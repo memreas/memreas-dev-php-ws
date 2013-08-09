@@ -1,0 +1,139 @@
+<?php 
+use Guzzle\Http\Client;
+use Zend\Session\Container;
+
+$session = new Container('user');        
+$user_id = $session->offsetGet('user_id');
+echo "user_id ----> " . $user_id;
+
+?>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>memreas</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  
+<!--jQuery Lybrary-->
+<script src="/memreas/js/jquery.js"></script>
+<script src="/memreas/js/modernizr.custom.17475.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!--Bootstrap jQuery-->
+<script src="/memreas/js/bootstrap.min.js"></script>
+<!--memreas-->
+<script src="/memreas/js/memreas.js"></script>
+<!-- Fetch the user_id -->
+<script type="text/javascript">
+	var base_url = $("#index_action").attr("action");
+	var login = '<xml><login><username>jmeah1</username><password>a123456</password></login></xml>';
+	var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password></registration></xml>';
+	var xml = "";
+    $(document).ready(function () {
+        $("#btnOK").click(onBtnCallClicked);
+    });
+    function onBtnCallClicked() {
+        jQuery.fetchWS(base_url);
+    }
+    $(function() {
+	    $( "#tabs" ).tabs();
+	});
+
+	$(document).ready(function () {
+		$("#action_input").val(registration);
+		$("#input_action").change(function() {
+			if ($("#input_action").val() == "registration") {
+				xml = registration;
+			} else if ($("#input_action").val() == "login") {
+				xml = login;
+			}
+			$("#action_input").val(xml);
+		});
+    });
+
+	//Change the form URL to existing URL
+	$(document).ready(function () {
+		$("#codebase").change(function() {
+			//base_url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/index_json.php";
+			//alert( "Changing input codebase to -> " + base_url );
+			alert( "Changing input codebase");
+		});
+    });
+	
+
+	//Not working.....
+	//change from xml to json and back
+	$(document).ready(function () {
+		$("#input_format").change(function() {
+			alert( "Changing input format" );
+			alert( $("#action_input").val() );
+			var xml = $.parseXML($("#action_input").val());
+			var obj = $.xml2json(xml); 
+			$("#action_input").val(JSON.stringify(obj, null, '\t'));
+			
+		});
+    });
+
+</script>
+</head>
+<body>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-5">Web Service Exec</a></li>
+  </ul>
+
+	<div id="tabs-5">
+	<form id="index_action" name=index_action" action="/index">
+		<table>
+			<tr>
+				<td>select action
+				<td>
+					<select id="input_action">
+					  <option>registration</option>
+					  <option>login</option>
+					</select>
+			</tr>
+			<!-- Not working....
+			<tr>
+				<td>select format
+				<td>
+					<select id="input_format">
+					  <option>xml</option>
+					  <option>json</option>
+					</select>
+			</tr>
+			-->
+			<input type="hidden" id="input_format" value="xml">
+			<tr>
+				<td>select url
+				<td>
+					<select id="codebase">
+					  <option>new_code</option>
+					  <option>original_code</option>
+					</select>
+			</tr>
+			<tr>
+				<td>Input (modify below as needed):
+			</tr>
+			<tr>
+				<td colspan="2"><textarea id="action_input" name="action_input" rows="10" cols="120"></textarea>
+			</tr>
+
+			<tr>
+				<td><input id="btnOK" type="button" name="btnOK" value="submit">
+			</tr>
+
+				<tr>
+					<td>Output:
+				</tr>
+				<tr>
+					<td colspan="2"><textarea id="action_output" name="action_output" rows="10" cols="120">Result will be shown here.</textarea>
+				</tr>
+
+		</table>
+	</div>
+	</form>
+</div>
+</body>
+</html>

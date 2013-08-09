@@ -1,0 +1,1815 @@
+[01-Aug-2013 17:57:21 America/New_York] PHP Fatal error:  Uncaught exception 'Zend\ModuleManager\Exception\RuntimeException' with message 'Module (Admin) could not be initialized.' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ModuleManager/ModuleManager.php:175
+Stack trace:
+#0 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ModuleManager/ModuleManager.php(149): Zend\ModuleManager\ModuleManager->loadModuleByName(Object(Zend\ModuleManager\ModuleEvent))
+#1 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ModuleManager/ModuleManager.php(90): Zend\ModuleManager\ModuleManager->loadModule('Admin')
+#2 [internal function]: Zend\ModuleManager\ModuleManager->onLoadModules(Object(Zend\ModuleManager\ModuleEvent))
+#3 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/EventManager/EventManager.php(468): call_user_func(Array, Object(Zend\ModuleManager\ModuleEvent))
+#4 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/EventManager/EventManager.php(207): Zend\EventManager\EventManager->triggerListeners('loadModules', Object(Zend\ModuleManager\ModuleEvent), NULL)
+#5 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ModuleManager/ModuleManager.php(109): Zend\EventManager\EventManager->trigger('loadModules', Object(Zend\ModuleManager\ModuleManager), Object(Zend\ModuleManager\ModuleEvent))
+#6 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/Mvc/Application.php(253): Zend\ModuleManager\ModuleManager->loadModules()
+#7 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/app/index.php(14): Zend\Mvc\Application::init(Array)
+#8 {main}
+  thrown in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ModuleManager/ModuleManager.php on line 175
+[01-Aug-2013 17:58:32 America/New_York] PHP Fatal error:  Cannot redeclare class Application\Module in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/ws/Module.php on line 30
+[01-Aug-2013 17:59:09 America/New_York] PHP Fatal error:  Cannot redeclare class Application\Module in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/ws/Module.php on line 29
+[01-Aug-2013 17:59:54 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:03:30 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:03:31 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:04:07 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:05:07 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:06:10 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:06:11 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:06:12 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:06:15 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:07:58 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:08:05 America/New_York] PHP Fatal error:  Class 'ws\Controller\IndexController' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/vendor/zendframework/zendframework/library/Zend/ServiceManager/AbstractPluginManager.php on line 170
+[01-Aug-2013 18:15:23 America/New_York] INSIDE security
+
+[01-Aug-2013 18:15:23 America/New_York] Not there so logout
+[01-Aug-2013 18:15:23 America/New_York] PHP Fatal error:  Class 'Admin\Model\MyAuthStorage' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/Module.php on line 202
+[01-Aug-2013 18:17:42 America/New_York] INSIDE security
+
+[01-Aug-2013 18:17:42 America/New_York] Not there so logout
+[01-Aug-2013 18:17:42 America/New_York] PHP Fatal error:  Class 'Admin\Model\MyAuthStorage' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/Module.php on line 202
+[01-Aug-2013 18:18:43 America/New_York] INSIDE security
+
+[01-Aug-2013 18:18:43 America/New_York] Not there so logout
+[01-Aug-2013 18:21:26 America/New_York] INSIDE security
+
+[01-Aug-2013 18:21:26 America/New_York] Not there so logout
+[01-Aug-2013 18:21:29 America/New_York] INSIDE security
+
+[01-Aug-2013 18:21:29 America/New_York] Not there so logout
+[01-Aug-2013 18:23:02 America/New_York] INSIDE security
+
+[01-Aug-2013 18:23:02 America/New_York] Not there so logout
+[01-Aug-2013 18:23:52 America/New_York] INSIDE security
+
+[01-Aug-2013 18:23:52 America/New_York] Not there so logout
+[01-Aug-2013 18:25:03 America/New_York] INSIDE security
+
+[01-Aug-2013 18:25:03 America/New_York] Not there so logout
+[01-Aug-2013 18:27:28 America/New_York] INSIDE security
+
+[01-Aug-2013 18:27:28 America/New_York] Not there so logout
+[01-Aug-2013 18:32:13 America/New_York] INSIDE security
+
+[01-Aug-2013 18:32:13 America/New_York] Not there so logout
+[01-Aug-2013 18:32:16 America/New_York] INSIDE security
+
+[01-Aug-2013 18:32:16 America/New_York] Not there so logout
+[01-Aug-2013 18:33:33 America/New_York] INSIDE security
+
+[01-Aug-2013 18:33:33 America/New_York] Not there so logout
+[01-Aug-2013 18:38:02 America/New_York] INSIDE security
+
+[01-Aug-2013 18:38:02 America/New_York] Not there so logout
+[01-Aug-2013 18:38:02 America/New_York] PHP Fatal error:  Class 'Admin\Model\MyAuthStorage' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/Module.php on line 140
+[01-Aug-2013 18:38:27 America/New_York] INSIDE security
+
+[01-Aug-2013 18:38:27 America/New_York] Not there so logout
+[01-Aug-2013 18:42:51 America/New_York] INSIDE LOGIN ACTION
+[01-Aug-2013 18:48:20 America/New_York] INSIDE LOGIN ACTION
+[01-Aug-2013 18:49:25 America/New_York] INSIDE LOGIN ACTION
+[01-Aug-2013 18:51:30 America/New_York] INSIDE LOGIN ACTION
+[01-Aug-2013 18:51:30 America/New_York] PHP Fatal error:  Class 'Admin\Model\User' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/Module.php on line 166
+[01-Aug-2013 18:57:36 America/New_York] INSIDE LOGIN ACTION
+[01-Aug-2013 18:57:37 America/New_York] PHP Fatal error:  Class 'Admin\Model\User' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/Module.php on line 166
+[01-Aug-2013 18:58:10 America/New_York] INSIDE LOGIN ACTION
+[01-Aug-2013 18:58:37 America/New_York] OUTPUT XML ----> 
+[01-Aug-2013 18:58:37 America/New_York] PHP Notice:  Undefined variable: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/view/application/index/event.phtml on line 154
+[01-Aug-2013 18:58:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/view/application/index/event.phtml on line 154
+[01-Aug-2013 18:58:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/view/application/index/event.phtml on line 154
+[01-Aug-2013 18:58:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/view/application/index/event.phtml on line 154
+[01-Aug-2013 18:58:37 America/New_York] PHP Warning:  Invalid argument supplied for foreach() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-frontend/module/Application/view/application/index/event.phtml on line 154
+[01-Aug-2013 19:05:46 America/New_York] Not there so logout
+[01-Aug-2013 19:05:57 America/New_York] INSIDE LOGIN ACTION
+[02-Aug-2013 01:35:59 America/New_York] Not there so logout
+[02-Aug-2013 10:17:13 America/New_York] Not there so logout
+[02-Aug-2013 17:11:18 America/New_York] PHP Notice:  Undefined index: action in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 101
+[02-Aug-2013 17:11:18 America/New_York] Inside index_json.php actionname .... 
+[02-Aug-2013 17:11:18 America/New_York] Not there so logout
+[02-Aug-2013 17:59:37 America/New_York] Not there so logout
+[02-Aug-2013 18:00:12 America/New_York] Not there so logout
+[02-Aug-2013 18:00:16 America/New_York] Not there so logout
+[02-Aug-2013 18:01:33 America/New_York] INSIDE LOGIN ACTION
+[03-Aug-2013 19:37:10 America/New_York] PHP Fatal error:  Class 'Application\Controller\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 98
+[03-Aug-2013 19:56:01 America/New_York] PHP Fatal error:  Class 'Application\Controller\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 98
+[03-Aug-2013 20:03:15 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 100
+[03-Aug-2013 20:08:38 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 100
+[03-Aug-2013 20:16:32 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 100
+[03-Aug-2013 20:18:19 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 100
+[03-Aug-2013 20:20:29 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 100
+[03-Aug-2013 20:21:24 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 99
+[03-Aug-2013 20:26:59 America/New_York] PHP Fatal error:  Class 'Memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 99
+[03-Aug-2013 20:27:47 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 99
+[03-Aug-2013 20:34:00 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 99
+[03-Aug-2013 20:35:09 America/New_York] PHP Fatal error:  Class 'memreas\Memreas' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 98
+[03-Aug-2013 20:39:53 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:39:53 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:39:53 America/New_York] PHP Fatal error:  Class 'Application\Controller\MemreasTables' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 99
+[03-Aug-2013 20:41:45 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:41:45 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:41:45 America/New_York] PHP Notice:  Undefined variable: result in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Memreas.php on line 34
+[03-Aug-2013 20:43:53 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:43:53 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:44:37 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:44:37 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:44:37 America/New_York] Returning result...
+[03-Aug-2013 20:45:23 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:45:23 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:45:23 America/New_York] Returning result...
+[03-Aug-2013 20:46:12 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:46:12 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:46:12 America/New_York] Returning result...
+[03-Aug-2013 20:46:41 America/New_York] Inside Memreas contructor...
+[03-Aug-2013 20:46:41 America/New_York] Exit Memreas constructor
+[03-Aug-2013 20:46:41 America/New_York] Returning result...
+[04-Aug-2013 00:41:19 America/New_York] PHP Fatal error:  Undefined constant 'Application\Controller\memreas\config' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 21
+[04-Aug-2013 00:42:28 America/New_York] PHP Parse error:  syntax error, unexpected '.', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 21
+[04-Aug-2013 00:42:39 America/New_York] PHP Warning:  require_once(memreas\config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:42:39 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required 'memreas\config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:43:02 America/New_York] PHP Parse error:  syntax error, unexpected ''memreas\config'' (T_CONSTANT_ENCAPSED_STRING), expecting identifier (T_STRING) or \\ (T_NS_SEPARATOR) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:43:36 America/New_York] PHP Parse error:  syntax error, unexpected ''memreas\config'' (T_CONSTANT_ENCAPSED_STRING), expecting identifier (T_STRING) or \\ (T_NS_SEPARATOR) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:45:21 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:45:21 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:52:30 America/New_York] PHP Parse error:  syntax error, unexpected '$xml' (T_VARIABLE) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 104
+[04-Aug-2013 00:58:04 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 00:58:04 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 01:00:16 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 01:00:16 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 2
+[04-Aug-2013 01:00:54 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 01:00:54 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 12:32:34 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 12:32:34 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 12:51:38 America/New_York] PHP Parse error:  syntax error, unexpected 'if' (T_IF) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 95
+[04-Aug-2013 12:51:55 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 12:51:55 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 12:57:02 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 12:57:02 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:01:21 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:01:21 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:01:59 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:01:59 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:02:01 America/New_York] PHP Warning:  require_once(/vendor/memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:02:01 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required '/vendor/memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:02:16 America/New_York] PHP Warning:  require_once(memreas/config.php) [<a href='0function.require-once0'>function.require-once0</a>]: failed to open stream: No such file or directory in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 13:02:16 America/New_York] PHP Fatal error:  require_once() [<a href='0function.require0'>function.require0</a>]: Failed opening required 'memreas/config.php' (include_path='.:/usr/local/Cellar/php54/5.4.11/lib/php') in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 4
+[04-Aug-2013 14:29:39 America/New_York] PHP Parse error:  syntax error, unexpected '/' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 56
+[04-Aug-2013 14:29:58 America/New_York] PHP Parse error:  syntax error, unexpected '=' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 77
+[04-Aug-2013 15:21:38 America/New_York] PHP Parse error:  syntax error, unexpected '}', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 95
+[04-Aug-2013 15:24:35 America/New_York] PHP Notice:  Undefined variable: actionname in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 91
+[04-Aug-2013 15:38:07 America/New_York] PHP Notice:  Undefined variable: user_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/view/application/index/test_webservice.php on line 128
+[04-Aug-2013 15:39:34 America/New_York] PHP Fatal error:  Call to undefined function Application\Controller\array2xml() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 117
+[04-Aug-2013 15:40:03 America/New_York] PHP Fatal error:  Class 'Application\Controller\SimpleXMLElement' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 51
+[04-Aug-2013 15:43:58 America/New_York] PHP Fatal error:  Class 'Application\Controller\SimpleXMLElement' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 51
+[04-Aug-2013 15:44:23 America/New_York] PHP Warning:  Invalid argument supplied for foreach() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 54
+[04-Aug-2013 15:44:23 America/New_York] xml ------> <?xml version="1.0" encoding="utf-8"?>
+<xml/>
+
+[04-Aug-2013 15:48:21 America/New_York] callback ------> jQuery190056503641535528_1375645460806
+[04-Aug-2013 15:48:21 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 15:48:21 America/New_York] actionname ------> login
+[04-Aug-2013 15:48:21 America/New_York] type ------> jsonp
+[04-Aug-2013 15:48:21 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 15:48:21 America/New_York] array -----> 1
+
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  key() expects parameter 1 to be array, string given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  SimpleXMLElement::__construct() [<a href='0simplexmlelement.--construct0'>simplexmlelement.--construct0</a>]: Entity: line 1: parser error : StartTag: invalid element name in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  SimpleXMLElement::__construct() [<a href='0simplexmlelement.--construct0'>simplexmlelement.--construct0</a>]: &lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;/&gt; in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  SimpleXMLElement::__construct() [<a href='0simplexmlelement.--construct0'>simplexmlelement.--construct0</a>]:                                        ^ in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  SimpleXMLElement::__construct() [<a href='0simplexmlelement.--construct0'>simplexmlelement.--construct0</a>]: Entity: line 1: parser error : Extra content at the end of the document in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  SimpleXMLElement::__construct() [<a href='0simplexmlelement.--construct0'>simplexmlelement.--construct0</a>]: &lt;?xml version='1.0' encoding='utf-8'?&gt;&lt;/&gt; in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:48:21 America/New_York] PHP Warning:  SimpleXMLElement::__construct() [<a href='0simplexmlelement.--construct0'>simplexmlelement.--construct0</a>]:                                        ^ in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 53
+[04-Aug-2013 15:53:00 America/New_York] PHP Notice:  Undefined index: callback in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 107
+[04-Aug-2013 15:53:00 America/New_York] PHP Warning:  error_log() expects parameter 2 to be long, string given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 107
+[04-Aug-2013 15:53:07 America/New_York] PHP Warning:  error_log() expects parameter 2 to be long, string given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 107
+[04-Aug-2013 15:53:07 America/New_York] callback ------> jQuery190040319213829934597_1375645980719
+[04-Aug-2013 15:53:07 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 15:53:07 America/New_York] actionname ------> login
+[04-Aug-2013 15:53:07 America/New_York] type ------> jsonp
+[04-Aug-2013 15:53:07 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 15:53:07 America/New_York] PHP Notice:  Undefined variable: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 125
+[04-Aug-2013 15:53:07 America/New_York] xml ------> 
+[04-Aug-2013 15:53:07 America/New_York] PHP Notice:  Undefined variable: result in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 142
+[04-Aug-2013 15:53:23 America/New_York] PHP Warning:  error_log() expects parameter 2 to be long, string given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 107
+[04-Aug-2013 15:53:23 America/New_York] callback ------> jQuery190040319213829934597_1375645980719
+[04-Aug-2013 15:53:23 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 15:53:23 America/New_York] actionname ------> login
+[04-Aug-2013 15:53:23 America/New_York] type ------> jsonp
+[04-Aug-2013 15:53:23 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 15:53:23 America/New_York] PHP Notice:  Undefined variable: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 125
+[04-Aug-2013 15:53:23 America/New_York] xml ------> 
+[04-Aug-2013 15:53:23 America/New_York] PHP Notice:  Undefined variable: result in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 142
+[04-Aug-2013 15:56:57 America/New_York] PHP Notice:  Undefined index: callback in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 107
+[04-Aug-2013 15:56:57 America/New_York] PHP Warning:  error_log() expects parameter 2 to be long, string given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 107
+[04-Aug-2013 15:57:28 America/New_York] callback ------> jQuery19008884054482914507_1375646244796
+[04-Aug-2013 15:57:28 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 15:57:28 America/New_York] actionname ------> login
+[04-Aug-2013 15:57:28 America/New_York] type ------> jsonp
+[04-Aug-2013 15:57:28 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 15:57:28 America/New_York] PHP Fatal error:  Class 'Application\Controller\Login' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 125
+[04-Aug-2013 15:57:53 America/New_York] callback ------> jQuery19005673229885287583_1375646271997
+[04-Aug-2013 15:57:53 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 15:57:53 America/New_York] actionname ------> login
+[04-Aug-2013 15:57:53 America/New_York] type ------> jsonp
+[04-Aug-2013 15:57:53 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 15:57:53 America/New_York] PHP Fatal error:  Class 'memreas\Login' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 126
+[04-Aug-2013 16:02:37 America/New_York] callback ------> jQuery19002279218512121588_1375646553776
+[04-Aug-2013 16:02:37 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 16:02:37 America/New_York] actionname ------> login
+[04-Aug-2013 16:02:37 America/New_York] type ------> jsonp
+[04-Aug-2013 16:02:37 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 16:02:37 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 16:02:37 America/New_York] PHP Notice:  Undefined index: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 22
+[04-Aug-2013 16:02:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 26
+[04-Aug-2013 16:02:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 26
+[04-Aug-2013 16:02:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 30
+[04-Aug-2013 16:02:37 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 30
+[04-Aug-2013 16:05:49 America/New_York] callback ------> jQuery190008986630546860397_1375646746833
+[04-Aug-2013 16:05:49 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 16:05:49 America/New_York] actionname ------> login
+[04-Aug-2013 16:05:49 America/New_York] type ------> jsonp
+[04-Aug-2013 16:05:49 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 16:05:49 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 16:05:49 America/New_York] PHP Notice:  Undefined index: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 22
+[04-Aug-2013 16:05:49 America/New_York] xml --->
+
+[04-Aug-2013 16:05:49 America/New_York] PHP Notice:  Undefined index: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 23
+[04-Aug-2013 16:05:49 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 29
+[04-Aug-2013 16:05:49 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 29
+[04-Aug-2013 16:05:49 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 33
+[04-Aug-2013 16:05:49 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 33
+[04-Aug-2013 16:07:23 America/New_York] callback ------> jQuery190039000656572170556_1375646839561
+[04-Aug-2013 16:07:23 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 16:07:23 America/New_York] actionname ------> login
+[04-Aug-2013 16:07:23 America/New_York] type ------> jsonp
+[04-Aug-2013 16:07:23 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 16:07:23 America/New_York] PHP Notice:  Undefined variable: xml in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 125
+[04-Aug-2013 16:07:23 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 16:07:23 America/New_York] xml --->
+
+[04-Aug-2013 16:07:23 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 29
+[04-Aug-2013 16:07:23 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 29
+[04-Aug-2013 16:07:23 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 33
+[04-Aug-2013 16:07:23 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 33
+[04-Aug-2013 16:08:33 America/New_York] callback ------> jQuery19004665990436915308_1375646910176
+[04-Aug-2013 16:08:33 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 16:08:33 America/New_York] actionname ------> login
+[04-Aug-2013 16:08:33 America/New_York] type ------> jsonp
+[04-Aug-2013 16:08:33 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 16:08:33 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 16:08:33 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[04-Aug-2013 16:08:33 America/New_York] PHP Warning:  mysql_num_rows() expects parameter 1 to be resource, boolean given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 53
+[04-Aug-2013 16:10:44 America/New_York] callback ------> jQuery19007865958805195987_1375647042649
+[04-Aug-2013 16:10:44 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 16:10:44 America/New_York] actionname ------> login
+[04-Aug-2013 16:10:44 America/New_York] type ------> jsonp
+[04-Aug-2013 16:10:44 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 16:10:44 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 16:10:44 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[04-Aug-2013 16:10:44 America/New_York] PHP Warning:  mysql_num_rows() expects parameter 1 to be resource, boolean given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 53
+[04-Aug-2013 16:10:56 America/New_York] callback ------> jQuery19004060537943150848_1375647053655
+[04-Aug-2013 16:10:56 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 16:10:56 America/New_York] actionname ------> login
+[04-Aug-2013 16:10:56 America/New_York] type ------> jsonp
+[04-Aug-2013 16:10:56 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 16:10:56 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 16:10:56 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[04-Aug-2013 16:10:56 America/New_York] PHP Warning:  mysql_num_rows() expects parameter 1 to be resource, boolean given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 53
+[04-Aug-2013 17:03:39 America/New_York] callback ------> jQuery19005083429564256221_1375650215979
+[04-Aug-2013 17:03:39 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 17:03:39 America/New_York] actionname ------> login
+[04-Aug-2013 17:03:39 America/New_York] type ------> jsonp
+[04-Aug-2013 17:03:39 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 17:03:39 America/New_York] Inside Login.exec()
+
+[04-Aug-2013 17:03:39 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[04-Aug-2013 17:03:39 America/New_York] PHP Warning:  mysql_num_rows() expects parameter 1 to be resource, boolean given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 53
+[04-Aug-2013 17:49:58 America/New_York] callback ------> jQuery19000663972373586148_1375652996094
+[04-Aug-2013 17:49:58 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 17:49:58 America/New_York] actionname ------> login
+[04-Aug-2013 17:49:58 America/New_York] type ------> jsonp
+[04-Aug-2013 17:49:58 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 17:49:58 America/New_York] PHP Warning:  Missing argument 1 for memreas\Login::__construct(), called in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 126 and defined in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 13
+[04-Aug-2013 17:49:58 America/New_York] PHP Notice:  Undefined variable: sl in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 14
+[04-Aug-2013 17:49:58 America/New_York] PHP Notice:  Undefined variable: sl in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 15
+[04-Aug-2013 17:49:58 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 15
+[04-Aug-2013 17:51:23 America/New_York] callback ------> jQuery19000663972373586148_1375652996094
+[04-Aug-2013 17:51:23 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 17:51:23 America/New_York] actionname ------> login
+[04-Aug-2013 17:51:23 America/New_York] type ------> jsonp
+[04-Aug-2013 17:51:23 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 17:51:23 America/New_York] PHP Warning:  Missing argument 1 for memreas\Login::__construct(), called in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 126 and defined in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 13
+[04-Aug-2013 17:51:23 America/New_York] PHP Notice:  Undefined variable: sl in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 14
+[04-Aug-2013 17:51:23 America/New_York] PHP Notice:  Undefined variable: sl in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 15
+[04-Aug-2013 17:51:23 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 15
+[04-Aug-2013 18:23:23 America/New_York] callback ------> jQuery1900018058110494166613_1375654999259
+[04-Aug-2013 18:23:23 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:23:23 America/New_York] actionname ------> login
+[04-Aug-2013 18:23:23 America/New_York] type ------> jsonp
+[04-Aug-2013 18:23:23 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:23:23 America/New_York] PHP Parse error:  syntax error, unexpected '{' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 67
+[04-Aug-2013 18:23:41 America/New_York] callback ------> jQuery1900018058110494166613_1375654999259
+[04-Aug-2013 18:23:41 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:23:41 America/New_York] actionname ------> login
+[04-Aug-2013 18:23:41 America/New_York] type ------> jsonp
+[04-Aug-2013 18:23:41 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:23:41 America/New_York] PHP Notice:  Undefined variable: sl in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 19
+[04-Aug-2013 18:23:41 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 19
+[04-Aug-2013 18:24:07 America/New_York] callback ------> jQuery1900018058110494166613_1375654999259
+[04-Aug-2013 18:24:07 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:24:07 America/New_York] actionname ------> login
+[04-Aug-2013 18:24:07 America/New_York] type ------> jsonp
+[04-Aug-2013 18:24:07 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:25:06 America/New_York] callback ------> jQuery1900018058110494166613_1375654999259
+[04-Aug-2013 18:25:06 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:25:06 America/New_York] actionname ------> login
+[04-Aug-2013 18:25:06 America/New_York] type ------> jsonp
+[04-Aug-2013 18:25:06 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:37:10 America/New_York] callback ------> jQuery19006458609849214554_1375655826228
+[04-Aug-2013 18:37:10 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:37:10 America/New_York] actionname ------> login
+[04-Aug-2013 18:37:10 America/New_York] type ------> jsonp
+[04-Aug-2013 18:37:10 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:38:00 America/New_York] callback ------> jQuery19006458609849214554_1375655826228
+[04-Aug-2013 18:38:00 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:38:00 America/New_York] actionname ------> login
+[04-Aug-2013 18:38:00 America/New_York] type ------> jsonp
+[04-Aug-2013 18:38:00 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:48:53 America/New_York] callback ------> jQuery190003045748546719551_1375656529633
+[04-Aug-2013 18:48:53 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:48:53 America/New_York] actionname ------> login
+[04-Aug-2013 18:48:53 America/New_York] type ------> jsonp
+[04-Aug-2013 18:48:53 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[04-Aug-2013 18:53:33 America/New_York] callback ------> jQuery190003045748546719551_1375656529633
+[04-Aug-2013 18:53:33 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[04-Aug-2013 18:53:33 America/New_York] actionname ------> login
+[04-Aug-2013 18:53:33 America/New_York] type ------> jsonp
+[04-Aug-2013 18:53:33 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 10:12:50 America/New_York] callback ------> jQuery190024282284290529788_1375708034003
+[05-Aug-2013 10:12:50 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 10:12:50 America/New_York] actionname ------> login
+[05-Aug-2013 10:12:50 America/New_York] type ------> jsonp
+[05-Aug-2013 10:12:50 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 10:12:50 America/New_York] Did I get here...
+[05-Aug-2013 10:12:50 America/New_York] Inside__construct...
+[05-Aug-2013 11:06:54 America/New_York] PHP Parse error:  syntax error, unexpected ';', expecting ')' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/config/autoload/global.php on line 55
+[05-Aug-2013 11:07:20 America/New_York] callback ------> jQuery190024282284290529788_1375708034003
+[05-Aug-2013 11:07:20 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:07:20 America/New_York] actionname ------> login
+[05-Aug-2013 11:07:20 America/New_York] type ------> jsonp
+[05-Aug-2013 11:07:20 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:07:20 America/New_York] Did I get here...
+[05-Aug-2013 11:07:20 America/New_York] Inside__construct...
+[05-Aug-2013 11:07:20 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:07:20 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:07:20 America/New_York] PHP Notice:  Undefined variable: db in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 66
+[05-Aug-2013 11:07:20 America/New_York] PHP Fatal error:  Call to a member function query() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 66
+[05-Aug-2013 11:08:21 America/New_York] callback ------> jQuery190053263378306292_1375715297789
+[05-Aug-2013 11:08:21 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:08:21 America/New_York] actionname ------> login
+[05-Aug-2013 11:08:21 America/New_York] type ------> jsonp
+[05-Aug-2013 11:08:21 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:08:21 America/New_York] Did I get here...
+[05-Aug-2013 11:08:21 America/New_York] Inside__construct...
+[05-Aug-2013 11:08:21 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:08:21 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:08:21 America/New_York] PHP Fatal error:  Call to undefined method Zend\Db\Adapter\Driver\Pdo\Statement::fetchall() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 67
+[05-Aug-2013 11:36:46 America/New_York] callback ------> jQuery190053263378306292_1375715297789
+[05-Aug-2013 11:36:46 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:36:46 America/New_York] actionname ------> login
+[05-Aug-2013 11:36:46 America/New_York] type ------> jsonp
+[05-Aug-2013 11:36:46 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:36:46 America/New_York] Did I get here...
+[05-Aug-2013 11:36:46 America/New_York] Inside__construct...
+[05-Aug-2013 11:36:46 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:36:46 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:36:46 America/New_York] PHP Notice:  Undefined variable: result in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 69
+[05-Aug-2013 11:38:17 America/New_York] callback ------> jQuery190053263378306292_1375715297789
+[05-Aug-2013 11:38:17 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:38:17 America/New_York] actionname ------> login
+[05-Aug-2013 11:38:17 America/New_York] type ------> jsonp
+[05-Aug-2013 11:38:17 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:38:17 America/New_York] Did I get here...
+[05-Aug-2013 11:38:17 America/New_York] Inside__construct...
+[05-Aug-2013 11:38:17 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:38:17 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:38:17 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 11:38:17 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 11:38:17 America/New_York] PHP Notice:  Undefined variable: result in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 69
+[05-Aug-2013 11:38:57 America/New_York] callback ------> jQuery190053263378306292_1375715297789
+[05-Aug-2013 11:38:57 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:38:57 America/New_York] actionname ------> login
+[05-Aug-2013 11:38:57 America/New_York] type ------> jsonp
+[05-Aug-2013 11:38:57 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:38:57 America/New_York] Did I get here...
+[05-Aug-2013 11:38:57 America/New_York] Inside__construct...
+[05-Aug-2013 11:38:57 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:38:57 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:38:57 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 11:38:57 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 11:38:58 America/New_York] didn't find user row 
+[05-Aug-2013 11:49:05 America/New_York] callback ------> jQuery19006831390964798629_1375717743358
+[05-Aug-2013 11:49:05 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:49:05 America/New_York] actionname ------> login
+[05-Aug-2013 11:49:05 America/New_York] type ------> jsonp
+[05-Aug-2013 11:49:05 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:49:05 America/New_York] Did I get here...
+[05-Aug-2013 11:49:05 America/New_York] Inside__construct...
+[05-Aug-2013 11:49:05 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:49:05 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:49:05 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 11:49:05 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 11:49:05 America/New_York] didn't find user row 
+[05-Aug-2013 11:52:55 America/New_York] callback ------> jQuery19007806728025898337_1375717973075
+[05-Aug-2013 11:52:55 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 11:52:55 America/New_York] actionname ------> login
+[05-Aug-2013 11:52:55 America/New_York] type ------> jsonp
+[05-Aug-2013 11:52:55 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 11:52:55 America/New_York] Did I get here...
+[05-Aug-2013 11:52:55 America/New_York] Inside__construct...
+[05-Aug-2013 11:52:55 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 11:52:55 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 11:52:55 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 11:52:55 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 11:52:55 America/New_York] didn't find user row 
+[05-Aug-2013 12:10:01 America/New_York] callback ------> jQuery19007806728025898337_1375717973075
+[05-Aug-2013 12:10:01 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 12:10:01 America/New_York] actionname ------> login
+[05-Aug-2013 12:10:01 America/New_York] type ------> jsonp
+[05-Aug-2013 12:10:01 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 12:10:01 America/New_York] Did I get here...
+[05-Aug-2013 12:10:01 America/New_York] Inside__construct...
+[05-Aug-2013 12:10:01 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:10:01 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:10:01 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:10:01 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:10:01 America/New_York] PHP Fatal error:  Cannot use object of type Zend\Db\Adapter\Driver\Pdo\Result as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 75
+[05-Aug-2013 12:16:39 America/New_York] callback ------> jQuery1900876129248412326_1375719395643
+[05-Aug-2013 12:16:39 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 12:16:39 America/New_York] actionname ------> login
+[05-Aug-2013 12:16:39 America/New_York] type ------> jsonp
+[05-Aug-2013 12:16:39 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 12:16:39 America/New_York] Did I get here...
+[05-Aug-2013 12:16:39 America/New_York] Inside__construct...
+[05-Aug-2013 12:16:39 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:16:39 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:16:39 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:16:39 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:16:39 America/New_York] PHP Fatal error:  Cannot use object of type Zend\Db\Adapter\Driver\Pdo\Result as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 76
+[05-Aug-2013 12:17:27 America/New_York] callback ------> jQuery1900876129248412326_1375719395643
+[05-Aug-2013 12:17:27 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 12:17:27 America/New_York] actionname ------> login
+[05-Aug-2013 12:17:27 America/New_York] type ------> jsonp
+[05-Aug-2013 12:17:27 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 12:17:27 America/New_York] Did I get here...
+[05-Aug-2013 12:17:27 America/New_York] Inside__construct...
+[05-Aug-2013 12:17:27 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:17:27 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:17:27 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:17:27 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:17:27 America/New_York] PHP Fatal error:  Cannot use object of type Zend\Db\Adapter\Driver\Pdo\Result as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 76
+[05-Aug-2013 12:19:54 America/New_York] callback ------> jQuery1900876129248412326_1375719395643
+[05-Aug-2013 12:19:54 America/New_York] json ------> {"action": "login", "type":"jsonp", "json": {
+	"xml": "<xml><login><username>jmeah1</username><password>a123456</password></login></xml>"
+}}
+[05-Aug-2013 12:19:54 America/New_York] actionname ------> login
+[05-Aug-2013 12:19:54 America/New_York] type ------> jsonp
+[05-Aug-2013 12:19:54 America/New_York] message_data xml ------> <xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+[05-Aug-2013 12:19:54 America/New_York] Did I get here...
+[05-Aug-2013 12:19:54 America/New_York] Inside__construct...
+[05-Aug-2013 12:19:54 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:19:54 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:19:54 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:19:54 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:19:54 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 12:19:54 America/New_York] found user row and setup xml 
+[05-Aug-2013 12:29:40 America/New_York] Inside__construct...
+[05-Aug-2013 12:29:40 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:29:40 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:29:40 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:29:40 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:29:40 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 12:29:40 America/New_York] found user row and setup xml 
+[05-Aug-2013 12:29:40 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 12:29:40 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 12:29:40 America/New_York] Callback ---> jQuery1900014329897705465555_1375720177379({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 12:31:21 America/New_York] Inside__construct...
+[05-Aug-2013 12:31:21 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:31:21 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:31:21 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:31:21 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:31:21 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 12:31:21 America/New_York] found user row and setup xml 
+[05-Aug-2013 12:31:21 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 12:31:21 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 12:31:21 America/New_York] Callback ---> jQuery19006617531215306371_1375720278801({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 12:31:47 America/New_York] Inside__construct...
+[05-Aug-2013 12:31:47 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:31:47 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:31:47 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:31:47 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:31:47 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 12:31:47 America/New_York] found user row and setup xml 
+[05-Aug-2013 12:31:47 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 12:31:47 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 12:31:47 America/New_York] Callback ---> jQuery19003240639267023653_1375720305425({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 12:33:31 America/New_York] Inside__construct...
+[05-Aug-2013 12:33:31 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 12:33:31 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 12:33:31 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 12:33:31 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 12:33:31 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 12:33:31 America/New_York] found user row and setup xml 
+[05-Aug-2013 12:33:31 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 12:33:31 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 12:33:31 America/New_York] Callback ---> jQuery190010934338066726923_1375720409866({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 13:05:06 America/New_York] PHP Notice:  Use of undefined constant hasXML - assumed 'hasXML' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 120
+[05-Aug-2013 13:05:06 America/New_York] Inside__construct...
+[05-Aug-2013 13:05:06 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:05:06 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:05:06 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:05:06 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:05:06 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:05:06 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:05:06 America/New_York] Final Output ----> <br />
+<b>Notice</b>:  Use of undefined constant hasXML - assumed 'hasXML' in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php</b> on line <b>120</b><br />
+<?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:05:06 America/New_York] PHP Notice:  Use of undefined constant hasXML - assumed 'hasXML' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 144
+[05-Aug-2013 13:05:06 America/New_York] PHP Warning:  simplexml_load_string() [<a href='0function.simplexml-load-string0'>function.simplexml-load-string0</a>]: Entity: line 2: parser error : Extra content at the end of the document in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 149
+[05-Aug-2013 13:05:06 America/New_York] PHP Warning:  simplexml_load_string() [<a href='0function.simplexml-load-string0'>function.simplexml-load-string0</a>]: &lt;b&gt;Notice&lt;/b&gt;:  Use of undefined constant hasXML - assumed 'hasXML' in &lt;b&gt;/Users in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 149
+[05-Aug-2013 13:05:06 America/New_York] PHP Warning:  simplexml_load_string() [<a href='0function.simplexml-load-string0'>function.simplexml-load-string0</a>]: ^ in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 149
+[05-Aug-2013 13:05:06 America/New_York] Final JSON ----> false
+[05-Aug-2013 13:05:06 America/New_York] Callback ---> jQuery190010967282112687826_1375722304289(false)
+[05-Aug-2013 13:05:43 America/New_York] Inside__construct...
+[05-Aug-2013 13:05:43 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:05:43 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:05:43 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:05:43 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:05:43 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:05:43 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:05:43 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:05:43 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 13:05:43 America/New_York] Callback ---> jQuery19005625862022861838_1375722340641({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 13:07:22 America/New_York] PHP Parse error:  syntax error, unexpected ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 120
+[05-Aug-2013 13:07:33 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:07:33 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:07:33 America/New_York] Inside__construct...
+[05-Aug-2013 13:07:33 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:07:33 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:07:33 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:07:33 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:07:33 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:07:33 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:07:33 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:07:33 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 13:07:33 America/New_York] Callback ---> jQuery19006454232807736844_1375722451192({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 13:10:08 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:10:08 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:10:08 America/New_York] Inside__construct...
+[05-Aug-2013 13:10:08 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:10:08 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:10:08 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:10:08 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:10:08 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:10:08 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:10:08 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:10:08 America/New_York] Final JSON ----> {"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}
+[05-Aug-2013 13:10:08 America/New_York] Callback ---> jQuery19005137054526712745_1375722605422({"loginresponse":{"status":"success","message":"User logged in successfully.","userid":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}})
+[05-Aug-2013 13:18:28 America/New_York] PHP Parse error:  syntax error, unexpected ':', expecting ')' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:18:43 America/New_York] PHP Parse error:  syntax error, unexpected ':', expecting ')' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:18:46 America/New_York] PHP Parse error:  syntax error, unexpected ':', expecting ')' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:19:07 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:19:07 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:19:07 America/New_York] Inside__construct...
+[05-Aug-2013 13:19:07 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:19:07 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:19:07 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:19:07 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:19:07 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:19:07 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:19:07 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:19:07 America/New_York] PHP Notice:  Undefined index: data in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 152
+[05-Aug-2013 13:19:07 America/New_York] Final XML ----> 
+[05-Aug-2013 13:19:07 America/New_York] PHP Notice:  Use of undefined constant data - assumed 'data' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:19:07 America/New_York] PHP Notice:  Undefined index: data in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:19:07 America/New_York] Callback ---> jQuery190026830041012726724_1375723145087({"data":null})
+[05-Aug-2013 13:19:57 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:19:57 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:19:57 America/New_York] Inside__construct...
+[05-Aug-2013 13:19:57 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:19:57 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:19:57 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:19:57 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:19:57 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:19:57 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:19:57 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:19:57 America/New_York] PHP Notice:  Undefined index: data in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 152
+[05-Aug-2013 13:19:57 America/New_York] Final XML ----> 
+[05-Aug-2013 13:19:57 America/New_York] PHP Notice:  Use of undefined constant data - assumed 'data' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:19:57 America/New_York] PHP Notice:  Undefined index: data in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:19:57 America/New_York] Callback ---> jQuery190026830041012726724_1375723145087({"data":null})
+[05-Aug-2013 13:20:28 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:20:28 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:20:28 America/New_York] Inside__construct...
+[05-Aug-2013 13:20:28 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:20:28 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:20:28 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:20:28 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:20:28 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:20:28 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:20:28 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:20:28 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:20:28 America/New_York] PHP Notice:  Use of undefined constant data - assumed 'data' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 155
+[05-Aug-2013 13:20:28 America/New_York] Callback ---> jQuery190026830041012726724_1375723145087({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 13:21:23 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:21:23 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:21:23 America/New_York] Inside__construct...
+[05-Aug-2013 13:21:23 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:21:23 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:21:23 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:21:23 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:21:23 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:21:23 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:21:23 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:21:23 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:21:23 America/New_York] PHP Notice:  Use of undefined constant data - assumed 'data' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 156
+[05-Aug-2013 13:21:23 America/New_York] Callback ---> jQuery1900625904408749193_1375723278999({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 13:21:58 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:21:58 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:21:58 America/New_York] Inside__construct...
+[05-Aug-2013 13:21:58 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:21:58 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:21:58 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:21:58 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:21:58 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:21:58 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:21:58 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:21:58 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:21:58 America/New_York] Callback ---> jQuery19002789380999747664_1375723316130({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 13:26:35 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:26:35 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:26:35 America/New_York] Inside__construct...
+[05-Aug-2013 13:26:35 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:26:35 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:26:35 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:26:35 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:26:35 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:26:35 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:26:35 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:26:35 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:26:35 America/New_York] Callback ---> jQuery190033251661201938987_1375723593048({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 13:26:53 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:26:53 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:26:53 America/New_York] Inside__construct...
+[05-Aug-2013 13:26:53 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:26:53 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:26:53 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:26:53 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:26:53 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:26:53 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:26:53 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:26:53 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:26:53 America/New_York] Callback ---> jQuery190033251661201938987_1375723593048({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 13:27:36 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:27:36 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:27:36 America/New_York] Inside__construct...
+[05-Aug-2013 13:27:36 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:27:36 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:27:36 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:27:36 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:27:36 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:27:36 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:27:36 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:27:36 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:27:36 America/New_York] Callback ---> jQuery190034285051352344453_1375723652070({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 13:39:06 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 13:39:06 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 13:39:06 America/New_York] Inside__construct...
+[05-Aug-2013 13:39:06 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 13:39:06 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 13:39:06 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 13:39:06 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 13:39:06 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 13:39:06 America/New_York] found user row and setup xml 
+[05-Aug-2013 13:39:06 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:39:06 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 13:39:06 America/New_York] Callback ---> jQuery190047100214706733823_1375724345771({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 19:22:02 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 19:22:02 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 19:22:02 America/New_York] Inside__construct...
+[05-Aug-2013 19:22:02 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 19:22:02 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 19:22:02 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 19:22:02 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 19:22:02 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 19:22:02 America/New_York] found user row and setup xml 
+[05-Aug-2013 19:22:02 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 19:22:02 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 19:22:02 America/New_York] Callback ---> jQuery1900060453987680375576_1375744920969({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 20:02:23 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 20:02:23 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 20:02:23 America/New_York] Inside__construct...
+[05-Aug-2013 20:02:23 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 20:02:23 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 20:02:23 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 20:02:23 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 20:02:23 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 20:02:23 America/New_York] found user row and setup xml 
+[05-Aug-2013 20:02:23 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:02:23 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:02:23 America/New_York] Callback ---> jQuery19009814239921979606_1375747338487({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 20:46:16 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 20:46:16 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 20:46:16 America/New_York] Inside__construct...
+[05-Aug-2013 20:46:16 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 20:46:16 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 20:46:16 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 20:46:16 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 20:46:16 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 20:46:16 America/New_York] found user row and setup xml 
+[05-Aug-2013 20:46:16 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:46:16 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:46:16 America/New_York] Callback ---> jQuery190001580106094479561_1375749967589({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 20:49:15 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 20:49:15 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 20:49:15 America/New_York] Inside__construct...
+[05-Aug-2013 20:49:15 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 20:49:15 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 20:49:15 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 20:49:15 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 20:49:15 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 20:49:15 America/New_York] found user row and setup xml 
+[05-Aug-2013 20:49:15 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:49:15 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:49:15 America/New_York] Callback ---> jQuery190011984906857833266_1375750147505({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 20:50:25 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 20:50:25 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 20:50:25 America/New_York] Inside__construct...
+[05-Aug-2013 20:50:25 America/New_York] Inside Login.exec()
+
+[05-Aug-2013 20:50:25 America/New_York] xml ---><xml><login><username>jmeah1</username><password>a123456</password></login></xml>
+
+[05-Aug-2013 20:50:25 America/New_York] data->login->username --->jmeah1
+
+[05-Aug-2013 20:50:25 America/New_York] data->login->password --->a123456
+
+[05-Aug-2013 20:50:25 America/New_York] row-----> Array
+(
+    [user_id] => 05cd7b92-c7d7-11e2-8c7e-c7f987b90c11
+    [database_id] => 0
+    [username] => jmeah1
+    [password] => dc483e80a7a0bd9ef71d8cf973673924
+    [email_address] => jmeah1@yahoo.com
+    [role] => 2
+    [profile_photo] => 0
+    [facebook_username] => 
+    [twitter_username] => 
+    [disable_account] => 0
+    [create_date] => 1369773710
+    [update_time] => 1369773710
+)
+
+
+[05-Aug-2013 20:50:25 America/New_York] found user row and setup xml 
+[05-Aug-2013 20:50:25 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:50:25 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 20:50:25 America/New_York] Callback ---> jQuery19008711195841897279_1375750214482({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 21:01:28 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:01:28 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:01:28 America/New_York] Inside__construct...
+[05-Aug-2013 21:01:28 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 21:01:28 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[05-Aug-2013 21:01:28 America/New_York] Callback ---> jQuery19008987655430100858_1375750886129({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[05-Aug-2013 21:11:45 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:11:45 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:17:29 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:17:29 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:17:29 America/New_York] PHP Parse error:  syntax error, unexpected '.', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 10
+[05-Aug-2013 21:18:38 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:18:38 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:18:38 America/New_York] PHP Parse error:  syntax error, unexpected '.', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 15
+[05-Aug-2013 21:19:39 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:19:39 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:19:39 America/New_York] PHP Parse error:  syntax error, unexpected '.', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 15
+[05-Aug-2013 21:20:29 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:20:29 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:20:29 America/New_York] PHP Parse error:  syntax error, unexpected '.', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 15
+[05-Aug-2013 21:21:01 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:21:01 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:21:01 America/New_York] PHP Parse error:  syntax error, unexpected '.', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 15
+[05-Aug-2013 21:22:07 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:22:07 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:22:07 America/New_York] PHP Fatal error:  Cannot redefine class constant Application\Model\MemreasConstants::S3BUCKET in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 21
+[05-Aug-2013 21:22:36 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:22:36 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:22:36 America/New_York] PHP Parse error:  syntax error, unexpected '}', expecting ',' or ';' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Model/MemreasConstants.php on line 24
+[05-Aug-2013 21:22:48 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:22:48 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:23:48 America/New_York] Final Output ----> 
+[05-Aug-2013 21:23:48 America/New_York] Final XML ----> 
+[05-Aug-2013 21:23:48 America/New_York] Callback ---> jQuery19008344586689490825_1375752154056({"data":""})
+[05-Aug-2013 21:23:48 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:23:48 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:24:48 America/New_York] Final Output ----> 
+[05-Aug-2013 21:24:48 America/New_York] Final XML ----> 
+[05-Aug-2013 21:24:48 America/New_York] Callback ---> jQuery19008344586689490825_1375752154057({"data":""})
+[05-Aug-2013 21:27:14 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 21:27:14 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 21:27:14 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[05-Aug-2013 21:28:14 America/New_York] Final Output ----> 
+[05-Aug-2013 21:28:14 America/New_York] Final XML ----> 
+[05-Aug-2013 21:28:14 America/New_York] Callback ---> jQuery190006823233584873378_1375752433805({"data":""})
+[05-Aug-2013 23:56:34 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 23:56:34 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 23:56:34 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[05-Aug-2013 23:57:34 America/New_York] result ---> <br />
+<b>Warning</b>:  mysql_connect(): Operation timed out in <b>/Users/johnmeah/AWS/memreasdev/eventapp_zend2.1/webservices/config.php</b> on line <b>13</b><br />
+Error connecting to mysql
+
+[05-Aug-2013 23:57:34 America/New_York] Final Output ----> 
+[05-Aug-2013 23:57:34 America/New_York] Final XML ----> 
+[05-Aug-2013 23:57:34 America/New_York] Callback ---> jQuery190040111131174489856_1375761392612({"data":""})
+[05-Aug-2013 23:57:34 America/New_York] hasXML ---> 1
+
+[05-Aug-2013 23:57:34 America/New_York] !hasXML ---> 
+
+[05-Aug-2013 23:57:34 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[05-Aug-2013 23:58:34 America/New_York] result ---> <br />
+<b>Warning</b>:  mysql_connect(): Operation timed out in <b>/Users/johnmeah/AWS/memreasdev/eventapp_zend2.1/webservices/config.php</b> on line <b>13</b><br />
+Error connecting to mysql
+
+[05-Aug-2013 23:58:34 America/New_York] Final Output ----> 
+[05-Aug-2013 23:58:34 America/New_York] Final XML ----> 
+[05-Aug-2013 23:58:34 America/New_York] Callback ---> jQuery190040111131174489856_1375761392613({"data":""})
+[06-Aug-2013 00:08:36 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:08:36 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:08:36 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[06-Aug-2013 00:08:36 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[06-Aug-2013 00:08:36 America/New_York] Final Output ----> 
+[06-Aug-2013 00:08:36 America/New_York] Final XML ----> 
+[06-Aug-2013 00:08:36 America/New_York] Callback ---> jQuery19005857155739795417_1375762114617({"data":""})
+[06-Aug-2013 00:10:57 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:10:57 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:10:57 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[06-Aug-2013 00:10:58 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[06-Aug-2013 00:10:58 America/New_York] Final Output ----> 
+[06-Aug-2013 00:10:58 America/New_York] Final XML ----> 
+[06-Aug-2013 00:10:58 America/New_York] Callback ---> jQuery190023392637493088841_1375762256041({"data":""})
+[06-Aug-2013 00:15:56 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:15:56 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:15:56 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[06-Aug-2013 00:15:56 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[06-Aug-2013 00:15:56 America/New_York] Final Output ----> 
+[06-Aug-2013 00:15:56 America/New_York] Final XML ----> 
+[06-Aug-2013 00:15:56 America/New_York] Callback ---> jQuery190023392637493088841_1375762256041({"data":""})
+[06-Aug-2013 00:19:02 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:19:02 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:19:02 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[06-Aug-2013 00:19:03 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[06-Aug-2013 00:19:03 America/New_York] Final Output ----> 
+[06-Aug-2013 00:19:03 America/New_York] Final XML ----> 
+[06-Aug-2013 00:19:03 America/New_York] Callback ---> jQuery190023392637493088841_1375762256041({"data":""})
+[06-Aug-2013 00:22:31 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:22:31 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:22:31 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[06-Aug-2013 00:22:32 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[06-Aug-2013 00:22:32 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[06-Aug-2013 00:22:32 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[06-Aug-2013 00:22:32 America/New_York] Callback ---> jQuery190026695725647732615_1375762950009({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>481f0560-e83e-11e2-8fd6-12313909a953<\/userid><\/loginresponse><\/xml>"})
+[06-Aug-2013 00:22:43 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:22:43 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:22:43 America/New_York] Inside__construct...
+[06-Aug-2013 00:22:43 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[06-Aug-2013 00:22:43 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[06-Aug-2013 00:22:43 America/New_York] Callback ---> jQuery190026695725647732615_1375762950009({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[06-Aug-2013 00:22:54 America/New_York] hasXML ---> 1
+
+[06-Aug-2013 00:22:54 America/New_York] !hasXML ---> 
+
+[06-Aug-2013 00:22:54 America/New_York] Inside__construct...
+[06-Aug-2013 00:22:54 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[06-Aug-2013 00:22:54 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11</userid></loginresponse></xml>
+[06-Aug-2013 00:22:54 America/New_York] Callback ---> jQuery19005171015039086342_1375762969090({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>05cd7b92-c7d7-11e2-8c7e-c7f987b90c11<\/userid><\/loginresponse><\/xml>"})
+[07-Aug-2013 02:08:32 America/New_York] hasXML ---> 1
+
+[07-Aug-2013 02:08:32 America/New_York] !hasXML ---> 
+
+[07-Aug-2013 02:08:32 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[07-Aug-2013 02:08:33 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[07-Aug-2013 02:08:33 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[07-Aug-2013 02:08:33 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[07-Aug-2013 02:08:33 America/New_York] Callback ---> jQuery19003071144565474242_1375855704246({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>481f0560-e83e-11e2-8fd6-12313909a953<\/userid><\/loginresponse><\/xml>"})
+[07-Aug-2013 02:08:42 America/New_York] hasXML ---> 1
+
+[07-Aug-2013 02:08:42 America/New_York] !hasXML ---> 
+
+[07-Aug-2013 02:08:42 America/New_York] Inside__construct...
+[07-Aug-2013 02:08:42 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[07-Aug-2013 02:08:42 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[07-Aug-2013 02:08:42 America/New_York] Callback ---> jQuery19003071144565474242_1375855704246({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>481f0560-e83e-11e2-8fd6-12313909a953<\/userid><\/loginresponse><\/xml>"})
+[09-Aug-2013 11:35:18 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 11:35:18 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 11:35:18 America/New_York] Inside__construct...
+[09-Aug-2013 11:35:18 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 37
+[09-Aug-2013 11:35:18 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 37
+[09-Aug-2013 11:35:18 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 41
+[09-Aug-2013 11:35:18 America/New_York] PHP Notice:  Trying to get property of non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php on line 41
+[09-Aug-2013 11:35:18 America/New_York] Final Output ----> <br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>37</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>37</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>41</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>41</b><br />
+<?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+[09-Aug-2013 11:35:18 America/New_York] Final XML ----> <br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>37</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>37</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>41</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Login.php</b> on line <b>41</b><br />
+<?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+[09-Aug-2013 11:35:18 America/New_York] Callback ---> jQuery19007736319277901202_1376062514188({"data":"<br \/>\n<b>Notice<\/b>:  Trying to get property of non-object in <b>\/Users\/johnmeah\/AWS\/memreasgit\/memreas-dev-php-ws\/vendor\/memreas\/Login.php<\/b> on line <b>37<\/b><br \/>\n<br \/>\n<b>Notice<\/b>:  Trying to get property of non-object in <b>\/Users\/johnmeah\/AWS\/memreasgit\/memreas-dev-php-ws\/vendor\/memreas\/Login.php<\/b> on line <b>37<\/b><br \/>\n<br \/>\n<b>Notice<\/b>:  Trying to get property of non-object in <b>\/Users\/johnmeah\/AWS\/memreasgit\/memreas-dev-php-ws\/vendor\/memreas\/Login.php<\/b> on line <b>41<\/b><br \/>\n<br \/>\n<b>Notice<\/b>:  Trying to get property of non-object in <b>\/Users\/johnmeah\/AWS\/memreasgit\/memreas-dev-php-ws\/vendor\/memreas\/Login.php<\/b> on line <b>41<\/b><br \/>\n<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>failure<\/status><message>Please checked that you have given all the data required for login.<\/message><\/loginresponse><\/xml>"})
+[09-Aug-2013 14:45:46 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 14:45:46 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 14:45:46 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 14:45:47 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+
+[09-Aug-2013 14:45:47 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+[09-Aug-2013 14:45:47 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+[09-Aug-2013 14:45:47 America/New_York] Callback ---> jQuery19007189397853799164_1376073874232({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>failure<\/status><message>Please checked that you have given all the data required for login.<\/message><\/loginresponse><\/xml>"})
+[09-Aug-2013 14:47:14 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 14:47:14 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 14:47:14 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 14:47:14 America/New_York] result ---> 
+
+[09-Aug-2013 14:47:14 America/New_York] Final Output ----> 
+[09-Aug-2013 14:47:14 America/New_York] Final XML ----> 
+[09-Aug-2013 14:47:14 America/New_York] Callback ---> jQuery190016997522441670299_1376074025145({"data":""})
+[09-Aug-2013 14:47:22 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 14:47:22 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 14:47:22 America/New_York] Inside__construct...
+[09-Aug-2013 14:47:23 America/New_York] Final Output ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[09-Aug-2013 14:47:23 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[09-Aug-2013 14:47:23 America/New_York] Callback ---> jQuery190016997522441670299_1376074025145({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>481f0560-e83e-11e2-8fd6-12313909a953<\/userid><\/loginresponse><\/xml>"})
+[09-Aug-2013 15:07:03 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 15:07:03 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 15:07:03 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:07:04 America/New_York] result ---> 
+
+[09-Aug-2013 15:07:04 America/New_York] Final Output ----> 
+[09-Aug-2013 15:07:04 America/New_York] Final XML ----> 
+[09-Aug-2013 15:07:04 America/New_York] Callback ---> jQuery19005866996450349689_1376075217620({"data":""})
+[09-Aug-2013 15:17:25 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 15:17:25 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 15:17:25 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:17:26 America/New_York] result ---> 
+
+[09-Aug-2013 15:17:26 America/New_York] Final Output ----> 
+[09-Aug-2013 15:17:26 America/New_York] Final XML ----> 
+[09-Aug-2013 15:17:26 America/New_York] Callback ---> jQuery19008166410000994802_1376075839757({"data":""})
+[09-Aug-2013 15:18:18 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 15:18:18 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 15:18:18 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:18:18 America/New_York] result ---> 
+
+[09-Aug-2013 15:18:18 America/New_York] Final Output ----> 
+[09-Aug-2013 15:18:18 America/New_York] Final XML ----> 
+[09-Aug-2013 15:18:18 America/New_York] Callback ---> jQuery19008166410000994802_1376075839757({"data":""})
+[09-Aug-2013 15:18:39 America/New_York] hasXML ---> 1
+
+[09-Aug-2013 15:18:39 America/New_York] !hasXML ---> 
+
+[09-Aug-2013 15:18:39 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:18:39 America/New_York] result ---> 
+
+[09-Aug-2013 15:18:39 America/New_York] Final Output ----> 
+[09-Aug-2013 15:18:39 America/New_York] Final XML ----> 
+[09-Aug-2013 15:18:39 America/New_York] Callback ---> jQuery190013612106628715992_1376075914021({"data":""})
+[09-Aug-2013 15:20:14 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:20:14 America/New_York] actionname ---> <xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password></registration></xml>
+
+[09-Aug-2013 15:20:15 America/New_York] result ---> 
+
+[09-Aug-2013 15:20:15 America/New_York] Final Output ----> 
+[09-Aug-2013 15:20:15 America/New_York] PHP Notice:  Undefined variable: hasXML in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 121
+[09-Aug-2013 15:20:15 America/New_York] Why am I here?
+[09-Aug-2013 15:20:15 America/New_York] Final JSON ----> false
+[09-Aug-2013 15:20:15 America/New_York] Callback ---> jQuery1900008832523599267006_1376076009976({"data":"false"})
+[09-Aug-2013 15:21:08 America/New_York] PHP Parse error:  syntax error, unexpected 'else' (T_ELSE), expecting function (T_FUNCTION) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/module/Application/src/Application/Controller/IndexController.php on line 131
+[09-Aug-2013 15:22:14 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:22:14 America/New_York] actionname ---> login
+
+[09-Aug-2013 15:22:15 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[09-Aug-2013 15:22:15 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[09-Aug-2013 15:22:15 America/New_York] Callback ---> jQuery19009367813840508461_1376076127915({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>481f0560-e83e-11e2-8fd6-12313909a953<\/userid><\/loginresponse><\/xml>"})
+[09-Aug-2013 15:22:41 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:22:41 America/New_York] actionname ---> login
+
+[09-Aug-2013 15:22:41 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+
+[09-Aug-2013 15:22:41 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>success</status><message>User logged in successfully.</message><userid>481f0560-e83e-11e2-8fd6-12313909a953</userid></loginresponse></xml>
+[09-Aug-2013 15:22:41 America/New_York] Callback ---> jQuery190017454475443810225_1376076155455({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>success<\/status><message>User logged in successfully.<\/message><userid>481f0560-e83e-11e2-8fd6-12313909a953<\/userid><\/loginresponse><\/xml>"})
+[09-Aug-2013 15:22:58 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:22:58 America/New_York] actionname ---> registration
+
+[09-Aug-2013 15:22:59 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. Please check all data you have inserted are proper.</message><userid>19e84554-0129-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+
+[09-Aug-2013 15:22:59 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. Please check all data you have inserted are proper.</message><userid>19e84554-0129-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+[09-Aug-2013 15:22:59 America/New_York] Callback ---> jQuery190017454475443810225_1376076155455({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><registrationresponse><status>Failure<\/status><message>Your profile is not created successfully. Please check all data you have inserted are proper.<\/message><userid>19e84554-0129-11e3-95ba-12313909e68b<\/userid><\/registrationresponse><\/xml>"})
+[09-Aug-2013 15:23:24 America/New_York] this->url ---> http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:23:24 America/New_York] actionname ---> registration
+
+[09-Aug-2013 15:23:24 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. Please check all data you have inserted are proper.</message><userid>295a93fc-0129-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+
+[09-Aug-2013 15:23:24 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. Please check all data you have inserted are proper.</message><userid>295a93fc-0129-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+[09-Aug-2013 15:23:24 America/New_York] Callback ---> jQuery190017454475443810225_1376076155455({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><registrationresponse><status>Failure<\/status><message>Your profile is not created successfully. Please check all data you have inserted are proper.<\/message><userid>295a93fc-0129-11e3-95ba-12313909e68b<\/userid><\/registrationresponse><\/xml>"})
+[09-Aug-2013 15:27:23 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:27:23 America/New_York] actionname ---> registration
+
+[09-Aug-2013 15:27:25 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. User name and email are already exist.</message><userid>b8595fde-0129-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+
+[09-Aug-2013 15:27:25 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. User name and email are already exist.</message><userid>b8595fde-0129-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+[09-Aug-2013 15:27:25 America/New_York] Callback ---> jQuery19006874182838946581_1376076435314({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><registrationresponse><status>Failure<\/status><message>Your profile is not created successfully. User name and email are already exist.<\/message><userid>b8595fde-0129-11e3-95ba-12313909e68b<\/userid><\/registrationresponse><\/xml>"})
+[09-Aug-2013 15:31:15 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:31:15 America/New_York] actionname ---> registration
+
+[09-Aug-2013 15:31:16 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. User name and email are already exist.</message><userid>429736f8-012a-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+
+[09-Aug-2013 15:31:16 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. User name and email are already exist.</message><userid>429736f8-012a-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+[09-Aug-2013 15:31:16 America/New_York] Callback ---> jQuery19009437133325263858_1376076669262({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><registrationresponse><status>Failure<\/status><message>Your profile is not created successfully. User name and email are already exist.<\/message><userid>429736f8-012a-11e3-95ba-12313909e68b<\/userid><\/registrationresponse><\/xml>"})
+[09-Aug-2013 15:32:06 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:32:06 America/New_York] actionname ---> registration
+
+[09-Aug-2013 15:32:06 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. User name and email are already exist.</message><userid>60338644-012a-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+
+[09-Aug-2013 15:32:06 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Failure</status><message>Your profile is not created successfully. User name and email are already exist.</message><userid>60338644-012a-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+[09-Aug-2013 15:32:06 America/New_York] Callback ---> jQuery19009437133325263858_1376076669262({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><registrationresponse><status>Failure<\/status><message>Your profile is not created successfully. User name and email are already exist.<\/message><userid>60338644-012a-11e3-95ba-12313909e68b<\/userid><\/registrationresponse><\/xml>"})
+[09-Aug-2013 15:32:14 America/New_York] this->url ---> http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php
+
+[09-Aug-2013 15:32:14 America/New_York] actionname ---> registration
+
+[09-Aug-2013 15:32:15 America/New_York] result ---> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Success</status><message>Welcome to Event App. Your profile has been created.</message><userid>6548c6ee-012a-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+
+[09-Aug-2013 15:32:15 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><registrationresponse><status>Success</status><message>Welcome to Event App. Your profile has been created.</message><userid>6548c6ee-012a-11e3-95ba-12313909e68b</userid></registrationresponse></xml>
+[09-Aug-2013 15:32:15 America/New_York] Callback ---> jQuery19009437133325263858_1376076669262({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><registrationresponse><status>Success<\/status><message>Welcome to Event App. Your profile has been created.<\/message><userid>6548c6ee-012a-11e3-95ba-12313909e68b<\/userid><\/registrationresponse><\/xml>"})
+[09-Aug-2013 17:31:05 America/New_York] Inside__construct...
+[09-Aug-2013 17:31:05 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+[09-Aug-2013 17:31:05 America/New_York] Callback ---> jQuery19003686126621905714_1376083860441({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>failure<\/status><message>Please checked that you have given all the data required for login.<\/message><\/loginresponse><\/xml>"})
+[09-Aug-2013 17:31:32 America/New_York] Inside__construct...
+[09-Aug-2013 17:31:32 America/New_York] Final XML ----> <?xml version="1.0"  encoding="utf-8" ?><xml><loginresponse><status>failure</status><message>Please checked that you have given all the data required for login.</message></loginresponse></xml>
+[09-Aug-2013 17:31:32 America/New_York] Callback ---> jQuery19003686126621905714_1376083860441({"data":"<?xml version=\"1.0\"  encoding=\"utf-8\" ?><xml><loginresponse><status>failure<\/status><message>Please checked that you have given all the data required for login.<\/message><\/loginresponse><\/xml>"})
+[09-Aug-2013 17:39:54 America/New_York] Inside__construct...
+[09-Aug-2013 17:39:54 America/New_York] PHP Fatal error:  Undefined class constant 'MEMREASDB' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 22
+[09-Aug-2013 17:41:30 America/New_York] Inside__construct...
+[09-Aug-2013 17:41:30 America/New_York] Inside exec...
+[09-Aug-2013 17:41:30 America/New_York] PHP Fatal error:  Class 'memreas\UUID' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 36
+[09-Aug-2013 17:41:44 America/New_York] Inside__construct...
+[09-Aug-2013 17:41:44 America/New_York] Inside exec...
+[09-Aug-2013 17:41:44 America/New_York] PHP Fatal error:  Class 'memreas\UUID' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 36
+[09-Aug-2013 17:42:11 America/New_York] Inside__construct...
+[09-Aug-2013 17:42:11 America/New_York] Inside exec...
+[09-Aug-2013 17:42:11 America/New_York] PHP Fatal error:  Class 'memreas\UUID' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 36
+[09-Aug-2013 17:44:49 America/New_York] Inside__construct...
+[09-Aug-2013 17:44:50 America/New_York] Inside exec...
+[09-Aug-2013 17:44:50 America/New_York] PHP Notice:  Undefined variable: service_locator in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 36
+[09-Aug-2013 17:44:50 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 12
+[09-Aug-2013 17:53:40 America/New_York] Inside__construct...
+[09-Aug-2013 17:53:40 America/New_York] Inside exec...
+[09-Aug-2013 17:53:40 America/New_York] PHP Notice:  Undefined variable: service_locator in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 36
+[09-Aug-2013 17:53:40 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 12
+[09-Aug-2013 17:53:52 America/New_York] Inside__construct...
+[09-Aug-2013 17:53:52 America/New_York] Inside exec...
+[09-Aug-2013 17:53:52 America/New_York] PHP Notice:  Undefined variable: service_locator in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 36
+[09-Aug-2013 17:53:52 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 12
+[09-Aug-2013 18:01:16 America/New_York] Inside__construct...
+[09-Aug-2013 18:01:16 America/New_York] Inside exec...
+[09-Aug-2013 18:01:16 America/New_York] PHP Notice:  Undefined variable: service_locator in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 37
+[09-Aug-2013 18:01:16 America/New_York] PHP Fatal error:  Call to a member function get() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 12
+[09-Aug-2013 18:02:09 America/New_York] Inside__construct...
+[09-Aug-2013 18:02:09 America/New_York] Inside exec...
+[09-Aug-2013 18:02:09 America/New_York] PHP Notice:  Use of undefined constant MEMREASDB - assumed 'MEMREASDB' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 12
+[09-Aug-2013 18:02:46 America/New_York] Inside__construct...
+[09-Aug-2013 18:02:46 America/New_York] Inside exec...
+[09-Aug-2013 18:02:46 America/New_York] PHP Notice:  Use of undefined constant MEMREASDB - assumed 'MEMREASDB' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 12
+[09-Aug-2013 18:11:46 America/New_York] Inside__construct...
+[09-Aug-2013 18:11:46 America/New_York] Inside exec...
+[09-Aug-2013 18:11:46 America/New_York] PHP Parse error:  syntax error, unexpected ')' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 25
+[09-Aug-2013 18:12:03 America/New_York] Inside__construct...
+[09-Aug-2013 18:12:03 America/New_York] Inside exec...
+[09-Aug-2013 18:12:03 America/New_York] PHP Fatal error:  Using $this when not in object context in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 21
+[09-Aug-2013 18:12:27 America/New_York] Inside__construct...
+[09-Aug-2013 18:12:27 America/New_York] Inside exec...
+[09-Aug-2013 18:12:27 America/New_York] PHP Fatal error:  Using $this when not in object context in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 22
+[09-Aug-2013 18:14:34 America/New_York] Inside__construct...
+[09-Aug-2013 18:14:34 America/New_York] Inside exec...
+[09-Aug-2013 18:14:34 America/New_York] PHP Warning:  Missing argument 1 for memreas\UUID::getUUID(), called in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 37 and defined in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 18
+[09-Aug-2013 18:14:34 America/New_York] PHP Notice:  Undefined variable: dbAdapter in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 22
+[09-Aug-2013 18:14:34 America/New_York] PHP Fatal error:  Call to a member function createStatement() on a non-object in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/UUID.php on line 22
+[09-Aug-2013 18:28:32 America/New_York] Inside__construct...
+[09-Aug-2013 18:28:32 America/New_York] Inside exec...
+[09-Aug-2013 18:28:33 America/New_York] row -----> Array
+(
+    [UUID()] => 067fa790-0143-11e3-95ba-12313909e68b
+)
+
+
+[09-Aug-2013 18:28:33 America/New_York] Inside exec user_id is 06883784-0143-11e3-ae10-6101df5c2fd7...
+[09-Aug-2013 18:28:33 America/New_York] Inside exec loaded data...
+[09-Aug-2013 18:28:33 America/New_York] PHP Fatal error:  Call to undefined function memreas\is_valid_email() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 54
+[09-Aug-2013 18:28:55 America/New_York] Inside__construct...
+[09-Aug-2013 18:28:55 America/New_York] Inside exec...
+[09-Aug-2013 18:28:55 America/New_York] row -----> Array
+(
+    [UUID()] => 13b4e6be-0143-11e3-95ba-12313909e68b
+)
+
+
+[09-Aug-2013 18:28:55 America/New_York] Inside exec user_id is 13bbf8aa-0143-11e3-ae10-6101df5c2fd7...
+[09-Aug-2013 18:28:55 America/New_York] Inside exec loaded data...
+[09-Aug-2013 18:28:55 America/New_York] Inside is_valid_email...
+[09-Aug-2013 18:28:55 America/New_York] Inside exec setting sql...
+[09-Aug-2013 18:28:55 America/New_York] Inside exec fetched sql...
+[09-Aug-2013 18:28:55 America/New_York] PHP Fatal error:  Class 'memreas\Exception' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-ws/vendor/memreas/Registration.php on line 75
+[09-Aug-2013 18:29:16 America/New_York] Inside__construct...
+[09-Aug-2013 18:29:16 America/New_York] Inside exec...
+[09-Aug-2013 18:29:16 America/New_York] row -----> Array
+(
+    [UUID()] => 200aab88-0143-11e3-95ba-12313909e68b
+)
+
+
+[09-Aug-2013 18:29:16 America/New_York] Inside exec user_id is 20114c54-0143-11e3-ae10-6101df5c2fd7...
+[09-Aug-2013 18:29:16 America/New_York] Inside exec loaded data...
+[09-Aug-2013 18:29:16 America/New_York] Inside is_valid_email...
+[09-Aug-2013 18:29:16 America/New_York] Inside exec setting sql...
+[09-Aug-2013 18:29:16 America/New_York] Inside exec fetched sql...
