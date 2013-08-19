@@ -3,7 +3,7 @@ namespace memreas;
 
 use Zend\Session\Container;
 
-use memreas\login.php;
+use memreas\login;
 //memreas models
 use Application\Model\User;
 

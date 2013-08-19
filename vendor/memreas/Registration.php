@@ -143,12 +143,22 @@ error_log("Inside exec setting 2nd sql...");
 								'1',
 								'$json_str',
 								'$time', '$time')";
-					$query_result = mysql_query($q);
+					//$query_result = mysql_query($q);
+                    
+				$statement = $this->dbAdapter->createStatement($q);
+				$query_result = $statement->execute();
+				//$row = $result->current();
+
 					if (!$query_result)
 						throw new Exception('Error : ' . mysql_error());
 
 					 $q_update = "UPDATE user SET profile_photo = '1' WHERE user_id ='$user_id'";
-					$r = mysql_query($q_update);
+					//$r = mysql_query($q_update);
+                     
+				$statement = $this->dbAdapter->createStatement($q_update);
+				$r = $statement->execute();
+				$row = $r->current();
+
 					if (!$r)
 						throw new Exception('Error : ' . mysql_error());
 
