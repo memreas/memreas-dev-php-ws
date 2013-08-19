@@ -1,139 +1,246 @@
-<?php 
-use Guzzle\Http\Client;
+<?php
+
 use Zend\Session\Container;
 
-$session = new Container('user');        
+$session = new Container('user');
 $user_id = $session->offsetGet('user_id');
 echo "user_id ----> " . $user_id;
-
 ?>
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<title>memreas</title>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-  
-<!--jQuery Lybrary-->
-<script src="/memreas/js/jquery.js"></script>
-<script src="/memreas/js/modernizr.custom.17475.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<!--Bootstrap jQuery-->
-<script src="/memreas/js/bootstrap.min.js"></script>
-<!--memreas-->
-<script src="/memreas/js/memreas.js"></script>
-<!-- Fetch the user_id -->
-<script type="text/javascript">
-	var base_url = $("#index_action").attr("action");
-	var login = '<xml><login><username>jmeah1</username><password>a123456</password></login></xml>';
-	var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password></registration></xml>';
-	var xml = "";
-    $(document).ready(function () {
-        $("#btnOK").click(onBtnCallClicked);
-    });
-    function onBtnCallClicked() {
-        jQuery.fetchWS(base_url);
-    }
-    $(function() {
-	    $( "#tabs" ).tabs();
-	});
+    <head>
+        <meta charset="utf-8">
+        <title>memreas</title>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
-	$(document).ready(function () {
-		$("#action_input").val(registration);
-		$("#input_action").change(function() {
-			if ($("#input_action").val() == "registration") {
-				xml = registration;
-			} else if ($("#input_action").val() == "login") {
-				xml = login;
-			}
-			$("#action_input").val(xml);
-		});
-    });
+        <!--jQuery Lybrary-->
+        <script src="/memreas/js/jquery.js"></script>
+        <script src="/memreas/js/modernizr.custom.17475.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <!--Bootstrap jQuery-->
+        <script src="/memreas/js/bootstrap.min.js"></script>
+        <!--memreas-->
+        <script src="/memreas/js/memreas.js"></script>
+        <!-- Fetch the user_id -->
+        <script type="text/javascript">
+            var base_url = $("#index_action").attr("action");
+            var login = '<xml><login><username>jmeah1</username><password>a123456</password></login></xml>';
+            var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password></registration></xml>';
+            var xml = "";
+            var chkuname = '<xml><checkusername><username>nihar</username></checkusername></xml>';
+            var addcomment = '<xml> <addcomment><event_id>1</event_id><media_id>1</media_id><user_id></user_id><comments>comments</comments><audio_media_id>audio_id</audio_media_id ></addcomment></xml>';
+            var addmediaevent = '<xml><addcomment><event_id>jmeah1</event_id><media_id>jmeah1</media_id><comments>jmeah1</comments><user_id>jmeah1</user_id><audio_media_id>jmeah1</audio_media_id></addcomment></xml>';
+            var likemedia = '<xml><likemedia> <media_id>1</media_id><user_id>1</user_id><is_like>1</is_like> </likemedia></xml>';
+            var mediainappropriate = '<xml><mediainappropriate><media_id>1</media_id><is_appropriate>0</is_appropriate></mediainappropriate></xml>';
+            var countlistallmedia = '<xml> <countlistallmedia><limit>15</limit><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id></countlistallmedia</xml>';
+            var listgroup = '<xml><listgroup><user_id>1</user_id></listgroup></xml>';
+            var deletephoto = '<xml><deletephoto><mediaid>5</mediaid></deletephoto></xml>';
+            var listphotos = '<xml><listphotos><userid>2</userid><deviceid>43</deviceid></listphotos></xml>';
+            var forgotpassword = '<xml><forgotpassword><email>hussain.arif@sufalamtech.com</email></forgotpassword></xml>';
+            var viewallfriends = '<xml><viewallfriends><user_id>2</user_id></viewallfriends></xml>';
+            var creategroup = '<xml><creategroup><group_name>nihar</group_name><user_id>1</user_id><friends><friend> <friend_name>abc</friend_name><network_name>facebook</network_name><profile_pic_url><![CDATA[url]]></profile_pic_url></friend></friends></creategroup</xml>';
+            var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><limit>2</limit><page>1</page> </listallmedia></xml>';
+            var countviewevent = '<xml><countviewevent><user_id>1</user_id><is_my_event>1</is_my_event> <is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><limit>2</limit></countviewevent></xml>';
+            var editevent ='<xml><editevent><user_id>1</user_id><event_id>1</event_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend><is_friend_can_post_media>no</is_friend_can_post_media> <event_self_destruct>02/03/2013</event_self_destruct></editevent></xml>';
+            var addevent ='<xml><addevent><user_id>1</user_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend> <is_friend_can_post_media>no</is_friend_can_post_media><event_self_destruct>02/03/2013</event_self_destruct><is_public>1</is_public></addevent></xml>';
+            var viewevents ='<xml><viewevent><user_id>1</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>2</page><limit>2</limit></viewevent></xml>';
+            var download='<xml><download> <user_id>1</user_id><media_id>92</media_id><device_id>123456</device_id></download></xml>';
+            $(document).ready(function() {
+                $("#btnOK").click(onBtnCallClicked);
+            });
+            function onBtnCallClicked() {
+                jQuery.fetchWS(base_url);
+            }
+            $(function() {
+                $("#tabs").tabs();
+            });
 
-	//Change the form URL to existing URL
-	$(document).ready(function () {
-		$("#codebase").change(function() {
-			//base_url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/index_json.php";
-			//alert( "Changing input codebase to -> " + base_url );
-			alert( "Changing input codebase");
-		});
-    });
-	
+            $(document).ready(function() {
+                $("#action_input").val(registration);
+                $("#input_action").change(function() {
+                    if ($("#input_action").val() == "registration") {
+                        xml = registration;
+                    } else if ($("#input_action").val() == "login") {
+                        xml = login;
+                    }
+                    else if ($("#input_action").val() == "chkuname") {
+                        xml = chkuname;
+                    }
+                    else if ($("#input_action").val() == "addcomment") {
+                        xml = addcomment;
+                    }
+                    else if ($("#input_action").val() == "addmediaevent") {
+                        xml = addmediaevent;
+                    }
+                    else if ($("#input_action").val() == "mediainappropriate") {
+                        xml = mediainappropriate;
+                    }
+                     else if ($("#input_action").val() == "countlistallmedia") {
+                        xml = countlistallmedia;
+                    }
+                     else if ($("#input_action").val() == "listgroup") {
+                        xml = listgroup;
+                    }
 
-	//Not working.....
-	//change from xml to json and back
-	$(document).ready(function () {
-		$("#input_format").change(function() {
-			alert( "Changing input format" );
-			alert( $("#action_input").val() );
-			var xml = $.parseXML($("#action_input").val());
-			var obj = $.xml2json(xml); 
-			$("#action_input").val(JSON.stringify(obj, null, '\t'));
-			
-		});
-    });
+                    else if ($("#input_action").val() == "deletephoto") {
+                        xml = deletephoto;
+                    }
+                    else if ($("#input_action").val() == "listphotos") {
+                        xml = listphotos;
+                    }
+                    else if ($("#input_action").val() == "forgotpassword") {
+                        xml = forgotpassword;
+                    }
+                    else if ($("#input_action").val() == "download") {
+                        xml = download;
+                    } else if ($("#input_action").val() == "viewallfriends") {
+                        xml = viewallfriends;
+                    } else if ($("#input_action").val() == "creategroup") {
+                        xml = creategroup;
+                    }
+                    
 
-</script>
-</head>
-<body>
+                    else if ($("#input_action").val() == "countviewevent") {
+                        xml = countviewevent;
+                    }
 
 
-<div id="tabs">
-  <ul>
-    <li><a href="#tabs-5">Web Service Exec</a></li>
-  </ul>
 
-	<div id="tabs-5">
-	<form id="index_action" name=index_action" action="/index">
-		<table>
-			<tr>
-				<td>select action
-				<td>
-					<select id="input_action">
-					  <option>registration</option>
-					  <option>login</option>
-					</select>
-			</tr>
-			<!-- Not working....
-			<tr>
-				<td>select format
-				<td>
-					<select id="input_format">
-					  <option>xml</option>
-					  <option>json</option>
-					</select>
-			</tr>
-			-->
-			<input type="hidden" id="input_format" value="xml">
-			<tr>
-				<td>select url
-				<td>
-					<select id="codebase">
-					  <option>new_code</option>
-					  <option>original_code</option>
-					</select>
-			</tr>
-			<tr>
-				<td>Input (modify below as needed):
-			</tr>
-			<tr>
-				<td colspan="2"><textarea id="action_input" name="action_input" rows="10" cols="120"></textarea>
-			</tr>
+                    else if ($("#input_action").val() == "listallmedia") {
+                        xml = listallmedia;
+                    }
+                       else if ($("#input_action").val() == "editevent") {
+                        xml = editevent;
+                    }
+                    else if ($("#input_action").val() == "addevent") {
+                        xml = addevent;
+                    }
+                    
+                     else if ($("#input_action").val() == "viewevents") {
+                        xml = viewevents;
+                    }
 
-			<tr>
-				<td><input id="btnOK" type="button" name="btnOK" value="submit">
-			</tr>
+                      else if ($("#input_action").val() == "likemedia") {
+                        xml = likemedia;
+                    }
 
-				<tr>
-					<td>Output:
-				</tr>
-				<tr>
-					<td colspan="2"><textarea id="action_output" name="action_output" rows="10" cols="120">Result will be shown here.</textarea>
-				</tr>
 
-		</table>
-	</div>
-	</form>
-</div>
+
+
+                    $("#action_input").val(xml);
+                });
+            });
+
+            //Change the form URL to existing URL
+            $(document).ready(function() {
+                $("#codebase").change(function() {
+                    //base_url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/index_json.php";
+                    //alert( "Changing input codebase to -> " + base_url );
+                    alert("Changing input codebase");
+                });
+            });
+
+
+            //Not working.....
+            //change from xml to json and back
+            $(document).ready(function() {
+                $("#input_format").change(function() {
+                    alert("Changing input format");
+                    alert($("#action_input").val());
+                    var xml = $.parseXML($("#action_input").val());
+                    var obj = $.xml2json(xml);
+                    $("#action_input").val(JSON.stringify(obj, null, '\t'));
+
+                });
+            });
+
+        </script>
+    </head>
+    <body>
+
+
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-5">Web Service Exec</a></li>
+            </ul>
+
+            <div id="tabs-5">
+                <form id="index_action" name=index_action" action="/index">
+                    <table>
+                        <tr>
+                            <td>select action
+                            <td>
+                                <select id="input_action">
+                                    <option>registration</option>
+                                    <option>login</option>
+                                    <option>chkuname</option>
+                                    <option>addcomment</option>
+                                    <option>addmediaevent</option>
+                                    <option>likemedia</option>
+                                    <option>mediainappropriate</option>
+                                    <option>countlistallmedia</option>
+                                    <option>listgroup</option>
+                                    <option>deletephoto</option>
+                                    <option>listphotos</option>
+                                    <option>forgotpassword</option>
+                                    <option>download</option>
+                                    <option>viewallfriends</option>
+                                    <option>creategroup</option>
+                                    <option>listallmedia</option>
+                                    <option>countviewevent</option>
+                                    <option>editevent</option>
+                                    <option>addevent</option>
+                                    <option>viewevents</option>
+
+
+
+
+
+
+
+
+                                </select>
+                        </tr>
+                        <!-- Not working....
+                        <tr>
+                            <td>select format
+                            <td>
+                                <select id="input_format">
+                                  <option>xml</option>
+                                  <option>json</option>
+                                </select>
+                        </tr>
+                        -->
+                        <input type="hidden" id="input_format" value="xml">
+                        <tr>
+                            <td>select url
+                            <td>
+                                <select id="codebase">
+                                    <option>new_code</option>
+                                    <option>original_code</option>
+                                </select>
+                        </tr>
+                        <tr>
+                            <td>Input (modify below as needed):
+                        </tr>
+                        <tr>
+                            <td colspan="2"><textarea id="action_input" name="action_input" rows="10" cols="120"></textarea>
+                        </tr>
+
+                        <tr>
+                            <td><input id="btnOK" type="button" name="btnOK" value="submit">
+                        </tr>
+
+                        <tr>
+                            <td>Output:
+                        </tr>
+                        <tr>
+                            <td colspan="2"><textarea id="action_output" name="action_output" rows="10" cols="120">Result will be shown here.</textarea>
+                        </tr>
+
+                    </table>
+            </div>
+        </form>
+    </div>
 </body>
 </html>

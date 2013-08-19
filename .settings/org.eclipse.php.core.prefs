@@ -1,3 +1,2 @@
-#Sun Apr 07 23:59:52 IST 2013
 eclipse.preferences.version=1
-include_path=0;/zf2paypal
+include_path=5;org.eclipse.dltk.USER_LIBRARY/org.eclipse.php.core.PHPNature\#Zend Framework 2\u00050;/jhon
