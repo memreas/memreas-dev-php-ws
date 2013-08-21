@@ -102,15 +102,12 @@ else {
                     //$r= mysql_query($q_profile_photo) or die(mysql_error());
                      $statement1 = $this->dbAdapter->createStatement($q_profile_photo);
             $r = $statement1->execute();
-            $row = $r->current();
-
-
-                    if($row2 = $r->next()){
+            if($row2 = $r->next()){
                         $json_array = json_decode($row2['metadata'], true);
-                        $view_all_friend[$count]['url_image']= (empty($json_array['S3_files']['path'])) ? "" :CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['path'];
-                        $view_all_friend[$count]['url_image_79x80']= (empty($json_array['S3_files']['79x80'])) ? "" :CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['79x80'];
-                        $view_all_friend[$count]['url_image_448x306']= (empty($json_array['S3_files']['448x306'])) ? "" :CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['448x306'];
-                        $view_all_friend[$count]['url_image_98x78']= (empty($json_array['S3_files']['98x78'])) ? "" :CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['98x78'];
+                        $view_all_friend[$count]['url_image']= (empty($json_array['S3_files']['path'])) ? "" :MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['path'];
+                        $view_all_friend[$count]['url_image_79x80']= (empty($json_array['S3_files']['79x80'])) ? "" :MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['79x80'];
+                        $view_all_friend[$count]['url_image_448x306']= (empty($json_array['S3_files']['448x306'])) ? "" :MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['448x306'];
+                        $view_all_friend[$count]['url_image_98x78']= (empty($json_array['S3_files']['98x78'])) ? "" :MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$json_array['S3_files']['98x78'];
                         
                     }
         }        
@@ -141,7 +138,7 @@ if($error_flag){
         
         $xml_output.="</friend>";   
 }else{
-//    echo "<pre>";print_r($view_all_friend);
+    //echo "<pre>";print_r($view_all_friend);
     foreach ($view_all_friend as $friend) {
         
     $xml_output.="<friend>";
@@ -149,22 +146,24 @@ if($error_flag){
         $xml_output.="<network>" . $friend['network'] . "</network>";
         $xml_output.="<social_username>" . $friend['social_username'] . "</social_username>";
         $xml_output.="<url><![CDATA[" . $friend['url_image'] . "]]></url>";
-        $xml_output.="<url_79x80><![CDATA[" .$friend['url_image_79x80'] . "]]></url_79x80>";
-        $xml_output.="<url_448x306><![CDATA[" .$friend['url_image_448x306'] . "]]></url_448x306>";
-        $xml_output.="<url_98x78><![CDATA[" . $friend['url_image_98x78'] . "]]></url_98x78>";
+        $xml_output.="<url_79x80><![CDATA[" .empty($friend['url_image_79x80'])?'':$friend['url_image_79x80'] . "]]></url_79x80>";
+        $xml_output.="<url_448x306><![CDATA[" .empty($friend['url_image_448x306'])? '':$friend['url_image_448x306'] . "]]></url_448x306>";
+        $xml_output.="<url_98x78><![CDATA[" . empty($friend['url_image_98x78'])? '':$friend['url_image_98x78'] . "]]></url_98x78>";
         $xml_output.="</friend>";
     }
 }
 $xml_output .= "</friends>";
 $group="SELECT * FROM `group` where group.user_id = '".$user_id."'";
-$res=mysql_query($group) or die(mysql_error());
+//$res=mysql_query($group) or die(mysql_error());
+$statement = $this->dbAdapter->createStatement($group);
+            $res = $statement->execute();
 $xml_output.="<groups>";
-if(mysql_num_rows($res)<=0){
+if($res->count()<=0){
     $xml_output.="<group>";
     $xml_output.="<group_id></group_id>";
     $xml_output.="<group_name></group_name>";
     $xml_output.="</group>";
-}else while ($row = mysql_fetch_assoc($res)) {
+}else while ($row = $res->current()) {
     $xml_output.="<group>";
     $xml_output.="<group_id>".$row['group_id']."</group_id>";
     $xml_output.="<group_name>".$row['group_name']."</group_name>";

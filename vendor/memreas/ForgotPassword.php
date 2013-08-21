@@ -50,7 +50,7 @@ if (isset($email) && !empty($email)) {
             //$row = $result->current();
 
         if ($result->count() > 0) {
-            $data = mysql_fetch_array($result);
+            $data = $result->next();
             $username = $email;
             $to = $email;
             $pass = mt_rand(10000, 999999);

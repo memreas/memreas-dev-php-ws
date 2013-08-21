@@ -26,6 +26,7 @@ error_log("Inside__construct...");
 
     
 	public function exec() {
+        $time ="";
        
 $data = simplexml_load_string($_POST['xml']);
 //echo "<pre>";

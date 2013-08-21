@@ -62,7 +62,7 @@ ORDER BY m.create_date DESC";
 
     if ($result->count() > 0 || $result1->count() > 0) {
         $count = 0;
-        while ($row = mysql_fetch_assoc($result)) {
+        while ($row = $result->next()) {
             $json_array = json_decode($row['metadata'], true);
             if (isset($json_array['type']['image'])) {
                 $count++;
@@ -72,7 +72,7 @@ ORDER BY m.create_date DESC";
             }
             
         }
-         while ($row = mysql_fetch_assoc($result1)) {
+         while ($row = $result1->next()) {
             $json_array = json_decode($row['metadata'], true);
             if (isset($json_array['type']['image'])) {
                 $count++;
@@ -92,7 +92,7 @@ ORDER BY m.create_date DESC";
                 
             $xml_output .= "<image>";
             $xml_output .= "<media_id>" . $metadata['media_id'] . "</media_id>";
-            $xml_output .= "<name>" . CLOUDFRONT_DOWNLOAD_HOST.$metadata['url']['path'] . "</name>";
+            $xml_output .= "<name>" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST.$metadata['url']['path'] . "</name>";
             $download=0;
 //                print_r();exit;
                 foreach ($metadata['download'] as $value) {

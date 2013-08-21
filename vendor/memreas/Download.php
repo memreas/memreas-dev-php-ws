@@ -27,6 +27,7 @@ class Download {
         
 $data = simplexml_load_string($_POST['xml']);
 $message="";
+$status ="";
 $media_id = trim($data->download->media_id);
 $user_id = trim($data->download->user_id);
 $device_id = trim($data->download->device_id);

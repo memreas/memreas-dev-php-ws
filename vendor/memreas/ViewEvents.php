@@ -83,7 +83,7 @@ if ($is_my_event) {
             $xml_output.="<page>$page</page>";
             $xml_output.="<events>";
         }if ($result_event->count() > 0) {
-            while ($row = mysql_fetch_assoc($result_event)) {//get media
+            while ($row = $result_event-> next()) {//get media
                 $xml_output.="<event>";
                 $xml_output.="<event_id>" . $row['event_id'] . "</event_id>";
                 $xml_output.="<event_name>" . $row['name'] . "</event_name>";

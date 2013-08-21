@@ -39,6 +39,7 @@ use memreas\CountViewevent;
 use memreas\EditEvent;
 use memreas\AddEvent;
 use memreas\ViewEvents;
+use memreas\AWSManager;
 
 
 

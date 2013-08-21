@@ -10,8 +10,8 @@ $dbname = 'memreasdevdb';
 //$dbuser = 'root';
 //$dbpass = '';
 //$dbname = 'eventappnew';
-$conn = mysql_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to mysql');
-mysql_select_db($dbname, $conn);
+//$conn = mysql_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to mysql');
+//mysql_select_db($dbname, $conn);
 //$imgurl = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/media/";
 $siteUrl = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";
 //$siteUrl="http://192.168.1.139/eventapp_zend2.1FilesToS3/eventapp_zend2.1";    //this url use for call websercives using curl
