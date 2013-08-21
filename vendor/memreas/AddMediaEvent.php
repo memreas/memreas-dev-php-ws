@@ -141,13 +141,17 @@ try {
             throw new Exception('Error In media table ' . mysql_error());
         if ($is_profile_pic) {
             $q_update = "UPDATE user SET profile_photo = '$is_profile_pic' WHERE user_id ='$user_id'";
-            $r = mysql_query($q_update);
+            //$r = mysql_query($q_update);
+             $statement1 = $this->dbAdapter->createStatement($q_update);
+            $r = $statement1->execute();
             if (!$r)
                 throw new Exception('Error : ' . mysql_error());
         }else {
             if(!empty($event_id)){
            $q_event_media = "INSERT INTO event_media (media_id, event_id) VALUES ('$media_id', '$event_id')";
-            $query_result1 = mysql_query($q_event_media);
+            //$query_result1 = mysql_query($q_event_media);
+            $statement1 = $this->dbAdapter->createStatement($q_event_media);
+            $query_result1 = $statement1->execute();
             if (!$query_result1)
                 throw new Exception('Error : ' . mysql_error());
             }
@@ -169,7 +173,7 @@ try {
 //        echo "<pre>";
 //                print_r($message_data);
 //Process Message here - 
-        $aws_manager = new AWSManager();
+         $aws_manager = new AWSManager();
         $response = $aws_manager->snsProcessMediaPublish($message_data);
 //        echo "<pre>";
 //        print_r($response);//exit;

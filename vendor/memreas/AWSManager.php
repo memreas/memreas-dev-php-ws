@@ -1,8 +1,8 @@
 <?php
-
+namespace memreas;
 require_once 'config.php';
-$vendor_autoloader = dirname(__DIR__) . '/' . 'vendor/autoload.php';
-require $vendor_autoloader;
+//$vendor_autoloader = dirname(__DIR__) . '/' . 'vendor/autoload.php';
+//require $vendor_autoloader;
 
 use Guzzle\Http\Client;
 use Guzzle\Http\EntityBody;
