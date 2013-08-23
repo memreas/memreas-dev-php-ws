@@ -40,8 +40,12 @@ use memreas\EditEvent;
 use memreas\AddEvent;
 use memreas\ViewEvents;
 use memreas\AWSManager;
-
-
+use memreas\AddFriendtoevent;
+use memreas\ViewMediadetails;
+use memreas\snsProcessMediaPublish;
+use memreas\Memreastvm;
+use memreas\UploadMedia;
+use memreas\UploadAdvertisement;
 
 use memreas\Memreas;
 use memreas\MemreasTables;
@@ -205,6 +209,51 @@ class IndexController extends AbstractActionController {
                     $viewevents = new ViewEvents($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $viewevents->exec();
                 }
+                
+                 else if ($actionname == "addfriendtoevent") {
+                    
+
+                    $addfriendtoevent = new AddFriendtoevent($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $addfriendtoevent->exec();
+                }   
+                
+                 else if ($actionname == "viewmediadetails") {
+                    
+
+                    $viewmediadetails = new ViewMediadetails($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $viewmediadetails->exec();
+                }
+                else if ($actionname == "snsProcessMediaPublish") {
+                    
+
+                    $snsProcessMediaPublish = new snsProcessMediaPublish($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $snsProcessMediaPublish->exec();
+                }
+                else if ($actionname == "memreas_tvm") {
+                    
+
+                    $memreastvm = new Memreastvm($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $memreastvm->exec();
+                }
+                else if ($actionname == "uploadmedia") {
+                    
+
+                    $uploadmedia = new UploadMedia($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $uploadmedia->exec();
+                }
+                 else if ($actionname == "uploadadvertisement") {
+                    
+
+                    $uploadadvertisement = new UploadAdvertisement($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $uploadadvertisement->exec();
+                }
+
+
+
+
+
+
+
 
 
 

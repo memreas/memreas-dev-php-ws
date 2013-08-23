@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use memreas\AWSManager;
 use memreas\UUID;
+use \Exception;
 
 class Registration {
 
@@ -54,7 +55,7 @@ error_log("Inside exec loaded data...");
 				$checkvalidemail = $this->is_valid_email($email);
 
 				if (!$checkvalidemail)
-					throw new Exception('Your profile is not created successfully. Please enter valid email address.');
+					throw new \Exception('Your profile is not created successfully. Please enter valid email address.');
 
 
 error_log("Inside exec setting sql...");
@@ -98,7 +99,7 @@ error_log("Inside exec setting 2nd sql...");
 				$row = $result->current();
 
 				if (empty($row)) {
-					throw new Exception('Unable to add record.');
+					throw new \Exception('Unable to add record.');
 				}
 
 				//$iresult = mysql_query($iquery) or die(mysql_error());
@@ -116,11 +117,11 @@ error_log("Inside exec setting 2nd sql...");
 
 
 					if (strpos($_FILES['f']['type'], 'image') < 0)
-						throw new Exception('Your profile is not created successfully. Please Upload Image.');
+						throw new \Exception('Your profile is not created successfully. Please Upload Image.');
 
 					$move = move_uploaded_file($_FILES['f']['tmp_name'], $file);
 					if (!$move)
-						throw new Exception('Please Upload Image.');
+						throw new \Exception('Please Upload Image.');
 					$media_id = getUUID();
 
 					$aws_manager = new AWSManager();
@@ -150,7 +151,7 @@ error_log("Inside exec setting 2nd sql...");
 				//$row = $result->current();
 
 					if (!$query_result)
-						throw new Exception('Error : ' . mysql_error());
+						throw new \Exception('Error : ' . mysql_error());
 
 					 $q_update = "UPDATE user SET profile_photo = '1' WHERE user_id ='$user_id'";
 					//$r = mysql_query($q_update);
@@ -160,7 +161,7 @@ error_log("Inside exec setting 2nd sql...");
 				$row = $r->current();
 
 					if (!$r)
-						throw new Exception('Error : ' . mysql_error());
+						throw new \Exception('Error : ' . mysql_error());
 
 
 					$message_data = array(
@@ -182,7 +183,7 @@ error_log("Inside exec setting 2nd sql...");
 						$message = "Media Successfully add";
 					}
 					else
-						throw new Exception('your Profile hase been created but Error In snsProcessMediaPublish');
+						throw new \Exception('your Profile hase been created but Error In snsProcessMediaPublish');
 				}
 
 				// Always set content-type when sending HTML email
@@ -202,9 +203,9 @@ error_log("Inside exec setting 2nd sql...");
 				$status = 'Success';
 				$message = "Welcome to Event App. Your profile has been created.";
 			} else {
-				throw new Exception('Your profile is not created successfully. Please check all data you have inserted are proper.');
+				throw new \Exception('Your profile is not created successfully. Please check all data you have inserted are proper.');
 			}
-		} catch (Exception $exc) {
+		} catch (\Exception $exc) {
 			$status = 'Failure';
 			$message = $exc->getMessage();
 		}

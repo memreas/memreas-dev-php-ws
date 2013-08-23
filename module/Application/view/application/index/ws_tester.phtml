@@ -45,7 +45,10 @@ echo "user_id ----> " . $user_id;
             var addevent ='<xml><addevent><user_id>1</user_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend> <is_friend_can_post_media>no</is_friend_can_post_media><event_self_destruct>02/03/2013</event_self_destruct><is_public>1</is_public></addevent></xml>';
             var viewevents ='<xml><viewevent><user_id>1</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>2</page><limit>2</limit></viewevent></xml>';
             var download='<xml><download> <user_id>1</user_id><media_id>92</media_id><device_id>123456</device_id></download></xml>';
-            $(document).ready(function() {
+            var addfriendtoevent ='<xml><addfriendtoevent><user_id>1</user_id><event_id>0</event_id>//if event_id is 0 then event_friend will not be added<friends><friend><network_name>facebook</network_name><friend_name>nihar</friend_name> <profile_pic_url><![CDATA[url]]> </profile_pic_url> </friend> </friends> </addfriendtoevent></xml>';
+            var viewmediadetails= '';
+            
+           $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
             });
             function onBtnCallClicked() {
@@ -123,6 +126,26 @@ echo "user_id ----> " . $user_id;
                       else if ($("#input_action").val() == "likemedia") {
                         xml = likemedia;
                     }
+                    else if ($("#input_action").val() == "addfriendtoevent") {
+                        xml = addfriendtoevent;
+                    }
+                      else if ($("#input_action").val() == "viewmediadetails") {
+                        xml = viewmediadetails;
+                    }
+                     else if ($("#input_action").val() == "snsProcessMediaPublish") {
+                        xml = snsProcessMediaPublish;
+                    }
+                     else if ($("#input_action").val() == "memreastvm") {
+                        xml = memreastvm;
+                    }
+                    else if ($("#input_action").val() == "uploadmedia") {
+                        xml = uploadmedia;
+                    }
+                    else if ($("#input_action").val() == "uploadadvertisement") {
+                        xml = uploadadvertisement;
+                    }
+
+
 
 
 
@@ -191,6 +214,14 @@ echo "user_id ----> " . $user_id;
                                     <option>editevent</option>
                                     <option>addevent</option>
                                     <option>viewevents</option>
+                                     
+                                    <option>viewmediadetails</option>
+                                    <option>snsProcessMediaPublish</option>
+                                     <option>memreastvm</option>
+                                     <option>uploadmedia</option>
+                                      <option>uploadadvertisement</option>
+
+
 
 
 
