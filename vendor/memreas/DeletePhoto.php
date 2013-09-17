@@ -24,7 +24,7 @@ class DeletePhoto {
     }
 
     public function exec() {
-        echo 'm';
+        
 $data = simplexml_load_string($_POST['xml']);
 $mediaid = trim($data->deletephoto->mediaid);
 //$photourl =  trim($data->deletephoto->photourl);

@@ -19,7 +19,7 @@ class FriendGroup
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $groupId;
+    private $group_id;
 
     /**
      * @var string
@@ -28,7 +28,7 @@ class FriendGroup
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $friendId;
+    private $friend_id;
 
   public function __set($name, $value) {
 

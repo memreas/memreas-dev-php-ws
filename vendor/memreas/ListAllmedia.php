@@ -101,7 +101,7 @@ class ListAllmedia {
                 $xml_output.="<page>$page</page>";
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Media List</message>";
-                while ($row = ($result->next())) {
+                while ($row = (count($result)!=0 )){
                     $url79x80 = '';
                     $url448x306 = '';
                     $url98x78 = '';

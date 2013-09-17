@@ -42,28 +42,32 @@ if(isset ($data->countlistallmedia->limit))
  else {
     $pagelimit = 10;
 }
+$qb = $this->dbAdapter->createQueryBuilder();
+$qb->select('media.media_id','media.metadata');
+        $qb->from('Application\Entity\Media', 'media');
+        $qb->join('Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id');
+        $qb->join('Application\Entity\Event', 'e', 'WITH', 'em.event_id = e.event_id');
+        $qb->where('e.event_id = ?1 ');
+        $qb->orderBy('media.media_id' ,'DESC');
+         $qb->setParameter(1,$event_id);
+        
+$result = $qb->getQuery()->getResult();
 
-$q = "select media.metadata ,media.media_id
+/*$q = "select media.metadata ,media.media_id
     from Application\Entity\Media 
     inner join Application\Entity\EventMedia as em on media.media_id=em.media_id
     inner join Application\Entity\Event  as e on em.event_id=e.event_id
-    where e.event_id='$event_id' ORDER BY `media`.`media_id` DESC";
+    where e.event_id='$event_id' ORDER BY `media`.`media_id` DESC";*/
 
 //$result=  mysql_query($q);
 //$statement = $this->dbAdapter->createStatement($q);
        //     $result = $statement->execute();
 	   
-	   $statement = $this->dbAdapter->createQuery($q);
-  $result = $statement->getResult();
-
-if(!$result)
-{
-    $error_flag=1;
-    $message= mysql_error();
-}
-else{
-    $result_data=count($result);
-    if($result_data>0)
+	//   $statement = $this->dbAdapter->createQuery($q);
+ // $result = $statement->getResult();
+ 
+     
+    if(count($result)>0)
     {        
         $norecords=$result_data;
         
@@ -79,7 +83,7 @@ else{
      {  $error_flag=2;         
         $message="No Record Found";
      }
-}
+
 if($error_flag)
 {
         $xml_output.="<status>Failure</status>";

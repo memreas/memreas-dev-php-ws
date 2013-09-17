@@ -53,14 +53,14 @@ class Comment
      *
      * @ORM\Column(name="text", type="text", nullable=false)
      */
-    private $text;
+    private $text=0;
 
     /**
      * @var string
      *
      * @ORM\Column(name="event_id", type="string", length=255, nullable=false)
      */
-    private $event_id;
+    private $event_id=0;
 
     /**
      * @var string

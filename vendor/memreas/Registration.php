@@ -66,16 +66,17 @@ error_log("Inside exec setting sql...");
 				//$result = $statement->execute();
 				//$row = $result->current();
                 $statement = $this->dbAdapter->createQuery($sql);
-  $result = $statement->getResult();
+  $result = $statement->getSingleResult($hydrationMode = null);
   	
+ 
 
 error_log("Inside exec fetched sql...");
-				if (!empty($row)) {
-					if (($row['email_address'] == $email) && ($row['username'] != $username)) {
+				if (!empty($result)) {
+					if (($result->email_address == $email) && ($result->username != $username)) {
 						throw new \Exception('Your profile is not created successfully. Email is already exist.');
-					} else if (($row['username'] == $username) && ($row['email_address'] != $email)) {
+					} else if (($result->username == $username) && ($result->email_address != $email)) {
 						throw new \Exception('Your profile is not created successfully. User name is already exist.');
-					} else if (($row['username'] == $username) && ($row['email_address'] == $email)) {
+					} else if (($result->username == $username) && ($result->email_address == $email)) {
 						throw new \Exception('Your profile is not created successfully. User name and email are already exist.');
 					}
 				}

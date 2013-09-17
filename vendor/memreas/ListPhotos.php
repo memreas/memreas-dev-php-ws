@@ -48,7 +48,8 @@ $qb->select('m.media_id','m.metadata');
         $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = em.media_id');
         $qb->where('e.user_id = ?1 and m.user_id!=?1');
         $qb->orderBy('m.create_date' ,'DESC');
-         $qb->setParameter(1,1);
+         $qb->setParameter(1,$userid);
+       
         
 $result1 = $qb->getQuery()->getResult();
   //echo '<pre>';print_r($result1);
@@ -80,21 +81,21 @@ ORDER BY m.create_date DESC";*/
 
     if (count($result) > 0 || count($result1) > 0) {
         $count = 0;
-        while ($row = $result->next()) {
-            $json_array = json_decode($row['metadata'], true);
+        foreach  ( $result as $row) {
+            $json_array = json_decode($row->metadata, true);
             if (isset($json_array['type']['image'])) {
                 $count++;
-                $meta[$count]['media_id']=$row['media_id'];
+                $meta[$count]['media_id']=$row->media_id;
                 $meta[$count]['url'] = $json_array['S3_files'];
                 $meta[$count]['download']= $json_array['local_filenames']['device'];
             }
             
         }
-         while ($row = $result1->next()) {
-            $json_array = json_decode($row['metadata'], true);
+         foreach ( $result1 as $row1) {
+            $json_array = json_decode($row1['metadata'], true);
             if (isset($json_array['type']['image'])) {
                 $count++;
-                $meta[$count]['media_id']=$row['media_id'];
+                $meta[$count]['media_id']=$row1['media_id'];
                 $meta[$count]['url'] = $json_array['S3_files'];
                 $meta[$count]['download']= $json_array['local_filenames']['device'];
             }

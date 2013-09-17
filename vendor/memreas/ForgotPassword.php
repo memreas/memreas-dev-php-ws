@@ -53,12 +53,12 @@ if (isset($email) && !empty($email)) {
   $result= $statement->getResult();
 
         if (count($result) > 0) {
-            $data = $result->next();
+            $data = $result[0];
             $username = $email;
             $to = $email;
             $pass = mt_rand(10000, 999999);
             $password = md5($pass);
-            $updatequr = "UPDATE Application\Entity\User u  set u.password ='" . $password . "' where u.user_id='" . $data['user_id']."'";
+            $updatequr = "UPDATE Application\Entity\User u  set u.password ='" . $password . "' where u.user_id='" . $data->user_id."'";
           //  $resofupd = mysql_query($updatequr);
           //  $statement1 = $this->dbAdapter->createStatement($updatequr);
         //    $resofupd = $statement1->execute();
@@ -68,9 +68,9 @@ if (isset($email) && !empty($email)) {
 
             if ($resofupd) {
                 $subject = "Welcome to Event App";
-                $message = "<p>Hello " . $data['username'] . ",</p>";
+                $message = "<p>Hello " . $data->username . ",</p>";
                 $message .= "<p>Welcome to Event App</p>";
-                $message .= "<p>Your username is: " . $data['username'] . "</p>";
+                $message .= "<p>Your username is: " . $data->username . "</p>";
                 $message .= "<p>Your Password is: " . $pass . "</p>";
                 $message .= "<p>Thanks and Regards,</p>";
                 $message .= "<p><b>Event App Team</b></p>";

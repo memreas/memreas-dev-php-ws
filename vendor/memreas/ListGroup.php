@@ -41,48 +41,31 @@ $message = ' ';
 $error_flag = 0;
 $user_id = trim($data->listgroup->user_id);
 
-$qb = $this->dbAdapter->createQueryBuilder();
-
-//$qb->select('em');
-      //  $qb->from('Application\Entity\EventMedia', 'em');$qb->join('Application\Entity\Event', 'e', 'ON', 'em.event_id = e.event_id');
-$query = $qb->getQuery()->getResult();
 
    /*$query_group = "SELECT group_id	
 FROM group where user_id='$user_id'";
   */
-    //$query_group ="select a.user_id from Application\Entity\Group as a ";
-	//SELECT `group_id` FROM `group` WHERE 1
-
- // $query_group ="select a.group_id from Application\Entity\Group as a";
-  // $query_group ="select a.id from Application\Entity\Album as a where a.title ='2134'";
-
-//$result_group = mysql_query($query_group);
- //$statement = $this->dbAdapter->getRepository('Application\Entity\Album')->findAll();
- 
- // $statement = $this->dbAdapter->find('Album',1);
-
-echo '<pre>';print_r($query);exit;
-//$statement = $this->dbAdapter->createQuery($query_group);
-  //$result_group = $statement->getResult();
-  		 // echo '<pre>';print_r($result_group);exit;
+    $query_group ="select g from Application\Entity\Group as g ";
+    $statement = $this->dbAdapter->createQuery($query_group);
+    $result_group = $statement->getResult();
+  	// echo '<pre>';print_r($result_group);exit;
 	//$q = $this->em->getConnection();
 //$result_group = $q->fetchAll($query_group);
 
    
-if (!$result_group) {
-    $error_flag = 1;
-    $message = mysql_error();
-} else {
-    if ($result_group->count() == 0) {
+
+    if (count($result_group) == 0) {
         $error_flag = 2;
         $message = "No Record Found";
     } else {
         $xml_output.="<status>Success</status>";
         $xml_output.="<message>Group List</message><groups>";
-        while ($row = $result_group->next()) {
-            $group_id = $row['group_id'];
-            $group_name = $row['group_name'];
-            $q = "select * from friend_group where group_id='$group_id'";
+        foreach ($result_group as $row)  {
+            
+ 
+            $group_id = $row->group_id;
+            $group_name = $row->group_name;
+            $q = "select fg from Application\Entity\FriendGroup as fg where fg.group_id='$group_id'";
            // $result_f_g = mysql_query($q);
             $statement = $this->dbAdapter->createQuery($q);
             $result_f_g = $statement->getResult();
@@ -91,10 +74,10 @@ if (!$result_group) {
             $xml_output.="<group><group_id>$group_id</group_id>";
             $xml_output.="<group_name>$group_name</group_name>";
             $xml_output.="<friends>";
-            if ($result_f_g->count()) {
-                while ($row = ($result_f_g->next())) {
+            if (count($result_f_g) >0) {
+                 foreach ($result_f_g as $row1 ) {
                     $xml_output.="<friend>";
-                    $xml_output.= "<friend_id>" . $row['friend_id'] . "</friend_id>";
+                    $xml_output.= "<friend_id>" . $row1->friend_id . "</friend_id>";
                     $xml_output.= "</friend>";
                 }
                 
@@ -109,7 +92,7 @@ if (!$result_group) {
     
         $xml_output.="</groups>";
     }
-}
+
 if ($error_flag) {
     $xml_output.="<status>Failure</status>";
     $xml_output.= "<message>$message</message><groups><group>";

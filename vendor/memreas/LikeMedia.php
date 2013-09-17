@@ -50,31 +50,26 @@ class LikeMedia {
 
             $statement = $this->dbAdapter->createQuery($q);
             $row = $statement->getResult();
-
-            if (!$row) {
-                $status = 'Failure';
-                $message = 'You have liked it';
-            } else if (mysql_num_rows($row) > 0) {
+ 
+           if (!empty($row[0])) {
                 $status = 'Success';
                 $message = 'You Already Like This Media';
             } else {
-                $q_event_media = "SELECT m  FROM `Application\Entity\EventMedia m` where m.media_id='$media_id'";
+                $q_event_media = "SELECT m  FROM Application\Entity\EventMedia m where m.media_id='$media_id'";
                 //$result_event_media = mysql_query($q_event_media);
                 // $statement = $this->dbAdapter->createStatement($q_event_media);
                 // $result = $statement->execute();
                 // $result_event_media = $result->current();
                 $statement = $this->dbAdapter->createQuery($q_event_media);
                 $result_event_media = $statement->getResult();
+//echo '<pre>';print_r($result_event_media);exit;
 
-                if (!$result_event_media) {
-                    $status = 'Failure';
-                    $message = mysql_error();
-                } else if (mysql_num_rows($result_event_media) <= 0) {
+                if (empty($result_event_media[0])) {
 
                     $status = 'Failure';
                     $message = "No Media for this Event";
                 } else {
-                    $comment_id = getUUID();
+                    $comment_id = UUID::getUUID($this->dbAdapter);
                     //$row = mysql_fetch_assoc($result_event_media);
 
                     $tblComment = new \Application\Entity\Comment();
@@ -82,7 +77,7 @@ class LikeMedia {
                     $tblComment->media_id = $media_id;
                     $tblComment->user_id = $user_id;
                     $tblComment->type = 'like';
-                    $tblComment->event_id = $row['event_id'];
+                    $tblComment->event_id = $result_event_media[0]->event_id;
                     $tblComment->create_time = $time;
                     $tblComment->update_time = $time;
 

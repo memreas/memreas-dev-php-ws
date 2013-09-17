@@ -48,10 +48,7 @@ if (!isset($media_id) || empty($media_id)) {
  $statement = $this->dbAdapter->createQuery($q);
   $result = $statement->getResult();
          
-if (!$result) {
-    $status = 'Failure';
-    $message = mysql_error();
-} else if(mysql_affected_rows()<=0){
+ if(empty($result)) {
 //    $status = 'Failure';
 //    $message = "Error in updation Plz check arguments";
     
@@ -83,20 +80,13 @@ if (!$result) {
 
             
 
-     if (!$result1) {
-    $status = 'Failure';
-    $message = mysql_error();
-     }
-    else
-    {
+   
+}
+
+   
     $status = 'Success';
     $message = 'Appropriate flag Successfully Updated';
-}
-}else
-    {
-    $status = 'Success';
-    $message = 'Appropriate flag Successfully Updated';
-}
+
 
 }
 
