@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use memreas\AWSManager;
 use memreas\UUID;
+use Application\Entity\User;
 
 class ChkUname {
 
@@ -19,7 +20,7 @@ class ChkUname {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -33,12 +34,14 @@ class ChkUname {
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         $xml_output .= "<xml>";
         if (isset($username) && !empty($username)) {
-            $query = "SELECT * FROM user where username = '$username'";
-            $statement = $this->dbAdapter->createStatement($query);
-            $result = $statement->execute();
-            $row = $result->current();
+            $query = "SELECT u FROM  Application\Entity\User as u  where u.username = '$username'";
+           // $statement = $this->dbAdapter->createStatement($query);
+            //$result = $statement->execute();
+            //$row = $result->current();
+			 $statement = $this->dbAdapter->createQuery($query);
+  $result = $statement->getResult();
 
-            if (!empty($row)) {
+            if (!empty($result)) {
                 $status = 'Success';
                 $message = 'Username is taken';
                 $isexist = 'Yes';

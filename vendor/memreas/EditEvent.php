@@ -19,7 +19,7 @@ class EditEvent {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -72,20 +72,22 @@ if (!isset($event_id) && !empty($event_id)) {
     $message = 'self distruct field is empty';
     $status = 'Failure';
 } else {
-    $query = "update event set                  name='$event_name',
-                                                location='$event_location',
-                                                date='$event_date',
-                                                friends_can_post='$is_friend_can_post_media',
-                                                friends_can_share='$is_friend_can_share',
-                                                viewable_from='$event_from',
-                                                viewable_to='$event_to',
-                                                self_destruct='$event_self_destruct',
-                                                create_time='$event_date',
-                                                update_time='$event_date' where event_id='$event_id' limit 1";
+    $query = "update Application\Entity\Event as e set                  e.name='$event_name',
+                                                e.location='$event_location',
+                                                e.date='$event_date',
+                                                e.friends_can_post='$is_friend_can_post_media',
+                                                e.friends_can_share='$is_friend_can_share',
+                                                e.viewable_from='$event_from',
+                                                e.viewable_to='$event_to',
+                                                e.self_destruct='$event_self_destruct',
+                                                e.create_time='$event_date',
+                                                e.update_time='$event_date' where e.event_id='$event_id' ";
    // $result = mysql_query($query);
-     $statement = $this->dbAdapter->createStatement($query);
-            $result = $statement->execute();
+    // $statement = $this->dbAdapter->createStatement($query);
+      //      $result = $statement->execute();
            // $row = $result->current
+    $statement = $this->dbAdapter->createQuery($query);
+  $result = $statement->getResult();
            
 
             

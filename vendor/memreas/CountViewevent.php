@@ -19,7 +19,7 @@ class CountViewEvent {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -39,41 +39,49 @@ header("Content-type: text/xml");
 $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 
 $totlecount = 0;
-$query_event = "select * 
-                from event 
-                where user_id='$user_id'";
+$query_event = "select e 
+                from Application\Entity\Event e 
+                where e.user_id='$user_id'";
 $q = "SELECT  event.event_id ,event.name
           FROM event 
           inner join user_friend as uf 
           on uf.friend_id=event.user_id 
           where uf.user_id='$user_id'";
-$q_public = "select * from event where public=1";
+$q_public = "select e from Application\Entity\Event e where e.public=1";
 
 //-----------------------------------pagination----------------------
     if ($is_my_event) {
         //$resultset = mysql_query($query_event);
-         $statement = $this->dbAdapter->createStatement($query_event);
-            $resultset = $statement->execute();
+        // $statement = $this->dbAdapter->createStatement($query_event);
+          //  $resultset = $statement->execute();
           //  $row = $result->current();
+        $statement = $this->dbAdapter->createQuery($query_event);
+  $resultset = $statement->getResult();
+        
 
     } 
     else    if ($is_friend_event) {
        // $resultset = mysql_query($q);
-         $statement1 = $this->dbAdapter->createStatement($q);
-            $resultset = $statement1->execute();
+        // $statement1 = $this->dbAdapter->createStatement($q);
+         //   $resultset = $statement1->execute();
             //$row = $result->current();
+        
+        $statement = $this->dbAdapter->createQuery($q);
+  $resultset = $statement->getResult();
 
     } 
     else    if ($is_public_event) {
         //$resultset = mysql_query($q_public
-         $statement2 = $this->dbAdapter->createStatement($q_public);
-            $resultset = $statement2->execute();
+        // $statement2 = $this->dbAdapter->createStatement($q_public);
+          //  $resultset = $statement2->execute();
             //$row = $result->current();
+        $statement = $this->dbAdapter->createQuery($q_public);
+  $resultset = $statement->getResult();
 
     }
-    if($resultset && $resultset->count()>0)
+    if($resultset && count($resultset)>0)
     {
-        $totlecount = $resultset->count();
+        $totlecount = count($resultset);
     if ($totlecount > $limit)
         $nopage = ceil(($totlecount) / $limit);
     else

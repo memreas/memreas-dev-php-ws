@@ -16,7 +16,7 @@ class AddComment {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -43,22 +43,56 @@ class AddComment {
             $status = 'Failure';
         } else {
             $uuid = UUID::getUUID($this->dbAdapter);
+			$tblComment= new \Application\Entity\Comment();
             if (!$audio_media_id) {
-                $query_comment = "insert into comment(comment_id,media_id,user_id,type,text, event_id,create_time,update_time)
-                    values('$uuid','$media_id','$user_id','text','$comment','$event_id','$time','$time')";
+				$tblComment->comment_id=$uuid;
+                $tblComment->media_id=$media_id;
+                $tblComment->user_id=$user_id;
+                $tblComment->type='text';
+                $tblComment->event_id=$event_id;
+                $tblComment->text=$comment;
+                $tblComment->create_time=$time;
+                $tblComment->update_time=$time;
+                $this->dbAdapter->persist($tblComment);
+                $this->dbAdapter->flush();
+
+                
+                
+               /* $query_comment = "insert into Application\Entity\Comment (comment_id,media_id,user_id,type,text, event_id,create_time,update_time)
+                    values('$uuid','$media_id','$user_id','text','$comment','$event_id','$time','$time')";*/
+            
+                $status = 'sucess';
             } else {
-                $query_comment = "insert into comment(comment_id,media_id,user_id,type,text, event_id,audio_id,create_time,update_time)
+                	$tblComment->comment_id=$uuid;
+                $tblComment->media_id=$media_id;
+                $tblComment->user_id=$user_id;
+                $tblComment->type='audio';
+                $tblComment->event_id=$event_id;
+                $tblComment->text=$comment;
+                $tblComment->audio_id=$audio_media_id;
+                $tblComment->create_time=$time;
+                $tblComment->update_time=$time;
+                $this->dbAdapter->persist($tblComment);
+                $this->dbAdapter->flush();
+               /*  $query_comment = "insert into Application\Entity\Comment(comment_id,media_id,user_id,type,text, event_id,audio_id,create_time,update_time)
                     values('$uuid','$media_id','$user_id','audio','$comment','$event_id','$audio_media_id','$time','$time')";
+               * 
+               */
+            
+                $status = 'sucess';
             }
             // $result_comment = mysql_query($query_comment) or die(mysql_error());
             //echo $query_comment;
-            $statement = $this->dbAdapter->createStatement($query_comment);
-            $result = $statement->execute();
+            //$statement = $this->dbAdapter->createStatement($query_comment);
+           // $result = $statement->execute();
+           
+            /*$statement = $this->dbAdapter->createQuery($query_comment);
+  $result = $statement->getResult();*/
             //print_r($result);
             $status = 'sucess';
             $message = "Comment successfuly added";
 
-            if (empty($result)) {
+            if (empty($status)) {
                 $status = 'failure';
             }
 

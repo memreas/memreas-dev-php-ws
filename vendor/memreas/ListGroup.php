@@ -2,7 +2,7 @@
 namespace memreas;
 
 use Zend\Session\Container;
-
+use Application\Entity\Album;
 use Application\Model\MemreasConstants; 
 use memreas\AWSManager;
 use memreas\UUID;
@@ -19,7 +19,10 @@ error_log("Inside__construct...");
 	   $this->message_data = $message_data;
 	   $this->memreas_tables = $memreas_tables;
 	   $this->service_locator = $service_locator;   
-	   $this->dbAdapter = $service_locator->get('memreasdevdb');
+	   $this->dbAdapter = $service_locator
+	                   ->get('doctrine.entitymanager.orm_default');
+
+//	   ->get('memreasdevdb');
 	   //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 
@@ -37,12 +40,34 @@ $data = simplexml_load_string($_POST['xml']);
 $message = ' ';
 $error_flag = 0;
 $user_id = trim($data->listgroup->user_id);
-  $query_group = "SELECT *
-FROM `group` where user_id='$user_id'";
-  
+
+$qb = $this->dbAdapter->createQueryBuilder();
+
+//$qb->select('em');
+      //  $qb->from('Application\Entity\EventMedia', 'em');$qb->join('Application\Entity\Event', 'e', 'ON', 'em.event_id = e.event_id');
+$query = $qb->getQuery()->getResult();
+
+   /*$query_group = "SELECT group_id	
+FROM group where user_id='$user_id'";
+  */
+    //$query_group ="select a.user_id from Application\Entity\Group as a ";
+	//SELECT `group_id` FROM `group` WHERE 1
+
+ // $query_group ="select a.group_id from Application\Entity\Group as a";
+  // $query_group ="select a.id from Application\Entity\Album as a where a.title ='2134'";
+
 //$result_group = mysql_query($query_group);
- $statement = $this->dbAdapter->createStatement($query_group);
-            $result_group = $statement->execute();
+ //$statement = $this->dbAdapter->getRepository('Application\Entity\Album')->findAll();
+ 
+ // $statement = $this->dbAdapter->find('Album',1);
+
+echo '<pre>';print_r($query);exit;
+//$statement = $this->dbAdapter->createQuery($query_group);
+  //$result_group = $statement->getResult();
+  		 // echo '<pre>';print_r($result_group);exit;
+	//$q = $this->em->getConnection();
+//$result_group = $q->fetchAll($query_group);
+
    
 if (!$result_group) {
     $error_flag = 1;
@@ -59,8 +84,8 @@ if (!$result_group) {
             $group_name = $row['group_name'];
             $q = "select * from friend_group where group_id='$group_id'";
            // $result_f_g = mysql_query($q);
-            $statement = $this->dbAdapter->createStatement($q);
-            $result_f_g = $statement->execute();
+            $statement = $this->dbAdapter->createQuery($q);
+            $result_f_g = $statement->getResult();
            // $row = $result->current();
 
             $xml_output.="<group><group_id>$group_id</group_id>";

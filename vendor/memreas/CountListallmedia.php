@@ -19,7 +19,7 @@ error_log("Inside__construct...");
 	   $this->message_data = $message_data;
 	   $this->memreas_tables = $memreas_tables;
 	   $this->service_locator = $service_locator;   
-	   $this->dbAdapter = $service_locator->get('memreasdevdb');
+	   $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
 	   //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 
@@ -44,14 +44,17 @@ if(isset ($data->countlistallmedia->limit))
 }
 
 $q = "select media.metadata ,media.media_id
-    from media 
-    inner join event_media as em on media.media_id=em.media_id
-    inner join event on em.event_id=event.event_id
-    where event.event_id='$event_id' ORDER BY `media`.`media_id` DESC";
+    from Application\Entity\Media 
+    inner join Application\Entity\EventMedia as em on media.media_id=em.media_id
+    inner join Application\Entity\Event  as e on em.event_id=e.event_id
+    where e.event_id='$event_id' ORDER BY `media`.`media_id` DESC";
 
 //$result=  mysql_query($q);
-$statement = $this->dbAdapter->createStatement($q);
-            $result = $statement->execute();
+//$statement = $this->dbAdapter->createStatement($q);
+       //     $result = $statement->execute();
+	   
+	   $statement = $this->dbAdapter->createQuery($q);
+  $result = $statement->getResult();
 
 if(!$result)
 {
@@ -59,7 +62,7 @@ if(!$result)
     $message= mysql_error();
 }
 else{
-    $result_data=$result->count();
+    $result_data=count($result);
     if($result_data>0)
     {        
         $norecords=$result_data;

@@ -1,4 +1,6 @@
 <?php
+namespace Application;
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -6,7 +8,6 @@
  * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-
 return array(
     'session' => array(
         //'remember_me_seconds' => 2419200, // 672 hours??
@@ -108,4 +109,20 @@ return array(
             __DIR__ . '/../view',
         ),
     ),
+	 // Doctrine config
+	 'doctrine' => array(
+        'driver' => array(
+            'Application_driver' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(__DIR__ . '/../src/Application/Entity')
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Application\Entity' => 'Application_driver'
+                ),
+            )
+        ),
+		),
+	
 );

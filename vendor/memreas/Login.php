@@ -1,5 +1,6 @@
 <?php
 namespace memreas;
+ 
 
 use Zend\Session\Container;
 
@@ -16,7 +17,8 @@ class Login {
 	   $this->message_data = $message_data;
 	   $this->memreas_tables = $memreas_tables;
 	   $this->service_locator = $service_locator;
-	   $this->dbAdapter = $service_locator->get('memreasdevdb');
+	   $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+
 	}
 
 
@@ -52,27 +54,35 @@ class Login {
 			$username = strtolower($username);
 			$checkvalidemail = $this->is_valid_email($username);
 			if ($checkvalidemail == TRUE) {
-				 $sql = "SELECT * FROM user where email_address = '" . $username . "' and password = '" . $password . "' and role= 2 and disable_account = 0";
+/*				 $sql = "SELECT * FROM user where email_address = '" . $username . "' and password = '" . $password . "' and role= 2 and disable_account = 0";
+*/				 
+				 				 $sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "' and u.role= 2 and u.disable_account = 0";
+
 			}else{
-			  $sql = "SELECT * FROM user where username = '" . $username . "' and password = '" . $password . "' and role = 2 and disable_account = 0";
+/*			  $sql = "SELECT * FROM user where username = '" . $username . "' and password = '" . $password . "' and role = 2 and disable_account = 0";
+*/			  			  $sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
+
 			}
 			
 			//modified for conversion to PDO and ZF2...
 			//$result = array();
 			//$this->dbAdapter->query($sql, $result);
 			
-			$statement = $this->dbAdapter->createStatement($sql);
-			$result = $statement->execute();
-			$row = $result->current();
+			//$statement = $this->dbAdapter->createStatement($sql);
+			//$result = $statement->execute();
+			//$row = $result->current();
+			$statement = $this->dbAdapter->createQuery($sql);
+  $row = $statement->getResult();
+  	 // echo '<pre>';print_r($row);exit;
 
 			if (!empty($row)) {
 			//$result = mysql_query($query);
 			//if (mysql_num_rows($result) > 0) {
 				//$row = mysql_fetch_array($result);
-				$userid = trim($row['user_id']);
+				$user_id = trim($row[0]->user_id);
 				$xml_output .= "<status>success</status>";
 				$xml_output .= "<message>User logged in successfully.</message>";
-				$xml_output .= "<userid>". $userid ."</userid>";
+				$xml_output .= "<userid>". $user_id ."</userid>";
 			} else {
 				$xml_output .= "<status>failure</status><message>Your Username and/or Password does not match our records.Please try again.</message>";
 			}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Global Configuration Override
  *
@@ -10,47 +11,46 @@
  * control, so do not include passwords or other sensitive information in this
  * file.
  */
-
 return array(
-	'db'=> array(
-		'adapters'=>array(
-			'memreasdevdb' => array(
-		        'driver'         => 'Pdo',
-    			'driver_options' => array(
-		            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-				),
-			),
-			'memreasbackenddb' => array(
-		        'driver'         => 'Pdo',
-    			'driver_options' => array(
-		            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-				),
-			),
-		)
-	),
+    'db' => array(
+        'adapters' => array(
+            'memreasdevdb' => array(
+                'driver' => 'Pdo',
+                'driver_options' => array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+                ),
+            ),
+            'memreasbackenddb' => array(
+                'driver' => 'Pdo',
+                'driver_options' => array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+                ),
+            ),
+        )
+    ),
     'service_manager' => array(
 //        'factories' => array(
 //            'Zend\Db\Adapter\Adapter'
 //                    => 'Zend\Db\Adapter\AdapterServiceFactory',
 //        ),
-		'abstract_factories' => array(
-				'Zend\Db\Adapter\AdapterAbstractServiceFactory',
-		),
-    ),
-    'session' => array(
-        'config' => array(
-            'class' => 'Zend\Session\Config\SessionConfig',
-            'options' => array(
-                'name' => 'myapp',
-            ),
-        ),
-        'storage' => 'Zend\Session\Storage\SessionArrayStorage',
-        'validators' => array(
-            array(
-                'Zend\Session\Validator\RemoteAddr',
-                'Zend\Session\Validator\HttpUserAgent',
-            ),
+        'abstract_factories' => array(
+            'Zend\Db\Adapter\AdapterAbstractServiceFactory',
         ),
     ),
-
+    'doctrine' => array(
+        'connection' => array(
+            'orm_default' => array(
+                'doctrine_type_mappings' => array(
+                    'enum' => 'string',
+                    'bit' => 'string'
+                ),
+                'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
+                'params' => array(
+                    'host' => 'localhost',
+                    'port' => '3306',
+                    'dbname' => 'jhon',
+                )
+            )
+        )
+    ),
 );

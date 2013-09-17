@@ -19,7 +19,7 @@ error_log("Inside__construct...");
 	   $this->message_data = $message_data;
 	   $this->memreas_tables = $memreas_tables;
 	   $this->service_locator = $service_locator;   
-	   $this->dbAdapter = $service_locator->get('memreasdevdb');
+	   $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
 	   //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 
@@ -34,7 +34,7 @@ try {
         $user_id = trim($_POST['user_id']);
     else
         $message ='Error : User ID is Mempty';
-       // throw new Exception('Error : User ID is Mempty');
+        throw new \Exception('Error : User ID is Mempty');
 
     $event_id = (isset($_POST['event_id'])) ?  trim($_POST['event_id']) : '';
 
@@ -56,12 +56,26 @@ try {
         else
            // throw new Exception('Error : Media ID is Mempty
             $message ='Error : Media ID is Mempty';
+        $tblEventMedia= new \Application\Entity\EventMedia();
+            
+				
+                $tblEventMedia->media_id=$media_id;
+              
+                
+                $tblEventMedia->event_id=$event_id;
+                
+                
+                
+                $this->dbAdapter->persist($tblEventMedia);
+                $this->dbAdapter->flush();
 
-        $q_event_media = "INSERT INTO event_media (media_id, event_id) VALUES ('$media_id', '$event_id')";
+        //$q_event_media = "INSERT INTO Application\Entity\EventMedia (media_id, event_id) VALUES ('$media_id', '$event_id')";
         //$query_result1 = mysql_query($q_event_media);
-         $statement = $this->dbAdapter->createStatement($q_event_media);
-            $query_result1 = $statement->execute();
+         //$statement = $this->dbAdapter->createStatement($q_event_media);
+           // $query_result1 = $statement->execute();
             //$row = $result->current();
+     //   $statement = $this->dbAdapter->createQuery($q_event_media);
+ // $query_result1 = $statement->getResult();
 
         if (!$query_result1) {
             throw new Exception('Error : ' . mysql_error());
@@ -72,12 +86,12 @@ try {
     } else {
 
         //new parameters
-        $content_type = trim($_POST['content_type']);
-        $s3file_name = trim($_POST['s3file_name']);
-        $email = trim($_POST['email']);
-        $s3url = trim($_POST['s3url']);
+      //  $content_type = trim($_POST['content_type']);
+       // $s3file_name = trim($_POST['s3file_name']);
+       // $email = trim($_POST['email']);
+       // $s3url = trim($_POST['s3url']);
         $isVideo = 0;
-        $s3path = $user_id . '/';
+       // $s3path = $user_id . '/';
         
         //$media_id = getUUID(); //generate GUUID
                     $media_id = UUID::getUUID($this->dbAdapter);
@@ -112,16 +126,28 @@ try {
         //insert into media table
 
         if ($is_profile_pic) {//if profile pic then remove previous profile pic
-            $update_media = "UPDATE media SET is_profile_pic = '0' WHERE user_id ='$user_id' and  is_profile_pic = '1'";
+            $update_media = "UPDATE Application\Entity\Media  m  SET m.is_profile_pic = '0' WHERE m.user_id ='$user_id' and  m.is_profile_pic = '1'";
            // $rs_is_profil = mysql_query($update_media);
-             $statement3 = $this->dbAdapter->createStatement($update_media);
-            $rs_is_profil = $statement3->execute();
+            // $statement3 = $this->dbAdapter->createStatement($update_media);
+            //$rs_is_profil = $statement3->execute();
             //$row = $result->current();
+            $statement = $this->dbAdapter->createQuery($update_media);
+  $rs_is_profil = $statement->getResult();
 
             if (!$rs_is_profil)
                 throw new Exception('Error : ' . mysql_error());
         }
-        $q = "INSERT INTO media(media_id,
+        $tblMedia= new \Application\Entity\Media();
+          
+		        $tblMedia->media_id=$media_id;
+                $tblMedia->user_id=$user_id;
+                $tblMedia->is_profile_pic=$is_profile_pic;
+                $tblMedia->metadata=$json_str;
+               $tblMedia->create_time=$time;
+                $tblMedia->update_time=$time;
+                $this->dbAdapter->persist($tblMedia);
+                $this->dbAdapter->flush();
+    /*   $q = "INSERT INTO Application\Entity\Media (media_id,
                         user_id ,
                         is_profile_pic,
                         metadata,
@@ -131,11 +157,13 @@ try {
                         '$user_id',
                         '$is_profile_pic',
                         '$json_str',
-                        '$time', '$time')";
+                        '$time', '$time')";*/
         //$query_result = mysql_query($q);
-         $statement1 = $this->dbAdapter->createStatement($q);
-            $query_result = $statement1->execute();
+     //    $statement1 = $this->dbAdapter->createStatement($q);
+       //     $query_result = $statement1->execute();
             //$row = $result->current();
+     //  $statement = $this->dbAdapter->createQuery($q);
+ // $query_result = $statement->getResult();
 
         if (!$query_result)
             throw new Exception('Error In media table ' . mysql_error());
@@ -148,10 +176,25 @@ try {
                 throw new Exception('Error : ' . mysql_error());
         }else {
             if(!empty($event_id)){
-           $q_event_media = "INSERT INTO event_media (media_id, event_id) VALUES ('$media_id', '$event_id')";
+                 $tblEventMedia= new \Application\Entity\EventMedia();
+            
+				
+                $tblEventMedia->media_id=$media_id;
+              
+                
+                $tblEventMedia->event_id=$event_id;
+                
+                
+                
+                $this->dbAdapter->persist($tblEventMedia);
+                $this->dbAdapter->flush();
+                
+        //   $q_event_media = "INSERT INTO Application\Entity\eventMedia (media_id, event_id) VALUES ('$media_id', '$event_id')";
             //$query_result1 = mysql_query($q_event_media);
-            $statement1 = $this->dbAdapter->createStatement($q_event_media);
-            $query_result1 = $statement1->execute();
+        //    $statement1 = $this->dbAdapter->createStatement($q_event_media);
+          //  $query_result1 = $statement1->execute();
+         //  $statement = $this->dbAdapter->createQuery($q_event_media);
+ // $query_result1 = $statement->getResult();
             if (!$query_result1)
                 throw new Exception('Error : ' . mysql_error());
             }
@@ -192,7 +235,7 @@ try {
             $message = "Media Successfully add";
         }
     }
-} catch (Exception $exc) {
+} catch (\Exception $exc) {
     $status = 'Failure';
     $message = $exc->getMessage();
 }

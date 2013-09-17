@@ -19,7 +19,7 @@ class DeletePhoto {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -34,26 +34,34 @@ $xml_output .= "<xml>";
 $xml_output .= "<deletephotoresponse>";
 //$photoname=1;
 if(isset ($mediaid) && !empty ($mediaid)){
-$seldata = "select * from media where media_id='$mediaid'";
-//$resseldata = mysql_query($seldata);
- $statement = $this->dbAdapter->createStatement($seldata);
-    $resseldata = $statement->execute();
-             // $row = $result->current();
-//print_r($resseldata);exit;
+//$seldata = "select * from media where media_id='$mediaid'";
+$seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'";
 
-if ($resseldata->count() > 0) {
-    $selrow = mysql_fetch_array($resseldata);
-    $json_array = json_decode($selrow['metadata'], true);
+//$resseldata = mysql_query($seldata);
+// $statement = $this->dbAdapter->createStatement($seldata);
+  //  $resseldata = $statement->execute();
+             // $row = $result->current();
+			 $statement = $this->dbAdapter->createQuery($seldata);
+  $resseldata = $statement->getResult();
+//print_r($resseldata);exit;
+//print_r(count($resseldata));exit;
+if (count($resseldata) > 0) {
+   // $selrow = mysql_fetch_array($resseldata);
+    $json_array = json_decode($resseldata[0]->metadata, true);
             if(isset($json_array['type']['image'])){
                 $imagename=  basename($json_array['S3_files']['path']);   
             }    
-    $query = "DELETE FROM media where media_id='$mediaid'";
-   // $result = mysql_query($query);
-    $statement = $this->dbAdapter->createStatement($query);
-    $result = $statement->execute();
-            //$row = $result->current();
+   // $query = "DELETE FROM media where media_id='$mediaid'";
+	    $query = "DELETE FROM Application\Entity\Media m where m.media_id='$mediaid'";
 
-    if (mysql_affected_rows() > 0) {
+   // $result = mysql_query($query);
+   // $statement = $this->dbAdapter->createStatement($query);
+    //$result = $statement->execute();
+            //$row = $result->current();
+			$statement = $this->dbAdapter->createQuery($query);
+  $result = $statement->getResult();
+
+    if ( count($result) > 0) {
 
         $xml_output .= "<status>success</status>";
         $xml_output.="<message>Photo deleted successfully</message>";

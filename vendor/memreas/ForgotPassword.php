@@ -19,7 +19,7 @@ class ForgotPassword {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -43,23 +43,28 @@ $xml_output .= "<forgotpasswordresponse>";
 if (isset($email) && !empty($email)) {
     $checkvalidemail = is_valid_email($email);
     if ($checkvalidemail == TRUE) {
-        $query = "SELECT * FROM user where email_address='" . $email . "' and role = 2 and disable_account = 0";
+        $query = "SELECT u FROM Application\Entity\User u where u.email_address='" . $email . "' and u.role = 2 and u.disable_account = 0";
        // $result = mysql_query($query);
-        $statement = $this->dbAdapter->createStatement($query);
-            $result = $statement->execute();
+      //  $statement = $this->dbAdapter->createStatement($query);
+       //     $result = $statement->execute();
             //$row = $result->current();
+        
+        $statement = $this->dbAdapter->createQuery($query);
+  $result= $statement->getResult();
 
-        if ($result->count() > 0) {
+        if (count($result) > 0) {
             $data = $result->next();
             $username = $email;
             $to = $email;
             $pass = mt_rand(10000, 999999);
             $password = md5($pass);
-            $updatequr = "UPDATE user set password ='" . $password . "' where user_id='" . $data['user_id']."'";
+            $updatequr = "UPDATE Application\Entity\User u  set u.password ='" . $password . "' where u.user_id='" . $data['user_id']."'";
           //  $resofupd = mysql_query($updatequr);
-            $statement1 = $this->dbAdapter->createStatement($updatequr);
-            $resofupd = $statement1->execute();
+          //  $statement1 = $this->dbAdapter->createStatement($updatequr);
+        //    $resofupd = $statement1->execute();
            // $row = $result->current();
+            $statement = $this->dbAdapter->createQuery($updatequr);
+  $resofupd = $statement->getResult();
 
             if ($resofupd) {
                 $subject = "Welcome to Event App";

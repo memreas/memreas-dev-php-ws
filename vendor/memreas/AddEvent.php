@@ -19,7 +19,7 @@ class AddEvent {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -80,9 +80,27 @@ if (!isset($user_id) || empty($user_id)) {
 //}
 else {
    // $uuid=  getUUID();
-                $uuid = UUID::getUUID($this->dbAdapter);
+             $uuid = UUID::getUUID($this->dbAdapter);
+             			$tblEvent= new \Application\Entity\Event();
 
-    $query = "insert into event (event_id,user_id,
+             $tblEvent->name=$event_name;
+                $tblEvent->location=$event_location;
+                $tblEvent->user_id=$user_id;
+                $tblEvent->type='audio';
+                $tblEvent->event_id=$uuid;
+                $tblEvent->date=$event_date;
+                $tblEvent->friends_can_post=$is_friend_can_post_media;
+                $tblEvent->friends_can_share=$is_friend_can_share;
+                $tblEvent->public=$is_public;
+                $tblEvent->viewable_from=$event_from;
+                $tblEvent->viewable_to=$event_to;
+                $tblEvent->self_destruct=$event_self_destruct;
+                $tblEvent->create_time=$event_date_timestamp;
+                 $tblEvent->update_time=$event_date_timestamp;
+                $this->dbAdapter->persist($tblEvent);
+                $this->dbAdapter->flush();
+
+   /* $query = "insert into Application\Entity\Event e (event_id,user_id,
                                                 name,
                                                 location,
                                                 date,
@@ -103,20 +121,20 @@ else {
                                                 '$event_from',
                                                 '$event_to',
                                                 '$event_self_destruct',
-                                                '$event_date_timestamp','$event_date_timestamp')";
+                                                '$event_date_timestamp','$event_date_timestamp')";*/
     //$result = mysql_query($query);
-     $statement = $this->dbAdapter->createStatement($query);
-            $result = $statement->execute();
+    // $statement = $this->dbAdapter->createStatement($query);
+      //      $result = $statement->execute();
             //$row = $result->current();
-
-    if(!$result) {
-        $message.=mysql_error();
-        $status = 'Failure';
-    } else {
+   // $statement = $this->dbAdapter->createQuery($query);
+  //$result = $statement->getResult();
+  
+  
+   
         $event_id = $uuid;
         $message .= 'Event successfully added';
         $status = 'Success';
-    }
+    
     /*
       foreach ($media_array as $key => $value)
       {
@@ -199,6 +217,10 @@ else {
      */
 }
 
+ if(empty($status)) {
+        $message.=mysql_error();
+        $status = 'Failure';
+    } 
 /*
   if(strcasecmp('success', $status)==0){
   $flag=uploadMedia();

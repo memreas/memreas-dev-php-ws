@@ -19,7 +19,7 @@ class ListPhotos {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -42,25 +42,43 @@ if (isset($userid) && !empty($userid)) {
 //WHERE e.user_id = '$userid'
 //OR m.user_id = '$userid'
 //ORDER BY m.create_date DESC ";
-    
-    $query_user_media = "SELECT * FROM media where user_id ='$userid' ORDER BY create_date DESC";
-    $query_user_event_media="SELECT m.media_id,m.metadata
-FROM event_media AS em
-JOIN event AS e ON e.event_id = em.event_id
-JOIN media AS m ON m.media_id = em.media_id
+  $qb = $this->dbAdapter->createQueryBuilder();
+$qb->select('m.media_id','m.metadata');
+        $qb->from('Application\Entity\EventMedia', 'em');$qb->join('Application\Entity\Event', 'e', 'WITH', 'em.event_id = e.event_id');
+        $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = em.media_id');
+        $qb->where('e.user_id = ?1 and m.user_id!=?1');
+        $qb->orderBy('m.create_date' ,'DESC');
+         $qb->setParameter(1,1);
+        
+$result1 = $qb->getQuery()->getResult();
+  //echo '<pre>';print_r($result1);
+
+    $query_user_media = "SELECT m FROM Application\Entity\Media m where m.user_id ='$userid' ORDER BY m.create_date DESC";
+   /* $query_user_event_media="SELECT m.media_id,m.metadata
+FROM Application\Entity\EventMedia AS em
+JOIN Application\Entity\Event AS e 
+ ON e.event_id = em.event_id*
+JOIN Application\Entity\Media AS m 
+ON m.media_id = em.media_id
 WHERE e.user_id = '$userid' and m.user_id!='$userid'
-ORDER BY m.create_date DESC";
+ORDER BY m.create_date DESC";*/
    // $result = mysql_query($query_user_media) or die(mysql_error());
     //$result1 = mysql_query($query_user_event_media) or die(mysql_error());
-    $statement = $this->dbAdapter->createStatement($query_user_media);
-            $result = $statement->execute();
-          //  $row = $result->current();
-        $statement1 = $this->dbAdapter->createStatement($query_user_event_media);
-            $result1 = $statement1->execute();
-            $row = $result1->current();
+  //  $statement = $this->dbAdapter->createStatement($query_user_media);
+    //        $result = $statement->execute();
+          //  $row = $result->current
+    
+    $statement = $this->dbAdapter->createQuery($query_user_media);
+  $result = $statement->getResult();
+    
+        ///$statement1 = $this->dbAdapter->createStatement($query_user_event_media);
+           // $result1 = $statement1->execute();
+            //$row = $result1->current();
+  //$statement = $this->dbAdapter->createQuery($query_user_event_media);
+ // $result1 = $statement->getResult();
     
 
-    if ($result->count() > 0 || $result1->count() > 0) {
+    if (count($result) > 0 || count($result1) > 0) {
         $count = 0;
         while ($row = $result->next()) {
             $json_array = json_decode($row['metadata'], true);
@@ -107,7 +125,7 @@ ORDER BY m.create_date DESC";
         $xml_output .= "</images>";
     } 
     //-----------------for users event
-    if($result1->count()==0 && $result->count()==0){
+    if(count($result1)==0 && count($result)==0){
         $error_flag=2;
         $message="no record found";
 

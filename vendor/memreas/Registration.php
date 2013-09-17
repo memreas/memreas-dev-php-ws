@@ -20,7 +20,7 @@ error_log("Inside__construct...");
 	   $this->message_data = $message_data;
 	   $this->memreas_tables = $memreas_tables;
 	   $this->service_locator = $service_locator;   
-	   $this->dbAdapter = $service_locator->get('memreasdevdb');
+	   $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
 	   //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 
@@ -60,11 +60,14 @@ error_log("Inside exec loaded data...");
 
 error_log("Inside exec setting sql...");
 
-				$sql = "SELECT * FROM user where email_address = '$email' or username = '$username'";
+				$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
 
-				$statement = $this->dbAdapter->createStatement($sql);
-				$result = $statement->execute();
-				$row = $result->current();
+				//$statement = $this->dbAdapter->createStatement($sql);
+				//$result = $statement->execute();
+				//$row = $result->current();
+                $statement = $this->dbAdapter->createQuery($sql);
+  $result = $statement->getResult();
+  	
 
 error_log("Inside exec fetched sql...");
 				if (!empty($row)) {
@@ -92,16 +95,30 @@ error_log("Inside exec fetched sql...");
 				$modified = strtotime(date('Y-m-d H:i:s'));
 
 error_log("Inside exec setting 2nd sql...");
-				$sql = "insert into user (user_id,`email_address`,`password`,`username`,`role`,`disable_account`,`create_date`,`update_time`) values ('$user_id','" . $email . "','" . $password . "','" . $username . "'," . $roleid . "," . $statusid . ",'" . $created . "','" . $modified . "')";
 
-				$statement = $this->dbAdapter->createStatement($sql);
-				$result = $statement->execute();
-				$row = $result->current();
+$tblUser = new \Application\Entity\User();
+                    $tblUser->email_address = $email;
+                    $tblUser->password = $password;
+                    $tblUser->user_id = $user_id;
+                    $tblUser->username = $username;
+                    $tblUser->role = $roleid;
+                    $tblUser->disable_account = $statusid;
+                    $tblUser->create_date = $created;
+                    $tblUser->update_time = $modified;
 
-				if (empty($row)) {
-					throw new \Exception('Unable to add record.');
-				}
 
+                    $this->dbAdapter->persist($tblUser);
+                    $this->dbAdapter->flush();
+			//	$sql = "insert into Application\Entity\User (user_id,`email_address`,`password`,`username`,`role`,`disable_account`,`create_date`,`update_time`) values ('$user_id','" . $email . "','" . $password . "','" . $username . "'," . $roleid . "," . $statusid . ",'" . $created . "','" . $modified . "')";
+
+				//$statement = $this->dbAdapter->createStatement($sql);
+				//$result = $statement->execute();
+				//$row = $result->current();
+              //  $statement = $this->dbAdapter->createQuery($sql);
+  //$result = $statement->getResult();
+  	
+
+				 
 				//$iresult = mysql_query($iquery) or die(mysql_error());
 				//if (mysql_affected_rows() < 0)
 				//	throw new Exception('Unable to add record.');
@@ -133,7 +150,19 @@ error_log("Inside exec setting 2nd sql...");
 					);
 					$json_str = json_encode($json_array);
 					$time = time();
-					$q = "INSERT INTO media(media_id,
+                    $tblMedia = new \Application\Entity\Media();
+                    
+                    $tblMedia->media_id = $media_id;
+                    $tblMedia->user_id = $user_id;
+                    $tblMedia->is_profile_pic = '1';
+                    $tblMedia->metadata = $json_str;
+                    $tblMedia->create_date = $time;
+                    $tblMedia->update_date = $time;
+
+
+                    $this->dbAdapter->persist($tblComment);
+                    $this->dbAdapter->flush();
+				/*	$q = "INSERT INTO Application\Entity\Media (media_id,
 								user_id ,
 								is_profile_pic,
 								metadata,
@@ -144,25 +173,29 @@ error_log("Inside exec setting 2nd sql...");
 								'1',
 								'$json_str',
 								'$time', '$time')";
+                 * 
+                 */
 					//$query_result = mysql_query($q);
                     
-				$statement = $this->dbAdapter->createStatement($q);
-				$query_result = $statement->execute();
+				//$statement = $this->dbAdapter->createStatement($q);
+			//	$query_result = $statement->execute();
 				//$row = $result->current();
+                   // $statement = $this->dbAdapter->createQuery($q);
+  //$query_result = $statement->getResult();
+  	
 
-					if (!$query_result)
-						throw new \Exception('Error : ' . mysql_error());
-
-					 $q_update = "UPDATE user SET profile_photo = '1' WHERE user_id ='$user_id'";
+			 
+					 $q_update = "UPDATE Application\Entity\User u  SET u.profile_photo = '1' WHERE u.user_id ='$user_id'";
 					//$r = mysql_query($q_update);
                      
-				$statement = $this->dbAdapter->createStatement($q_update);
-				$r = $statement->execute();
-				$row = $r->current();
+				//$statement = $this->dbAdapter->createStatement($q_update);
+				//$r = $statement->execute();
+				//$row = $r->current();
+                     $statement = $this->dbAdapter->createQuery($q_update);
+  $r = $statement->getResult();
+  	
 
-					if (!$r)
-						throw new \Exception('Error : ' . mysql_error());
-
+					 
 
 					$message_data = array(
 						'user_id' => $user_id,
@@ -178,12 +211,10 @@ error_log("Inside exec setting 2nd sql...");
 					//$aws_manager = new AWSManager();
 					//$response = $aws_manager->snsProcessMediaPublish($message_data);
 					//what should condition over here
-					if ($response == 1) {
+					 
 						$status = 'Success';
 						$message = "Media Successfully add";
-					}
-					else
-						throw new \Exception('your Profile hase been created but Error In snsProcessMediaPublish');
+					 
 				}
 
 				// Always set content-type when sending HTML email
@@ -207,6 +238,7 @@ error_log("Inside exec setting 2nd sql...");
 			}
 		} catch (\Exception $exc) {
 			$status = 'Failure';
+            
 			$message = $exc->getMessage();
 		}
 
