@@ -67,9 +67,8 @@ AND u.disable_account =0";
             //       $row = $result->current();
             $statement = $this->dbAdapter->createQuery($q);
             $result = $statement->getResult();
-
-//$result1=  mysql_query($q1) or die(mysql_error());
-            if ($result) {
+ //$result1=  mysql_query($q1) or die(mysql_error());
+            if (!$result) {
                 $error_flag = 1;
                 $message = mysql_error();
             }
@@ -82,22 +81,22 @@ AND u.disable_account =0";
 //            || mysql_num_rows($result1)>0
                 ) {
                     $xml_output.="<status>Success</status><message>Friends list</message>";
-                    while ($row1 = $result->next()) {
+                    foreach ( $result as $row1) {
                         $count++;
-                        $view_all_friend[$count]['id'] = $row1['user_id'];
-                        if (isset($row1['facebook_username']) && !empty($row1['facebook_username'])) {
+                        $view_all_friend[$count]['id'] = $row1->user_id;
+                        if (isset($row1->facebook_username) && !empty($row1->facebook_username)) {
                             $view_all_friend[$count]['network'] = 'Facebook';
-                        } elseif (isset($row1['twitter_username']) && !empty($row1['twitter_username'])) {
+                        } elseif (isset($row1->twitter_username) && !empty($row1->twitter_username)) {
                             $view_all_friend[$count]['network'] = 'Twitter';
                         } else {
                             $view_all_friend[$count]['network'] = 'Memreas';
                         }
-                        $view_all_friend[$count]['social_username'] = $row1['username'];
+                        $view_all_friend[$count]['social_username'] = $row1->username;
                         $view_all_friend[$count]['url_image'] = '';
-                        if (isset($row1['profile_photo']) && !empty($row1['profile_photo']) && $row1['profile_photo'] == 1) {
+                        if (isset($row1->profile_photo) && !empty($row1->profile_photo) && $row1->profile_photo == 1) {
                             $q_profile_photo = "SELECT m
                                         FROM Application\Entity\Media m
-                                        WHERE m.`user_id` LIKE '" . $row1['user_id'] . "'
+                                        WHERE m.`user_id` LIKE '" . $row1->user_id . "'
                                         AND m.`is_profile_pic` =1";
                             // LIMIT 1";
                             $view_all_friend[$count]['q'] = $q_profile_photo;
@@ -108,8 +107,8 @@ AND u.disable_account =0";
                             $statement = $this->dbAdapter->createQuery($q_profile_photo);
                             $statement->setMaxResults(1);
                             $r = $statement->getResult();
-                            if ($row2 = $r->next()) {
-                                $json_array = json_decode($row2['metadata'], true);
+                            if ($row2 = array_pop($r)) {
+                                $json_array = json_decode($row2->metadata, true);
                                 $view_all_friend[$count]['url_image'] = (empty($json_array['S3_files']['path'])) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
                                 $view_all_friend[$count]['url_image_79x80'] = (empty($json_array['S3_files']['79x80'])) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['79x80'];
                                 $view_all_friend[$count]['url_image_448x306'] = (empty($json_array['S3_files']['448x306'])) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['448x306'];

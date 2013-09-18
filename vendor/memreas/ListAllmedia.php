@@ -101,7 +101,7 @@ class ListAllmedia {
                 $xml_output.="<page>$page</page>";
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Media List</message>";
-                while ($row = (count($result)!=0 )){
+                foreach ($result as  $row ){
                     $url79x80 = '';
                     $url448x306 = '';
                     $url98x78 = '';
@@ -125,7 +125,8 @@ class ListAllmedia {
                         $url79x80 = isset($json_array['S3_files']['1080p_thumbails'][1]['79x80']) ? $json_array['S3_files']['1080p_thumbails'][1]['79x80'] : ''; //get video thum
                         $url448x306 = isset($json_array['S3_files']['1080p_thumbails'][2]['448x306']) ? $json_array['S3_files']['1080p_thumbails'][2]['448x306'] : ''; //get video thum
                         $url98x78 = isset($json_array['S3_files']['1080p_thumbails'][3]['98x78']) ? $json_array['S3_files']['1080p_thumbails'][3]['98x78'] : ''; //get video thum
-                    } else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio'])) {
+                    } 
+                    else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio'])) {
                         $type = "audio";
 //                $rs_audio=mysql_query("select * from comment  WHERE media_id='".$row['media_id']."' and type='audio' limit 1") or die(mysql_error());
 //                if(mysql_num_rows($rs_audio)>0)

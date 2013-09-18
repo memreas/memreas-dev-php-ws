@@ -10,16 +10,16 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="friend")
  * @ORM\Entity
  */
-class Friend
-{
+class Friend {
+
     /**
      * @var string
      *
      * @ORM\Column(name="friend_id", type="string", length=255, nullable=false)
      * @ORM\Id
-     
+
      */
-    private $friendId;
+    private $friend_id;
 
     /**
      * @var string
@@ -33,14 +33,14 @@ class Friend
      *
      * @ORM\Column(name="social_username", type="string", length=255, nullable=false)
      */
-    private $socialUsername;
+    private $social_username;
 
     /**
      * @var string
      *
      * @ORM\Column(name="url_image", type="string", length=255, nullable=false)
      */
-    private $urlImage;
+    private $url_image;
 
     /**
      * @var string
@@ -54,17 +54,16 @@ class Friend
      *
      * @ORM\Column(name="update_date", type="string", length=255, nullable=false)
      */
-    private $updateDate;
+    private $update_date;
 
-	  public function __set($name, $value) {
+    public function __set($name, $value) {
 
-    $this->$name = $value;
-  }
+        $this->$name = $value;
+    }
 
-  public function __get($name) {
-    
-    return $this->$name;
-  }
+    public function __get($name) {
 
+        return $this->$name;
+    }
 
 }

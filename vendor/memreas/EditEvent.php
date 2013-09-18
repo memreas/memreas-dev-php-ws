@@ -93,7 +93,7 @@ if (!isset($event_id) && !empty($event_id)) {
             
 
     if (!$result) {
-        $message.=mysql_error();
+        $message.='Record not updated';
         $status = 'Failure';
     } else {
         $message.='Event Successfully Updated';
