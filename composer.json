@@ -15,6 +15,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "aws/aws-sdk-php": "2.*",
-		"sybio/image-workshop": "2.0.0"
+		"sybio/image-workshop": "2.0.0",
+		 "doctrine/doctrine-orm-module": "0.*"
     }    
 }
