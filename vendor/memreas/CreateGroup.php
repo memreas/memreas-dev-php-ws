@@ -85,7 +85,7 @@ class CreateGroup {
                 $result_friend = $statement->getResult();
 
                 if (!$result_friend) {
-                    $friend_id = UUID::getUUID();
+                    $friend_id = UUID::getUUID($this->dbAdapter);
                     $tblFriend = new \Application\Entity\Friend();
                     $tblFriend->friend_id = $friend_id;
                     $tblFriend->network = $network_name;

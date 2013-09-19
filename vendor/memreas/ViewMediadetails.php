@@ -19,7 +19,8 @@ class ViewMediadetails {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        //$this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -39,41 +40,47 @@ class ViewMediadetails {
             $status = "Failure";
             $message = "Plz enter media id";
         } else {
-            $q_like = "SELECT COUNT(type) as totale_like FROM comment WHERE media_id='$media_id' and type='like'";
+            $q_like = "SELECT COUNT(c.type) as totale_like FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and c.type='like'";
             //$result_like = mysql_query($q_like);
-            $statement = $this->dbAdapter->createStatement($q_like);
-            $result_like = $statement->execute();
+            //$statement = $this->dbAdapter->createStatement($q_like);
+            //$result_like = $statement->execute();
+              $statement = $this->dbAdapter->createQuery($q_like);
+                        $result_like = $statement->getResult();
+
             if (!$result_like) {
                 $status = "Failure";
                 $message.= mysql_error();
             } else {
-                $row_like = $result_like->current();
+                $row_like = array_pop($result_like);
                 $totale_like = $row_like['totale_like'];
             }
-            $q_comment = "SELECT COUNT(type) as totale_comment FROM comment WHERE media_id='$media_id' and (type='text' or type='audio')";
-            $q_last_comment = "select text,audio_id from comment where media_id='$media_id' and (type='text' or type='audio') ORDER BY `create_time` DESC limit 1";
+            $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
+            $q_last_comment = "select c.text,c.audio_id from Application\Entity\Comment c where c.media_id='$media_id' and (c.type='text' or c.type='audio') ORDER BY c.create_time DESC ";//limit 1";
 
             //$result_comment = mysql_query($q_comment);
-            $statement = $this->dbAdapter->createStatement($q_comment);
-            $result_comment = $statement->execute();
+            //$statement = $this->dbAdapter->createStatement($q_comment);
+            //$result_comment = $statement->execute();
+            $statement = $this->dbAdapter->createQuery($q_comment);
+            $statement->setMaxResults(1);
+            
+                        $result_comment = $statement->getResult();
+
             // $result_last_comment = mysql_query($q_last_comment);
-            $statement = $this->dbAdapter->createStatement($q_last_comment);
-            $result_last_comment = $statement->execute();
-            if (!$result_last_comment) {
-                $status = "Failure";
-                $message.= mysql_error();
-            } else if ($result_last_comment->count() <= 0) {
+            $statement = $this->dbAdapter->createQuery($q_last_comment);
+            $result_last_comment = $statement->getResult();
+            
+            if (count($result_last_comment) <= 0) {
                 $status = "Success";
                 $message = "No TEXT Comment For this media";
             } else {
-                $row_last = $result_last_comment->current();
+                $row_last = array_pop($result_last_comment);
                 $last_comment = $row_last['text'];
                 if (!empty($row_last['audio_id'])) {
-                    $qaudiotext = "Select media_id,metadata from media where media_id='" . $row_last['audio_id'] . "'";
+                    $qaudiotext = "Select m.media_id,m.metadata from Application\Entity\Media m where m.media_id='" . $row_last['audio_id'] . "'";
                     //$result_audiotext = mysql_query($qaudiotext);
-                    $statement = $this->dbAdapter->createStatement($qaudiotext);
-                    $result_audiotext = $statement->execute();
-                    if ($row1 = $result_audiotext->current()) {
+                    $statement = $this->dbAdapter->createQuery($qaudiotext);
+                    $result_audiotext = $statement->getResult();
+                    if ($row1 = array_pop($result_audiotext)) {
                         $json_array = json_decode($row1['metadata'], true);
                         $path = $json_array['S3_files']['path'];
                     }
@@ -83,7 +90,7 @@ class ViewMediadetails {
                 $status = "Failure";
                 $message.= mysql_error();
             } else {
-                $row = $result_comment->current();
+                $row = array_pop($result_comment);
                 $totale_comment = $row['totale_comment'];
                 $status = "Success";
                 $message.="Media Details";

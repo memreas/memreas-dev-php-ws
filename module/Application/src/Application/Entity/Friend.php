@@ -47,7 +47,7 @@ class Friend {
      *
      * @ORM\Column(name="create_date", type="string", length=255, nullable=false)
      */
-    private $createDate;
+    private $create_date;
 
     /**
      * @var string

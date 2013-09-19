@@ -41,7 +41,7 @@ class Download {
 
         if (count($result_event_media) == 0) {
             $status = "Failure";
-            $message .= mysql_error();
+            $message = 'Media not Found.';
         } else {
             $row = array_pop($result_event_media);
             $q_event = "select e.user_id from Application\Entity\Event e  where e.event_id='" . $row->event_id . "'";
