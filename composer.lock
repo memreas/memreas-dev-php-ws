@@ -7,16 +7,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.4.2",
+            "version": "2.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "2.4.2"
+                "reference": "71e1a049f14fc764101c7bfe51a4d0a9fcbeb924"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/2.4.2",
-                "reference": "2.4.2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/71e1a049f14fc764101c7bfe51a4d0a9fcbeb924",
+                "reference": "71e1a049f14fc764101c7bfe51a4d0a9fcbeb924",
                 "shasum": ""
             },
             "require": {
@@ -69,20 +69,20 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2013-07-25 20:39:55"
+            "time": "2013-09-12 17:31:35"
         },
         {
             "name": "guzzle/guzzle",
-            "version": "v3.7.2",
+            "version": "v3.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "v3.7.2"
+                "reference": "0f16aad385528b5cf790392cb4a4d16cf600e944"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/v3.7.2",
-                "reference": "v3.7.2",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/0f16aad385528b5cf790392cb4a4d16cf600e944",
+                "reference": "0f16aad385528b5cf790392cb4a4d16cf600e944",
                 "shasum": ""
             },
             "require": {
@@ -161,7 +161,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2013-08-02 18:31:05"
+            "time": "2013-09-08 21:09:18"
         },
         {
             "name": "sybio/image-workshop",
@@ -169,12 +169,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Sybio/ImageWorkshop.git",
-                "reference": "2.0.0"
+                "reference": "26c56636399820ff9fa2f4b7a991b9c9f4016f6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Sybio/ImageWorkshop/zipball/2.0.0",
-                "reference": "2.0.0",
+                "url": "https://api.github.com/repos/Sybio/ImageWorkshop/zipball/26c56636399820ff9fa2f4b7a991b9c9f4016f6e",
+                "reference": "26c56636399820ff9fa2f4b7a991b9c9f4016f6e",
                 "shasum": ""
             },
             "require": {
@@ -214,17 +214,17 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.3.3",
+            "version": "v2.3.4",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "v2.3.3"
+                "reference": "41c9826457c65fa3cf746f214985b7ca9cba42f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/v2.3.3",
-                "reference": "v2.3.3",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/41c9826457c65fa3cf746f214985b7ca9cba42f8",
+                "reference": "41c9826457c65fa3cf746f214985b7ca9cba42f8",
                 "shasum": ""
             },
             "require": {
@@ -268,16 +268,16 @@
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.2.2",
+            "version": "2.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "release-2.2.2"
+                "reference": "5b03d868755c181fc9b5dc56c1f8c26e73ca0bed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/release-2.2.2",
-                "reference": "release-2.2.2",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/5b03d868755c181fc9b5dc56c1f8c26e73ca0bed",
+                "reference": "5b03d868755c181fc9b5dc56c1f8c26e73ca0bed",
                 "shasum": ""
             },
             "require": {
@@ -378,7 +378,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2013-07-24 14:02:19"
+            "time": "2013-08-26 15:09:04"
         }
     ],
     "packages-dev": [

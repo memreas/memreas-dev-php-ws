@@ -18,7 +18,6 @@ namespace Aws\Ec2;
 
 use Aws\Common\Client\AbstractClient;
 use Aws\Common\Client\ClientBuilder;
-use Aws\Common\Credentials\Credentials;
 use Aws\Common\Enum\ClientOptions as Options;
 use Guzzle\Common\Collection;
 use Guzzle\Service\Resource\Model;
@@ -116,6 +115,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeRegions(array $args = array()) {@command Ec2 DescribeRegions}
  * @method Model describeReservedInstances(array $args = array()) {@command Ec2 DescribeReservedInstances}
  * @method Model describeReservedInstancesListings(array $args = array()) {@command Ec2 DescribeReservedInstancesListings}
+ * @method Model describeReservedInstancesModifications(array $args = array()) {@command Ec2 DescribeReservedInstancesModifications}
  * @method Model describeReservedInstancesOfferings(array $args = array()) {@command Ec2 DescribeReservedInstancesOfferings}
  * @method Model describeRouteTables(array $args = array()) {@command Ec2 DescribeRouteTables}
  * @method Model describeSecurityGroups(array $args = array()) {@command Ec2 DescribeSecurityGroups}
@@ -150,6 +150,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model modifyImageAttribute(array $args = array()) {@command Ec2 ModifyImageAttribute}
  * @method Model modifyInstanceAttribute(array $args = array()) {@command Ec2 ModifyInstanceAttribute}
  * @method Model modifyNetworkInterfaceAttribute(array $args = array()) {@command Ec2 ModifyNetworkInterfaceAttribute}
+ * @method Model modifyReservedInstances(array $args = array()) {@command Ec2 ModifyReservedInstances}
  * @method Model modifySnapshotAttribute(array $args = array()) {@command Ec2 ModifySnapshotAttribute}
  * @method Model modifyVolumeAttribute(array $args = array()) {@command Ec2 ModifyVolumeAttribute}
  * @method Model modifyVpcAttribute(array $args = array()) {@command Ec2 ModifyVpcAttribute}
@@ -214,6 +215,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeRegionsIterator(array $args = array()) The input array uses the parameters of the DescribeRegions operation
  * @method ResourceIteratorInterface getDescribeReservedInstancesIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstances operation
  * @method ResourceIteratorInterface getDescribeReservedInstancesListingsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstancesListings operation
+ * @method ResourceIteratorInterface getDescribeReservedInstancesModificationsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstancesModifications operation
  * @method ResourceIteratorInterface getDescribeReservedInstancesOfferingsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstancesOfferings operation
  * @method ResourceIteratorInterface getDescribeRouteTablesIterator(array $args = array()) The input array uses the parameters of the DescribeRouteTables operation
  * @method ResourceIteratorInterface getDescribeSecurityGroupsIterator(array $args = array()) The input array uses the parameters of the DescribeSecurityGroups operation
@@ -233,46 +235,15 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  */
 class Ec2Client extends AbstractClient
 {
-    const LATEST_API_VERSION = '2013-06-15';
+    const LATEST_API_VERSION = '2013-08-15';
 
     /**
-     * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options:
-     *
-     * Credential options (`key`, `secret`, and optional `token` OR `credentials` is required)
-     *
-     * - key: AWS Access Key ID
-     * - secret: AWS secret access key
-     * - credentials: You can optionally provide a custom `Aws\Common\Credentials\CredentialsInterface` object
-     * - token: Custom AWS security token to use with request authentication
-     * - token.ttd: UNIX timestamp for when the custom credentials expire
-     * - credentials.cache: Used to cache credentials when using providers that require HTTP requests. Set the true
-     *   to use the default APC cache or provide a `Guzzle\Cache\CacheAdapterInterface` object.
-     * - credentials.cache.key: Optional custom cache key to use with the credentials
-     * - credentials.client: Pass this option to specify a custom `Guzzle\Http\ClientInterface` to use if your
-     *   credentials require a HTTP request (e.g. RefreshableInstanceProfileCredentials)
-     *
-     * Region and Endpoint options (a `region` and optional `scheme` OR a `base_url` is required)
-     *
-     * - region: Region name (e.g. 'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', etc...)
-     * - scheme: URI Scheme of the base URL (e.g. 'https', 'http').
-     * - base_url: Instead of using a `region` and `scheme`, you can specify a custom base URL for the client
-     *
-     * Generic client options
-     *
-     * - ssl.certificate_authority: Set to true to use the bundled CA cert (default), system to use the certificate
-     *   bundled with your system, or pass the full path to an SSL certificate bundle. This option should be used when
-     *   you encounter curl error code 60.
-     * - curl.options: Array of cURL options to apply to every request.
-     *   See http://www.php.net/manual/en/function.curl-setopt.php for a list of available options
-     * - signature: You can optionally provide a custom signature implementation used to sign requests
-     * - client.backoff.logger: `Guzzle\Log\LogAdapterInterface` object used to log backoff retries. Use
-     *   'debug' to emit PHP warnings when a retry is issued.
-     * - client.backoff.logger.template: Optional template to use for exponential backoff log messages. See
-     *   `Guzzle\Plugin\Backoff\BackoffLogger` for formatting information.
+     * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options.
      *
      * @param array|Collection $config Client configuration data
      *
      * @return self
+     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
      */
     public static function factory($config = array())
     {

@@ -20,7 +20,6 @@ use Aws\Common\Exception\RuntimeException;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\Exception\NoSuchKeyException;
 use Aws\S3\Iterator\ListObjectsIterator;
-use Guzzle\Http\QueryString;
 use Guzzle\Http\EntityBody;
 use Guzzle\Http\CachingEntityBody;
 use Guzzle\Stream\PhpStreamRequestFactory;
@@ -431,8 +430,7 @@ class StreamWrapper
         }
 
         if ($params['Key']) {
-            $suffix = $delimiter ?: '/';
-            $params['Key'] = rtrim($params['Key'], $suffix) . $suffix;
+            $params['Key'] = rtrim($params['Key'], $delimiter) . $delimiter;
         }
 
         $this->openedBucket = $params['Bucket'];
@@ -491,10 +489,11 @@ class StreamWrapper
         if ($this->objectIterator->valid()) {
             $current = $this->objectIterator->current();
             if (isset($current['Prefix'])) {
-                // Include "directories"
-                $result = str_replace($this->openedBucketPrefix, '', $current['Prefix']);
-                $key = "s3://{$this->openedBucket}/{$current['Prefix']}";
-                $stat = $this->formatUrlStat($current['Prefix']);
+                // Include "directories". Be sure to strip a trailing "/" on prefixes.
+                $prefix = rtrim($current['Prefix'], '/');
+                $result = str_replace($this->openedBucketPrefix, '', $prefix);
+                $key = "s3://{$this->openedBucket}/{$prefix}";
+                $stat = $this->formatUrlStat($prefix);
             } else {
                 // Remove the prefix from the result to emulate other stream wrappers
                 $result = str_replace($this->openedBucketPrefix, '', $current['Key']);

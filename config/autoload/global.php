@@ -46,9 +46,11 @@ return array(
                 ),
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
                 'params' => array(
-                    'host' => 'localhost',
+                    'host' => 'aa19n8yspndox3g.co0fw2snbu92.us-east-1.rds.amazonaws.com',
                     'port' => '3306',
-                    'dbname' => 'jhon',
+                    'dbname' => 'memreasdevdb',
+                    'user'     => 'memreasdbuser',
+					'password' => 'memreas2013',
                 )
             )
         )

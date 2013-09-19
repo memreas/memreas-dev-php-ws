@@ -1,6 +1,52 @@
 CHANGELOG
 =========
 
+2.4.6 (2013-09-12)
+------------------
+
+* Added support for modifying EC2 Reserved Instances to the Amazon EC2 client
+* Added support for VPC features to the AWS OpsWorks client
+* Updated the DynamoDB Session Handler to implement the SessionHandlerInterface of PHP 5.4 when available
+* Updated the SNS Message Validator to throw an exception, instead of an error, when the raw post data is invalid
+* Fixed an issue in the S3 signature which ensures that parameters are sorted correctly for signing
+* Fixed an issue in the S3 client where the Sydney region was not allowed as a `LocationConstraint` for the
+  `PutObject` operation
+
+2.4.5 (2013-09-04)
+------------------
+
+* Added support for replication groups to the Amazon ElastiCache client
+* Added support for using the `us-gov-west-1` region to the AWS CloudFormation client
+
+2.4.4 (2013-08-29)
+------------------
+
+* Added support for assigning a public IP address to an instance at launch to the Amazon EC2 client
+* Updated the Amazon EC2 client to use the 2013-07-15 API version
+* Updated the Amazon SWF client to sign requests with Signature V4
+* Updated the Instance Metadata client to allow for higher and more customizable connection timeouts
+* Fixed an issue with the SDK where XML map structures were not being serialized correctly in some cases
+* Fixed issue #136 where a few of the new Amazon SNS mobile push operations were not working properly
+* Fixed an issue where the AWS STS `AssumeRoleWithWebIdentity` operation was requiring credentials and a signature
+  unnecessarily
+* Fixed and issue with the `S3Client::uploadDirectory` method so that true key prefixes can be used
+* [Docs] Updated the API docs to include sample code for each operation that indicates the parameter structure
+* [Docs] Updated the API docs to include more information in the descriptions of operations and parameters
+* [Docs] Added a page about Iterators to the user guide
+
+2.4.3 (2013-08-12)
+------------------
+
+* Added support for mobile push notifications to the Amazon SNS client
+* Added support for progress reporting on snapshot restore operations to the the Amazon Redshift client
+* Updated the Amazon Elastic MapReduce client to use JSON serialization
+* Updated the Amazon Elastic MapReduce client to sign requests with Signature V4
+* Updated the SDK to throw `Aws\Common\Exception\TransferException` exceptions when a network error occurs instead of a
+  `Guzzle\Http\Exception\CurlException`. The TransferException class, however, extends from
+  `Guzzle\Http\Exception\CurlException`. You can continue to catch the Guzzle `CurlException` or catch
+  `Aws\Common\Exception\AwsExceptionInterface` to catch any exception that can be thrown by an AWS client
+* Fixed an issue with the Amazon S3 stream wrapper where trailing slashes were being added when listing directories
+
 2.4.2 (2013-07-25)
 ------------------
 
@@ -18,7 +64,7 @@ CHANGELOG
 2.4.1 (2013-06-08)
 ------------------
 
-* Added supports for setting watermarks and max framerates to the Amazon Elastic Transcoder client
+* Added support for setting watermarks and max framerates to the Amazon Elastic Transcoder client
 * Added the `Aws\DynamoDb\Iterator\ItemIterator` class to make it easier to get items from the results of DynamoDB
   operations in a simpler form
 * Added support for the `cr1.8xlarge` EC2 instance type. Use `Aws\Ec2\Enum\InstanceType::CR1_8XLARGE`

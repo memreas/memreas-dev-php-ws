@@ -31,10 +31,12 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model createCacheParameterGroup(array $args = array()) {@command ElastiCache CreateCacheParameterGroup}
  * @method Model createCacheSecurityGroup(array $args = array()) {@command ElastiCache CreateCacheSecurityGroup}
  * @method Model createCacheSubnetGroup(array $args = array()) {@command ElastiCache CreateCacheSubnetGroup}
+ * @method Model createReplicationGroup(array $args = array()) {@command ElastiCache CreateReplicationGroup}
  * @method Model deleteCacheCluster(array $args = array()) {@command ElastiCache DeleteCacheCluster}
  * @method Model deleteCacheParameterGroup(array $args = array()) {@command ElastiCache DeleteCacheParameterGroup}
  * @method Model deleteCacheSecurityGroup(array $args = array()) {@command ElastiCache DeleteCacheSecurityGroup}
  * @method Model deleteCacheSubnetGroup(array $args = array()) {@command ElastiCache DeleteCacheSubnetGroup}
+ * @method Model deleteReplicationGroup(array $args = array()) {@command ElastiCache DeleteReplicationGroup}
  * @method Model describeCacheClusters(array $args = array()) {@command ElastiCache DescribeCacheClusters}
  * @method Model describeCacheEngineVersions(array $args = array()) {@command ElastiCache DescribeCacheEngineVersions}
  * @method Model describeCacheParameterGroups(array $args = array()) {@command ElastiCache DescribeCacheParameterGroups}
@@ -43,11 +45,13 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeCacheSubnetGroups(array $args = array()) {@command ElastiCache DescribeCacheSubnetGroups}
  * @method Model describeEngineDefaultParameters(array $args = array()) {@command ElastiCache DescribeEngineDefaultParameters}
  * @method Model describeEvents(array $args = array()) {@command ElastiCache DescribeEvents}
+ * @method Model describeReplicationGroups(array $args = array()) {@command ElastiCache DescribeReplicationGroups}
  * @method Model describeReservedCacheNodes(array $args = array()) {@command ElastiCache DescribeReservedCacheNodes}
  * @method Model describeReservedCacheNodesOfferings(array $args = array()) {@command ElastiCache DescribeReservedCacheNodesOfferings}
  * @method Model modifyCacheCluster(array $args = array()) {@command ElastiCache ModifyCacheCluster}
  * @method Model modifyCacheParameterGroup(array $args = array()) {@command ElastiCache ModifyCacheParameterGroup}
  * @method Model modifyCacheSubnetGroup(array $args = array()) {@command ElastiCache ModifyCacheSubnetGroup}
+ * @method Model modifyReplicationGroup(array $args = array()) {@command ElastiCache ModifyReplicationGroup}
  * @method Model purchaseReservedCacheNodesOffering(array $args = array()) {@command ElastiCache PurchaseReservedCacheNodesOffering}
  * @method Model rebootCacheCluster(array $args = array()) {@command ElastiCache RebootCacheCluster}
  * @method Model resetCacheParameterGroup(array $args = array()) {@command ElastiCache ResetCacheParameterGroup}
@@ -60,6 +64,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeCacheSubnetGroupsIterator(array $args = array()) The input array uses the parameters of the DescribeCacheSubnetGroups operation
  * @method ResourceIteratorInterface getDescribeEngineDefaultParametersIterator(array $args = array()) The input array uses the parameters of the DescribeEngineDefaultParameters operation
  * @method ResourceIteratorInterface getDescribeEventsIterator(array $args = array()) The input array uses the parameters of the DescribeEvents operation
+ * @method ResourceIteratorInterface getDescribeReplicationGroupsIterator(array $args = array()) The input array uses the parameters of the DescribeReplicationGroups operation
  * @method ResourceIteratorInterface getDescribeReservedCacheNodesIterator(array $args = array()) The input array uses the parameters of the DescribeReservedCacheNodes operation
  * @method ResourceIteratorInterface getDescribeReservedCacheNodesOfferingsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedCacheNodesOfferings operation
  *
@@ -68,45 +73,15 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  */
 class ElastiCacheClient extends AbstractClient
 {
-    const LATEST_API_VERSION = '2012-11-15';
+    const LATEST_API_VERSION = '2013-06-15';
 
     /**
      * Factory method to create a new Amazon ElastiCache client using an array of configuration options.
      *
-     * The following array keys and values are available options:
-     *
-     * - Credential options (`key`, `secret`, and optional `token` OR `credentials` is required)
-     *     - key: AWS Access Key ID
-     *     - secret: AWS secret access key
-     *     - credentials: You can optionally provide a custom `Aws\Common\Credentials\CredentialsInterface` object
-     *     - token: Custom AWS security token to use with request authentication
-     *     - token.ttd: UNIX timestamp for when the custom credentials expire
-     *     - credentials.cache.key: Optional custom cache key to use with the credentials
-     * - Region and Endpoint options (a `region` and optional `scheme` OR a `base_url` is required)
-     *     - region: Region name (e.g. 'us-east-1', 'us-west-1', 'us-west-2', 'eu-west-1', etc...)
-     *     - scheme: URI Scheme of the base URL (e.g. 'https', 'http').
-     *     - base_url: Instead of using a `region` and `scheme`, you can specify a custom base URL for the client
-     *     - endpoint_provider: Optional `Aws\Common\Region\EndpointProviderInterface` used to provide region endpoints
-     * - Generic client options
-     *     - ssl.cert: Set to true to use the bundled CA cert or pass the full path to an SSL certificate bundle. This
-     *           option should be used when you encounter curl error code 60.
-     *     - curl.CURLOPT_VERBOSE: Set to true to output curl debug information during transfers
-     *     - curl.*: Prefix any available cURL option with `curl.` to add cURL options to each request.
-     *           See: http://www.php.net/manual/en/function.curl-setopt.php
-     *     - service.description.cache.ttl: Optional TTL used for the service description cache
-     * - Signature options
-     *     - signature: You can optionally provide a custom signature implementation used to sign requests
-     *     - signature.service: Set to explicitly override the service name used in signatures
-     *     - signature.region:  Set to explicitly override the region name used in signatures
-     * - Exponential backoff options
-     *     - client.backoff.logger: `Guzzle\Common\Log\LogAdapterInterface` object used to log backoff retries. Use
-     *           'debug' to emit PHP warnings when a retry is issued.
-     *     - client.backoff.logger.template: Optional template to use for exponential backoff log messages. See
-     *           `Guzzle\Http\Plugin\ExponentialBackoffLogger` for formatting information.
-     *
      * @param array|Collection $config Client configuration data
      *
      * @return self
+     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
      */
     public static function factory($config = array())
     {

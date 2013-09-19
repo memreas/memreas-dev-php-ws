@@ -19,7 +19,6 @@ namespace Aws\S3\Sync;
 use \FilesystemIterator as FI;
 use Aws\Common\Model\MultipartUpload\AbstractTransfer;
 use Aws\S3\Model\Acp;
-use Aws\S3\S3Client;
 use Guzzle\Common\Event;
 use Guzzle\Service\Command\CommandInterface;
 
@@ -167,7 +166,7 @@ class UploadSyncBuilder extends AbstractSyncBuilder
                     $size = $command['Body']->getContentLength();
                     $percentage = number_format(($progress / $totalSize) * 100, 2);
                     fwrite($resource, "- Part {$command['PartNumber']} ({$size} bytes, {$percentage}%)\n");
-                    $progress .=  $size;
+                    $progress += $size;
                 }
             );
         });
