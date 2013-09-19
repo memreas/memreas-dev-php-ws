@@ -48,7 +48,7 @@ return array(
                 'params' => array(
                     'host' => 'aa15nf7gzm5gbt3.co0fw2snbu92.us-east-1.rds.amazonaws.com',
                     'port' => '3306',
-                    'dbname' => 'memreasdevdb',
+                    'dbname' => 'memreasintdb',
                     'user'     => 'memreasdbuser',
 					'password' => 'memreas2013',
                 )
