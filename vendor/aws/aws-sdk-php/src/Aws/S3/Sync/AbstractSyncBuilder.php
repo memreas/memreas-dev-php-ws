@@ -18,7 +18,6 @@ namespace Aws\S3\Sync;
 
 use Aws\Common\Exception\RuntimeException;
 use Aws\Common\Exception\UnexpectedValueException;
-use Aws\Common\Model\MultipartUpload\AbstractTransfer;
 use Aws\Common\Model\MultipartUpload\TransferInterface;
 use Aws\S3\S3Client;
 use Aws\S3\Iterator\OpendirIterator;
@@ -412,11 +411,10 @@ abstract class AbstractSyncBuilder
         // Ensure that the stream wrapper is registered
         $this->client->registerStreamWrapper();
         // Calculate the opendir() bucket and optional key prefix location
-        // Remove the delimiter as it is not needed for this
-        $dir = rtrim('s3://' . $this->bucket . ($this->keyPrefix ? ('/' . $this->keyPrefix) : ''), '/');
+        $dir = 's3://' . $this->bucket . ($this->keyPrefix ? ('/' . $this->keyPrefix) : '');
         // Use opendir so that we can pass stream context to the iterator
         $dh = opendir($dir, stream_context_create(array('s3' => array('delimiter' => ''))));
 
-        return $this->filterIterator(new \NoRewindIterator(new OpendirIterator($dh, $dir . '/')));
+        return $this->filterIterator(new \NoRewindIterator(new OpendirIterator($dh, $dir)));
     }
 }

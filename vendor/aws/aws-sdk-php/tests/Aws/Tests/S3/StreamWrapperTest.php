@@ -16,11 +16,8 @@
 
 namespace Aws\Tests\S3;
 
-use Aws\Common\Credentials\Credentials;
 use Aws\S3\S3Client;
-use Aws\S3\S3Signature;
 use Aws\S3\StreamWrapper;
-use Guzzle\Common\Collection;
 use Guzzle\Http\Message\Response;
 use Guzzle\Http\EntityBody;
 
@@ -425,7 +422,7 @@ class StreamWrapperTest extends \Guzzle\Tests\GuzzleTestCase
         }
 
         // This is the order that the mock responses should provide
-        $expected = array('a/', 'b/', 'c', 'd/','e', 'f', 'g/');
+        $expected = array('a', 'b', 'c', 'd', 'e', 'f', 'g');
 
         $this->assertEquals($expected, $files);
         $this->assertEquals(5, count($this->getMockedRequests()));
