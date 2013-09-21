@@ -54,7 +54,7 @@ class IndexController extends AbstractActionController {
 
     //protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
     //protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
-    protected $url = "/index/ws";
+    protected $url = "/index/";
     protected $user_id;
     protected $storage;
     protected $authservice;
@@ -107,10 +107,12 @@ class IndexController extends AbstractActionController {
         //$path = $this->security("application/index/ws_tester.phtml");
 
         $path = "application/index/ws_tester.phtml";
+        $output ='';
+        
+        $callback = isset($_REQUEST['callback'])?$_REQUEST['callback']:'';
 
-        if (isset($_REQUEST['callback'])) {
+        if (isset($_REQUEST['json'])) {
             //Fetch parms
-            $callback = $_REQUEST['callback'];
             $json = $_REQUEST['json'];
             $jsonArr = json_decode($json, true);
             $actionname = $jsonArr['action'];
@@ -119,8 +121,15 @@ class IndexController extends AbstractActionController {
             $message_data = $jsonArr['json'];
 
             $_POST['xml'] = $message_data['xml'];
+            
+        } else{
+            $actionname=  isset($_REQUEST['action'])?$_REQUEST['action']:''; 
+            $codebase = "new_code";
+            $message_data['xml']='';
+            
+        }
 
-            if ($codebase == "new_code") {
+            if ($codebase == "new_code" && !empty($actionname)) {
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
                 $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -248,18 +257,7 @@ class IndexController extends AbstractActionController {
                         $result = $uploadadvertisement->exec();
                 }
 
-
-
-
-
-
-
-
-
-
-
-
-                $output = ob_get_clean();
+               $output = ob_get_clean();
             } else if ($codebase == "original_code") {
                 //Guzzle existing webservice
                 $this->url = MemreasConstants::ORIGINAL_URL;
@@ -272,24 +270,36 @@ class IndexController extends AbstractActionController {
             //$memreas_tables = new MemreasTables($this->getServiceLocator());
             //$result = $memreas->login($message_data, $memreas_tables, $this->getServiceLocator());
 
-            $message_data['data'] = $output;
-            error_log("Final XML ----> " . $message_data['data']);
+           
 
-            $json_arr = array("data" => $message_data['data']);
-            $json = json_encode($json_arr);
+          //
+            if(!empty($callback)){
+                $message_data['data'] = $output;
+                error_log("Final XML ----> " . $message_data['data']);
 
-            error_log("Callback ---> " . $callback . "(" . $json . ")");
-            header("Content-type: plain/text");
+                $json_arr = array("data" => $message_data['data']);
+                $json = json_encode($json_arr);
+               
+                error_log("Callback ---> " . $callback . "(" . $json . ")");
+                 header("Content-type: plain/text");
+            //callback json
             echo $callback . "(" . $json . ")";
             //Need to exit here to avoid ZF2 framework view.
+
             exit;
-        } else {
+            }
+            
+            
+        
+        if(isset($_GET['view'])&& empty($actionname)) {
             $view = new ViewModel();
             $view->setTemplate($path); // path to phtml file under view folder
-        
-
-        return $view;
-    }
+            return $view;
+        } else{
+            //xml output
+            echo $output;
+            exit;
+        }
     
     }
     public function galleryAction() {
