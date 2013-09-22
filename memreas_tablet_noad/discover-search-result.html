@@ -1,0 +1,192 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Memreas</title>
+
+<!--Custom css-->
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
+
+<!--Bootstrap Css-->
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+
+
+<!--jQuery Lybrary-->
+<script src="js/jquery.js"></script>
+<script src="js/modernizr.custom.17475.js"></script>
+
+
+<!--Bootstrap jQuery-->
+<script src="js/bootstrap.min.js"></script>
+
+<!--Backgound Strecher-->
+<script type="text/javascript" src="js/bgstretcher.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(document).bgStretcher({
+			images: ['img/bg.jpg'],
+			imageWidth: 1366, imageHeight: 700
+	});
+});
+</script> 
+</head>
+
+<body>
+<!-- Begin : Container -->
+<div class="container">
+  <!-- Begin : Header -->
+  <div class="row-fluid">
+  	<header>
+      <h1 id="logo"><a href="index.html">memreas</a></h1>
+      <input name="input"type="text" class="search_bar" value="@person, #discover" onBlur="if(!/\S/.test(this.value))this.value=this.defaultValue" onFocus="if(this.value == '@person, #discover')this.value = '';"/>
+      <div class="pro-info">
+      	<figure class="pro-pic"><img src="img/profile-pic.jpg" alt=""></figure>
+        <div class="pro-name">User Name</div>
+      </div>
+    </header>
+  </div>
+  <!-- End : Header -->
+  <!-- Begin : Content -->
+  	<div class="row-fluid content">
+      <div class="span1">
+      	<!-- Begin : Nav -->
+      	<nav>
+          <ul>
+          	<li><a href="gallery.html" class="active"><img src="img/gallery.png" alt=""></a></li>
+            <li><a href="queue.html"><img src="img/queue.png" alt=""></a></li>
+            <li><a href="share.html"><img src="img/share.png" alt=""></a></li>
+            <li><a href="memreas-me-friends.html"><img src="img/memreas.png" alt=""></a></li>
+            <li><a href="more.html"><img src="img/more.png" alt=""></a></li>
+          </ul>
+        </nav>
+        <!-- End : Nav -->
+      </div>
+      <div class="span11">
+      	<div class="results">over 300 results found.</div>
+        <ul class="discover_results scrollClass">
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing <a href="#">birthday</a> elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. <a href="#">birthday</a>  Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+           <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing <a href="#">birthday</a> elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. <a href="#">birthday</a>  Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+           <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing <a href="#">birthday</a> elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. <a href="#">birthday</a>  Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+          <li>
+            <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+            <p>Lorem ipsum dolor <a href="#">birthday</a> sit amet, consectetur adipiscing elit. Morbi ultrices pretium eleifend. Vestibulum semper sollicitudin dui, quis consequat elit pellentesque non. </p>
+			<p>Nam aliquet consectetur sem, <a href="#">birthday</a>  in accumsan nisl eleifend non. Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.Integer at nisl et lacus pellentesque dictum. Phasellus ullamcorper mattis quam, id facilisis orci ornare eu.</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  <!-- End : Content -->
+</div>
+  <!-- Begin : Footer -->
+  <footer>&copy; 2013 memreas, llc. All rights reserved.</footer>
+  <!-- End : Footer -->
+<!-- End : Container -->
+
+
+	<!-- custom scrollbars plugin -->
+	<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+	<script>
+	
+		(function($){
+			$(window).load(function(){
+			
+			$("ul.scrollClass").mCustomScrollbar({
+					scrollButtons:{
+						enable:true
+					}
+				});
+				
+				
+				
+				
+			$("#tab-content div.hideCls").hide(); // Initially hide all content
+			$("#tabs li:first").attr("id","current"); // Activate first tab
+			$("#tab-content div:first").fadeIn(); // Show first tab content*/
+			
+			$('#tabs a').click(function(e) {
+				
+				e.preventDefault();        
+				$("#tab-content div.hideCls").hide(); //Hide all content
+				$("#tabs li").attr("id",""); //Reset id's
+				$(this).parent().attr("id","current"); // Activate this
+				$('#' + $(this).attr('title')).fadeIn(); // Show content for current tab
+			});
+
+			
+				
+				
+				//ajax demo fn
+				$("a[rel='load-content']").click(function(e){
+					
+					e.preventDefault();
+					var $this=$(this),
+						url=$this.attr("href");
+					$this.addClass("loading");
+					$.get(url,function(data){
+						$this.removeClass("loading");
+						$("ul.scrollClass .mCSB_container").html(data); //load new content inside .mCSB_container
+						$("ul.scrollClass").mCustomScrollbar("update"); //update scrollbar according to newly loaded content
+						$("ul.scrollClass").mCustomScrollbar("scrollTo","top",{scrollInertia:200}); //scroll to top
+					});
+				});
+				$("a[rel='append-content']").click(function(e){
+					e.preventDefault();
+					var $this=$(this),
+						url=$this.attr("href");
+					$this.addClass("loading");
+					$.get(url,function(data){
+						$this.removeClass("loading");
+						$("ul.scrollClass .mCSB_container").append(data); //append new content inside .mCSB_container
+						$("ul.scrollClass").mCustomScrollbar("update"); //update scrollbar according to newly appended content
+						$("ul.scrollClass").mCustomScrollbar("scrollTo","h2:last",{scrollInertia:2500,scrollEasing:"easeInOutQuad"}); //scroll to appended content
+					});
+				});
+			});
+		})(jQuery);
+	</script>
+</body>
+</html>

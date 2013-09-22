@@ -1,0 +1,1325 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Memreas</title>
+
+<!--Custom css-->
+<link href="css/style.css" rel="stylesheet" type="text/css">
+<link href="css/jquery.mCustomScrollbar.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/swipebox.css">
+
+<!--Bootstrap Css-->
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+<!--jQuery Lybrary-->
+<script src="js/jquery.js"></script>
+<script src="js/modernizr.custom.17475.js"></script>
+
+<!--Bootstrap jQuery-->
+<script src="js/bootstrap.min.js"></script>
+
+<!--Backgound Strecher-->
+<script type="text/javascript" src="js/bgstretcher.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+$(document).bgStretcher({
+			images: ['img/bg.jpg'],
+			imageWidth: 1366, imageHeight: 700
+		});
+	});
+</script>
+
+</head>
+
+<body>
+<!-- Begin : Container -->
+<div class="container">
+  <!-- Begin : Header -->
+  <div class="row-fluid">
+  	<header>
+      <h1 id="logo"><a href="index.html">memreas</a></h1>
+      <input name="input"type="text" class="search_bar" value="@person, #discover" onBlur="if(!/\S/.test(this.value))this.value=this.defaultValue" onFocus="if(this.value == '@person, #discover')this.value = '';"/>
+      <div class="pro-info">
+      	<figure class="pro-pic"><img src="img/profile-pic.jpg" alt=""></figure>
+        <div class="pro-name">User Name</div>
+      </div>
+    </header>
+  </div>
+  <!-- End : Header -->
+  <!-- Begin : Content -->
+  	<div class="row-fluid content">
+      <div class="span1">
+      	<!-- Begin : Nav -->
+      	<nav>
+          <ul>
+          	<li><a href="gallery.html"><img src="img/gallery.png" alt=""></a></li>
+            <li><a href="queue.html"><img src="img/queue.png" alt=""></a></li>
+            <li><a href="share.html"><img src="img/share.png" alt=""></a></li>
+            <li><a href="memreas-me-friends.html" class="active"><img src="img/memreas.png" alt=""></a></li>
+            <li><a href="more.html"><img src="img/more.png" alt=""></a></li>
+          </ul>
+        </nav>
+        <!-- End : Nav -->
+      </div>
+      <div class="span11 fixed">
+      	<div class="row-fluid">
+        <ul id="tabs" class="medium_tabs">
+            <li><a href="#" title="tab1">me</a></li>
+            <li><a href="#" title="tab2">friends</a></li>
+            <li><a href="#" title="tab3">public</a></li>
+        </ul>
+        <div id="tab-content"> 
+            <div id="tab1" class="hideCls">
+                      <ul id="content_1" class="pics scrollClass">
+                       <div class="event_section">
+                        <aside class="event_name">event name</aside>
+                        <div class="event_like"></div>
+                        <div class="event_comment"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="clear"></div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll" class="swipeclass">
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                          </div>
+                        </div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll2" class="swipeclass">
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                          </div>
+                        </div>
+                       </div>
+                       <div class="event_section">
+                        <aside class="event_name">event name</aside>
+                        <div class="event_like"></div>
+                        <div class="event_comment"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="clear"></div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll3" class="swipeclass">
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                          </div>
+                        </div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll4" class="swipeclass">
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                          </div>
+                        </div>
+                       </div>
+                       <div class="event_section">
+                        <aside class="event_name">event name</aside>
+                        <div class="event_like"></div>
+                        <div class="event_comment"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="clear"></div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll5" class="swipeclass">
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                          </div>
+                        </div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll6" class="swipeclass">
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                          </div>
+                        </div>
+                       </div>
+                       <div class="event_section">
+                        <aside class="event_name">event name</aside>
+                        <div class="event_like"></div>
+                        <div class="event_comment"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="clear"></div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll7" class="swipeclass">
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                          </div>
+                        </div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll8" class="swipeclass">
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                          </div>
+                        </div>
+                       </div>
+                       <div class="event_section">
+                        <aside class="event_name">event name</aside>
+                        <div class="event_like"></div>
+                        <div class="event_comment"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="event_gallery_pro"><img src="img/profile-pic.jpg"></div>
+                        <div class="clear"></div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll9" class="swipeclass">
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                            <div class="event_img"><img src="img/small/2.jpg" /></div>
+                            <div class="event_img"><img src="img/small/1.jpg" /></div>
+                          </div>
+                        </div>
+                        <div id="viewport" onselectstart="return false;">
+                          <div id="mouseSwipeScroll10" class="swipeclass">
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                            <div class="swipebox_comment">
+                              <div class="event_pro"><img src="img/profile-pic.jpg"></div>
+                              <textarea class="event_textarea" name="your sign or comments here" cols="" rows="" 
+                              onfocus="if(this.value==this.defaultValue)this.value='';" 
+                              onblur="if(this.value=='')this.value=this.defaultValue;">your sign or comments here</textarea>
+                            </div>
+                          </div>
+                        </div>
+                       </div>
+                      </ul>  
+                  <a class="black_btn_skin f-center" href="#">add memreas</a>
+            </div>
+            <div id="tab2" class="hideCls">
+                 <ul id="content_1" class="pics scrollClass event_images">
+                      <section class="row-fluid clearfix">
+                        <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                        <aside class="pro-names2">Friend Name</aside>
+                      </section>
+                      <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll11" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll12" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll13" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll14" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll15" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll16" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll17" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll18" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                      </ul>  
+                  <a class="black_btn_skin f-center" href="#">add memreas</a> 
+            </div>
+            <div id="tab3" class="hideCls">
+                 <ul id="content_1" class="pics scrollClass event_images">
+                      <section class="row-fluid clearfix">
+                        <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                        <aside class="pro-names2">Friend Name</aside>
+                      </section>
+                      <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll19" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll20" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll21" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll22" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll23" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll24" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll25" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                        <section class="row-fluid clearfix">
+                          <figure class="pro-pics2"><img src="img/profile-pic-2.jpg" alt=""></figure>
+                          <aside class="pro-names2">Friend Name</aside>
+                        </section>
+                        <div id="viewport" class="mouse_swip" onselectstart="return false;">
+                        <div id="mouseSwipeScroll26" class="swipeclass">
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-1</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-2</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-3</span></div>
+                        <div class="event_img"><img src="img/small-pic-3.jpg" alt=""><span class="event_name_box">Event-4</span></div>
+                        <div class="event_img"><img src="img/small-pic-1.jpg" alt=""><span class="event_name_box">Event-5</span></div>
+                        <div class="event_img"><img src="img/small-pic-2.jpg" alt=""><span class="event_name_box">Event-6</span></div>
+                        </div>
+                      </div>
+                      </ul>  
+                  <a class="black_btn_skin f-center" href="#">add memreas</a> 
+            </div>
+        </div>
+       </div>
+      </div>
+    </div>
+  <!-- End : Content -->
+  <!-- Begin : Footer -->
+  <!-- End : Footer -->
+</div>
+<footer>&copy; 2013 memreas, llc. All rights reserved.</footer>
+<!-- End : Container -->
+
+<script src="js/jquery.mouseSwipe.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+
+  $(document).bind("dragstart", function() { return false; });
+  
+	$('#mouseSwipeScroll').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll2').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll3').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll4').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+   $('#mouseSwipeScroll5').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+   $('#mouseSwipeScroll6').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll7').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+   $('#mouseSwipeScroll8').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+   $('#mouseSwipeScroll9').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll10').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll11').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll12').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll13').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll14').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll15').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll16').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll17').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll18').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll19').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll20').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll21').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll22').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll23').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll24').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll25').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+  $('#mouseSwipeScroll26').swipe({
+    TYPE:'mouseSwipe',
+    HORIZ: true
+  });
+});
+</script>
+
+<!-- custom scrollbars plugin -->
+	<script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+	<script>
+	
+		(function($){
+			$(window).load(function(){
+			
+			$("ul.scrollClass").mCustomScrollbar({
+					scrollButtons:{
+						enable:true
+					}
+				});
+				
+				
+				
+				
+			$("#tab-content div.hideCls").hide(); // Initially hide all content
+			$("#tabs li:first").attr("id","current"); // Activate first tab
+			$("#tab-content div:first").fadeIn(); // Show first tab content*/
+			
+			$('#tabs a').click(function(e) {
+				
+				e.preventDefault();        
+				$("#tab-content div.hideCls").hide(); //Hide all content
+				$("#tabs li").attr("id",""); //Reset id's
+				$(this).parent().attr("id","current"); // Activate this
+				$('#' + $(this).attr('title')).fadeIn(); // Show content for current tab
+			});
+
+			
+				
+				
+				//ajax demo fn
+				$("a[rel='load-content']").click(function(e){
+					
+					e.preventDefault();
+					var $this=$(this),
+						url=$this.attr("href");
+					$this.addClass("loading");
+					$.get(url,function(data){
+						$this.removeClass("loading");
+						$("ul.scrollClass .mCSB_container").html(data); //load new content inside .mCSB_container
+						$("ul.scrollClass").mCustomScrollbar("update"); //update scrollbar according to newly loaded content
+						$("ul.scrollClass").mCustomScrollbar("scrollTo","top",{scrollInertia:200}); //scroll to top
+					});
+				});
+				$("a[rel='append-content']").click(function(e){
+					e.preventDefault();
+					var $this=$(this),
+						url=$this.attr("href");
+					$this.addClass("loading");
+					$.get(url,function(data){
+						$this.removeClass("loading");
+						$("ul.scrollClass .mCSB_container").append(data); //append new content inside .mCSB_container
+						$("ul.scrollClass").mCustomScrollbar("update"); //update scrollbar according to newly appended content
+						$("ul.scrollClass").mCustomScrollbar("scrollTo","h2:last",{scrollInertia:2500,scrollEasing:"easeInOutQuad"}); //scroll to appended content
+					});
+				});
+			});
+		})(jQuery);
+	</script>
+    
+</body>
+</html>
