@@ -842,7 +842,9 @@ class SqlWalker implements TreeWalker
         $class    = $this->em->getClassMetadata($rangeVariableDeclaration->abstractSchemaName);
         $dqlAlias = $rangeVariableDeclaration->aliasIdentificationVariable;
 
-        $this->rootAliases[] = $dqlAlias;
+        if ($rangeVariableDeclaration->isRoot) {
+            $this->rootAliases[] = $dqlAlias;
+        }
 
         $sql = $this->quoteStrategy->getTableName($class,$this->platform) . ' '
             . $this->getSQLTableAlias($class->getTableName(), $dqlAlias);
@@ -858,13 +860,14 @@ class SqlWalker implements TreeWalker
      * Walks down a JoinAssociationDeclaration AST node, thereby generating the appropriate SQL.
      *
      * @param AST\JoinAssociationDeclaration $joinAssociationDeclaration
-     * @param int $joinType
+     * @param int                            $joinType
+     * @param AST\ConditionalExpression      $condExpr
      *
      * @return string
      *
      * @throws QueryException
      */
-    public function walkJoinAssociationDeclaration($joinAssociationDeclaration, $joinType = AST\Join::JOIN_TYPE_INNER)
+    public function walkJoinAssociationDeclaration($joinAssociationDeclaration, $joinType = AST\Join::JOIN_TYPE_INNER, $condExpr = null)
     {
         $sql = '';
 
@@ -979,6 +982,13 @@ class SqlWalker implements TreeWalker
                 break;
         }
 
+        // Handle WITH clause
+        if ($condExpr !== null) {
+            // Phase 2 AST optimization: Skip processing of ConditionalExpression
+            // if only one ConditionalTerm is defined
+            $sql .= ' AND (' . $this->walkConditionalExpression($condExpr) . ')';
+        }
+
         // FIXME: these should either be nested or all forced to be left joins (DDC-XXX)
         if ($targetClass->isInheritanceTypeJoined()) {
             $sql .= $this->_generateClassTableInheritanceJoins($targetClass, $joinedDqlAlias);
@@ -1058,24 +1068,37 @@ class SqlWalker implements TreeWalker
 
         switch (true) {
             case ($joinDeclaration instanceof \Doctrine\ORM\Query\AST\RangeVariableDeclaration):
-                $class = $this->em->getClassMetadata($joinDeclaration->abstractSchemaName);
-                $condExprConjunction = $class->isInheritanceTypeJoined() && $joinType != AST\Join::JOIN_TYPE_LEFT && $joinType != AST\Join::JOIN_TYPE_LEFTOUTER
+                $class      = $this->em->getClassMetadata($joinDeclaration->abstractSchemaName);
+                $dqlAlias   = $joinDeclaration->aliasIdentificationVariable;
+                $tableAlias = $this->getSQLTableAlias($class->table['name'], $dqlAlias);
+                $condition = '(' . $this->walkConditionalExpression($join->conditionalExpression) . ')';
+                $condExprConjunction = ($class->isInheritanceTypeJoined() && $joinType != AST\Join::JOIN_TYPE_LEFT && $joinType != AST\Join::JOIN_TYPE_LEFTOUTER)
                     ? ' AND '
                     : ' ON ';
 
-                $sql .= $this->walkRangeVariableDeclaration($joinDeclaration)
-                      . $condExprConjunction . '(' . $this->walkConditionalExpression($join->conditionalExpression) . ')';
+                $sql .= $this->walkRangeVariableDeclaration($joinDeclaration);
+
+                $conditions = array($condition);
+
+                // Apply remaining inheritance restrictions
+                $discrSql = $this->_generateDiscriminatorColumnConditionSQL(array($dqlAlias));
+
+                if ($discrSql) {
+                    $conditions[] = $discrSql;
+                }
+
+                // Apply the filters
+                $filterExpr = $this->generateFilterConditionSQL($class, $tableAlias);
+
+                if ($filterExpr) {
+                    $conditions[] = $filterExpr;
+                }
+
+                $sql .= $condExprConjunction . implode(' AND ', $conditions);
                 break;
 
             case ($joinDeclaration instanceof \Doctrine\ORM\Query\AST\JoinAssociationDeclaration):
-                $sql .= $this->walkJoinAssociationDeclaration($joinDeclaration, $joinType);
-
-                // Handle WITH clause
-                if (($condExpr = $join->conditionalExpression) !== null) {
-                    // Phase 2 AST optimization: Skip processing of ConditionalExpression
-                    // if only one ConditionalTerm is defined
-                    $sql .= ' AND (' . $this->walkConditionalExpression($condExpr) . ')';
-                }
+                $sql .= $this->walkJoinAssociationDeclaration($joinDeclaration, $joinType, $join->conditionalExpression);
                 break;
         }
 

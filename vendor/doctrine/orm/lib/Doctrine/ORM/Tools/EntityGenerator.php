@@ -152,7 +152,7 @@ class EntityGenerator
         Type::SMALLINT      => 'integer',
         Type::TEXT          => 'string',
         Type::BLOB          => 'string',
-        Type::DECIMAL       => 'float',
+        Type::DECIMAL       => 'string',
         Type::JSON_ARRAY    => 'array',
         Type::SIMPLE_ARRAY  => 'array',
     );
@@ -911,7 +911,7 @@ public function __construct()
     protected function generateDiscriminatorColumnAnnotation($metadata)
     {
         if ($metadata->inheritanceType != ClassMetadataInfo::INHERITANCE_TYPE_NONE) {
-            $discrColumn = $metadata->discriminatorValue;
+            $discrColumn = $metadata->discriminatorColumn;
             $columnDefinition = 'name="' . $discrColumn['name']
                 . '", type="' . $discrColumn['type']
                 . '", length=' . $discrColumn['length'];
