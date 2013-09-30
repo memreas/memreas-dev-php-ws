@@ -20,6 +20,9 @@ class AddEvent {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+        if(!$this->AddNotification){
+                        $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -130,11 +133,23 @@ else {
   //$result = $statement->getResult();
   
   
-   
+   //TODO send Notification
         $event_id = $uuid;
         $message .= 'Event successfully added';
         $status = 'Success';
     
+        $data = array('addNotification' => array(
+                                'user_id' => $user_id,
+                                'event_id' => $event_id,
+                                'table_name' => 'event',
+                                'id' => $event_id,
+                                'meta' => "New Event: $event_name",
+                                )
+                        
+                        
+                    );
+                    
+                    $this->AddNotification->exec($data);
     /*
       foreach ($media_array as $key => $value)
       {

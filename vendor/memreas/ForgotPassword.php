@@ -58,7 +58,9 @@ if (isset($email) && !empty($email)) {
             $to = $email;
             $pass = mt_rand(10000, 999999);
             $password = md5($pass);
-            $updatequr = "UPDATE Application\Entity\User u  set u.password ='" . $password . "' where u.user_id='" . $data->user_id."'";
+                            $token =uniqid();
+
+            $updatequr = "UPDATE Application\Entity\User u  set u.forgot_token ='" . $token . "' where u.user_id='" . $data->user_id."'";
           //  $resofupd = mysql_query($updatequr);
           //  $statement1 = $this->dbAdapter->createStatement($updatequr);
         //    $resofupd = $statement1->execute();
@@ -70,8 +72,8 @@ if (isset($email) && !empty($email)) {
                 $subject = "Welcome to Event App";
                 $message = "<p>Hello " . $data->username . ",</p>";
                 $message .= "<p>Welcome to Event App</p>";
-                $message .= "<p>Your username is: " . $data->username . "</p>";
-                $message .= "<p>Your Password is: " . $pass . "</p>";
+                $message .= "<p>Your Password Activation code is: " .$token . "</p>";
+                //$message .= "<p>Your Password is: " . $pass . "</p>";
                 $message .= "<p>Thanks and Regards,</p>";
                 $message .= "<p><b>Event App Team</b></p>";
                 $headers = "MIME-Version: 1.0" . "\r\n";

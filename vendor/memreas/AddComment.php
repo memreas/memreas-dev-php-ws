@@ -17,6 +17,9 @@ class AddComment {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+        if(!$this->AddNotification){
+            $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -91,9 +94,28 @@ class AddComment {
             //print_r($result);
             $status = 'sucess';
             $message = "Comment successfuly added";
-
+           
+            
             if (empty($status)) {
                 $status = 'failure';
+            } else{
+                 //TODO send notification owner of the event and all who commented.
+                 $query = "SELECT c.user_id FROM  Application\Entity\Comment as c  where c.event_id = '$event_id'";
+          		 $statement = $this->dbAdapter->createQuery($query);
+                    $comment_u = $statement->getResult();
+                    foreach($comment_u as $comment_row){
+                        $data = array('addNotification' => array(
+                                        'user_id' => $comment_row['user_id'],
+                                        'event_id' => $event_id,
+                                        'table_name' => 'media',
+                                        'id' => $media_id,
+                                        'meta' => 'User has comment on ',
+                                    )
+                                );
+                    
+                        $this->AddNotification->exec($data);
+                        
+                    }
             }
 
 

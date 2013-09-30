@@ -6,6 +6,8 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use memreas\AWSManager;
 use memreas\UUID;
+use memreas\gcm;
+
 
 class AddFriendtoevent {
 
@@ -20,6 +22,9 @@ class AddFriendtoevent {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+        if(!$this->AddNotification){
+            $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -46,6 +51,7 @@ class AddFriendtoevent {
 //    echo $key.'=>';print_r($value);
 //}exit;
 //$count = 0;
+        //add group to event_group
         foreach ($group_array as $key => $value) {
 //    echo $count++;
             //event check group already exist
@@ -73,7 +79,7 @@ class AddFriendtoevent {
                 $tblEventGroup->group_id = $group_id;
                 $tblEventGroup->event_id = $event_id;
 
-                $this->dbAdapter->persist($tblComment);
+                $this->dbAdapter->persist($tblEventGroup);
                 $this->dbAdapter->flush();
 
 
@@ -94,6 +100,7 @@ class AddFriendtoevent {
                 }
             }
         }//echo $message;
+        //add friends to event loop
         foreach ($friend_array as $key => $value) {
             $network_name = addslashes(trim($value->network_name));
             $friend_name = addslashes(trim($value->friend_name));
@@ -106,7 +113,7 @@ class AddFriendtoevent {
             //		$result_friend = $statement->execute();
             $statement = $this->dbAdapter->createQuery($friend_query);
             $result_friend = $statement->getResult();
-
+             // add to friend
             if ($row = $result_friend->current()) {
                 $friend_id = $row['friend_id'];
             } else {
@@ -124,7 +131,7 @@ class AddFriendtoevent {
 
 
                 try {
-                    $this->dbAdapter->persist($tblComment);
+                    $this->dbAdapter->persist($tblFriend);
                     $this->dbAdapter->flush();
                 } catch (\Exception $exc) {
                     $status = 'failure';
@@ -156,12 +163,13 @@ class AddFriendtoevent {
                     $error = 1;
                 }
             }
+            // add to user_friend
             if (isset($friend_id) && !empty($friend_id)) {
                 $check_user_frind = "SELECT u  FROM  Application\Entity\UserFriend u where u.user_id='$user_id' and u.friend_id='$friend_id'";
                 // $r = mysql_query($check_user_frind) or die(mysql_error());
                 //    $statement = $this->dbAdapter->createStatement($check_user_frind);
                 //			$r = $statement->execute();
-
+                
                 $statement = $this->dbAdapter->createQuery($check_user_frind);
                 $r = $statement->getResult();
 
@@ -209,7 +217,7 @@ class AddFriendtoevent {
 //                    }
                 }
             }
-
+            //adding friend to event
             if (!empty($event_id) && $error == 0) {//echo "hi";
                 $check_event_frind = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='$event_id' and e.friend_id='$friend_id'";
                 //$r = mysql_query($check_event_frind);
@@ -253,9 +261,32 @@ class AddFriendtoevent {
 //                        
 //                    }
                 }
-            }
-        }
+                
+                //save nofication intable
+                
+                    $data = array('addNotification' => array(
+                                'user_id' => $user_id,
+                                'event_id' => $event_id,
+                                'table_name' => 'event_friend',
+                                'id' => $event_id,
+                                'meta' => $friend_name .'want to add you',
+                                )
+                        
+                        
+                    );
+                    
+                    $this->AddNotification->exec($data);
+                               
+                    //send push message
+                    if(trim($value->network_name == 'memreas')){
+                        gcm::sendpush('kamlesh', 'APA91bGQqtM2213fkQH6sV_jsWeZiQh3aDCVX0Rr1h-i0gATPJhNHVid4zGd5MNvnl_wR2ThYf-IBPrZ8_jxzPnwj8HuAO5yTUS_6bx-h2HiDK9e-N-VoPhtrVw4yFJzVvZvZtlt4rPgTLh4CgZvtltCAIJhXTySWbKcQAh69GGeZBpFAPpfbAI');
 
+                    }
+                	 
+            }
+           
+        }
+        //add friends to event loop end
         header("Content-type: text/xml");
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         $xml_output .= "<xml>";

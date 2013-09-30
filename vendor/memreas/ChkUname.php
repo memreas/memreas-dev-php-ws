@@ -25,6 +25,7 @@ class ChkUname {
     }
 
     public function exec() {
+		
         $data = simplexml_load_string($_POST['xml']);
 //print_r($data);
 

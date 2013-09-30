@@ -46,6 +46,7 @@ use memreas\snsProcessMediaPublish;
 use memreas\Memreastvm;
 use memreas\UploadMedia;
 use memreas\UploadAdvertisement;
+use memreas\AddNotification;
 
 use memreas\Memreas;
 use memreas\MemreasTables;
@@ -54,7 +55,7 @@ class IndexController extends AbstractActionController {
 
     //protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
     //protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
-    protected $url = "/index/";
+    protected $url = "http://test";
     protected $user_id;
     protected $storage;
     protected $authservice;
@@ -255,6 +256,17 @@ class IndexController extends AbstractActionController {
 
                     $uploadadvertisement = new UploadAdvertisement($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $uploadadvertisement->exec();
+                } else if ($actionname == "addNotification") {
+                    
+
+                    $addNotification = new AddNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $addNotification->exec();
+                }
+                else if ($actionname == "changepassword") {
+                    
+
+                    $changepassword = new \memreas\ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $changepassword->exec();
                 }
 
                $output = ob_get_clean();
