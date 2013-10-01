@@ -101,7 +101,8 @@ class ListAllmedia {
                 $xml_output.="<page>$page</page>";
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Media List</message>";
-                foreach ($result as  $row ){
+                foreach ($result as  $rowObj ){
+                	$row = (array) $rowObj;
                     $url79x80 = '';
                     $url448x306 = '';
                     $url98x78 = '';
