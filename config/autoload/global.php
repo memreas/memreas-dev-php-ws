@@ -44,6 +44,7 @@ return array(
                     'enum' => 'string',
                     'bit' => 'string'
                 ),
+				//integration db
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
                 'params' => array(
                     'host' => 'aa15nf7gzm5gbt3.co0fw2snbu92.us-east-1.rds.amazonaws.com',
@@ -51,6 +52,15 @@ return array(
                     'dbname' => 'memreasintdb',
                     'user'     => 'memreasdbuser',
 					'password' => 'memreas2013',
+                /*
+				//localhost db
+                'params' => array(
+                    'host' => 'localhost',
+                    'port' => '3306',
+                    'dbname' => 'memreasintdb',
+                    'user'     => 'root',
+					'password' => 'john1016',
+				*/
                 )
             )
         )

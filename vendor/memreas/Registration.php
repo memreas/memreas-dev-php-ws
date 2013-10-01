@@ -37,19 +37,24 @@ class Registration {
         error_log("Inside exec...");
         $user_id = UUID::getUUID($this->dbAdapter);
         error_log("Inside exec user_id is $user_id...");
+error_log("_REQUEST----> " . print_r($_REQUEST, true) . PHP_EOL);
 
-        $data = simplexml_load_string($_POST['xml']);
-        $username = trim($data->registration->username);
-        $email = trim($data->registration->email);
-        $email = strtolower($email);
-        $password = trim($data->registration->password);
-        $device_token = trim($data->registration->device_token);
-        $device_type = trim($data->registration->device_type);
-
-        //$username = trim($_POST['username']);
-        //$email = trim($_POST['email']);
-        //$password = trim($_POST['password']);
-        //$device_id = trim($_POST['device_id']);
+		if (isset($_POST['xml'])) {
+			$data = simplexml_load_string($_POST['xml']);
+			$username = trim($data->registration->username);
+			$email = trim($data->registration->email);
+			$email = strtolower($email);
+			$password = trim($data->registration->password);
+			$device_token = trim($data->registration->device_token);
+			$device_type = trim($data->registration->device_type);
+		} else {
+			$username = trim($_REQUEST['username']);
+			$email = trim($_REQUEST['email']);
+			$email = strtolower($email);
+			$password = trim($_REQUEST['password']);
+			$device_token = trim($_REQUEST['device_token']);
+			$device_type = trim($_REQUEST['device_type']);
+		}
 
         error_log("Inside exec loaded data...");
         try {
@@ -63,12 +68,15 @@ class Registration {
                 error_log("Inside exec setting sql...");
 
                 $sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
+error_log("Inside exec setting sql - sql ----> $sql" . PHP_EOL);
 
                 //$statement = $this->dbAdapter->createStatement($sql);
                 //$result = $statement->execute();
                 //$row = $result->current();
                 $statement = $this->dbAdapter->createQuery($sql);
+//error_log("Inside exec setting sql - statement ----> $statement" . PHP_EOL);
                 $result = $statement->getOneOrNullResult();
+//error_log("Inside exec setting sql - result ----> $result" . PHP_EOL);
 
 
                 error_log("Inside exec fetched sql...");
@@ -93,6 +101,7 @@ class Registration {
                 $password = md5($password);
                 $roleid = 2;
                 $statusid = 0;
+                $forgottoken = "";
                 $created = strtotime(date('Y-m-d H:i:s'));
                 $modified = strtotime(date('Y-m-d H:i:s'));
 
@@ -105,12 +114,14 @@ class Registration {
                 $tblUser->username = $username;
                 $tblUser->role = $roleid;
                 $tblUser->disable_account = $statusid;
+                $tblUser->forgot_token = $forgottoken;
                 $tblUser->create_date = $created;
                 $tblUser->update_time = $modified;
 
 
                 $this->dbAdapter->persist($tblUser);
                 $this->dbAdapter->flush();
+                
                 //	$sql = "insert into Application\Entity\User (user_id,`email_address`,`password`,`username`,`role`,`disable_account`,`create_date`,`update_time`) values ('$user_id','" . $email . "','" . $password . "','" . $username . "'," . $roleid . "," . $statusid . ",'" . $created . "','" . $modified . "')";
                 //$statement = $this->dbAdapter->createStatement($sql);
                 //$result = $statement->execute();
@@ -121,29 +132,34 @@ class Registration {
                 //if (mysql_affected_rows() < 0)
                 //	throw new Exception('Unable to add record.');
                 error_log("Inside adding device...");
-                echo '<pre>';print_r();
+                echo '<pre>';
 
                 if(!empty($device_token)&& !empty($device_type)){
-                $device_id = UUID::getUUID($this->dbAdapter);
-                 
-                $tblDevice = new \Application\Entity\Device();
-                $tblDevice->device_id = $device_id;
-                $tblDevice->device_token = $device_token;
-                $tblDevice->user_id = $user_id;
-                $tblDevice->create_time = $created;
-                $tblDevice->update_time = $modified;
+					$device_id = UUID::getUUID($this->dbAdapter);
+				 
+					$tblDevice = new \Application\Entity\Device();
+					$tblDevice->device_id = $device_id;
+					$tblDevice->device_token = $device_token;
+					$tblDevice->user_id = $user_id;
+					$tblDevice->create_time = $created;
+					$tblDevice->update_time = $modified;
 
 
-                $this->dbAdapter->persist($tblDevice);
-                $this->dbAdapter->flush();
+					$this->dbAdapter->persist($tblDevice);
+					$this->dbAdapter->flush();
                 }
+error_log("_FILES -----> " . print_r($_FILES['f']) . PHP_EOL);
+error_log("__DIR__ -----> " . dirname(__DIR__) . PHP_EOL);
+error_log(" cwd -----> " . getcwd() . PHP_EOL);
+chdir();
+error_log("__DIR__ -----> " . dirname(__DIR__) . PHP_EOL);
                 // upload profile image
                 if (isset($_FILES['f']) && !empty($_FILES['f']['name'])) {
                     $s3file_name = time() . $_FILES['f']['name'];
                     $content_type = $_FILES['f']['type'];
-                    $dirPath = dirname(__DIR__) . "/media/";
+                    //$dirPath = dirname(__DIR__) . "/data/media/";
+                    $dirPath = getcwd() . MemreasConstants::DIR_PATH;
                     $file = $dirPath . $s3file_name;
-
 
                     if (strpos($_FILES['f']['type'], 'image') < 0)
                         throw new \Exception('Your profile is not created successfully. Please Upload Image.');
@@ -249,6 +265,7 @@ class Registration {
             $status = 'Failure';
 
             $message = $exc->getMessage();
+error_log("error message ----> $message" . PHP_EOL);
         }
 
         header("Content-type: text/xml");

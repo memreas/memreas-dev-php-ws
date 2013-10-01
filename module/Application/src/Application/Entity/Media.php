@@ -41,7 +41,7 @@ class Media {
      *
      * @ORM\Column(name="sync_status", type="integer", nullable=false)
      */
-    private $sync_status;
+    private $sync_status = '0';
 
     /**
      * @var string
@@ -55,7 +55,7 @@ class Media {
      *
      * @ORM\Column(name="report_flag", type="string", length=1, nullable=false)
      */
-    private $report_flag;
+    private $report_flag = '0';
 
     /**
      * @var string

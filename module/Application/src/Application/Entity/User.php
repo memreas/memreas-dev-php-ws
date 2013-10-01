@@ -38,15 +38,6 @@ class User
      */
    protected $password;
    
-   /**
-     * @var boolean
-     *
-     * @ORM\Column(name="disable_account", type="boolean", nullable=false)
-     */
-
-	
-	protected $disable_account = '0';
-	
 	    /**
      * @var string
      *
@@ -120,12 +111,19 @@ class User
      */
     private $twitter_username='';
 
-    /**
+   /**
      * @var boolean
      *
      * @ORM\Column(name="disable_account", type="boolean", nullable=false)
      */
-  //  private $disableAccount = '0';
+	protected $disable_account = 0;
+	
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="forgot_token", type="string", length=255, nullable=false)
+     */
+   private $forgot_token='';
 
     /**
      * @var string
@@ -140,13 +138,6 @@ class User
      * @ORM\Column(name="update_time", type="string", length=255, nullable=false)
      */
     private $update_time;
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="forgot_token", type="string", length=255, nullable=false)
-     */
-   private $forgot_token;
-
 
    public function __set($name, $value) {
 

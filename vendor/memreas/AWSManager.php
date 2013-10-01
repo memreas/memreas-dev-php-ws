@@ -12,6 +12,7 @@ use Aws\Common\Exception\MultipartUploadException;
 use Aws\S3\Model\MultipartUpload\UploadBuilder;
 use Aws\ElasticTranscoder\ElasticTranscoderClient;
 use PHPImageWorkshop\ImageWorkshop;
+use Application\Model\MemreasConstants;
 
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -557,7 +558,8 @@ class AWSManager {
 
 //added by Sufalam STRAT
     public function webserviceUpload($user_id, $s3file_name, $content_type) {
-        $dirPath = dirname(__DIR__) . "/media/";
+        //$dirPath = dirname(__DIR__) . "/media/";
+        $dirPath = getcwd() . MemreasConstants::DIR_PATH;
         $file = $dirPath . $s3file_name;
         $layer = ImageWorkshop::initFromPath($file);
         //Saving image ugh

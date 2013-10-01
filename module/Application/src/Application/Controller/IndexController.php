@@ -131,6 +131,7 @@ class IndexController extends AbstractActionController {
         }
 
             if ($codebase == "new_code" && !empty($actionname)) {
+error_log("actionname ---> $actionname" . PHP_EOL);
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
                 $memreas_tables = new MemreasTables($this->getServiceLocator());
