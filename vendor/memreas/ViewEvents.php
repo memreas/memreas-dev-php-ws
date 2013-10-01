@@ -24,7 +24,7 @@ class ViewEvents {
     }
 
     public function exec() {
-
+	ini_set('max_execution_time', 120); 
         $data = simplexml_load_string($_POST['xml']);
         $user_id = trim($data->viewevent->user_id);
         $is_my_event = trim($data->viewevent->is_my_event);
@@ -64,8 +64,7 @@ class ViewEvents {
             $statement->setFirstResult($from);
             $result_event = $statement->getResult();
 
-
-
+ 
             if ($result_event) {
                 if (count($result_event) <= 0) {
                     $xml_output.="<status>Failure</status>";
@@ -89,27 +88,37 @@ class ViewEvents {
                     $xml_output.="<page>$page</page>";
                     $xml_output.="<events>";
                 }if (count($result_event) > 0) {
-                    while ($row = $result_event->next()) {//get media
+                    foreach($result_event as $row) {//get media
                         $xml_output.="<event>";
-                        $xml_output.="<event_id>" . $row['event_id'] . "</event_id>";
-                        $xml_output.="<event_name>" . $row['name'] . "</event_name>";
+                        $xml_output.="<event_id>" . $row->event_id . "</event_id>";
+                        $xml_output.="<event_name>" . $row->name . "</event_name>";
 
-                        $xml_output.="<friend_can_post>" . $row['friends_can_post'] . "</friend_can_post>";
-                        $xml_output.="<friend_can_share>" . $row['friends_can_share'] . "</friend_can_share>";
-
-                        $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata
-                                    FROM Application\Entity\EventMedia event_media  inner join Application\Entity\Event event on event.event_id=event_media.event_id
-                                    inner join Application\Entity\Media media  on event_media.media_id=media.media_id
-                                    where event.user_id='$user_id' and event.event_id='" . $row['event_id'] . "' ORDER BY media.create_date DESC";
-                        //$query_event_media_result = mysql_query($query_event_media);
-                        //$statement1 = $this->dbAdapter->createStatement($query_event_media);
-                        //  $query_event_media_result = $statement1->execute();
-                        //  $row = $query_event_media_result->current();
+                        $xml_output.="<friend_can_post>" . $row->friends_can_post . "</friend_can_post>";
+                        $xml_output.="<friend_can_share>" . $row->friends_can_share . "</friend_can_share>";
+/*
+                        $query_event_media = 
+                                "SELECT event.event_id,event.name,media.media_id,media.metadata
+                                FROM Application\Entity\EventMedia event_media  inner join Application\Entity\Event event on event.event_id=event_media.event_id
+                                inner join Application\Entity\Media media  on event_media.media_id=media.media_id
+                                where event.user_id='$user_id' and event.event_id='" . $row->event_id . "' ORDER BY media.create_date DESC";
+                       
                         $statement = $this->dbAdapter->createQuery($query_event_media);
                         $query_event_media_result = $statement->getResult();
+ * 
+ */
+                        
+						$qb = $this->dbAdapter->createQueryBuilder();
+						$qb->select('event.event_id','event.name','media.media_id','media.metadata');
+						$qb->from('Application\Entity\EventMedia', 'event_media');
+						$qb->join('Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id');
+						$qb->join('Application\Entity\Media', 'media', 'WITH', 'media.media_id = media.media_id');
+						$qb->where('event.user_id = ?1 and event.event_id!=?2');
+						$qb->orderBy('media.create_date' ,'DESC');
+						$qb->setParameter(1,$user_id);
+						$qb->setParameter(2,$row->event_id );
+ 						$query_event_media_result = $qb->getQuery()->getResult();
 
-
-                        if (!$query_event_media_result) {
+                        if (empty($query_event_media_result)) {
                             $xml_output.="<status>Failure</status>";
                             $xml_output.="<message>" . mysql_error() . "</message>";
                             $xml_output.="<events><event>";
@@ -122,9 +131,9 @@ class ViewEvents {
                             $xml_output.= "</event></events>";
                         } else {
 
-                            if ($query_event_media_result->count() > 0) {
+                            if (count($query_event_media_result) > 0) {
 
-                                while ($row1 = $query_event_media_result->next()) {
+                                foreach ( $query_event_media_result as $row1) {
                                     $url = "";
                                     $type = "";
                                     $thum_url = '';
@@ -151,12 +160,12 @@ class ViewEvents {
                                             $type = "Type not Mentioned";
                                     }
                                     $xml_output.="<event_media_type>" . $type . "</event_media_type>";
-                                    $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+                                    $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
                                     $xml_output.="<event_media_id>" . $row1['media_id'] . "</event_media_id>";
-                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum>" . CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "</event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
-                                    $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
-                                    $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
-                                    $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
+                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum>" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "</event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+                                    $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
+                                    $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
+                                    $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
                                     break;
                                 }
                             } else {
@@ -216,7 +225,7 @@ class ViewEvents {
                 $message = "No Record Found";
             } else {
 
-                while ($row_getfriendid = $result_getfriendid->next()) {
+                foreach($result_getfriendid as $row_getfriendid) {
 //        print_r($row_getfriendid);
 //         $q_getuserid = "SELECT user_id FROM user_friend WHERE friend_id='" . $row_getfriendid['friend_id'] . "'";
 //        $result_getuserid = mysql_query($q_getuserid);
@@ -253,7 +262,7 @@ class ViewEvents {
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                     and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
-                    and event_friend.friend_id='" . $row_getfriendid['friend_id'] . "' ORDER BY `user`.`username` ASC,`event`.`create_time` DESC ";
+                    and event_friend.friend_id='" . $row_getfriendid->friend_id . "' ORDER BY `user`.`username` ASC,`event`.`create_time` DESC ";
                     // $result_friendevent = mysql_query($q_friendsevent) or die(mysql_error());
                     //$statement = $this->dbAdapter->createStatement($q_friendsevent);
                     // $result_friendevent = $statement->execute();
@@ -264,14 +273,14 @@ class ViewEvents {
 
                     $xml_output.="<friends>";
                     $user_id = null;
-                    while ($row_friendsevent = $result_friendevent->next()) {
+                    foreach ($result_friendevent as $row_friendsevent) {
 //                echo "<pre>";
 //                print_r($row_friendsevent);
                         $array[$row_friendsevent['username']][] = $row_friendsevent;
                     }
-//            echo "<pre>";print_r($array);exit;
+            echo "<pre>";print_r($array);exit;
                     foreach ($array as $key => $value) {
-//                echo "<pre>";print_r($value);
+              // echo "<pre>";print_r($value);exit;
                         $url1 = null;
                         $xml_output.="<friend>";
                         $xml_output.="<event_creator>" . $value[0]['username'] . "</event_creator>";
@@ -285,19 +294,19 @@ class ViewEvents {
                             $re = $statement->getResult();
 
 
-                            $row = $re->next();
+                            $row = array_pop($re);
                             $json_array = json_decode($row['metadata'], true);
                             if (!empty($json_array['S3_files']['path']))
-                                $url1 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
+                                $url1 =  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
 
                             if (!empty($json_array['S3_files']['79x80']))
-                                $pic_79x80 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['79x80'];
+                                $pic_79x80 =  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['79x80'];
 
                             if (!empty($json_array['S3_files']['448x306']))
-                                $pic_448x306 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['448x306'];
+                                $pic_448x306 =  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['448x306'];
 
                             if (!empty($json_array['S3_files']['98x78']))
-                                $pic_98x78 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['98x78'];
+                                $pic_98x78  = MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['98x78'];
                         }
                         $xml_output.="<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
                         $xml_output.="<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
@@ -315,13 +324,24 @@ class ViewEvents {
                             $xml_output.="<event_name>" . $row_friendsevent['name'] . "</event_name>";
                             $xml_output.="<friend_can_post>" . $row_friendsevent['friends_can_post'] . "</friend_can_post>";
                             $xml_output.="<friend_can_share>" . $row_friendsevent['friends_can_share'] . "</friend_can_share>";
-                            $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata
+                           /* $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata
                                     FROM Application\Entity\EventMedia event_media inner join Application\Entity\Event event  on event.event_id=event_media.event_id
                                     inner join Application\Entity\Media media  on event_media.media_id=media.media_id
                                     where  event.event_id='" . $row_friendsevent['event_id'] . "' ORDER BY media.create_date DESC";
-                            $query_event_media_result = mysql_query($query_event_media) or die(mysql_error());
-                            if (mysql_num_rows($query_event_media_result) > 0) {
-                                while ($row = mysql_fetch_assoc($query_event_media_result)) {
+                            $query_event_media_result = mysql_query($query_event_media) or die(mysql_error());*/
+                            $qb = $this->dbAdapter->createQueryBuilder();
+                                                    $qb->select('event.event_id','event.name','media.media_id','media.metadata');
+                                                    $qb->from('Application\Entity\EventMedia', 'event_media');$qb->join('Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id');
+                                                 $qb->join('Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id');
+                                                 $qb->where('event.event_id = ?1 ');
+                                                    $qb->orderBy('media.create_date' ,'DESC');
+                                                                $qb->setParameter(1, $row_friendsevent['event_id']);
+       
+        
+$$query_event_media_result = $qb->getQuery()->getResult();
+                            
+                            if (count($query_event_media_result) > 0) {
+                                foreach ($query_event_media_result as $row) {
                                     $url = '';
                                     $type = "";
                                     $thum_url = '';
@@ -348,12 +368,12 @@ class ViewEvents {
                                             $type = "Type not Mentioned";
                                     }
                                     $xml_output.="<event_media_type>" . $type . "</event_media_type>";
-                                    $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
+                                    $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
                                     $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>";
-                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum>" . CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "</event_media_video_thum>" : "<event_media_video_thum/>";
-                                    $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
-                                    $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
-                                    $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
+                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum>" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "</event_media_video_thum>" : "<event_media_video_thum/>";
+                                    $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
+                                    $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
+                                    $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
                                     break;
                                 }
                             }else {
@@ -609,7 +629,7 @@ class ViewEvents {
                 $xml_output.="<page>$page</page>";
                 $xml_output.="<friends>";
 
-                while ($row3 = $result_pub->next()) {
+                foreach($result_pub as $row3) {
                     $pic = '';
                     $xml_output.="<friend>";
                     $xml_output.="<event_creator>" . $row3['username'] . "</event_creator>";
@@ -626,21 +646,21 @@ class ViewEvents {
 
 
                         if ($result_profile_pic) {
-                            if ($row6 = $result_profile_pic->next()) {
+                            if ($row6 = array_pop($result_profile_pic)) {
                                 $json_array = json_decode($row6['metadata'], true);
 //                        echo "<pre>";
 //                        print_r($json_array['S3_files']);
                                 if (!empty($json_array['S3_files']['path']))
-                                    $pic = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
+                                    $pic =  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
 
                                 if (!empty($json_array['S3_files']['79x80']))
-                                    $pic_79x80 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['79x80'];
+                                    $pic_79x80 =  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['79x80'];
 
                                 if (!empty($json_array['S3_files']['448x306']))
-                                    $pic_448x306 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['448x306'];
+                                    $pic_448x306 = MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['448x306'];
 
                                 if (!empty($json_array['S3_files']['98x78']))
-                                    $pic_98x78 = CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['98x78'];
+                                    $pic_98x78 =  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['98x78'];
                             }
                         }
                     }
@@ -663,14 +683,14 @@ class ViewEvents {
 
                     if ($result2) {
                         $xml_output.="<events>";
-                        while ($row5 = mysql_fetch_array($result2)) {
+                        foreach ($result2 as $row5) {
 
                             $xml_output.="<event>";
-                            $xml_output.="<event_id>" . $row5['event_id'] . "</event_id>";
-                            $xml_output.="<event_name>" . $row5['name'] . "</event_name>";
-                            $xml_output.="<friend_can_post>" . $row5['friends_can_post'] . "</friend_can_post>";
-                            $xml_output.="<friend_can_share>" . $row5['friends_can_share'] . "</friend_can_share>";
-                            $query_event_public = "SELECT event_media.event_id,media.media_id,media.metadata
+                            $xml_output.="<event_id>" . $row5->event_id. "</event_id>";
+                            $xml_output.="<event_name>" . $row5->name . "</event_name>";
+                            $xml_output.="<friend_can_post>" . $row5->friends_can_post . "</friend_can_post>";
+                            $xml_output.="<friend_can_share>" . $row5->friends_can_share . "</friend_can_share>";
+                          /*  $query_event_public = "SELECT event_media.event_id,media.media_id,media.metadata
                                     FROM Application\Entity\Media  media inner join  Application\Entity\EventMedia event_media
                                     on  event_media.media_id=media.media_id 
                                     where event_media.event_id='" . $row5['event_id'] . "' and event_media.event_id='" . $row5['event_id'] . "' ORDER BY media.create_date DESC";
@@ -679,12 +699,22 @@ class ViewEvents {
                             //   $result_event_public = $statement->execute();
                             //$row = $result->current();
                             $statement = $this->dbAdapter->createQuery($query_event_public);
-                            $result_event_public = $statement->getResult();
+                            $result_event_public = $statement->getResult();*/
+                            $qb = $this->dbAdapter->createQueryBuilder();
+                                        $qb->select('event_media.event_id','media.media_id','media.metadata');
+                             $qb->from('Application\Entity\Media', 'media');$qb->join('Application\Entity\EventMedia', 'event_media', 'WITH', 'event_media.event_id = media.event_id');
+                               
+                                $qb->where('event_media.event_id = ?1 and event_media.event_id!=?1');
+                                $qb->orderBy('media.create_date' ,'DESC');
+                                            $qb->setParameter(1,$row5->event_id);
+       
+        
+$result_event_public = $qb->getQuery()->getResult();
 
 
                             $only_audio_in_event = 0;
                             if (count($result_event_public) > 0) {
-                                while ($row = $result_event_public->next()) {
+                                foreach ( $result_event_public as $row) {
 //                            echo "<pre>";
 //                            print_r($row);
                                     $url = '';
@@ -717,12 +747,12 @@ class ViewEvents {
                                     }
                                     $only_audio_in_event = 0;
                                     $xml_output.="<event_media_type>" . $type . "</event_media_type>";
-                                    $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
+                                    $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
                                     $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>";
-                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
-                                    $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
-                                    $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
-                                    $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
+                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
+                                    $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
+                                    $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" .  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
+                                    $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
                                     break;
                                 }if ($only_audio_in_event) {
                                     $xml_output.="<event_media_type></event_media_type>";
