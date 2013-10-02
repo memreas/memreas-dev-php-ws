@@ -19,7 +19,7 @@ class EventFriend
      * @ORM\Id
      
      */
-    private $eventId;
+    private $event_id;
 
     /**
      * @var string
@@ -28,7 +28,7 @@ class EventFriend
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $friendId;
+    private $friend_id;
 
 	  public function __set($name, $value) {
 
