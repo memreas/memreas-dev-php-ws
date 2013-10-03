@@ -44,6 +44,7 @@ return array(
                     'enum' => 'string',
                     'bit' => 'string'
                 ),
+                /*
 				//integration db
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
                 'params' => array(
@@ -52,7 +53,7 @@ return array(
                     'dbname' => 'memreasintdb',
                     'user'     => 'memreasdbuser',
 					'password' => 'memreas2013',
-                /*
+				*/
 				//localhost db
                 'params' => array(
                     'host' => 'localhost',
@@ -60,7 +61,6 @@ return array(
                     'dbname' => 'memreasintdb',
                     'user'     => 'root',
 					'password' => 'john1016',
-				*/
                 )
             )
         )
