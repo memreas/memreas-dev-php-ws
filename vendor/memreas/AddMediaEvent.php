@@ -42,8 +42,8 @@ error_log("AddMediaEvent _POST[user_id] ----> " . $_POST['user_id'] . PHP_EOL);
                 $user_id = trim($_POST['user_id']);
             } else {
                 $message = 'Error : User ID is Mempty';
-	            throw new \Exception('Error : User ID is Mempty');
-	        }
+            throw new \Exception('Error : User ID is Mempty');
+			}
 
 error_log("AddMediaEvent exec user_id ----> " . $user_id . PHP_EOL);
 
@@ -106,12 +106,12 @@ error_log("AddMediaEvent exec is_server_image == 1 else " . PHP_EOL);
 				////////////////////////////////////
 				// fetch parameters to upload to S3
 				////////////////////////////////////
-                $content_type = trim($_POST['content_type']);
-                $s3file_name = trim($_POST['s3file_name']);
-                $email = trim($_POST['email']);
-                $s3url = trim($_POST['s3url']);
+                  $content_type = trim($_POST['content_type']);
+                 $s3file_name = trim($_POST['s3file_name']);
+                 $email = trim($_POST['email']);
+                 $s3url = trim($_POST['s3url']);
                 $isVideo = 0;
-                $s3path = $user_id . '/';
+                 $s3path = $user_id . '/';
                 //$media_id = getUUID(); //generate GUUID
                 $media_id = UUID::getUUID($this->dbAdapter);
 
@@ -163,37 +163,37 @@ error_log("AddMediaEvent exec - just udpated Media " . PHP_EOL);
                 } else {
 	                //insert into media table
 					$now = date('Y-m-d H:i:s');
-					$tblMedia = new \Application\Entity\Media();
-					$tblMedia->media_id = $media_id;
-					$tblMedia->user_id = $user_id;
-					$tblMedia->is_profile_pic = $is_profile_pic;
-					$tblMedia->metadata = $json_str;
+                $tblMedia = new \Application\Entity\Media();
+                $tblMedia->media_id = $media_id;
+                $tblMedia->user_id = $user_id;
+                $tblMedia->is_profile_pic = $is_profile_pic;
+                $tblMedia->metadata = $json_str;
 					$tblMedia->create_date = $now;
 					$tblMedia->update_date = $now;
-					$this->dbAdapter->persist($tblMedia);
-					$this->dbAdapter->flush();
+                $this->dbAdapter->persist($tblMedia);
+  $this->dbAdapter->flush();
 error_log("AddMediaEvent exec - just inserted Media " . PHP_EOL);
                 }
-                
+
 				$event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
 				if (isset($event_id)) {
-					$tblEventMedia = new \Application\Entity\EventMedia();
-					$tblEventMedia->media_id = $media_id;
-					$tblEventMedia->event_id = $event_id;
-					$this->dbAdapter->persist($tblEventMedia);
-					$this->dbAdapter->flush();
+                        $tblEventMedia = new \Application\Entity\EventMedia();
+                        $tblEventMedia->media_id = $media_id;
+                        $tblEventMedia->event_id = $event_id;
+                        $this->dbAdapter->persist($tblEventMedia);
+                        $this->dbAdapter->flush();
 error_log("AddMediaEvent exec - just inserted EventMedia " . PHP_EOL);
 
-					//   $q_event_media = "INSERT INTO Application\Entity\eventMedia (media_id, event_id) VALUES ('$media_id', '$event_id')";
-					//$query_result1 = mysql_query($q_event_media);
-					//    $statement1 = $this->dbAdapter->createStatement($q_event_media);
-					//  $query_result1 = $statement1->execute();
-					//  $statement = $this->dbAdapter->createQuery($q_event_media);
-					// $query_result1 = $statement->getResult();
+                        //   $q_event_media = "INSERT INTO Application\Entity\eventMedia (media_id, event_id) VALUES ('$media_id', '$event_id')";
+                        //$query_result1 = mysql_query($q_event_media);
+                        //    $statement1 = $this->dbAdapter->createStatement($q_event_media);
+                        //  $query_result1 = $statement1->execute();
+                        //  $statement = $this->dbAdapter->createQuery($q_event_media);
+                        // $query_result1 = $statement->getResult();
 					//if (!$query_result1)
 					//	throw new Exception('Error : ' . mysql_error());
 				}
-
+                        
                 //if (!$is_audio) {
                 if (!$is_server_image) {
                     $message_data = array(
@@ -224,12 +224,12 @@ error_log("AddMediaEvent exec - just inserted EventMedia " . PHP_EOL);
              * @todo send to all particiepent
              * 
              */
-            $query = "SELECT ef.user_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
+            $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
             $statement = $this->dbAdapter->createQuery($query);
             $efusers = $statement->getResult();
             foreach ($efusers as $ef) {
                 $data = array('addNotification' => array(
-                        'user_id' =>$ef['user_id'],
+                        'user_id' =>$ef['friend_id'],
                         'event_id' => $event_id,
                         'table_name' => 'media',
                         'id' => $media_id,

@@ -26,8 +26,7 @@ class NotificationLink
      * @var string
      *
      * @ORM\Column(name="id", type="string", length=255, nullable=false)
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="NONE")
+  
      */
     private $id;
 

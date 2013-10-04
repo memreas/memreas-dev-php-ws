@@ -100,11 +100,8 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
         //       $row = $result->current();
 //$statement = $this->dbAdapter->createQuery($q1);
         //$result = $statement->getResult();
-
-        if (!$result) {
-            $error_flage = 1;
-            $message = mysql_error();
-        } else {
+        
+        
             if (count($result) <= 0) {
                 $error_flage = 2;
                 $message = "No Record found for this Event";
@@ -112,8 +109,9 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                 $xml_output.="<page>$page</page>";
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Media List</message>";
-                foreach ($result as  $rowObj ){
-                	$row = (array) $rowObj;
+                foreach ($result as  $row ){
+                	
+                    
                     $url79x80 = '';
                     $url448x306 = '';
                     $url98x78 = '';
@@ -121,7 +119,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     $is_download = 0;
 
 
-                    $json_array = json_decode($row['metadata'], true);
+                    $json_array = json_decode($row->metadata, true);
                     if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                         $type = "image";
                         if (isset($json_array['S3_files']['79x80']))
@@ -159,7 +157,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     }
 //            }
                     $xml_output.="<media>";
-                    $xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
+                    $xml_output.="<media_id>" . $row->media_id . "</media_id>";
                     $xml_output.="<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
                     $xml_output.="<is_downloaded>$is_download</is_downloaded>";
                     $xml_output.="<event_media_video_thum>";
@@ -179,7 +177,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     $xml_output.="</media>";
                 }
             }
-        }
+        
         if ($error_flage) {
             $xml_output.="<status>Failure</status>";
             $xml_output.= "<message>$message</message>";

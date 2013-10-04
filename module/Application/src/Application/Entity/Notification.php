@@ -26,7 +26,6 @@ class Notification
      * @var string
      *
      * @ORM\Column(name="user_id", type="string", length=255, nullable=false)
-     * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $user_id;
