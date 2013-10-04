@@ -14,7 +14,7 @@
 return array(
     'db' => array(
         'adapters' => array(
-            'memreasdevdb' => array(
+            'memreasintdb' => array(
                 'driver' => 'Pdo',
                 'driver_options' => array(
                     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
@@ -44,7 +44,7 @@ return array(
                     'enum' => 'string',
                     'bit' => 'string'
                 ),
-                /*
+/*
 				//integration db
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
                 'params' => array(
@@ -53,7 +53,7 @@ return array(
                     'dbname' => 'memreasintdb',
                     'user'     => 'memreasdbuser',
 					'password' => 'memreas2013',
-				*/
+*/
 				//localhost db
                 'params' => array(
                     'host' => 'localhost',

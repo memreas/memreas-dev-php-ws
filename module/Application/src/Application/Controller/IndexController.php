@@ -131,7 +131,7 @@ class IndexController extends AbstractActionController {
         }
 
             if ($codebase == "new_code" && !empty($actionname)) {
-error_log("actionname ---> $actionname" . PHP_EOL);
+error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
                 $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -148,6 +148,7 @@ error_log("actionname ---> $actionname" . PHP_EOL);
                     $chkuname = new ChkUname($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $chkuname->exec();
                 } else if ($actionname == "addmediaevent") {
+error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                     $addmediaevent = new AddMediaEvent($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addmediaevent->exec();
                 } else if ($actionname == "likemedia") {

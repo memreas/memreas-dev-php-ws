@@ -68,9 +68,6 @@ public function add($key,$name) {
             $message ="";
             $status = "fail";
         }
-
-        
- 
         
         if(empty($frmweb)){
         header("Content-type: text/xml");
