@@ -89,12 +89,10 @@ error_log("AddMediaEvent exec eis_server_image == 1 " . PHP_EOL);
                 //   $statement = $this->dbAdapter->createQuery($q_event_media);
                 // $query_result1 = $statement->getResult();
 
-                if (!$query_result1) {
-                    throw new Exception('Error : ' . mysql_error());
-                } else {
+                
                     $status = 'Success';
                     $message = "Media Successfully add";
-                }
+                 
             } 
             else {
 				/////////////////////////////////////////////////
