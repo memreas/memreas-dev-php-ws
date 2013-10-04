@@ -206,7 +206,7 @@ error_log("AddMediaEvent exec - just inserted EventMedia " . PHP_EOL);
                         'email' => $email
                     );
 
-                    $aws_manager = new AWSManager();
+                    $aws_manager = new AWSManager($this->service_locator);
                     $response = $aws_manager->snsProcessMediaPublish($message_data);
 
                     if ($response == 1) {

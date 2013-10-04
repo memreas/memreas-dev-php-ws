@@ -24,11 +24,15 @@ class AWSManager {
     private $sns = null;
     private $topicArn = null;
     private $awsTranscode = null;
+    private $service_locator = null;
+    private $dbAdapter = null;
 
-    public function __construct() {
+    public function __construct($service_locator) {
         //print "In AWSManager constructor <br>";
         error_log("Inside AWSManager contructor...", 0);
 
+		$this->service_locator = $service_locator;
+		$this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         $this->aws = Aws::factory(array(
                     'key' => 'AKIAJMXGGG4BNFS42LZA',
                     'secret' => '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',
@@ -110,19 +114,16 @@ error_log("Inside snsProcessMediaSubscribe result ----> $result" . PHP_EOL);
             $paths = $this->s3upload($user_id, $media_id, $s3file_name, $content_type, $file);
 
             ////////////////////////////////////////////////////////////////////
-            //Store to database here...
-            $query = "SELECT metadata FROM media WHERE media_id = '$media_id'";
-            $result = mysql_query($query) or die("SELECT FROM MEDIA FAILED");
-            $row = mysql_fetch_array($result);
-
-
-            $metadata = json_decode($row['metadata'], true);
+            //Retrieve media entry here...
+            $metadata = json_decode($media['metadata'], true);
             $metadata['S3_files']['79x80'] = $paths['79x80_Path'];
             $metadata['S3_files']['448x306'] = $paths['448x306_Path'];
             $metadata['S3_files']['98x78'] = $paths['98x78_Path'];
             $json = json_encode($metadata);
-            $query = "UPDATE media SET metadata = '$json' WHERE media_id = '$media_id'";
-            $result = mysql_query($query) or die("UPDATE MEDIA FAILED");
+			$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+			$media->metadata = $json;
+			$this->dbAdapter->persist($media);
+			$this->dbAdapter->flush();
         }
         return $result;
     }
