@@ -87,7 +87,7 @@ error_log("ListAllmedia.exec event_id  ---> $event_id" . PHP_EOL);
             $qb->setMaxResults($limit);
             $qb->setFirstResult($from);
 
-error_log("ListAllmedia.exec qb->getDql()  ---> " . $qb->getDql() . PHP_EOL);    
+error_log("ListAllmedia.exec qb->getQuery()->getSQL()  ---> " . print_r($qb->getQuery()->getSQL(), true) . PHP_EOL);    
 
             $result = $qb->getQuery()->getResult();
 error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);    

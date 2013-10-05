@@ -115,13 +115,16 @@ error_log("Inside snsProcessMediaSubscribe result ----> $result" . PHP_EOL);
 
             ////////////////////////////////////////////////////////////////////
             //Retrieve media entry here...
-            $metadata = json_decode($media['metadata'], true);
+			$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+            $metadata = json_decode($media->metadata, true);
+error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
             $metadata['S3_files']['79x80'] = $paths['79x80_Path'];
             $metadata['S3_files']['448x306'] = $paths['448x306_Path'];
             $metadata['S3_files']['98x78'] = $paths['98x78_Path'];
             $json = json_encode($metadata);
-			$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);            
 			$media->metadata = $json;
+error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
 			$this->dbAdapter->persist($media);
 			$this->dbAdapter->flush();
         }

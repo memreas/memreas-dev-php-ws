@@ -24,6 +24,7 @@ class ViewEvents {
     }
 
     public function exec() {
+error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
         ini_set('max_execution_time', 120);
         $data = simplexml_load_string($_POST['xml']);
         $user_id = trim($data->viewevent->user_id);
@@ -784,6 +785,7 @@ class ViewEvents {
 
         $xml_output.='</viewevents>';
         $xml_output.='</xml>';
+error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
         echo $xml_output;
     }
 
