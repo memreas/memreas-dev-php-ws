@@ -27,7 +27,7 @@ $fields = array(
                 'registration_ids'  => array($user_register),
                 'data'              => array( "price" => $message ),
                 );
-echo'<pre>'; print_r($fields);
+
 $headers = array( 
                     'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
                     'Content-Type: application/json'

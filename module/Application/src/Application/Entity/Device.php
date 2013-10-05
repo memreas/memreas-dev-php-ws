@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Device  
 {
+    const ANROID = '1';
+    const APPLE = '2';
+    
     /**
      * @var string
      *

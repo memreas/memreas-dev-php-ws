@@ -279,7 +279,10 @@ class AddFriendtoevent {
                                
                     //send push message
                     if(trim($value->network_name == 'memreas')){
-                        gcm::sendpush('kamlesh', 'APA91bGQqtM2213fkQH6sV_jsWeZiQh3aDCVX0Rr1h-i0gATPJhNHVid4zGd5MNvnl_wR2ThYf-IBPrZ8_jxzPnwj8HuAO5yTUS_6bx-h2HiDK9e-N-VoPhtrVw4yFJzVvZvZtlt4rPgTLh4CgZvtltCAIJhXTySWbKcQAh69GGeZBpFAPpfbAI');
+                        $get_user_device = "SELECT d  FROM  Application\Entity\Device u where u.user_id='$user_id'";
+                        $statement = $this->dbAdapter->createQuery($get_user_device);
+                        $r = $statement->getOneOrNullResult();
+                        gcm::sendpush($data['mrta'], $r->device_token);
 
                     }
                 	 

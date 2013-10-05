@@ -47,6 +47,8 @@ use memreas\Memreastvm;
 use memreas\UploadMedia;
 use memreas\UploadAdvertisement;
 use memreas\AddNotification;
+use memreas\ListNotification;
+use memreas\UpdateNotification;
 
 use memreas\Memreas;
 use memreas\MemreasTables;
@@ -131,7 +133,7 @@ class IndexController extends AbstractActionController {
         }
 
             if ($codebase == "new_code" && !empty($actionname)) {
-error_log("actionname ---> $actionname" . PHP_EOL);
+error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
                 $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -148,6 +150,7 @@ error_log("actionname ---> $actionname" . PHP_EOL);
                     $chkuname = new ChkUname($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $chkuname->exec();
                 } else if ($actionname == "addmediaevent") {
+error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                     $addmediaevent = new AddMediaEvent($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addmediaevent->exec();
                 } else if ($actionname == "likemedia") {
@@ -268,6 +271,13 @@ error_log("actionname ---> $actionname" . PHP_EOL);
 
                     $changepassword = new \memreas\ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $changepassword->exec();
+                }
+                 else if ($actionname == "listnotification") {
+                    $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                        $result = $listnotification->exec();
+                }else if ($actionname == "updatenotification") {
+                    $updatenotification = new UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $updatenotification->exec();
                 }
 
                $output = ob_get_clean();

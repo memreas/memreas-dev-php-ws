@@ -6,6 +6,8 @@ use Zend\Session\Container;
 
 use Application\Model\MemreasConstants;
 use memreas\UUID;
+use \Exception;
+
 
 class UpdateNotification {
 
@@ -22,9 +24,7 @@ class UpdateNotification {
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
-public function add($key,$name) {
-    $this->data[$key] =$name;
-   }
+
     public function exec($frmweb='') {
 
         if(empty($frmweb)){
@@ -34,41 +34,81 @@ public function add($key,$name) {
             $data =json_decode(json_encode($frmweb));
         }
         
-        $user_id = (trim($data->updateNotification->user_id));
-        $event_id = (trim($data->updateNotification->event_id));
-        $meta = $data->updateNotification->meta;
-        $table_name = $data->updateNotification->table_name;
-        $id = $data->updateNotification->id;
-        $status = "";
+        $user_id = (trim($data->updatenotification->user_id));
+        $notification_id = (trim($data->updatenotification->notification_id));
+        
+        $status = trim($data->updatenotification->status);
 
         $time = time();
-   
+       
         //save notification in table
-        $notification_id = UUID::getUUID($this->dbAdapter);
-        $tblNotification = new \Application\Entity\Notification();
-        $tblNotification->notification_id = $notification_id;
-        $tblNotification->user_id = $user_id;
-        $tblNotification->notification_type = $user_id;
-        $tblNotification->meta = $meta;
-        $tblNotification->create_time = $time;
-        $tblNotification->update_time = $time;
-        $this->dbAdapter->persist($tblNotification);
-          
-        $tblNotificationLink = new \Application\Entity\NotificationLink();
-        $tblNotificationLink->notification_id = $notification_id;
-        $tblNotificationLink->id = $id;
-        $tblNotificationLink->table_name = $table_name;
-        $this->dbAdapter->persist($tblNotificationLink);
+        $tblNotification = $this->dbAdapter->find("\Application\Entity\Notification", $notification_id);
         
-        try {
-            $this->dbAdapter->flush();
-             $status = "success";
-             $message ="";
-        } catch (\Exception $exc) {
-            $message ="";
-            $status = "fail";
+        if (!$tblNotification) {
+             $status = "failur";
+             $message ="Notification not found";
+        } else{
+            
+             $tblNotification->status = $status;
+             $tblNotification->update_time = $time;
+        
+             $this->dbAdapter->flush();
+             $status = "Sucess";
+             $message ="Notification Updated";
+             $user_id = $tblNotification->user_id;
+             $get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id='$user_id'";
+             $statement = $this->dbAdapter->createQuery($get_user_device);
+             $r = $statement->getOneOrNullResult();
+             if($r){
+                 
+                 switch($tblNotification->notification_type){
+                     
+                     case 1:
+                         $message = "Friend ";          
+                         break;
+                     case 2:
+                         $message = "Add Friend to Event";             
+                         break;
+                     case 3:
+                         $message = "Add Media ";
+                         break;
+                     case 4:
+                         $message = "Add Comment";
+                         break;
+                 }
+                 
+                 
+                 
+                 
+                 
+                 
+             gcm::sendpush($message, $r->device_token);
+             }
+                    
+            
         }
 
+       
+         
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+       
+         
+       
+            
         
  
         

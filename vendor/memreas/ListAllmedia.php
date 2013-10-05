@@ -15,17 +15,22 @@ class ListAllmedia {
     protected $dbAdapter;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
+error_log("ListAllmedia.__construct enter" . PHP_EOL);    
         error_log("Inside__construct...");
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
+error_log("ListAllmedia.__construct exit" . PHP_EOL);    
     }
 
     public function exec() {
 
+error_log("ListAllmedia.exec enter" . PHP_EOL);    
+error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);    
         $data = simplexml_load_string($_POST['xml']);
+error_log("ListAllmedia.exec data ---> " . print_r($data, true) . PHP_EOL);    
 //echo "<pre>";
 //print_r($data);
         $message = ' ';
@@ -56,12 +61,15 @@ class ListAllmedia {
 // changed by milap to fetch the profile pic also - with girish - 11-7-2013
         $from = ($page - 1) * $limit;
         if (empty($event_id)) {
+error_log("ListAllmedia.exec if empty event_id ---> " . print_r($data, true) . PHP_EOL);    
             $q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' ORDER BY m.create_date DESC";
             $statement = $this->dbAdapter->createQuery($q1);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
             $result = $statement->getResult();
         } else {
+error_log("ListAllmedia.exec if empty event_id else  ---> " . print_r($data, true) . PHP_EOL);    
+error_log("ListAllmedia.exec event_id  ---> $event_id" . PHP_EOL);    
             /* $q = "select media.metadata ,media.media_id
               from Application\Entity\Media  as media
               inner join Application\Entity\EventMedia as em on media.media_id=em.media_id
@@ -73,13 +81,16 @@ class ListAllmedia {
             $qb->from('Application\Entity\Media', 'media');
             $qb->join('Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id');
             $qb->join('Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id');
-            $qb->where('event.event_id = ?1 ');
+            $qb->where('event.event_id = ?1');
             $qb->orderBy('media.create_date', 'DESC');
-            $qb->setParameter(1, 1);
+            $qb->setParameter(1, $event_id);
             $qb->setMaxResults($limit);
             $qb->setFirstResult($from);
 
+error_log("ListAllmedia.exec qb->getQuery()->getSQL()  ---> " . print_r($qb->getQuery()->getSQL(), true) . PHP_EOL);    
+
             $result = $qb->getQuery()->getResult();
+error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);    
         }
 //echo '<pre>';print_r($result); exit;
 //echo $q;exit;
@@ -89,11 +100,8 @@ class ListAllmedia {
         //       $row = $result->current();
 //$statement = $this->dbAdapter->createQuery($q1);
         //$result = $statement->getResult();
-
-        if (!$result) {
-            $error_flage = 1;
-            $message = mysql_error();
-        } else {
+        
+        
             if (count($result) <= 0) {
                 $error_flage = 2;
                 $message = "No Record found for this Event";
@@ -101,8 +109,9 @@ class ListAllmedia {
                 $xml_output.="<page>$page</page>";
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Media List</message>";
-                foreach ($result as  $rowObj ){
-                	$row = (array) $rowObj;
+                foreach ($result as  $row ){
+                	
+                    
                     $url79x80 = '';
                     $url448x306 = '';
                     $url98x78 = '';
@@ -110,7 +119,7 @@ class ListAllmedia {
                     $is_download = 0;
 
 
-                    $json_array = json_decode($row['metadata'], true);
+                    $json_array = json_decode($row->metadata, true);
                     if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                         $type = "image";
                         if (isset($json_array['S3_files']['79x80']))
@@ -148,7 +157,7 @@ class ListAllmedia {
                     }
 //            }
                     $xml_output.="<media>";
-                    $xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
+                    $xml_output.="<media_id>" . $row->media_id . "</media_id>";
                     $xml_output.="<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
                     $xml_output.="<is_downloaded>$is_download</is_downloaded>";
                     $xml_output.="<event_media_video_thum>";
@@ -168,7 +177,7 @@ class ListAllmedia {
                     $xml_output.="</media>";
                 }
             }
-        }
+        
         if ($error_flage) {
             $xml_output.="<status>Failure</status>";
             $xml_output.= "<message>$message</message>";
@@ -188,6 +197,7 @@ class ListAllmedia {
         $xml_output.="</listallmediaresponse>";
         $xml_output.="</xml>";
         echo $xml_output;
+error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);    
     }
 
 }

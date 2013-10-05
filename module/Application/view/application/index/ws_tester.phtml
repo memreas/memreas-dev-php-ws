@@ -14,13 +14,13 @@ echo "user_id ----> " . $user_id;
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
         <!--jQuery Lybrary-->
-        <script src="/memreas-dev-php-ws/app/memreas/js/jquery.js"></script>
-        <script src="/memreas-dev-php-ws/app/memreas/js/modernizr.custom.17475.js"></script>
+        <script src="/app/memreas/js/jquery.js"></script>
+        <script src="/app/memreas/js/modernizr.custom.17475.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <!--Bootstrap jQuery-->
-        <script src="/memreas-dev-php-ws/app/memreas/js/bootstrap.min.js"></script>
+        <script src="/app/memreas/js/bootstrap.min.js"></script>
         <!--memreas-->
-        <script src="/memreas-dev-php-ws/app/memreas/js/memreas.js"></script>
+        <script src="/app/memreas/js/memreas.js"></script>
         <!-- Fetch the user_id -->
         <script type="text/javascript">
             var base_url = $("#index_action").attr("action");
@@ -49,6 +49,8 @@ echo "user_id ----> " . $user_id;
             var viewmediadetails= '<xml><viewmediadetails><media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id></viewmediadetails></xml>';
             var addNotification = '<xml><addNotification><user_id>1	</user_id><event_id>2</event_id></addNotification></xml>';
             var changepassword = '<xml><changepassword><new>1	</new><retype>2</retype><token>2</token></changepassword></xml>';
+            var listnotification = '<xml><listnotification><user_id>1</user_id></listnotification></xml>';
+            var updatenotification = '<xml><updatenotification><notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id><status>2</status></updatenotification></xml>';
 
            $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
@@ -153,6 +155,12 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "changepassword") {
                         xml = changepassword;
                     }
+                    else if ($("#input_action").val() == "listnotification") {
+                        xml = listnotification;
+                    }else if ($("#input_action").val() == "updatenotification") {
+                        xml = updatenotification;
+                    }
+
 
 
 
@@ -229,7 +237,10 @@ echo "user_id ----> " . $user_id;
                                     <option>addfriendtoevent</option> 
                                     <option>viewmediadetails</option> 
                                     <option>addNotification</option> 
-                                     <option>changepassword</option>    
+                                     <option>changepassword</option> 
+                                     <option>listnotification</option>    
+                                     <option>updatenotification</option>    
+
 
 
 

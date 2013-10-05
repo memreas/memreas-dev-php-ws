@@ -24,11 +24,15 @@ class AWSManager {
     private $sns = null;
     private $topicArn = null;
     private $awsTranscode = null;
+    private $service_locator = null;
+    private $dbAdapter = null;
 
-    public function __construct() {
+    public function __construct($service_locator) {
         //print "In AWSManager constructor <br>";
         error_log("Inside AWSManager contructor...", 0);
 
+		$this->service_locator = $service_locator;
+		$this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         $this->aws = Aws::factory(array(
                     'key' => 'AKIAJMXGGG4BNFS42LZA',
                     'secret' => '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',
@@ -58,34 +62,29 @@ class AWSManager {
     function snsProcessMediaPublish($message_data) {
 
         $json = json_encode($message_data);
-        error_log("INPUT SON ----> " . $json);
+        error_log("INPUT JSON ----> " . $json);
 
         //Debug without Topic publish
-//        $result = $this->snsProcessMediaSubscribe($message_data);
-
-        //Post to topic once the subscribe work is done
-        //s1
-        // ?? What will be result of this function on success?
-        //
+        $result = $this->snsProcessMediaSubscribe($message_data);
+/*
 		$result = $this->sns->publish(array(
            'TopicArn' => $this->topicArn,
             'Message'  => $json,
             'Subject'  => 'snsProcessMediaPublish',
         	));
-
+*/
         return $result;
     }
 
-    //function snsProcessMediaSubscribe ($user_id, $media_id, $content_type, $s3path, $s3file_name, $isVideo = false) {
     function snsProcessMediaSubscribe($message_data) {
 
+error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
         if ($message_data['isVideo']) {
             //Transcode, fetch thumbnail and resize as needed
             $result = $this->awsTranscodeExec($message_data);
         } else {
+error_log("Inside snsProcessMediaSubscribe else ..." . PHP_EOL);            
             //Fetch image and create thumbnails
-            //added by Sufalam STRAT
-
             $s3file_name = $message_data['s3file_name'];
             $user_id = $message_data['user_id'];
             $media_id = $message_data['media_id'];
@@ -94,7 +93,9 @@ class AWSManager {
             //END
             //Saving image ugh - need to find way to not write to disk....
             //$dirPath = dirname(__DIR__)."/media/79x80/";
-            $dirPath = dirname(__DIR__) . "/media/";
+            //$dirPath = dirname(__DIR__) . "/media/";
+            $dirPath = getcwd() . "/data/media/";
+error_log("Inside snsProcessMediaSubscribe dirPath ----> $dirPath" . PHP_EOL);            
             $file = $dirPath . $s3file_name;
             $s3file = $s3path . $s3file_name;
 //            echo "s3file=$s3file<br/>file=$file<br/>dirpath=$dirPath<br/>s3path=$s3path<br/>s3path=$s3path<br>content=$content_type<br/>file_name=$s3file_name";
@@ -103,25 +104,29 @@ class AWSManager {
                 'Key' => $s3file,
                 'SaveAs' => $file
             ));
+error_log("Inside snsProcessMediaSubscribe dirPath ----> $dirPath" . PHP_EOL);            
+error_log("Inside snsProcessMediaSubscribe file ----> $file" . PHP_EOL);            
+error_log("Inside snsProcessMediaSubscribe s3file ----> $s3file" . PHP_EOL);            
+error_log("Inside snsProcessMediaSubscribe result ----> $result" . PHP_EOL);            
 
             //Use the s3upload code to resize and load to s3		
             //$media_id add by sufalam
             $paths = $this->s3upload($user_id, $media_id, $s3file_name, $content_type, $file);
 
             ////////////////////////////////////////////////////////////////////
-            //Store to database here...
-            $query = "SELECT metadata FROM media WHERE media_id = '$media_id'";
-            $result = mysql_query($query) or die("SELECT FROM MEDIA FAILED");
-            $row = mysql_fetch_array($result);
-
-
-            $metadata = json_decode($row['metadata'], true);
+            //Retrieve media entry here...
+			$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+            $metadata = json_decode($media->metadata, true);
+error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
             $metadata['S3_files']['79x80'] = $paths['79x80_Path'];
             $metadata['S3_files']['448x306'] = $paths['448x306_Path'];
             $metadata['S3_files']['98x78'] = $paths['98x78_Path'];
             $json = json_encode($metadata);
-            $query = "UPDATE media SET metadata = '$json' WHERE media_id = '$media_id'";
-            $result = mysql_query($query) or die("UPDATE MEDIA FAILED");
+error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);            
+			$media->metadata = $json;
+error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
+			$this->dbAdapter->persist($media);
+			$this->dbAdapter->flush();
         }
         return $result;
     }
@@ -418,7 +423,8 @@ class AWSManager {
             $layer->resizeInPixel(79, 80);
 
             //Saving image ugh
-            $dirPath = dirname(__DIR__) . "/media/79x80/";
+            //$dirPath = dirname(__DIR__) . "/media/79x80/";
+            $dirPath = getcwd() . "/data/media/79x80/";
             $createFolders = true;
             $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
             $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
@@ -459,7 +465,8 @@ class AWSManager {
             $layer->resizeInPixel(448, 306);
 
             //Saving image ugh
-            $dirPath = dirname(__DIR__) . "/media/448x306/";
+            //$dirPath = dirname(__DIR__) . "/media/448x306/";
+            $dirPath = getcwd() . "/data/media/448x306/";
             $createFolders = true;
             $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
             $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
@@ -501,7 +508,8 @@ class AWSManager {
             $layer->resizeInPixel(98, 78);
 
             //Saving image ugh
-            $dirPath = dirname(__DIR__) . "/media/98x78/";
+            //$dirPath = dirname(__DIR__) . "/media/98x78/";
+            $dirPath = getcwd() . "/data/media/98x78/";
             $createFolders = true;
             $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
             $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)

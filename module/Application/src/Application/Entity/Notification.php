@@ -13,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Notification  
 {
+    const ADD_FRIEND = '1';
+    const ADD_FRIEND_TO_EVENT = '2';
+    const ADD_COMMENT = '3';
+    const ADD_MEDIA = '4';
     /**
      * @var string
      *
@@ -26,7 +30,6 @@ class Notification
      * @var string
      *
      * @ORM\Column(name="user_id", type="string", length=255, nullable=false)
-     * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
     private $user_id;
@@ -44,8 +47,14 @@ class Notification
      * @ORM\Column(name="meta", type="string", length=255, nullable=false)
      */
     private $meta;
-
-
+    
+       /**
+     * @var string
+     *
+     * @ORM\Column(name="status", type="string", length=255, nullable=false)
+     */
+    private $status;
+      
     /**
      * @var string
      *
