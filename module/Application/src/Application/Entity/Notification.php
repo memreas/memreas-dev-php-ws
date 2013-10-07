@@ -50,12 +50,19 @@ class Notification
      */
     private $meta;
     
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="links", type="string", length=255, nullable=false)
+     */
+    private $links;
+    
        /**
      * @var string
      *
      * @ORM\Column(name="status", type="string", length=255, nullable=false)
      */
-    private $status;
+    private $status=0;
       
     /**
      * @var string
