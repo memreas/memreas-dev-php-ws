@@ -47,8 +47,6 @@ use memreas\Memreastvm;
 use memreas\UploadMedia;
 use memreas\UploadAdvertisement;
 use memreas\AddNotification;
-use memreas\ListNotification;
-use memreas\UpdateNotification;
 
 use memreas\Memreas;
 use memreas\MemreasTables;
@@ -273,10 +271,10 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                         $result = $changepassword->exec();
                 }
                  else if ($actionname == "listnotification") {
-                    $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $listnotification = new \memreas\listnotification($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $listnotification->exec();
                 }else if ($actionname == "updatenotification") {
-                    $updatenotification = new UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $updatenotification = new \memreas\UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $updatenotification->exec();
                 }
 
@@ -305,11 +303,11 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                
                 error_log("Callback ---> " . $callback . "(" . $json . ")");
                  header("Content-type: plain/text");
-            //callback json
-            echo $callback . "(" . $json . ")";
-            //Need to exit here to avoid ZF2 framework view.
+				//callback json
+				echo $callback . "(" . $json . ")";
+				//Need to exit here to avoid ZF2 framework view.
 
-            exit;
+				exit;
             }
             
             

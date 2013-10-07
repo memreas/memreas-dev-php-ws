@@ -10,6 +10,7 @@ class AddComment {
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    protected $notification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -19,6 +20,10 @@ class AddComment {
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         if(!$this->AddNotification){
             $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
+        
+        if(!$this->notification){
+            $this->notification = new Notification($service_locator);
         }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
@@ -110,11 +115,18 @@ class AddComment {
                                         'table_name' => 'media',
                                         'id' => $media_id,
                                         'meta' => 'User has comment on ',
+                                        'notifaction_type' => \Application\Entity\Notification::ADD_COMMENT,
                                     )
                                 );
                     
                         $this->AddNotification->exec($data);
+                         $this->notification->add($comment_row['user_id']);
                         
+                    }
+                    
+                    if(!empty($data['addNotification']['meta'])){
+                        $this->notification->setMessage($data['addNotification']['meta']);
+                        $this->notification->send(); 
                     }
             }
 

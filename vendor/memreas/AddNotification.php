@@ -1,9 +1,6 @@
 <?php
 namespace memreas;
- 
-
 use Zend\Session\Container;
-
 use Application\Model\MemreasConstants;
 use memreas\UUID;
 
@@ -23,9 +20,7 @@ class AddNotification {
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
-public function add($key,$name) {
-    $this->data[$key] =$name;
-   }
+
     public function exec($frmweb='') {
 
         if(empty($frmweb)){
@@ -41,7 +36,7 @@ public function add($key,$name) {
         $table_name = $data->addNotification->table_name;
         $id = $data->addNotification->id;
         $status = 0;
-        $notifaction_type = 0;
+        $notifaction_type = $data->addNotification->notifaction_type;
 
         $time = time();
    
