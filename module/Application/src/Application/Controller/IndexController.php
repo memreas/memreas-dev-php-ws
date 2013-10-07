@@ -271,10 +271,11 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                         $result = $changepassword->exec();
                 }
                  else if ($actionname == "listnotification") {
-                    
-
-                    $listnotification = new \memreas\listnotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $listnotification = new \memreas\ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $listnotification->exec();
+                }else if ($actionname == "updatenotification") {
+                    $updatenotification = new \memreas\UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $updatenotification->exec();
                 }
 
                $output = ob_get_clean();

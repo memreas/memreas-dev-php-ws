@@ -13,6 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Device  
 {
+    const ANROID = '1';
+    const APPLE = '2';
+    
     /**
      * @var string
      *
@@ -35,6 +38,13 @@ class Device
      * @ORM\Column(name="device_token", type="string", length=255, nullable=false)
      */
     private $device_token;
+
+      /**
+     * @var string
+     *
+     * @ORM\Column(name="device_type", type="string", length=255, nullable=false)
+     */
+    private $device_type;
 
     /**
      * @var string

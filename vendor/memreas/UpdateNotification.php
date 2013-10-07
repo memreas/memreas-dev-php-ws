@@ -6,6 +6,8 @@ use Zend\Session\Container;
 
 use Application\Model\MemreasConstants;
 use memreas\UUID;
+use \Exception;
+
 
 class UpdateNotification {
 
@@ -13,6 +15,7 @@ class UpdateNotification {
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    protected $notification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -21,66 +24,57 @@ class UpdateNotification {
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
+        if(!$this->notification){
+        $this->notification = new Notification($service_locator);
+        }
     }
-public function add($key,$name) {
-    $this->data[$key] =$name;
-   }
-    public function exec($frmweb='') {
 
+    public function exec($frmweb='') {
+                    
         if(empty($frmweb)){
             $data = simplexml_load_string($_POST['xml']);
         } else{
             
             $data =json_decode(json_encode($frmweb));
         }
+        $message='';
+        $user_id = (trim($data->updatenotification->user_id));
+        $notification_id = (trim($data->updatenotification->notification_id));
         
-        $user_id = (trim($data->updateNotification->user_id));
-        $event_id = (trim($data->updateNotification->event_id));
-        $meta = $data->updateNotification->meta;
-        $table_name = $data->updateNotification->table_name;
-        $id = $data->updateNotification->id;
-        $status = "";
+        $status = trim($data->updatenotification->status);
 
         $time = time();
-   
+       
         //save notification in table
-        $notification_id = UUID::getUUID($this->dbAdapter);
-        $tblNotification = new \Application\Entity\Notification();
-        $tblNotification->notification_id = $notification_id;
-        $tblNotification->user_id = $user_id;
-        $tblNotification->notification_type = $user_id;
-        $tblNotification->meta = $meta;
-        $tblNotification->create_time = $time;
-        $tblNotification->update_time = $time;
-        $this->dbAdapter->persist($tblNotification);
-          
-        $tblNotificationLink = new \Application\Entity\NotificationLink();
-        $tblNotificationLink->notification_id = $notification_id;
-        $tblNotificationLink->id = $id;
-        $tblNotificationLink->table_name = $table_name;
-        $this->dbAdapter->persist($tblNotificationLink);
+        $tblNotification = $this->dbAdapter->find("\Application\Entity\Notification", $notification_id);
         
-        try {
-            $this->dbAdapter->flush();
-             $status = "success";
-             $message ="";
-        } catch (\Exception $exc) {
-            $message ="";
-            $status = "fail";
-        }
-
-        
- 
-        
-        if(empty($frmweb)){
+        if (!$tblNotification) {
+             $status = "failure";
+             $message ="Notification not found";
+        } else{
+            
+             $tblNotification->status = $status;
+             $tblNotification->update_time = $time;
+       
+             $this->dbAdapter->flush();
+             $status = "Sucess";
+             $message ="Notification Updated";
+             $this->notification->setUpdateMessage($tblNotification->notification_type);
+             $this->notification->add($tblNotification->user_id);
+             $this->notification->send();
+    
+                
+             }
+                    
+         if(empty($frmweb)){
         header("Content-type: text/xml");
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         $xml_output .= "<xml>";
-        $xml_output.= "<addnotification>";
+        $xml_output.= "<updatenotification>";
         $xml_output.= "<status>$status</status>";
         $xml_output.= "<message>" . $message . "</message>";
         $xml_output.= "<notification_id>$notification_id</notification_id>";
-        $xml_output.= "</addnotification>";
+        $xml_output.= "</updatenotification>";
         $xml_output.= "</xml>";
         echo $xml_output;
         }

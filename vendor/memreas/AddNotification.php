@@ -1,9 +1,6 @@
 <?php
 namespace memreas;
- 
-
 use Zend\Session\Container;
-
 use Application\Model\MemreasConstants;
 use memreas\UUID;
 
@@ -13,6 +10,7 @@ class AddNotification {
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -22,9 +20,7 @@ class AddNotification {
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
-public function add($key,$name) {
-    $this->data[$key] =$name;
-   }
+
     public function exec($frmweb='') {
 
         if(empty($frmweb)){
@@ -39,7 +35,8 @@ public function add($key,$name) {
         $meta = $data->addNotification->meta;
         $table_name = $data->addNotification->table_name;
         $id = $data->addNotification->id;
-        $status = "";
+        $status = 0;
+        $notifaction_type = $data->addNotification->notifaction_type;
 
         $time = time();
    
@@ -48,17 +45,12 @@ public function add($key,$name) {
         $tblNotification = new \Application\Entity\Notification();
         $tblNotification->notification_id = $notification_id;
         $tblNotification->user_id = $user_id;
-        $tblNotification->notification_type = $user_id;
+        $tblNotification->notification_type = $notifaction_type;
         $tblNotification->meta = $meta;
         $tblNotification->create_time = $time;
         $tblNotification->update_time = $time;
         $this->dbAdapter->persist($tblNotification);
           
-        $tblNotificationLink = new \Application\Entity\NotificationLink();
-        $tblNotificationLink->notification_id = $notification_id;
-        $tblNotificationLink->id = $id;
-        $tblNotificationLink->table_name = $table_name;
-        $this->dbAdapter->persist($tblNotificationLink);
         
         try {
             $this->dbAdapter->flush();

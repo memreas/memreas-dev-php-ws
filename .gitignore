@@ -3,3 +3,4 @@ vendor
 data/
 *.log
 .elasticbeanstalk/
+php_errors.log
