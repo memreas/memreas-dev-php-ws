@@ -15,6 +15,7 @@ class AddMediaEvent {
     protected $service_locator;
     protected $dbAdapter;
     protected $AddNotification;
+    protected $notification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
 error_log("AddMediaEvent __construct...");
@@ -26,6 +27,9 @@ error_log("AddMediaEvent __construct message_data..." . print_r($message_data, t
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
         if (!$this->AddNotification) {
             $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
+        if(!$this->notification){
+            $this->notification = new Notification($service_locator);
         }
     }
 
@@ -232,10 +236,20 @@ error_log("AddMediaEvent exec - just inserted EventMedia " . PHP_EOL);
                         'table_name' => 'media',
                         'id' => $media_id,
                         'meta' => 'New Media added',
+                        'notifaction_type' => \Application\Entity\Notification::ADD_MEDIA,
                     )
                 );
+                $this->AddNotification->exec($data);
+                $this->notification->add($ef['friend_id']);
             }
-            $this->AddNotification->exec($data);
+            
+            
+            if(!empty($data['addNotification']['meta'])){
+                $this->notification->setMessage($data['addNotification']['meta']);
+                $this->notification->send(); 
+            }
+            
+            
         } catch (\Exception $exc) {
             $status = 'Failure';
             $message = $exc->getMessage();

@@ -8,13 +8,13 @@ use memreas\AWSManager;
 use memreas\UUID;
 use memreas\gcm;
 
-
 class AddFriendtoevent {
 
     protected $message_data;
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    protected $notification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -22,8 +22,11 @@ class AddFriendtoevent {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
-        if(!$this->AddNotification){
+        if (!$this->AddNotification) {
             $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
+        if (!$this->notification) {
+            $this->notification = new Notification($service_locator);
         }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
@@ -90,14 +93,9 @@ class AddFriendtoevent {
                 // $statement = $this->dbAdapter->createQuery($q);
                 // $rs = $statement->getResult();
 
-                if (!$rs) {
-                    $message1 = mysql_error();
-                    $status = 'Failure';
-                    $error = 1;
-                } else {
-                    $message1 = 'event group Successfully added ';
-                    $status = 'Success';
-                }
+
+                $message1 = 'event group Successfully added ';
+                $status = 'Success';
             }
         }//echo $message;
         //add friends to event loop
@@ -113,7 +111,7 @@ class AddFriendtoevent {
             //		$result_friend = $statement->execute();
             $statement = $this->dbAdapter->createQuery($friend_query);
             $result_friend = $statement->getResult();
-             // add to friend
+            // add to friend
             if ($row = $result_friend->current()) {
                 $friend_id = $row['friend_id'];
             } else {
@@ -155,13 +153,6 @@ class AddFriendtoevent {
                 //		$result_friend_insert = $statement->execute();
                 //  $statement = $this->dbAdapter->createQuery($insert_q);
                 //$result_friend_insert = $statement->getResult();
-
-
-                if (!$result_friend_insert) {
-                    $message.=mysql_error();
-                    $status = 'failure';
-                    $error = 1;
-                }
             }
             // add to user_friend
             if (isset($friend_id) && !empty($friend_id)) {
@@ -169,7 +160,7 @@ class AddFriendtoevent {
                 // $r = mysql_query($check_user_frind) or die(mysql_error());
                 //    $statement = $this->dbAdapter->createStatement($check_user_frind);
                 //			$r = $statement->execute();
-                
+
                 $statement = $this->dbAdapter->createQuery($check_user_frind);
                 $r = $statement->getResult();
 
@@ -220,9 +211,6 @@ class AddFriendtoevent {
             //adding friend to event
             if (!empty($event_id) && $error == 0) {//echo "hi";
                 $check_event_frind = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='$event_id' and e.friend_id='$friend_id'";
-                //$r = mysql_query($check_event_frind);
-                //  $statement = $this->dbAdapter->createStatement($check_event_frind);
-                //	$r = $statement->execute();
 
                 $statement = $this->dbAdapter->createQuery($check_event_frind);
                 $r = $statement->getResult();
@@ -236,15 +224,15 @@ class AddFriendtoevent {
                     $tblEventFriend->friend_id = $friend_id;
                     $tblEventFriend->event_id = $event_id;
 
+
                     try {
                         $this->dbAdapter->persist($tblEventFriend);
                         $this->dbAdapter->flush();
                         $message .= 'Event Friend Successfully added';
                         $status = 'Success';
                     } catch (\Exception $exc) {
-                        $message.=mysql_error();
+                        $message.='';
                         $status = 'failure';
-                        echo $exc->getTraceAsString();
                     }
 
 
@@ -261,34 +249,30 @@ class AddFriendtoevent {
 //                        
 //                    }
                 }
-                
-                //save nofication intable
-                
-                    $data = array('addNotification' => array(
-                                'user_id' => $user_id,
-                                'event_id' => $event_id,
-                                'table_name' => 'event_friend',
-                                'id' => $event_id,
-                                'meta' => $friend_name .'want to add you',
-                                )
-                        
-                        
-                    );
-                    
-                    $this->AddNotification->exec($data);
-                               
-                    //send push message
-                    if(trim($value->network_name == 'memreas')){
-                        $get_user_device = "SELECT d  FROM  Application\Entity\Device u where u.user_id='$user_id'";
-                        $statement = $this->dbAdapter->createQuery($get_user_device);
-                        $r = $statement->getOneOrNullResult();
-                        gcm::sendpush($data['mrta'], $r->device_token);
 
-                    }
-                	 
+                //save nofication intable
+
+                $data = array('addNotification' => array(
+                        'user_id' => $user_id,
+                        'event_id' => $event_id,
+                        'table_name' => 'event_friend',
+                        'id' => $event_id,
+                        'meta' => $friend_name . 'want to add you to event',
+                        'notifaction_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT
+                    )
+                );
+
+                $this->AddNotification->exec($data);
+
+                //send push message add user id
+                $this->notification->add($user_id);
             }
-           
         }
+        if (!empty($data['addNotification']['meta'])) {
+            $this->notification->setMessage($data['addNotification']['meta']);
+            $this->notification->send();
+        }
+
         //add friends to event loop end
         header("Content-type: text/xml");
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";

@@ -17,6 +17,8 @@ class Notification
     const ADD_FRIEND_TO_EVENT = '2';
     const ADD_COMMENT = '3';
     const ADD_MEDIA = '4';
+    const ADD_EVENT = '5';
+
     /**
      * @var string
      *

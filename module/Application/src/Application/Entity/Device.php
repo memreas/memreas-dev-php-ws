@@ -39,6 +39,13 @@ class Device
      */
     private $device_token;
 
+      /**
+     * @var string
+     *
+     * @ORM\Column(name="device_type", type="string", length=255, nullable=false)
+     */
+    private $device_type;
+
     /**
      * @var string
      *
