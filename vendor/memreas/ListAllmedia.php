@@ -66,7 +66,7 @@ error_log("ListAllmedia.exec if empty event_id ---> " . print_r($data, true) . P
             $statement = $this->dbAdapter->createQuery($q1);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
-            $result = $statement->getResult();
+            $result = $statement->getArrayResult();
         } else {
 error_log("ListAllmedia.exec if empty event_id else  ---> " . print_r($data, true) . PHP_EOL);    
 error_log("ListAllmedia.exec event_id  ---> $event_id" . PHP_EOL);    
@@ -89,7 +89,7 @@ error_log("ListAllmedia.exec event_id  ---> $event_id" . PHP_EOL);
 
 error_log("ListAllmedia.exec qb->getQuery()->getSQL()  ---> " . print_r($qb->getQuery()->getSQL(), true) . PHP_EOL);    
 
-            $result = $qb->getQuery()->getResult();
+            $result = $qb->getQuery()->getArrayResult();
 error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);    
         }
 //echo '<pre>';print_r($result); exit;
@@ -100,7 +100,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
         //       $row = $result->current();
 //$statement = $this->dbAdapter->createQuery($q1);
         //$result = $statement->getResult();
-        
+       
         
             if (count($result) <= 0) {
                 $error_flage = 2;
@@ -120,8 +120,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
 
 
                     $json_array = json_decode($row['metadata'], true);
-error_log("ListAllmedia.exec row['metadata']  ---> " . $row['metadata'] . PHP_EOL);    
-
+ 
                     if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                         $type = "image";
                         if (isset($json_array['S3_files']['79x80']))
