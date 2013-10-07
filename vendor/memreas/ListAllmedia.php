@@ -66,7 +66,7 @@ error_log("ListAllmedia.exec if empty event_id ---> " . print_r($data, true) . P
             $statement = $this->dbAdapter->createQuery($q1);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
-            $result = $statement->getResult();
+            $result = $statement->getArrayResult();
         } else {
 error_log("ListAllmedia.exec if empty event_id else  ---> " . print_r($data, true) . PHP_EOL);    
 error_log("ListAllmedia.exec event_id  ---> $event_id" . PHP_EOL);    
@@ -89,7 +89,7 @@ error_log("ListAllmedia.exec event_id  ---> $event_id" . PHP_EOL);
 
 error_log("ListAllmedia.exec qb->getQuery()->getSQL()  ---> " . print_r($qb->getQuery()->getSQL(), true) . PHP_EOL);    
 
-            $result = $qb->getQuery()->getResult();
+            $result = $qb->getQuery()->getArrayResult();
 error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);    
         }
 //echo '<pre>';print_r($result); exit;
@@ -100,7 +100,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
         //       $row = $result->current();
 //$statement = $this->dbAdapter->createQuery($q1);
         //$result = $statement->getResult();
-        
+       
         
             if (count($result) <= 0) {
                 $error_flage = 2;
@@ -119,7 +119,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     $is_download = 0;
 
 
-                    $json_array = json_decode($row->metadata, true);
+                    $json_array = json_decode($row['metadata'], true);
  
                     if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                         $type = "image";
@@ -162,7 +162,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     }
 //            }
                     $xml_output.="<media>";
-                    $xml_output.="<media_id>" . $row->media_id . "</media_id>";
+                    $xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
                     $xml_output.="<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
                     $xml_output.="<is_downloaded>$is_download</is_downloaded>";
                     $xml_output.="<event_media_video_thum>";
