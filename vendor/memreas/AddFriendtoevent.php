@@ -15,6 +15,7 @@ class AddFriendtoevent {
     protected $service_locator;
     protected $dbAdapter;
     protected $notification;
+    protected $AddNotification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -110,10 +111,11 @@ class AddFriendtoevent {
             //  $statement = $this->dbAdapter->createStatement($friend_query);
             //		$result_friend = $statement->execute();
             $statement = $this->dbAdapter->createQuery($friend_query);
-            $result_friend = $statement->getResult();
+            $result_friend = $statement->getOneOrNullResult();
             // add to friend
-            if ($row = $result_friend->current()) {
-                $friend_id = $row['friend_id'];
+            if ($result_friend) {
+               
+                $friend_id = $result_friend->friend_id;
             } else {
                 ////
                 $friend_id = UUID::getUUID($this->dbAdapter);
@@ -254,11 +256,14 @@ class AddFriendtoevent {
 
                 $data = array('addNotification' => array(
                         'user_id' => $user_id,
-                        'event_id' => $event_id,
-                        'table_name' => 'event_friend',
-                        'id' => $event_id,
+                        
                         'meta' => $friend_name . 'want to add you to event',
-                        'notifaction_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT
+                        'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
+                        'links' => json_encode(array(
+                                    'event_id' => $event_id,
+                                    'from_id' => $user_id,
+                                    
+                                )),
                     )
                 );
 

@@ -31,22 +31,23 @@ class AddNotification {
         }
         
         $user_id = (trim($data->addNotification->user_id));
-        $event_id = (trim($data->addNotification->event_id));
+         
         $meta = $data->addNotification->meta;
-        $table_name = $data->addNotification->table_name;
-        $id = $data->addNotification->id;
-        $status = 0;
-        $notifaction_type = $data->addNotification->notifaction_type;
-
+        
+        
+        $status = empty($data->addNotification->status)?0:$data->addNotification->status;
+        $notification_type = $data->addNotification->notification_type;
+        $links= $data->addNotification->links;
         $time = time();
-   
-        //save notification in table
+         //save notification in table
         $notification_id = UUID::getUUID($this->dbAdapter);
         $tblNotification = new \Application\Entity\Notification();
         $tblNotification->notification_id = $notification_id;
         $tblNotification->user_id = $user_id;
-        $tblNotification->notification_type = $notifaction_type;
+        $tblNotification->notification_type = $notification_type;
         $tblNotification->meta = $meta;
+        $tblNotification->links = $links;
+
         $tblNotification->create_time = $time;
         $tblNotification->update_time = $time;
         $this->dbAdapter->persist($tblNotification);

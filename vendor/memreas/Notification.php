@@ -30,7 +30,7 @@ class Notification {
     }
 
     public function send() {
-        $get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in(".join(',',$this->userIds).")";
+        $get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in('".join('\' , \'',$this->userIds)."')";
         $statement = $this->dbAdapter->createQuery($get_user_device);
                                 
         $users = $statement->getArrayResult();

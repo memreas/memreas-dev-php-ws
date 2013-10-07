@@ -44,6 +44,7 @@ class ListNotification {
                 $xml_output .= "<status>success</status><notifications>";
                 foreach ($result as $row) {
                                             $xml_output .= "<notification>";
+                                            $xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
                     $xml_output .= "<meta>{$row['meta']}</meta>";
                     $xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
                     $xml_output .= "</notification>";

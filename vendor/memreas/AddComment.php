@@ -11,6 +11,7 @@ class AddComment {
     protected $service_locator;
     protected $dbAdapter;
     protected $notification;
+    protected $AddNotification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -111,11 +112,14 @@ class AddComment {
                     foreach($comment_u as $comment_row){
                         $data = array('addNotification' => array(
                                         'user_id' => $comment_row['user_id'],
-                                        'event_id' => $event_id,
-                                        'table_name' => 'media',
-                                        'id' => $media_id,
+                                        
                                         'meta' => 'User has comment on ',
-                                        'notifaction_type' => \Application\Entity\Notification::ADD_COMMENT,
+                                        'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
+                            'links' => json_encode(array(
+                                    'event_id' => $event_id,
+                                    'from_id' => $comment_row['user_id'],
+                                    
+                                )),
                                     )
                                 );
                     

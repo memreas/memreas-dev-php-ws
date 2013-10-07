@@ -232,11 +232,15 @@ error_log("AddMediaEvent exec - just inserted EventMedia " . PHP_EOL);
             foreach ($efusers as $ef) {
                 $data = array('addNotification' => array(
                         'user_id' =>$ef['friend_id'],
-                        'event_id' => $event_id,
-                        'table_name' => 'media',
-                        'id' => $media_id,
                         'meta' => 'New Media added',
-                        'notifaction_type' => \Application\Entity\Notification::ADD_MEDIA,
+                        'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
+                    'links' => json_encode(array(
+                                    'event_id' => $event_id,
+                                    'from_id' => $user_id,
+                                    'friend_id' =>$ef['friend_id'],
+
+                                    
+                                )),
                     )
                 );
                 $this->AddNotification->exec($data);

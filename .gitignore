@@ -1,4 +1,6 @@
-vendor/bin
+!vendor/memreas
+vendor
 data/
 *.log
 .elasticbeanstalk/
+php_errors.log

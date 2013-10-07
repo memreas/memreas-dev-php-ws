@@ -110,11 +110,12 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                         $qb->from('Application\Entity\EventMedia', 'event_media');
                         $qb->join('Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id');
                         $qb->join('Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id');
-                        $qb->where('event.user_id = ?1 and event.event_id!=?2');
+                        $qb->where('event.user_id = ?1 and event.event_id=?2');
                         $qb->orderBy('media.create_date', 'DESC');
                         $qb->setParameter(1, $user_id);
                         $qb->setParameter(2, $row->event_id);
                         $query_event_media_result = $qb->getQuery()->getResult();
+//error_log("SQL ----> " . $qb->getQuery()->getSQL() . PHP_EOL);
 
 
                         if (count($query_event_media_result) > 0) {

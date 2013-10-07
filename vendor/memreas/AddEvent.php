@@ -13,6 +13,7 @@ class AddEvent {
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    protected $AddNotification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -140,15 +141,18 @@ else {
     
         $data = array('addNotification' => array(
                                 'user_id' => $user_id,
-                                'event_id' => $event_id,
-                                'table_name' => 'event',
-                                'id' => $event_id,
                                 'meta' => "New Event: $event_name",
+                                'notification_type' => \Application\Entity\Notification::ADD_EVENT,
+                                'links' => json_encode(array(
+                                    'event_id' => $event_id,
+                                    'from_id' => $user_id,
+                                    
+                                )),
                                 )
                         
                         
                     );
-                    
+               print_r($data);
                     $this->AddNotification->exec($data);
     /*
       foreach ($media_array as $key => $value)
