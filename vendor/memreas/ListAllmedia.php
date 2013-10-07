@@ -147,9 +147,13 @@ error_log("ListAllmedia.exec row['metadata']  ---> " . $row['metadata'] . PHP_EO
                     else
                         $type = "Type not Mentioned";
 
-                    $url = $json_array['S3_files']['path'];
+                    $url = isset($json_array['S3_files']['path']) ? $json_array['S3_files']['path'] : '';
                     $media_name = basename($url);
-                    $device = (array) $json_array['local_filenames']['device'];
+                    if (isset($json_array['local_filenames']['device'])) {
+                    	$device = (array) $json_array['local_filenames']['device'];
+                    } else {
+                    	$device = array();
+                    }
 //        echo "<pre>";print_r($device);
 //            echo $user_id . '_' . $device_id;echo "<br/>".$row['media_id'];
 //            

@@ -302,11 +302,11 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                
                 error_log("Callback ---> " . $callback . "(" . $json . ")");
                  header("Content-type: plain/text");
-            //callback json
-            echo $callback . "(" . $json . ")";
-            //Need to exit here to avoid ZF2 framework view.
+				//callback json
+				echo $callback . "(" . $json . ")";
+				//Need to exit here to avoid ZF2 framework view.
 
-            exit;
+				exit;
             }
             
             
