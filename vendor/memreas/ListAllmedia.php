@@ -119,7 +119,9 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     $is_download = 0;
 
 
-                    $json_array = json_decode($row->metadata, true);
+                    $json_array = json_decode($row['metadata'], true);
+error_log("ListAllmedia.exec row['metadata']  ---> " . $row['metadata'] . PHP_EOL);    
+
                     if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                         $type = "image";
                         if (isset($json_array['S3_files']['79x80']))
@@ -145,9 +147,13 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     else
                         $type = "Type not Mentioned";
 
-                    $url = $json_array['S3_files']['path'];
+                    $url = isset($json_array['S3_files']['path']) ? $json_array['S3_files']['path'] : '';
                     $media_name = basename($url);
-                    $device = (array) $json_array['local_filenames']['device'];
+                    if (isset($json_array['local_filenames']['device'])) {
+                    	$device = (array) $json_array['local_filenames']['device'];
+                    } else {
+                    	$device = array();
+                    }
 //        echo "<pre>";print_r($device);
 //            echo $user_id . '_' . $device_id;echo "<br/>".$row['media_id'];
 //            
@@ -157,7 +163,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     }
 //            }
                     $xml_output.="<media>";
-                    $xml_output.="<media_id>" . $row->media_id . "</media_id>";
+                    $xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
                     $xml_output.="<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
                     $xml_output.="<is_downloaded>$is_download</is_downloaded>";
                     $xml_output.="<event_media_video_thum>";
