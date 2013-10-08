@@ -144,7 +144,8 @@ error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 } else if ($actionname == "addcomment") {
                     $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addcomment->exec();
-                } else if ($actionname == "chkuname") {
+                } else if ($actionname == "checkusername") {
+error_log("IndexController ----> about to checkusername" . PHP_EOL);
                     $chkuname = new ChkUname($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $chkuname->exec();
                 } else if ($actionname == "addmediaevent") {

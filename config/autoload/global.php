@@ -14,7 +14,7 @@
 return array(
     'db' => array(
         'adapters' => array(
-            'memreasdevdb' => array(
+            'memreasintdb' => array(
                 'driver' => 'Pdo',
                 'driver_options' => array(
                     PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
@@ -37,6 +37,10 @@ return array(
             'Zend\Db\Adapter\AdapterAbstractServiceFactory',
         ),
     ),
+    'notification' => array(
+        'gcm_key' => 'AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM'
+        
+    ),
     'doctrine' => array(
         'connection' => array(
             'orm_default' => array(
@@ -52,7 +56,7 @@ return array(
                     'dbname' => 'memreasintdb',
                     'user'     => 'memreasdbuser',
 					'password' => 'memreas2013',
-                /*
+/*
 				//localhost db
                 'params' => array(
                     'host' => 'localhost',
@@ -60,7 +64,7 @@ return array(
                     'dbname' => 'memreasintdb',
                     'user'     => 'root',
 					'password' => 'john1016',
-				*/
+*/
                 )
             )
         )
