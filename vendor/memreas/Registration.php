@@ -151,7 +151,6 @@ error_log("Inside exec setting sql - sql ----> $sql" . PHP_EOL);
 error_log("_FILES -----> " . print_r($_FILES['f']) . PHP_EOL);
 error_log("__DIR__ -----> " . dirname(__DIR__) . PHP_EOL);
 error_log(" cwd -----> " . getcwd() . PHP_EOL);
-chdir();
 error_log("__DIR__ -----> " . dirname(__DIR__) . PHP_EOL);
                 // upload profile image
                 if (isset($_FILES['f']) && !empty($_FILES['f']['name'])) {
@@ -169,12 +168,22 @@ error_log("__DIR__ -----> " . dirname(__DIR__) . PHP_EOL);
                         throw new \Exception('Please Upload Image.');
                     $media_id = UUID::getUUID($this->dbAdapter);
 
-                    $aws_manager = new AWSManager();
+                    $aws_manager = new AWSManager($this->service_locator);
                     $s3url = $aws_manager->webserviceUpload($user_id, $s3file_name, $content_type);
-                    $s3path = $user_id . '/image/';
-                    $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,),
-                        "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $divice_id,),),
-                        "type" => array("image" => array("format" => $file_type[1]))
+                    $paths = $aws_manager->s3upload($user_id, $media_id, $s3file_name, $content_type, $file, $isVideo = false);
+                    //$s3path = $user_id . '/image/';
+                    $json_array = array(
+                    				"S3_files" => array(
+                    								"path" => $s3url, 
+                    								"Full" => $s3url,
+                    								"79x80" => $paths['79x80_Path'],
+                    								"448x306" => $paths['448x306_Path'],
+                    								"98x78" => $paths['98x78_Path'],
+                    							),
+                        			"local_filenames" => 
+                        					array("device" => array("unique_device_identifier1" => $user_id . '_' . $divice_id,),),
+                        			"type" => 
+                        				array("image" => array("format" => $file_type[1]))
                     );
                     $json_str = json_encode($json_array);
                     $time = time();
@@ -186,7 +195,6 @@ error_log("__DIR__ -----> " . dirname(__DIR__) . PHP_EOL);
                     $tblMedia->metadata = $json_str;
                     $tblMedia->create_date = $time;
                     $tblMedia->update_date = $time;
-
 
                     $this->dbAdapter->persist($tblMedia);
                     $this->dbAdapter->flush();
