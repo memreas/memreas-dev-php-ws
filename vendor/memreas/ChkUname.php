@@ -26,6 +26,7 @@ class ChkUname {
 
     public function exec() {
 		
+error_log("View ChkUname.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
         $data = simplexml_load_string($_POST['xml']);
 //print_r($data);
 
@@ -36,11 +37,11 @@ class ChkUname {
         $xml_output .= "<xml>";
         if (isset($username) && !empty($username)) {
             $query = "SELECT u FROM  Application\Entity\User as u  where u.username = '$username'";
-           // $statement = $this->dbAdapter->createStatement($query);
-            //$result = $statement->execute();
-            //$row = $result->current();
-			 $statement = $this->dbAdapter->createQuery($query);
-  $result = $statement->getResult();
+           	// $statement = $this->dbAdapter->createStatement($query);
+            // $result = $statement->execute();
+            // $row = $result->current();
+			$statement = $this->dbAdapter->createQuery($query);
+  			$result = $statement->getResult();
 
             if (!empty($result)) {
                 $status = 'Success';
@@ -64,6 +65,7 @@ class ChkUname {
         $xml_output.="</xml>";
 
         echo $xml_output;
+error_log("View ChkUname.xml_output ---->  " . $xml_output . PHP_EOL);
     }
 
 }
