@@ -23,17 +23,20 @@ public function addDevice($device_token) {
    }
 	public function sendpush($message='')
 	{// Message to be sent
-         if(count($this->device_token)==0)return;
+         if(count($this->device_token)==0)return 'dev token not found';
  
         $url = 'https://android.googleapis.com/gcm/send';
 
 $fields = array(
                 'registration_ids'  => $this->device_token,
-                'data'              => array( "price" => $message ),
+                'data'              => array( "message" => $message , 'type'=>1, 'id' => '1000'),
                 );
  
 $headers = array( 
-                    'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
+                   //kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
+    
+                    //given by devender/
+                        'Authorization: key=AIzaSyCrKrzFlPbauqLNuXy6mdi4xZd13djnIHU',
                     'Content-Type: application/json'
                 );
 

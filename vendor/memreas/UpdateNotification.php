@@ -61,7 +61,7 @@ class UpdateNotification {
              $message ="Notification Updated";
              $this->notification->setUpdateMessage($tblNotification->notification_type);
              $this->notification->add($tblNotification->user_id);
-             $this->notification->send();
+             $r= $this->notification->send();
     
                 
              }
@@ -72,7 +72,8 @@ class UpdateNotification {
         $xml_output .= "<xml>";
         $xml_output.= "<updatenotification>";
         $xml_output.= "<status>$status</status>";
-        $xml_output.= "<message>" . $message ."</message>";
+        if(!empty($_GET['view'])) $message .= $r;
+        $xml_output.= "<message>" . $message."</message>";
         $xml_output.= "<notification_id>$notification_id</notification_id>";
         $xml_output.= "</updatenotification>";
         $xml_output.= "</xml>";
