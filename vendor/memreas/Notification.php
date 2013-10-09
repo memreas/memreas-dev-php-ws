@@ -47,7 +47,7 @@ class Notification {
                     }
                     
                 } 
-                $this->gcm->sendpush($this->message);
+                return $this->gcm->sendpush($this->message);
                      
       
        

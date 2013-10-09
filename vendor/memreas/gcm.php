@@ -31,7 +31,7 @@ $fields = array(
                 'registration_ids'  => $this->device_token,
                 'data'              => array( "price" => $message ),
                 );
-
+ 
 $headers = array( 
                     'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
                     'Content-Type: application/json'
