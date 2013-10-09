@@ -29,11 +29,14 @@ public function addDevice($device_token) {
 
 $fields = array(
                 'registration_ids'  => $this->device_token,
-                'data'              => array( "price" => $message ),
+                'data'              => array( "message" => $message , 'type'=>1, id => '1000'),
                 );
  
 $headers = array( 
-                    'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
+                   //kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
+    
+                    //given by devender/
+                        'Authorization: key=AIzaSyCrKrzFlPbauqLNuXy6mdi4xZd13djnIHU',
                     'Content-Type: application/json'
                 );
 
