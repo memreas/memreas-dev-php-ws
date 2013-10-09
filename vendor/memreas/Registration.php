@@ -141,6 +141,7 @@ error_log("Inside exec setting sql - sql ----> $sql" . PHP_EOL);
 					$tblDevice->device_id = $device_id;
 					$tblDevice->device_token = $device_token;
 					$tblDevice->user_id = $user_id;
+                    $tblDevice->device_type = $device_type;
 					$tblDevice->create_time = $created;
 					$tblDevice->update_time = $modified;
 
