@@ -29,7 +29,7 @@ public function addDevice($device_token) {
 
 $fields = array(
                 'registration_ids'  => $this->device_token,
-                'data'              => array( "message" => $message , 'type'=>1, id => '1000'),
+                'data'              => array( "message" => $message , 'type'=>1, 'id' => '1000'),
                 );
  
 $headers = array( 
