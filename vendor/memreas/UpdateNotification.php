@@ -72,7 +72,8 @@ class UpdateNotification {
         $xml_output .= "<xml>";
         $xml_output.= "<updatenotification>";
         $xml_output.= "<status>$status</status>";
-        $xml_output.= "<message>" . $message . $r."</message>";
+        if(!empty($_GET['view'])) $message .= $r;
+        $xml_output.= "<message>" . $message."</message>";
         $xml_output.= "<notification_id>$notification_id</notification_id>";
         $xml_output.= "</updatenotification>";
         $xml_output.= "</xml>";
