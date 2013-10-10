@@ -61,6 +61,9 @@ class UpdateNotification {
              $message ="Notification Updated";
              $this->notification->setUpdateMessage($tblNotification->notification_type);
              $this->notification->add($tblNotification->user_id);
+             $this->notification->type=$tblNotification->notification_type;
+             $this->notification->id= $notification_id;
+             
              $r= $this->notification->send();
     
                 

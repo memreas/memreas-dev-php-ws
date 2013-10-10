@@ -17,22 +17,20 @@ class gcm {
 //       $config = $this->service_locator->get('Config');
 
 	}
-public function addDevice($device_token) {
-    $this->device_token[] =$device_token;
- 
-   }
-	public function sendpush($message='')
+    public function addDevice($device_token) {
+        $this->device_token[] = $device_token;
+    }
+	public function sendpush($message='',$type='',$id='')
 	{// Message to be sent
-         if(count($this->device_token)==0)return 'dev token not found';
+          if(count($this->device_token)==0)return 'dev token not found';
  
         $url = 'https://android.googleapis.com/gcm/send';
 
 $fields = array(
                 'registration_ids'  => $this->device_token,
-                'data'              => array( "message" => $message , 'type'=>1, 'id' => '1000'),
+                'data'              => array( "message" => $message , 'type'=>$type, 'id' => $id),
                 );
- 
-$headers = array( 
+ $headers = array( 
                    //kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
     
                     //given by devender/
@@ -58,7 +56,7 @@ $result = curl_exec($ch);
 // Close connection
 curl_close($ch);
 
-return $result;
+return $result ;
 
 	}
 
