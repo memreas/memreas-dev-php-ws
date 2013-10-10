@@ -47,12 +47,13 @@ class UpdateNotification {
        
         //save notification in table
         $tblNotification = $this->dbAdapter->find("\Application\Entity\Notification", $notification_id);
-        
+       
         if (!$tblNotification) {
              $status = "failure";
              $message ="Notification not found";
         } else{
             
+           
              $tblNotification->status = $status;
              $tblNotification->update_time = $time;
        
@@ -62,7 +63,8 @@ class UpdateNotification {
              $this->notification->setUpdateMessage($tblNotification->notification_type);
              $this->notification->add($tblNotification->user_id);
              $this->notification->type=$tblNotification->notification_type;
-             $this->notification->id= $notification_id;
+             $links = json_decode($tblNotification->links,true);
+             $this->notification->id= $links['event_id'];
              
              $r= $this->notification->send();
     

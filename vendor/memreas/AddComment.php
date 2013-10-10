@@ -109,7 +109,7 @@ class AddComment {
                  $query = "SELECT c.user_id FROM  Application\Entity\Comment as c  where c.event_id = '$event_id'";
           		 $statement = $this->dbAdapter->createQuery($query);
                     $comment_u = $statement->getResult();
-                    foreach($comment_u as $comment_row){
+                    foreach($comment_u as $comment_row){ 
                         $data = array('addNotification' => array(
                                         'user_id' => $comment_row['user_id'],
                                         
@@ -129,7 +129,12 @@ class AddComment {
                     }
                     
                     if(!empty($data['addNotification']['meta'])){
+                        
                         $this->notification->setMessage($data['addNotification']['meta']);
+                          $this->notification->type=\Application\Entity\Notification::ADD_COMMENT;
+             
+             $this->notification->id= $event_id;
+                
                         $this->notification->send(); 
                     }
             }

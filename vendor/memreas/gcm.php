@@ -30,6 +30,7 @@ $fields = array(
                 'registration_ids'  => $this->device_token,
                 'data'              => array( "message" => $message , 'type'=>$type, 'id' => $id),
                 );
+//print_r($fields['data']);exit;
  $headers = array( 
                    //kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
     

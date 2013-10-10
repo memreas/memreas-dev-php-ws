@@ -115,7 +115,7 @@ class AddFriendtoevent {
             // add to friend
             if ($result_friend) {
                
-                $friend_id = $result_friend->friend_id;
+                $friend_id = $result_friend['friend_id'];
             } else {
                 ////
                 $friend_id = UUID::getUUID($this->dbAdapter);
@@ -275,6 +275,10 @@ class AddFriendtoevent {
         }
         if (!empty($data['addNotification']['meta'])) {
             $this->notification->setMessage($data['addNotification']['meta']);
+              $this->notification->type=\Application\Entity\Notification::ADD_FRIEND_TO_EVENT;
+             
+             $this->notification->id= $event_id;
+                
             $this->notification->send();
         }
 
