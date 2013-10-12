@@ -7,6 +7,7 @@ use Application\Model\MemreasConstants;
 class apns {
 	protected $service_locator;
 	protected $dbAdapter;
+       protected $device_token=array();
 
 	public function __construct() {
 	   //$this->dbAdapter = $service_locator->get(MEMREASDB);
@@ -14,12 +15,13 @@ class apns {
 	   //$this->dbAdapter = $this->service_locator->get('doctrine.entitymanager.orm_default');
 
 	}
-
-	public static function sendpush($message,$user_register)
+    public function addDevice($device_token) {
+    $this->device_token[] =$device_token;
+ 
+   }
+	public static function sendpush($message='', $type='', $id='')
 	{// Message to be sent
-            $message = "Is that Good?! No?";
-	
-	$payload = '{
+            $payload = '{
 					"aps" : 
 						
 						{
@@ -36,8 +38,7 @@ class apns {
 	
 	$fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 
-print_r($fp);
-
+ 
 	if(!$fp){
 		print "Failed to connect $err";
 		return;
@@ -45,11 +46,9 @@ print_r($fp);
 		print "Notifications sent!";
 	}
 	
-	// Pass device key
-	$devArray = array();
-	
-	foreach($devArray as $deviceToken){
-		$msg = chr(0) . pack("n",32) . pack('H*', str_replace(' ', '', $deviceToken)) . pack		("n",strlen($payload)) . $payload;
+	// Pass device key	
+	foreach($this->device_token as $Token){
+		$msg = chr(0) . pack("n",32) . pack('H*', str_replace(' ', '', $Token)) . pack		("n",strlen($payload)) . $payload;
 		fwrite($fp, $msg);
 	}
 	fclose($fp);

@@ -15,6 +15,11 @@ class Notification {
     protected $userIds;
     protected $message;
     protected $gcm;
+    protected $apns;
+    protected $type;
+    protected $id;
+
+
 
     public function __construct($service_locator) {
         error_log("Inside__construct...");
@@ -22,6 +27,9 @@ class Notification {
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         if (!$this->gcm) {
             $this->gcm = new gcm($service_locator);
+        }
+         if (!$this->apns) {
+            $this->apns = new apns($service_locator);
         }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
@@ -32,6 +40,7 @@ class Notification {
     }
 
     public function send() {
+            
         $get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in('" . join('\' , \'', $this->userIds) . "')";
         $statement = $this->dbAdapter->createQuery($get_user_device);
 
@@ -42,13 +51,13 @@ class Notification {
             foreach ($users as $user) {
 
                 if ($user['device_type'] == \Application\Entity\Device::ANROID) {
-
                     $this->gcm->addDevice($user['device_token']);
                 } else if ($user['device_type'] == \Application\Entity\Device::APPLE) {
+                    $this->apns->addDevice($user['device_token']);
                     
                 }
             }
-            return $this->gcm->sendpush($this->message);
+            return $this->gcm->sendpush($this->message,$this->type,$this->id);
         }
     }
 
@@ -66,15 +75,28 @@ class Notification {
             case 4:
                 $this->message = "Add Comment";
                 break;
+            case 5:
+                $this->message = "Update on Event";
+                break;
+            
         }
 
-        // echo '<pre>';print_r($notification_type);exit;
+         //echo '<pre>';print_r($notification_type);exit;
     }
 
     public function setMessage($message) {
         $this->message = $message;
     }
 
+    public function __set($name, $value) {
+        $this->$name = $value;
+    }
+
+    public function __get($name) {
+        return $this->$name;
+    }
+
+    
 }
 
 ?>
