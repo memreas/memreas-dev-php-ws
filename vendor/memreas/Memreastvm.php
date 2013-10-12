@@ -18,7 +18,7 @@ class Memreastvm {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('memreasdevdb');
+        $this->dbAdapter = $service_locator->get('memreasintdb');
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
