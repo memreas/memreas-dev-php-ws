@@ -13,8 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Device  
 {
-    const ANROID = '1';
-    const APPLE = '2';
+    const ANROID = '2';
+    const APPLE = '1';
     
     /**
      * @var string
