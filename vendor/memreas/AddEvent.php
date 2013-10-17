@@ -175,7 +175,7 @@ else {
                         
                     );
                      $this->AddNotification->exec($data);
-                     
+                      $this->notification->add($user_id);
                      if (!empty($data['addNotification']['meta'])) {
 
                     $this->notification->setMessage($data['addNotification']['meta']);
