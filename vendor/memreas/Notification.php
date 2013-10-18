@@ -18,6 +18,7 @@ class Notification {
     protected $apns;
     protected $type;
     protected $id;
+    protected $media_id;
 
 
 
@@ -57,7 +58,7 @@ class Notification {
                     
                 }
             }
-            return $this->gcm->sendpush($this->message,$this->type,$this->id);
+            return $this->gcm->sendpush($this->message,$this->type,$this->id,$this->media_id);
         }
     }
 
