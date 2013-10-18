@@ -26,9 +26,9 @@ class AddEvent {
         if(!$this->AddNotification){
                         $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
         }
-        if(!$this->AddTag){
+        /*if(!$this->AddTag){
                         $this->AddTag = new AddTag($service_locator);
-        }
+        }*/
         if (!$this->notification) {
             $this->notification = new Notification($service_locator);
         }
