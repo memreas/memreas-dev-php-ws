@@ -14,6 +14,8 @@ class AddEvent {
     protected $service_locator;
     protected $dbAdapter;
     protected $AddNotification;
+    protected $AddTag;
+    protected $notification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log("Inside__construct...");
@@ -23,6 +25,12 @@ class AddEvent {
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         if(!$this->AddNotification){
                         $this->AddNotification = new AddNotification($message_data, $memreas_tables, $service_locator);
+        }
+        /*if(!$this->AddTag){
+                        $this->AddTag = new AddTag($service_locator);
+        }*/
+        if (!$this->notification) {
+            $this->notification = new Notification($service_locator);
         }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
@@ -100,9 +108,23 @@ else {
                 $tblEvent->viewable_to=$event_to;
                 $tblEvent->self_destruct=$event_self_destruct;
                 $tblEvent->create_time=$event_date_timestamp;
-                 $tblEvent->update_time=$event_date_timestamp;
+                $tblEvent->update_time=$event_date_timestamp;
                 $this->dbAdapter->persist($tblEvent);
                 $this->dbAdapter->flush();
+                
+                
+                
+                
+              //add tag
+              /*  $tagData = array('addtag' => array(
+                    'meta' => json_encode(array('event_id' => $uuid)),
+                    'tag_type' => \Application\Entity\Tag::EVENT,
+                    'tag' => \Application\Entity\Tag::EVENT.$event_name,
+                ),);
+                $this->AddTag->exec($tagData);
+               * *
+               */
+                
 
    /* $query = "insert into Application\Entity\Event e (event_id,user_id,
                                                 name,
@@ -128,7 +150,7 @@ else {
                                                 '$event_date_timestamp','$event_date_timestamp')";*/
     //$result = mysql_query($query);
     // $statement = $this->dbAdapter->createStatement($query);
-      //      $result = $statement->execute();
+     //      $result = $statement->execute();
             //$row = $result->current();
    // $statement = $this->dbAdapter->createQuery($query);
   //$result = $statement->getResult();
@@ -138,7 +160,7 @@ else {
         $event_id = $uuid;
         $message .= 'Event successfully added';
         $status = 'Success';
-    
+  
         $data = array('addNotification' => array(
                                 'user_id' => $user_id,
                                 'meta' => "New Event: $event_name",
@@ -152,8 +174,15 @@ else {
                         
                         
                     );
-               print_r($data);
-                    $this->AddNotification->exec($data);
+                     $this->AddNotification->exec($data);
+                      $this->notification->add($user_id);
+                     if (!empty($data['addNotification']['meta'])) {
+
+                    $this->notification->setMessage($data['addNotification']['meta']);
+                    $this->notification->type = \Application\Entity\Notification::ADD_EVENT;
+                    $this->notification->id = $event_id;
+                    $this->notification->send();
+                }
     /*
       foreach ($media_array as $key => $value)
       {
