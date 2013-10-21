@@ -41,10 +41,10 @@ class apns {
 
  
 	if(!$fp){
-		print "Failed to connect $err $errstr";
+		//print "Failed to connect $err $errstr";
 		return;
 	} else {
-		print "Notifications sent!";
+		//print "Notifications sent!";
 	}
 	
 	// Pass device key	

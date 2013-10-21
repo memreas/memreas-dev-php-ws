@@ -52,7 +52,7 @@ class AWSManager {
         $this->sns = $this->aws->get('sns');
 
         //Set the topicArn
-        $this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker';
+        $this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
 
 
         error_log("Exit AWSManager constructor", 0);
@@ -65,14 +65,12 @@ class AWSManager {
         error_log("INPUT JSON ----> " . $json);
 
         //Debug without Topic publish
-        $result = $this->snsProcessMediaSubscribe($message_data);
-/*
+//        $result = $this->snsProcessMediaSubscribe($message_data);
 		$result = $this->sns->publish(array(
            'TopicArn' => $this->topicArn,
             'Message'  => $json,
             'Subject'  => 'snsProcessMediaPublish',
         	));
-*/
         return $result;
     }
 
