@@ -104,7 +104,7 @@ class IndexController extends AbstractActionController {
     }
 
     public function indexAction() {
-
+ 
         //$path = $this->security("application/index/ws_tester.phtml");
 
         $path = "application/index/ws_tester.phtml";
@@ -277,6 +277,9 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                 }else if ($actionname == "updatenotification") {
                     $updatenotification = new \memreas\UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $updatenotification->exec();
+                }else if ($actionname == "findtag") {
+                    $findtag = new \memreas\FindTag($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $findtag->exec();
                 }
 
                $output = ob_get_clean();

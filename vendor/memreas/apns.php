@@ -7,7 +7,7 @@ use Application\Model\MemreasConstants;
 class apns {
 	protected $service_locator;
 	protected $dbAdapter;
-       protected $device_token=array();
+    protected $device_token=array();
 
 	public function __construct() {
 	   //$this->dbAdapter = $service_locator->get(MEMREASDB);
@@ -19,18 +19,19 @@ class apns {
     $this->device_token[] =$device_token;
  
    }
-	public static function sendpush($message='', $type='', $id='')
+   public function getDeviceCount() {
+        return count($this->device_token);
+    }
+	public static function sendpush($message='',$type='',$id='',$media_id='')
 	{// Message to be sent
-            $payload = '{
-					"aps" : 
-						
-						{
-						  "alert" : "Test",
-						  "badge" : "1",
-						  "sound" : "default"
-						} 
-				}';
-	
+                
+                $payload['aps'] = array('alert' => $message,'badge' => '1','sound' => 'default');
+                $payload['eid'] = $id; 
+                if(!empty($media_id)){
+                   $payload['mid'] = $media_id; 
+                }  	
+               $payload = json_encode($payload);
+               
 	$ctx = stream_context_create();
 	stream_context_set_option($ctx, 'ssl', 'local_cert', 'ck.pem');
 	stream_context_set_option($ctx, 'ssl', 'passphrase', 'nopass');
@@ -40,10 +41,10 @@ class apns {
 
  
 	if(!$fp){
-		print "Failed to connect $err";
+		//print "Failed to connect $err $errstr";
 		return;
 	} else {
-		print "Notifications sent!";
+		//print "Notifications sent!";
 	}
 	
 	// Pass device key	
