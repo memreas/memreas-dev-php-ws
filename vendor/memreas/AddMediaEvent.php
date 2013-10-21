@@ -251,7 +251,7 @@ class AddMediaEvent {
 
                 $this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
 
-                $this->notification->id = $event_id;
+                $this->notification->event_id = $event_id;
 
 
 

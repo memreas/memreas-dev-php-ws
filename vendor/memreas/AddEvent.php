@@ -180,7 +180,7 @@ else {
 
                     $this->notification->setMessage($data['addNotification']['meta']);
                     $this->notification->type = \Application\Entity\Notification::ADD_EVENT;
-                    $this->notification->id = $event_id;
+                    $this->notification->event_id = $event_id;
                     $this->notification->send();
                 }
     /*
