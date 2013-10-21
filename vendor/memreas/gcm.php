@@ -20,9 +20,12 @@ class gcm {
     public function addDevice($device_token) {
         $this->device_token[] = $device_token;
     }
+    public function getDeviceCount() {
+        return count($this->device_token);
+    }
 	public function sendpush($message='',$type='',$id='',$media_id='')
 	{// Message to be sent
-          if(count($this->device_token)==0)return 'dev token not found';
+          
  
         $url = 'https://android.googleapis.com/gcm/send';
 

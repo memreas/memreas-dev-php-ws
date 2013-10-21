@@ -46,19 +46,24 @@ class Notification {
         $statement = $this->dbAdapter->createQuery($get_user_device);
 
         $users = $statement->getArrayResult();
+
         if (count($users) > 0) {
 
 
             foreach ($users as $user) {
-
                 if ($user['device_type'] == \Application\Entity\Device::ANROID) {
                     $this->gcm->addDevice($user['device_token']);
                 } else if ($user['device_type'] == \Application\Entity\Device::APPLE) {
                     $this->apns->addDevice($user['device_token']);
-                    
                 }
             }
-            return $this->gcm->sendpush($this->message,$this->type,$this->id,$this->media_id);
+            
+            if($this->gcm->getDeviceCount()> 0){
+                $this->gcm->sendpush($this->message,$this->type,$this->id,$this->media_id);
+            }
+             if($this->apns->getDeviceCount()> 0){
+                $this->apns->sendpush($this->message,$this->type,$this->id,$this->media_id);
+             }
         }
     }
 
