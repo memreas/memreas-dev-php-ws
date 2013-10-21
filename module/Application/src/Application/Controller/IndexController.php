@@ -39,7 +39,7 @@ use memreas\CountViewevent;
 use memreas\EditEvent;
 use memreas\AddEvent;
 use memreas\ViewEvents;
-use memreas\AWSManager;
+use memreas\AWSManagerSender;
 use memreas\AddFriendtoevent;
 use memreas\ViewMediadetails;
 use memreas\snsProcessMediaPublish;
@@ -104,7 +104,7 @@ class IndexController extends AbstractActionController {
     }
 
     public function indexAction() {
- 
+
         //$path = $this->security("application/index/ws_tester.phtml");
 
         $path = "application/index/ws_tester.phtml";
@@ -130,7 +130,7 @@ class IndexController extends AbstractActionController {
             
         }
 
-            if ($codebase == "new_code" && !empty($actionname)) {
+		if ($codebase == "new_code" && !empty($actionname)) {
 error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
