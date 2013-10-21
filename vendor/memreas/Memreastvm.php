@@ -4,7 +4,7 @@ namespace memreas;
  use Aws\Common\Aws;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use memreas\AWSManager;
+use memreas\AWSManagerSender;
 use memreas\UUID;
 class Memreastvm {
 

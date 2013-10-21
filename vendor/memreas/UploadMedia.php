@@ -4,7 +4,7 @@ namespace memreas;
  use Aws\Common\Aws;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use memreas\AWSManager;
+use memreas\AWSManagerSender;
 use memreas\UUID;
 class UploadMedia {
 
@@ -49,21 +49,22 @@ if (empty($_FILES['f'])) {
 //-----------------for image upload------------------
             if (strcasecmp($file_type[0], 'image') == 0) {
                 require_once 'upload-advertisement.php';
-//        $folder = FOLDER_PATH. "100x100/";
                 //$folder = "/home/sufalam1/public_html/playfulencounter/public/130x150/";
                 $w = 10;
                 $h = 100;
                 $ftmp = $_FILES['f']['tmp_name'];
                 //echo $ftmp;exit;
                 $oname = $_FILES['f']['name'];
-//        if (resize_image($oname, $ftmp, $newfilename,FOLDER_PATH. "79x80/", 79, 80) 
-//                && resize_image($oname, $ftmp, $newfilename,FOLDER_PATH. "448x306/", 448, 306)
-//                && resize_image($oname, $ftmp, $newfilename,FOLDER_PATH. "98x78/", 98, 78)) {
-                $upload = DIR_PATH . $newfilename;
-
+				// dirPath = /data/temp_uuid/media/userimage/
+				$temp_job_uuid_dir = UUID::getUUID($this->dbAdapter);
+				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::MEDIA_PATH;
+				if (!file_exists($dirPath)) {
+					mkdir($dirPath, 0777, true);
+				}
+                $upload = $dirPath . $newfilename;
 
                 //memreas added
-                $aws_manager = new AWSManager();
+                $aws_manager = new AWSManagerSender();
                 $s3paths = $aws_manager->s3upload($_POST['user_id'], $newfilename, $ftmp);
 //                echo "<pre>";
 //                print_r($s3paths);
@@ -80,7 +81,7 @@ if (empty($_FILES['f'])) {
             //--------------------------------for video upload-----------
             if (strcasecmp('video', $file_type[0]) == 0) {
 
-                $aws_manager = new AWSManager();
+                $aws_manager = new AWSManagerSender();
                 $s3paths = $aws_manager->s3upload($_POST['user_id'], $newfilename, $_FILES['f']['tmp_name'], true);
 
                 return $s3paths;
@@ -90,7 +91,7 @@ if (empty($_FILES['f'])) {
             } else
             //----------------------------------for audio------------
             if (strcasecmp('audio', $file_type[0]) == 0)
-                $aws_manager = new AWSManager();
+                $aws_manager = new AWSManagerSender();
             $s3paths = $aws_manager->s3upload($_POST['user_id'], $newfilename, $_FILES['f']['tmp_name'], true);
 
             return $s3paths;

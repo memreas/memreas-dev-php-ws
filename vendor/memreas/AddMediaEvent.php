@@ -4,7 +4,7 @@ namespace memreas;
 
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use memreas\AWSManager;
+use memreas\AWSManagerSender;
 use memreas\AddNotification;
 use memreas\UUID;
 
@@ -207,7 +207,7 @@ class AddMediaEvent {
                         'email' => $email
                     );
 
-                    $aws_manager = new AWSManager($this->service_locator);
+                    $aws_manager = new AWSManagerSender($this->service_locator);
                     $response = $aws_manager->snsProcessMediaPublish($message_data);
 
                     if ($response == 1) {
