@@ -165,18 +165,26 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     $xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
                     $xml_output.="<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
                     $xml_output.="<is_downloaded>$is_download</is_downloaded>";
-                    $xml_output.="<event_media_video_thum>";
-                    $xml_output.=(!empty($thum_url)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
-                    $xml_output.= "</event_media_video_thum>";
-                    $xml_output.="<media_url_79x80><![CDATA[";
-                    $xml_output.=(!empty($url79x80)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 : '';
-                    $xml_output.= "]]></media_url_79x80>";
-                    $xml_output.="<media_url_98x78><![CDATA[";
-                    $xml_output.=(!empty($url98x78)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 : '';
-                    $xml_output.= "]]></media_url_98x78>";
+                    if((!empty($thum_url))){
+                        $xml_output.="<event_media_video_thum>";
+                        $xml_output.=  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url ;
+                        $xml_output.= "</event_media_video_thum>";
+                    }
+                    if(!empty($url79x80)) {
+                        $xml_output.="<media_url_79x80><![CDATA[";
+                        $xml_output.= MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 ;
+                        $xml_output.= "]]></media_url_79x80>";
+                    }
+                    if(!empty($url98x78)) {
+                        $xml_output.="<media_url_98x78><![CDATA[";
+                        $xml_output.= MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78;
+                        $xml_output.= "]]></media_url_98x78>";
+                    }
+                    if((!empty($url448x306))){
                     $xml_output.="<media_url_448x306><![CDATA[";
-                    $xml_output.=(!empty($url448x306)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 : '';
+                    $xml_output.=  MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 ;
                     $xml_output.= "]]></media_url_448x306>";
+                    }
                     $xml_output.="<type>$type</type>";
                     $xml_output.="<media_name><![CDATA[" . $media_name . "]]></media_name>";
                     $xml_output.="</media>";
@@ -186,7 +194,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
         if ($error_flage) {
             $xml_output.="<status>Failure</status>";
             $xml_output.= "<message>$message</message>";
-            $xml_output.="<media>";
+           /* $xml_output.="<media>";
             $xml_output.="<media_id></media_id>";
             $xml_output.="<is_downloaded></is_downloaded>";
             $xml_output.="<event_media_video_thum></event_media_video_thum>";
@@ -195,7 +203,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
             $xml_output.="<media_url_448x306></media_url_448x306>";
             $xml_output.="<type></type>";
             $xml_output.="<media_name></media_name>";
-            $xml_output.="</media>";
+            $xml_output.="</media>";*/
         }
 
         $xml_output .= "</medias>";
