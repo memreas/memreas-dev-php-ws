@@ -157,8 +157,8 @@ class AddComment {
 
                     $this->notification->setMessage($data['addNotification']['meta']);
                     $this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
-                    $this->notification->id = $event_id;
-                    $this->notification->id = $media_id;
+                    $this->notification->event_id = $event_id;
+                    $this->notification->media_id = $media_id;
 
                     $this->notification->send();
                 }

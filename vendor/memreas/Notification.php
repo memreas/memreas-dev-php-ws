@@ -17,7 +17,7 @@ class Notification {
     protected $gcm;
     protected $apns;
     protected $type;
-    protected $id;
+    protected $event_id;
     protected $media_id;
 
 
@@ -59,10 +59,10 @@ class Notification {
             }
             
             if($this->gcm->getDeviceCount()> 0){
-                $this->gcm->sendpush($this->message,$this->type,$this->id,$this->media_id);
+                $this->gcm->sendpush($this->message,$this->type,$this->event_id,$this->media_id);
             }
              if($this->apns->getDeviceCount()> 0){
-                $this->apns->sendpush($this->message,$this->type,$this->id,$this->media_id);
+                $this->apns->sendpush($this->message,$this->type,$this->event_id,$this->media_id);
              }
         }
     }

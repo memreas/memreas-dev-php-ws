@@ -64,7 +64,7 @@ class UpdateNotification {
              $this->notification->add($tblNotification->user_id);
              $this->notification->type=$tblNotification->notification_type;
              $links = json_decode($tblNotification->links,true);
-             $this->notification->id= $links['event_id'];
+             $this->notification->event_id= $links['event_id'];
              
              $r= $this->notification->send();
     

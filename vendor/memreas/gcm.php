@@ -23,7 +23,7 @@ class gcm {
     public function getDeviceCount() {
         return count($this->device_token);
     }
-	public function sendpush($message='',$type='',$id='',$media_id='')
+	public function sendpush($message='',$type='',$event_id='',$media_id='')
 	{// Message to be sent
           
  
@@ -31,10 +31,10 @@ class gcm {
 
 $fields = array(
                 'registration_ids'  => $this->device_token,
-                'data'              => array( "message" => $message , 'type'=>$type, 'id' => $id ,'media_id' =>$media_id),
+                'data'              => array( "message" => $message , 'type'=>$type, 'event_id' => $event_id ,'media_id' =>$media_id),
                 );
-//print_r($fields['data']);exit;
- $headers = array( 
+
+$headers = array( 
                    //kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
     
                     //given by devender/

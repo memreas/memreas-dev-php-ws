@@ -8,41 +8,42 @@ use Doctrine\ORM\Mapping as ORM;
  * A music album.
  *
  * @ORM\Entity
- * @ORM\Table(name="notifications")
+ * @ORM\Table(name="tag")
  * 
  */
-class Notification  
+class Tag  
 {
-    const ADD_FRIEND = '1';
-    const ADD_FRIEND_TO_EVENT = '2';
-    const ADD_COMMENT = '3';
-    const ADD_MEDIA = '4';
-    const ADD_EVENT = '5';
+    
+    const EVENT='!';
+    const PERSON='@';
+    const TAG='#';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="notification_id", type="string", length=255, nullable=false)
+     * @ORM\Column(name="tag_id", type="string", length=255, nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $notification_id;
+    private $tag_id;
 
      /**
      * @var string
-     *
-     * @ORM\Column(name="user_id", type="string", length=255, nullable=false)
+     * @ORM\Id
+     * @ORM\Column(name="tag", type="string", length=255, nullable=false)
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $user_id;
-
-    /**
+    private $tag;
+    
+      /**
      * @var string
      *
-     * @ORM\Column(name="notification_type", type="string", length=255, nullable=false)
+     * @ORM\Column(name="tag_type", type="string", length=1, nullable=false)
+     * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $notification_type;
-    
+    private $tag_type;
+
+   
     /**
      * @var string
      *
@@ -50,20 +51,7 @@ class Notification
      */
     private $meta;
     
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="links", type="string", length=255, nullable=false)
-     */
-    private $links;
-    
-       /**
-     * @var string
-     *
-     * @ORM\Column(name="status", type="string", length=255, nullable=false)
-     */
-    private $status=0;
-      
+   
     /**
      * @var string
      *
