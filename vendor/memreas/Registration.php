@@ -143,8 +143,8 @@ error_log("s3_data['s3file_name'] ----> " . $s3_data['s3file_name'] . PHP_EOL);
                     //$s3path = $user_id . '/image/';
                     $json_array = array(
 						"S3_files" => array(
-							"path" => $s3_data['s3path'],
-							"Full" => $s3_data['s3file_name'],
+							"path" => $s3_data['s3path'].$s3_data['s3file_name'],
+							"Full" => $s3_data['s3path'].$s3_data['s3file_name'],
 						),
 						"local_filenames" => 
 								array("device" => 
@@ -173,15 +173,6 @@ error_log("s3_data['s3file_name'] ----> " . $s3_data['s3file_name'] . PHP_EOL);
 error_log("statement->getResult() ----> " . print_r($r,true) . PHP_EOL);
 error_log("*************************************************************" . PHP_EOL);
 error_log("message_data ----> " . print_r($message_data,true) . PHP_EOL);
-                    $message_data = array(
-                        'user_id' => $user_id,
-                        'media_id' => $media_id,
-                        'content_type' => $content_type,
-                        's3path' => $s3path,
-                        's3file_name' => $s3file_name,
-                        'isVideo' => 0,
-                        'email' => $email
-                    );
 
 					//Now publish the message so any photo is thumbnailed.
                     $message_data = array(
@@ -190,7 +181,7 @@ error_log("message_data ----> " . print_r($message_data,true) . PHP_EOL);
                         'content_type' => $content_type,
                         's3path' => $s3_data['s3path'],
                         's3file_name' => $s3_data['s3file_name'],
-                        'isVideo' => $isVideo,
+                        'isVideo' => 0,
                         'email' => $email
                     );
 

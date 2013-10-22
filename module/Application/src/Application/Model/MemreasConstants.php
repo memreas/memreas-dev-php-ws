@@ -16,6 +16,7 @@ class MemreasConstants {
         //const SITEURL			= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";
         const DATA_PATH			= "/data/";
         const MEDIA_PATH		= "/media/";
+        const IMAGES_PATH		= "/media/images/";
         const USERIMAGE_PATH	= "/media/userimage/";
         const FOLDER_PATH		= "/data/media/";
         const FOLDER_AUDIO		= "upload_audio";
