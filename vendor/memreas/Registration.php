@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use memreas\AWSManagerSender;
 use memreas\UUID;
+use memreas\RmWorkDir;
 use \Exception;
 
 class Registration {
@@ -117,7 +118,7 @@ class Registration {
 
                     // dirPath = /data/temp_uuid/media/userimage/
 					$temp_job_uuid_dir = UUID::getUUID($this->dbAdapter);
-                    $dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::USERIMAGE_PATH;
+                    $dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
 					if (!file_exists($dirPath)) {
 						mkdir($dirPath, 0755, true);
 					}
@@ -130,12 +131,12 @@ class Registration {
                         throw new \Exception('Please Upload Image.');
 
 
+error_log("About to upload to S3" . PHP_EOL);
 					//Upload to S3 here
                     $media_id = UUID::getUUID($this->dbAdapter);
                     $aws_manager = new AWSManagerSender($this->service_locator);
                     $s3_data = $aws_manager->webserviceUpload($user_id, $dirPath, $s3file_name, $content_type);
 
-error_log("Removed job dir ----> " . $job_dir . PHP_EOL);
 error_log("s3_data['s3path']----> " . $s3_data['s3path'] . PHP_EOL);
 error_log("s3_data['s3file_name'] ----> " . $s3_data['s3file_name'] . PHP_EOL);
 
@@ -189,8 +190,8 @@ error_log("message_data ----> " . print_r($message_data,true) . PHP_EOL);
                     $response = $aws_manager->snsProcessMediaPublish($message_data);
                     
 					//Remove the work directory
-					$job_dir = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir;
-					rmdir($job_dir);
+					$dir = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir;
+					$dirRemoved = new RmWorkDir($dir);
 
                     $status = 'Success';
                     $message = "Media Successfully add";
