@@ -4,8 +4,8 @@ namespace memreas;
 
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use memreas\AWSManagerSender;
 use memreas\UUID;
+use memreas\AWSManagerSender;
 use memreas\RmWorkDir;
 use \Exception;
 
