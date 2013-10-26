@@ -121,7 +121,7 @@ class AddMediaEvent {
                 /////////////////////////////////////////
                 $file_type = explode('/', $content_type);
                 if (strcasecmp($file_type[0], 'image') == 0) {
-                    $s3path = $user_id . '/image/';
+                    $s3path = $user_id . '/images/';
                     $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,),
                         "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $divice_id,),),
                         "type" => array("image" => array("format" => $file_type[1]))
