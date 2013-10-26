@@ -120,7 +120,7 @@ class Registration {
 					$temp_job_uuid_dir = UUID::getUUID($this->dbAdapter);
                     $dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
 					if (!file_exists($dirPath)) {
-						mkdir($dirPath, 0755, true);
+						mkdir($dirPath, 0766, true);
 					}
                     $file = $dirPath . $s3file_name;
                     if (strpos($_FILES['f']['type'], 'image') < 0)
