@@ -19,38 +19,37 @@ use Zend\Mail\Message;
 use Zend\Mail\Transport\Sendmail as SendmailTransport;
 use Guzzle\Http\Client;
 use Application\Model\MemreasConstants;
-use memreas\Login;
-use memreas\Registration;
-use memreas\AddComment;
-use memreas\AddMediaEvent;
-use memreas\ChkUname;
-use memreas\LikeMedia;
-use memreas\MediaInappropriate;
-use memreas\CountListallmedia;
-use memreas\ListGroup;
-use memreas\DeletePhoto;
-use memreas\ListPhotos;
-use memreas\ForgotPassword;
-use memreas\Download;
-use memreas\ViewAllfriends;
-use memreas\CreateGroup;
-use memreas\ListAllmedia;
-use memreas\CountViewevent;
-use memreas\EditEvent;
-use memreas\AddEvent;
-use memreas\ViewEvents;
-use memreas\AWSManagerSender;
-use memreas\AddFriendtoevent;
-use memreas\ViewMediadetails;
-use memreas\snsProcessMediaPublish;
-use memreas\Memreastvm;
-use memreas\UploadMedia;
-use memreas\UploadAdvertisement;
-use memreas\AddNotification;
+use Application\memreas\Login;
+use Application\memreas\Registration;
+use Application\memreas\AddComment;
+use Application\memreas\AddMediaEvent;
+use Application\memreas\ChkUname;
+use Application\memreas\LikeMedia;
+use Application\memreas\MediaInappropriate;
+use Application\memreas\CountListallmedia;
+use Application\memreas\ListGroup;
+use Application\memreas\DeletePhoto;
+use Application\memreas\ListPhotos;
+use Application\memreas\ForgotPassword;
+use Application\memreas\Download;
+use Application\memreas\ViewAllfriends;
+use Application\memreas\CreateGroup;
+use Application\memreas\ListAllmedia;
+use Application\memreas\CountViewevent;
+use Application\memreas\EditEvent;
+use Application\memreas\AddEvent;
+use Application\memreas\ViewEvents;
+use Application\memreas\AWSManagerSender;
+use Application\memreas\AddFriendtoevent;
+use Application\memreas\ViewMediadetails;
+use Application\memreas\snsProcessMediaPublish;
+use Application\memreas\Memreastvm;
+use Application\memreas\UploadMedia;
+use Application\memreas\UploadAdvertisement;
+use Application\memreas\AddNotification;
 
-use memreas\Memreas;
-use memreas\MemreasTables;
-
+use Application\memreas\Memreas;
+use Application\memreas\MemreasTables;
 class IndexController extends AbstractActionController {
 
     //protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
@@ -268,17 +267,17 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                 else if ($actionname == "changepassword") {
                     
 
-                    $changepassword = new \memreas\ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
+                    $changepassword = new \Application\memreas\ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $changepassword->exec();
                 }
                  else if ($actionname == "listnotification") {
-                    $listnotification = new \memreas\ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $listnotification = new Application\memreas\ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $listnotification->exec();
                 }else if ($actionname == "updatenotification") {
-                    $updatenotification = new \memreas\UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $updatenotification = new Application\memreas\UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $updatenotification->exec();
                 }else if ($actionname == "findtag") {
-                    $findtag = new \memreas\FindTag($message_data, $memreas_tables, $this->getServiceLocator());
+                    $findtag = new Application\memreas\FindTag($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $findtag->exec();
                 }
 
