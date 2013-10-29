@@ -189,7 +189,7 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                     $download = new Download($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $download->exec();
                 } else if ($actionname == "viewallfriends") {
-
+error_log("IndexController ----> about to viewallfriends" . PHP_EOL);                	 
                     $viewallfriends = new ViewAllfriends($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $viewallfriends->exec();
                 } else if ($actionname == "creategroup") {
