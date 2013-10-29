@@ -47,6 +47,11 @@ use Application\memreas\Memreastvm;
 use Application\memreas\UploadMedia;
 use Application\memreas\UploadAdvertisement;
 use Application\memreas\AddNotification;
+use Application\memreas\ChangePassword; 
+use Application\memreas\ListNotification; 
+use Application\memreas\UpdateNotification; 
+use Application\memreas\FindTag; 
+
 
 use Application\memreas\Memreas;
 use Application\memreas\MemreasTables;
@@ -143,10 +148,10 @@ error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 } else if ($actionname == "addcomment") {
                     $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addcomment->exec();
-                } else if ($actionname == "checkusername") {
+                } else if ($actionname == "checkusername" || $actionname == "chkuname") {
 error_log("IndexController ----> about to checkusername" . PHP_EOL);
                     $chkuname = new ChkUname($message_data, $memreas_tables, $this->getServiceLocator());
-                    $result = $chkuname->exec();
+                    $result = $chkuname->exec(); 
                 } else if ($actionname == "addmediaevent") {
 error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                     $addmediaevent = new AddMediaEvent($message_data, $memreas_tables, $this->getServiceLocator());
@@ -267,17 +272,17 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                 else if ($actionname == "changepassword") {
                     
 
-                    $changepassword = new \Application\memreas\ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
+                    $changepassword = new ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $changepassword->exec();
                 }
                  else if ($actionname == "listnotification") {
-                    $listnotification = new Application\memreas\ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $listnotification->exec();
                 }else if ($actionname == "updatenotification") {
-                    $updatenotification = new Application\memreas\UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
+                    $updatenotification = new UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $updatenotification->exec();
                 }else if ($actionname == "findtag") {
-                    $findtag = new Application\memreas\FindTag($message_data, $memreas_tables, $this->getServiceLocator());
+                    $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $findtag->exec();
                 }
 

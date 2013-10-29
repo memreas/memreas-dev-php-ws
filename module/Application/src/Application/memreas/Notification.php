@@ -4,7 +4,10 @@ namespace Application\memreas;
 
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use Application\memreas\facebook\Facebook;
+
+//use Application\facebook\Facebook;
+//use Application\twitteroauth\TwitterOAuth;
+
 use Application\memreas\UUID;
 
 class Notification {
@@ -35,20 +38,14 @@ class Notification {
          if (!$this->apns) {
             $this->apns = new apns($service_locator);
         }
+        /*
         if (!$this->fb) {
             $config = array();
             $config['appId'] = '152686394870393';
             $config['secret'] = '62215615af53550af20c1d56736c189e';
             $this->fb =  new Facebook($config);
             $this->fb->setAccessToken($config['appId'].'|'.$config['secret']);
-
-        }
-            
-
-
-
-
-$user = '100001297014569';
+            $user = '100001297014569';
 $message = 'kamlesh noti message';
 $href = 'http://apps.facebook.com/kptestfb
 ';
@@ -60,6 +57,28 @@ $params = array(
 
   //$facebook->api('/' . $user . '/notifications/', 'post', $params);
   
+
+        }
+            
+        if(!$this->twitter){
+            
+            $config = array();
+            $config['CONSUMER_KEY'] = '1bqpAfSWfZFuEeY3rbsKrw';
+            $config['CONSUMER_SECRET'] = 'wM0gGBCzZKl5dLRB8TQydRDfTD5ocf2hGRKSQwag';
+            $config['OAUTH_CALLBACK'] = 'http://localhost.in/test/twitteroauth';
+            $config['oauth_token'] = '74094832-mnJlYPt02qpy1jhEYAYPMKAzrLF2jTeMiJue65Zn7';
+             $config['oauth_token_secret'] = 'zdIrpUzuIs7llt5KLlx1TU1vWUrq28TkSNFUsschaaE4X';
+
+         
+            $this->twitter =  new TwitterOAuth($config['CONSUMER_KEY'],  $config['CONSUMER_SECRET'], $config['oauth_token'], $config['oauth_token_secret']);
+echo '<pre>';print_r($this->twitter );
+$options = array("screen_name" => "kamleshpawar", "text" => "Hey that's my message");
+print_r($this->twitter->post('direct_messages/new', $options));
+            exit;
+        }
+
+*/
+
 
  
     }

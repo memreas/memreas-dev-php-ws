@@ -1,5 +1,5 @@
 <?php
-namespace memreas\Facebook;
+namespace Application\Facebook;
 use \Exception;
 use \InvalidArgumentException;
 

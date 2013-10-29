@@ -1,5 +1,5 @@
 <?php
-namespace memreas\Facebook;
+namespace Application\facebook;
 
 /**
  * Copyright 2011 Facebook, Inc.
@@ -17,7 +17,7 @@ namespace memreas\Facebook;
 * under the License.
 */
 
-use Application\memreas\Facebook\BaseFacebook;
+use Application\Facebook\BaseFacebook;
 
 /**
  * Extends the BaseFacebook class with the intent of using

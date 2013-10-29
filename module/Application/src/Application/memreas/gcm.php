@@ -56,7 +56,7 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( $fields ));
 
 // Execute post
 $result = curl_exec($ch);
-echo '<pre>';print_r($result);exit;
+//echo '<pre>';print_r($result);exit;
 // Close connection
 curl_close($ch);
 
