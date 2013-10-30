@@ -5,8 +5,8 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 
-//use Application\facebook\Facebook;
-//use Application\twitteroauth\TwitterOAuth;
+use Application\facebook\Facebook;
+use Application\TwitterOAuth\TwitterOAuth;
 
 use Application\memreas\UUID;
 
@@ -38,46 +38,35 @@ class Notification {
          if (!$this->apns) {
             $this->apns = new apns($service_locator);
         }
-        /*
+       
         if (!$this->fb) {
-            $config = array();
+             $config = array();
             $config['appId'] = '152686394870393';
             $config['secret'] = '62215615af53550af20c1d56736c189e';
+            $href = 'http://apps.facebook.com/kptestfb';
             $this->fb =  new Facebook($config);
             $this->fb->setAccessToken($config['appId'].'|'.$config['secret']);
             $user = '100001297014569';
-$message = 'kamlesh noti message';
-$href = 'http://apps.facebook.com/kptestfb
-';
+            $user = 'kamlesh.pawar.9461';
+            $message = 'message via name';
+            
 
-$params = array(
-        'href' => $href,
-        'template' => $message,
-    );
-
-  //$facebook->api('/' . $user . '/notifications/', 'post', $params);
-  
-
+           
         }
             
         if(!$this->twitter){
             
             $config = array();
-            $config['CONSUMER_KEY'] = '1bqpAfSWfZFuEeY3rbsKrw';
-            $config['CONSUMER_SECRET'] = 'wM0gGBCzZKl5dLRB8TQydRDfTD5ocf2hGRKSQwag';
-            $config['OAUTH_CALLBACK'] = 'http://localhost.in/test/twitteroauth';
+            $config['consumer_key'] = '1bqpAfSWfZFuEeY3rbsKrw';
+            $config['consumer_secret'] = 'wM0gGBCzZKl5dLRB8TQydRDfTD5ocf2hGRKSQwag';
             $config['oauth_token'] = '74094832-mnJlYPt02qpy1jhEYAYPMKAzrLF2jTeMiJue65Zn7';
-             $config['oauth_token_secret'] = 'zdIrpUzuIs7llt5KLlx1TU1vWUrq28TkSNFUsschaaE4X';
-
-         
-            $this->twitter =  new TwitterOAuth($config['CONSUMER_KEY'],  $config['CONSUMER_SECRET'], $config['oauth_token'], $config['oauth_token_secret']);
-echo '<pre>';print_r($this->twitter );
-$options = array("screen_name" => "kamleshpawar", "text" => "Hey that's my message");
-print_r($this->twitter->post('direct_messages/new', $options));
-            exit;
+            $config['oauth_token_secret'] = 'zdIrpUzuIs7llt5KLlx1TU1vWUrq28TkSNFUsschaaE4X';
+            $config['output_format'] = 'object';
+            $this->twitter =  new TwitterOAuth($config);
+            
         }
 
-*/
+
 
 
  
@@ -90,10 +79,9 @@ print_r($this->twitter->post('direct_messages/new', $options));
     }
 
     public function send() {
-            
+         //mobile notification.   
         $get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in('" . join('\' , \'', $this->userIds) . "')";
         $statement = $this->dbAdapter->createQuery($get_user_device);
-
         $users = $statement->getArrayResult();
 
         if (count($users) > 0) {
@@ -108,14 +96,36 @@ print_r($this->twitter->post('direct_messages/new', $options));
             }
             
             if($this->gcm->getDeviceCount()> 0){
-                print_r($this->gcm->sendpush($this->message,$this->type,$this->event_id,$this->media_id));
+                $this->gcm->sendpush($this->message,$this->type,$this->event_id,$this->media_id);
             }
              if($this->apns->getDeviceCount()> 0){
                 $this->apns->sendpush($this->message,$this->type,$this->event_id,$this->media_id);
              }
         }
         
-        //notification face book
+        //web notification 
+        $get_user = "SELECT u  FROM  Application\Entity\User u where u.user_id in('" . join('\' , \'', $this->userIds) . "')";
+        $statement = $this->dbAdapter->createQuery($get_user);
+        $users = $statement->getArrayResult();
+        
+        if (count($users) > 0) {
+            $href = 'http://apps.facebook.com/kptestfb';
+             $fbparams = array(
+                        'href' => $href,
+                        'template' => $this->message,
+                        );
+             $twparams['text']=$this->message;
+             foreach ($users as $user) {
+                if (!empty($user['facebook_username'])) {
+                    $this->fb->api('/' . $user['facebook_username'] . '/notifications/', 'post', $fbparams);
+                } 
+                if (!empty($user['twitter_username']) ) {
+                    $twparams['screen_name']=$user['twitter_username'];
+                   $this->twitter->post('direct_messages/new', $twparams);                  
+                }
+            }
+        }
+        
         
     }
 
