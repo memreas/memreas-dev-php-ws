@@ -91,16 +91,8 @@ error_log("ListAllmedia.exec qb->getQuery()->getSQL()  ---> " . print_r($qb->get
 
             $result = $qb->getQuery()->getArrayResult();
 error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);    
+
         }
-//echo '<pre>';print_r($result); exit;
-//echo $q;exit;
-//$result = mysql_query($q);
-        //$statement = $this->dbAdapter->createStatement($q);
-        //         $result = $statement->execute();
-        //       $row = $result->current();
-//$statement = $this->dbAdapter->createQuery($q1);
-        //$result = $statement->getResult();
-       
         
             if (count($result) <= 0) {
                 $error_flage = 2;
@@ -110,8 +102,6 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Media List</message>";
                 foreach ($result as  $row ){
-                	
-                    
                     $url79x80 = '';
                     $url448x306 = '';
                     $url98x78 = '';
@@ -139,8 +129,6 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     } 
                     else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio'])) {
                         $type = "audio";
-//                $rs_audio=mysql_query("select * from comment  WHERE media_id='".$row['media_id']."' and type='audio' limit 1") or die(mysql_error());
-//                if(mysql_num_rows($rs_audio)>0)
                         continue;
                     }
                     else
@@ -153,33 +141,34 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                     } else {
                     	$device = array();
                     }
-//        echo "<pre>";print_r($device);
-//            echo $user_id . '_' . $device_id;echo "<br/>".$row['media_id'];
-//            
-                    //if ($event_id != 0) {
                     if (in_array($user_id . '_' . $device_id, $device)) {
                         $is_download = 1;
                     }
-//            }
-                    $xml_output.="<media>";
-                    $xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
-                    $xml_output.="<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
-                    $xml_output.="<is_downloaded>$is_download</is_downloaded>";
-                    $xml_output.="<event_media_video_thum>";
-                    $xml_output.=(!empty($thum_url)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
-                    $xml_output.= "</event_media_video_thum>";
-                    $xml_output.="<media_url_79x80><![CDATA[";
-                    $xml_output.=(!empty($url79x80)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 : '';
-                    $xml_output.= "]]></media_url_79x80>";
-                    $xml_output.="<media_url_98x78><![CDATA[";
-                    $xml_output.=(!empty($url98x78)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 : '';
-                    $xml_output.= "]]></media_url_98x78>";
-                    $xml_output.="<media_url_448x306><![CDATA[";
-                    $xml_output.=(!empty($url448x306)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 : '';
-                    $xml_output.= "]]></media_url_448x306>";
-                    $xml_output.="<type>$type</type>";
-                    $xml_output.="<media_name><![CDATA[" . $media_name . "]]></media_name>";
-                    $xml_output.="</media>";
+
+					$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
+					if (isset($data->listallmedia->RTMP)){
+						$host = MemreasConstants::CLOUDFRONT_STREAMING_HOST;
+					} else {
+						$xml_output.="<media>";
+						$xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
+						$xml_output.="<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
+						$xml_output.="<is_downloaded>$is_download</is_downloaded>";
+						$xml_output.="<event_media_video_thum>";
+						$xml_output.=(!empty($thum_url)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
+						$xml_output.= "</event_media_video_thum>";
+						$xml_output.="<media_url_79x80><![CDATA[";
+						$xml_output.=(!empty($url79x80)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 : '';
+						$xml_output.= "]]></media_url_79x80>";
+						$xml_output.="<media_url_98x78><![CDATA[";
+						$xml_output.=(!empty($url98x78)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 : '';
+						$xml_output.= "]]></media_url_98x78>";
+						$xml_output.="<media_url_448x306><![CDATA[";
+						$xml_output.=(!empty($url448x306)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 : '';
+						$xml_output.= "]]></media_url_448x306>";
+						$xml_output.="<type>$type</type>";
+						$xml_output.="<media_name><![CDATA[" . $media_name . "]]></media_name>";
+						$xml_output.="</media>";
+					}
                 }
             }
         

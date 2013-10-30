@@ -27,8 +27,8 @@ class MemreasConstants {
 
         const CLOUDFRONT_STREAMING_HOST		= 'http://s1iq2cbtodqqky.cloudfront.net/';
         const CLOUDFRONT_DOWNLOAD_HOST		= 'http://d1ckv7o9k6o3x9.cloudfront.net/';
-        //const MEMREAS_TRANSCODER_URL		= 'http://memreasbackend.elasticbeanstalk.com/';
-        const MEMREAS_TRANSCODER_URL		= 'http://192.168.1.13/memreas-dev-php-backend/app/';
+        const MEMREAS_TRANSCODER_URL		= 'http://memreasbackend.elasticbeanstalk.com/';
+        //const MEMREAS_TRANSCODER_URL		= 'http://192.168.1.13/memreas-dev-php-backend/app/';
         const MEMREAS_TRANSCODER_TOPIC_ARN	= 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
 
 }
