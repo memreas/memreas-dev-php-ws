@@ -110,7 +110,7 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
 
 
                     $json_array = json_decode($row['metadata'], true);
- 
+ error_log("json ----> ListAllmedia.exec metadata ---->" . $row['metadata'] . PHP_EOL);
                     if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                         $type = "image";
                         if (isset($json_array['S3_files']['79x80']))
