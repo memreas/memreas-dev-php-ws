@@ -68,6 +68,7 @@ class AWSManagerSender {
 
 		try {
 			/* - publish to topic here */
+			$hello = "world";
 			$result = $this->sns->publish(array(
 			   'TopicArn' => $this->topicArn,
 				'Message'  => $json,
