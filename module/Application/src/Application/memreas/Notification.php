@@ -5,7 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 
-use Application\facebook\Facebook;
+use Application\Facebook\Facebook;
 use Application\TwitterOAuth\TwitterOAuth;
 
 use Application\memreas\UUID;

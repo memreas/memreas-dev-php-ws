@@ -82,7 +82,6 @@ class AWSManagerSender {
         
 		/* - call web service here - debugging only /*
 		$guzzle = new Client();
-
 		error_log("Inside fetchXML this->url " . MemreasConstants::MEMREAS_TRANSCODER_URL . PHP_EOL);
 		$request = $guzzle->post(
 			MemreasConstants::MEMREAS_TRANSCODER_URL, 

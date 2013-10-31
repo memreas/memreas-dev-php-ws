@@ -1,5 +1,5 @@
 <?php
-namespace Application\facebook;
+namespace Application\Facebook;
 
 /**
  * Copyright 2011 Facebook, Inc.
