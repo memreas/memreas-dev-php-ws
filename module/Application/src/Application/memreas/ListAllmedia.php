@@ -115,10 +115,16 @@ error_log("ListAllmedia.exec result  ---> " . print_r($result, true) . PHP_EOL);
                         $type = "image";
                         if (isset($json_array['S3_files']['79x80']))
                             $url79x80 = $json_array['S3_files']['79x80'];
+ error_log("json ----> ListAllmedia.exec url79x80 ---->" . $url79x80 . PHP_EOL);
+ error_log("json ----> ListAllmedia.exec json_array['S3_files']['79x80'] ---->" . $json_array['S3_files']['79x80'] . PHP_EOL);
                         if (isset($json_array['S3_files']['448x306']))
                             $url448x306 = $json_array['S3_files']['448x306'];
+ error_log("json ----> ListAllmedia.exec url448x306 ---->" . $url448x306 . PHP_EOL);
+ error_log("json ----> ListAllmedia.exec json_array['S3_files']['448x306'] ---->" . $json_array['S3_files']['448x306'] . PHP_EOL);
                         if (isset($json_array['S3_files']['98x78']))
                             $url98x78 = $json_array['S3_files']['98x78'];
+ error_log("json ----> ListAllmedia.exec url98x78 ---->" . $url98x78 . PHP_EOL);
+ error_log("json ----> ListAllmedia.exec json_array['S3_files']['98x78'] ---->" . $json_array['S3_files']['98x78'] . PHP_EOL);
                     }
                     else if (isset($json_array['type']['video']) && is_array($json_array['type']['video'])) {
                         $type = "video";

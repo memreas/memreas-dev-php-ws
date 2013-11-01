@@ -21,7 +21,8 @@ class ViewAllfriends {
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
-//error_log ( "Inside ViewAllfriends.exec()..." );
+error_log ( "Inside ViewAllfriends.exec()..." .PHP_EOL);
+error_log ( "Inside ViewAllfriends.exec().xml ---> " .  $_POST['xml'] .PHP_EOL);
 		
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = $data->viewallfriends->user_id;
@@ -129,6 +130,7 @@ class ViewAllfriends {
 		$xml_output .= "</groups>";
         $xml_output .= "</xml>";
 //echo "<pre>";print_r($view_all_friend);
+error_log ( "Exiting ViewAllfriends.exec().xml ---> " . $xml_output .PHP_EOL);
         echo $xml_output;
     }
 
