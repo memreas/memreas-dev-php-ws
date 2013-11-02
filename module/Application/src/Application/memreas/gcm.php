@@ -11,6 +11,7 @@ class gcm {
     protected $messages;
     protected $device_token;
     public function __construct($service_locator) {
+        
 	   //$this->dbAdapter = $service_locator->get(MEMREASDB);
 	   $this->service_locator = $service_locator;
 	   //$this->dbAdapter = $this->service_locator->get('doctrine.entitymanager.orm_default');
@@ -25,7 +26,6 @@ class gcm {
     }
 	public function sendpush($message='',$type='',$event_id='',$media_id='')
 	{// Message to be sent
-          
  
         $url = 'https://android.googleapis.com/gcm/send';
 
@@ -56,7 +56,7 @@ curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( $fields ));
 
 // Execute post
 $result = curl_exec($ch);
-//echo '<pre>';print_r($result);exit;
+
 // Close connection
 curl_close($ch);
 

@@ -40,19 +40,19 @@ class AddComment {
         $user_id = trim($data->addcomment->user_id);
         $audio_media_id = trim($data->addcomment->audio_media_id);
         $message = "";
-        $time = time();
+        $time = time(); 
         if (!isset($event_id) && !empty($event_id)) {
             $message = 'event id is empty';
             $status = 'Failure';
-        } else if (!isset($media_id) && !empty($media_id)) {
+        } else if (empty($media_id)) {
             $message = 'media_id is empty';
             $status = 'Failure';
-        } else if (!isset($comment) && !empty($comment)) {
+        } else if (empty($comment)) {
             $messages = 'comment is empty';
             $status = 'Failure';
-        } else if (!isset($user_id) && !empty($user_id)) {
+        } else if (empty($user_id)) {
             $messages = 'user_id is empty';
-            $status = 'Failure';
+            $status = 'Failure'; 
         } else {
             $uuid = UUID::getUUID($this->dbAdapter);
             $tblComment = new \Application\Entity\Comment();
@@ -69,11 +69,6 @@ class AddComment {
                 $this->dbAdapter->persist($tblComment);
                 $this->dbAdapter->flush();
 
-
-
-                /* $query_comment = "insert into Application\Entity\Comment (comment_id,media_id,user_id,type,text, event_id,create_time,update_time)
-                  values('$uuid','$media_id','$user_id','text','$comment','$event_id','$time','$time')"; */
-
                 $status = 'sucess';
             } else {
                 $tblComment->comment_id = $uuid;
@@ -87,26 +82,16 @@ class AddComment {
                 $tblComment->update_time = $time;
                 $this->dbAdapter->persist($tblComment);
                 $this->dbAdapter->flush();
-                /*  $query_comment = "insert into Application\Entity\Comment(comment_id,media_id,user_id,type,text, event_id,audio_id,create_time,update_time)
-                  values('$uuid','$media_id','$user_id','audio','$comment','$event_id','$audio_media_id','$time','$time')";
-                 * 
-                 */
+               
 
                 $status = 'sucess';
             }
-            // $result_comment = mysql_query($query_comment) or die(mysql_error());
-            //echo $query_comment;
-            //$statement = $this->dbAdapter->createStatement($query_comment);
-            // $result = $statement->execute();
-
-            /* $statement = $this->dbAdapter->createQuery($query_comment);
-              $result = $statement->getResult(); */
-            //print_r($result);
+           
             $status = 'sucess';
             $message = "Comment successfuly added";
 
 
-            if (empty($status)) {
+            if ($status=='failure') {
                 $status = 'failure';
             } else {
                
@@ -137,8 +122,9 @@ class AddComment {
                 $query = "SELECT c.user_id FROM  Application\Entity\Comment as c  where c.event_id = '$event_id'";
                 $statement = $this->dbAdapter->createQuery($query);
                 $comment_u = $statement->getResult();
+                $cdata['addNotification']['meta'] ='User has comment on ';
                 foreach ($comment_u as $comment_row) {
-                    $data = array('addNotification' => array(
+                    $cdata = array('addNotification' => array(
                             'user_id' => $comment_row['user_id'],
                             'meta' => 'User has comment on ',
                             'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
@@ -149,26 +135,22 @@ class AddComment {
                         )
                     );
 
-                    $this->AddNotification->exec($data);
+                    $this->AddNotification->exec($cdata);
                     $this->notification->add($comment_row['user_id']);
                 }
-
-                if (!empty($data['addNotification']['meta'])) {
-
-                    $this->notification->setMessage($data['addNotification']['meta']);
+                
+ 
+                    $this->notification->setMessage($cdata['addNotification']['meta']);
                     $this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
                     $this->notification->event_id = $event_id;
                     $this->notification->media_id = $media_id;
-
                     $this->notification->send();
-                }
-            }
+             }
 
 
 
             //echo '<pre>';print_r($result);exit;
-            //	$result_comment = $result->current();
-        }
+         }
         header("Content-type: text/xml");
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         $xml_output .= "<xml>";

@@ -19,7 +19,7 @@ class EventGroup
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $eventId;
+    private $event_id;
 
     /**
      * @var string
@@ -28,7 +28,7 @@ class EventGroup
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="NONE")
      */
-    private $groupId;
+    private $group_id;
 
 
 }
