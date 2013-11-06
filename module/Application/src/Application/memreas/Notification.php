@@ -87,9 +87,11 @@ class Notification {
                 }
 
                 if ($this->gcm->getDeviceCount() > 0) {
+                    error_log('SENDING-ANROID');
                     $this->gcm->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
                 }
                 if ($this->apns->getDeviceCount() > 0) {
+                    error_log('SENDING-APPLE');
                     $this->apns->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
                 }
             }
@@ -154,9 +156,11 @@ class Notification {
                 foreach ($users as $user) {
                     switch (strtolower($user['network'])) {
                         case 'facebook':
+                            error_log('SENDING-FB');
                             $this->fb->api('/' . $user['social_username'] . '/notifications/', 'post', $fbparams);
                             break;
                         case 'twitter':
+                            error_log('SENDING-tWIIT');
                             $twparams['screen_name'] = $user['social_username'];
                             $this->twitter->post('direct_messages/new', $twparams);
 

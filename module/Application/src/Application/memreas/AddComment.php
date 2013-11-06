@@ -56,6 +56,9 @@ class AddComment {
         } else {
             $uuid = UUID::getUUID($this->dbAdapter);
             $tblComment = new \Application\Entity\Comment();
+			 $userOBj = $this->dbAdapter->find('Application\Entity\User', $user_id);
+             $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);
+     
             
             if (!$audio_media_id) {
                 $tblComment->comment_id = $uuid;
@@ -122,7 +125,7 @@ class AddComment {
                 $query = "SELECT c.user_id FROM  Application\Entity\Comment as c  where c.event_id = '$event_id'";
                 $statement = $this->dbAdapter->createQuery($query);
                 $comment_u = $statement->getResult();
-                $cdata['addNotification']['meta'] ='User has comment on ';
+                $cdata['addNotification']['meta'] = $userOBj->username . ' Has commented on '.$eventOBj->name.' event';
                 foreach ($comment_u as $comment_row) {
                     $cdata = array('addNotification' => array(
                             'user_id' => $comment_row['user_id'],

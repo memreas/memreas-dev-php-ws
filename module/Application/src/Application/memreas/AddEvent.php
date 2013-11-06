@@ -147,7 +147,8 @@ else {
                                                 '$event_from',
                                                 '$event_to',
                                                 '$event_self_destruct',
-                                                '$event_date_timestamp','$event_date_timestamp')";*/
+                                                '$event_date_timestamp','$event_date_timestamp')";
+				*/
     //$result = mysql_query($query);
     // $statement = $this->dbAdapter->createStatement($query);
      //      $result = $statement->execute();
@@ -156,11 +157,12 @@ else {
   //$result = $statement->getResult();
   
   
-   //TODO send Notification
+   
         $event_id = $uuid;
         $message .= 'Event successfully added';
         $status = 'Success';
-  
+  //TODO send Notification
+  /* 
         $data = array('addNotification' => array(
                                 'user_id' => $user_id,
                                 'meta' => "New Event: $event_name",
@@ -183,6 +185,7 @@ else {
                     $this->notification->event_id = $event_id;
                     $this->notification->send();
                 }
+				*/
     /*
       foreach ($media_array as $key => $value)
       {
