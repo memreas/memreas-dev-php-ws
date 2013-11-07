@@ -170,13 +170,13 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
 							$status = 'failure';
 						}
 					} // end if (count($r) > 0) else
-
+                       $nmessage = $userOBj->username . ' want to add you to '.$eventOBj->name.' event';
 					//save nofication intable
-					$ndata['addNotification']['meta'] = $userOBj->username . ' want to add you to '.$eventOBj->name.' event';
+					$ndata['addNotification']['meta'] = $nmessage;
 					if($network_name == 'memreas'){
 						$ndata = array('addNotification' => array(
 							'user_id' => $user_id,
-							'meta' => $friend_name . 'want to add you to event',
+							'meta' => $nmessage,
 							'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
 							'links' => json_encode(array(
 										'event_id' => $event_id,

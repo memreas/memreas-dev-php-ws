@@ -184,15 +184,41 @@ class AddMediaEvent {
                     $this->dbAdapter->persist($tblEventMedia);
                     $this->dbAdapter->flush();
                     error_log("AddMediaEvent exec - just inserted EventMedia " . PHP_EOL);
+                    /*
+                     * @todo send to all particiepent
+                     * 
+                     */
+                    $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
+                    $statement = $this->dbAdapter->createQuery($query);
+                    $efusers = $statement->getResult();
+                    $nmessage = $userOBj->username . 'Added Media to  '.$eventOBj->name.' event';
 
-                    //   $q_event_media = "INSERT INTO Application\Entity\eventMedia (media_id, event_id) VALUES ('$media_id', '$event_id')";
-                    //$query_result1 = mysql_query($q_event_media);
-                    //    $statement1 = $this->dbAdapter->createStatement($q_event_media);
-                    //  $query_result1 = $statement1->execute();
-                    //  $statement = $this->dbAdapter->createQuery($q_event_media);
-                    // $query_result1 = $statement->getResult();
-                    //if (!$query_result1)
-                    //	throw new Exception('Error : ' . mysql_error());
+                    $ndata['addNotification']['meta'] = $nmessage;
+                    foreach ($efusers as $ef) {
+                        $ndata = array('addNotification' => array(
+                                'user_id' => $ef['friend_id'],
+                                'meta' => $nmessage,
+                                'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
+                                'links' => json_encode(array(
+                                    'event_id' => $event_id,
+                                    'from_id' => $user_id,
+                                    'friend_id' => $ef['friend_id'],
+                                )),
+                            )
+                        );
+                        $this->AddNotification->exec($ndata);
+                        $this->notification->add($ef['friend_id']);
+                    }
+
+
+                    if (!empty($ndata['addNotification']['meta'])) {
+                        $this->notification->setMessage($ndata['addNotification']['meta']);
+                        $this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
+                        $this->notification->event_id = $event_id;
+
+                        $this->notification->send();
+                    }
+                   
                 }
 
                 //if (!$is_audio) {
@@ -222,41 +248,7 @@ class AddMediaEvent {
                 }
             }
 
-            /*
-             * @todo send to all particiepent
-             * 
-             */
-            $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
-            $statement = $this->dbAdapter->createQuery($query);
-            $efusers = $statement->getResult();
-            foreach ($efusers as $ef) {
-                $data = array('addNotification' => array(
-                        'user_id' => $ef['friend_id'],
-                        'meta' => 'New Media added',
-                        'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
-                        'links' => json_encode(array(
-                            'event_id' => $event_id,
-                            'from_id' => $user_id,
-                            'friend_id' => $ef['friend_id'],
-                        )),
-                    )
-                );
-                $this->AddNotification->exec($data);
-                $this->notification->add($ef['friend_id']);
-            }
 
-
-            if (!empty($data['addNotification']['meta'])) {
-                $this->notification->setMessage($data['addNotification']['meta']);
-
-                $this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
-
-                $this->notification->event_id = $event_id;
-
-
-
-                $this->notification->send();
-            }
         } catch (\Exception $exc) {
             $status = 'Failure';
             $message = $exc->getMessage();

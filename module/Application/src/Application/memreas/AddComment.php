@@ -125,11 +125,13 @@ class AddComment {
                 $query = "SELECT c.user_id FROM  Application\Entity\Comment as c  where c.event_id = '$event_id'";
                 $statement = $this->dbAdapter->createQuery($query);
                 $comment_u = $statement->getResult();
-                $cdata['addNotification']['meta'] = $userOBj->username . ' Has commented on '.$eventOBj->name.' event';
+                $nmessage = $userOBj->username . ' Has commented on '.$eventOBj->name.' event';
+
+                $cdata['addNotification']['meta'] = $nmessage;
                 foreach ($comment_u as $comment_row) {
                     $cdata = array('addNotification' => array(
                             'user_id' => $comment_row['user_id'],
-                            'meta' => 'User has comment on ',
+                            'meta' => $nmessage,
                             'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
                             'links' => json_encode(array(
                                 'event_id' => $event_id,
