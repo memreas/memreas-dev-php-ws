@@ -189,25 +189,48 @@ class AddMediaEvent {
                      * 
                      */
                     $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
-                    $statement = $this->dbAdapter->createQuery($query);
-                    $efusers = $statement->getResult();
+                       $qb = $this->dbAdapter->createQueryBuilder();
+                            $qb->select('u.user_id,f.network,f.friend_id');
+                            $qb->from('Application\Entity\EventFriend', 'ef');
+                            $qb->join('Application\Entity\Friend', 'f','WITH', 'ef.friend_id = f.friend_id');
+                            $qb->leftjoin('Application\Entity\User', 'u', 'WITH', 'u.username = f.social_username');
+                            $qb->where('ef.event_id = ?1');
+                            $qb->setParameter(1, $event_id);
+                    
+                    
+                    
+                    
+                   
+                    $efusers = $qb->getQuery()->getResult();
+                    $userOBj = $this->dbAdapter->find('Application\Entity\User', $user_id);
+                    $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);
                     $nmessage = $userOBj->username . 'Added Media to  '.$eventOBj->name.' event';
-
                     $ndata['addNotification']['meta'] = $nmessage;
                     foreach ($efusers as $ef) {
-                        $ndata = array('addNotification' => array(
-                                'user_id' => $ef['friend_id'],
+                       $friendId = $ef['user_id'];
+                       if($ef['network'] == 'memreas')
+                       {
+                            $ndata = array('addNotification' => array(
+                                'user_id' => $friendId,
                                 'meta' => $nmessage,
                                 'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
                                 'links' => json_encode(array(
                                     'event_id' => $event_id,
                                     'from_id' => $user_id,
-                                    'friend_id' => $ef['friend_id'],
-                                )),
-                            )
-                        );
+                                    'friend_id' => $friendId,
+                                    )),
+                                    )
+                                );
                         $this->AddNotification->exec($ndata);
-                        $this->notification->add($ef['friend_id']);
+                        $this->notification->add($friendId);
+                            
+                        } else {
+                            $this->notification->addFriend($ef['friend_id']);
+                        }
+                        
+                        
+                        
+                        
                     }
 
 

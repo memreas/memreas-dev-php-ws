@@ -122,26 +122,42 @@ class AddComment {
                 */
                 
                 //TODO send notification owner of the event and all who commented.
-                $query = "SELECT c.user_id FROM  Application\Entity\Comment as c  where c.event_id = '$event_id'";
-                $statement = $this->dbAdapter->createQuery($query);
-                $comment_u = $statement->getResult();
-                $nmessage = $userOBj->username . ' Has commented on '.$eventOBj->name.' event';
+                 $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
+                       $qb = $this->dbAdapter->createQueryBuilder();
+                            $qb->select('u.user_id,f.network,f.friend_id');
+                            $qb->from('Application\Entity\EventFriend', 'ef');
+                            $qb->join('Application\Entity\Friend', 'f','WITH', 'ef.friend_id = f.friend_id');
+                            $qb->leftjoin('Application\Entity\User', 'u', 'WITH', 'u.username = f.social_username');
+                            $qb->where('ef.event_id = ?1');
+                            $qb->setParameter(1, $event_id);
+                    
+                    
+                    
+                    
+                   
+                    $efusers = $qb->getQuery()->getResult();
+                    $nmessage = $userOBj->username . ' Has commented on '.$eventOBj->name.' event';
 
-                $cdata['addNotification']['meta'] = $nmessage;
-                foreach ($comment_u as $comment_row) {
-                    $cdata = array('addNotification' => array(
-                            'user_id' => $comment_row['user_id'],
+                    $cdata['addNotification']['meta'] = $nmessage;
+                foreach ($efusers as $ef) {
+                    if($ef['network'] == 'memreas'){
+                        $cdata = array('addNotification' => array(
+                            'user_id' =>$ef['user_id'],
                             'meta' => $nmessage,
                             'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
                             'links' => json_encode(array(
                                 'event_id' => $event_id,
-                                'from_id' => $comment_row['user_id'],
-                            )),
-                        )
-                    );
+                                'from_id' => $user_id,
+                                )),
+                            )
+                        );
 
-                    $this->AddNotification->exec($cdata);
-                    $this->notification->add($comment_row['user_id']);
+                        $this->AddNotification->exec($cdata);
+                        $this->notification->add($ef['user_id']);
+                       }else{
+                        $this->notification->addFriend($ef['friend_id']);
+                       }
+                    
                 }
                 
  

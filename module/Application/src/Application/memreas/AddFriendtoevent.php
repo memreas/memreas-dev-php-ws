@@ -50,7 +50,6 @@ error_log("Enter AddFriendtoevent.exec() xml ----> " . $_POST['xml'] . PHP_EOL);
         $userOBj = $this->dbAdapter->find('Application\Entity\User', $user_id);
         $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);
         
-
 		//add group to event_group
 		if (!empty($group_array)) {
 error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
@@ -171,11 +170,18 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
 						}
 					} // end if (count($r) > 0) else
                        $nmessage = $userOBj->username . ' want to add you to '.$eventOBj->name.' event';
-					//save nofication intable
+ //save nofication intable
 					$ndata['addNotification']['meta'] = $nmessage;
 					if($network_name == 'memreas'){
-						$ndata = array('addNotification' => array(
-							'user_id' => $user_id,
+                        
+                    $sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $friend_name . "' and u.role = 2 and u.disable_account = 0";
+                        
+                        
+					$r = $this->dbAdapter->getRepository('Application\Entity\User')
+                         ->findOneBy(array('username' => $friend_name));
+                     if($r){
+                        $ndata = array('addNotification' => array(
+							'user_id' => $r->user_id,
 							'meta' => $nmessage,
 							'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
 							'links' => json_encode(array(
@@ -186,7 +192,10 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
 							);
 						$this->AddNotification->exec($ndata);
 						//send push message add user id
-						$this->notification->add($user_id);
+						$this->notification->add($r->user_id);
+                        
+                    }
+                     	
 					} 
 					else {
 						$this->notification->addFriend($friend_id);
