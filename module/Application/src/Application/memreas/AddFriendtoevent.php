@@ -96,7 +96,14 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
 				else {
 	error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
 					////
-					$friend_id = UUID::getUUID($this->dbAdapter);
+					
+                    if($network_name == 'memreas'){
+                           $r = $this->dbAdapter->getRepository('Application\Entity\User')
+                                     ->findOneBy(array('username' => $friend_name,'disable_account' => 0));
+                            $friend_id = $r->user_id;
+                    }else{
+                        $friend_id = UUID::getUUID($this->dbAdapter);
+                    }
 					$tblFriend = new \Application\Entity\Friend();
 					$tblFriend->friend_id = $friend_id;
 					$tblFriend->network = $network_name;
@@ -170,18 +177,11 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
 						}
 					} // end if (count($r) > 0) else
                        $nmessage = $userOBj->username . ' want to add you to '.$eventOBj->name.' event';
- //save nofication intable
+                       //save nofication intable
 					$ndata['addNotification']['meta'] = $nmessage;
 					if($network_name == 'memreas'){
-                        
-                    $sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $friend_name . "' and u.role = 2 and u.disable_account = 0";
-                        
-                        
-					$r = $this->dbAdapter->getRepository('Application\Entity\User')
-                         ->findOneBy(array('username' => $friend_name));
-                     if($r){
                         $ndata = array('addNotification' => array(
-							'user_id' => $r->user_id,
+							'user_id' => $friend_id,
 							'meta' => $nmessage,
 							'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
 							'links' => json_encode(array(
@@ -192,12 +192,9 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
 							);
 						$this->AddNotification->exec($ndata);
 						//send push message add user id
-						$this->notification->add($r->user_id);
+						$this->notification->add($friend_id);
                         
-                    }
-                     	
-					} 
-					else {
+                    } else {
 						$this->notification->addFriend($friend_id);
 					}
 				} // endif (!empty($event_id) && $error == 0)

@@ -124,10 +124,9 @@ class AddComment {
                 //TODO send notification owner of the event and all who commented.
                  $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
                        $qb = $this->dbAdapter->createQueryBuilder();
-                            $qb->select('u.user_id,f.network,f.friend_id');
+                            $qb->select('f.network,f.friend_id');
                             $qb->from('Application\Entity\EventFriend', 'ef');
                             $qb->join('Application\Entity\Friend', 'f','WITH', 'ef.friend_id = f.friend_id');
-                            $qb->leftjoin('Application\Entity\User', 'u', 'WITH', 'u.username = f.social_username');
                             $qb->where('ef.event_id = ?1');
                             $qb->setParameter(1, $event_id);
                     
@@ -142,7 +141,7 @@ class AddComment {
                 foreach ($efusers as $ef) {
                     if($ef['network'] == 'memreas'){
                         $cdata = array('addNotification' => array(
-                            'user_id' =>$ef['user_id'],
+                            'user_id' =>$ef['friend_id'],
                             'meta' => $nmessage,
                             'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
                             'links' => json_encode(array(
@@ -153,7 +152,7 @@ class AddComment {
                         );
 
                         $this->AddNotification->exec($cdata);
-                        $this->notification->add($ef['user_id']);
+                        $this->notification->add($ef['friend_id']);
                        }else{
                         $this->notification->addFriend($ef['friend_id']);
                        }

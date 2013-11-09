@@ -190,10 +190,9 @@ class AddMediaEvent {
                      */
                     $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
                        $qb = $this->dbAdapter->createQueryBuilder();
-                            $qb->select('u.user_id,f.network,f.friend_id');
+                            $qb->select('f.network,f.friend_id');
                             $qb->from('Application\Entity\EventFriend', 'ef');
                             $qb->join('Application\Entity\Friend', 'f','WITH', 'ef.friend_id = f.friend_id');
-                            $qb->leftjoin('Application\Entity\User', 'u', 'WITH', 'u.username = f.social_username');
                             $qb->where('ef.event_id = ?1');
                             $qb->setParameter(1, $event_id);
                     
@@ -207,7 +206,7 @@ class AddMediaEvent {
                     $nmessage = $userOBj->username . 'Added Media to  '.$eventOBj->name.' event';
                     $ndata['addNotification']['meta'] = $nmessage;
                     foreach ($efusers as $ef) {
-                       $friendId = $ef['user_id'];
+                       $friendId = $ef['friend_id'];
                        if($ef['network'] == 'memreas')
                        {
                             $ndata = array('addNotification' => array(
