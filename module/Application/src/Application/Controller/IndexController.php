@@ -145,7 +145,7 @@ error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 } else if ($actionname == "registration") {
                     $registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $registration->exec();
-                } else if ($actionname == "addcomment") {
+                } else if ($actionname == "addcomments") {
                     $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addcomment->exec();
                 } else if ($actionname == "checkusername" || $actionname == "chkuname") {
@@ -284,6 +284,14 @@ error_log("IndexController ----> about to viewallfriends" . PHP_EOL);
                 }else if ($actionname == "findtag") {
                     $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $findtag->exec();
+                }else if ($actionname == "showlog") {
+					
+					echo '<pre>' .file_get_contents( \getcwd().'/php_errors.log');exit;
+                }else if ($actionname == "doquery") {
+                    $em = 	$this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+                    $x = $em->createQuery($_GET['sql'])->getResult();
+                    echo '<pre>';print_r( $x);exit;
+
                 }
 
                $output = ob_get_clean();
