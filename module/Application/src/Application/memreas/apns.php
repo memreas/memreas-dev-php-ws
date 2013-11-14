@@ -56,7 +56,7 @@ class apns {
 
 	}
 	fclose($fp);
- 
+    return $result;
 	}
 
 }
