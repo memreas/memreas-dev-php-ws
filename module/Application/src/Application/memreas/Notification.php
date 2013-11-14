@@ -87,12 +87,14 @@ class Notification {
                 }
 
                 if ($this->gcm->getDeviceCount() > 0) {
-                    error_log('SENDING-ANROID');
-                    $this->gcm->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
+                    
+                    $x = $this->gcm->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
+                    error_log('SENDING-ANROID'.   print_r($x, true) . PHP_EOL);
                 }
                 if ($this->apns->getDeviceCount() > 0) {
-                    error_log('SENDING-APPLE');
-                    $this->apns->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
+                    
+                    $x = $this->apns->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
+                    error_log('SENDING-Apple'.   print_r($x, true) . PHP_EOL);
                 }
             }
             //memaras user fb twitter
