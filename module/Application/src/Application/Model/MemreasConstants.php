@@ -9,8 +9,9 @@ class MemreasConstants {
         const MEMREASDB     = 'memreasintdb';
         const S3BUCKET     	= "memreasdev";
         const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
-        const ORIGINAL_URL	= "http://memreasint.elasticbeanstalk.com/app/";
-        const MEDIA_URL		= "http://memreasint.elasticbeanstalk.com/app/?action=addmediaevent";
+        const ORIGINAL_URL	= "http://memreas-dev-php-ws.localhost/";
+        //const ORIGINAL_URL	= "http://memreasint.elasticbeanstalk.com/";
+        const MEDIA_URL		= "http://memreasint.elasticbeanstalk.com/?action=addmediaevent";
         const URL			= "/index";
 
         //const SITEURL			= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";

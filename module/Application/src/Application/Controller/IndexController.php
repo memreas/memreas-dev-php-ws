@@ -108,7 +108,7 @@ class IndexController extends AbstractActionController {
     }
 
     public function indexAction() {
-
+error_log("Inside indexAction" . PHP_EOL);
         //$path = $this->security("application/index/ws_tester.phtml");
 
         $path = "application/index/ws_tester.phtml";
@@ -124,7 +124,6 @@ class IndexController extends AbstractActionController {
             $codebase = $jsonArr['codebase'];
             $type = $jsonArr['type'];
             $message_data = $jsonArr['json'];
-
             $_POST['xml'] = $message_data['xml'];
             
         } else{
@@ -135,7 +134,6 @@ class IndexController extends AbstractActionController {
         }
 
 		if ($codebase == "new_code" && !empty($actionname)) {
-error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
                 $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -149,11 +147,9 @@ error_log("IndexController ----> actionname ---> $actionname" . PHP_EOL);
                     $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addcomment->exec();
                 } else if ($actionname == "checkusername" || $actionname == "chkuname") {
-error_log("IndexController ----> about to checkusername" . PHP_EOL);
                     $chkuname = new ChkUname($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $chkuname->exec(); 
                 } else if ($actionname == "addmediaevent") {
-error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                     $addmediaevent = new AddMediaEvent($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $addmediaevent->exec();
                 } else if ($actionname == "likemedia") {
@@ -165,135 +161,83 @@ error_log("IndexController ----> about to addmediaevent" . PHP_EOL);
                 } else if ($actionname == "countlistallmedia") {
                     $countlistallmedia = new CountListallmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $countlistallmedia->exec();
-                }else if ($actionname == "listgroup") {
+                } else if ($actionname == "listgroup") {
                     $listgroup = new ListGroup($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listgroup->exec();
-                }
-                
-                else if ($actionname == "deletephoto") {
-
+                } else if ($actionname == "deletephoto") {
                     $deletephoto = new DeletePhoto($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $deletephoto->exec();
                 } else if ($actionname == "listphotos") {
-
                     $listphotos = new ListPhotos($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listphotos->exec();
-                }
-                else if ($actionname == "forgotpassword") {
-
+                } else if ($actionname == "forgotpassword") {
                     $forgotpassword = new ForgotPassword($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $forgotpassword->exec();
-                }
-                else if ($actionname == "download") {
-
+                } else if ($actionname == "download") {
                     $download = new Download($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $download->exec();
                 } else if ($actionname == "viewallfriends") {
-error_log("IndexController ----> about to viewallfriends" . PHP_EOL);                	 
                     $viewallfriends = new ViewAllfriends($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $viewallfriends->exec();
                 } else if ($actionname == "creategroup") {
-
                     $creategroup = new CreateGroup($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $creategroup->exec();
-                } 
-                 else if ($actionname == "listallmedia") {
-
+                } else if ($actionname == "listallmedia") {
+error_log("Inside indexAction.listallmedia" . PHP_EOL);
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listallmedia->exec();
-                }
-                
-                else if ($actionname == "countviewevent") {
-
+                } else if ($actionname == "countviewevent") {
                     $countviewevent = new CountViewevent($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $countviewevent->exec();
-                }
-                
-                else if ($actionname == "editevent") {
-
+                } else if ($actionname == "editevent") {
                     $editevent = new EditEvent($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $editevent->exec();
-                }
-                
-                  else if ($actionname == "addevent") {
-
+                } else if ($actionname == "addevent") {
                     $addevent = new AddEvent($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $addevent->exec();
-                }
-
-                   else if ($actionname == "viewevents") {
-
+                } else if ($actionname == "viewevents") {
                     $viewevents = new ViewEvents($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $viewevents->exec();
-                }
-                
-                 else if ($actionname == "addfriendtoevent") {
-                    
-
+                } else if ($actionname == "addfriendtoevent") {
                     $addfriendtoevent = new AddFriendtoevent($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $addfriendtoevent->exec();
-                }   
-                
-                 else if ($actionname == "viewmediadetails") {
-                    
-
+                } else if ($actionname == "viewmediadetails") {
                     $viewmediadetails = new ViewMediadetails($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $viewmediadetails->exec();
-                }
-                else if ($actionname == "snsProcessMediaPublish") {
-                    
-
+                } else if ($actionname == "snsProcessMediaPublish") {
                     $snsProcessMediaPublish = new snsProcessMediaPublish($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $snsProcessMediaPublish->exec();
-                }
-                else if ($actionname == "memreas_tvm") {
-                    
-
+                } else if ($actionname == "memreas_tvm") {
                     $memreastvm = new Memreastvm($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $memreastvm->exec();
-                }
-                else if ($actionname == "uploadmedia") {
-                    
-
+                } else if ($actionname == "uploadmedia") {
                     $uploadmedia = new UploadMedia($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $uploadmedia->exec();
-                }
-                 else if ($actionname == "uploadadvertisement") {
-                    
-
+                } else if ($actionname == "uploadadvertisement") {
                     $uploadadvertisement = new UploadAdvertisement($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $uploadadvertisement->exec();
                 } else if ($actionname == "addNotification") {
-                    
-
                     $addNotification = new AddNotification($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $addNotification->exec();
-                }
-                else if ($actionname == "changepassword") {
-                    
-
+                } else if ($actionname == "changepassword") {
                     $changepassword = new ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $changepassword->exec();
-                }
-                 else if ($actionname == "listnotification") {
+                } else if ($actionname == "listnotification") {
                     $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
                         $result = $listnotification->exec();
-                }else if ($actionname == "updatenotification") {
+                } else if ($actionname == "updatenotification") {
                     $updatenotification = new UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $updatenotification->exec();
-                }else if ($actionname == "findtag") {
+                } else if ($actionname == "findtag") {
                     $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $findtag->exec();
-                }else if ($actionname == "showlog") {
-					
+                } else if ($actionname == "showlog") {
 					echo '<pre>' .file_get_contents( \getcwd().'/php_errors.log');exit;
-                }else if ($actionname == "doquery") {
+                } else if ($actionname == "doquery") {
                     $em = 	$this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                     $x = $em->createQuery($_GET['sql'])->getResult();
-                    echo '<pre>';print_r( $x);exit;
-
+                    echo '<pre>';print_r($x);exit;
                 }
-
                $output = ob_get_clean();
             } else if ($codebase == "original_code") {
                 //Guzzle existing webservice
@@ -306,10 +250,6 @@ error_log("IndexController ----> about to viewallfriends" . PHP_EOL);
             //$memreas = new Memreas();
             //$memreas_tables = new MemreasTables($this->getServiceLocator());
             //$result = $memreas->login($message_data, $memreas_tables, $this->getServiceLocator());
-
-           
-
-          //
             if(!empty($callback)){
                 $message_data['data'] = $output;
                 error_log("Final XML ----> " . $message_data['data']);
@@ -325,9 +265,7 @@ error_log("IndexController ----> about to viewallfriends" . PHP_EOL);
 
 				exit;
             }
-            
-            
-        
+error_log("path ----> ".PHP_EOL);
         if(isset($_GET['view'])&& empty($actionname)) {
             $view = new ViewModel();
             $view->setTemplate($path); // path to phtml file under view folder

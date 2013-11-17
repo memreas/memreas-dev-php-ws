@@ -51,7 +51,10 @@ $video_path = '481f0560-e83e-11e2-8fd6-12313909a953/media/web/VID_20130629_21532
   jwplayer('player_1').setup({
     //Use this URL to access with security
     //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:2012-05-26_12-17-55_73.mp4",
-    file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:fb4a101a-4308-11e3-85d4-22000a8a1935/media/video3.mp4",
+    //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:00686bda-4838-11e3-85d4-22000a8a1935/media/VID_20130629_215321.mp4",
+    //file: "rtmp://cp67126.edgefcs.net/ondemand/mediapm/osmf/content/test/akamai_10_year_f8_512K",
+    file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:00686bda-4838-11e3-85d4-22000a8a1935/media/VID_20130629_215321.mp4",
+    //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:fb4a101a-4308-11e3-85d4-22000a8a1935/media/video3.mp4",
     width: "480",
     height: "270"
   });

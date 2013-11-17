@@ -14,13 +14,13 @@ echo "user_id ----> " . $user_id;
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
         <!--jQuery Lybrary-->
-        <script src="/app/memreas/js/jquery.js"></script>
-        <script src="/app/memreas/js/modernizr.custom.17475.js"></script>
+        <script src="/memreas/js/jquery.js"></script>
+        <script src="/memreas/js/modernizr.custom.17475.js"></script>
         <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
         <!--Bootstrap jQuery-->
-        <script src="/app/memreas/js/bootstrap.min.js"></script>
+        <script src="/memreas/js/bootstrap.min.js"></script>
         <!--memreas-->
-        <script src="/app/memreas/js/memreas.js"></script>
+        <script src="/memreas/js/memreas.js"></script>
         <!-- Fetch the user_id -->
         <script type="text/javascript">
             var base_url = $("#index_action").attr("action");
@@ -39,7 +39,8 @@ echo "user_id ----> " . $user_id;
             var forgotpassword = '<xml><forgotpassword><email>hussain.arif@sufalamtech.com</email></forgotpassword></xml>';
             var viewallfriends = '<xml><viewallfriends><user_id>2</user_id></viewallfriends></xml>';
             var creategroup = '<xml><creategroup><group_name>nihar</group_name><user_id>1</user_id><friends><friend> <friend_name>abc</friend_name><network_name>facebook</network_name><profile_pic_url></profile_pic_url></friend></friends></creategroup></xml>';
-            var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><limit>2</limit><page>1</page> </listallmedia></xml>';
+            //var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><limit>2</limit><page>1</page> </listallmedia></xml>';
+            var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><metadata>true</metadata><limit>2</limit><page>1</page> </listallmedia></xml>';
             var countviewevent = '<xml><countviewevent><user_id>1</user_id><is_my_event>1</is_my_event> <is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><limit>2</limit></countviewevent></xml>';
             var editevent ='<xml><editevent><user_id>1</user_id><event_id>1</event_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend><is_friend_can_post_media>no</is_friend_can_post_media> <event_self_destruct>02/03/2013</event_self_destruct></editevent></xml>';
             var addevent ='<xml><addevent><user_id>1</user_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend> <is_friend_can_post_media>no</is_friend_can_post_media><event_self_destruct>02/03/2013</event_self_destruct><is_public>1</is_public></addevent></xml>';
@@ -66,6 +67,9 @@ echo "user_id ----> " . $user_id;
             $(document).ready(function() {
                 $("#action_input").val(registration);
                 $("#input_action").change(function() {
+alert("Hi");                
+alert($("#action_input").val());                
+alert($("#input_action").val());                
                     if ($("#input_action").val() == "registration") {
                         xml = registration;
                     } else if ($("#input_action").val() == "login") {

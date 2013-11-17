@@ -37,7 +37,7 @@ class ListAllmedia {
         $error_flage = 0;
 
 
-        if (isset($data->listallmedia->page)) {
+        if (isset($data->listallmedia->page) && !empty($data->listallmedia->page)) {
             $page = $data->listallmedia->page;
         } else {
             $page = 1;
@@ -134,6 +134,11 @@ class ListAllmedia {
 				$xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
 				$xml_output.="<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
 				$xml_output.="<is_downloaded>$is_download</is_downloaded>";
+				if (isset($data->listallmedia->metadata)){
+//error_log("Inside metadata...".PHP_EOL);
+//error_log("Inside metadata ----> ".$row['metadata'].PHP_EOL);
+					$xml_output.="<metadata>".$row['metadata']."</metadata>";
+				}
 				$xml_output.="<event_media_video_thum>";
 				$xml_output.=(!empty($thum_url)) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
 				$xml_output.= "</event_media_video_thum>";
@@ -157,6 +162,7 @@ class ListAllmedia {
             $xml_output.= "<message>$message</message>";
             $xml_output.="<media>";
             $xml_output.="<media_id></media_id>";
+            $xml_output.="<metadata></metadata>";
             $xml_output.="<is_downloaded></is_downloaded>";
             $xml_output.="<event_media_video_thum></event_media_video_thum>";
             $xml_output.="<media_url_79x80></media_url_79x80>";
