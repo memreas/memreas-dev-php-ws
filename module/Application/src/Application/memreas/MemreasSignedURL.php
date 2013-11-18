@@ -21,7 +21,7 @@ class MemreasSignedURL {
         $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
         $this->private_key_filename = getcwd().'/key/pk-APKAJC22BYF2JGZTOC6A.pem';
 		$this->key_pair_id = 'APKAJC22BYF2JGZTOC6A';
-		$this->expires = time() + 300; // 5 min from now
+		$this->expires = time() + 3600; // 5 min from now
 		$this->signature_encoded = null;
 		$this->policy_encoded = null;
 
@@ -40,7 +40,8 @@ class MemreasSignedURL {
 		if (isset($path) && !empty($path)) {
 			$signedurl = $this->get_canned_policy_stream_name($path, $this->private_key_filename, $this->key_pair_id, $this->expires);
 			$xml_output .= "<status>success</status>";
-			$xml_output .= "<signedurl>$signedurl</signedurl>";
+			//$xml_output .= "<signedurl>$signedurl</signedurl>";
+			$xml_output .= "<key_pair_id>$this->key_pair_id</key_pair_id>";
 			$xml_output .= "<signature_encoded>$this->signature_encoded</signature_encoded>";
 			$xml_output .= "<policy_encoded>$this->policy_encoded</policy_encoded>";
 		}else {
