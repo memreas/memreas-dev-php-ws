@@ -22,6 +22,8 @@ class MemreasSignedURL {
         $this->private_key_filename = getcwd().'/key/pk-APKAJC22BYF2JGZTOC6A.pem';
 		$this->key_pair_id = 'APKAJC22BYF2JGZTOC6A';
 		$this->expires = time() + 300; // 5 min from now
+		$this->signature_encoded = null;
+		$this->policy_encoded = null;
 
     }
 
@@ -37,7 +39,10 @@ class MemreasSignedURL {
 		$xml_output .= "<signedurlresponse>";
 		if (isset($path) && !empty($path)) {
 			$signedurl = $this->get_canned_policy_stream_name($path, $this->private_key_filename, $this->key_pair_id, $this->expires);
-			$xml_output .= "<status>success</status>$signedurl<signedurl></signedurl>";
+			$xml_output .= "<status>success</status>";
+			$xml_output .= "<signedurl>$signedurl</signedurl>";
+			$xml_output .= "<signature_encoded>$this->signature_encoded</signature_encoded>";
+			$xml_output .= "<policy_encoded>$this->policy_encoded</policy_encoded>";
 		}else {
 			$xml_output .= "<status>failure</status><message>Please checked that you have given all the data required for signedurl.</message>";
 		}
@@ -109,11 +114,13 @@ error_log ("SignedUrl ---> xml_output ----> " . $xml_output . PHP_EOL);
 		$canned_policy = '{"Statement":[{"Resource":"' . $video_path . '","Condition":{"DateLessThan":{"AWS:EpochTime":'. $expires . '}}}]}';
 		// the policy contains characters that cannot be part of a URL, so we base64 encode it
 		$encoded_policy = $this->url_safe_base64_encode($canned_policy);
+		$this->policy_encoded = $encoded_policy;
 		// sign the original policy, not the encoded version
 		$signature = $this->rsa_sha1_sign($canned_policy, $private_key_filename);
 		// make the signature safe to be included in a url
 		$encoded_signature = $this->url_safe_base64_encode($signature);
-
+		$this->signature_encoded = $encoded_signature;
+		
 		// combine the above into a stream name
 		$stream_name = $this->create_stream_name($video_path, null, $encoded_signature, $key_pair_id, $expires);
 		// url-encode the query string characters to work around a flash player bug
