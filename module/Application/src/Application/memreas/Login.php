@@ -57,43 +57,24 @@ class Login {
 			$username = strtolower($username);
 			$checkvalidemail = $this->is_valid_email($username);
 			if ($checkvalidemail == TRUE) {
-/*				 $sql = "SELECT * FROM user where email_address = '" . $username . "' and password = '" . $password . "' and role= 2 and disable_account = 0";
-*/				 
-				 				 $sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "' and u.role= 2 and u.disable_account = 0";
-
-			}else{
-/*			  $sql = "SELECT * FROM user where username = '" . $username . "' and password = '" . $password . "' and role = 2 and disable_account = 0";
-*/			  			  $sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
-
+				$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "' and u.role= 2 and u.disable_account = 0";
+			} else {
+				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
 			}
-			
-			//modified for conversion to PDO and ZF2...
-			//$result = array();
-			//$this->dbAdapter->query($sql, $result);
-			
-			//$statement = $this->dbAdapter->createStatement($sql);
-			//$result = $statement->execute();
-			//$row = $result->current();
 			$statement = $this->dbAdapter->createQuery($sql);
-  $row = $statement->getResult();
-  	 // echo '<pre>';print_r($row);exit;
+			$row = $statement->getResult();
 			if (!empty($row)) {
-			//$result = mysql_query($query);
-			//if (mysql_num_rows($result) > 0) {
-				//$row = mysql_fetch_array($result);
-                 if(!empty($devicetoken)&& !empty($devicetype)){            
-                    $qb = $this->dbAdapter->createQueryBuilder();
-                      $q = $qb->update('\Application\Entity\Device', 'd')
-                            ->set('d.device_token', $qb->expr()->literal($devicetoken))
-                            ->set('d.update_time', $qb->expr()->literal($time))
-                            ->where('d.user_id = ?1 AND d.device_type = ?2')
-                            
-                            ->setParameter(1, $row[0]->user_id)
-                            ->setParameter(2, $devicetype)
-                            ->getQuery();
-                    $p = $q->execute();
-                    	
-                }
+				if(!empty($devicetoken)&& !empty($devicetype)){            
+					$qb = $this->dbAdapter->createQueryBuilder();
+				  	$q = $qb->update('\Application\Entity\Device', 'd')
+						->set('d.device_token', $qb->expr()->literal($devicetoken))
+						->set('d.update_time', $qb->expr()->literal($time))
+						->where('d.user_id = ?1 AND d.device_type = ?2')
+						->setParameter(1, $row[0]->user_id)
+						->setParameter(2, $devicetype)
+						->getQuery();
+					$p = $q->execute();
+				}
 				$user_id = trim($row[0]->user_id);
 				$xml_output .= "<status>success</status>";
 				$xml_output .= "<message>User logged in successfully.</message>";

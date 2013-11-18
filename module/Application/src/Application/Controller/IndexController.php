@@ -44,6 +44,7 @@ use Application\memreas\AddFriendtoevent;
 use Application\memreas\ViewMediadetails;
 use Application\memreas\snsProcessMediaPublish;
 use Application\memreas\Memreastvm;
+use Application\memreas\MemreasSignedURL;
 use Application\memreas\UploadMedia;
 use Application\memreas\UploadAdvertisement;
 use Application\memreas\AddNotification;
@@ -231,6 +232,9 @@ error_log("Inside indexAction.listallmedia" . PHP_EOL);
                 } else if ($actionname == "findtag") {
                     $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $findtag->exec();
+                } else if ($actionname == "signedurl") {
+                    $signedurl = new MemreasSignedURL($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $signedurl->exec();
                 } else if ($actionname == "showlog") {
 					echo '<pre>' .file_get_contents( \getcwd().'/php_errors.log');exit;
                 } else if ($actionname == "doquery") {
