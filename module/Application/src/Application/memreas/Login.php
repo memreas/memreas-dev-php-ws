@@ -62,6 +62,7 @@ class Login {
 				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
 			}
 			$statement = $this->dbAdapter->createQuery($sql);
+
   $row = $statement->getResult();
   
   $auth = $this->service_locator->get('AuthService');
@@ -82,6 +83,7 @@ class Login {
                     $p = $q->execute();
                     	
                 }
+
 				$user_id = trim($row[0]->user_id);
 				$xml_output .= "<status>success</status>";
 				$xml_output .= "<message>User logged in successfully.</message>";
