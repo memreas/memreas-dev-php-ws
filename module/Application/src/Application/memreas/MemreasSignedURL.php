@@ -19,9 +19,9 @@ class MemreasSignedURL {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
-        $this->private_key_filename = getcwd().'/key/pk-APKAJC22BYF2JGZTOC6A.pem';
-		$this->key_pair_id = 'APKAJC22BYF2JGZTOC6A';
-		$this->expires = time() + 3600; // 5 min from now
+        $this->private_key_filename = getcwd().'/key/pk-S3AccessUser-key.pem';
+		$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
+		$this->expires = time() + 360000; // 100 hour from now
 		$this->signature_encoded = null;
 		$this->policy_encoded = null;
 
