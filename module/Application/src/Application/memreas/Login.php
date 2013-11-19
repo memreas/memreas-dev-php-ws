@@ -76,14 +76,15 @@ class Login {
 			//$row = $result->current();
 			$statement = $this->dbAdapter->createQuery($sql);
   $row = $statement->getResult();
-  	 // echo '<pre>';print_r($row);exit;
-			if (!empty($row)) {
-			//$result = mysql_query($query);
-			//if (mysql_num_rows($result) > 0) {
-				//$row = mysql_fetch_array($result);
+  
+  $auth = $this->service_locator->get('AuthService');
+            if (!empty($row)) {
+                $auth = $this->service_locator->get('AuthService');
+                $auth->getStorage()->write($row[0]);
+			
                  if(!empty($devicetoken)&& !empty($devicetype)){            
                     $qb = $this->dbAdapter->createQueryBuilder();
-                      $q = $qb->update('\Application\Entity\Device', 'd')
+                    $q = $qb->update('\Application\Entity\Device', 'd')
                             ->set('d.device_token', $qb->expr()->literal($devicetoken))
                             ->set('d.update_time', $qb->expr()->literal($time))
                             ->where('d.user_id = ?1 AND d.device_type = ?2')

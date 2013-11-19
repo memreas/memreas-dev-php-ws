@@ -50,7 +50,8 @@ use Application\memreas\AddNotification;
 use Application\memreas\ChangePassword; 
 use Application\memreas\ListNotification; 
 use Application\memreas\UpdateNotification; 
-use Application\memreas\FindTag; 
+use Application\memreas\FindTag;
+use Application\memreas\LogOut;
 
 
 use Application\memreas\Memreas;
@@ -237,6 +238,9 @@ error_log("Inside indexAction.listallmedia" . PHP_EOL);
                     $em = 	$this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                     $x = $em->createQuery($_GET['sql'])->getResult();
                     echo '<pre>';print_r($x);exit;
+                } else if ($actionname == "logout") {
+                    $logout = new LogOut($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $logout->exec();
                 }
                $output = ob_get_clean();
             } else if ($codebase == "original_code") {

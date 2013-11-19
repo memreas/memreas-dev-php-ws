@@ -42,7 +42,9 @@ class Module
 
     public function bootstrapSession($e)
     {
-        $session = $e->getApplication()
+        $storage = $e->getApplication()->getServiceManager()->get('Application\Storage\DBStorage');
+        $storage->setSessionStorage();
+         $session = $e->getApplication()
                      ->getServiceManager()
                      ->get('Zend\Session\SessionManager');
         $session->start();
@@ -52,6 +54,7 @@ class Module
              $session->regenerateId(true);
              $container->init = 1;
         }
+       
     }
 
 
