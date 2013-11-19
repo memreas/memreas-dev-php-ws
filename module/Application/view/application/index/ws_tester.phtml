@@ -21,31 +21,6 @@ echo "user_id ----> " . $user_id;
 <!--memreas-->
 <script src="/memreas/js/memreas.js"></script>
 <!-- Fetch the user_id -->
-
-<?php
-use Zend\Session\Container;
-$session = new Container ( 'user' );
-$user_id = $session->offsetGet ( 'user_id' );
-echo "user_id ----> " . $user_id;
-?>
-<!doctype html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>memreas</title>
-<link rel="stylesheet"
-	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-
-<!--jQuery Lybrary-->
-<script src="/memreas/js/jquery.js"></script>
-<script src="/memreas/js/modernizr.custom.17475.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<!--Bootstrap jQuery-->
-<script src="/memreas/js/bootstrap.min.js"></script>
-<!--memreas-->
-<script src="/memreas/js/memreas.js"></script>
-<!-- Fetch the user_id -->
->>>>>>> d6c74587e812e7ff0471ae26be33d07e5c461615
 <script type="text/javascript">
             var base_url = $("#index_action").attr("action");
             var login = '<xml><login><username>kamlesh1</username><password>123456</password><devicetype>1</devicetype><devicetoken>aaaababababababa</devicetoken></login></xml>';
@@ -225,56 +200,54 @@ echo "user_id ----> " . $user_id;
                 });
             });
 
-
         </script>
-    </head>
-    <body>
+</head>
+<body>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-5">Web Service Exec</a></li>
+		</ul>
 
-
-        <div id="tabs">
-            <ul>
-                <li><a href="#tabs-5">Web Service Exec</a></li>
-            </ul>
-
-            <div id="tabs-5">
-                <form id="index_action" name=index_action" action="/index">
-                    <table>
-                        <tr>
-                            <td>select action
-                            <td>
-                                <select id="input_action">
-                                    <option>registration</option>
-                                    <option>login</option>
-                                    <option>chkuname</option>
-                                    <option>addcomments</option>
-                                    <option>addmediaevent</option>
-                                    <option>likemedia</option>
-                                    <option>mediainappropriate</option>
-                                    <option>countlistallmedia</option>
-                                    <option>listgroup</option>
-                                    <option>deletephoto</option>
-                                    <option>listphotos</option>
-                                    <option>forgotpassword</option>
-                                    <option>download</option>
-                                    <option>viewallfriends</option>
-                                    <option>creategroup</option>
-                                    <option>listallmedia</option>
-                                    <option>countviewevent</option>
-                                    <option>editevent</option>
-                                    <option>addevent</option>
-                                    <option>viewevents</option>
-                                    <option>viewmediadetails</option>
-                                    <option>snsProcessMediaPublish</option>
-                                    <option>memreastvm</option>
-                                    <option>uploadmedia</option>
-                                    <option>uploadadvertisement</option>
-                                    <option>addfriendtoevent</option> 
-                                    <option>viewmediadetails</option> 
-                                    <option>addNotification</option> 
-                                     <option>changepassword</option> 
-                                     <option>listnotification</option>    
-                                     <option>updatenotification</option>    
-                                     <option>findtag</option>
+		<div id="tabs-5">
+			<form id="index_action" name=index_action " action="/index">
+				<table>
+					<tr>
+						<td>select action
+						
+						<td><select id="input_action">
+								<option>registration</option>
+								<option>login</option>
+								<option>chkuname</option>
+								<option>addcomments</option>
+								<option>addmediaevent</option>
+								<option>likemedia</option>
+								<option>mediainappropriate</option>
+								<option>countlistallmedia</option>
+								<option>listgroup</option>
+								<option>deletephoto</option>
+								<option>listphotos</option>
+								<option>forgotpassword</option>
+								<option>download</option>
+								<option>viewallfriends</option>
+								<option>creategroup</option>
+								<option>listallmedia</option>
+								<option>countviewevent</option>
+								<option>editevent</option>
+								<option>addevent</option>
+								<option>viewevents</option>
+								<option>viewmediadetails</option>
+								<option>snsProcessMediaPublish</option>
+								<option>memreastvm</option>
+								<option>uploadmedia</option>
+								<option>uploadadvertisement</option>
+								<option>addfriendtoevent</option>
+								<option>viewmediadetails</option>
+								<option>addNotification</option>
+								<option>changepassword</option>
+								<option>listnotification</option>
+								<option>updatenotification</option>
+								<option>signedurl</option>
+								<option>findtag</option>
                                      <option>logout</option>
 
 
@@ -283,115 +256,9 @@ echo "user_id ----> " . $user_id;
 
 
 
-                                </select>
-                        </tr>
-                        <!-- Not working....
-=======
-        </script>
-</head>
-<body>
-	<div id="tabs">
-		<ul>
-			<li><a href="#tabs-5">Web Service Exec</a></li>
-		</ul>
-
-		<div id="tabs-5">
-			<form id="index_action" name=index_action " action="/index">
-				<table>
-					<tr>
-						<td>select action
-						
-						<td><select id="input_action">
-								<option>registration</option>
-								<option>login</option>
-								<option>chkuname</option>
-								<option>addcomments</option>
-								<option>addmediaevent</option>
-								<option>likemedia</option>
-								<option>mediainappropriate</option>
-								<option>countlistallmedia</option>
-								<option>listgroup</option>
-								<option>deletephoto</option>
-								<option>listphotos</option>
-								<option>forgotpassword</option>
-								<option>download</option>
-								<option>viewallfriends</option>
-								<option>creategroup</option>
-								<option>listallmedia</option>
-								<option>countviewevent</option>
-								<option>editevent</option>
-								<option>addevent</option>
-								<option>viewevents</option>
-								<option>viewmediadetails</option>
-								<option>snsProcessMediaPublish</option>
-								<option>memreastvm</option>
-								<option>uploadmedia</option>
-								<option>uploadadvertisement</option>
-								<option>addfriendtoevent</option>
-								<option>viewmediadetails</option>
-								<option>addNotification</option>
-								<option>changepassword</option>
-								<option>listnotification</option>
-								<option>updatenotification</option>
-								<option>signedurl</option>
-								<option>findtag</option>
 						</select>
 					</tr>
 					<!-- Not working....
->>>>>>> d6c74587e812e7ff0471ae26be33d07e5c461615
-=======
-        </script>
-</head>
-<body>
-	<div id="tabs">
-		<ul>
-			<li><a href="#tabs-5">Web Service Exec</a></li>
-		</ul>
-
-		<div id="tabs-5">
-			<form id="index_action" name=index_action " action="/index">
-				<table>
-					<tr>
-						<td>select action
-						
-						<td><select id="input_action">
-								<option>registration</option>
-								<option>login</option>
-								<option>chkuname</option>
-								<option>addcomments</option>
-								<option>addmediaevent</option>
-								<option>likemedia</option>
-								<option>mediainappropriate</option>
-								<option>countlistallmedia</option>
-								<option>listgroup</option>
-								<option>deletephoto</option>
-								<option>listphotos</option>
-								<option>forgotpassword</option>
-								<option>download</option>
-								<option>viewallfriends</option>
-								<option>creategroup</option>
-								<option>listallmedia</option>
-								<option>countviewevent</option>
-								<option>editevent</option>
-								<option>addevent</option>
-								<option>viewevents</option>
-								<option>viewmediadetails</option>
-								<option>snsProcessMediaPublish</option>
-								<option>memreastvm</option>
-								<option>uploadmedia</option>
-								<option>uploadadvertisement</option>
-								<option>addfriendtoevent</option>
-								<option>viewmediadetails</option>
-								<option>addNotification</option>
-								<option>changepassword</option>
-								<option>listnotification</option>
-								<option>updatenotification</option>
-								<option>signedurl</option>
-								<option>findtag</option>
-						</select>
-					</tr>
-					<!-- Not working....
->>>>>>> d6c74587e812e7ff0471ae26be33d07e5c461615
                         <tr>
                             <td>select format
                             <td>
@@ -400,7 +267,6 @@ echo "user_id ----> " . $user_id;
                                   <option>json</option>
                                 </select>
                         </tr>
-<<<<<<< HEAD
                         -->
 					<input type="hidden" id="input_format" value="xml">
 					<tr>
@@ -443,47 +309,3 @@ echo "user_id ----> " . $user_id;
 	</div>
 </body>
 </html>
-=======
-                        -->
-					<input type="hidden" id="input_format" value="xml">
-					<tr>
-						<td>select url
-						
-						<td><select id="codebase">
-								<option>new_code</option>
-								<option>original_code</option>
-						</select>
-					
-					</tr>
-					<tr>
-						<td>Input (modify below as needed):
-					
-					</tr>
-					<tr>
-						<td colspan="2"><textarea id="action_input" name="action_input"
-								rows="10" cols="120"></textarea>
-					
-					</tr>
-
-					<tr>
-						<td><input id="btnOK" type="button" name="btnOK" value="submit">
-					
-					</tr>
-
-					<tr>
-						<td>Output:
-					
-					</tr>
-					<tr>
-						<td colspan="2"><textarea id="action_output" name="action_output"
-								rows="10" cols="120">Result will be shown here.</textarea>
-					
-					</tr>
-
-				</table>
-			</form>
-		</div>
-	</div>
-</body>
-</html>
->>>>>>> d6c74587e812e7ff0471ae26be33d07e5c461615
