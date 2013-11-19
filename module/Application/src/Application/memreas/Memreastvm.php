@@ -19,6 +19,8 @@ class Memreastvm {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
+        $this->private_key_filename = getcwd().'/key/pk-APKAJC22BYF2JGZTOC6A.pem';
+   		$this->key_pair_id = 'APKAJC22BYF2JGZTOC6A';
     }
 
     public function exec() {
@@ -50,7 +52,7 @@ class Memreastvm {
 		$response = $s3_token->getFederationToken(array(
 			'Name' => 'S3_Access_User',
 			'Policy' => $PolicyDocument_decode,
-			'DurationSeconds' => 3600 //1 hour
+			'DurationSeconds' => 36000 //10 hour
 		));
 
 		$response_array = $response->toArray();
@@ -68,6 +70,35 @@ class Memreastvm {
 		echo json_encode($arr);
     }
 
+    function rsa_sha1_sign($policy, $private_key_filename) {
+    	$signature = "";
+    
+    	// load the private key
+    	$fp = fopen($private_key_filename, "r");
+    	$priv_key = fread($fp, 8192);
+    	fclose($fp);
+    	$pkeyid = openssl_get_privatekey($priv_key);
+    
+    	// compute signature
+    	openssl_sign($policy, $signature, $pkeyid);
+    
+    	// free the key from memory
+    	openssl_free_key($pkeyid);
+    
+    	return $signature;
+    }
+    
+    function url_safe_base64_encode($value) {
+    	$encoded = base64_encode($value);
+    	// replace unsafe characters +, = and / with the safe characters -, _ and ~
+    	return str_replace(
+    			array('+', '=', '/'),
+    			array('-', '_', '~'),
+    			$encoded);
+    }
+    
+    
+    
 }
 
 ?>

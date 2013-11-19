@@ -57,23 +57,10 @@ class Login {
 			$username = strtolower($username);
 			$checkvalidemail = $this->is_valid_email($username);
 			if ($checkvalidemail == TRUE) {
-/*				 $sql = "SELECT * FROM user where email_address = '" . $username . "' and password = '" . $password . "' and role= 2 and disable_account = 0";
-*/				 
-				 				 $sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "' and u.role= 2 and u.disable_account = 0";
-
-			}else{
-/*			  $sql = "SELECT * FROM user where username = '" . $username . "' and password = '" . $password . "' and role = 2 and disable_account = 0";
-*/			  			  $sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
-
+				$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "' and u.role= 2 and u.disable_account = 0";
+			} else {
+				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
 			}
-			
-			//modified for conversion to PDO and ZF2...
-			//$result = array();
-			//$this->dbAdapter->query($sql, $result);
-			
-			//$statement = $this->dbAdapter->createStatement($sql);
-			//$result = $statement->execute();
-			//$row = $result->current();
 			$statement = $this->dbAdapter->createQuery($sql);
   $row = $statement->getResult();
   

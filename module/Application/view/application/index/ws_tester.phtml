@@ -1,28 +1,27 @@
 <?php
-
 use Zend\Session\Container;
-
-$session = new Container('user');
-$user_id = $session->offsetGet('user_id');
+$session = new Container ( 'user' );
+$user_id = $session->offsetGet ( 'user_id' );
 echo "user_id ----> " . $user_id;
 ?>
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>memreas</title>
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<head>
+<meta charset="utf-8">
+<title>memreas</title>
+<link rel="stylesheet"
+	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 
-        <!--jQuery Lybrary-->
-        <script src="/memreas/js/jquery.js"></script>
-        <script src="/memreas/js/modernizr.custom.17475.js"></script>
-        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        <!--Bootstrap jQuery-->
-        <script src="/memreas/js/bootstrap.min.js"></script>
-        <!--memreas-->
-        <script src="/memreas/js/memreas.js"></script>
-        <!-- Fetch the user_id -->
-        <script type="text/javascript">
+<!--jQuery Lybrary-->
+<script src="/memreas/js/jquery.js"></script>
+<script src="/memreas/js/modernizr.custom.17475.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!--Bootstrap jQuery-->
+<script src="/memreas/js/bootstrap.min.js"></script>
+<!--memreas-->
+<script src="/memreas/js/memreas.js"></script>
+<!-- Fetch the user_id -->
+<script type="text/javascript">
             var base_url = $("#index_action").attr("action");
             var login = '<xml><login><username>kamlesh1</username><password>123456</password><devicetype>1</devicetype><devicetoken>aaaababababababa</devicetoken></login></xml>';
             var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password><device_token></device_token><device_type></device_type></registration></xml>';
@@ -52,6 +51,7 @@ echo "user_id ----> " . $user_id;
             var changepassword = '<xml><changepassword><new>1	</new><retype>2</retype><token>2</token></changepassword></xml>';
             var listnotification = '<xml<xml><login><username>kamlesh1</username><password>123456</password><devicetype>1</devicetype><devicetoken>apple</devicetoken></login></xml>><listnotification><user_id>1</user_id></listnotification></xml>';
             var updatenotification = '<xml><updatenotification><notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id><status>2</status></updatenotification></xml>';
+            var signedurl = '<xml><signedurl><path>http://d1ckv7o9k6o3x9.cloudfront.net/0.jpg</path></signedurl></xml>';
             var findtag = '<xml><findtag> <tag></tag></findtag></xml>';
             var logout = '<xml><logout><user_id>1</user_id></logout></xml>';
 
@@ -68,9 +68,6 @@ echo "user_id ----> " . $user_id;
             $(document).ready(function() {
                 $("#action_input").val(registration);
                 $("#input_action").change(function() {
-alert("Hi");                
-alert($("#action_input").val());                
-alert($("#input_action").val());                
                     if ($("#input_action").val() == "registration") {
                         xml = registration;
                     } else if ($("#input_action").val() == "login") {
@@ -94,8 +91,7 @@ alert($("#input_action").val());
                      else if ($("#input_action").val() == "listgroup") {
                         xml = listgroup;
                     }
-
-                    else if ($("#input_action").val() == "deletephoto") {
+                   else if ($("#input_action").val() == "deletephoto") {
                         xml = deletephoto;
                     }
                     else if ($("#input_action").val() == "listphotos") {
@@ -111,7 +107,7 @@ alert($("#input_action").val());
                     } else if ($("#input_action").val() == "creategroup") {
                         xml = creategroup;
                     }
-                    
+
 
                     else if ($("#input_action").val() == "countviewevent") {
                         xml = countviewevent;
@@ -128,7 +124,7 @@ alert($("#input_action").val());
                     else if ($("#input_action").val() == "addevent") {
                         xml = addevent;
                     }
-                    
+
                      else if ($("#input_action").val() == "viewevents") {
                         xml = viewevents;
                     }
@@ -165,6 +161,8 @@ alert($("#input_action").val());
                         xml = listnotification;
                     }else if ($("#input_action").val() == "updatenotification") {
                         xml = updatenotification;
+                    }else if ($("#input_action").val() == "signedurl") {
+                        xml = signedurl;
                     }else if ($("#input_action").val() == "findtag") {
                         xml = findtag;
                     }else if ($("#input_action").val() == "logout") {
@@ -201,6 +199,7 @@ alert($("#input_action").val());
 
                 });
             });
+
 
         </script>
     </head>
@@ -262,6 +261,59 @@ alert($("#input_action").val());
                                 </select>
                         </tr>
                         <!-- Not working....
+=======
+        </script>
+</head>
+<body>
+	<div id="tabs">
+		<ul>
+			<li><a href="#tabs-5">Web Service Exec</a></li>
+		</ul>
+
+		<div id="tabs-5">
+			<form id="index_action" name=index_action " action="/index">
+				<table>
+					<tr>
+						<td>select action
+						
+						<td><select id="input_action">
+								<option>registration</option>
+								<option>login</option>
+								<option>chkuname</option>
+								<option>addcomments</option>
+								<option>addmediaevent</option>
+								<option>likemedia</option>
+								<option>mediainappropriate</option>
+								<option>countlistallmedia</option>
+								<option>listgroup</option>
+								<option>deletephoto</option>
+								<option>listphotos</option>
+								<option>forgotpassword</option>
+								<option>download</option>
+								<option>viewallfriends</option>
+								<option>creategroup</option>
+								<option>listallmedia</option>
+								<option>countviewevent</option>
+								<option>editevent</option>
+								<option>addevent</option>
+								<option>viewevents</option>
+								<option>viewmediadetails</option>
+								<option>snsProcessMediaPublish</option>
+								<option>memreastvm</option>
+								<option>uploadmedia</option>
+								<option>uploadadvertisement</option>
+								<option>addfriendtoevent</option>
+								<option>viewmediadetails</option>
+								<option>addNotification</option>
+								<option>changepassword</option>
+								<option>listnotification</option>
+								<option>updatenotification</option>
+								<option>signedurl</option>
+								<option>findtag</option>
+						</select>
+					</tr>
+					<!-- Not working....
+>>>>>>> d6c74587e812e7ff0471ae26be33d07e5c461615
                         <tr>
                             <td>select format
                             <td>
@@ -271,36 +323,44 @@ alert($("#input_action").val());
                                 </select>
                         </tr>
                         -->
-                        <input type="hidden" id="input_format" value="xml">
-                        <tr>
-                            <td>select url
-                            <td>
-                                <select id="codebase">
-                                    <option>new_code</option>
-                                    <option>original_code</option>
-                                </select>
-                        </tr>
-                        <tr>
-                            <td>Input (modify below as needed):
-                        </tr>
-                        <tr>
-                            <td colspan="2"><textarea id="action_input" name="action_input" rows="10" cols="120"></textarea>
-                        </tr>
+					<input type="hidden" id="input_format" value="xml">
+					<tr>
+						<td>select url
+						
+						<td><select id="codebase">
+								<option>new_code</option>
+								<option>original_code</option>
+						</select>
+					
+					</tr>
+					<tr>
+						<td>Input (modify below as needed):
+					
+					</tr>
+					<tr>
+						<td colspan="2"><textarea id="action_input" name="action_input"
+								rows="10" cols="120"></textarea>
+					
+					</tr>
 
-                        <tr>
-                            <td><input id="btnOK" type="button" name="btnOK" value="submit">
-                        </tr>
+					<tr>
+						<td><input id="btnOK" type="button" name="btnOK" value="submit">
+					
+					</tr>
 
-                        <tr>
-                            <td>Output:
-                        </tr>
-                        <tr>
-                            <td colspan="2"><textarea id="action_output" name="action_output" rows="10" cols="120">Result will be shown here.</textarea>
-                        </tr>
+					<tr>
+						<td>Output:
+					
+					</tr>
+					<tr>
+						<td colspan="2"><textarea id="action_output" name="action_output"
+								rows="10" cols="120">Result will be shown here.</textarea>
+					
+					</tr>
 
-                    </table>
-            </div>
-        </form>
-    </div>
+				</table>
+			</form>
+		</div>
+	</div>
 </body>
 </html>
