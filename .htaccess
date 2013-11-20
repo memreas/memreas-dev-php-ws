@@ -1,17 +1,7 @@
 <IfModule mod_php5.c>
 
-#setup for zf2 redirect to public - doesn't work well...
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^.*$ - [NC,L]
-RewriteRule ^.*$ app/index.php [NC,L]
-#set app/index.php as the default for directories
-DirectoryIndex app/index.php
-
 #Limits for file uploads
-php_value memory_limit 200M
+php_value memory_limit 500M
 php_value max_execution_time 259200
 php_value max_input_time 259200
 php_value session.gc_maxlifetime 1200
@@ -50,5 +40,3 @@ php_value log_errors_max_len 0
 </Files>
 
 </IfModule>
-
-
