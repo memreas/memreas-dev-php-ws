@@ -16,6 +16,7 @@ namespace Application\Factory;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Application\Storage\DBStorage;
+use Application\Model\MemreasConstants;
 
 /*
  * Contributed storage factory by community user https://github.com/acnb
@@ -32,7 +33,7 @@ class DBStorageFactory implements FactoryInterface
             $config = $conf['zf2-db-session']['sessionConfig'];
         }
         //$dbAdapter = $serviceLocator->get('\Zend\Db\Adapter\Adapter');
-        $dbAdapter = $serviceLocator->get('memreasdevdb');
+        $dbAdapter = $serviceLocator->get(MemreasConstants::MEMREASDB);
         return new DBStorage($dbAdapter, $config);
     }
 }

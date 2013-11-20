@@ -26,6 +26,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Application\Model\User;
 use Application\Model\UserTable;
 use Application\Model;
+use Application\Model\MemreasConstants;
 
 class Module
 {
@@ -131,7 +132,7 @@ class Module
 							//My assumption, you've alredy set dbAdapter
 							//and has users table with columns : user_name and pass_word
 							//that password hashed with md5
-							$dbAdapter = $sm->get('memreasdevdb');
+							$dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 							$dbTableAuthAdapter = new DbTableAuthAdapter($dbAdapter,
 											'user', 'username', 'password', 'MD5(?)');
 
@@ -149,7 +150,7 @@ class Module
 							return $table;
 						},
 						'UserTableGateway' => function ($sm) {
-							$dbAdapter = $sm->get('memreasdevdb');
+							$dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 							$resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 							$resultSetPrototype->setArrayObjectPrototype(new User());
 							return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
