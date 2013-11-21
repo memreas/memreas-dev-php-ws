@@ -36,84 +36,60 @@ class AddMediaEvent {
     public function exec() {
         error_log("AddMediaEvent exec...");
         error_log("AddMediaEvent _POST ----> " . print_r($_POST, true) . PHP_EOL);
-        error_log("AddMediaEvent _POST[user_id] ----> " . $_POST['user_id'] . PHP_EOL);
         $is_audio = FALSE;
         try {
             $media_id = '';
-//--------------------old parameters
-            //Fetch user_id
-            if (isset($_POST['user_id'])) {
-                $user_id = trim($_POST['user_id']);
-            } else {
-                $message = 'Error : User ID is Mempty';
-                throw new \Exception('Error : User ID is Mempty');
-            }
-
-            error_log("AddMediaEvent exec user_id ----> " . $user_id . PHP_EOL);
-
-            //Fetch event_id
-            $event_id = (isset($_POST['event_id'])) ? trim($_POST['event_id']) : '';
-            if (isset($_POST['device_id']))
-                $divice_id = trim($_POST['device_id']);
-            else
-                $message = 'Error : Device ID is Mempty';
-            // throw new Exception('Error : Device ID is Mempty');
-
-            error_log("AddMediaEvent exec event_id ----> " . $event_id . PHP_EOL);
-
-            $is_profile_pic = isset($_POST['is_profile_pic']) ? trim($_POST['is_profile_pic']) : 0;
-            $time = time();
-            $is_server_image = isset($_POST['is_server_image']) ? $_POST['is_server_image'] : 0;
-
-
+			if (isset($_POST['xml']) && !empty($_POST['xml'])) {
+	            $data = simplexml_load_string($_POST['xml']);
+ 	            if (isset($data->addmediaevent->user_id)) { $user_id = addslashes(trim($data->addmediaevent->user_id)); } else { throw new \Exception('Error : User ID is empty');}
+			 	if (isset($data->addmediaevent->device_id)) { $device_id = addslashes(trim($data->addmediaevent->device_id)); } else { throw new \Exception('Error : device id is empty');}
+	            $event_id = isset($data->addmediaevent->event_id) ? addslashes(trim($data->addmediaevent->event_id)) : '';
+	            $media_id = isset($data->addmediaevent->media_id) ? addslashes(trim($data->addmediaevent->media_id)) : '';
+	            $is_profile_pic = isset($data->addmediaevent->is_profile_pic) ? addslashes(trim($data->addmediaevent->is_profile_pic)) : 0;
+	            $is_server_image = addslashes(trim($data->addmediaevent->is_server_image));
+	            $content_type = addslashes(trim($data->addmediaevent->content_type));
+	            $s3url = addslashes(trim($data->addmediaevent->s3url));
+	            $s3file_name = addslashes(trim($data->addmediaevent->s3file_name));
+	            $location = json_decode($data->addmediaevent->location);
+	            $email = isset($data->addmediaevent->email) ? addslashes(trim($data->addmediaevent->email)) : '';
+error_log("location json ---> " . $data->addmediaevent->location . PHP_EOL);
+			} else {
+				//Old code uses POST            
+	            //Fetch user_id
+			 	if (isset($_POST['user_id'])) { $user_id = addslashes(trim($_POST['user_id'])); } else { throw new \Exception('Error : User ID is empty');}
+				if (isset($_POST['device_id'])) { $device_id = addslashes(trim($_POST['device_id'])); } else { throw new \Exception('Error : Device ID is empty');}
+	            $event_id = (isset($_POST['event_id'])) ? trim($_POST['event_id']) : '';
+	            $media_id = (isset($_POST['media_id'])) ? trim($_POST['media_id']) : '';
+	            $is_profile_pic = isset($_POST['is_profile_pic']) ? trim($_POST['is_profile_pic']) : 0;
+	            $is_server_image = isset($_POST['is_server_image']) ? $_POST['is_server_image'] : 0;
+	            $content_type = isset($_POST['content_type']) ? $_POST['content_type'] : '';
+	            $s3file_name = isset($_POST['s3file_name']) ? $_POST['s3file_name'] : '';
+	            $email = isset($_POST['email']) ? $_POST['email'] : '';
+	            $s3url = isset($_POST['s3url']) ? $_POST['s3url'] : '';
+	            $location = isset($_POST['location']) ? $_POST['location'] : '';
+			}
+			$time = time();
+				
             //////////////////////////////////////////////////////////////////////
             // dont upload file if server image just insert into event_media table
             //////////////////////////////////////////////////////////////////////
             if ($is_server_image == 1) {
-
-                error_log("AddMediaEvent exec eis_server_image == 1 " . PHP_EOL);
-
-                if (isset($_POST['media_id']) && !empty($_POST['media_id']))
-                    $media_id = $_POST['media_id'];
-                else
-                // throw new Exception('Error : Media ID is Mempty
-                    $message = 'Error : Media ID is Mempty';
-
+                error_log("AddMediaEvent exec is_server_image == 1 " . PHP_EOL);
+            	if (!isset($media_id) || empty($media_id)) { throw new \Exception('Error : media_id is empty');}
                 $tblEventMedia = new \Application\Entity\EventMedia();
                 $tblEventMedia->media_id = $media_id;
                 $tblEventMedia->event_id = $event_id;
                 $this->dbAdapter->persist($tblEventMedia);
                 $this->dbAdapter->flush();
-
-                //$q_event_media = "INSERT INTO Application\Entity\EventMedia (media_id, event_id) VALUES ('$media_id', '$event_id')";
-                //$query_result1 = mysql_query($q_event_media);
-                //$statement = $this->dbAdapter->createStatement($q_event_media);
-                // $query_result1 = $statement->execute();
-                //$row = $result->current();
-                //   $statement = $this->dbAdapter->createQuery($q_event_media);
-                // $query_result1 = $statement->getResult();
-
-
                 $status = 'Success';
                 $message = "Media Successfully add";
-            }
-            else {
+            } else {
                 /////////////////////////////////////////////////
                 // insert into media and event media 
                 /////////////////////////////////////////////////
-
                 error_log("AddMediaEvent exec is_server_image == 1 else " . PHP_EOL);
-
-                ////////////////////////////////////
-                // fetch parameters to upload to S3
-                ////////////////////////////////////
-                $content_type = trim($_POST['content_type']);
-                $s3file_name = trim($_POST['s3file_name']);
-                $email = trim($_POST['email']);
-                $s3url = trim($_POST['s3url']);
                 $isVideo = 0;
                 $s3path = $user_id . '/';
-                //$media_id = getUUID(); //generate GUUID
                 $media_id = UUID::getUUID($this->dbAdapter);
 
                 /////////////////////////////////////////
@@ -122,25 +98,58 @@ class AddMediaEvent {
                 $file_type = explode('/', $content_type);
                 if (strcasecmp($file_type[0], 'image') == 0) {
                     $s3path = $user_id . '/image/';
-                    $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,),
-                        "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $divice_id,),),
-                        "type" => array("image" => array("format" => $file_type[1]))
+                    $json_array = array();
+                    $json_array['S3_files']['path'] = $s3url;
+                    $json_array['S3_files']['Full'] = $s3url;
+                    $json_array['S3_files']['location'] = $location;
+                    $json_array['S3_files']['local_filenames']['device']['unique_device_identifier1'] = $user_id . '_' . $device_id;
+                    $json_array['S3_files']['type']['image']['format'] =  $file_type[1];
+ error_log("json_array ---> " . json_encode($json_array));                   
+ /*
+                    $json_array = array("S3_files" => 
+	                    				array("path" => $s3url, "Full" => $s3url,),
+	                        			"local_filenames" => 
+	                    					array("device" => 
+	                    							array("unique_device_identifier1" => $user_id . '_' . $device_id,),),
+	                        			"type" => array("image" => array("format" => $file_type[1]))
                     );
+ error_log("$json_array ---> " . json_encode($json_array));                   
+*/                    
                 } else
                 if (strcasecmp('video', $file_type[0]) == 0) {
                     $isVideo = 1;
                     $s3path = $user_id . '/media/';
+                    $json_array = array();
+                    $json_array['S3_files']['path'] = $s3url;
+                    $json_array['S3_files']['Full'] = $s3url;
+                    $json_array['S3_files']['location'] = $location;
+                    $json_array['S3_files']['local_filenames']['device']['unique_device_identifier1'] = $user_id . '_' . $device_id;
+                    $json_array['S3_files']['type']['video']['format'] =  $file_type[1];
+ error_log("json_array ---> " . json_encode($json_array));
+ /*                   
                     $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url),
-                        "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $divice_id,),),
+                        "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),),
                         "type" => array("video" => array("format" => $file_type[1],))
                     );
+ error_log("$json_array ---> " . json_encode($json_array));
+ */                   
                 } else
                 if (strcasecmp('audio', $file_type[0]) == 0) {
                     $is_audio = 1;
+                    $json_array = array();
+                    $json_array['S3_files']['path'] = $s3url;
+                    $json_array['S3_files']['Full'] = $s3url;
+                    $json_array['S3_files']['location'] = $location;
+                    $json_array['S3_files']['local_filenames']['device']['unique_device_identifier1'] = $user_id . '_' . $device_id;
+                    $json_array['S3_files']['type']['audio']['format'] =  $file_type[1];
+ error_log("json_array ---> " . json_encode($json_array));                   
+/*
                     $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,),
-                        "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $divice_id,),),
+                        "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),),
                         "type" => array("audio" => array("format" => $file_type[1],))
                     );
+ error_log("json_array ---> " . json_encode($json_array));
+ */	                   
                 }
                 $json_str = json_encode($json_array);
 
@@ -176,8 +185,8 @@ class AddMediaEvent {
                     error_log("AddMediaEvent exec - just inserted Media " . PHP_EOL);
                 }
 
-                $event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
-                if (isset($event_id)) {
+                //$event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
+                if (isset($event_id) && !empty($event_id)) {
                     $tblEventMedia = new \Application\Entity\EventMedia();
                     $tblEventMedia->media_id = $media_id;
                     $tblEventMedia->event_id = $event_id;
