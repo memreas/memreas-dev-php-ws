@@ -7,5 +7,6 @@ nbproject
 .project
 .settings
 .log
+vendor
 data/
 php_errors.log
