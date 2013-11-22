@@ -27,6 +27,7 @@ class DBStorageFactory implements FactoryInterface
 
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
+          
         $conf = $serviceLocator->get('Config');
         $config = null;
         if (isset($conf['zf2-db-session']) && isset($conf['zf2-db-session']['sessionConfig'])) {
@@ -34,6 +35,8 @@ class DBStorageFactory implements FactoryInterface
         }
         //$dbAdapter = $serviceLocator->get('\Zend\Db\Adapter\Adapter');
         $dbAdapter = $serviceLocator->get(MemreasConstants::MEMREASDB);
-        return new DBStorage($dbAdapter, $config);
+        $x = new DBStorage($dbAdapter, $config);
+        $x->ipaddress = $serviceLocator->get('Request')->getServer('REMOTE_ADDR');
+        return $x;
     }
 }

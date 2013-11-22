@@ -63,13 +63,11 @@ class Login {
 			}
 			$statement = $this->dbAdapter->createQuery($sql);
 
-  $row = $statement->getResult();
-  
-  $auth = $this->service_locator->get('AuthService');
+            $row = $statement->getResult();
+             
             if (!empty($row)) {
-                $auth = $this->service_locator->get('AuthService');
-                $auth->getStorage()->write($row[0]);
-			
+               
+                $this->setSession($row[0]);
                  if(!empty($devicetoken)&& !empty($devicetype)){            
                     $qb = $this->dbAdapter->createQueryBuilder();
                     $q = $qb->update('\Application\Entity\Device', 'd')
@@ -99,6 +97,21 @@ class Login {
 		echo $xml_output;
 error_log ("Login ---> xml_output ----> " . $xml_output . PHP_EOL);
 	}
+    
+      public function setSession($user) {
+
+
+        $user->password='';
+       	$user->disable_account='';
+   	    $user->create_date='';
+        $user->update_time='';
+		$session = new Container('user');
+error_log("Inside setSession got new Container...");
+		$session->offsetSet('user_id', $user->user_id);
+		$session->offsetSet('username', $user->username);
+        $session->offsetSet('user', json_encode($user));
+error_log("Inside setSession set user data...");
+    }
 	
 }
 ?>
