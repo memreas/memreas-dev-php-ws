@@ -86,6 +86,7 @@ class Login {
 				$xml_output .= "<status>success</status>";
 				$xml_output .= "<message>User logged in successfully.</message>";
 				$xml_output .= "<userid>". $user_id ."</userid>";
+                $xml_output .= "<sid>". session_id() ."</sid>";
 			} else {
 				$xml_output .= "<status>failure</status><message>Your Username and/or Password does not match our records.Please try again.</message>";
 			}
@@ -106,6 +107,7 @@ error_log ("Login ---> xml_output ----> " . $xml_output . PHP_EOL);
    	    $user->create_date='';
         $user->update_time='';
 		$session = new Container('user');
+        $this->service_locator->get('Zend\Session\SessionManager')->regenerateId(true);
 error_log("Inside setSession got new Container...");
 		$session->offsetSet('user_id', $user->user_id);
 		$session->offsetSet('username', $user->username);

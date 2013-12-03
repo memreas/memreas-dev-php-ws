@@ -79,6 +79,7 @@ class Notification {
 
 
                 foreach ($users as $user) {
+                    error_log('user-id- '.$user['user_id'].'  devicetype-'.$user['device_type'] . PHP_EOL);
                     if ($user['device_type'] == \Application\Entity\Device::ANROID) {
                         $this->gcm->addDevice($user['device_token']);
                     } else if ($user['device_type'] == \Application\Entity\Device::APPLE) {

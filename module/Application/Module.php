@@ -43,18 +43,11 @@ class Module
 
     public function bootstrapSession($e)
     {
+        ini_set('session.use_cookies', '0');
+    
         $storage = $e->getApplication()->getServiceManager()->get('Application\Storage\DBStorage');
         $storage->setSessionStorage();
-         $session = $e->getApplication()
-                     ->getServiceManager()
-                     ->get('Zend\Session\SessionManager');
-        $session->start();
-
-        $container = new Container('user');
-        if (!isset($container->init)) {
-             $session->regenerateId(true);
-             $container->init = 1;
-        }
+       
        
     }
 
@@ -109,8 +102,7 @@ class Module
 								}
 
 								$sessionManager = new SessionManager($sessionConfig, $sessionStorage, $sessionSaveHandler);
-
-								if (isset($session['validator'])) {
+ 								if (isset($session['validator'])) {
 									$chain = $sessionManager->getValidatorChain();
 									foreach ($session['validator'] as $validator) {
 										$validator = new $validator();
@@ -121,6 +113,7 @@ class Module
 							} else {
 								$sessionManager = new SessionManager();
 							}
+                            error_log('sm');
 							Container::setDefaultManager($sessionManager);
 							return $sessionManager;
 						},

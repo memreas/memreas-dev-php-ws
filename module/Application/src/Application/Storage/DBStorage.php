@@ -44,7 +44,9 @@ class DBStorage
          
          
         $saveHandler = new \Application\Model\DbTableGateway($this->tblGW, $gwOpts);
-        $sessionManager = new SessionManager();
+       
+        $sessionManager = new SessionManager(); 
+        
         if ($this->sessionConfig) {
             $sessionConfig = new \Zend\Session\Config\SessionConfig();
             $sessionConfig->setOptions($this->sessionConfig);
@@ -52,7 +54,18 @@ class DBStorage
         }
         $sessionManager->setSaveHandler($saveHandler);
         Container::setDefaultManager($sessionManager);
-        $sessionManager->start();
+        if(isset($_POST[session_name()])){
+            $sessionManager->setId($_POST[session_name()]);
+        }
+        
+        //$sessionManager->start();
+         $container = new Container('user');
+         if (!isset($container->init)) { 
+            //$sessionManager->regenerateId(true);
+            $container->init = 1;
+        }
+       
+        
     }
     
    public function __set($name, $value) {
