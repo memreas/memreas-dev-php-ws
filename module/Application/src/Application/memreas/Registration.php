@@ -34,7 +34,7 @@ class Registration {
 
     public function exec() {
         $user_id = UUID::getUUID($this->dbAdapter);
-
+        $invited_by = '';
 		if (isset($_POST['xml'])) {
 			$data = simplexml_load_string($_POST['xml']);
 			$username = trim($data->registration->username);
@@ -43,13 +43,17 @@ class Registration {
 			$password = trim($data->registration->password);
 			$device_token = trim($data->registration->device_token);
 			$device_type = trim($data->registration->device_type);
-		} else {
+            			$invited_by = trim($data->registration->invited_by);
+
+
+            } else {
 			$username = trim($_REQUEST['username']);
 			$email = trim($_REQUEST['email']);
 			$email = strtolower($email);
 			$password = trim($_REQUEST['password']);
 			$device_token = trim($_REQUEST['device_token']);
 			$device_type = trim($_REQUEST['device_type']);
+            $invited_by = trim($_REQUEST['invited_by']);
 		}
 
         try {
@@ -91,12 +95,11 @@ class Registration {
                 $tblUser->forgot_token = $forgottoken;
                 $tblUser->create_date = $created;
                 $tblUser->update_time = $modified;
+                $tblUser->invited_by = $invited_by;
 
                 $this->dbAdapter->persist($tblUser);
                 $this->dbAdapter->flush();
                 
-                echo '<pre>';
-
                 if(!empty($device_token)&& !empty($device_type)){
 					$device_id = UUID::getUUID($this->dbAdapter);
 				 

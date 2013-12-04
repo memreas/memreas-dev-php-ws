@@ -138,6 +138,13 @@ class User
      * @ORM\Column(name="update_time", type="string", length=255, nullable=false)
      */
     private $update_time;
+    
+     /**
+     * @var string
+     *
+     * @ORM\Column(name="invited_by", type="string", length=255, nullable=false)
+     */
+   private $invited_by;
 
    public function __set($name, $value) {
 
