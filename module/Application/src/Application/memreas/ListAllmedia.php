@@ -32,6 +32,10 @@ class ListAllmedia {
         $message = ' ';
         $containt = ' ';
         $user_id = trim($data->listallmedia->user_id);
+        if (!empty($_SESSION['user']['user_id'])){
+            $user_id = $_SESSION['user']['user_id'];
+        }
+        
         $event_id = trim($data->listallmedia->event_id);
         $device_id = trim($data->listallmedia->device_id);
         $error_flage = 0;

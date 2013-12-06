@@ -43,9 +43,8 @@ class Registration {
 			$password = trim($data->registration->password);
 			$device_token = trim($data->registration->device_token);
 			$device_type = trim($data->registration->device_type);
-            			$invited_by = trim($data->registration->invited_by);
-
-
+            $invited_by = trim($data->registration->invited_by);
+            $invited_by = $this->is_valid_email($invited_by)?$invited_by:''; 
             } else {
 			$username = trim($_REQUEST['username']);
 			$email = trim($_REQUEST['email']);
@@ -54,6 +53,8 @@ class Registration {
 			$device_token = trim($_REQUEST['device_token']);
 			$device_type = trim($_REQUEST['device_type']);
             $invited_by = trim($_REQUEST['invited_by']);
+            $invited_by = $this->is_valid_email($invited_by)?$invited_by:'';
+             
 		}
 
         try {
