@@ -106,12 +106,12 @@ error_log ("Login ---> xml_output ----> " . $xml_output . PHP_EOL);
        	$user->disable_account='';
    	    $user->create_date='';
         $user->update_time='';
-		$session = new Container('user');
+		
         $this->service_locator->get('Zend\Session\SessionManager')->regenerateId(true);
 error_log("Inside setSession got new Container...");
-		$session->offsetSet('user_id', $user->user_id);
-		$session->offsetSet('username', $user->username);
-        $session->offsetSet('user', json_encode($user));
+		$_SESSION['user']['user_id'] =  $user->user_id;
+		$_SESSION['user']['username'] = $user->username;
+        $_SESSION['user']['user'] =  json_encode($user);
 error_log("Inside setSession set user data...");
     }
 	
