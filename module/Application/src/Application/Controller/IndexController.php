@@ -53,6 +53,7 @@ use Application\memreas\ListNotification;
 use Application\memreas\UpdateNotification; 
 use Application\memreas\FindTag;
 use Application\memreas\LogOut;
+use Application\memreas\ClearAllNotification;
 
 
 use Application\memreas\Memreas;
@@ -244,6 +245,9 @@ error_log("Inside indexAction.listallmedia" . PHP_EOL);
                     echo '<pre>';print_r($x);exit;
                 } else if ($actionname == "logout") {
                     $logout = new LogOut($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $logout->exec();
+                } else if ($actionname == "clearallnotification") {
+                    $logout = new ClearAllNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $logout->exec();
                 }
                $output = ob_get_clean();

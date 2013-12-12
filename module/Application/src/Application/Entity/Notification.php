@@ -64,6 +64,13 @@ class Notification
      */
     private $status=0;
       
+       /**
+     * @var string
+     *
+     * @ORM\Column(name="is_read", type="string", length=1, nullable=false)
+     */
+    private $is_read=0;
+      
     /**
      * @var string
      *
