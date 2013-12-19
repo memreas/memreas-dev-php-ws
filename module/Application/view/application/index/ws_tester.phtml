@@ -56,6 +56,7 @@ echo "user_id ----> " . $user_id;
             var findtag = '<xml><findtag> <tag></tag></findtag></xml>';
             var logout = '<xml><logout><user_id>1</user_id></logout></xml>';
             var clearallnotification = '<xml><clearallnotification><user_id>1</user_id></clearallnotification></xml>';
+            var getsession = '<xml><getsession><sid>1</sid></getsession></xml>';
 
 
            $(document).ready(function() {
@@ -172,6 +173,8 @@ echo "user_id ----> " . $user_id;
                         xml = logout;
                     }else if ($("#input_action").val() == "clearallnotification") {
                         xml = clearallnotification;
+                    }else if ($("#input_action").val() == "getsession") {
+                        xml = getsession;
                     }
 
 
@@ -255,6 +258,7 @@ echo "user_id ----> " . $user_id;
 								<option>findtag</option>
                                      <option>logout</option>
                                      <option>clearallnotification</option>
+                                     <option>getsession</option>
 
 
 

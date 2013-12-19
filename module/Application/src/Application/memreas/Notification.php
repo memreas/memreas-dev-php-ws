@@ -86,12 +86,13 @@ class Notification {
                         $this->apns->addDevice($user['device_token']);
                     }
                 }
-
+                $x='';
                 if ($this->gcm->getDeviceCount() > 0) {
                     
                     $x = $this->gcm->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
                     error_log('SENDING-ANROID'.   print_r($x, true) . PHP_EOL);
                 }
+                $x='';
                 if ($this->apns->getDeviceCount() > 0) {
                     
                     $x = $this->apns->sendpush($this->message, $this->type, $this->event_id, $this->media_id);
