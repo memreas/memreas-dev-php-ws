@@ -55,6 +55,7 @@ use Application\memreas\FindTag;
 use Application\memreas\LogOut;
 use Application\memreas\ClearAllNotification;
 use Application\memreas\GetSession;
+use Application\memreas\RegisterDevice;
 
 
 
@@ -253,6 +254,9 @@ error_log("Inside indexAction.listallmedia" . PHP_EOL);
                     $result = $logout->exec();
                 }else if ($actionname == "getsession") {
                     $logout = new GetSession($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $logout->exec();
+                }else if ($actionname == "registerdevice") {
+                    $logout = new RegisterDevice($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $logout->exec();
                 }
                $output = ob_get_clean();

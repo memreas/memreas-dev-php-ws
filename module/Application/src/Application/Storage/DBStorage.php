@@ -54,8 +54,15 @@ class DBStorage
         }
         $sessionManager->setSaveHandler($saveHandler);
         Container::setDefaultManager($sessionManager);
+
         if(isset($_POST[session_name()])){
             $sessionManager->setId($_POST[session_name()]);
+        }elseif(isset($_POST['xml'])){
+            $data = simplexml_load_string($_POST['xml']);
+            if(!empty($data->sid)){
+                $sessionManager->setId($data->sid);
+            }            
+            
         }
         
         //$sessionManager->start();
