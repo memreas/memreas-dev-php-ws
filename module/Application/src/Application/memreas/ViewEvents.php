@@ -635,7 +635,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                         //  $result_profile_pic = $statement->execute();
                         //$row = $result->current();
                         $statement = $this->dbAdapter->createQuery($q_profile_photo);
-                        $statement::setMaxResults(1);
+                        $statement->setMaxResults(1);
                         $result_profile_pic = $statement->getArrayResult();
 
 
