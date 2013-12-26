@@ -731,9 +731,9 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                                          $url = $json_array['S3_files']['path'];
                                         if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
                                             $type = "image";
-                                            $url79x80 = $json_array['S3_files']['79x80'];
-                                            $url448x306 = $json_array['S3_files']['448x306'];
-                                            $url98x78 = $json_array['S3_files']['98x78'];
+                                            $url79x80 = empty($json_array['S3_files']['79x80'])?'':$json_array['S3_files']['79x80'];
+                                            $url448x306 = empty($json_array['S3_files']['448x306'])?'':$json_array['S3_files']['448x306'];
+                                            $url98x78 = empty($json_array['S3_files']['98x78'])?'':$json_array['S3_files']['98x78'];
                                         } else if (isset($json_array['type']['video']) && is_array($json_array['type']['video'])) {
                                             $type = "video";
                                             $thum_url = isset($json_array['S3_files']['1080p_thumbails'][0]) ? $json_array['S3_files']['1080p_thumbails'][0] : '';
