@@ -58,12 +58,14 @@ class Memreastvm {
 		$AccessKeyId = (string)$response_array['Credentials']['AccessKeyId'];
 		$SecretAccessKey = (string)$response_array['Credentials']['SecretAccessKey'];
 		$SessionToken = (string)$response_array['Credentials']['SessionToken'];
-
+		$Expiration = (string)$response_array['Credentials']['Expiration'];
+		
 		
 		$arr = array(
 			'AccessKeyId' => $AccessKeyId, 
 			'SecretAccessKey' => $SecretAccessKey, 
 			'SessionToken' => $SessionToken,
+			'Expiration' => $Expiration
 		);
 
 		header('Content-Type: application/json');
