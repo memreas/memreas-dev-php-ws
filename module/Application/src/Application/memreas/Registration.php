@@ -3,6 +3,7 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
+use Zend\View\Model\ViewModel;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\UUID;
@@ -32,7 +33,8 @@ class Registration {
         return $result;
     }
 
-    public function exec() {
+    public function exec() {   
+        
         $user_id = UUID::getUUID($this->dbAdapter);
         $invited_by = '';
 		if (isset($_POST['xml'])) {
@@ -201,33 +203,20 @@ error_log("message_data ----> " . print_r($message_data,true) . PHP_EOL);
                     $message = "Media Successfully add";
                 }
 
-				/*
+				
 error_log("About to email...". PHP_EOL);
 //API Info
 //http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
-
-$m = new SimpleEmailServiceMessage();
-$m->addTo('johnmeah@memreas.com');
-$m->setFrom('johnmeah@memreas.com');
-$m->setSubject('Hello, world!');
-$m->setMessageFromString('This is the message body.');
-
-error_log(print_r($ses->sendEmail($m)));
-
-                // Always set content-type when sending HTML email
+// Always set content-type when sending HTML email
                 $to = $email;
-                $subject = "Welcome to Event App";
-                $message = "<p>Hello " . $username . ",</p>";
-                $message .= "<p>Welcome to Event App</p>";
-                $message .= "<p>Your username is: " . $email . "</p>";
-                $message .= "<p>Your Password is: " . $passwrd . "</p>";
-                $message .= "<p>Thanks and Regards,</p>";
-                $message .= "<p><b>Event App Team</b></p>";
-                $headers = "MIME-Version: 1.0" . "\r\n";
-                $headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-                $headers .= 'From: <admin@eventapp.com>' . "\r\n";
-                mail($to, $subject, $message, $headers);
-                */
+                $viewVar = array('email'=>$email,'username'=> $username, 'passwrd' => $passwrd);
+                $viewModel = new ViewModel($viewVar);
+                $viewModel->setTemplate('email/register');
+                $viewRender = $this->service_locator->get('ViewRenderer');
+                $html = $viewRender->render($viewModel);
+                $subject = 'Welcome to Event App';
+                if(empty($aws_manager)) $aws_manager = new AWSManagerSender($this->service_locator);
+                $aws_manager->sendSeSMail($to,$subject,$html);
 
                 $status = 'Success';
                 $message = "Welcome to Event App. Your profile has been created.";
@@ -253,6 +242,8 @@ error_log("Finished...". PHP_EOL);
         ob_clean();
         echo $xml_output;
     }
+
+
 
 }
 

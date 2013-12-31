@@ -45,12 +45,12 @@ return array(
             // new controllers and actions without needing to create a new
             // module. Simply drop new controllers in, and you can access them
             // using the path /application/:controller/:action
-            'application' => array(
+            'admin' => array(
                 'type'    => 'Literal',
                 'options' => array(
-                    'route'    => '/application',
+                    'route'    => '/admin',
                     'defaults' => array(
-                        '__NAMESPACE__' => 'Application\Controller',
+                        '__NAMESPACE__' => 'Application\Admin\Controller',
                         'controller'    => 'Index',
                         'action'        => 'index',
                     ),
@@ -92,6 +92,11 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Application\Controller\Index' => 'Application\Controller\IndexController',
+		    'Application\Admin\Controller\Index' => 'Application\Admin\Controller\IndexController',
+			'Application\Admin\Controller\User' => 'Application\Admin\Controller\UserController',
+		    'Application\Admin\Controller\Event' => 'Application\Admin\Controller\EventController',
+
+
         ),
     ),
     'view_manager' => array(

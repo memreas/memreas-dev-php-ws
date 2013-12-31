@@ -258,6 +258,11 @@ error_log("Inside indexAction.listallmedia" . PHP_EOL);
                 }else if ($actionname == "registerdevice") {
                     $logout = new RegisterDevice($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $logout->exec();
+                }else if ($actionname == "verifyemail") {
+                    $aws_manager = new AWSManagerSender($this->service_locator);
+                    $client = $aws_manager->ses();
+                    $client->verifyEmailAddress(array('EmailAddress' => $_GET['email']));
+                    echo 'Please Cheack email validate you email to recive emails';
                 }
                $output = ob_get_clean();
             } else if ($codebase == "original_code") {

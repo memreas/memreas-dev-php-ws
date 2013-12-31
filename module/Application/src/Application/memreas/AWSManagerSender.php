@@ -128,6 +128,49 @@ error_log("file ---> $file" . PHP_EOL);
 
         return $s3_data;
     }
+    
+        public function sendSeSMail($to,$subject,$html)
+    {
+        $from = 'kamleshpawar2000@yahoo.com';
+         $client = $this->ses;
+
+        $result = $client->sendEmail(array(
+    // Source is required
+    'Source' => $from ,
+    // Destination is required
+    'Destination' => array(
+        'ToAddresses' => array($to),
+        'CcAddresses' => array(),
+        'BccAddresses' => array(),
+    ),
+    // Message is required
+    'Message' => array(
+        // Subject is required
+        'Subject' => array(
+            // Data is required
+            'Data' => $subject,
+            'Charset' => 'iso-8859-1',
+        ),
+        // Body is required
+        'Body' => array(
+            'Text' => array(
+                // Data is required
+                'Data' => $html,
+                'Charset' => 'iso-8859-1',
+            ),
+            'Html' => array(
+                // Data is required
+                'Data' => $html,
+                'Charset' => 'iso-8859-1',
+            ),
+        ),
+    ),
+    'ReplyToAddresses' => array($from),
+    'ReturnPath' => $from,
+));
+
+
+    }
 }
 
 ?>
