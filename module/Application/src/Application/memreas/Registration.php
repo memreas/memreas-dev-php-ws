@@ -72,11 +72,11 @@ class Registration {
 
                 if (!empty($result)) {
                     if (($result->email_address == $email) && ($result->username != $username)) {
-                        throw new \Exception('Your profile is not created successfully. Email is already exist.');
+                       // throw new \Exception('Your profile is not created successfully. Email is already exist.');
                     } else if (($result->username == $username) && ($result->email_address != $email)) {
                         throw new \Exception('Your profile is not created successfully. User name is already exist.');
                     } else if (($result->username == $username) && ($result->email_address == $email)) {
-                        throw new \Exception('Your profile is not created successfully. User name and email are already exist.');
+                        //throw new \Exception('Your profile is not created successfully. User name and email are already exist.');
                     }
                 }
 
