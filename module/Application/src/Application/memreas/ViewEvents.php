@@ -68,19 +68,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                 if (count($result_event) <= 0) {
                     $xml_output.="<status>Failure</status>";
                     $xml_output.="<message>No Record Found </message>";
-                    $xml_output.="<events><event>";
-                    $xml_output.="<event_id></event_id>";
-                    $xml_output.="<event_name></event_name>";
-                    $xml_output.="<friend_can_post></friend_can_post>";
-                    $xml_output.="<friend_can_share></friend_can_share>";
-                    $xml_output.="<event_media_type></event_media_type>";
-                    $xml_output.="<event_media_url></event_media_url>";
-                    $xml_output.="<event_media_id></event_media_id>";
-                    $xml_output.="<event_media_video_thum></event_media_video_thum>";
-                    $xml_output.="<event_media_79x80></event_media_79x80>";
-                    $xml_output.="<event_media_98x78></event_media_98x78>";
-                    $xml_output.="<event_media_448x306></event_media_448x306>";
-                    $xml_output.= "</event></events>";
+                    $xml_output.="<events></events>";
                 } else {
                     $xml_output.="<status>Success</status>";
                     $xml_output.="<message>My Events List</message>";
@@ -88,6 +76,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                     $xml_output.="<events>";
                 }if (count($result_event) > 0) {
                     foreach ($result_event as $row) {//get media
+                        
                         $xml_output.="<event>";
                         $xml_output.="<event_id>" . $row->event_id . "</event_id>";
                         $xml_output.="<event_name>" . $row->name . "</event_name>";
@@ -127,30 +116,32 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                                 $url79x80 = '';
                                 $url448x306 = '';
                                 $url98x78 = '';
+                                
+
                                 if (isset($row1['metadata'])) {
                                     $json_array = json_decode($row1['metadata'], true);
                                     $url = $json_array['S3_files']['path'];
-                                    if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
+                                    if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) {
                                         $type = "image";
                                         
                                         $url79x80 = isset($json_array['S3_files']['79x80'])? $json_array['S3_files']['79x80']:'' ;
                                         $url448x306 = isset($json_array['S3_files']['448x306'])?$json_array['S3_files']['448x306'] : '';
                                         $url98x78 = isset($json_array['S3_files']['98x78'])? $json_array['S3_files']['98x78'] :'' ;
-                                    } else if (isset($json_array['type']['video']) && is_array($json_array['type']['video'])) {
+                                    } else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) {
                                         $type = "video";
                                         $thum_url = isset($json_array['S3_files']['1080p_thumbails'][0]['Full']) ? $json_array['S3_files']['1080p_thumbails'][0]['Full'] : ''; //get video thum
                                         $url79x80 = isset($json_array['S3_files']['1080p_thumbails'][1]['79x80']) ? $json_array['S3_files']['1080p_thumbails'][1]['79x80'] : '';
                                         $url448x306 = isset($json_array['S3_files']['1080p_thumbails'][2]['448x306']) ? $json_array['S3_files']['1080p_thumbails'][2]['448x306'] : '';
                                         $url98x78 = isset($json_array['S3_files']['1080p_thumbails'][3]['98x78']) ? $json_array['S3_files']['1080p_thumbails'][3]['98x78'] : '';
-                                    } else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio']))
+                                    } else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio']))
                                         continue;
                                     else
                                         $type = "Type not Mentioned";
                                 }
                                 $xml_output.="<event_media_type>" . $type . "</event_media_type>";
-                                $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+                                $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
                                 $xml_output.="<event_media_id>" . $row1['media_id'] . "</event_media_id>";
-                                $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum>" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "</event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+                                $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
                                 $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
                                 $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
                                 $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
@@ -172,20 +163,8 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                 }
             } else {
                 $xml_output.="<status>Failure</status>";
-                $xml_output.="<message>" . mysql_error() . "</message>";
-                $xml_output.="<events><event>";
-                $xml_output.="<event_id></event_id>";
-                $xml_output.="<event_name></event_name>";
-                $xml_output.="<friend_can_post></friend_can_post>";
-                $xml_output.="<friend_can_share></friend_can_share>";
-                $xml_output.="<event_media_type></event_media_type>";
-                $xml_output.="<event_media_url></event_media_url>";
-                $xml_output.="<event_media_id></event_media_id>";
-                $xml_output.="<event_media_video_thum></event_media_video_thum>";
-                $xml_output.="<event_media_79x80></event_media_79x80>";
-                $xml_output.="<event_media_98x78></event_media_98x78>";
-                $xml_output.="<event_media_448x306></event_media_448x306>";
-                $xml_output.= "</event></events>";
+                $xml_output.="<message>No Record Found </message>";
+                $xml_output.="<events></events>";
             }
         }
 //------------------------for friends event-------------------------
@@ -205,10 +184,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
             $statement = $this->dbAdapter->createQuery($getfriendid_loginuser);
             $result_getfriendid = $statement->getResult();
 
-            if (!$result_getfriendid) {
-                $error_flag = 1;
-                $message = mysql_error();
-            } else if (count($result_getfriendid) <= 0) {
+            if (count($result_getfriendid) <= 0) {
                 $error_flag = 2;
                 $message = "No Record Found";
             } else {
@@ -343,18 +319,18 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                                         $json_array = json_decode($row['metadata'], true);
 
                                         $url = $json_array['S3_files']['path'];
-                                        if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
+                                        if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) {
                                             $type = "image";
                                             $url79x80 = $json_array['S3_files']['79x80'];
                                             $url448x306 = $json_array['S3_files']['448x306'];
                                             $url98x78 = $json_array['S3_files']['98x78'];
-                                        } else if (isset($json_array['type']['video']) && is_array($json_array['type']['video'])) {
+                                        } else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) {
                                             $type = "video";
                                             $thum_url = isset($json_array['S3_files']['video_thum_path']) ? $json_array['S3_files']['video_thum_path'] : '';
                                             $url79x80 = isset($json_array['S3_files']['video_thum_79x80']) ? $json_array['S3_files']['video_thum_79x80'] : '';
                                             $url448x306 = isset($json_array['S3_files']['video_thum_448x306']) ? $json_array['S3_files']['video_thum_448x306'] : '';
                                             $url98x78 = isset($json_array['S3_files']['video_thum_98x78']) ? $json_array['S3_files']['video_thum_98x78'] : '';
-                                        } else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio']))
+                                        } else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio']))
                                             continue;
                                         else
                                             $type = "Type not Mentioned";
@@ -362,7 +338,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                                     $xml_output.="<event_media_type>" . $type . "</event_media_type>";
                                     $xml_output.=(!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
                                     $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>";
-                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum>" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "</event_media_video_thum>" : "<event_media_video_thum/>";
+                                    $xml_output.=(!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
                                     $xml_output.=(!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
                                     $xml_output.=(!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
                                     $xml_output.=(!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
@@ -512,30 +488,8 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
             $xml_output .= "<xml><viewevents>";
             $xml_output.="<status>Failure</status>";
             $xml_output.="<message>$message</message>";
-            $xml_output.="<friends>";
-            $xml_output.="<friend>";
-            $xml_output.="<event_creator></event_creator>";
-            $xml_output.="<profile_pic></profile_pic>";
-            $xml_output.="<profile_pic_79x80></profile_pic_79x80>";
-            $xml_output.="<profile_pic_448x306></profile_pic_448x306>";
-            $xml_output.="<profile_pic_98x78></profile_pic_98x78>";
-            $xml_output.="<event_creator_user_id></event_creator_user_id>";
-
-            $xml_output.="<events><event>";
-            $xml_output.="<event_id></event_id>";
-            $xml_output.="<event_name></event_name>";
-            $xml_output.="<friend_can_post></friend_can_post>";
-            $xml_output.="<friend_can_share></friend_can_share>";
-            $xml_output.="<event_media_type></event_media_type>";
-            $xml_output.="<event_media_url></event_media_url>";
-            $xml_output.="<event_media_id></event_media_id>";
-            $xml_output.="<event_media_video_thum></event_media_video_thum>";
-            $xml_output.="<event_media_79x80></event_media_79x80>";
-            $xml_output.="<event_media_98x78></event_media_98x78>";
-            $xml_output.="<event_media_448x306></event_media_448x306>";
-            $xml_output.= "</event></events>";
-            $xml_output.="</friend>";
-            $xml_output.="</friends>";
+            $xml_output.="<events></events>";
+            $xml_output.="</friend></friends>";
         }
 //  }
 //-----------------------------public events-----------------------------
@@ -591,37 +545,18 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
               $xml_output.="</friends>";
               } */
             if (count($result_pub) == 0) {
-                $xml_output.="<status>Failure</status>";
+               
+                         
+                $xml_output.="<friends> <status>Failure</status>";
                 $xml_output.="<message>No record found</message>";
-                $xml_output.="<page>0</page>";
-                $xml_output.="<friends>";
-                $xml_output.="<friend>";
-                $xml_output.="<event_creator></event_creator>";
-                $xml_output.="<profile_pic><![CDATA[]]></profile_pic>";
-                $xml_output.="<profile_pic_79x80></profile_pic_79x80>";
-                $xml_output.="<profile_pic_448x306></profile_pic_448x306>";
-                $xml_output.="<profile_pic_98x78></profile_pic_98x78>";
-                $xml_output.="<event_creator_user_id></event_creator_user_id>";
-                $xml_output.="<events><event>";
-                $xml_output.="<event_id></event_id>";
-                $xml_output.="<event_name></event_name>";
-                $xml_output.="<friend_can_post></friend_can_post>";
-                $xml_output.="<friend_can_share></friend_can_share>";
-                $xml_output.="<event_media_type></event_media_type>";
-                $xml_output.="<event_media_url></event_media_url>";
-                $xml_output.="<event_media_id></event_media_id>";
-                $xml_output.="<event_media_video_thum></event_media_video_thum>";
-                $xml_output.="<event_media_79x80></event_media_79x80>";
-                $xml_output.="<event_media_98x78></event_media_98x78>";
-                $xml_output.="<event_media_448x306></event_media_448x306>";
-                $xml_output.= "</event>";
-                $xml_output.="</events></friend>";
                 $xml_output.="</friends>";
             } else {
+                
+                
+                $xml_output.="<friends>";
                 $xml_output.="<status>Success</status>";
                 $xml_output.="<message>Public Event List</message>";
                 $xml_output.="<page>$page</page>";
-                $xml_output.="<friends>";
 
                 foreach ($result_pub as $row3) {
                     $pic = '';
@@ -729,18 +664,18 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
 
                                         $json_array = json_decode($row['metadata'], true);
                                          $url = $json_array['S3_files']['path'];
-                                        if (isset($json_array['type']['image']) && is_array($json_array['type']['image'])) {
+                                        if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) {
                                             $type = "image";
                                             $url79x80 = empty($json_array['S3_files']['79x80'])?'':$json_array['S3_files']['79x80'];
                                             $url448x306 = empty($json_array['S3_files']['448x306'])?'':$json_array['S3_files']['448x306'];
                                             $url98x78 = empty($json_array['S3_files']['98x78'])?'':$json_array['S3_files']['98x78'];
-                                        } else if (isset($json_array['type']['video']) && is_array($json_array['type']['video'])) {
+                                        } else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) {
                                             $type = "video";
                                             $thum_url = isset($json_array['S3_files']['1080p_thumbails'][0]) ? $json_array['S3_files']['1080p_thumbails'][0] : '';
                                             $url79x80 = '';
                                             $url448x306 = '';
                                             $url98x78 = '';
-                                        } else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio'])) {
+                                        } else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio'])) {
                                             $only_audio_in_event = 1;
                                             continue;
                                         }
