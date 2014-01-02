@@ -456,11 +456,11 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
           if (isset($row['metadata'])) {
           $json_array = json_decode($row['metadata'], true);
           $url = $json_array['S3_files']['path'];
-          if (isset($json_array['type']['image']) && is_array($json_array['type']['image']))
+          if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image']))
           $type = "image";
-          else if (isset($json_array['type']['video']) && is_array($json_array['type']['video']))
+          else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video']))
           $type = "video";
-          else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio']))
+          else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio']))
           $type = "audio";
           else
           $type = "Type not Mentioned";

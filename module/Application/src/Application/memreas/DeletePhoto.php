@@ -48,7 +48,7 @@ $seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'
 if (count($resseldata) > 0) {
    // $selrow = mysql_fetch_array($resseldata);
     $json_array = json_decode($resseldata[0]->metadata, true);
-            if(isset($json_array['type']['image'])){
+            if(isset($json_array['S3_files']['type']['image'])){
                 $imagename=  basename($json_array['S3_files']['path']);   
             }    
    // $query = "DELETE FROM media where media_id='$mediaid'";

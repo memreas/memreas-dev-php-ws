@@ -83,7 +83,7 @@ ORDER BY m.create_date DESC";*/
         $count = 0;
         foreach  ( $result as $row) {
             $json_array = json_decode($row->metadata, true);
-            if (isset($json_array['type']['image'])) {
+            if (isset($json_array['S3_files']['type']['image'])) {
                 $count++;
                 $meta[$count]['media_id']=$row->media_id;
                 $meta[$count]['url'] = $json_array['S3_files'];
@@ -93,7 +93,7 @@ ORDER BY m.create_date DESC";*/
         }
          foreach ( $result1 as $row1) {
             $json_array = json_decode($row1['metadata'], true);
-            if (isset($json_array['type']['image'])) {
+            if (isset($json_array['S3_files']['type']['image'])) {
                 $count++;
                 $meta[$count]['media_id']=$row1['media_id'];
                 $meta[$count]['url'] = $json_array['S3_files'];
