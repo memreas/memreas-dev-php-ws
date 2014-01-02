@@ -489,7 +489,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
             $xml_output.="<status>Failure</status>";
             $xml_output.="<message>$message</message>";
             $xml_output.="<events></events>";
-            $xml_output.="</friend></friends>";
+            $xml_output.="</friends></friends>";
         }
 //  }
 //-----------------------------public events-----------------------------
