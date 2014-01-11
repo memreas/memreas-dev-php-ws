@@ -35,33 +35,60 @@ class ListNotification {
         $xml_output .= "<listnotificationresponse>";
         if (isset($userid) && !empty($userid)) {
 
-            $query_user_media = "SELECT m FROM Application\Entity\Notification m where m.user_id ='$userid' AND m.is_read = '0' ORDER BY m.create_time DESC";
+            $query_user_media = "SELECT m FROM Application\Entity\Notification m   where m.user_id ='$userid' AND m.is_read = '0' ORDER BY m.create_time DESC";
             $statement = $this->dbAdapter->createQuery($query_user_media);
+           
             $result = $statement->getArrayResult();
 
+           
+    
+    
+
+            $xml_output .= "<notifications>";
             if (count($result) > 0) {
                 $count = 0;
-                $xml_output .= "<status>success</status><notifications>";
-                foreach ($result as $row) {
-                                            $xml_output .= "<notification>";
-                                            $xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
+                $xml_output .= "<status>success</status>";
+                 foreach ($result as $row) {
+                    $profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array('user_id' => $row['user_id'],'is_profile_pic' => 1));
+                    
+                    
+                    $xml_output .= "<notification>";
+                    if($profile_pic)
+                    $json_array = json_decode($profile_pic->metadata, true);
+                           $url1 = null;
+                           if (!empty($json_array['S3_files']['path']))
+                                $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
+                            $pic_79x80 ='';
+                            if (!empty($json_array['S3_files']['79x80']))
+                                $pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['79x80'];
+                            $pic_448x306 ='';
+                            if (!empty($json_array['S3_files']['448x306']))
+                                $pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['448x306'];
+                            $pic_98x78='';
+                            if (!empty($json_array['S3_files']['98x78']))
+                                $pic_98x78 = MemreasConstants:: CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['98x78'];
+                        
+                        $xml_output.="<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+                        $xml_output.="<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
+                        $xml_output.="<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
+                        $xml_output.="<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
+                        $json_array_link = json_decode($row['links'] , true);
+
+                        $xml_output .= "<event_id>{$json_array_link['event_id']}</event_id>";
+                        $xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
+
                     $xml_output .= "<meta>{$row['meta']}</meta>";
                     $xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
                     $xml_output .= "</notification>";
                 }
 
-
- 
             }
-            //-----------------for users event
+            
             if (count($result) == 0) {
-                $error_flag = 2;
-                $message = "no record found";
-            }
-            if ($error_flag) {
+                
                 $xml_output .= "<status>failure</status>";
 
-                $xml_output .="<message>$message</message>";
+                $xml_output .="<message>No record founf</message>";
             }
         } else {
             $xml_output .= "<status>failure</status>";
