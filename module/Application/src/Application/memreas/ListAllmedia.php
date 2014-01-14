@@ -66,7 +66,7 @@ class ListAllmedia {
             $result = $statement->getArrayResult();
         } else {
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('media.media_id', 'media.metadata');
+            $qb->select('media.user_id','media.media_id', 'media.metadata');
             $qb->from('Application\Entity\Media', 'media');
             $qb->join('Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id');
             $qb->join('Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id');
@@ -86,6 +86,7 @@ class ListAllmedia {
 		else {
 			$xml_output.="<page>$page</page>";
 			$xml_output.="<status>Success</status>";
+            $xml_output.="<user_id>" . $result[0]['user_id'] . "</user_id>";
 			$xml_output.="<message>Media List</message>";
 			foreach ($result as  $row ){
 				$url79x80 = '';
@@ -136,7 +137,7 @@ class ListAllmedia {
 				}
 				$xml_output.="<media>";
 				$xml_output.="<media_id>" . $row['media_id'] . "</media_id>";
-				$xml_output.="<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
+                $xml_output.="<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
 				$xml_output.="<is_downloaded>$is_download</is_downloaded>";
 				if (isset($data->listallmedia->metadata)){
 //error_log("Inside metadata...".PHP_EOL);
@@ -163,9 +164,12 @@ class ListAllmedia {
         
         if ($error_flage) {
             $xml_output.="<status>Failure</status>";
+            $xml_output.="<user_id></user_id>";
             $xml_output.= "<message>$message</message>";
             $xml_output.="<media>";
             $xml_output.="<media_id></media_id>";
+
+
             $xml_output.="<metadata></metadata>";
             $xml_output.="<is_downloaded></is_downloaded>";
             $xml_output.="<event_media_video_thum></event_media_video_thum>";
