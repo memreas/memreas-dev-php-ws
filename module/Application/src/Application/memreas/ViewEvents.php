@@ -239,13 +239,17 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
 
                     $xml_output.="<friends>";
                     $user_id = null;
+                    $array =  array();
                     foreach ($result_friendevent as $row_friendsevent) {
 
-                        $array[$row_friendsevent[0]['username']][] = $row_friendsevent;
+                        $p[$row_friendsevent[0]['username']][] = $row_friendsevent;
                     }
-                    //echo "<pre>";print_r($array);exit;
+                    
                     foreach ($array as $key => $value) {
                         $url1 = null;
+                        $pic_79x80   = '';
+                        $pic_448x306 = '';
+                        $pic_98x78   = '';
                         $xml_output.="<friend>";
                         $xml_output.="<event_creator>" . $value[0][0]['username'] . "</event_creator>";
                         if ($value[0][0]['profile_photo']) {
