@@ -76,10 +76,12 @@ error_log ( "Inside Registration  if (isset ( email ) ...".PHP_EOL );
 				if (! $checkvalidemail)
 					throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
 				
+error_log ( "Inside Registration checked email ...".PHP_EOL );
 				$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$result = $statement->getOneOrNullResult ();
 				
+error_log ( "Inside Registration checked user table ...".PHP_EOL );
 				if (! empty ( $result )) {
 					if (($result->email_address == $email) && ($result->username != $username)) {
 error_log ( "Inside Registration // throw new \Exception('Your profile is not created successfully. Email is already exist.') ...".PHP_EOL );
@@ -93,6 +95,7 @@ error_log ( "Inside Registration // throw new \Exception('Your profile is not cr
 					}
 				}
 				
+error_log ( "Inside Registration encrypting password ...".PHP_EOL );
 				$passwrd = $password;
 				$password = md5 ( $password );
 				$roleid = 2;
@@ -222,7 +225,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 					$message = "Media Successfully add";
 				}
 				
-				error_log ( "About to email..." . PHP_EOL );
+error_log ( "About to email..." . PHP_EOL );
 				// API Info
 				// http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
 				// Always set content-type when sending HTML email
@@ -243,7 +246,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				
 				$status = 'Success';
 				$message = "Welcome to Event App. Your profile has been created.";
-				error_log ( "Finished..." . PHP_EOL );
+error_log ( "Finished..." . PHP_EOL );
 			} else {
 				throw new \Exception ( 'Your profile is not created successfully. Please check all data you have inserted are proper.' );
 			}
