@@ -30,10 +30,10 @@ class Registration {
 		return $result;
 	}
 	public function exec() {
-		error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
 		$user_id = UUID::getUUID ( $this->dbAdapter );
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
+error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$username = trim ( $data->registration->username );
 			$email = trim ( $data->registration->email );
@@ -44,6 +44,12 @@ class Registration {
 			$invited_by = trim ( $data->registration->invited_by );
 			$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 		} else {
+error_log ( "Inside Registration  ----> ".$_REQUEST['username'].PHP_EOL );
+error_log ( "Inside Registration  ----> ".$_REQUEST['email'].PHP_EOL );
+error_log ( "Inside Registration  ----> ".$_REQUEST['password'].PHP_EOL );
+error_log ( "Inside Registration  ----> ".$_REQUEST['device_token'].PHP_EOL );
+error_log ( "Inside Registration  ----> ".$_REQUEST['device_type'].PHP_EOL );
+error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
