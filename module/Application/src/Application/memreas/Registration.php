@@ -56,8 +56,12 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 			$password = trim ( $_REQUEST ['password'] );
 			$device_token = trim ( $_REQUEST ['device_token'] );
 			$device_type = trim ( $_REQUEST ['device_type'] );
-			$invited_by = trim ( $_REQUEST ['invited_by'] );
-			$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
+			if (isset($_REQUEST ['invited_by'])&&(!empty($_REQUEST ['invited_by']))) {
+				$invited_by = $_REQUEST['invited_by'];
+				$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
+			} else {
+				$invited_by = null;
+			} 
 		}
 		
 		try {
