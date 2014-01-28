@@ -58,14 +58,19 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 			$device_type = trim ( $_REQUEST ['device_type'] );
 			if (isset($_REQUEST ['invited_by'])&&(!empty($_REQUEST ['invited_by']))) {
 				$invited_by = $_REQUEST['invited_by'];
-				$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
+				
+				if (!$this->is_valid_email($invited_by))
+					throw new \Exception ( 'fail: please enter valid email address for invited by.' );
+				
 			} else {
+error_log ( "Inside Registration  invited_by is null".PHP_EOL );
 				$invited_by = null;
 			} 
 		}
 		
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
+error_log ( "Inside Registration  if (isset ( email ) ...".PHP_EOL );
 				$checkvalidemail = $this->is_valid_email ( $email );
 				
 				if (! $checkvalidemail)
@@ -77,10 +82,13 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				
 				if (! empty ( $result )) {
 					if (($result->email_address == $email) && ($result->username != $username)) {
+error_log ( "Inside Registration // throw new \Exception('Your profile is not created successfully. Email is already exist.') ...".PHP_EOL );
 						// throw new \Exception('Your profile is not created successfully. Email is already exist.');
 					} else if (($result->username == $username) && ($result->email_address != $email)) {
+error_log ( "Inside Registration throw new \Exception ( 'Your profile is not created successfully. User name is already exist.' );') ...".PHP_EOL );
 						throw new \Exception ( 'Your profile is not created successfully. User name is already exist.' );
 					} else if (($result->username == $username) && ($result->email_address == $email)) {
+error_log ( "Inside Registration // throw new \Exception('Your profile is not created successfully. User name and email are already exist.'); ...".PHP_EOL );
 						// throw new \Exception('Your profile is not created successfully. User name and email are already exist.');
 					}
 				}
@@ -108,6 +116,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				$this->dbAdapter->persist ( $tblUser );
 				$this->dbAdapter->flush ();
 				
+error_log ( "Inside Registration inserted user..." . PHP_EOL );
 				if (! empty ( $device_token ) && ! empty ( $device_type )) {
 error_log ( "Inside Registration if(!empty..." . PHP_EOL );
 					$device_id = UUID::getUUID ( $this->dbAdapter );
