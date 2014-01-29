@@ -2,7 +2,7 @@
 namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class AddNotification {
 
@@ -40,7 +40,7 @@ class AddNotification {
         $links= $data->addNotification->links;
         $time = time();
          //save notification in table
-        $notification_id = UUID::getUUID($this->dbAdapter);
+        $notification_id = MUUID::fetchUUID();
         $tblNotification = new \Application\Entity\Notification();
         $tblNotification->notification_id = $notification_id;
         $tblNotification->user_id = $user_id;

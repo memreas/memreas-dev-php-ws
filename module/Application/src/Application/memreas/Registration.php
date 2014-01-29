@@ -6,7 +6,7 @@ use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 use Application\memreas\RmWorkDir;
 use \Exception;
 
@@ -30,7 +30,7 @@ class Registration {
 		return $result;
 	}
 	public function exec() {
-		$user_id = UUID::getUUID ( $this->dbAdapter );
+		$user_id = MUUID::fetchUUID();
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
 //error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
@@ -126,7 +126,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				$this->dbAdapter->flush ();
 				
 				if (! empty ( $device_token ) && ! empty ( $device_type )) {
-					$device_id = UUID::getUUID ( $this->dbAdapter );
+					$device_id = MUUID::fetchUUID();
 					
 					$tblDevice = new \Application\Entity\Device ();
 					$tblDevice->device_id = $device_id;
@@ -145,7 +145,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					$content_type = $_FILES ['f'] ['type'];
 					
 					// dirPath = /data/temp_uuid/media/userimage/
-					$temp_job_uuid_dir = UUID::getUUID ( $this->dbAdapter );
+					$temp_job_uuid_dir = MUUID::fetchUUID();
 					$dirPath = getcwd () . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
 					if (! file_exists ( $dirPath )) {
 						mkdir ( $dirPath, 0755, true );
@@ -159,7 +159,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 						throw new \Exception ( 'Please Upload Image.' );
 					
 					// Upload to S3 here
-					$media_id = UUID::getUUID ( $this->dbAdapter );
+					$media_id = MUUID::fetchUUID();
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
 					

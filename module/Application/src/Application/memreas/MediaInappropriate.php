@@ -5,7 +5,7 @@ use Zend\Session\Container;
 
 use Application\Model\MemreasConstants; 
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class MediaInappropriate {
 
@@ -49,11 +49,8 @@ if (!isset($media_id) || empty($media_id)) {
   $result = $statement->getResult();
          
  if(empty($result)) {
-//    $status = 'Failure';
-//    $message = "Error in updation Plz check arguments";
     
-      // $uuid=  getUUID();
-        $uuid = UUID::getUUID($this->dbAdapter);
+        $uuid = MUUID::fetchUUID();
         $tblComment = new \Application\Entity\Comment();
                     $tblComment->comment_id = $uuid;
                     $tblComment->media_id = $media_id;

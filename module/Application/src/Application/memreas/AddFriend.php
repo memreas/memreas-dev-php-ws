@@ -4,7 +4,7 @@ namespace Application\memreas;
 
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class AddFriend {
 
@@ -89,9 +89,8 @@ if (!isset($user_id) || empty($user_id)) {
 //    $event_self_destruct='';
 //}
 else {
-   // $uuid=  getUUID();
-             $uuid = UUID::getUUID($this->dbAdapter);
-             			$tblEvent= new \Application\Entity\Event();
+             $uuid = MUUID::fetchUUID();
+             $tblEvent= new \Application\Entity\Event();
 
              $tblEvent->name=$event_name;
                 $tblEvent->location=$event_location;

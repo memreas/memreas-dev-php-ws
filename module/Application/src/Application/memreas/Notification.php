@@ -6,7 +6,6 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\Facebook\Facebook;
 use Application\TwitterOAuth\TwitterOAuth;
-use Application\memreas\UUID;
 use \Exception;
 
 class Notification {

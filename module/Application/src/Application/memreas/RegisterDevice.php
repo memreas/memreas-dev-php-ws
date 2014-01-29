@@ -5,6 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 
 use Application\Model\MemreasConstants;
+use Application\memreas\MUUID;
 
 class RegisterDevice {
 
@@ -52,7 +53,6 @@ class RegisterDevice {
                             ->set('d.device_token', $qb->expr()->literal($devicetoken))
                             ->set('d.update_time', $qb->expr()->literal($time))
                             ->where('d.user_id = ?1 AND d.device_type = ?2')
-                            
                             ->setParameter(1, $result['user_id'])
                             ->setParameter(2, $devicetype)
                             ->getQuery();
@@ -66,7 +66,7 @@ class RegisterDevice {
                     if($result1){
                         
                         $tblDevice = new \Application\Entity\Device();
-                        $device_id = UUID::getUUID($this->dbAdapter);
+                        $device_id = MUUID::fetchUUID();
                         $tblDevice->device_id = $device_id;
                         $tblDevice->device_token = $devicetoken;
                         $tblDevice->user_id = $result->user_id;

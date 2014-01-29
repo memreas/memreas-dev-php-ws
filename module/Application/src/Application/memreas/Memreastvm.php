@@ -5,8 +5,8 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
 //use Application\memreas\PostPolicy
+
 class Memreastvm {
 
     protected $message_data;

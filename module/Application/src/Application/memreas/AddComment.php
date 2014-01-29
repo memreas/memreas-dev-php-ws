@@ -2,7 +2,7 @@
 
 namespace Application\memreas;
 
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class AddComment {
 
@@ -54,7 +54,7 @@ class AddComment {
             $messages = 'user_id is empty';
             $status = 'Failure'; 
         } else {
-            $uuid = UUID::getUUID($this->dbAdapter);
+            $uuid = MUUID::fetchUUID();
             $tblComment = new \Application\Entity\Comment();
 			 $userOBj = $this->dbAdapter->find('Application\Entity\User', $user_id);
              $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);

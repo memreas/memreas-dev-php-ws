@@ -5,7 +5,6 @@ use Zend\Session\Container;
 use Application\Entity\Album;
 use Application\Model\MemreasConstants; 
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
 
 class ListGroup {
 

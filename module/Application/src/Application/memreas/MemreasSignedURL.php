@@ -5,7 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+
 class MemreasSignedURL {
 
     protected $message_data;

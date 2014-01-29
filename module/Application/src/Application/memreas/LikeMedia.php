@@ -5,7 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class LikeMedia {
 
@@ -69,7 +69,7 @@ class LikeMedia {
                     $status = 'Failure';
                     $message = "No Media for this Event";
                 } else {
-                    $comment_id = UUID::getUUID($this->dbAdapter);
+                    $comment_id = MUUID::fetchUUID();
                     //$row = mysql_fetch_assoc($result_event_media);
 
                     $tblComment = new \Application\Entity\Comment();

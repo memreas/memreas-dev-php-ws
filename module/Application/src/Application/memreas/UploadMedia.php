@@ -5,7 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 class UploadMedia {
 
     protected $message_data;
@@ -56,7 +56,7 @@ if (empty($_FILES['f'])) {
                 //echo $ftmp;exit;
                 $oname = $_FILES['f']['name'];
 				// dirPath = /data/temp_uuid/media/userimage/
-				$temp_job_uuid_dir = UUID::getUUID($this->dbAdapter);
+				$temp_job_uuid_dir = MUUID::fetchUUID();
 				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::MEDIA_PATH;
 				if (!file_exists($dirPath)) {
 					mkdir($dirPath, 0777, true);

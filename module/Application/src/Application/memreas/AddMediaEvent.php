@@ -6,7 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AddNotification;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class AddMediaEvent {
 
@@ -90,7 +90,7 @@ error_log("location json ---> " . $data->addmediaevent->location . PHP_EOL);
                 error_log("AddMediaEvent exec is_server_image == 1 else " . PHP_EOL);
                 $isVideo = 0;
                 $s3path = $user_id . '/';
-                $media_id = UUID::getUUID($this->dbAdapter);
+                $media_id = MUUID::fetchUUID();
 
                 /////////////////////////////////////////
                 //create metadata based on content type 

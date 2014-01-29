@@ -4,7 +4,7 @@ namespace Application\memreas;
 
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 use \Exception;
 
 class AddTag {
@@ -40,7 +40,7 @@ class AddTag {
 
         if (!$tblTag) {
             //add tag
-            $tag_id = UUID::getUUID($this->dbAdapter);
+            $tag_id = MUUID::fetchUUID();
             $tblTag = new \Application\Entity\Tag();
             $tblTag->tag = $tag;
             $tblTag->tag_id = $tag_id;

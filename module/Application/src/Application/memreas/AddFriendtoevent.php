@@ -5,7 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 use Application\memreas\gcm;
 
 class AddFriendtoevent {
@@ -102,7 +102,7 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)". PHP_EOL);
                                      ->findOneBy(array('username' => $friend_name,'disable_account' => 0));
                             $friend_id = $r->user_id;
                     }else{
-                        $friend_id = UUID::getUUID($this->dbAdapter);
+                        $friend_id = MUUID::fetchUUID();
                     }
 					$tblFriend = new \Application\Entity\Friend();
 					$tblFriend->friend_id = $friend_id;

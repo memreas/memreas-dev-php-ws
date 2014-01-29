@@ -5,7 +5,6 @@ namespace Application\memreas;
 use Zend\Session\Container;
 
 use Application\Model\MemreasConstants;
-use Application\memreas\UUID;
 use \Exception;
 
 

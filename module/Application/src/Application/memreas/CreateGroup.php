@@ -5,7 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class CreateGroup {
 
@@ -41,7 +41,7 @@ class CreateGroup {
             $status = 'Failure';
             $message = 'User id  is empty';
         } else {
-            $group_id = UUID::getUUID($this->dbAdapter);
+            $group_id = MUUID::fetchUUID();
 
             $tblGroup = new \Application\Entity\Group();
             $tblGroup->group_id = $group_id;
@@ -85,7 +85,7 @@ class CreateGroup {
                 $result_friend = $statement->getResult();
 
                 if (!$result_friend) {
-                    $friend_id = UUID::getUUID($this->dbAdapter);
+                    $friend_id = MUUID::fetchUUID();
                     $tblFriend = new \Application\Entity\Friend();
                     $tblFriend->friend_id = $friend_id;
                     $tblFriend->network = $network_name;
