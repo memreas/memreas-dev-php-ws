@@ -77,6 +77,8 @@ error_log ( "Inside Registration  if (isset ( email ) ...".PHP_EOL );
 					throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
 				
 error_log ( "Inside Registration checked email ...".PHP_EOL );
+error_log ( "Inside Registration email ...".$email.PHP_EOL );
+error_log ( "Inside Registration username ...".$username.PHP_EOL );
 				$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$result = $statement->getOneOrNullResult ();
