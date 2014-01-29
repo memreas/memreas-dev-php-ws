@@ -33,7 +33,7 @@ class Registration {
 		$user_id = UUID::getUUID ( $this->dbAdapter );
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
-error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
+//error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$username = trim ( $data->registration->username );
 			$email = trim ( $data->registration->email );
@@ -44,12 +44,14 @@ error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL )
 			$invited_by = trim ( $data->registration->invited_by );
 			$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 		} else {
+/*			
 error_log ( "Inside Registration  ----> ".$_REQUEST['username'].PHP_EOL );
 error_log ( "Inside Registration  ----> ".$_REQUEST['email'].PHP_EOL );
 error_log ( "Inside Registration  ----> ".$_REQUEST['password'].PHP_EOL );
 error_log ( "Inside Registration  ----> ".$_REQUEST['device_token'].PHP_EOL );
 error_log ( "Inside Registration  ----> ".$_REQUEST['device_type'].PHP_EOL );
 error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
+*/
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
@@ -63,22 +65,17 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					throw new \Exception ( 'fail: please enter valid email address for invited by.' );
 				
 			} else {
-error_log ( "Inside Registration  invited_by is null".PHP_EOL );
 				$invited_by = null;
 			} 
 		}
 		
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
-error_log ( "Inside Registration  if (isset ( email ) ...".PHP_EOL );
 				$checkvalidemail = $this->is_valid_email ( $email );
 				
 				if (! $checkvalidemail)
 					throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
 				
-error_log ( "Inside Registration checked email ...".PHP_EOL );
-error_log ( "Inside Registration email ...".$email.PHP_EOL );
-error_log ( "Inside Registration username ...".$username.PHP_EOL );
 				/*
 				 * TODO: Fix email check prior to go-beta...
 				 */
@@ -86,30 +83,25 @@ error_log ( "Inside Registration username ...".$username.PHP_EOL );
 				$sql = "SELECT u FROM Application\Entity\User u  where u.username = '".$username."'";
 				error_log ( "Inside Registration sql ...".$sql.PHP_EOL );
 				$statement = $this->dbAdapter->createQuery ( $sql );
-error_log ( "Inside Registration created statement...".PHP_EOL );
 				try {
 					$result = $statement->getOneOrNullResult ();
 				} catch (\Exception $e) {
 					error_log("SQL Failed ---> $sql ".PHP_EOL);
 					error_log("Caught exception $e".PHP_EOL);
 				}
-error_log ( "Inside Registration created have result...".PHP_EOL );
-								
-error_log ( "Inside Registration checked user table ...".PHP_EOL );
 				if (! empty ( $result )) {
 					if (($result->email_address == $email) && ($result->username != $username)) {
-error_log ( "Inside Registration // throw new \Exception('Your profile is not created successfully. Email is already exist.') ...".PHP_EOL );
 						// throw new \Exception('Your profile is not created successfully. Email is already exist.');
 					} else if (($result->username == $username) && ($result->email_address != $email)) {
-error_log ( "Inside Registration throw new \Exception ( 'Your profile is not created successfully. User name is already exist.' );') ...".PHP_EOL );
 						throw new \Exception ( 'Your profile is not created successfully. User name is already exist.' );
 					} else if (($result->username == $username) && ($result->email_address == $email)) {
-error_log ( "Inside Registration // throw new \Exception('Your profile is not created successfully. User name and email are already exist.'); ...".PHP_EOL );
 						// throw new \Exception('Your profile is not created successfully. User name and email are already exist.');
 					}
 				}
 				
-error_log ( "Inside Registration encrypting password ...".PHP_EOL );
+				/*
+				 * MD5 Encrypting password
+				 */
 				$passwrd = $password;
 				$password = md5 ( $password );
 				$roleid = 2;
@@ -133,9 +125,7 @@ error_log ( "Inside Registration encrypting password ...".PHP_EOL );
 				$this->dbAdapter->persist ( $tblUser );
 				$this->dbAdapter->flush ();
 				
-error_log ( "Inside Registration inserted user..." . PHP_EOL );
 				if (! empty ( $device_token ) && ! empty ( $device_type )) {
-error_log ( "Inside Registration if(!empty..." . PHP_EOL );
 					$device_id = UUID::getUUID ( $this->dbAdapter );
 					
 					$tblDevice = new \Application\Entity\Device ();
@@ -151,7 +141,6 @@ error_log ( "Inside Registration if(!empty..." . PHP_EOL );
 				
 				// upload profile image
 				if (isset ( $_FILES ['f'] ) && ! empty ( $_FILES ['f'] ['name'] )) {
-error_log ( "Inside Registration if (isset(_FILES['f']) ..." . PHP_EOL );
 					$s3file_name = time () . $_FILES ['f'] ['name'];
 					$content_type = $_FILES ['f'] ['type'];
 					
@@ -169,14 +158,13 @@ error_log ( "Inside Registration if (isset(_FILES['f']) ..." . PHP_EOL );
 					if (! $move)
 						throw new \Exception ( 'Please Upload Image.' );
 					
-error_log ( "About to upload to S3" . PHP_EOL );
 					// Upload to S3 here
 					$media_id = UUID::getUUID ( $this->dbAdapter );
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
 					
-error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
-error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
+//error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
+//error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
 					
 					// Set the metatdata
 					// $s3path = $user_id . '/image/';
@@ -213,9 +201,9 @@ error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL
 					$q_update = "UPDATE Application\Entity\User u  SET u.profile_photo = '1' WHERE u.user_id ='$user_id'";
 					$statement = $this->dbAdapter->createQuery ( $q_update );
 					$r = $statement->getResult ();
-error_log ( "statement->getResult() ----> " . print_r ( $r, true ) . PHP_EOL );
-error_log ( "*************************************************************" . PHP_EOL );
-error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
+//error_log ( "statement->getResult() ----> " . print_r ( $r, true ) . PHP_EOL );
+//error_log ( "*************************************************************" . PHP_EOL );
+//error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 					
 					// Now publish the message so any photo is thumbnailed.
 					$message_data = array (
@@ -239,7 +227,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 					$message = "Media Successfully add";
 				}
 				
-error_log ( "About to email..." . PHP_EOL );
+//error_log ( "About to email..." . PHP_EOL );
 				// API Info
 				// http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
 				// Always set content-type when sending HTML email
@@ -260,7 +248,7 @@ error_log ( "About to email..." . PHP_EOL );
 				
 				$status = 'Success';
 				$message = "Welcome to Event App. Your profile has been created.";
-error_log ( "Finished..." . PHP_EOL );
+//error_log ( "Finished..." . PHP_EOL );
 			} else {
 				throw new \Exception ( 'Your profile is not created successfully. Please check all data you have inserted are proper.' );
 			}
