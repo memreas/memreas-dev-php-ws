@@ -83,7 +83,13 @@ error_log ( "Inside Registration username ...".$username.PHP_EOL );
 error_log ( "Inside Registration sql ...".$sql.PHP_EOL );
 				$statement = $this->dbAdapter->createQuery ( $sql );
 error_log ( "Inside Registration created statement...".PHP_EOL );
-				$result = $statement->getOneOrNullResult ();
+				try {
+					$result = $statement->getOneOrNullResult ();
+				} catch (\Exception $e) {
+					error_log("SQL Failed ---> $sql ".PHP_EOL);
+					error_log("Exception code: ".$e.getCode().PHP_EOL);
+					error_log("Exception message: ".$e.getMessage().PHP_EOL);
+				}
 error_log ( "Inside Registration created have result...".PHP_EOL );
 								
 error_log ( "Inside Registration checked user table ...".PHP_EOL );
