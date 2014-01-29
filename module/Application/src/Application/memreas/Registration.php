@@ -79,16 +79,19 @@ error_log ( "Inside Registration  if (isset ( email ) ...".PHP_EOL );
 error_log ( "Inside Registration checked email ...".PHP_EOL );
 error_log ( "Inside Registration email ...".$email.PHP_EOL );
 error_log ( "Inside Registration username ...".$username.PHP_EOL );
-				$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
-error_log ( "Inside Registration sql ...".$sql.PHP_EOL );
+				/*
+				 * TODO: Fix email check prior to go-beta...
+				 */
+				///$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
+				$sql = "SELECT u FROM Application\Entity\User u  where u.username = '".$username."'";
+				error_log ( "Inside Registration sql ...".$sql.PHP_EOL );
 				$statement = $this->dbAdapter->createQuery ( $sql );
 error_log ( "Inside Registration created statement...".PHP_EOL );
 				try {
 					$result = $statement->getOneOrNullResult ();
 				} catch (\Exception $e) {
 					error_log("SQL Failed ---> $sql ".PHP_EOL);
-					error_log("Exception code: ".$e.getCode().PHP_EOL);
-					error_log("Exception message: ".$e.getMessage().PHP_EOL);
+					error_log("Caught exception $e".PHP_EOL);
 				}
 error_log ( "Inside Registration created have result...".PHP_EOL );
 								
