@@ -133,7 +133,6 @@ error_log("Inside indexAction" . PHP_EOL);
             $_POST['xml'] = $message_data['xml'];
             
         } else{
-error_log("Inside indexAction action = ".$_REQUEST['action'].PHP_EOL);
         	$actionname=  isset($_REQUEST['action'])?$_REQUEST['action']:''; 
             $codebase = "new_code";
             $message_data['xml']='';
