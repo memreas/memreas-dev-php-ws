@@ -2,11 +2,10 @@
 namespace Application\memreas;
 class ParseString {
 
-   public function __construct() {
-    
-   }
-    public static function getKeyword($tring){
+   
+    public static function getKeyword($string){print_r($string) ;
         preg_match_all('/(^|\s)#(\w*[a-zA-Z_]+\w*)/', $string, $keywords);
+          
         return $keywords;
     }
 

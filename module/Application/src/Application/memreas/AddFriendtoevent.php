@@ -40,7 +40,7 @@ error_log("Enter AddFriendtoevent.exec() xml ----> " . $_POST['xml'] . PHP_EOL);
         $friend_array = $data->addfriendtoevent->friends->friend;
         $user_id = (trim($data->addfriendtoevent->user_id));
         $event_id = (trim($data->addfriendtoevent->event_id));
-        $group_array = $data->addfriendtoevent->groups;
+        $group_array =(trim($data->addfriendtoevent->groups));
         $status = "";
         $message = "";
         $message1 = "";

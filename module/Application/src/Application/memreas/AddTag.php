@@ -54,7 +54,27 @@ class AddTag {
         } else {
 
             //update tag 
-            $tblTag->meta = $meta;
+            $meta_array = json_decode($tblTag->meta,true);
+            //echo 'orignla';print_r($meta_array);;
+            $add_array =  json_decode($meta,true); 
+
+            foreach ($add_array['comment_ids'] as $key => $value) {
+                $meta_array['comment_ids'][$key] = $value;
+            }
+
+            foreach ($add_array['user_ids'] as $key => $value) {
+                $meta_array['user_ids'][$key] = $value;
+            }
+            foreach ($add_array['event_ids'] as $key => $value) {
+                $meta_array['event_ids'][$key] = $value;
+            }
+
+            foreach ($add_array['media_ids'] as $key => $value) {
+                $meta_array['media_ids'][$key] = $value;
+            }
+             //echo 'after update';print_r($meta_array);exit;
+             
+            $tblTag->meta = json_encode($meta_array);
             $tblTag->update_time = $time;
 
             $status = "Sucess";
@@ -82,6 +102,59 @@ class AddTag {
         }
     }
 
+    public function getEventname($str,$meta)
+    {
+         $events = ParseString::getEventname($str)  ; 
+                if(!empty($events[0][0])) {
+                    foreach($events[0] as $event){
+
+                        $tagData = array('addtag' => array(
+                            'meta' => json_encode($meta),
+                            'tag_type' => \Application\Entity\Tag::EVENT,
+                            'tag' => $event,
+                            ),);
+                        $this->exec($tagData);
+                    }               
+                }       
+                 
+    }
+
+    public function getUserName($str,$meta)
+    {
+          $usernames = ParseString::getUserName($str)  ;
+                if (!empty($usernames[0][0])) {
+                    foreach($usernames[0] as $username){
+                        $tagData = array('addtag' => array(
+                            'meta' => json_encode($meta),
+                            'tag_type' => \Application\Entity\Tag::PERSON,
+                            'tag' => $username,
+                            ),);
+                        $this->exec($tagData);
+                    }                 
+                }
+                 
+    }
+
+    public function getKeyword($str,$meta)
+    {
+        $keywords = ParseString::getKeyword($str);
+            if (!empty($keywords[0][0])) {
+                foreach($keywords[0] as $keyword){
+                    $tagData = array('addtag' => array(
+                        'meta' => json_encode($meta),
+                        'tag_type' => \Application\Entity\Tag::TAG,
+                        'tag' => $keyword,
+                        ),);
+                    $this->exec($tagData);          
+                }
+            }
+    }
 }
+               
+                                   
+                
+    
+
+
 
 ?>

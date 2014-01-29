@@ -62,14 +62,14 @@ class RegisterDevice {
                     $sql = "SELECT u FROM Application\Entity\User u  where  u.username = '$username'";
                     $statement = $this->dbAdapter->createQuery($sql);
                     $result1 = $statement->getOneOrNullResult();
-                    
+
                     if($result1){
                         
                         $tblDevice = new \Application\Entity\Device();
                         $device_id = MUUID::fetchUUID();
                         $tblDevice->device_id = $device_id;
                         $tblDevice->device_token = $devicetoken;
-                        $tblDevice->user_id = $result->user_id;
+                        $tblDevice->user_id = $result1->user_id;
                         $tblDevice->device_type = $devicetype;
                         $tblDevice->create_time = $time;
                         $tblDevice->update_time = $time;

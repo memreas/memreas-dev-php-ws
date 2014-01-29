@@ -86,6 +86,7 @@ class ListAllmedia {
 			$xml_output.="<page>$page</page>";
 			$xml_output.="<status>Success</status>";
             $xml_output.="<user_id>" . $result[0]['user_id'] . "</user_id>";
+            $xml_output.="<event_id>" . $event_id . "</event_id>";
 			$xml_output.="<message>Media List</message>";
 			foreach ($result as  $row ){
 				$url79x80 = '';
@@ -164,6 +165,7 @@ class ListAllmedia {
         if ($error_flage) {
             $xml_output.="<status>Failure</status>";
             $xml_output.="<user_id></user_id>";
+            $xml_output.="<event_id></event_id>";
             $xml_output.= "<message>$message</message>";
             $xml_output.="<media>";
             $xml_output.="<media_id></media_id>";

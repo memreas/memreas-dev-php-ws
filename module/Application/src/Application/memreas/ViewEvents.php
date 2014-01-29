@@ -57,7 +57,6 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                     and  (e.viewable_from <=" . $date . " or e.viewable_from ='') 
                     and  (e.self_destruct >=" . $date . " or e.self_destruct='') 
                 ORDER BY e.create_time DESC";
-
             $statement = $this->dbAdapter->createQuery($query_event);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
@@ -82,6 +81,16 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                         $xml_output.="<event_name>" . $row->name . "</event_name>";
                         $xml_output.="<friend_can_post>" . $row->friends_can_post . "</friend_can_post>";
                         $xml_output.="<friend_can_share>" . $row->friends_can_share . "</friend_can_share>";
+                        $commCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1');
+                        $commCountSql->setParameter(1, $row->event_id);
+                        $commCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= "text"');
+                        $commCountSql->setParameter(1, $row->event_id);
+                        $commCount = $commCountSql->getSingleScalarResult();
+                        $xml_output.="<comment_count>" . $commCount . "</comment_count>";
+
+
+
+
                         /*
                           $query_event_media =
                           "SELECT event.event_id,event.name,media.media_id,media.metadata
@@ -202,7 +211,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
 //        }
 //        else {
                     $xml_output.="<status>Success</status>";
-                    $xml_output.="<message>My Events List</message>";
+                    $xml_output.="<message>My Friends Events List</message>";
                     $xml_output.="<page>$page</page>";
 //            while ($row_getuserid = mysql_fetch_assoc($result_getuserid)) {
 //                print_r($row_getuserid);
@@ -500,14 +509,14 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
         if ($is_public_event) {
 
             $q_public = "select distinct event.user_id,event.user_id ,user.username,user.profile_photo
-    from Application\Entity\Event event  , Application\Entity\User user  
-    where event.public=1  
-    and event.user_id=user.user_id
-    and event.user_id != '$user_id' 
-    and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
-    and  (event.viewable_from <=" . $date . " or event.viewable_from ='')     
-    and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
-    ORDER BY event.create_time DESC ";
+                        from Application\Entity\Event event  , Application\Entity\User user  
+                        where event.public=1  
+                        and event.user_id=user.user_id
+                        and event.user_id != '$user_id' 
+                        and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
+                        and  (event.viewable_from <=" . $date . " or event.viewable_from ='')     
+                        and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
+                        ORDER BY event.create_time DESC ";
             //LIMIT $from , $limit";
             //  $result_pub = mysql_query($q_public);
             //$statement = $this->dbAdapter->createStatement($q_public);

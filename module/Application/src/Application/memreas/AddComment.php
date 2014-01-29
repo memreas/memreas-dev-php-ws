@@ -27,7 +27,7 @@ class AddComment {
             $this->notification = new Notification($service_locator);
         }
         if (!$this->addTag) {
-           // $this->addTag = new AddTag($service_locator);
+            $this->addTag = new AddTag($service_locator);
         }
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
@@ -70,7 +70,7 @@ class AddComment {
                 $tblComment->create_time = $time;
                 $tblComment->update_time = $time;
                 $this->dbAdapter->persist($tblComment);
-                $this->dbAdapter->flush();
+               // $this->dbAdapter->flush();
 
                 $status = 'sucess';
             } else {
@@ -98,28 +98,22 @@ class AddComment {
                 $status = 'failure';
             } else {
                
-                //add tag
-               /* $metaTag = array(
-                    'event_ids' => $event_id,
-                    'media_ids' => $media_id,
-                    'user_ids'  => $user_id,
-                    'comment_ids' => $uuid,
+                //add tags
+               $metaTag = array(
+                    'comment_ids' => array($uuid => ''),
+                    'event_ids' => array($event_id =>''),
+                    'media_ids' => array($media_id =>''),
+                    'user_ids'  => array($user_id =>'') ,
+                    
                 );
                 
+                //add tags
+                //$this->addTag->getEventname($comment,$metaTag);
+                //$this->addTag->getUserName($comment,$metaTag);
+                $this->addTag->getKeyword($comment,$metaTag);                     
                 
-                $events = ParseString::getEventname($comment)  ;  
-                echo '<pre>';print_r($events);exit;
-                $usernames = ParseString::getUserName($comment)  ;                    
-                $keywords = ParseString::getKeyword($comment)  ;                    
-
-                $tagData = array('addtag' => array(
-                    'meta' => json_encode($metaTag),
-                    'tag_type' => \Application\Entity\Tag::EVENT,
-                    'tag' => \Application\Entity\Tag::EVENT.$event_name,
-                ),);
-                $this->AddTag->exec($tagData);
                 
-                */
+                
                 
                 //TODO send notification owner of the event and all who commented.
                  $query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
