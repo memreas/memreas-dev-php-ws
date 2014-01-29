@@ -80,9 +80,12 @@ error_log ( "Inside Registration checked email ...".PHP_EOL );
 error_log ( "Inside Registration email ...".$email.PHP_EOL );
 error_log ( "Inside Registration username ...".$username.PHP_EOL );
 				$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
+error_log ( "Inside Registration sql ...".$sql.PHP_EOL );
 				$statement = $this->dbAdapter->createQuery ( $sql );
+error_log ( "Inside Registration created statement...".PHP_EOL );
 				$result = $statement->getOneOrNullResult ();
-				
+error_log ( "Inside Registration created have result...".PHP_EOL );
+								
 error_log ( "Inside Registration checked user table ...".PHP_EOL );
 				if (! empty ( $result )) {
 					if (($result->email_address == $email) && ($result->username != $username)) {
