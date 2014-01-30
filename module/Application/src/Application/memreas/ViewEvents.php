@@ -253,7 +253,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                     $array =  array();
                     foreach ($result_friendevent as $row_friendsevent) {
 
-                        $p[$row_friendsevent[0]['username']][] = $row_friendsevent;
+                       $array[$row_friendsevent[0]['username']][] = $row_friendsevent;
                     }
                     
                     foreach ($array as $key => $value) {
