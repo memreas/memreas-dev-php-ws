@@ -13,7 +13,8 @@ class MemreasCache {
     private $baseURL = MemreasConstants::ORIGINAL_URL;
     
 	public function __construct() {
- 		//print "In MemreasCache constructor <br>";
+error_log("MemreasCache.__construct()....".PHP_EOL);
+		//print "In MemreasCache constructor <br>";
      	//$this->cache = new memcached();
 		//$this->cache->addServer("localhost", 11211); 
 		//$this->client = new Client();
@@ -42,7 +43,7 @@ error_log("Set port $server_port".PHP_EOL);
 		 * without requiring any changes to the PHP application.
 		*/
 		
-		$this->cache = new Memcached ();
+		$this->cache = new \Memcached ();
 error_log("Created new Memcached client..".PHP_EOL);
 		$this->cache->setOption ( Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE );
 		$this->cache->addServer ( $server_endpoint, $server_port );

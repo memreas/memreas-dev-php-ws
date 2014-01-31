@@ -142,7 +142,8 @@ error_log("Inside indexAction" . PHP_EOL);
 		if (isset($actionname) && !empty($actionname)) {
 				//Fetch the elasticache handle
 				//$this->elasticache = new AWSManagerSender($this->service_locator, 'elasticache');
-				$this->elasticache = new MemreasCache();
+error_log("About to create MemreasCache...".PHP_EOL);
+			$this->elasticache = new MemreasCache();
 				$update_elasticache_flag = false;				
 			
                 //Capture the echo from the includes in case we need to convert back to json
