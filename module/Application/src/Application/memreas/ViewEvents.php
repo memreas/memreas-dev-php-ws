@@ -82,9 +82,11 @@ error_log("cklDid I get here?". PHP_EOL);
                         $xml_output.="<event_name>" . $row->name . "</event_name>";
                         $xml_output.="<friend_can_post>" . $row->friends_can_post . "</friend_can_post>";
                         $xml_output.="<friend_can_share>" . $row->friends_can_share . "</friend_can_share>";
-                        $commCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1');
-                        $commCountSql->setParameter(1, $row->event_id);
-                        $commCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= "text"');
+                        $likeCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1');
+                        $likeCountSql->setParameter(1, $row->event_id);
+                        $likeCount = $likeCountSql->getSingleScalarResult();
+                        $xml_output.="<like_count>" . $likeCount . "</like_count>";
+                        $commCountSql = $this->dbAdapter->createQuery("SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= 'text'");
                         $commCountSql->setParameter(1, $row->event_id);
                         $commCount = $commCountSql->getSingleScalarResult();
                         $xml_output.="<comment_count>" . $commCount . "</comment_count>";
@@ -252,7 +254,7 @@ error_log("cklDid I get here?". PHP_EOL);
                     $array =  array();
                     foreach ($result_friendevent as $row_friendsevent) {
 
-                        $p[$row_friendsevent[0]['username']][] = $row_friendsevent;
+                       $array[$row_friendsevent[0]['username']][] = $row_friendsevent;
                     }
                     
                     foreach ($array as $key => $value) {
