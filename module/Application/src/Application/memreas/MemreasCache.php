@@ -45,7 +45,7 @@ error_log("Set port $server_port".PHP_EOL);
 		
 		$this->cache = new \Memcached ();
 error_log("Created new Memcached client..".PHP_EOL);
-		$this->cache->setOption ( Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE );
+		$this->cache->setOption ( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE );
 		$this->cache->addServer ( $server_endpoint, $server_port );
 		$now = date('Y-m-d H:i:s');
 		
