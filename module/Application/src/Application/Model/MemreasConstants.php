@@ -13,7 +13,11 @@ class MemreasConstants {
         const ORIGINAL_URL	= "http://memreasint.elasticbeanstalk.com/";
         const MEDIA_URL		= "http://memreasint.elasticbeanstalk.com/?action=addmediaevent";
         const URL			= "/index";
-
+        
+        //ElastiCache section 
+        const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";
+        const ELASTICACHE_SERVER_PORT = "11211";
+        
         //const SITEURL			= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";
         const DATA_PATH			= "/data/";
         const MEDIA_PATH		= "/media/";

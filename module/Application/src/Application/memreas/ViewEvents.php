@@ -61,7 +61,8 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
             $result_event = $statement->getResult();
-
+error_log("cklDid I get here?". PHP_EOL);
+            
 
             if ($result_event) {
                 if (count($result_event) <= 0) {
@@ -517,6 +518,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                         and  (event.viewable_from <=" . $date . " or event.viewable_from ='')     
                         and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
                         ORDER BY event.create_time DESC ";
+error_log("Inside Public event dql string ----> ".$q_public.PHP_EOL);
             //LIMIT $from , $limit";
             //  $result_pub = mysql_query($q_public);
             //$statement = $this->dbAdapter->createStatement($q_public);
@@ -564,7 +566,9 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                 $xml_output.="<message>No record found</message>";
                 $xml_output.="</friends>";
             } else {
-                
+
+error_log("Inside else ".PHP_EOL);
+            	 
                 
                 $xml_output.="<friends>";
                 $xml_output.="<status>Success</status>";
@@ -618,6 +622,8 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                           and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                           and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
                           ORDER BY event.create_time DESC";
+error_log("dql qub event ---> ".$qub_event.PHP_EOL);
+                    
                     // $result2 = mysql_query($qub_event) or die(mysql_error
                     //$statement = $this->dbAdapter->createStatement($qub_event);
                     //$result2 = $statement->execute();
