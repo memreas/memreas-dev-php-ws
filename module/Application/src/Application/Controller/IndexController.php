@@ -26,6 +26,7 @@ use Application\memreas\AddMediaEvent;
 use Application\memreas\ChkUname;
 use Application\memreas\LikeMedia;
 use Application\memreas\MediaInappropriate;
+use Application\memreas\MemreasCache;
 use Application\memreas\CountListallmedia;
 use Application\memreas\ListGroup;
 use Application\memreas\DeletePhoto;
@@ -74,6 +75,8 @@ class IndexController extends AbstractActionController {
     protected $mediaTable;
     protected $eventmediaTable;
     protected $friendmediaTable;
+    protected $elasticache;
+    protected $aws;
 
     public function xml2array($xmlstring) {
         $xml = simplexml_load_string($xmlstring);
@@ -127,19 +130,27 @@ error_log("Inside indexAction" . PHP_EOL);
             $json = $_REQUEST['json'];
             $jsonArr = json_decode($json, true);
             $actionname = $jsonArr['action'];
-            $codebase = $jsonArr['codebase'];
             $type = $jsonArr['type'];
             $message_data = $jsonArr['json'];
             $_POST['xml'] = $message_data['xml'];
             
         } else{
         	$actionname=  isset($_REQUEST['action'])?$_REQUEST['action']:''; 
-            $codebase = "new_code";
             $message_data['xml']='';
             
         }
-
-		if ($codebase == "new_code" && !empty($actionname)) {
+        
+		if (isset($actionname) && !empty($actionname)) {
+				//Fetch the elasticache handle
+error_log("Need to create MemreasCache...".PHP_EOL);
+				//$this->aws = new AWSManagerSender($this->service_locator);
+				//$this->elasticache = new MemreasCache($this->aws->);
+				//$update_elasticache_flag = false;				
+				
+				//Debugging
+				//$this->elasticache->set('hello', 'world', 600);
+				//End Debugging
+			
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
                 $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -264,11 +275,6 @@ error_log("Inside indexAction" . PHP_EOL);
                     echo 'Please Cheack email validate you email to recive emails';
                 }
                $output = ob_get_clean();
-            } else if ($codebase == "original_code") {
-                //Guzzle existing webservice
-                $this->url = MemreasConstants::ORIGINAL_URL;
-                $output = $this->fetchXML($actionname, $_POST['xml']);
-                error_log("result ---> " . $output . PHP_EOL);
             }
 
             //memreas related calls...
