@@ -81,16 +81,48 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                         $xml_output.="<event_name>" . $row->name . "</event_name>";
                         $xml_output.="<friend_can_post>" . $row->friends_can_post . "</friend_can_post>";
                         $xml_output.="<friend_can_share>" . $row->friends_can_share . "</friend_can_share>";
+                        //get like count
                         $likeCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1');
                         $likeCountSql->setParameter(1, $row->event_id);
                         $likeCount = $likeCountSql->getSingleScalarResult();
                         $xml_output.="<like_count>" . $likeCount . "</like_count>";
+                        //get comment count for event
                         $commCountSql = $this->dbAdapter->createQuery("SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= 'text'");
                         $commCountSql->setParameter(1, $row->event_id);
                         $commCount = $commCountSql->getSingleScalarResult();
                         $xml_output.="<comment_count>" . $commCount . "</comment_count>";
 
+                        //get event friends
+                        $qb = $this->dbAdapter->createQueryBuilder();
+                        $qb->select('u.username', 'm.metadata');
+                        $qb->from('Application\Entity\User', 'u');
+                        $qb->leftjoin('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
+                        $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
+                        $qb->where('ef.event_id=?1 ');
+                         
+                        $qb->setParameter(1, $row->event_id);
+                        $query_ef_result = $qb->getQuery()->getResult();
 
+                      
+                        $xml_output.='<event_friends>';
+                        foreach ($query_ef_result as $efRow) {
+                            $xml_output.='<event_friend>';
+
+                            $xml_output.="<username>" . $efRow['username'] . "</username>";
+                            $profileurl = empty($efRow['metadata'])?'':$efRow['metadata'];
+                             $json_array = json_decode($efRow['metadata'], true);
+                             $url1='';
+                            if (!empty($json_array['S3_files']['path']))
+                                $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
+                             
+                            $xml_output.="<username>" . $efRow['username'] . "</username>";
+                            $xml_output.="<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+                            
+
+                            $xml_output.='</event_friend>';
+                        }
+                        $xml_output.='</event_friends>';
+                        
 
 
                         /*
@@ -104,7 +136,7 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
                           $query_event_media_result = $statement->getResult();
                          * 
                          */
-
+                        //get media details
                         $qb = $this->dbAdapter->createQueryBuilder();
                         $qb->select('event.event_id', 'event.name', 'media.media_id', 'media.metadata');
                         $qb->from('Application\Entity\EventMedia', 'event_media');
@@ -738,6 +770,15 @@ error_log("View Events.xml_input ---->  " . $_POST['xml'] . PHP_EOL);
         $xml_output.='</xml>';
 error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
         echo $xml_output;
+
+        function profileurl($meta=''){
+
+
+
+
+            return $outString;
+
+        }
     }
 
 }
