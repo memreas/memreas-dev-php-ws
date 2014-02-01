@@ -10,8 +10,8 @@ class MemreasConstants {
         const S3BUCKET     	= "memreasdev";
         const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
         //const ORIGINAL_URL	= "http://memreas-dev-php-ws.localhost/";
-        const ORIGINAL_URL	= "http://memreasint.elasticbeanstalk.com/";
-        const MEDIA_URL		= "http://memreasint.elasticbeanstalk.com/?action=addmediaevent";
+        const ORIGINAL_URL	= "http://memreasdev-ws.elasticbeanstalk.com/";
+        const MEDIA_URL		= "http://memreasdev-ws.elasticbeanstalk.com/?action=addmediaevent";
         const URL			= "/index";
         
         //ElastiCache section 
