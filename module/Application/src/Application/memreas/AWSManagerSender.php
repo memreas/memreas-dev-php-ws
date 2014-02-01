@@ -147,58 +147,6 @@ class AWSManagerSender {
 				'ReturnPath' => $from 
 		) );
 	}
-	
-	/*
-	 * TODO: Add ElastiCache connectivity
-	 */
-	public function connect() {
-		/**
-		 * Sample PHP code to show how to integrate with the Amazon ElastiCcache
-		 * Auto Discovery feature.
-		 */
-		
-		/* Configuration endpoint to use to initialize memcached client. This is only an example. */
-		$server_endpoint = MemreasConstants::ELASTICACHE_SERVER_ENDPOINT;
-		/* Port for connecting to the ElastiCache cluster. This is only an example */
-		$server_port = MemreasConstants::ELASTICACHE_SERVER_PORT;
-		
-error_log("Set endpoint $server_endpoint".PHP_EOL);		
-error_log("Set port $server_port".PHP_EOL);		
-		
-		/**
-		 * The following will initialize a Memcached client to utilize the Auto Discovery feature.
-		 *
-		 * By configuring the client with the Dynamic client mode with single endpoint, the
-		 * client will periodically use the configuration endpoint to retrieve the current cache
-		 * cluster configuration. This allows scaling the cache cluster up or down in number of nodes
-		 * without requiring any changes to the PHP application.
-		 */
-		
-		$dynamic_client = new Memcached ();
-error_log("Created new Memcached client..".PHP_EOL);
-		$dynamic_client->setOption ( Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE );
-		$dynamic_client->addServer ( $server_endpoint, $server_port );
-		
-		$dynamic_client->set ( 'LAST-USER-ID-ACCESS', 'user_name', 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
-		
-		/**
-		 * Configuring the client with Static client mode disables the usage of Auto Discovery
-		 * and the client operates as it did before the introduction of Auto Discovery.
-		 * The user
-		 * can then add a list of server endpoints.
-		 */
-		
-		$static_client = new Memcached ();
-		$static_client->setOption ( Memcached::OPT_CLIENT_MODE, Memcached::STATIC_CLIENT_MODE );
-		$static_client->addServer ( $server_endpoint, $server_port );
-
-		
-		//Connected at this point
-error_log("Connected to elasticache client!".PHP_EOL);		
-		
-		
-		$static_client->set ( 'key', 'value' ); // Store the data in the cluster without expiration
-	}
 }
 
 ?>

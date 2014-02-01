@@ -76,6 +76,7 @@ class IndexController extends AbstractActionController {
     protected $eventmediaTable;
     protected $friendmediaTable;
     protected $elasticache;
+    protected $aws;
 
     public function xml2array($xmlstring) {
         $xml = simplexml_load_string($xmlstring);
@@ -141,10 +142,14 @@ error_log("Inside indexAction" . PHP_EOL);
         
 		if (isset($actionname) && !empty($actionname)) {
 				//Fetch the elasticache handle
-				//$this->elasticache = new AWSManagerSender($this->service_locator, 'elasticache');
-error_log("About to create MemreasCache...".PHP_EOL);
-			$this->elasticache = new MemreasCache();
-				$update_elasticache_flag = false;				
+error_log("Need to create MemreasCache...".PHP_EOL);
+				//$this->aws = new AWSManagerSender($this->service_locator);
+				//$this->elasticache = new MemreasCache($this->aws->);
+				//$update_elasticache_flag = false;				
+				
+				//Debugging
+				//$this->elasticache->set('hello', 'world', 600);
+				//End Debugging
 			
                 //Capture the echo from the includes in case we need to convert back to json
                 ob_start();
