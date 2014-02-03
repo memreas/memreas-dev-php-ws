@@ -57,6 +57,7 @@ use Application\memreas\LogOut;
 use Application\memreas\ClearAllNotification;
 use Application\memreas\GetSession;
 use Application\memreas\RegisterDevice;
+use Application\memreas\ListComments;
 
 
 
@@ -268,6 +269,9 @@ error_log("Need to create MemreasCache...".PHP_EOL);
                 }else if ($actionname == "registerdevice") {
                     $logout = new RegisterDevice($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $logout->exec();
+                }else if ($actionname == "listcomments") {
+                    $listcomments = new ListComments($message_data, $memreas_tables, $this->getServiceLocator());
+                    $result = $listcomments->exec();
                 }else if ($actionname == "verifyemail") {
                     $aws_manager = new AWSManagerSender($this->service_locator);
                     $client = $aws_manager->ses();

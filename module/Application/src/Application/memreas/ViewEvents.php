@@ -101,7 +101,7 @@ error_log("cklDid I get here?". PHP_EOL);
                         $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
                         $qb->where('ef.event_id=?1 ');
                          
-                        $qb->setParameter(1, $row->event_id);
+                        $qb->setParameter(1, $event_id);
                         $query_ef_result = $qb->getQuery()->getResult();
 
                       
@@ -110,9 +110,8 @@ error_log("cklDid I get here?". PHP_EOL);
                             $xml_output.='<event_friend>';
 
                             $xml_output.="<username>" . $efRow['username'] . "</username>";
-                            $profileurl = empty($efRow['metadata'])?'':$efRow['metadata'];
-                             $json_array = json_decode($efRow['metadata'], true);
-                             $url1='';
+                            $json_array = json_decode($efRow['metadata'], true);
+                            $url1='';
                             if (!empty($json_array['S3_files']['path']))
                                 $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array['S3_files']['path'];
                              
@@ -777,14 +776,7 @@ error_log("dql qub event ---> ".$qub_event.PHP_EOL);
 error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
         echo $xml_output;
 
-        function profileurl($meta=''){
-
-
-
-
-            return $outString;
-
-        }
+         
     }
 
 }

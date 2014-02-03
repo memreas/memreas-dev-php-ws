@@ -58,6 +58,7 @@ echo "user_id ----> " . $user_id;
             var clearallnotification = '<xml><clearallnotification><user_id>1</user_id></clearallnotification></xml>';
             var getsession = '<xml><getsession><sid>1</sid></getsession></xml>';
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
+            var listcomments = '<xml><listcomments><event_id>1</event_id><limit>10</limit><page>1</page> </listcomments></xml>';
 
            $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
@@ -177,6 +178,8 @@ echo "user_id ----> " . $user_id;
                         xml = getsession;
                     }else if ($("#input_action").val() == "registerdevice") {
                         xml = registerdevice;
+                    }else if ($("#input_action").val() == "listcomments") {
+                        xml = listcomments;
                     }
 
 
@@ -261,7 +264,8 @@ echo "user_id ----> " . $user_id;
                                      <option>logout</option>
                                      <option>clearallnotification</option>
                                      <option>getsession</option>
-                                      <option>registerdevice</option>
+                                     <option>registerdevice</option>
+                                     <option>listcomments</option>
 
 
 
