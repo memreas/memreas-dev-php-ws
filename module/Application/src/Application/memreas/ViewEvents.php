@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\UUID;
+use Application\memreas\ListComments;
 
 class ViewEvents {
 
@@ -15,11 +16,12 @@ class ViewEvents {
     protected $dbAdapter;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
-        error_log("Inside__construct...");
+        error_log("Inside ViewEvents :__construct...");
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+        $this->dbAdapter       = $service_locator->get('doctrine.entitymanager.orm_default');
+        $this->comments = new ListComments($message_data, $memreas_tables, $service_locator);
         //$this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -101,7 +103,7 @@ error_log("cklDid I get here?". PHP_EOL);
                         $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
                         $qb->where('ef.event_id=?1 ');
                          
-                        $qb->setParameter(1, $event_id);
+                        $qb->setParameter(1, $row->event_id);
                         $query_ef_result = $qb->getQuery()->getResult();
 
                       
@@ -123,7 +125,15 @@ error_log("cklDid I get here?". PHP_EOL);
                         }
                         $xml_output.='</event_friends>';
                         
+                        //get comments
+                            $cdata = array('listcomments'=> array(
+                            'event_id' => $row->event_id ,
+                            'limit'    => 5,
+                            'page'     => 1, 
 
+                            ));
+                        $xml_output.= $this->comments->exec($cdata);
+                        
 
                         /*
                           $query_event_media =
