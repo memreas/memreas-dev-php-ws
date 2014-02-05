@@ -16,8 +16,7 @@ return array (
 				'use_cookies' => true,
 				'cookie_httponly' => true,
 				'cookie_lifetime' => 0  //30 seconds
-    )// 30 seconds
-		null,
+    	),
 		'router' => array (
 				'routes' => array (
 						'home' => array (
@@ -60,8 +59,7 @@ return array (
 						// new controllers and actions without needing to create a new
 						// module. Simply drop new controllers in, and you can access them
 						// using the path /application/:controller/:action
-            'admin'// using the path /application/:controller/:action
-						null => array (
+            'admin' => array (
 								'type' => 'Literal',
 								'options' => array (
 										'route' => '/admin',
@@ -130,8 +128,7 @@ return array (
 				) 
 		),
 		// Doctrine config
-	 'doctrine'// Doctrine config
-		null => array (
+	 'doctrine' => array (
 				'driver' => array (
 						'Application_driver' => array (
 								'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
