@@ -48,6 +48,26 @@ class AWSMemreasCache {
 		error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
 	}
 	
+	public function setCache($action, $uid, $value, $ttl = 300) { // 5 minutes
+		$key = $action . '_' . $uid;
+		$result = $this->cache->set ( $key , $value, $ttl );
+		error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
+		return $result;
+	}
+	
+	public function getCache($action, $uid) {
+		$key = $action . '_' . $uid;
+		$result = $this->cache->get ( $key );
+		error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+		return $result;
+	}
+	
+	public function invalidateCache($action, $uid) {
+		$key = $action . '_' . $uid;
+		$this->cache->delete ( $key );
+		error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+	}
+	
 	public function fetchPostBody($url, $action, $xml, $cache_me = false) {
 		$request = $this->client->post ( $url, null, array (
 				'action' => $action,
@@ -58,6 +78,7 @@ class AWSMemreasCache {
 		$response = $request->send ();
 		return $response->getBody ( true );
 	}
+
 	public function fetchXML($url, $action, $uid, $xml, $invalidateCache = false) {
 		
 		// echo 'Inside fetchXML action ----> ' . $url . '<BR><BR>';

@@ -134,8 +134,8 @@ class IndexController extends AbstractActionController {
 			// Fetch the elasticache handle
 			error_log ( "Need to create MemreasCache..." . PHP_EOL );
 			// $this->aws = new AWSManagerSender($this->service_locator);
-			// $this->elasticache = new MemreasCache($this->aws->);
-			// $update_elasticache_flag = false;
+			 $this->elasticache = new AWSMemreasCache();
+			 $update_elasticache_flag = false;
 			
 			// Debugging
 			// $this->elasticache->set('hello', 'world', 600);
@@ -159,6 +159,14 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "addmediaevent") {
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
+				/*
+				 * TODO: Since we just added media we need to invalidate the cache for list all media 
+				 */
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				if (isset ( $data->addmediaevent->user_id ) ) {
+					$invalidate_action = "listallmedia";
+					$uid = $data->addmediaevent->user_id;
+				}
 			} else if ($actionname == "likemedia") {
 				$likemedia = new LikeMedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $likemedia->exec ();
@@ -190,8 +198,17 @@ class IndexController extends AbstractActionController {
 				$creategroup = new CreateGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $creategroup->exec ();
 			} else if ($actionname == "listallmedia") {
-				$listallmedia = new ListAllmedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $listallmedia->exec ();
+				/*
+				 * TODO: Check cache first if not there then fetch and cache...
+				*/
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				$uid = $data->listallmedia->user_id;				
+				$result = $this->elasticache->get($actionname.$uid);
+				if (!$result) {
+					$listallmedia = new ListAllmedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $listallmedia->exec ();
+					$cache_me = true;
+				}
 			} else if ($actionname == "countviewevent") {
 				$countviewevent = new CountViewevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $countviewevent->exec ();
@@ -273,6 +290,21 @@ class IndexController extends AbstractActionController {
 				echo 'Please Cheack email validate you email to recive emails';
 			}
 			$output = ob_get_clean ();
+
+			/*
+			 * TODO - Cache here
+			 */
+			if ($cache_me) {
+				$this->elasticache-setCache($actionname,$uid,$output);
+			}
+
+			/*
+			 * TODO - Invalidate cache here
+			 */
+			if ($invalidate_me) {
+				$this->elasticache-invalidateCache($invalidate_action,$uid);
+			}
+				
 		}
 		
 		// memreas related calls...
