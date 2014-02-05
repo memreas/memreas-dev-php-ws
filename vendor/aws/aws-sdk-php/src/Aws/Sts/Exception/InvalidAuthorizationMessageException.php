@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sts\Exception;
 
 /**
- * The error returned if the message passed to DecodeAuthorizationMessage was invalid. This can happen if the token contains invalid characters, such as linebreaks.
+ * The error returned if the message passed to DecodeAuthorizationMessage was invalid.
+ * This can happen if the token contains invalid characters, such as linebreaks.
  */
-class InvalidAuthorizationMessageException extends StsException {}
+class InvalidAuthorizationMessageException extends StsException {
+}

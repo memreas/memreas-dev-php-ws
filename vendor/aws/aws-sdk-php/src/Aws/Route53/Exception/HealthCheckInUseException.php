@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Route53\Exception;
 
 /**
- * There are resource records associated with this health check. Before you can delete the health check, you must disassociate it from the resource record sets.
+ * There are resource records associated with this health check.
+ * Before you can delete the health check, you must disassociate it from the resource record sets.
  */
-class HealthCheckInUseException extends Route53Exception {}
+class HealthCheckInUseException extends Route53Exception {
+}

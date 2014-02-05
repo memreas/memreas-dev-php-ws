@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Sqs;
 
 use Aws\Sqs\QueueUrlListener;
@@ -23,29 +23,28 @@ use Guzzle\Common\Event;
 /**
  * @covers Aws\Sqs\QueueUrlListener
  */
-class QueueUrlListenerTest extends \Guzzle\Tests\GuzzleTestCase
-{
-
-    public function testUpdatesUrl()
-    {
-        $listener = new QueueUrlListener();
-
-        // Make sure the subscribed events are declared
-        $events = $listener->getSubscribedEvents();
-        $this->assertArrayHasKey('command.before_send', $events);
-
-        // Setup state of command/request
-        $newUrl = 'https://queue.amazonaws.com/stuff/in/the/path';
-        $client = $this->getServiceBuilder()->get('s3', true);
-        $command = $client->getCommand('ListBuckets');
-        $request = $command->prepare();
-        $command->set('QueueUrl', $newUrl);
-        $request->getParams()->set('QueueUrl', $newUrl);
-        $event = new Event(array('command' => $command));
-
-        // Execute the listener and confirm effects
-        $listener->onCommandBeforeSend($event);
-        $this->assertEquals($newUrl, $request->getUrl());
-        $this->assertFalse($request->getParams()->hasKey('QueueUrl'));
-    }
+class QueueUrlListenerTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testUpdatesUrl() {
+		$listener = new QueueUrlListener ();
+		
+		// Make sure the subscribed events are declared
+		$events = $listener->getSubscribedEvents ();
+		$this->assertArrayHasKey ( 'command.before_send', $events );
+		
+		// Setup state of command/request
+		$newUrl = 'https://queue.amazonaws.com/stuff/in/the/path';
+		$client = $this->getServiceBuilder ()->get ( 's3', true );
+		$command = $client->getCommand ( 'ListBuckets' );
+		$request = $command->prepare ();
+		$command->set ( 'QueueUrl', $newUrl );
+		$request->getParams ()->set ( 'QueueUrl', $newUrl );
+		$event = new Event ( array (
+				'command' => $command 
+		) );
+		
+		// Execute the listener and confirm effects
+		$listener->onCommandBeforeSend ( $event );
+		$this->assertEquals ( $newUrl, $request->getUrl () );
+		$this->assertFalse ( $request->getParams ()->hasKey ( 'QueueUrl' ) );
+	}
 }

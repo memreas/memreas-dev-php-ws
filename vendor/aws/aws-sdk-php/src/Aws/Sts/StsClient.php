@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sts;
 
 use Aws\Common\Client\AbstractClient;
@@ -38,77 +38,72 @@ use Symfony\Component\EventDispatcher\Event;
  * @method Model decodeAuthorizationMessage(array $args = array()) {@command Sts DecodeAuthorizationMessage}
  * @method Model getFederationToken(array $args = array()) {@command Sts GetFederationToken}
  * @method Model getSessionToken(array $args = array()) {@command Sts GetSessionToken}
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-sts.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sts.StsClient.html API docs
  */
-class StsClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2011-06-15';
-
-    /**
-     * Factory method to create a new Amazon STS client using an array of configuration options:
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @throws InvalidArgumentException
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        // Always need long term credentials
-        if (!isset($config[Options::CREDENTIALS]) && isset($config[Options::TOKEN])) {
-            throw new InvalidArgumentException('You must use long-term credentials with Amazon STS');
-        }
-
-        // Construct the STS client with the client builder
-        $client = ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/sts-%s.php'
-            ))
-            ->build();
-
-        // Attach a listener to prevent AssumeRoleWithWebIdentity requests from being signed
-        $client->getEventDispatcher()->addListener('command.before_send', function(Event $event) {
-            /** @var AbstractCommand $command */
-            $command = $event['command'];
-            if ($command->getName() === 'AssumeRoleWithWebIdentity') {
-                /** @var EventDispatcher $dispatcher */
-                $dispatcher = $command->getRequest()->getEventDispatcher();
-                foreach ($dispatcher->getListeners('request.before_send') as $listener) {
-                    if (is_array($listener) && $listener[0] instanceof SignatureListener) {
-                        $dispatcher->removeListener('request.before_send', $listener);
-                        break;
-                    }
-                }
-            }
-        });
-
-        return $client;
-    }
-
-    /**
-     * Creates a credentials object from the credential data return by an STS operation
-     *
-     * @param Model $result The result of an STS operation
-     *
-     * @return Credentials
-     * @throws InvalidArgumentException if the result does not contain credential data
-     */
-    public function createCredentials(Model $result)
-    {
-        if (!$result->hasKey('Credentials')) {
-            throw new InvalidArgumentException('The modeled result provided contained no credentials.');
-        }
-
-        return new Credentials(
-            $result->getPath('Credentials/AccessKeyId'),
-            $result->getPath('Credentials/SecretAccessKey'),
-            $result->getPath('Credentials/SessionToken'),
-            $result->getPath('Credentials/Expiration')
-        );
-    }
+class StsClient extends AbstractClient {
+	const LATEST_API_VERSION = '2011-06-15';
+	
+	/**
+	 * Factory method to create a new Amazon STS client using an array of configuration options:
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @throws InvalidArgumentException
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		// Always need long term credentials
+		if (! isset ( $config [Options::CREDENTIALS] ) && isset ( $config [Options::TOKEN] )) {
+			throw new InvalidArgumentException ( 'You must use long-term credentials with Amazon STS' );
+		}
+		
+		// Construct the STS client with the client builder
+		$client = ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/sts-%s.php' 
+		) )->build ();
+		
+		// Attach a listener to prevent AssumeRoleWithWebIdentity requests from being signed
+		$client->getEventDispatcher ()->addListener ( 'command.before_send', function (Event $event) {
+			/**
+			 * @var AbstractCommand $command
+			 */
+			$command = $event ['command'];
+			if ($command->getName () === 'AssumeRoleWithWebIdentity') {
+				/**
+				 * @var EventDispatcher $dispatcher
+				 */
+				$dispatcher = $command->getRequest ()->getEventDispatcher ();
+				foreach ( $dispatcher->getListeners ( 'request.before_send' ) as $listener ) {
+					if (is_array ( $listener ) && $listener [0] instanceof SignatureListener) {
+						$dispatcher->removeListener ( 'request.before_send', $listener );
+						break;
+					}
+				}
+			}
+		} );
+		
+		return $client;
+	}
+	
+	/**
+	 * Creates a credentials object from the credential data return by an STS operation
+	 *
+	 * @param Model $result
+	 *        	The result of an STS operation
+	 *        	
+	 * @return Credentials
+	 * @throws InvalidArgumentException if the result does not contain credential data
+	 */
+	public function createCredentials(Model $result) {
+		if (! $result->hasKey ( 'Credentials' )) {
+			throw new InvalidArgumentException ( 'The modeled result provided contained no credentials.' );
+		}
+		
+		return new Credentials ( $result->getPath ( 'Credentials/AccessKeyId' ), $result->getPath ( 'Credentials/SecretAccessKey' ), $result->getPath ( 'Credentials/SessionToken' ), $result->getPath ( 'Credentials/Expiration' ) );
+	}
 }

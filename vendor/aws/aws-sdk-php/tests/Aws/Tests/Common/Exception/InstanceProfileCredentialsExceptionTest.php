@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,22 +14,19 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Common\Exception;
 
 use Aws\Common\Exception\InstanceProfileCredentialsException;
 
-class InstanceProfileCredentialsExceptionTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @covers Aws\Common\Exception\InstanceProfileCredentialsException::getStatusCode
-     * @covers Aws\Common\Exception\InstanceProfileCredentialsException::setStatusCode
-     */
-    public function testOwnsStatusCode()
-    {
-        $e = new InstanceProfileCredentialsException('Foo');
-        $this->assertNull($e->getStatusCode());
-        $e->setStatusCode('Bar');
-        $this->assertEquals('Bar', $e->getStatusCode());
-    }
+class InstanceProfileCredentialsExceptionTest extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 * @covers Aws\Common\Exception\InstanceProfileCredentialsException::getStatusCode
+	 * @covers Aws\Common\Exception\InstanceProfileCredentialsException::setStatusCode
+	 */
+	public function testOwnsStatusCode() {
+		$e = new InstanceProfileCredentialsException ( 'Foo' );
+		$this->assertNull ( $e->getStatusCode () );
+		$e->setStatusCode ( 'Bar' );
+		$this->assertEquals ( 'Bar', $e->getStatusCode () );
+	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,24 +14,25 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Session\LockingStrategy;
 
 use Aws\DynamoDb\Session\SessionHandlerConfig;
 
 /**
- * Interface for locking strategy factories. Useful for those who are creating
+ * Interface for locking strategy factories.
+ * Useful for those who are creating
  * their own locking strategies.
  */
-interface LockingStrategyFactoryInterface
-{
-    /**
-     * Creates a session handler locking strategy object
-     *
-     * @param string               $lockingStrategy The name of the locking strategy
-     * @param SessionHandlerConfig $config          The session handler config data
-     *
-     * @return LockingStrategyInterface
-     */
-    public function factory($lockingStrategy, SessionHandlerConfig $config);
+interface LockingStrategyFactoryInterface {
+	/**
+	 * Creates a session handler locking strategy object
+	 *
+	 * @param string $lockingStrategy
+	 *        	The name of the locking strategy
+	 * @param SessionHandlerConfig $config
+	 *        	The session handler config data
+	 *        	
+	 * @return LockingStrategyInterface
+	 */
+	public function factory($lockingStrategy, SessionHandlerConfig $config);
 }

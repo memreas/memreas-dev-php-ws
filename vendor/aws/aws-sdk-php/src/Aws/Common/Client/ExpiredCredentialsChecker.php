@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Client;
 
 use Aws\Common\Credentials\AbstractRefreshableCredentials;
@@ -28,53 +28,51 @@ use Guzzle\Plugin\Backoff\AbstractBackoffStrategy;
 /**
  * Backoff logic that handles retrying requests when credentials expire
  */
-class ExpiredCredentialsChecker extends AbstractBackoffStrategy
-{
-    /**
-     * @var array Array of known retrying exception codes
-     */
-    protected $retryable = array(
-        'RequestExpired' => true,
-        'ExpiredTokenException' => true,
-        'ExpiredToken' => true
-    );
-
-    /**
-     * @var ExceptionParserInterface Exception parser used to parse exception responses
-     */
-    protected $exceptionParser;
-
-    public function __construct(ExceptionParserInterface $exceptionParser, BackoffStrategyInterface $next = null) {
-        $this->exceptionParser = $exceptionParser;
-        $this->next = $next;
-    }
-
-    public function makesDecision()
-    {
-        return true;
-    }
-
-    protected function getDelay($retries, RequestInterface $request, Response $response = null, HttpException $e = null)
-    {
-        if ($response && $response->isClientError()) {
-
-            $parts = $this->exceptionParser->parse($request, $response);
-            if (!isset($this->retryable[$parts['code']]) || !$request->getClient()) {
-                return null;
-            }
-
-            /** @var $client AwsClientInterface */
-            $client = $request->getClient();
-            // Only retry if the credentials can be refreshed
-            if (!($client->getCredentials() instanceof AbstractRefreshableCredentials)) {
-                return null;
-            }
-
-            // Resign the request using new credentials
-            $client->getSignature()->signRequest($request, $client->getCredentials()->setExpiration(-1));
-
-            // Retry immediately with no delay
-            return 0;
-        }
-    }
+class ExpiredCredentialsChecker extends AbstractBackoffStrategy {
+	/**
+	 *
+	 * @var array Array of known retrying exception codes
+	 */
+	protected $retryable = array (
+			'RequestExpired' => true,
+			'ExpiredTokenException' => true,
+			'ExpiredToken' => true 
+	);
+	
+	/**
+	 *
+	 * @var ExceptionParserInterface Exception parser used to parse exception responses
+	 */
+	protected $exceptionParser;
+	public function __construct(ExceptionParserInterface $exceptionParser, BackoffStrategyInterface $next = null) {
+		$this->exceptionParser = $exceptionParser;
+		$this->next = $next;
+	}
+	public function makesDecision() {
+		return true;
+	}
+	protected function getDelay($retries, RequestInterface $request, Response $response = null, HttpException $e = null) {
+		if ($response && $response->isClientError ()) {
+			
+			$parts = $this->exceptionParser->parse ( $request, $response );
+			if (! isset ( $this->retryable [$parts ['code']] ) || ! $request->getClient ()) {
+				return null;
+			}
+			
+			/**
+			 * @var $client AwsClientInterface
+			 */
+			$client = $request->getClient ();
+			// Only retry if the credentials can be refreshed
+			if (! ($client->getCredentials () instanceof AbstractRefreshableCredentials)) {
+				return null;
+			}
+			
+			// Resign the request using new credentials
+			$client->getSignature ()->signRequest ( $request, $client->getCredentials ()->setExpiration ( - 1 ) );
+			
+			// Retry immediately with no delay
+			return 0;
+		}
+	}
 }

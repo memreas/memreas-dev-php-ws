@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
  * Your socket connection to the server was not read from or written to within the timeout period.
  */
-class RequestTimeoutException extends S3Exception {}
+class RequestTimeoutException extends S3Exception {
+}

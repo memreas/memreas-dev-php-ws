@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Iam\Exception;
 
 /**
- * The request was rejected because it referenced an entity that does not exist. The error message describes the entity.
+ * The request was rejected because it referenced an entity that does not exist.
+ * The error message describes the entity.
  */
-class NoSuchEntityException extends IamException {}
+class NoSuchEntityException extends IamException {
+}

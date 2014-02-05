@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * The specified location constraint is not valid. For more information about Regions, see How to Select a Region for Your Buckets.
+ * The specified location constraint is not valid.
+ * For more information about Regions, see How to Select a Region for Your Buckets.
  */
-class InvalidLocationConstraintException extends S3Exception {}
+class InvalidLocationConstraintException extends S3Exception {
+}

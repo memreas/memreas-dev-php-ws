@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Session\LockingStrategy;
 
 use Aws\Common\Enum\UaString as Ua;
@@ -21,45 +21,47 @@ use Aws\DynamoDb\Exception\DynamoDbException;
 
 /**
  * The NULL locking strategy is the default strategy that does NOT do session
- * locking. Session locking can cause extra latency and costs when retrying
+ * locking.
+ * Session locking can cause extra latency and costs when retrying
  * lock acquisitions. Thus, the null strategy is the most reasonable default.
  */
-class NullLockingStrategy extends AbstractLockingStrategy
-{
-    /**
-     * {@inheritdoc}
-     */
-    public function doRead($id)
-    {
-        try {
-            // Execute a GetItem command to retrieve the item
-            $result = $this->client->getCommand('GetItem', array(
-                'TableName' => $this->config->get('table_name'),
-                'Key' => $this->formatKey($id),
-                'ConsistentRead' => (bool) $this->config->get('consistent_read'),
-                Ua::OPTION       => Ua::SESSION
-            ))->execute();
-
-            // Get the item values
-            $item   = array();
-            $result = isset($result['Item']) ? $result['Item'] : array();
-            foreach ($result as $key => $value) {
-                $item[$key] = current($value);
-            }
-        } catch (DynamoDbException $e) {
-            $item = array();
-        }
-
-        return $item;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtraAttributes()
-    {
-        // @codeCoverageIgnoreStart
-        return array();
-        // @codeCoverageIgnoreEnd
-    }
+class NullLockingStrategy extends AbstractLockingStrategy {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public function doRead($id) {
+		try {
+			// Execute a GetItem command to retrieve the item
+			$result = $this->client->getCommand ( 'GetItem', array (
+					'TableName' => $this->config->get ( 'table_name' ),
+					'Key' => $this->formatKey ( $id ),
+					'ConsistentRead' => ( bool ) $this->config->get ( 'consistent_read' ),
+					Ua::OPTION => Ua::SESSION 
+			) )->execute ();
+			
+			// Get the item values
+			$item = array ();
+			$result = isset ( $result ['Item'] ) ? $result ['Item'] : array ();
+			foreach ( $result as $key => $value ) {
+				$item [$key] = current ( $value );
+			}
+		} catch ( DynamoDbException $e ) {
+			$item = array ();
+		}
+		
+		return $item;
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function getExtraAttributes() {
+		// @codeCoverageIgnoreStart
+		return array ();
+		// @codeCoverageIgnoreEnd
+	}
 }

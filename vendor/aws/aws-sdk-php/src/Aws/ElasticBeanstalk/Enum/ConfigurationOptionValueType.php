@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk\Enum;
 
 use Aws\Common\Enum;
@@ -21,8 +21,7 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ConfigurationOptionValueType values
  */
-class ConfigurationOptionValueType extends Enum
-{
-    const SCALAR_TYPE = 'Scalar';
-    const LIST_TYPE = 'List';
+class ConfigurationOptionValueType extends Enum {
+	const SCALAR_TYPE = 'Scalar';
+	const LIST_TYPE = 'List';
 }

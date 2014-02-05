@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticTranscoder\Exception;
 
 /**
- * The requested resource does not exist or is not available. For example, the pipeline to which you're trying to add a job doesn't exist or is still being created.
+ * The requested resource does not exist or is not available.
+ * For example, the pipeline to which you're trying to add a job doesn't exist or is still being created.
  */
-class ResourceNotFoundException extends ElasticTranscoderException {}
+class ResourceNotFoundException extends ElasticTranscoderException {
+}

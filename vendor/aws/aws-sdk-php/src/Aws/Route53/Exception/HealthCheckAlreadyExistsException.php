@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Route53\Exception;
 
 /**
- * The health check you are trying to create already exists. Route 53 returns this error when a health check has already been created with the specified CallerReference.
+ * The health check you are trying to create already exists.
+ * Route 53 returns this error when a health check has already been created with the specified CallerReference.
  */
-class HealthCheckAlreadyExistsException extends Route53Exception {}
+class HealthCheckAlreadyExistsException extends Route53Exception {
+}

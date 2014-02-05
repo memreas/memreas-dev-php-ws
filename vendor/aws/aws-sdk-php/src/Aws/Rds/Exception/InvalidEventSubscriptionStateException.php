@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds\Exception;
 
 /**
- * This error can occur if someone else is modifying a subscription. You should retry the action.
+ * This error can occur if someone else is modifying a subscription.
+ * You should retry the action.
  */
-class InvalidEventSubscriptionStateException extends RdsException {}
+class InvalidEventSubscriptionStateException extends RdsException {
+}

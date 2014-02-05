@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElastiCache\Exception;
 
 /**
  * The current state of the cache parameter group does not allow the requested action to occur.
  */
-class InvalidCacheParameterGroupStateException extends ElastiCacheException {}
+class InvalidCacheParameterGroupStateException extends ElastiCacheException {
+}

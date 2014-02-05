@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,40 +14,43 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Glacier\Model\MultipartUpload;
 
 /**
  * Transfers multipart upload parts serially
  */
-class SerialTransfer extends AbstractTransfer
-{
-    /**
-     * {@inheritdoc}
-     */
-    protected function transfer()
-    {
-        /** @var $partGenerator UploadPartGenerator */
-        $partGenerator = $this->state->getPartGenerator();
-
-        /** @var $part UploadPart */
-        foreach ($partGenerator as $part) {
-            $command = $this->getCommandForPart($part);
-
-            // Notify observers that the part is about to be uploaded
-            $eventData = $this->getEventData($command);
-            $this->dispatch(self::BEFORE_PART_UPLOAD, $eventData);
-
-            // Allow listeners to stop the transfer if needed
-            if ($this->stopped) {
-                break;
-            }
-
-            $command->execute();
-            $this->state->addPart($part);
-
-            // Notify observers that the part was uploaded
-            $this->dispatch(self::AFTER_PART_UPLOAD, $eventData);
-        }
-    }
+class SerialTransfer extends AbstractTransfer {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function transfer() {
+		/**
+		 * @var $partGenerator UploadPartGenerator
+		 */
+		$partGenerator = $this->state->getPartGenerator ();
+		
+		/**
+		 * @var $part UploadPart
+		 */
+		foreach ( $partGenerator as $part ) {
+			$command = $this->getCommandForPart ( $part );
+			
+			// Notify observers that the part is about to be uploaded
+			$eventData = $this->getEventData ( $command );
+			$this->dispatch ( self::BEFORE_PART_UPLOAD, $eventData );
+			
+			// Allow listeners to stop the transfer if needed
+			if ($this->stopped) {
+				break;
+			}
+			
+			$command->execute ();
+			$this->state->addPart ( $part );
+			
+			// Notify observers that the part was uploaded
+			$this->dispatch ( self::AFTER_PART_UPLOAD, $eventData );
+		}
+	}
 }

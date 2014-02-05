@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * There is a problem with your AWS account that prevents the operation from completing successfully. Please use Contact Us.
+ * There is a problem with your AWS account that prevents the operation from completing successfully.
+ * Please use Contact Us.
  */
-class AccountProblemException extends S3Exception {}
+class AccountProblemException extends S3Exception {
+}

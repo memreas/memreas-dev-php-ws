@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Model\BatchRequest;
 
 use Guzzle\Common\ToArrayInterface;
@@ -21,12 +21,11 @@ use Guzzle\Common\ToArrayInterface;
 /**
  * An interface used to describe a batch write request
  */
-interface WriteRequestInterface extends ToArrayInterface
-{
-    /**
-     * Returns the table name that the write request is for.
-     *
-     * @return string The table name
-     */
-    public function getTableName();
+interface WriteRequestInterface extends ToArrayInterface {
+	/**
+	 * Returns the table name that the write request is for.
+	 *
+	 * @return string The table name
+	 */
+	public function getTableName();
 }

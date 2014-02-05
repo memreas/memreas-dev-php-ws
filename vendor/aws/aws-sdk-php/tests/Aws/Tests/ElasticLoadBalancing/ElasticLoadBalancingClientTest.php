@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\ElasticLoadBalancing;
 
 use Aws\ElasticLoadBalancing\ElasticLoadBalancingClient;
@@ -21,18 +21,16 @@ use Aws\ElasticLoadBalancing\ElasticLoadBalancingClient;
 /**
  * @covers Aws\ElasticLoadBalancing\ElasticLoadBalancingClient
  */
-class ElasticLoadBalancingClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testFactoryInitializesClient()
-    {
-        $client = ElasticLoadBalancingClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-west-2'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://elasticloadbalancing.us-west-2.amazonaws.com', $client->getBaseUrl());
-    }
+class ElasticLoadBalancingClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testFactoryInitializesClient() {
+		$client = ElasticLoadBalancingClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-west-2' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://elasticloadbalancing.us-west-2.amazonaws.com', $client->getBaseUrl () );
+	}
 }

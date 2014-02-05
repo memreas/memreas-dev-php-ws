@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Common\Credentials;
 
 use Aws\Common\Credentials\Credentials;
@@ -21,24 +21,24 @@ use Aws\Common\Credentials\Credentials;
 /**
  * @covers Aws\Common\Credentials\AbstractRefreshableCredentials
  */
-class AbstractRefreshableCredentialsTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testCallsRefreshWhenExpired()
-    {
-        $c = new Credentials('a', 'b', 'c', 10);
-
-        $mock = $this->getMockBuilder('Aws\\Common\\Credentials\\AbstractRefreshableCredentials')
-            ->setConstructorArgs(array($c))
-            ->setMethods(array('refresh'))
-            ->getMock();
-
-        $mock->expects($this->exactly(4))
-            ->method('refresh');
-
-        /** @var $mock \Aws\Common\Credentials\AbstractRefreshableCredentials */
-        $mock->getAccessKeyId();
-        $mock->getSecretKey();
-        $mock->getSecurityToken();
-        $mock->serialize();
-    }
+class AbstractRefreshableCredentialsTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testCallsRefreshWhenExpired() {
+		$c = new Credentials ( 'a', 'b', 'c', 10 );
+		
+		$mock = $this->getMockBuilder ( 'Aws\\Common\\Credentials\\AbstractRefreshableCredentials' )->setConstructorArgs ( array (
+				$c 
+		) )->setMethods ( array (
+				'refresh' 
+		) )->getMock ();
+		
+		$mock->expects ( $this->exactly ( 4 ) )->method ( 'refresh' );
+		
+		/**
+		 * @var $mock \Aws\Common\Credentials\AbstractRefreshableCredentials
+		 */
+		$mock->getAccessKeyId ();
+		$mock->getSecretKey ();
+		$mock->getSecurityToken ();
+		$mock->serialize ();
+	}
 }

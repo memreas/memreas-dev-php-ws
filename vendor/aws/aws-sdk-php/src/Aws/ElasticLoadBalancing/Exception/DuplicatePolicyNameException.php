@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticLoadBalancing\Exception;
 
 /**
- * Policy with the same name exists for this load balancer. Please choose another name.
+ * Policy with the same name exists for this load balancer.
+ * Please choose another name.
  */
-class DuplicatePolicyNameException extends ElasticLoadBalancingException {}
+class DuplicatePolicyNameException extends ElasticLoadBalancingException {
+}

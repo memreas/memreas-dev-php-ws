@@ -2,6 +2,5 @@
 
 namespace Doctrine\Tests\Common\Reflection;
 
-class SameNamespaceParent extends Dummies\NoParent
-{
+class SameNamespaceParent extends Dummies\NoParent {
 }

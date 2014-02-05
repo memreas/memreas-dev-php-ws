@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sqs;
 
 use Aws\Sqs\Exception\SqsException;
@@ -23,32 +23,35 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Listener used to validate the MD5 of the ReceiveMessage body
  */
-class Md5ValidatorListener implements EventSubscriberInterface
-{
-    public static function getSubscribedEvents()
-    {
-        return array('command.after_send' => array('onCommandBeforeSend', -255));
-    }
-
-    /**
-     * Validates the MD5OfBody attribute against the body
-     *
-     * @param Event $event Event emitted
-     * @throws SqsException when an MD5 mismatch occurs
-     */
-    public function onCommandBeforeSend(Event $event)
-    {
-        if ($event['command']->getName() != 'ReceiveMessage') {
-            return;
-        }
-
-        $result = $event['command']->getResult();
-        if (isset($result['Messages'])) {
-            foreach ($result['Messages'] as $message) {
-                if ($message['MD5OfBody'] != md5($message['Body'])) {
-                    throw new SqsException('Body MD5 mismatch for ' . var_export($message, true));
-                }
-            }
-        }
-    }
+class Md5ValidatorListener implements EventSubscriberInterface {
+	public static function getSubscribedEvents() {
+		return array (
+				'command.after_send' => array (
+						'onCommandBeforeSend',
+						- 255 
+				) 
+		);
+	}
+	
+	/**
+	 * Validates the MD5OfBody attribute against the body
+	 *
+	 * @param Event $event
+	 *        	Event emitted
+	 * @throws SqsException when an MD5 mismatch occurs
+	 */
+	public function onCommandBeforeSend(Event $event) {
+		if ($event ['command']->getName () != 'ReceiveMessage') {
+			return;
+		}
+		
+		$result = $event ['command']->getResult ();
+		if (isset ( $result ['Messages'] )) {
+			foreach ( $result ['Messages'] as $message ) {
+				if ($message ['MD5OfBody'] != md5 ( $message ['Body'] )) {
+					throw new SqsException ( 'Body MD5 mismatch for ' . var_export ( $message, true ) );
+				}
+			}
+		}
+	}
 }

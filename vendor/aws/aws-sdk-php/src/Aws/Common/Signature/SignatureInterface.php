@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Signature;
 
 use Aws\Common\Credentials\CredentialsInterface;
@@ -23,15 +23,16 @@ use Guzzle\Http\Message\RequestInterface;
  * Interface used to provide interchangeable strategies for signing requests
  * using the various AWS signature protocols.
  */
-interface SignatureInterface
-{
-    /**
-     * Signs the specified request with an AWS signing protocol by using the
-     * provided AWS account credentials and adding the required headers to the
-     * request.
-     *
-     * @param RequestInterface     $request     Request to add a signature to
-     * @param CredentialsInterface $credentials Signing credentials
-     */
-    public function signRequest(RequestInterface $request, CredentialsInterface $credentials);
+interface SignatureInterface {
+	/**
+	 * Signs the specified request with an AWS signing protocol by using the
+	 * provided AWS account credentials and adding the required headers to the
+	 * request.
+	 *
+	 * @param RequestInterface $request
+	 *        	Request to add a signature to
+	 * @param CredentialsInterface $credentials
+	 *        	Signing credentials
+	 */
+	public function signRequest(RequestInterface $request, CredentialsInterface $credentials);
 }

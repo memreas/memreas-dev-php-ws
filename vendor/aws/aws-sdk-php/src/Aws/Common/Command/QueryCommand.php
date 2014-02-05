@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Command;
 
 use Guzzle\Service\Command\OperationCommand;
@@ -21,33 +21,33 @@ use Guzzle\Service\Command\OperationCommand;
 /**
  * Adds AWS Query service serialization
  */
-class QueryCommand extends OperationCommand
-{
-    /**
-     * @var AwsQueryVisitor
-     */
-    protected static $queryVisitor;
-
-    /**
-     * @var XmlResponseLocationVisitor
-     */
-    protected static $xmlVisitor;
-
-    /**
-     * Register the aws.query visitor
-     */
-    protected function init()
-    {
-        // @codeCoverageIgnoreStart
-        if (!self::$queryVisitor) {
-            self::$queryVisitor = new AwsQueryVisitor();
-        }
-        if (!self::$xmlVisitor) {
-            self::$xmlVisitor = new XmlResponseLocationVisitor();
-        }
-        // @codeCoverageIgnoreEnd
-
-        $this->getRequestSerializer()->addVisitor('aws.query', self::$queryVisitor);
-        $this->getResponseParser()->addVisitor('xml', self::$xmlVisitor);
-    }
+class QueryCommand extends OperationCommand {
+	/**
+	 *
+	 * @var AwsQueryVisitor
+	 */
+	protected static $queryVisitor;
+	
+	/**
+	 *
+	 * @var XmlResponseLocationVisitor
+	 */
+	protected static $xmlVisitor;
+	
+	/**
+	 * Register the aws.query visitor
+	 */
+	protected function init() {
+		// @codeCoverageIgnoreStart
+		if (! self::$queryVisitor) {
+			self::$queryVisitor = new AwsQueryVisitor ();
+		}
+		if (! self::$xmlVisitor) {
+			self::$xmlVisitor = new XmlResponseLocationVisitor ();
+		}
+		// @codeCoverageIgnoreEnd
+		
+		$this->getRequestSerializer ()->addVisitor ( 'aws.query', self::$queryVisitor );
+		$this->getResponseParser ()->addVisitor ( 'xml', self::$xmlVisitor );
+	}
 }

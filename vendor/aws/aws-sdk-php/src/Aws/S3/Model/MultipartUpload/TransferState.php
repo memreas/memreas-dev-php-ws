@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Model\MultipartUpload;
 
 use Aws\Common\Client\AwsClientInterface;
@@ -23,19 +23,19 @@ use Aws\Common\Model\MultipartUpload\UploadIdInterface;
 /**
  * State of a multipart upload
  */
-class TransferState extends AbstractTransferState
-{
-    /**
-     * {@inheritdoc}
-     */
-    public static function fromUploadId(AwsClientInterface $client, UploadIdInterface $uploadId)
-    {
-        $transferState = new self($uploadId);
-
-        foreach ($client->getIterator('ListParts', $uploadId->toParams()) as $part) {
-            $transferState->addPart(UploadPart::fromArray($part));
-        }
-
-        return $transferState;
-    }
+class TransferState extends AbstractTransferState {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public static function fromUploadId(AwsClientInterface $client, UploadIdInterface $uploadId) {
+		$transferState = new self ( $uploadId );
+		
+		foreach ( $client->getIterator ( 'ListParts', $uploadId->toParams () ) as $part ) {
+			$transferState->addPart ( UploadPart::fromArray ( $part ) );
+		}
+		
+		return $transferState;
+	}
 }

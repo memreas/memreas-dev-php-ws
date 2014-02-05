@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,34 +14,33 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Model\MultipartUpload;
 
 /**
  * An object that encapsulates the data for an upload part
  */
-interface UploadPartInterface extends \Serializable
-{
-    /**
-     * Create an upload part from an array
-     *
-     * @param array|\Traversable $data Data representing the upload part
-     *
-     * @return self
-     */
-    public static function fromArray($data);
-
-    /**
-     * Returns the part number of the upload part which is used as an identifier
-     *
-     * @return int
-     */
-    public function getPartNumber();
-
-    /**
-     * Returns the array form of the upload part
-     *
-     * @return array
-     */
-    public function toArray();
+interface UploadPartInterface extends \Serializable {
+	/**
+	 * Create an upload part from an array
+	 *
+	 * @param array|\Traversable $data
+	 *        	Data representing the upload part
+	 *        	
+	 * @return self
+	 */
+	public static function fromArray($data);
+	
+	/**
+	 * Returns the part number of the upload part which is used as an identifier
+	 *
+	 * @return int
+	 */
+	public function getPartNumber();
+	
+	/**
+	 * Returns the array form of the upload part
+	 *
+	 * @return array
+	 */
+	public function toArray();
 }

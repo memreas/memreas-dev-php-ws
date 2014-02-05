@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds\Exception;
 
 /**
  * The specified DB instance is not in the available state.
  */
-class InvalidDBInstanceStateException extends RdsException {}
+class InvalidDBInstanceStateException extends RdsException {
+}

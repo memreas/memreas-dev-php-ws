@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Command;
 
 use Guzzle\Service\Command\OperationCommand;
@@ -25,41 +25,41 @@ use Guzzle\Common\Event;
  * - Adds the PutObject URL to a response
  * - Allows creating a Pre-signed URL from any command
  */
-class S3Command extends OperationCommand
-{
-    /**
-     * Create a pre-signed URL for the operation
-     *
-     * @param int|string $expires The Unix timestamp to expire at or a string that can be evaluated by strtotime
-     *
-     * @return string
-     */
-    public function createPresignedUrl($expires)
-    {
-        return $this->client->createPresignedUrl($this->prepare(), $expires);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function process()
-    {
-        $request = $this->getRequest();
-        $response = $this->getResponse();
-
-        // Dispatch an error if a 301 redirect occurred
-        if ($response->getStatusCode() == 301) {
-            $this->getClient()->getEventDispatcher()->dispatch('request.error', new Event(array(
-                'request'  => $this->getRequest(),
-                'response' => $response
-            )));
-        }
-
-        parent::process();
-
-        // Set the GetObject URL if using the PutObject operation
-        if ($this->result instanceof Model && $this->getName() == 'PutObject') {
-            $this->result->set('ObjectURL', $request->getUrl());
-        }
-    }
+class S3Command extends OperationCommand {
+	/**
+	 * Create a pre-signed URL for the operation
+	 *
+	 * @param int|string $expires
+	 *        	The Unix timestamp to expire at or a string that can be evaluated by strtotime
+	 *        	
+	 * @return string
+	 */
+	public function createPresignedUrl($expires) {
+		return $this->client->createPresignedUrl ( $this->prepare (), $expires );
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function process() {
+		$request = $this->getRequest ();
+		$response = $this->getResponse ();
+		
+		// Dispatch an error if a 301 redirect occurred
+		if ($response->getStatusCode () == 301) {
+			$this->getClient ()->getEventDispatcher ()->dispatch ( 'request.error', new Event ( array (
+					'request' => $this->getRequest (),
+					'response' => $response 
+			) ) );
+		}
+		
+		parent::process ();
+		
+		// Set the GetObject URL if using the PutObject operation
+		if ($this->result instanceof Model && $this->getName () == 'PutObject') {
+			$this->result->set ( 'ObjectURL', $request->getUrl () );
+		}
+	}
 }

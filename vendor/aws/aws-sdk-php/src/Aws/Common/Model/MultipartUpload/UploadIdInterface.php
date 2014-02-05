@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,27 +14,26 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Model\MultipartUpload;
 
 /**
  * An object that encapsulates the data identifying an upload
  */
-interface UploadIdInterface extends \Serializable
-{
-    /**
-     * Create an UploadId from an array
-     *
-     * @param array $data Data representing the upload identification
-     *
-     * @return self
-     */
-    public static function fromParams($data);
-
-    /**
-     * Returns the array form of the upload identification for use as command params
-     *
-     * @return array
-     */
-    public function toParams();
+interface UploadIdInterface extends \Serializable {
+	/**
+	 * Create an UploadId from an array
+	 *
+	 * @param array $data
+	 *        	Data representing the upload identification
+	 *        	
+	 * @return self
+	 */
+	public static function fromParams($data);
+	
+	/**
+	 * Returns the array form of the upload identification for use as command params
+	 *
+	 * @return array
+	 */
+	public function toParams();
 }

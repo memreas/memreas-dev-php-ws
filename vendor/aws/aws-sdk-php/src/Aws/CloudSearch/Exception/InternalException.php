@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudSearch\Exception;
 
 /**
- * An internal error occurred while processing the request. If this problem persists, report an issue from the Service Health Dashboard.
+ * An internal error occurred while processing the request.
+ * If this problem persists, report an issue from the Service Health Dashboard.
  */
-class InternalException extends CloudSearchException {}
+class InternalException extends CloudSearchException {
+}

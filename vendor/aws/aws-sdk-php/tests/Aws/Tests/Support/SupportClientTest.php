@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,28 +14,25 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Support;
 
 use Aws\Common\Credentials\Credentials;
 use Aws\Common\Signature\SignatureV4;
 use Aws\Support\SupportClient;
 
-class SupportClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @covers Aws\Support\SupportClient::factory
-     */
-    public function testFactoryInitializesClient()
-    {
-        $client = SupportClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-east-1'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://support.us-east-1.amazonaws.com', $client->getBaseUrl());
-    }
+class SupportClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 * @covers Aws\Support\SupportClient::factory
+	 */
+	public function testFactoryInitializesClient() {
+		$client = SupportClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-east-1' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://support.us-east-1.amazonaws.com', $client->getBaseUrl () );
+	}
 }

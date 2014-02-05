@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ImportExport\Exception;
 
 /**
- * One or more required fields were missing from the manifest file. Please correct and resubmit.
+ * One or more required fields were missing from the manifest file.
+ * Please correct and resubmit.
  */
-class MissingManifestFieldException extends ImportExportException {}
+class MissingManifestFieldException extends ImportExportException {
+}

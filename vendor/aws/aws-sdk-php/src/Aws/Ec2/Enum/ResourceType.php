@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Ec2\Enum;
 
 use Aws\Common\Enum;
@@ -21,23 +21,22 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ResourceType values
  */
-class ResourceType extends Enum
-{
-    const CUSTOMER_GATEWAY = 'customer-gateway';
-    const DHCP_OPTIONS = 'dhcp-options';
-    const IMAGE = 'image';
-    const INSTANCE = 'instance';
-    const INTERNET_GATEWAY = 'internet-gateway';
-    const NETWORK_ACL = 'network-acl';
-    const NETWORK_INTERFACE = 'network-interface';
-    const RESERVED_INSTANCES = 'reserved-instances';
-    const ROUTE_TABLE = 'route-table';
-    const SNAPSHOT = 'snapshot';
-    const SPOT_INSTANCES_REQUEST = 'spot-instances-request';
-    const SUBNET = 'subnet';
-    const SECURITY_GROUP = 'security-group';
-    const VOLUME = 'volume';
-    const VPC = 'vpc';
-    const VPN_CONNECTION = 'vpn-connection';
-    const VPN_GATEWAY = 'vpn-gateway';
+class ResourceType extends Enum {
+	const CUSTOMER_GATEWAY = 'customer-gateway';
+	const DHCP_OPTIONS = 'dhcp-options';
+	const IMAGE = 'image';
+	const INSTANCE = 'instance';
+	const INTERNET_GATEWAY = 'internet-gateway';
+	const NETWORK_ACL = 'network-acl';
+	const NETWORK_INTERFACE = 'network-interface';
+	const RESERVED_INSTANCES = 'reserved-instances';
+	const ROUTE_TABLE = 'route-table';
+	const SNAPSHOT = 'snapshot';
+	const SPOT_INSTANCES_REQUEST = 'spot-instances-request';
+	const SUBNET = 'subnet';
+	const SECURITY_GROUP = 'security-group';
+	const VOLUME = 'volume';
+	const VPC = 'vpc';
+	const VPN_CONNECTION = 'vpn-connection';
+	const VPN_GATEWAY = 'vpn-gateway';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticLoadBalancing\Exception;
 
 /**
  * The specified load balancer attribute could not be found.
  */
-class LoadBalancerAttributeNotFoundException extends ElasticLoadBalancingException {}
+class LoadBalancerAttributeNotFoundException extends ElasticLoadBalancingException {
+}

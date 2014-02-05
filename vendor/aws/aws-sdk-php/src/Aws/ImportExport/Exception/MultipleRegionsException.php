@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ImportExport\Exception;
 
 /**
- * Your manifest file contained buckets from multiple regions. A job is restricted to buckets from one region. Please correct and resubmit.
+ * Your manifest file contained buckets from multiple regions.
+ * A job is restricted to buckets from one region. Please correct and resubmit.
  */
-class MultipleRegionsException extends ImportExportException {}
+class MultipleRegionsException extends ImportExportException {
+}

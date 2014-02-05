@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,30 +14,30 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Signature;
 
 /**
  * Interface for signatures that use specific region and service names when
  * signing requests.
  */
-interface EndpointSignatureInterface extends SignatureInterface
-{
-    /**
-     * Set the service name instead of inferring it from a request URL
-     *
-     * @param string $service Name of the service used when signing
-     *
-     * @return self
-     */
-    public function setServiceName($service);
-
-    /**
-     * Set the region name instead of inferring it from a request URL
-     *
-     * @param string $region Name of the region used when signing
-     *
-     * @return self
-     */
-    public function setRegionName($region);
+interface EndpointSignatureInterface extends SignatureInterface {
+	/**
+	 * Set the service name instead of inferring it from a request URL
+	 *
+	 * @param string $service
+	 *        	Name of the service used when signing
+	 *        	
+	 * @return self
+	 */
+	public function setServiceName($service);
+	
+	/**
+	 * Set the region name instead of inferring it from a request URL
+	 *
+	 * @param string $region
+	 *        	Name of the region used when signing
+	 *        	
+	 * @return self
+	 */
+	public function setRegionName($region);
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,24 +14,28 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Glacier\Waiter;
 
-class VaultExistsTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testReturnsTrueIfVaultExists()
-    {
-        $client = $this->getServiceBuilder()->get('glacier', true);
-        $this->setMockResponse($client, 'glacier/describe_vault');
-        $client->waitUntil('VaultExists', array('vaultName' => 'foo'));
-        $this->assertEquals(1, count($this->getMockedRequests()));
-    }
-
-    public function testRetriesUntilVaultExists()
-    {
-        $client = $this->getServiceBuilder()->get('glacier', true);
-        $this->setMockResponse($client, array('glacier/describe_vault_error', 'glacier/describe_vault_error', 'glacier/describe_vault'));
-        $client->waitUntil('VaultExists', array('vaultName' => 'foo', 'waiter.interval' => 0));
-        $this->assertEquals(3, count($this->getMockedRequests()));
-    }
+class VaultExistsTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testReturnsTrueIfVaultExists() {
+		$client = $this->getServiceBuilder ()->get ( 'glacier', true );
+		$this->setMockResponse ( $client, 'glacier/describe_vault' );
+		$client->waitUntil ( 'VaultExists', array (
+				'vaultName' => 'foo' 
+		) );
+		$this->assertEquals ( 1, count ( $this->getMockedRequests () ) );
+	}
+	public function testRetriesUntilVaultExists() {
+		$client = $this->getServiceBuilder ()->get ( 'glacier', true );
+		$this->setMockResponse ( $client, array (
+				'glacier/describe_vault_error',
+				'glacier/describe_vault_error',
+				'glacier/describe_vault' 
+		) );
+		$client->waitUntil ( 'VaultExists', array (
+				'vaultName' => 'foo',
+				'waiter.interval' => 0 
+		) );
+		$this->assertEquals ( 3, count ( $this->getMockedRequests () ) );
+	}
 }

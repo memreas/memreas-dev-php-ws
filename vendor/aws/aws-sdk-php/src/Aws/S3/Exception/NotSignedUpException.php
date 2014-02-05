@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * Your account is not signed up for the Amazon S3 service. You must sign up before you can use Amazon S3. You can sign up at the following URL: http://aws.amazon.com/s3
+ * Your account is not signed up for the Amazon S3 service.
+ * You must sign up before you can use Amazon S3. You can sign up at the following URL: http://aws.amazon.com/s3
  */
-class NotSignedUpException extends S3Exception {}
+class NotSignedUpException extends S3Exception {
+}

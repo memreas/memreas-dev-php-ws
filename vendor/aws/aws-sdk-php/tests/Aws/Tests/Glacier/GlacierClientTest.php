@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,27 +14,24 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Glacier;
 
 use Aws\Glacier\GlacierClient;
 
-class GlacierClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @covers Aws\Glacier\GlacierClient::factory
-     */
-    public function testFactoryInitializesClient()
-    {
-        $client = GlacierClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-west-2'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://glacier.us-west-2.amazonaws.com', $client->getBaseUrl());
-        $this->assertEquals('-', $client->getCommand('ListVaults')->get('accountId'));
-    }
+class GlacierClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 * @covers Aws\Glacier\GlacierClient::factory
+	 */
+	public function testFactoryInitializesClient() {
+		$client = GlacierClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-west-2' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://glacier.us-west-2.amazonaws.com', $client->getBaseUrl () );
+		$this->assertEquals ( '-', $client->getCommand ( 'ListVaults' )->get ( 'accountId' ) );
+	}
 }

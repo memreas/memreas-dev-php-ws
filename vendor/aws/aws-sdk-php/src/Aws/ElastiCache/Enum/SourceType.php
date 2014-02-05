@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElastiCache\Enum;
 
 use Aws\Common\Enum;
@@ -21,10 +21,9 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable SourceType values
  */
-class SourceType extends Enum
-{
-    const CACHE_CLUSTER = 'cache-cluster';
-    const CACHE_PARAMETER_GROUP = 'cache-parameter-group';
-    const CACHE_SECURITY_GROUP = 'cache-security-group';
-    const CACHE_SUBNET_GROUP = 'cache-subnet-group';
+class SourceType extends Enum {
+	const CACHE_CLUSTER = 'cache-cluster';
+	const CACHE_PARAMETER_GROUP = 'cache-parameter-group';
+	const CACHE_SECURITY_GROUP = 'cache-security-group';
+	const CACHE_SUBNET_GROUP = 'cache-subnet-group';
 }

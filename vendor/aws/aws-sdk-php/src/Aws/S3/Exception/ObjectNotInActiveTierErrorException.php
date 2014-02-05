@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
  * The source object of the COPY operation is not in the active tier and is only stored in Amazon Glacier.
  */
-class ObjectNotInActiveTierErrorException extends S3Exception {}
+class ObjectNotInActiveTierErrorException extends S3Exception {
+}

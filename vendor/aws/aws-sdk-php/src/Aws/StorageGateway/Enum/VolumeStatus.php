@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\StorageGateway\Enum;
 
 use Aws\Common\Enum;
@@ -21,16 +21,15 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable VolumeStatus values
  */
-class VolumeStatus extends Enum
-{
-    const CREATING = 'CREATING';
-    const AVAILABLE = 'AVAILABLE';
-    const RESTORING = 'RESTORING';
-    const BOOTSTRAPPING = 'BOOTSTRAPPING';
-    const IRRECOVERABLE = 'IRRECOVERABLE';
-    const PASS_THROUGH = 'PASS THROUGH';
-    const RESTORE_AND_PASS_THROUGH = 'RESTORE AND PASS THROUGH';
-    const DELETED = 'DELETED';
-    const WORKING_STORAGE_NOT_CONFIGURED = 'WORKING STORAGE NOT CONFIGURED';
-    const UPLOAD_BUFFER_NOT_CONFIGURED = 'UPLOAD BUFFER NOT CONFIGURED';
+class VolumeStatus extends Enum {
+	const CREATING = 'CREATING';
+	const AVAILABLE = 'AVAILABLE';
+	const RESTORING = 'RESTORING';
+	const BOOTSTRAPPING = 'BOOTSTRAPPING';
+	const IRRECOVERABLE = 'IRRECOVERABLE';
+	const PASS_THROUGH = 'PASS THROUGH';
+	const RESTORE_AND_PASS_THROUGH = 'RESTORE AND PASS THROUGH';
+	const DELETED = 'DELETED';
+	const WORKING_STORAGE_NOT_CONFIGURED = 'WORKING STORAGE NOT CONFIGURED';
+	const UPLOAD_BUFFER_NOT_CONFIGURED = 'UPLOAD BUFFER NOT CONFIGURED';
 }

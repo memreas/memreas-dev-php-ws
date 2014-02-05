@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticLoadBalancing\Exception;
 
 /**
  * The specified SSL ID does not refer to a valid SSL certificate in the AWS Identity and Access Management Service.
  */
-class CertificateNotFoundException extends ElasticLoadBalancingException {}
+class CertificateNotFoundException extends ElasticLoadBalancingException {
+}

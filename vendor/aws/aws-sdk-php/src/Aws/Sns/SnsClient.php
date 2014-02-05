@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sns;
 
 use Aws\Common\Client\AbstractClient;
@@ -56,30 +56,26 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getListSubscriptionsIterator(array $args = array()) The input array uses the parameters of the ListSubscriptions operation
  * @method ResourceIteratorInterface getListSubscriptionsByTopicIterator(array $args = array()) The input array uses the parameters of the ListSubscriptionsByTopic operation
  * @method ResourceIteratorInterface getListTopicsIterator(array $args = array()) The input array uses the parameters of the ListTopics operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-sns.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Sns.SnsClient.html API docs
  */
-class SnsClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2010-03-31';
-
-    /**
-     * Factory method to create a new Amazon Simple Notification Service client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/sns-%s.php'
-            ))
-            ->build();
-    }
+class SnsClient extends AbstractClient {
+	const LATEST_API_VERSION = '2010-03-31';
+	
+	/**
+	 * Factory method to create a new Amazon Simple Notification Service client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/sns-%s.php' 
+		) )->build ();
+	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudFront\Exception;
 
 /**
  * The default root object file name is too big or contains an invalid character.
  */
-class InvalidDefaultRootObjectException extends CloudFrontException {}
+class InvalidDefaultRootObjectException extends CloudFrontException {
+}

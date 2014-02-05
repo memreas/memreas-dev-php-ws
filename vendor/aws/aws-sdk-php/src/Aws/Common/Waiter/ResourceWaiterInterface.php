@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Waiter;
 
 use Aws\Common\Client\AwsClientInterface;
@@ -21,14 +21,14 @@ use Aws\Common\Client\AwsClientInterface;
 /**
  * Interface used in conjunction with clients to wait on a resource
  */
-interface ResourceWaiterInterface extends WaiterInterface
-{
-    /**
-     * Set the client associated with the waiter
-     *
-     * @param AwsClientInterface $client Client to use with the waiter
-     *
-     * @return self
-     */
-    public function setClient(AwsClientInterface $client);
+interface ResourceWaiterInterface extends WaiterInterface {
+	/**
+	 * Set the client associated with the waiter
+	 *
+	 * @param AwsClientInterface $client
+	 *        	Client to use with the waiter
+	 *        	
+	 * @return self
+	 */
+	public function setClient(AwsClientInterface $client);
 }

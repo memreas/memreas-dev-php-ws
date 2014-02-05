@@ -3,6 +3,5 @@
 /**
  * @Annotation
  */
-class Entity
-{
+class Entity {
 }

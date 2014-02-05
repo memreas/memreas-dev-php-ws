@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Route53\Exception;
 
 /**
- * The hosted zone contains resource record sets in addition to the default NS and SOA resource record sets. Before you can delete the hosted zone, you must delete the additional resource record sets.
+ * The hosted zone contains resource record sets in addition to the default NS and SOA resource record sets.
+ * Before you can delete the hosted zone, you must delete the additional resource record sets.
  */
-class HostedZoneNotEmptyException extends Route53Exception {}
+class HostedZoneNotEmptyException extends Route53Exception {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
  * The e-mail address you provided is associated with more than one account.
  */
-class AmbiguousGrantByEmailAddressException extends S3Exception {}
+class AmbiguousGrantByEmailAddressException extends S3Exception {
+}

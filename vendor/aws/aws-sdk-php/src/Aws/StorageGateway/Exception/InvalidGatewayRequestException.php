@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\StorageGateway\Exception;
 
 /**
- * An exception occurred because an invalid gateway request was issued to the service. See the error and message fields for more information.
+ * An exception occured because an invalid gateway request was issued to the service.
+ * See the error and message fields for more information.
  */
-class InvalidGatewayRequestException extends StorageGatewayException {}
+class InvalidGatewayRequestException extends StorageGatewayException {
+}

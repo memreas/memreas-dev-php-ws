@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Swf\Exception;
 
 /**
- * Returned if the specified domain already exists. You will get this fault even if the existing domain is in deprecated status.
+ * Returned if the specified domain already exists.
+ * You will get this fault even if the existing domain is in deprecated status.
  */
-class DomainAlreadyExistsException extends SwfException {}
+class DomainAlreadyExistsException extends SwfException {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Redshift\Exception;
 
 /**
- * The cluster parameter group action can not be completed because another task is in progress that involves the parameter group. Wait a few moments and try the operation again.
+ * The cluster parameter group action can not be completed because another task is in progress that involves the parameter group.
+ * Wait a few moments and try the operation again.
  */
-class InvalidClusterParameterGroupStateException extends RedshiftException {}
+class InvalidClusterParameterGroupStateException extends RedshiftException {
+}

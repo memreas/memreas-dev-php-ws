@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudFormation\Exception;
 
 /**
- * Exception that occurs when a InsufficientCapabilitiesException error is encountered
+ * The template contains resources with capabilities that were not specified in the Capabilities parameter.
  */
-class InsufficientCapabilitiesException extends CloudFormationException {}
+class InsufficientCapabilitiesException extends CloudFormationException {
+}

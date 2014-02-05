@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\OpsWorks;
 
 use Aws\Common\Client\AbstractClient;
@@ -52,9 +52,11 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeInstances(array $args = array()) {@command OpsWorks DescribeInstances}
  * @method Model describeLayers(array $args = array()) {@command OpsWorks DescribeLayers}
  * @method Model describeLoadBasedAutoScaling(array $args = array()) {@command OpsWorks DescribeLoadBasedAutoScaling}
+ * @method Model describeMyUserProfile(array $args = array()) {@command OpsWorks DescribeMyUserProfile}
  * @method Model describePermissions(array $args = array()) {@command OpsWorks DescribePermissions}
  * @method Model describeRaidArrays(array $args = array()) {@command OpsWorks DescribeRaidArrays}
  * @method Model describeServiceErrors(array $args = array()) {@command OpsWorks DescribeServiceErrors}
+ * @method Model describeStackSummary(array $args = array()) {@command OpsWorks DescribeStackSummary}
  * @method Model describeStacks(array $args = array()) {@command OpsWorks DescribeStacks}
  * @method Model describeTimeBasedAutoScaling(array $args = array()) {@command OpsWorks DescribeTimeBasedAutoScaling}
  * @method Model describeUserProfiles(array $args = array()) {@command OpsWorks DescribeUserProfiles}
@@ -77,6 +79,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model updateElasticIp(array $args = array()) {@command OpsWorks UpdateElasticIp}
  * @method Model updateInstance(array $args = array()) {@command OpsWorks UpdateInstance}
  * @method Model updateLayer(array $args = array()) {@command OpsWorks UpdateLayer}
+ * @method Model updateMyUserProfile(array $args = array()) {@command OpsWorks UpdateMyUserProfile}
  * @method Model updateStack(array $args = array()) {@command OpsWorks UpdateStack}
  * @method Model updateUserProfile(array $args = array()) {@command OpsWorks UpdateUserProfile}
  * @method Model updateVolume(array $args = array()) {@command OpsWorks UpdateVolume}
@@ -94,31 +97,26 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeTimeBasedAutoScalingIterator(array $args = array()) The input array uses the parameters of the DescribeTimeBasedAutoScaling operation
  * @method ResourceIteratorInterface getDescribeUserProfilesIterator(array $args = array()) The input array uses the parameters of the DescribeUserProfiles operation
  * @method ResourceIteratorInterface getDescribeVolumesIterator(array $args = array()) The input array uses the parameters of the DescribeVolumes operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-opsworks.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.OpsWorks.OpsWorksClient.html API docs
  */
-class OpsWorksClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2013-02-18';
-
-    /**
-     * Factory method to create a new AWS OpsWorks client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/opsworks-%s.php'
-            ))
-            ->setExceptionParser(new JsonQueryExceptionParser())
-            ->build();
-    }
+class OpsWorksClient extends AbstractClient {
+	const LATEST_API_VERSION = '2013-02-18';
+	
+	/**
+	 * Factory method to create a new AWS OpsWorks client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/opsworks-%s.php' 
+		) )->setExceptionParser ( new JsonQueryExceptionParser () )->build ();
+	}
 }

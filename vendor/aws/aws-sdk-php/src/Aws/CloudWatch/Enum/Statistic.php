@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudWatch\Enum;
 
 use Aws\Common\Enum;
@@ -21,11 +21,10 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable Statistic values
  */
-class Statistic extends Enum
-{
-    const SAMPLE_COUNT = 'SampleCount';
-    const AVERAGE = 'Average';
-    const SUM = 'Sum';
-    const MINIMUM = 'Minimum';
-    const MAXIMUM = 'Maximum';
+class Statistic extends Enum {
+	const SAMPLE_COUNT = 'SampleCount';
+	const AVERAGE = 'Average';
+	const SUM = 'Sum';
+	const MINIMUM = 'Minimum';
+	const MAXIMUM = 'Maximum';
 }

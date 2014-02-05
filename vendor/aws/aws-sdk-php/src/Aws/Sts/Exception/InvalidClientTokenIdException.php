@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sts\Exception;
 
 /**
  * The X.509 certificate or AWS Access Key ID provided does not exist in our records.
  */
-class InvalidClientTokenIdException extends StsException {}
+class InvalidClientTokenIdException extends StsException {
+}

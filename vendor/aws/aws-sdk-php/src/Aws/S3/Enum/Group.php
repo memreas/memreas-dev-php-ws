@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Enum;
 
 use Aws\Common\Enum;
@@ -21,9 +21,8 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable Amazon S3 group options for ACL grantees
  */
-class Group extends Enum
-{
-    const AUTHENTICATED_USERS = 'http://acs.amazonaws.com/groups/global/AuthenticatedUsers';
-    const ALL_USERS           = 'http://acs.amazonaws.com/groups/global/AllUsers';
-    const LOG_DELIVERY        = 'http://acs.amazonaws.com/groups/s3/LogDelivery';
+class Group extends Enum {
+	const AUTHENTICATED_USERS = 'http://acs.amazonaws.com/groups/global/AuthenticatedUsers';
+	const ALL_USERS = 'http://acs.amazonaws.com/groups/global/AllUsers';
+	const LOG_DELIVERY = 'http://acs.amazonaws.com/groups/s3/LogDelivery';
 }

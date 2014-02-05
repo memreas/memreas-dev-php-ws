@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudWatch\Exception;
 
 /**
  * Bad or out-of-range value was supplied for the input parameter.
  */
-class InvalidParameterValueException extends CloudWatchException {}
+class InvalidParameterValueException extends CloudWatchException {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\SimpleDb;
 
 use Aws\Common\Client\AbstractClient;
@@ -38,43 +38,38 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model select(array $args = array()) {@command SimpleDb Select}
  * @method ResourceIteratorInterface getListDomainsIterator(array $args = array()) The input array uses the parameters of the ListDomains operation
  * @method ResourceIteratorInterface getSelectIterator(array $args = array()) The input array uses the parameters of the Select operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-simpledb.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.SimpleDb.SimpleDbClient.html API docs
  */
-class SimpleDbClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2009-04-15';
-
-    /**
-     * Factory method to create a new Amazon SimpleDB client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/simpledb-%s.php'
-            ))
-            ->setIteratorsConfig(array(
-                'token_key' => 'NextToken',
-                'token_param' => 'NextToken',
-                'operations' => array(
-                    'ListDomains' => array(
-                        'result_key' => 'DomainNames',
-                        'limit_key' => 'MaxNumberOfDomains'
-                    ),
-                    'Select' => array(
-                        'result_key' => 'Items'
-                    )
-                )
-            ))
-            ->build();
-    }
+class SimpleDbClient extends AbstractClient {
+	const LATEST_API_VERSION = '2009-04-15';
+	
+	/**
+	 * Factory method to create a new Amazon SimpleDB client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/simpledb-%s.php' 
+		) )->setIteratorsConfig ( array (
+				'token_key' => 'NextToken',
+				'token_param' => 'NextToken',
+				'operations' => array (
+						'ListDomains' => array (
+								'result_key' => 'DomainNames',
+								'limit_key' => 'MaxNumberOfDomains' 
+						),
+						'Select' => array (
+								'result_key' => 'Items' 
+						) 
+				) 
+		) )->build ();
+	}
 }

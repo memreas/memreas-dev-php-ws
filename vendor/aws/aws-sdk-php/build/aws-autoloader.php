@@ -13,23 +13,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 require_once __DIR__ . '/Symfony/Component/ClassLoader/UniversalClassLoader.php';
 
-if (!defined('AWS_FILE_PREFIX')) {
-    define('AWS_FILE_PREFIX', __DIR__);
+if (! defined ( 'AWS_FILE_PREFIX' )) {
+	define ( 'AWS_FILE_PREFIX', __DIR__ );
 }
 
-$classLoader = new Symfony\Component\ClassLoader\UniversalClassLoader();
-$classLoader->registerNamespaces(array(
-    'Aws'      => AWS_FILE_PREFIX,
-    'Guzzle'   => AWS_FILE_PREFIX,
-    'Symfony'  => AWS_FILE_PREFIX,
-    'Doctrine' => AWS_FILE_PREFIX,
-    'Psr'      => AWS_FILE_PREFIX,
-    'Monolog'  => AWS_FILE_PREFIX
-));
+$classLoader = new Symfony\Component\ClassLoader\UniversalClassLoader ();
+$classLoader->registerNamespaces ( array (
+		'Aws' => AWS_FILE_PREFIX,
+		'Guzzle' => AWS_FILE_PREFIX,
+		'Symfony' => AWS_FILE_PREFIX,
+		'Doctrine' => AWS_FILE_PREFIX,
+		'Psr' => AWS_FILE_PREFIX,
+		'Monolog' => AWS_FILE_PREFIX 
+) );
 
-$classLoader->register();
+$classLoader->register ();
 
 return $classLoader;

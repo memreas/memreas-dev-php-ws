@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\StorageGateway\Enum;
 
 use Aws\Common\Enum;
@@ -21,9 +21,8 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable BandwidthType values
  */
-class BandwidthType extends Enum
-{
-    const UPLOAD = 'UPLOAD';
-    const DOWNLOAD = 'DOWNLOAD';
-    const ALL = 'ALL';
+class BandwidthType extends Enum {
+	const UPLOAD = 'UPLOAD';
+	const DOWNLOAD = 'DOWNLOAD';
+	const ALL = 'ALL';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudTrail\Exception;
 
 /**
- * Exception that occurs when a InsufficientS3BucketPolicyException error is encountered
+ * This exception is thrown when the policy on the S3 bucket is not sufficient.
  */
-class InsufficientS3BucketPolicyException extends CloudTrailException {}
+class InsufficientS3BucketPolicyException extends CloudTrailException {
+}

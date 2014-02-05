@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,36 +14,36 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Model\BatchRequest;
 
 /**
- * Represents a batch delete request. It is composed of a table name and key
+ * Represents a batch delete request.
+ * It is composed of a table name and key
  */
-class UnprocessedRequest extends AbstractWriteRequest
-{
-    /**
-     * @var array The raw data from a batch write request's response
-     */
-    protected $data;
-
-    /**
-     * @param array  $data
-     * @param string $tableName The name of the DynamoDB table
-     */
-    public function __construct(array $data, $tableName)
-    {
-        $this->data      = $data;
-        $this->tableName = $tableName;
-    }
-
-    /**
-     * The parameter form of the request
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->data;
-    }
+class UnprocessedRequest extends AbstractWriteRequest {
+	/**
+	 *
+	 * @var array The raw data from a batch write request's response
+	 */
+	protected $data;
+	
+	/**
+	 *
+	 * @param array $data        	
+	 * @param string $tableName
+	 *        	The name of the DynamoDB table
+	 */
+	public function __construct(array $data, $tableName) {
+		$this->data = $data;
+		$this->tableName = $tableName;
+	}
+	
+	/**
+	 * The parameter form of the request
+	 *
+	 * @return array
+	 */
+	public function toArray() {
+		return $this->data;
+	}
 }

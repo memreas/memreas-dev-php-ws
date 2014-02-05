@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Emr\Enum;
 
 use Aws\Common\Enum;
@@ -21,13 +21,12 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ClusterState values
  */
-class ClusterState extends Enum
-{
-    const STARTING = 'STARTING';
-    const BOOTSTRAPPING = 'BOOTSTRAPPING';
-    const RUNNING = 'RUNNING';
-    const WAITING = 'WAITING';
-    const TERMINATING = 'TERMINATING';
-    const TERMINATED = 'TERMINATED';
-    const TERMINATED_WITH_ERRORS = 'TERMINATED_WITH_ERRORS';
+class ClusterState extends Enum {
+	const STARTING = 'STARTING';
+	const BOOTSTRAPPING = 'BOOTSTRAPPING';
+	const RUNNING = 'RUNNING';
+	const WAITING = 'WAITING';
+	const TERMINATING = 'TERMINATING';
+	const TERMINATED = 'TERMINATED';
+	const TERMINATED_WITH_ERRORS = 'TERMINATED_WITH_ERRORS';
 }

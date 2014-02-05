@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\AutoScaling\Enum;
 
 use Aws\Common\Enum;
@@ -21,11 +21,10 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable LifecycleState values
  */
-class LifecycleState extends Enum
-{
-    const PENDING = 'Pending';
-    const QUARANTINED = 'Quarantined';
-    const IN_SERVICE = 'InService';
-    const TERMINATING = 'Terminating';
-    const TERMINATED = 'Terminated';
+class LifecycleState extends Enum {
+	const PENDING = 'Pending';
+	const QUARANTINED = 'Quarantined';
+	const IN_SERVICE = 'InService';
+	const TERMINATING = 'Terminating';
+	const TERMINATED = 'Terminated';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Ses;
 
 use Aws\Common\Client\AbstractClient;
@@ -47,31 +47,27 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method waitUntilIdentityExists(array $input) Wait using the IdentityExists waiter. The input array uses the parameters of the GetIdentityVerificationAttributes operation and waiter specific settings
  * @method ResourceIteratorInterface getListIdentitiesIterator(array $args = array()) The input array uses the parameters of the ListIdentities operation
  * @method ResourceIteratorInterface getListVerifiedEmailAddressesIterator(array $args = array()) The input array uses the parameters of the ListVerifiedEmailAddresses operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-ses.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Ses.SesClient.html API docs
  */
-class SesClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2010-12-01';
-
-    /**
-     * Factory method to create a new Amazon Simple Email Service client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/ses-%s.php',
-                Options::SIGNATURE_SERVICE   => 'ses',
-            ))
-            ->build();
-    }
+class SesClient extends AbstractClient {
+	const LATEST_API_VERSION = '2010-12-01';
+	
+	/**
+	 * Factory method to create a new Amazon Simple Email Service client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/ses-%s.php',
+				Options::SIGNATURE_SERVICE => 'ses' 
+		) )->build ();
+	}
 }

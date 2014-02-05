@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\DataPipeline;
 
 use Aws\Common\Enum\ClientOptions;
@@ -22,18 +22,16 @@ use Aws\DataPipeline\DataPipelineClient;
 /**
  * @covers Aws\DataPipeline\DataPipelineClient
  */
-class DataPipelineClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testFactoryInitializesClient()
-    {
-        $client = DataPipelineClient::factory(array(
-            ClientOptions::KEY    => 'foo',
-            ClientOptions::SECRET => 'bar',
-            ClientOptions::REGION => 'us-east-1'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://datapipeline.us-east-1.amazonaws.com', $client->getBaseUrl());
-    }
+class DataPipelineClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testFactoryInitializesClient() {
+		$client = DataPipelineClient::factory ( array (
+				ClientOptions::KEY => 'foo',
+				ClientOptions::SECRET => 'bar',
+				ClientOptions::REGION => 'us-east-1' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://datapipeline.us-east-1.amazonaws.com', $client->getBaseUrl () );
+	}
 }

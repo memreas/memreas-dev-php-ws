@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticTranscoder\Exception;
 
 /**
- * Too many operations for a given AWS account. For example, the number of pipelines exceeds the maximum allowed.
+ * Too many operations for a given AWS account.
+ * For example, the number of pipelines exceeds the maximum allowed.
  */
-class LimitExceededException extends ElasticTranscoderException {}
+class LimitExceededException extends ElasticTranscoderException {
+}

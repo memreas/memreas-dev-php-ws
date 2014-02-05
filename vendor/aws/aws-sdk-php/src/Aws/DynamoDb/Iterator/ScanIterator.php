@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Iterator;
 
 use Aws\Common\Iterator\AwsResourceIterator;
@@ -21,37 +21,37 @@ use Guzzle\Common\Version;
 use Guzzle\Service\Resource\Model;
 
 /**
- * Iterator for a DynamoDB Scan operation. Can also get the total scanned count
+ * Iterator for a DynamoDB Scan operation.
+ * Can also get the total scanned count
  *
  * @deprecated Getting the scanned count is possible using event listeners, so this class is not needed
  */
-class ScanIterator extends AwsResourceIterator
-{
-    /**
-     * @var int Total number of scanned items
-     */
-    protected $scannedCount = 0;
-
-    /**
-     * Get the total number of scanned items
-     *
-     * @return int
-     */
-    public function getScannedCount()
-    {
-        Version::warn('This method is deprecated and will be removed in a future version of the SDK. Getting the '
-            . 'scanned count is possible using event listeners.');
-
-        return $this->scannedCount;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function handleResults(Model $result)
-    {
-        $this->scannedCount += (int) $result->get('ScannedCount');
-
-        return parent::handleResults($result);
-    }
+class ScanIterator extends AwsResourceIterator {
+	/**
+	 *
+	 * @var int Total number of scanned items
+	 */
+	protected $scannedCount = 0;
+	
+	/**
+	 * Get the total number of scanned items
+	 *
+	 * @return int
+	 */
+	public function getScannedCount() {
+		Version::warn ( 'This method is deprecated and will be removed in a future version of the SDK. Getting the ' . 'scanned count is possible using event listeners.' );
+		
+		return $this->scannedCount;
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function handleResults(Model $result) {
+		$this->scannedCount += ( int ) $result->get ( 'ScannedCount' );
+		
+		return parent::handleResults ( $result );
+	}
 }

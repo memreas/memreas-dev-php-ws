@@ -9,18 +9,14 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="group1")
- * 
  */
-class Group1  
-{
-    protected $inputFilter;
-
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer");
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $a_id;
-
-    
+class Group1 {
+	protected $inputFilter;
+	
+	/**
+	 * @ORM\Id
+	 * @ORM\Column(type="integer");
+	 * @ORM\GeneratedValue(strategy="AUTO")
+	 */
+	protected $a_id;
 }

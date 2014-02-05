@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,11 +14,12 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * The Tag provided was not a valid tag. This can occur if the Tag did not pass input validation. See the
+ * The Tag provided was not a valid tag.
+ * This can occur if the Tag did not pass input validation. See the
  * CostAllocation docs for a description of valid tags.
  */
-class InvalidTagErrorException extends S3Exception {}
+class InvalidTagErrorException extends S3Exception {
+}

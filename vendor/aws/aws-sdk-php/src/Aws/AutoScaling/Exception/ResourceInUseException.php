@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\AutoScaling\Exception;
 
 /**
  * This is returned when you cannot delete a launch configuration or Auto Scaling group because it is being used.
  */
-class ResourceInUseException extends AutoScalingException {}
+class ResourceInUseException extends AutoScalingException {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\OpsWorks\Enum;
 
 use Aws\Common\Enum;
@@ -21,15 +21,14 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable LayerType values
  */
-class LayerType extends Enum
-{
-    const LB = 'lb';
-    const WEB = 'web';
-    const PHP_APP = 'php-app';
-    const RAILS_APP = 'rails-app';
-    const NODEJS_APP = 'nodejs-app';
-    const MEMCACHED = 'memcached';
-    const DB_MASTER = 'db-master';
-    const MONITORING_MASTER = 'monitoring-master';
-    const CUSTOM = 'custom';
+class LayerType extends Enum {
+	const LB = 'lb';
+	const WEB = 'web';
+	const PHP_APP = 'php-app';
+	const RAILS_APP = 'rails-app';
+	const NODEJS_APP = 'nodejs-app';
+	const MEMCACHED = 'memcached';
+	const DB_MASTER = 'db-master';
+	const MONITORING_MASTER = 'monitoring-master';
+	const CUSTOM = 'custom';
 }

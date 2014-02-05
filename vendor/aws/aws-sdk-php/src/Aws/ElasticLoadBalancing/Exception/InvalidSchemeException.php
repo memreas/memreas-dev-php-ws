@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticLoadBalancing\Exception;
 
 /**
- * Invalid value for scheme. Scheme can only be specified for load balancers in VPC.
+ * Invalid value for scheme.
+ * Scheme can only be specified for load balancers in VPC.
  */
-class InvalidSchemeException extends ElasticLoadBalancingException {}
+class InvalidSchemeException extends ElasticLoadBalancingException {
+}

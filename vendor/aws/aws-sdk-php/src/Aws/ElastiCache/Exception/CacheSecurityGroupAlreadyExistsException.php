@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElastiCache\Exception;
 
 /**
  * A cache security group with the specified name already exists.
  */
-class CacheSecurityGroupAlreadyExistsException extends ElastiCacheException {}
+class CacheSecurityGroupAlreadyExistsException extends ElastiCacheException {
+}

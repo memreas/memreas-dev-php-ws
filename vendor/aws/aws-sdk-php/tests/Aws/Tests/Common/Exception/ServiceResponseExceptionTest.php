@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Common\Exception;
 
 use Aws\Common\Exception\ServiceResponseException;
@@ -23,35 +23,33 @@ use Guzzle\Http\Message\Request;
 /**
  * @covers Aws\Common\Exception\ServiceResponseException
  */
-class ServiceResponseExceptionTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testRepresentsException()
-    {
-        $e = new ServiceResponseException('Foo!');
-        $e->setExceptionCode('foo');
-        $this->assertEquals('foo', $e->getExceptionCode());
-        $e->setExceptionType('client');
-        $this->assertEquals('client', $e->getExceptionType());
-        $e->setRequestId('xyz');
-        $this->assertEquals('xyz', $e->getRequestId());
-
-        $response = new Response(200);
-        $e->setResponse($response);
-        $this->assertSame($response, $e->getResponse());
-
-        $this->assertEquals('Aws\Common\Exception\ServiceResponseException: AWS Error Code: foo, Status Code: 200, AWS Request ID: xyz, AWS Error Type: client, AWS Error Message: Foo!', (string) $e);
-    }
-
-    public function testAddsUserAgentIfAvailable()
-    {
-        $request = new Request('GET', 'http://www.foo.com', array('User-Agent' => 'Foo/Bar'));
-        $response = new Response(200);
-        $e = new ServiceResponseException('Foo!');
-        $e->setExceptionCode('foo');
-        $e->setExceptionType('client');
-        $e->setRequestId('xyz');
-        $e->setRequest($request);
-        $e->setResponse($response);
-        $this->assertEquals('Aws\Common\Exception\ServiceResponseException: AWS Error Code: foo, Status Code: 200, AWS Request ID: xyz, AWS Error Type: client, AWS Error Message: Foo!, User-Agent: Foo/Bar', (string) $e);
-    }
+class ServiceResponseExceptionTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testRepresentsException() {
+		$e = new ServiceResponseException ( 'Foo!' );
+		$e->setExceptionCode ( 'foo' );
+		$this->assertEquals ( 'foo', $e->getExceptionCode () );
+		$e->setExceptionType ( 'client' );
+		$this->assertEquals ( 'client', $e->getExceptionType () );
+		$e->setRequestId ( 'xyz' );
+		$this->assertEquals ( 'xyz', $e->getRequestId () );
+		
+		$response = new Response ( 200 );
+		$e->setResponse ( $response );
+		$this->assertSame ( $response, $e->getResponse () );
+		
+		$this->assertEquals ( 'Aws\Common\Exception\ServiceResponseException: AWS Error Code: foo, Status Code: 200, AWS Request ID: xyz, AWS Error Type: client, AWS Error Message: Foo!', ( string ) $e );
+	}
+	public function testAddsUserAgentIfAvailable() {
+		$request = new Request ( 'GET', 'http://www.foo.com', array (
+				'User-Agent' => 'Foo/Bar' 
+		) );
+		$response = new Response ( 200 );
+		$e = new ServiceResponseException ( 'Foo!' );
+		$e->setExceptionCode ( 'foo' );
+		$e->setExceptionType ( 'client' );
+		$e->setRequestId ( 'xyz' );
+		$e->setRequest ( $request );
+		$e->setResponse ( $response );
+		$this->assertEquals ( 'Aws\Common\Exception\ServiceResponseException: AWS Error Code: foo, Status Code: 200, AWS Request ID: xyz, AWS Error Type: client, AWS Error Message: Foo!, User-Agent: Foo/Bar', ( string ) $e );
+	}
 }

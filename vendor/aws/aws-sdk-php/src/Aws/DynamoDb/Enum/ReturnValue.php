@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Enum;
 
 use Aws\Common\Enum;
@@ -21,11 +21,10 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ReturnValue values
  */
-class ReturnValue extends Enum
-{
-    const NONE = 'NONE';
-    const ALL_OLD = 'ALL_OLD';
-    const UPDATED_OLD = 'UPDATED_OLD';
-    const ALL_NEW = 'ALL_NEW';
-    const UPDATED_NEW = 'UPDATED_NEW';
+class ReturnValue extends Enum {
+	const NONE = 'NONE';
+	const ALL_OLD = 'ALL_OLD';
+	const UPDATED_OLD = 'UPDATED_OLD';
+	const ALL_NEW = 'ALL_NEW';
+	const UPDATED_NEW = 'UPDATED_NEW';
 }

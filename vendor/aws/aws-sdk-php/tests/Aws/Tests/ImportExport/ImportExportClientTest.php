@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\ImportExport;
 
 use Aws\ImportExport\ImportExportClient;
@@ -21,17 +21,15 @@ use Aws\ImportExport\ImportExportClient;
 /**
  * @covers Aws\ImportExport\ImportExportClient
  */
-class ImportExportClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testFactoryInitializesClient()
-    {
-        $client = ImportExportClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV2', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://importexport.amazonaws.com', $client->getBaseUrl());
-    }
+class ImportExportClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testFactoryInitializesClient() {
+		$client = ImportExportClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV2', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://importexport.amazonaws.com', $client->getBaseUrl () );
+	}
 }

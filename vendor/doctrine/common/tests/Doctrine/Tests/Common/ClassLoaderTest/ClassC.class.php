@@ -1,6 +1,3 @@
 <?php
-
-class ClassLoaderTest_ClassC
-{
-
+class ClassLoaderTest_ClassC {
 }

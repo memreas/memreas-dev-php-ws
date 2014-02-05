@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,29 +14,29 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Waiter;
 
 /**
  * Waiter factory used to create waiter objects by short names
  */
-interface WaiterFactoryInterface
-{
-    /**
-     * Create a waiter by name
-     *
-     * @param string $waiter Name of the waiter to create
-     *
-     * @return WaiterInterface
-     */
-    public function build($waiter);
-
-    /**
-     * Check if the factory can create a waiter by a specific name
-     *
-     * @param string $waiter Name of the waiter to check
-     *
-     * @return bool
-     */
-    public function canBuild($waiter);
+interface WaiterFactoryInterface {
+	/**
+	 * Create a waiter by name
+	 *
+	 * @param string $waiter
+	 *        	Name of the waiter to create
+	 *        	
+	 * @return WaiterInterface
+	 */
+	public function build($waiter);
+	
+	/**
+	 * Check if the factory can create a waiter by a specific name
+	 *
+	 * @param string $waiter
+	 *        	Name of the waiter to check
+	 *        	
+	 * @return bool
+	 */
+	public function canBuild($waiter);
 }

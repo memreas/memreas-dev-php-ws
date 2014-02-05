@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Enum;
 
 use Aws\Common\Enum;
@@ -21,11 +21,10 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable Permission values
  */
-class Permission extends Enum
-{
-    const FULL_CONTROL = 'FULL_CONTROL';
-    const WRITE = 'WRITE';
-    const WRITE_ACP = 'WRITE_ACP';
-    const READ = 'READ';
-    const READ_ACP = 'READ_ACP';
+class Permission extends Enum {
+	const FULL_CONTROL = 'FULL_CONTROL';
+	const WRITE = 'WRITE';
+	const WRITE_ACP = 'WRITE_ACP';
+	const READ = 'READ';
+	const READ_ACP = 'READ_ACP';
 }

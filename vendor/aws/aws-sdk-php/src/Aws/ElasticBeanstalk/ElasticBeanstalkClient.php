@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk;
 
 use Aws\Common\Client\AbstractClient;
@@ -63,30 +63,26 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeEnvironmentsIterator(array $args = array()) The input array uses the parameters of the DescribeEnvironments operation
  * @method ResourceIteratorInterface getDescribeEventsIterator(array $args = array()) The input array uses the parameters of the DescribeEvents operation
  * @method ResourceIteratorInterface getListAvailableSolutionStacksIterator(array $args = array()) The input array uses the parameters of the ListAvailableSolutionStacks operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-elasticbeanstalk.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.ElasticBeanstalk.ElasticBeanstalkClient.html API docs
  */
-class ElasticBeanstalkClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2010-12-01';
-
-    /**
-     * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/elasticbeanstalk-%s.php'
-            ))
-            ->build();
-    }
+class ElasticBeanstalkClient extends AbstractClient {
+	const LATEST_API_VERSION = '2010-12-01';
+	
+	/**
+	 * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/elasticbeanstalk-%s.php' 
+		) )->build ();
+	}
 }

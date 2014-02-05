@@ -30,10 +30,10 @@ class Registration {
 		return $result;
 	}
 	public function exec() {
-		$user_id = MUUID::fetchUUID();
+		$user_id = MUUID::fetchUUID ();
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
-//error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
+			// error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$username = trim ( $data->registration->username );
 			$email = trim ( $data->registration->email );
@@ -44,29 +44,23 @@ class Registration {
 			$invited_by = trim ( $data->registration->invited_by );
 			$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 		} else {
-/*			
-error_log ( "Inside Registration  ----> ".$_REQUEST['username'].PHP_EOL );
-error_log ( "Inside Registration  ----> ".$_REQUEST['email'].PHP_EOL );
-error_log ( "Inside Registration  ----> ".$_REQUEST['password'].PHP_EOL );
-error_log ( "Inside Registration  ----> ".$_REQUEST['device_token'].PHP_EOL );
-error_log ( "Inside Registration  ----> ".$_REQUEST['device_type'].PHP_EOL );
-error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
-*/
+			/*
+			 * error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['email'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['password'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['device_token'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['device_type'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
+			 */
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
 			$password = trim ( $_REQUEST ['password'] );
 			$device_token = trim ( $_REQUEST ['device_token'] );
 			$device_type = trim ( $_REQUEST ['device_type'] );
-			if (isset($_REQUEST ['invited_by'])&&(!empty($_REQUEST ['invited_by']))) {
-				$invited_by = $_REQUEST['invited_by'];
+			if (isset ( $_REQUEST ['invited_by'] ) && (! empty ( $_REQUEST ['invited_by'] ))) {
+				$invited_by = $_REQUEST ['invited_by'];
 				
-				if (!$this->is_valid_email($invited_by))
+				if (! $this->is_valid_email ( $invited_by ))
 					throw new \Exception ( 'fail: please enter valid email address for invited by.' );
-				
 			} else {
 				$invited_by = null;
-			} 
+			}
 		}
 		
 		try {
@@ -75,19 +69,19 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				
 				if (! $checkvalidemail)
 					throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
-				
-				/*
+					
+					/*
 				 * TODO: Fix email check prior to go-beta...
 				 */
-				///$sql = "SELECT u FROM Application\Entity\User u  where u.email_address = '$email' or u.username = '$username'";
-				$sql = "SELECT u FROM Application\Entity\User u  where u.username = '".$username."'";
-				error_log ( "Inside Registration sql ...".$sql.PHP_EOL );
+					// /$sql = "SELECT u FROM Application\Entity\User u where u.email_address = '$email' or u.username = '$username'";
+				$sql = "SELECT u FROM Application\Entity\User u  where u.username = '" . $username . "'";
+				error_log ( "Inside Registration sql ..." . $sql . PHP_EOL );
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				try {
 					$result = $statement->getOneOrNullResult ();
-				} catch (\Exception $e) {
-					error_log("SQL Failed ---> $sql ".PHP_EOL);
-					error_log("Caught exception $e".PHP_EOL);
+				} catch ( \Exception $e ) {
+					error_log ( "SQL Failed ---> $sql " . PHP_EOL );
+					error_log ( "Caught exception $e" . PHP_EOL );
 				}
 				if (! empty ( $result )) {
 					if (($result->email_address == $email) && ($result->username != $username)) {
@@ -126,7 +120,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				$this->dbAdapter->flush ();
 				
 				if (! empty ( $device_token ) && ! empty ( $device_type )) {
-					$device_id = MUUID::fetchUUID();
+					$device_id = MUUID::fetchUUID ();
 					
 					$tblDevice = new \Application\Entity\Device ();
 					$tblDevice->device_id = $device_id;
@@ -145,7 +139,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					$content_type = $_FILES ['f'] ['type'];
 					
 					// dirPath = /data/temp_uuid/media/userimage/
-					$temp_job_uuid_dir = MUUID::fetchUUID();
+					$temp_job_uuid_dir = MUUID::fetchUUID ();
 					$dirPath = getcwd () . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
 					if (! file_exists ( $dirPath )) {
 						mkdir ( $dirPath, 0755, true );
@@ -157,14 +151,14 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					$move = move_uploaded_file ( $_FILES ['f'] ['tmp_name'], $file );
 					if (! $move)
 						throw new \Exception ( 'Please Upload Image.' );
-					
-					// Upload to S3 here
-					$media_id = MUUID::fetchUUID();
+						
+						// Upload to S3 here
+					$media_id = MUUID::fetchUUID ();
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
 					
-//error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
-//error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
+					// error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
+					// error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
 					
 					// Set the metatdata
 					// $s3path = $user_id . '/image/';
@@ -201,9 +195,9 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					$q_update = "UPDATE Application\Entity\User u  SET u.profile_photo = '1' WHERE u.user_id ='$user_id'";
 					$statement = $this->dbAdapter->createQuery ( $q_update );
 					$r = $statement->getResult ();
-//error_log ( "statement->getResult() ----> " . print_r ( $r, true ) . PHP_EOL );
-//error_log ( "*************************************************************" . PHP_EOL );
-//error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
+					// error_log ( "statement->getResult() ----> " . print_r ( $r, true ) . PHP_EOL );
+					// error_log ( "*************************************************************" . PHP_EOL );
+					// error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 					
 					// Now publish the message so any photo is thumbnailed.
 					$message_data = array (
@@ -227,7 +221,7 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					$message = "Media Successfully add";
 				}
 				
-//error_log ( "About to email..." . PHP_EOL );
+				// error_log ( "About to email..." . PHP_EOL );
 				// API Info
 				// http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
 				// Always set content-type when sending HTML email
@@ -248,14 +242,14 @@ error_log ( "Inside Registration  ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				
 				$status = 'Success';
 				$message = "Welcome to Event App. Your profile has been created.";
-//error_log ( "Finished..." . PHP_EOL );
+				// error_log ( "Finished..." . PHP_EOL );
 			} else {
 				throw new \Exception ( 'Your profile is not created successfully. Please check all data you have inserted are proper.' );
 			}
 		} catch ( \Exception $exc ) {
 			$status = 'Failure';
 			$message = $exc->getMessage ();
-error_log ( "error message ----> $message" . PHP_EOL );
+			error_log ( "error message ----> $message" . PHP_EOL );
 		}
 		
 		header ( "Content-type: text/xml" );
@@ -265,14 +259,11 @@ error_log ( "error message ----> $message" . PHP_EOL );
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "<userid>" . $user_id . "</userid>";
-        $xml_output .= "</registrationresponse>";
-        $xml_output .= "</xml>";
-        ob_clean();
-        echo $xml_output;
-    }
-
-
-
+		$xml_output .= "</registrationresponse>";
+		$xml_output .= "</xml>";
+		ob_clean ();
+		echo $xml_output;
+	}
 }
 
 ?>

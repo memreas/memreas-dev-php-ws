@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Ec2\Enum;
 
 use Aws\Common\Enum;
@@ -21,10 +21,9 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable PlacementGroupState values
  */
-class PlacementGroupState extends Enum
-{
-    const PENDING = 'pending';
-    const AVAILABLE = 'available';
-    const DELETING = 'deleting';
-    const DELETED = 'deleted';
+class PlacementGroupState extends Enum {
+	const PENDING = 'pending';
+	const AVAILABLE = 'available';
+	const DELETING = 'deleting';
+	const DELETED = 'deleted';
 }

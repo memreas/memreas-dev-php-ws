@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Glacier\Enum;
 
 use Aws\Common\Enum;
@@ -21,9 +21,8 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable StatusCode values
  */
-class StatusCode extends Enum
-{
-    const IN_PROGRESS = 'InProgress';
-    const SUCCEEDED = 'Succeeded';
-    const FAILED = 'Failed';
+class StatusCode extends Enum {
+	const IN_PROGRESS = 'InProgress';
+	const SUCCEEDED = 'Succeeded';
+	const FAILED = 'Failed';
 }

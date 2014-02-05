@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,23 +14,21 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Rds\Waiter;
 
-class DBAvailableTest extends \Guzzle\Tests\GuzzleTestCase
-{
+class DBAvailableTest extends \Guzzle\Tests\GuzzleTestCase {
 	/**
-     * @var RdsClient
-     */
-    public $client;
-
-    public function testDBAvailable()
-    {
-        $this->client = $this->getServiceBuilder()->get('rds', true);
-        $this->setMockResponse($this->client, 'rds/describe_db_instances');
-        $this->client->waitUntil('__DBInstanceState', array(
-        	'DBInstanceIdentifier' => 'foo',
-        	'waiter.success.value' => "available",
-        	'waiter.interval'      => 0));
-    }
+	 *
+	 * @var RdsClient
+	 */
+	public $client;
+	public function testDBAvailable() {
+		$this->client = $this->getServiceBuilder ()->get ( 'rds', true );
+		$this->setMockResponse ( $this->client, 'rds/describe_db_instances' );
+		$this->client->waitUntil ( '__DBInstanceState', array (
+				'DBInstanceIdentifier' => 'foo',
+				'waiter.success.value' => "available",
+				'waiter.interval' => 0 
+		) );
+	}
 }

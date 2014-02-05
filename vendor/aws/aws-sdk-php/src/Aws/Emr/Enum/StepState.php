@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Emr\Enum;
 
 use Aws\Common\Enum;
@@ -21,12 +21,11 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable StepState values
  */
-class StepState extends Enum
-{
-    const PENDING = 'PENDING';
-    const RUNNING = 'RUNNING';
-    const COMPLETED = 'COMPLETED';
-    const CANCELLED = 'CANCELLED';
-    const FAILED = 'FAILED';
-    const INTERRUPTED = 'INTERRUPTED';
+class StepState extends Enum {
+	const PENDING = 'PENDING';
+	const RUNNING = 'RUNNING';
+	const COMPLETED = 'COMPLETED';
+	const CANCELLED = 'CANCELLED';
+	const FAILED = 'FAILED';
+	const INTERRUPTED = 'INTERRUPTED';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sts\Exception;
 
 /**
- * The request was rejected because the policy document was too large. The error message describes how big the policy document is, in packed form, as a percentage of what the API allows.
+ * The request was rejected because the policy document was too large.
+ * The error message describes how big the policy document is, in packed form, as a percentage of what the API allows.
  */
-class PackedPolicyTooLargeException extends StsException {}
+class PackedPolicyTooLargeException extends StsException {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DirectConnect\Exception;
 
 /**
- * The API was called with invalid parameters. The error message will contain additional details about the cause.
+ * The API was called with invalid parameters.
+ * The error message will contain additional details about the cause.
  */
-class DirectConnectClientException extends DirectConnectException {}
+class DirectConnectClientException extends DirectConnectException {
+}

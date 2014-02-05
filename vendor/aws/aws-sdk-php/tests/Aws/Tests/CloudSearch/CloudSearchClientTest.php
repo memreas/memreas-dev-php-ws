@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,26 +14,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\CloudWatch;
 
 use Aws\CloudSearch\CloudSearchClient;
 
-class CloudSearchClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @covers Aws\CloudSearch\CloudSearchClient::factory
-     */
-    public function testFactoryInitializesClient()
-    {
-        $client = CloudSearchClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-east-1'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $this->readAttribute($client, 'signature'));
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://cloudsearch.us-east-1.amazonaws.com', $client->getBaseUrl());
-    }
+class CloudSearchClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 * @covers Aws\CloudSearch\CloudSearchClient::factory
+	 */
+	public function testFactoryInitializesClient() {
+		$client = CloudSearchClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-east-1' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $this->readAttribute ( $client, 'signature' ) );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://cloudsearch.us-east-1.amazonaws.com', $client->getBaseUrl () );
+	}
 }

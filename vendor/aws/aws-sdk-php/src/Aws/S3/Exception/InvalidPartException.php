@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * One or more of the specified parts could not be found. The part might not have been uploaded, or the specified entity tag might not have matched the part's entity tag.
+ * One or more of the specified parts could not be found.
+ * The part might not have been uploaded, or the specified entity tag might not have matched the part's entity tag.
  */
-class InvalidPartException extends S3Exception {}
+class InvalidPartException extends S3Exception {
+}

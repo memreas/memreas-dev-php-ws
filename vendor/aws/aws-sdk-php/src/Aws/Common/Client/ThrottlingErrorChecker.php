@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Client;
 
 use Aws\Common\Exception\Parser\ExceptionParserInterface;
@@ -26,50 +26,48 @@ use Guzzle\Plugin\Backoff\AbstractBackoffStrategy;
 /**
  * Backoff logic that handles throttling exceptions from services
  */
-class ThrottlingErrorChecker extends AbstractBackoffStrategy
-{
-    /** @var array Whitelist of exception codes (as indexes) that indicate throttling */
-    protected static $throttlingExceptions = array(
-        'RequestLimitExceeded'                   => true,
-        'Throttling'                             => true,
-        'ThrottlingException'                    => true,
-        'ProvisionedThroughputExceededException' => true,
-        'RequestThrottled'                       => true,
-    );
-
-    /**
-     * @var ExceptionParserInterface Exception parser used to parse exception responses
-     */
-    protected $exceptionParser;
-
-    public function __construct(ExceptionParserInterface $exceptionParser, BackoffStrategyInterface $next = null)
-    {
-        $this->exceptionParser = $exceptionParser;
-        if ($next) {
-            $this->setNext($next);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function makesDecision()
-    {
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDelay(
-        $retries,
-        RequestInterface $request,
-        Response $response = null,
-        HttpException $e = null
-    ) {
-        if ($response && $response->isClientError()) {
-            $parts = $this->exceptionParser->parse($request, $response);
-            return isset(self::$throttlingExceptions[$parts['code']]) ? true : null;
-        }
-    }
+class ThrottlingErrorChecker extends AbstractBackoffStrategy {
+	/**
+	 * @var array Whitelist of exception codes (as indexes) that indicate throttling
+	 */
+	protected static $throttlingExceptions = array (
+			'RequestLimitExceeded' => true,
+			'Throttling' => true,
+			'ThrottlingException' => true,
+			'ProvisionedThroughputExceededException' => true,
+			'RequestThrottled' => true 
+	);
+	
+	/**
+	 *
+	 * @var ExceptionParserInterface Exception parser used to parse exception responses
+	 */
+	protected $exceptionParser;
+	public function __construct(ExceptionParserInterface $exceptionParser, BackoffStrategyInterface $next = null) {
+		$this->exceptionParser = $exceptionParser;
+		if ($next) {
+			$this->setNext ( $next );
+		}
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public function makesDecision() {
+		return true;
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function getDelay($retries, RequestInterface $request, Response $response = null, HttpException $e = null) {
+		if ($response && $response->isClientError ()) {
+			$parts = $this->exceptionParser->parse ( $request, $response );
+			return isset ( self::$throttlingExceptions [$parts ['code']] ) ? true : null;
+		}
+	}
 }

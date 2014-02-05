@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Support\Exception;
 
 /**
  * Returned when you have exceeded the case creation limit for an account.
  */
-class CaseCreationLimitExceededException extends SupportException {}
+class CaseCreationLimitExceededException extends SupportException {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\StorageGateway\Exception;
 
 /**
- * An internal server error has occurred during the request. See the error and message fields for more information.
+ * An internal server error has occurred during the request.
+ * See the error and message fields for more information.
  */
-class InternalServerErrorException extends StorageGatewayException {}
+class InternalServerErrorException extends StorageGatewayException {
+}

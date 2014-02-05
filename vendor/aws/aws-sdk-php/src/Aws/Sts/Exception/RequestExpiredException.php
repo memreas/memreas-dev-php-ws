@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,11 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sts\Exception;
 
 /**
  * Request is past expires date or the request date (either with 15 minute padding),
  * or the request date occurs more than 15 minutes in the future.
  */
-class RequestExpiredException extends StsException {}
+class RequestExpiredException extends StsException {
+}

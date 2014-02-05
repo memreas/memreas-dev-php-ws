@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds\Exception;
 
 /**
- * Exception that occurs when a InvalidSubnetException error is encountered
+ * The requested subnet is invalid, or multiple subnets were requested that are not all in a common VPC.
  */
-class InvalidSubnetException extends RdsException {}
+class InvalidSubnetException extends RdsException {
+}

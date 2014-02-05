@@ -1,12 +1,12 @@
 /* http://www.menucool.com */
-
 #slider {
 	width: 50%;
-	height: 350px;/* Make it the same size as your images */
+	height: 350px; /* Make it the same size as your images */
 	position: relative;
 	float: left;
 	border: 1px #FFF solid;
 }
+
 #slider img {
 	width: 100%;
 }
@@ -22,15 +22,18 @@
 	height: 100%;
 }
 /* Caption styles */
-div.mc-caption-bg, div.mc-caption-bg2 {
+div.mc-caption-bg,div.mc-caption-bg2 {
 	width: 600px;
 	height: auto;
 	padding: 0;
-	left: 0px; /*if the caption needs to be aligned from right, specify by right instead of left. i.e. right:20px;*/
-	top: 270px;/*if the caption needs to be aligned from bottom, specify by bottom instead of bottom. i.e. top:150px;*/
+	left: 0px;
+	/*if the caption needs to be aligned from right, specify by right instead of left. i.e. right:20px;*/
+	top: 270px;
+	/*if the caption needs to be aligned from bottom, specify by bottom instead of bottom. i.e. top:150px;*/
 	overflow: hidden;
 	font-size: 0;
 }
+
 div.mc-caption {
 	font: normal 12px/16px Verdana;
 	color: #333;
@@ -38,9 +41,11 @@ div.mc-caption {
 	padding: 10px 0;
 	text-align: left;
 }
+
 div.mc-caption a {
 	color: #09F;
 }
+
 div.mc-caption a:hover {
 	color: #06C;
 }

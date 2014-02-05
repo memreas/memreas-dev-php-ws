@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Redshift\Exception;
 
 /**
- * The quota for HSM configurations has been reached. For information about increasing your quota, go to Limits in Amazon Redshift in the Amazon Redshift Management Guide.
+ * The quota for HSM configurations has been reached.
+ * For information about increasing your quota, go to Limits in Amazon Redshift in the Amazon Redshift Management Guide.
  */
-class HsmConfigurationQuotaExceededException extends RedshiftException {}
+class HsmConfigurationQuotaExceededException extends RedshiftException {
+}

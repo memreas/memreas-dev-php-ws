@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudFront\Exception;
 
 /**
- * This operation requires the HTTPS protocol. Ensure that you specify the HTTPS protocol in your request, or omit the RequiredProtocols element from your distribution configuration.
+ * This operation requires the HTTPS protocol.
+ * Ensure that you specify the HTTPS protocol in your request, or omit the RequiredProtocols element from your distribution configuration.
  */
-class InvalidRequiredProtocolException extends CloudFrontException {}
+class InvalidRequiredProtocolException extends CloudFrontException {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Route53\Enum;
 
 use Aws\Common\Enum;
@@ -21,8 +21,7 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ResourceRecordSetFailover values
  */
-class ResourceRecordSetFailover extends Enum
-{
-    const PRIMARY = 'PRIMARY';
-    const SECONDARY = 'SECONDARY';
+class ResourceRecordSetFailover extends Enum {
+	const PRIMARY = 'PRIMARY';
+	const SECONDARY = 'SECONDARY';
 }

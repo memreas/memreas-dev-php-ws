@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\OpsWorks\Enum;
 
 use Aws\Common\Enum;
@@ -21,16 +21,15 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable DeploymentCommandName values
  */
-class DeploymentCommandName extends Enum
-{
-    const INSTALL_DEPENDENCIES = 'install_dependencies';
-    const UPDATE_DEPENDENCIES = 'update_dependencies';
-    const UPDATE_CUSTOM_COOKBOOKS = 'update_custom_cookbooks';
-    const EXECUTE_RECIPES = 'execute_recipes';
-    const DEPLOY = 'deploy';
-    const ROLLBACK = 'rollback';
-    const START = 'start';
-    const STOP = 'stop';
-    const RESTART = 'restart';
-    const UNDEPLOY = 'undeploy';
+class DeploymentCommandName extends Enum {
+	const INSTALL_DEPENDENCIES = 'install_dependencies';
+	const UPDATE_DEPENDENCIES = 'update_dependencies';
+	const UPDATE_CUSTOM_COOKBOOKS = 'update_custom_cookbooks';
+	const EXECUTE_RECIPES = 'execute_recipes';
+	const DEPLOY = 'deploy';
+	const ROLLBACK = 'rollback';
+	const START = 'start';
+	const STOP = 'stop';
+	const RESTART = 'restart';
+	const UNDEPLOY = 'undeploy';
 }

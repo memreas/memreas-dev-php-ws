@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Enum;
 
 use Aws\Common\Enum;
@@ -21,10 +21,9 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable TableStatus values
  */
-class TableStatus extends Enum
-{
-    const CREATING = 'CREATING';
-    const UPDATING = 'UPDATING';
-    const DELETING = 'DELETING';
-    const ACTIVE = 'ACTIVE';
+class TableStatus extends Enum {
+	const CREATING = 'CREATING';
+	const UPDATING = 'UPDATING';
+	const DELETING = 'DELETING';
+	const ACTIVE = 'ACTIVE';
 }

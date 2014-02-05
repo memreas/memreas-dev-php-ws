@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds\Enum;
 
 use Aws\Common\Enum;
@@ -21,10 +21,9 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable SourceType values
  */
-class SourceType extends Enum
-{
-    const DB_INSTANCE = 'db-instance';
-    const DB_PARAMETER_GROUP = 'db-parameter-group';
-    const DB_SECURITY_GROUP = 'db-security-group';
-    const DB_SNAPSHOT = 'db-snapshot';
+class SourceType extends Enum {
+	const DB_INSTANCE = 'db-instance';
+	const DB_PARAMETER_GROUP = 'db-parameter-group';
+	const DB_SECURITY_GROUP = 'db-security-group';
+	const DB_SNAPSHOT = 'db-snapshot';
 }

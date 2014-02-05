@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sts\Exception;
 
 /**
- * The web identity token that was passed is expired or is not valid. Get a new identity token from the identity provider and then retry the request.
+ * The web identity token that was passed is expired or is not valid.
+ * Get a new identity token from the identity provider and then retry the request.
  */
-class ExpiredTokenException extends StsException {}
+class ExpiredTokenException extends StsException {
+}

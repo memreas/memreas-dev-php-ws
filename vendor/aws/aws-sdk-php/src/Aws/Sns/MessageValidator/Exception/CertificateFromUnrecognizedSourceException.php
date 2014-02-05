@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Sns\MessageValidator\Exception;
 
 use Aws\Sns\MessageValidator\Exception\SnsMessageValidatorException;
@@ -21,4 +21,5 @@ use Aws\Sns\MessageValidator\Exception\SnsMessageValidatorException;
 /**
  * Indicates that certificate was from an unrecognized source.
  */
-class CertificateFromUnrecognizedSourceException extends SnsMessageValidatorException {}
+class CertificateFromUnrecognizedSourceException extends SnsMessageValidatorException {
+}

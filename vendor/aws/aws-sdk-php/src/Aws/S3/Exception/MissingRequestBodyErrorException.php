@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * This happens when the user sends an empty xml document as a request. The error message is, "Request body is empty."
+ * This happens when the user sends an empty xml document as a request.
+ * The error message is, "Request body is empty."
  */
-class MissingRequestBodyErrorException extends S3Exception {}
+class MissingRequestBodyErrorException extends S3Exception {
+}

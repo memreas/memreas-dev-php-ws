@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Common\Hash;
 
 use Aws\Common\Hash\HashUtils;
@@ -21,27 +21,22 @@ use Aws\Common\Hash\HashUtils;
 /**
  * @covers \Aws\Common\Hash\HashUtils
  */
-class HashUtilsTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testHexBinConversionsWorkCorrectly()
-    {
-        $hex = "5a4b";
-        $bin = "ZK";
-
-        $this->assertEquals($hex, HashUtils::binToHex($bin));
-        $this->assertEquals($bin, HashUtils::hexToBin($hex));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testThrowsExceptionForInvalidAlgorithm()
-    {
-        HashUtils::validateAlgorithm('foobar');
-    }
-
-    public function testReturnsTrueForValidAlgorithm()
-    {
-        $this->assertTrue(HashUtils::validateAlgorithm('md5'));
-    }
+class HashUtilsTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testHexBinConversionsWorkCorrectly() {
+		$hex = "5a4b";
+		$bin = "ZK";
+		
+		$this->assertEquals ( $hex, HashUtils::binToHex ( $bin ) );
+		$this->assertEquals ( $bin, HashUtils::hexToBin ( $hex ) );
+	}
+	
+	/**
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function testThrowsExceptionForInvalidAlgorithm() {
+		HashUtils::validateAlgorithm ( 'foobar' );
+	}
+	public function testReturnsTrueForValidAlgorithm() {
+		$this->assertTrue ( HashUtils::validateAlgorithm ( 'md5' ) );
+	}
 }

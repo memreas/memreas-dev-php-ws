@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ImportExport;
 
 use Guzzle\Common\Event;
@@ -22,30 +22,36 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Listener used to assist with formatting the Manifest parameter of CreateJob operation into YAML
  */
-class JobManifestListener implements EventSubscriberInterface
-{
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return array('command.before_prepare' => array('onCommandBeforePrepare'));
-    }
-
-    /**
-     * An event handler for assisting with formatting the Manifest parameter of CreateJob operation into YAML
-     *
-     * @param Event $event The event being handled
-     */
-    public function onCommandBeforePrepare(Event $event)
-    {
-        /** @var $command \Guzzle\Service\Command\AbstractCommand */
-        $command = $event['command'];
-        if ($command->getName() === 'CreateJob') {
-            $manifest = $command->get('Manifest');
-            if (!is_string($manifest) && class_exists('Symfony\Component\Yaml\Yaml')) {
-                $command->set('Manifest', \Symfony\Component\Yaml\Yaml::dump($manifest));
-            }
-        }
-    }
+class JobManifestListener implements EventSubscriberInterface {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public static function getSubscribedEvents() {
+		return array (
+				'command.before_prepare' => array (
+						'onCommandBeforePrepare' 
+				) 
+		);
+	}
+	
+	/**
+	 * An event handler for assisting with formatting the Manifest parameter of CreateJob operation into YAML
+	 *
+	 * @param Event $event
+	 *        	The event being handled
+	 */
+	public function onCommandBeforePrepare(Event $event) {
+		/**
+		 * @var $command \Guzzle\Service\Command\AbstractCommand
+		 */
+		$command = $event ['command'];
+		if ($command->getName () === 'CreateJob') {
+			$manifest = $command->get ( 'Manifest' );
+			if (! is_string ( $manifest ) && class_exists ( 'Symfony\Component\Yaml\Yaml' )) {
+				$command->set ( 'Manifest', \Symfony\Component\Yaml\Yaml::dump ( $manifest ) );
+			}
+		}
+	}
 }

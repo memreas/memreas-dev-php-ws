@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Redshift\Exception;
 
 /**
  * The specified HSM client certificate is not in the available state, or it is still in use by one or more Amazon Redshift clusters.
  */
-class InvalidHsmClientCertificateStateException extends RedshiftException {}
+class InvalidHsmClientCertificateStateException extends RedshiftException {
+}

@@ -21,8 +21,8 @@ class ViewAllfriends {
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
-error_log ( "Inside ViewAllfriends.exec()..." .PHP_EOL);
-error_log ( "Inside ViewAllfriends.exec().xml ---> " .  $_POST['xml'] .PHP_EOL);
+		error_log ( "Inside ViewAllfriends.exec()..." . PHP_EOL );
+		error_log ( "Inside ViewAllfriends.exec().xml ---> " . $_POST ['xml'] . PHP_EOL );
 		
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = $data->viewallfriends->user_id;
@@ -37,13 +37,12 @@ error_log ( "Inside ViewAllfriends.exec().xml ---> " .  $_POST['xml'] .PHP_EOL);
 		} else {
 			$q = "SELECT u FROM Application\Entity\User u WHERE u.user_id != '$user_id' AND u.role=2 AND u.disable_account =0";
 			$statement = $this->dbAdapter->createQuery ( $q );
-			$result = $statement->getResult();
-			if (!$result) {
+			$result = $statement->getResult ();
+			if (! $result) {
 				$error_flag = 1;
-				$message = mysql_error();
-			}
-			else {
-				if (count ( $result ) > 0) { 
+				$message = mysql_error ();
+			} else {
+				if (count ( $result ) > 0) {
 					$xml_output .= "<status>Success</status><message>Friends list</message>";
 					foreach ( $result as $row1 ) {
 						$count ++;
@@ -128,12 +127,11 @@ error_log ( "Inside ViewAllfriends.exec().xml ---> " .  $_POST['xml'] .PHP_EOL);
 				$xml_output .= "</group>";
 			}
 		$xml_output .= "</groups>";
-        $xml_output .= "</xml>";
-//echo "<pre>";print_r($view_all_friend);
-error_log ( "Exiting ViewAllfriends.exec().xml ---> " . $xml_output .PHP_EOL);
-        echo $xml_output;
-    }
-
+		$xml_output .= "</xml>";
+		// echo "<pre>";print_r($view_all_friend);
+		error_log ( "Exiting ViewAllfriends.exec().xml ---> " . $xml_output . PHP_EOL );
+		echo $xml_output;
+	}
 }
 
 ?>

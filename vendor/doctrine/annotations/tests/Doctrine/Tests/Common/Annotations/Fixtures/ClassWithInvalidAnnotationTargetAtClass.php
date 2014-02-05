@@ -7,11 +7,10 @@ use Doctrine\Tests\Common\Annotations\Fixtures\AnnotationTargetPropertyMethod;
 /**
  * @AnnotationTargetPropertyMethod("Some data")
  */
-class ClassWithInvalidAnnotationTargetAtClass
-{
-
-    /**
-     * @AnnotationTargetPropertyMethod("Bar")
-     */
-    public $foo;
+class ClassWithInvalidAnnotationTargetAtClass {
+	
+	/**
+	 * @AnnotationTargetPropertyMethod("Bar")
+	 */
+	public $foo;
 }

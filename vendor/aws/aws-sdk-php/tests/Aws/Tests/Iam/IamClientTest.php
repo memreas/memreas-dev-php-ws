@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Iam;
 
 use Aws\Iam\IamClient;
@@ -21,15 +21,13 @@ use Aws\Iam\IamClient;
 /**
  * @covers Aws\Iam\IamClient
  */
-class IamClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testIsGlobal()
-    {
-        $c = IamClient::factory(array(
-            'key' => 'foo',
-            'secret' => 'bar'
-        ));
-        $this->assertEquals('https://iam.amazonaws.com', $c->getBaseUrl());
-        $this->assertNotNull($c->getDescription());
-    }
+class IamClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testIsGlobal() {
+		$c = IamClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar' 
+		) );
+		$this->assertEquals ( 'https://iam.amazonaws.com', $c->getBaseUrl () );
+		$this->assertNotNull ( $c->getDescription () );
+	}
 }

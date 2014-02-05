@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.
+ * The requested bucket name is not available.
+ * The bucket namespace is shared by all users of the system. Please select a different name and try again.
  */
-class BucketAlreadyExistsException extends S3Exception {}
+class BucketAlreadyExistsException extends S3Exception {
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Exception;
 
 /**
  * The server encountered an internal error trying to fulfill the request.
  */
-class InternalFailureException extends DynamoDbException {}
+class InternalFailureException extends DynamoDbException {
+}

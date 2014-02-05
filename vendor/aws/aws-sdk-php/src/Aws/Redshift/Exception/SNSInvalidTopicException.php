@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Redshift\Exception;
 
 /**
  * Amazon SNS has responded that there is a problem with the specified Amazon SNS topic.
  */
-class SNSInvalidTopicException extends RedshiftException {}
+class SNSInvalidTopicException extends RedshiftException {
+}

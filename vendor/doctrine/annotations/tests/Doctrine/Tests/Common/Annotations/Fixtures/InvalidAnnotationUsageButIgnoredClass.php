@@ -9,6 +9,5 @@ use Doctrine\Tests\Common\Annotations\Fixtures\Annotation\Route;
  * @IgnoreAnnotation("NoAnnotation")
  * @Route("foo")
  */
-class InvalidAnnotationUsageButIgnoredClass
-{
+class InvalidAnnotationUsageButIgnoredClass {
 }

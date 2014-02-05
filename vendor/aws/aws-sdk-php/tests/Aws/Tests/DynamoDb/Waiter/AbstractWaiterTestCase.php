@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,22 +14,20 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\DynamoDb\Waiter;
 
-abstract class AbstractWaiterTestCase extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @return \Aws\DynamoDb\DynamoDbClient
-     */
-    protected function getClient()
-    {
-        /** @var $client \Aws\DynamoDb\DynamoDbClient */
-        $client = $this->getServiceBuilder()->get('dynamodb', true);
-        $client->getCredentials()
-            ->setSecurityToken('foo')
-            ->setExpiration(time() + 1000);
-
-        return $client;
-    }
+abstract class AbstractWaiterTestCase extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 *
+	 * @return \Aws\DynamoDb\DynamoDbClient
+	 */
+	protected function getClient() {
+		/**
+		 * @var $client \Aws\DynamoDb\DynamoDbClient
+		 */
+		$client = $this->getServiceBuilder ()->get ( 'dynamodb', true );
+		$client->getCredentials ()->setSecurityToken ( 'foo' )->setExpiration ( time () + 1000 );
+		
+		return $client;
+	}
 }

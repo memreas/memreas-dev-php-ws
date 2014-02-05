@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,26 +14,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\CloudTrail;
 
 use Aws\CloudTrail\CloudTrailClient;
 
-class CloudTrailClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @covers Aws\CloudTrail\CloudTrailClient::factory
-     */
-    public function testFactoryInitializesClient()
-    {
-        $client = CloudTrailClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-west-2'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://cloudtrail.us-west-2.amazonaws.com', $client->getBaseUrl());
-    }
+class CloudTrailClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 * @covers Aws\CloudTrail\CloudTrailClient::factory
+	 */
+	public function testFactoryInitializesClient() {
+		$client = CloudTrailClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-west-2' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://cloudtrail.us-west-2.amazonaws.com', $client->getBaseUrl () );
+	}
 }

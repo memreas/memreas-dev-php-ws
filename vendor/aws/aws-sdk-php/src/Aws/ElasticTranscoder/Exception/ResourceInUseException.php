@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticTranscoder\Exception;
 
 /**
- * The resource you are attempting to change is in use. For example, you are attempting to delete a pipeline that is currently in use.
+ * The resource you are attempting to change is in use.
+ * For example, you are attempting to delete a pipeline that is currently in use.
  */
-class ResourceInUseException extends ElasticTranscoderException {}
+class ResourceInUseException extends ElasticTranscoderException {
+}

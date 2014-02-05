@@ -1,5 +1,4 @@
 /* Elastislide Style */
-
 .elastislide-list {
 	list-style-type: none;
 	display: none;
@@ -83,7 +82,6 @@
 }
 
 /* Navigation Arrows */
-
 .elastislide-wrapper navs span {
 	position: absolute;
 	background: url(../img/arrows.png) no-repeat 0px 0px;

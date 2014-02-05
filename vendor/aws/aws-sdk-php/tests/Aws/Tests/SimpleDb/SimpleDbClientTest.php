@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\SimpleDb;
 
 use Aws\SimpleDb\SimpleDbClient;
@@ -21,16 +21,14 @@ use Aws\SimpleDb\SimpleDbClient;
 /**
  * @covers Aws\SimpleDb\SimpleDbClient
  */
-class SimpleDbClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testCanCreate()
-    {
-        $c = SimpleDbClient::factory(array(
-            'key' => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-east-1'
-        ));
-        $this->assertEquals('https://sdb.amazonaws.com', $c->getBaseUrl());
-        $this->assertNotNull($c->getDescription());
-    }
+class SimpleDbClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testCanCreate() {
+		$c = SimpleDbClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-east-1' 
+		) );
+		$this->assertEquals ( 'https://sdb.amazonaws.com', $c->getBaseUrl () );
+		$this->assertNotNull ( $c->getDescription () );
+	}
 }

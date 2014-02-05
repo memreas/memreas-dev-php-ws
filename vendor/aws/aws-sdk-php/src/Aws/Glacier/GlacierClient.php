@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Glacier;
 
 use Aws\Common\Client\AbstractClient;
@@ -53,71 +53,65 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getListMultipartUploadsIterator(array $args = array()) The input array uses the parameters of the ListMultipartUploads operation
  * @method ResourceIteratorInterface getListPartsIterator(array $args = array()) The input array uses the parameters of the ListParts operation
  * @method ResourceIteratorInterface getListVaultsIterator(array $args = array()) The input array uses the parameters of the ListVaults operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-glacier.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Glacier.GlacierClient.html API docs
  */
-class GlacierClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2012-06-01';
-
-    /**
-     * Factory method to create a new Amazon Glacier client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        // Setup the Glacier client
-        $client = ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/glacier-%s.php',
-                // Set default value for "accountId" for all requests
-                'command.params' => array(
-                    'accountId'               => '-',
-                    Options::MODEL_PROCESSING => true
-                )
-            ))
-            ->setExceptionParser(new JsonRestExceptionParser())
-            ->setIteratorsConfig(array(
-                'limit_param' => 'limit',
-                'token_param' => 'marker',
-                'token_key'   => 'Marker',
-                'operations'  => array(
-                    'ListJobs' => array(
-                        'result_key' => 'JobList'
-                    ),
-                    'ListMultipartUploads' => array(
-                        'result_key' => 'UploadsList'
-                    ),
-                    'ListParts' => array(
-                        'result_key' => 'Parts'
-                    ),
-                    'ListVaults' => array(
-                        'result_key' => 'VaultList'
-                    )
-                )
-            ))
-            ->build();
-
-        // Add the Glacier version header required for all operations
-        $client->getConfig()->setPath(
-            'request.options/headers/x-amz-glacier-version',
-            $client->getDescription()->getApiVersion()
-        );
-
-        // Allow for specifying bodies with file paths and file handles
-        $uploadOperations = array('UploadArchive', 'UploadMultipartPart');
-        $client->addSubscriber(new UploadBodyListener($uploadOperations, 'body', 'sourceFile'));
-
-        // Listen for upload operations and make sure the required hash headers are added
-        $client->addSubscriber(new GlacierUploadListener());
-
-        return $client;
-    }
+class GlacierClient extends AbstractClient {
+	const LATEST_API_VERSION = '2012-06-01';
+	
+	/**
+	 * Factory method to create a new Amazon Glacier client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		// Setup the Glacier client
+		$client = ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/glacier-%s.php',
+				// Set default value for "accountId" for all requests
+				'command.params' => array (
+						'accountId' => '-',
+						Options::MODEL_PROCESSING => true 
+				) 
+		) )->setExceptionParser ( new JsonRestExceptionParser () )->setIteratorsConfig ( array (
+				'limit_param' => 'limit',
+				'token_param' => 'marker',
+				'token_key' => 'Marker',
+				'operations' => array (
+						'ListJobs' => array (
+								'result_key' => 'JobList' 
+						),
+						'ListMultipartUploads' => array (
+								'result_key' => 'UploadsList' 
+						),
+						'ListParts' => array (
+								'result_key' => 'Parts' 
+						),
+						'ListVaults' => array (
+								'result_key' => 'VaultList' 
+						) 
+				) 
+		) )->build ();
+		
+		// Add the Glacier version header required for all operations
+		$client->getConfig ()->setPath ( 'request.options/headers/x-amz-glacier-version', $client->getDescription ()->getApiVersion () );
+		
+		// Allow for specifying bodies with file paths and file handles
+		$uploadOperations = array (
+				'UploadArchive',
+				'UploadMultipartPart' 
+		);
+		$client->addSubscriber ( new UploadBodyListener ( $uploadOperations, 'body', 'sourceFile' ) );
+		
+		// Listen for upload operations and make sure the required hash headers are added
+		$client->addSubscriber ( new GlacierUploadListener () );
+		
+		return $client;
+	}
 }

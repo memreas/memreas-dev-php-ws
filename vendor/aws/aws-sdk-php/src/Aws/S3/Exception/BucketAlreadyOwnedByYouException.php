@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
  * Your previous request to create the named bucket succeeded and you already own it.
  */
-class BucketAlreadyOwnedByYouException extends S3Exception {}
+class BucketAlreadyOwnedByYouException extends S3Exception {
+}

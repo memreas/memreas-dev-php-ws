@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\AutoScaling\Enum;
 
 use Aws\Common\Enum;
@@ -21,14 +21,13 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ScalingActivityStatusCode values
  */
-class ScalingActivityStatusCode extends Enum
-{
-    const WAITING_FOR_SPOT_INSTANCE_REQUEST_ID = 'WaitingForSpotInstanceRequestId';
-    const WAITING_FOR_SPOT_INSTANCE_ID = 'WaitingForSpotInstanceId';
-    const WAITING_FOR_INSTANCE_ID = 'WaitingForInstanceId';
-    const PRE_IN_SERVICE = 'PreInService';
-    const IN_PROGRESS = 'InProgress';
-    const SUCCESSFUL = 'Successful';
-    const FAILED = 'Failed';
-    const CANCELLED = 'Cancelled';
+class ScalingActivityStatusCode extends Enum {
+	const WAITING_FOR_SPOT_INSTANCE_REQUEST_ID = 'WaitingForSpotInstanceRequestId';
+	const WAITING_FOR_SPOT_INSTANCE_ID = 'WaitingForSpotInstanceId';
+	const WAITING_FOR_INSTANCE_ID = 'WaitingForInstanceId';
+	const PRE_IN_SERVICE = 'PreInService';
+	const IN_PROGRESS = 'InProgress';
+	const SUCCESSFUL = 'Successful';
+	const FAILED = 'Failed';
+	const CANCELLED = 'Cancelled';
 }

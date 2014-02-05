@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,64 +14,66 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Credentials;
 
 /**
  * Abstract decorator to provide a foundation for refreshable credentials
  */
-abstract class AbstractRefreshableCredentials extends AbstractCredentialsDecorator
-{
-    /**
-     * {@inheritdoc}
-     */
-    public function getAccessKeyId()
-    {
-        if ($this->credentials->isExpired()) {
-            $this->refresh();
-        }
-
-        return $this->credentials->getAccessKeyId();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSecretKey()
-    {
-        if ($this->credentials->isExpired()) {
-            $this->refresh();
-        }
-
-        return $this->credentials->getSecretKey();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSecurityToken()
-    {
-        if ($this->credentials->isExpired()) {
-            $this->refresh();
-        }
-
-        return $this->credentials->getSecurityToken();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function serialize()
-    {
-        if ($this->credentials->isExpired()) {
-            $this->refresh();
-        }
-
-        return $this->credentials->serialize();
-    }
-
-    /**
-     * Attempt to get new credentials
-     */
-    abstract protected function refresh();
+abstract class AbstractRefreshableCredentials extends AbstractCredentialsDecorator {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public function getAccessKeyId() {
+		if ($this->credentials->isExpired ()) {
+			$this->refresh ();
+		}
+		
+		return $this->credentials->getAccessKeyId ();
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public function getSecretKey() {
+		if ($this->credentials->isExpired ()) {
+			$this->refresh ();
+		}
+		
+		return $this->credentials->getSecretKey ();
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public function getSecurityToken() {
+		if ($this->credentials->isExpired ()) {
+			$this->refresh ();
+		}
+		
+		return $this->credentials->getSecurityToken ();
+	}
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public function serialize() {
+		if ($this->credentials->isExpired ()) {
+			$this->refresh ();
+		}
+		
+		return $this->credentials->serialize ();
+	}
+	
+	/**
+	 * Attempt to get new credentials
+	 */
+	abstract protected function refresh();
 }

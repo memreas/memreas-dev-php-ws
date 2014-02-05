@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.
+ * The bucket you are attempting to access must be addressed using the specified endpoint.
+ * Please send all future requests to this endpoint.
  */
-class PermanentRedirectException extends S3Exception {}
+class PermanentRedirectException extends S3Exception {
+}

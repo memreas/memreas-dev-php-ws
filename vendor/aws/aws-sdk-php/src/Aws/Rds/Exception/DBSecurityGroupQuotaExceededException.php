@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds\Exception;
 
 /**
  * Request would result in user exceeding the allowed number of DB security groups.
  */
-class DBSecurityGroupQuotaExceededException extends RdsException {}
+class DBSecurityGroupQuotaExceededException extends RdsException {
+}

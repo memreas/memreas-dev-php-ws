@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * A conflicting conditional operation is currently in progress against this resource. Please try again.
+ * A conflicting conditional operation is currently in progress against this resource.
+ * Please try again.
  */
-class OperationAbortedException extends S3Exception {}
+class OperationAbortedException extends S3Exception {
+}

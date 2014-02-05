@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudSearch\Enum;
 
 use Aws\Common\Enum;
@@ -21,10 +21,9 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable SearchInstanceType values
  */
-class SearchInstanceType extends Enum
-{
-    const SEARCH_INSTANCET1_MICRO = 'SearchInstance:t1.micro';
-    const SEARCH_INSTANCEM1_SMALL = 'SearchInstance:m1.small';
-    const SEARCH_INSTANCEM1_LARGE = 'SearchInstance:m1.large';
-    const SEARCH_INSTANCEM2_XLARGE = 'SearchInstance:m2.xlarge';
+class SearchInstanceType extends Enum {
+	const SEARCH_INSTANCET1_MICRO = 'SearchInstance:t1.micro';
+	const SEARCH_INSTANCEM1_SMALL = 'SearchInstance:m1.small';
+	const SEARCH_INSTANCEM1_LARGE = 'SearchInstance:m1.large';
+	const SEARCH_INSTANCEM2_XLARGE = 'SearchInstance:m2.xlarge';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk\Exception;
 
 /**
  * Unable to perform the specified operation because another operation is already in progress affecting an an element in this activity.
  */
-class OperationInProgressException extends ElasticBeanstalkException {}
+class OperationInProgressException extends ElasticBeanstalkException {
+}

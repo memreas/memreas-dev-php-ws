@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk\Exception;
 
 /**
  * The caller has exceeded the limit on the number of application versions associated with their account.
  */
-class TooManyApplicationVersionsException extends ElasticBeanstalkException {}
+class TooManyApplicationVersionsException extends ElasticBeanstalkException {
+}

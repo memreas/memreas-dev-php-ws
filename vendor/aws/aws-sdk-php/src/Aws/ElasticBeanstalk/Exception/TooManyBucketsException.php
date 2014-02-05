@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk\Exception;
 
 /**
  * The web service attempted to create a bucket in an Amazon S3 account that already has 100 buckets.
  */
-class TooManyBucketsException extends ElasticBeanstalkException {}
+class TooManyBucketsException extends ElasticBeanstalkException {
+}

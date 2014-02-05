@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Model\MultipartUpload;
 
 use Aws\Common\Model\MultipartUpload\AbstractUploadId;
@@ -22,14 +22,15 @@ use Aws\Common\Model\MultipartUpload\AbstractUploadId;
  * An object that encapsulates the identification for a Glacier upload part
  * @codeCoverageIgnore
  */
-class UploadId extends AbstractUploadId
-{
-    /**
-     * {@inheritdoc}
-     */
-    protected static $expectedValues = array(
-        'Bucket'   => false,
-        'Key'      => false,
-        'UploadId' => false
-    );
+class UploadId extends AbstractUploadId {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected static $expectedValues = array (
+			'Bucket' => false,
+			'Key' => false,
+			'UploadId' => false 
+	);
 }

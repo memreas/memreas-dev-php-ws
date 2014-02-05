@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Emr\Enum;
 
 use Aws\Common\Enum;
@@ -21,13 +21,12 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable ClusterStateChangeReasonCode values
  */
-class ClusterStateChangeReasonCode extends Enum
-{
-    const INTERNAL_ERROR = 'INTERNAL_ERROR';
-    const VALIDATION_ERROR = 'VALIDATION_ERROR';
-    const INSTANCE_FAILURE = 'INSTANCE_FAILURE';
-    const BOOTSTRAP_FAILURE = 'BOOTSTRAP_FAILURE';
-    const USER_REQUEST = 'USER_REQUEST';
-    const STEP_FAILURE = 'STEP_FAILURE';
-    const ALL_STEPS_COMPLETED = 'ALL_STEPS_COMPLETED';
+class ClusterStateChangeReasonCode extends Enum {
+	const INTERNAL_ERROR = 'INTERNAL_ERROR';
+	const VALIDATION_ERROR = 'VALIDATION_ERROR';
+	const INSTANCE_FAILURE = 'INSTANCE_FAILURE';
+	const BOOTSTRAP_FAILURE = 'BOOTSTRAP_FAILURE';
+	const USER_REQUEST = 'USER_REQUEST';
+	const STEP_FAILURE = 'STEP_FAILURE';
+	const ALL_STEPS_COMPLETED = 'ALL_STEPS_COMPLETED';
 }

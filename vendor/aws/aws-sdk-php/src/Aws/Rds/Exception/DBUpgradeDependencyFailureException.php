@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds\Exception;
 
 /**
- * Exception that occurs when a DBUpgradeDependencyFailureException error is encountered
+ * The DB upgrade failed because a resource the DB depends on could not be modified.
  */
-class DBUpgradeDependencyFailureException extends RdsException {}
+class DBUpgradeDependencyFailureException extends RdsException {
+}

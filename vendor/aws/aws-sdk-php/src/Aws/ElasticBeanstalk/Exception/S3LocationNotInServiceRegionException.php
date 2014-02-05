@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk\Exception;
 
 /**
  * The specified S3 bucket does not belong to the S3 region in which the service is running.
  */
-class S3LocationNotInServiceRegionException extends ElasticBeanstalkException {}
+class S3LocationNotInServiceRegionException extends ElasticBeanstalkException {
+}

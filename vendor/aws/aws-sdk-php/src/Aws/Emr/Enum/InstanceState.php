@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Emr\Enum;
 
 use Aws\Common\Enum;
@@ -21,11 +21,10 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable InstanceState values
  */
-class InstanceState extends Enum
-{
-    const AWAITING_FULFILLMENT = 'AWAITING_FULFILLMENT';
-    const PROVISIONING = 'PROVISIONING';
-    const BOOTSTRAPPING = 'BOOTSTRAPPING';
-    const RUNNING = 'RUNNING';
-    const TERMINATED = 'TERMINATED';
+class InstanceState extends Enum {
+	const AWAITING_FULFILLMENT = 'AWAITING_FULFILLMENT';
+	const PROVISIONING = 'PROVISIONING';
+	const BOOTSTRAPPING = 'BOOTSTRAPPING';
+	const RUNNING = 'RUNNING';
+	const TERMINATED = 'TERMINATED';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ImportExport\Iterator;
 
 use Aws\Common\Iterator\AwsResourceIterator;
@@ -22,19 +22,19 @@ use Guzzle\Service\Resource\Model;
 /**
  * Iterator for an ImportExport ListJobs command
  */
-class ListJobsIterator extends AwsResourceIterator
-{
-    /**
-     * {@inheritdoc}
-     */
-    protected function determineNextToken(Model $result)
-    {
-        $this->nextToken = null;
-
-        if ($result->get($this->get('more_key'))) {
-            $jobs = $result->get($this->get('result_key')) ?: array();
-            $numJobs = count($jobs);
-            $this->nextToken = $numJobs ? $jobs[$numJobs - 1]['JobId'] : null;
-        }
-    }
+class ListJobsIterator extends AwsResourceIterator {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function determineNextToken(Model $result) {
+		$this->nextToken = null;
+		
+		if ($result->get ( $this->get ( 'more_key' ) )) {
+			$jobs = $result->get ( $this->get ( 'result_key' ) ) ?  : array ();
+			$numJobs = count ( $jobs );
+			$this->nextToken = $numJobs ? $jobs [$numJobs - 1] ['JobId'] : null;
+		}
+	}
 }

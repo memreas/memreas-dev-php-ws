@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Client;
 
 use Guzzle\Common\Event;
@@ -21,41 +21,45 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Listener used to append strings to the User-Agent header of a request based
- * on the `ua.append` option. `ua.append` can contain a string or array of values.
+ * on the `ua.append` option.
+ * `ua.append` can contain a string or array of values.
  */
-class UserAgentListener implements EventSubscriberInterface
-{
-    /**
-     * @var string Option used to store User-Agent modifiers
-     */
-    const OPTION = 'ua.append';
-
-    /**
-     * {@inheritdoc}
-     */
-    public static function getSubscribedEvents()
-    {
-        return array('command.before_send' => 'onBeforeSend');
-    }
-
-    /**
-     * Adds strings to the User-Agent header using the `ua.append` parameter of a command
-     *
-     * @param Event $event Event emitted
-     */
-    public function onBeforeSend(Event $event)
-    {
-        $command = $event['command'];
-        if ($userAgentAppends = $command->get(self::OPTION)) {
-            $request = $command->getRequest();
-            $userAgent = (string) $request->getHeader('User-Agent');
-            foreach ((array) $userAgentAppends as $append) {
-                $append = ' ' . $append;
-                if (strpos($userAgent, $append) === false) {
-                    $userAgent .= $append;
-                }
-            }
-            $request->setHeader('User-Agent', $userAgent);
-        }
-    }
+class UserAgentListener implements EventSubscriberInterface {
+	/**
+	 *
+	 * @var string Option used to store User-Agent modifiers
+	 */
+	const OPTION = 'ua.append';
+	
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	public static function getSubscribedEvents() {
+		return array (
+				'command.before_send' => 'onBeforeSend' 
+		);
+	}
+	
+	/**
+	 * Adds strings to the User-Agent header using the `ua.append` parameter of a command
+	 *
+	 * @param Event $event
+	 *        	Event emitted
+	 */
+	public function onBeforeSend(Event $event) {
+		$command = $event ['command'];
+		if ($userAgentAppends = $command->get ( self::OPTION )) {
+			$request = $command->getRequest ();
+			$userAgent = ( string ) $request->getHeader ( 'User-Agent' );
+			foreach ( ( array ) $userAgentAppends as $append ) {
+				$append = ' ' . $append;
+				if (strpos ( $userAgent, $append ) === false) {
+					$userAgent .= $append;
+				}
+			}
+			$request->setHeader ( 'User-Agent', $userAgent );
+		}
+	}
 }

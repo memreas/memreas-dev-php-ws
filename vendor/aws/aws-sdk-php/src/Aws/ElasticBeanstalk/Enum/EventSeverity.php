@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElasticBeanstalk\Enum;
 
 use Aws\Common\Enum;
@@ -21,12 +21,11 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable EventSeverity values
  */
-class EventSeverity extends Enum
-{
-    const TRACE = 'TRACE';
-    const DEBUG = 'DEBUG';
-    const INFO = 'INFO';
-    const WARN = 'WARN';
-    const ERROR = 'ERROR';
-    const FATAL = 'FATAL';
+class EventSeverity extends Enum {
+	const TRACE = 'TRACE';
+	const DEBUG = 'DEBUG';
+	const INFO = 'INFO';
+	const WARN = 'WARN';
+	const ERROR = 'ERROR';
+	const FATAL = 'FATAL';
 }

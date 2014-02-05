@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Iterator;
 
 use Aws\Common\Iterator\AwsResourceIterator;
@@ -26,23 +26,23 @@ use Guzzle\Service\Resource\Model;
  *
  * - return_prefixes: Set to true to receive both prefixes and versions in results
  */
-class ListObjectVersionsIterator extends AwsResourceIterator
-{
-    /**
-     * {@inheritdoc}
-     */
-    protected function handleResults(Model $result)
-    {
-        // Get the list of object versions
-        $versions = $result->get('Versions') ?: array();
-        $deleteMarkers = $result->get('DeleteMarkers') ?: array();
-        $versions = array_merge($versions, $deleteMarkers);
-
-        // If there are prefixes and we want them, merge them in
-        if ($this->get('return_prefixes') && $result->hasKey('CommonPrefixes')) {
-            $versions = array_merge($versions, $result->get('CommonPrefixes'));
-        }
-
-        return $versions;
-    }
+class ListObjectVersionsIterator extends AwsResourceIterator {
+	/**
+	 *
+	 * @ERROR!!!
+	 *
+	 */
+	protected function handleResults(Model $result) {
+		// Get the list of object versions
+		$versions = $result->get ( 'Versions' ) ?  : array ();
+		$deleteMarkers = $result->get ( 'DeleteMarkers' ) ?  : array ();
+		$versions = array_merge ( $versions, $deleteMarkers );
+		
+		// If there are prefixes and we want them, merge them in
+		if ($this->get ( 'return_prefixes' ) && $result->hasKey ( 'CommonPrefixes' )) {
+			$versions = array_merge ( $versions, $result->get ( 'CommonPrefixes' ) );
+		}
+		
+		return $versions;
+	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudTrail\Exception;
 
 /**
- * Exception that occurs when a InvalidS3PrefixException error is encountered
+ * This exception is thrown when the provided S3 prefix is not valid.
  */
-class InvalidS3PrefixException extends CloudTrailException {}
+class InvalidS3PrefixException extends CloudTrailException {
+}

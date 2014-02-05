@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DataPipeline;
 
 use Aws\Common\Client\AbstractClient;
@@ -46,51 +46,45 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getListPipelinesIterator(array $args = array()) The input array uses the parameters of the ListPipelines operation
  * @method ResourceIteratorInterface getDescribeObjectsIterator(array $args = array()) The input array uses the parameters of the DescribeObjects operation
  * @method ResourceIteratorInterface getQueryObjectsIterator(array $args = array()) The input array uses the parameters of the QueryObjects operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-datapipeline.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.DataPipeline.DataPipelineClient.html API docs
  */
-class DataPipelineClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2012-10-29';
-
-    /**
-     * Factory method to create a new Amazon Data Pipeline client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        // Construct the Data Pipeline client with the client builder
-        $client = ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/datapipeline-%s.php'
-            ))
-            ->setExceptionParser(new JsonQueryExceptionParser())
-            ->setIteratorsConfig(array(
-                'limit_key'   => 'limit',
-                'more_key'    => 'hasMoreResults',
-                'token_param' => 'marker',
-                'token_key'   => 'marker',
-                'operations'  => array(
-                    'ListPipelines' => array(
-                        'result_key'  => 'pipelineIdList',
-                    ),
-                    'DescribeObjects' => array(
-                        'result_key'  => 'pipelineObjects',
-                    ),
-                    'QueryObjects' => array(
-                        'result_key'  => 'ids',
-                    ),
-                )
-            ))
-            ->build();
-
-        return $client;
-    }
+class DataPipelineClient extends AbstractClient {
+	const LATEST_API_VERSION = '2012-10-29';
+	
+	/**
+	 * Factory method to create a new Amazon Data Pipeline client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		// Construct the Data Pipeline client with the client builder
+		$client = ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/datapipeline-%s.php' 
+		) )->setExceptionParser ( new JsonQueryExceptionParser () )->setIteratorsConfig ( array (
+				'limit_key' => 'limit',
+				'more_key' => 'hasMoreResults',
+				'token_param' => 'marker',
+				'token_key' => 'marker',
+				'operations' => array (
+						'ListPipelines' => array (
+								'result_key' => 'pipelineIdList' 
+						),
+						'DescribeObjects' => array (
+								'result_key' => 'pipelineObjects' 
+						),
+						'QueryObjects' => array (
+								'result_key' => 'ids' 
+						) 
+				) 
+		) )->build ();
+		
+		return $client;
+	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\OpsWorks\Enum;
 
 use Aws\Common\Enum;
@@ -21,8 +21,7 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable Architecture values
  */
-class Architecture extends Enum
-{
-    const X86_64 = 'x86_64';
-    const I386 = 'i386';
+class Architecture extends Enum {
+	const X86_64 = 'x86_64';
+	const I386 = 'i386';
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudTrail\Exception;
 
 /**
- * Exception that occurs when a TrailNotFoundException error is encountered
+ * This exception is thrown when the trail with the given name is not found.
  */
-class TrailNotFoundException extends CloudTrailException {}
+class TrailNotFoundException extends CloudTrailException {
+}

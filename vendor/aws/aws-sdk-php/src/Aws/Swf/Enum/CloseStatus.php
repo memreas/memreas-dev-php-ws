@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Swf\Enum;
 
 use Aws\Common\Enum;
@@ -21,12 +21,11 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable CloseStatus values
  */
-class CloseStatus extends Enum
-{
-    const COMPLETED = 'COMPLETED';
-    const FAILED = 'FAILED';
-    const CANCELED = 'CANCELED';
-    const TERMINATED = 'TERMINATED';
-    const CONTINUED_AS_NEW = 'CONTINUED_AS_NEW';
-    const TIMED_OUT = 'TIMED_OUT';
+class CloseStatus extends Enum {
+	const COMPLETED = 'COMPLETED';
+	const FAILED = 'FAILED';
+	const CANCELED = 'CANCELED';
+	const TERMINATED = 'TERMINATED';
+	const CONTINUED_AS_NEW = 'CONTINUED_AS_NEW';
+	const TIMED_OUT = 'TIMED_OUT';
 }

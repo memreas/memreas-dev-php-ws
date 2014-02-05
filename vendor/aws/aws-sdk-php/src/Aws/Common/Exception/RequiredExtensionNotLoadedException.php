@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Common\Exception;
 
 /**
  * Thrown when a particular PHP extension is required to execute the guarded logic, but the extension is not loaded
  */
-class RequiredExtensionNotLoadedException extends RuntimeException {}
+class RequiredExtensionNotLoadedException extends RuntimeException {
+}

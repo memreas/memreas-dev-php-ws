@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ImportExport;
 
 use Aws\Common\Client\AbstractClient;
@@ -32,38 +32,34 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model listJobs(array $args = array()) {@command ImportExport ListJobs}
  * @method Model updateJob(array $args = array()) {@command ImportExport UpdateJob}
  * @method ResourceIteratorInterface getListJobsIterator(array $args = array()) The input array uses the parameters of the ListJobs operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-importexport.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.ImportExport.ImportExportClient.html API docs
  */
-class ImportExportClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2010-06-01';
-
-    /**
-     * Factory method to create a new AWS Import/Export client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        $client = ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/importexport-%s.php'
-            ))
-            ->build();
-
-        // If the Symfony YAML component is installed, add a listener that will convert arrays to proper YAML in when
-        // specifying the "Manifest" parameter of the "CreateJob" operation
-        if (class_exists('Symfony\Component\Yaml\Yaml')) {
-            $client->addSubscriber(new JobManifestListener());
-        }
-
-        return $client;
-    }
+class ImportExportClient extends AbstractClient {
+	const LATEST_API_VERSION = '2010-06-01';
+	
+	/**
+	 * Factory method to create a new AWS Import/Export client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		$client = ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/importexport-%s.php' 
+		) )->build ();
+		
+		// If the Symfony YAML component is installed, add a listener that will convert arrays to proper YAML in when
+		// specifying the "Manifest" parameter of the "CreateJob" operation
+		if (class_exists ( 'Symfony\Component\Yaml\Yaml' )) {
+			$client->addSubscriber ( new JobManifestListener () );
+		}
+		
+		return $client;
+	}
 }

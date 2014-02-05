@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Redshift\Exception;
 
 /**
- * The value specified for the event category was not one of the allowed values, or it specified a category that does not apply to the specified source type. The allowed values are Configuration, Management, Monitoring, and Security.
+ * The value specified for the event category was not one of the allowed values, or it specified a category that does not apply to the specified source type.
+ * The allowed values are Configuration, Management, Monitoring, and Security.
  */
-class SubscriptionCategoryNotFoundException extends RedshiftException {}
+class SubscriptionCategoryNotFoundException extends RedshiftException {
+}

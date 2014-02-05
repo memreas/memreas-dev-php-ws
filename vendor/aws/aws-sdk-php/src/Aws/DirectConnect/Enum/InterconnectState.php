@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DirectConnect\Enum;
 
 use Aws\Common\Enum;
@@ -21,12 +21,11 @@ use Aws\Common\Enum;
 /**
  * Contains enumerable InterconnectState values
  */
-class InterconnectState extends Enum
-{
-    const REQUESTED = 'requested';
-    const PENDING = 'pending';
-    const AVAILABLE = 'available';
-    const DOWN = 'down';
-    const DELETING = 'deleting';
-    const DELETED = 'deleted';
+class InterconnectState extends Enum {
+	const REQUESTED = 'requested';
+	const PENDING = 'pending';
+	const AVAILABLE = 'available';
+	const DOWN = 'down';
+	const DELETING = 'deleting';
+	const DELETED = 'deleted';
 }

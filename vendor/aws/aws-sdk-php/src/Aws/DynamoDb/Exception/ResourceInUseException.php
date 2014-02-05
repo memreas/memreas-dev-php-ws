@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Exception;
 
 /**
- * The operation conflicts with the resource's availability. For example, you attempted to recreate an existing table, or tried to delete a table currently in the CREATING state.
+ * The operation conflicts with the resource's availability.
+ * For example, you attempted to recreate an existing table, or tried to delete a table currently in the CREATING state.
  */
-class ResourceInUseException extends DynamoDbException {}
+class ResourceInUseException extends DynamoDbException {
+}

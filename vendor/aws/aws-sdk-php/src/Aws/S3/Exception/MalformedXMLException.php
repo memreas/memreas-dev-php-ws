@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\S3\Exception;
 
 /**
- * This happens when the user sends a malformed xml (xml that doesn't conform to the published xsd) for the configuration. The error message is, "The XML you provided was not well-formed or did not validate against our published schema."
+ * This happens when the user sends a malformed xml (xml that doesn't conform to the published xsd) for the configuration.
+ * The error message is, "The XML you provided was not well-formed or did not validate against our published schema."
  */
-class MalformedXMLException extends S3Exception {}
+class MalformedXMLException extends S3Exception {
+}

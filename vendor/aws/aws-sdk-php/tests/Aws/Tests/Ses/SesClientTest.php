@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,26 +14,23 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Ses;
 
 use Aws\Ses\SesClient;
 
-class SesClientTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    /**
-     * @covers Aws\Ses\SesClient::factory
-     */
-    public function testFactoryInitializesClient()
-    {
-        $client = SesClient::factory(array(
-            'key'    => 'foo',
-            'secret' => 'bar',
-            'region' => 'us-east-1'
-        ));
-
-        $this->assertInstanceOf('Aws\Common\Signature\SignatureV4', $client->getSignature());
-        $this->assertInstanceOf('Aws\Common\Credentials\Credentials', $client->getCredentials());
-        $this->assertEquals('https://email.us-east-1.amazonaws.com', $client->getBaseUrl());
-    }
+class SesClientTest extends \Guzzle\Tests\GuzzleTestCase {
+	/**
+	 * @covers Aws\Ses\SesClient::factory
+	 */
+	public function testFactoryInitializesClient() {
+		$client = SesClient::factory ( array (
+				'key' => 'foo',
+				'secret' => 'bar',
+				'region' => 'us-east-1' 
+		) );
+		
+		$this->assertInstanceOf ( 'Aws\Common\Signature\SignatureV4', $client->getSignature () );
+		$this->assertInstanceOf ( 'Aws\Common\Credentials\Credentials', $client->getCredentials () );
+		$this->assertEquals ( 'https://email.us-east-1.amazonaws.com', $client->getBaseUrl () );
+	}
 }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Tests\Common\Command;
 
 use Aws\Common\Command\XmlResponseLocationVisitor;
@@ -21,29 +21,32 @@ use Aws\Common\Command\XmlResponseLocationVisitor;
 /**
  * @covers Aws\Common\Command\XmlResponseLocationVisitor
  */
-class XmlResponseLocationVisitorTest extends \Guzzle\Tests\GuzzleTestCase
-{
-    public function testHandlesWrappedResponses()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testHandlesWrappedMembers()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testHandlesXmlMaps()
-    {
-        $result = XmlResponseLocationVisitor::xmlMap(array(
-            array('key' => 'a', 'value' => 1),
-            array('key' => 'b', 'value' => 2),
-            array('key' => 'c', 'value' => 3)
-        ), 'item', 'key', 'value');
-        $this->assertEquals(array(
-            'a' => '1',
-            'b' => '2',
-            'c' => '3'
-        ), $result);
-    }
+class XmlResponseLocationVisitorTest extends \Guzzle\Tests\GuzzleTestCase {
+	public function testHandlesWrappedResponses() {
+		$this->markTestIncomplete ();
+	}
+	public function testHandlesWrappedMembers() {
+		$this->markTestIncomplete ();
+	}
+	public function testHandlesXmlMaps() {
+		$result = XmlResponseLocationVisitor::xmlMap ( array (
+				array (
+						'key' => 'a',
+						'value' => 1 
+				),
+				array (
+						'key' => 'b',
+						'value' => 2 
+				),
+				array (
+						'key' => 'c',
+						'value' => 3 
+				) 
+		), 'item', 'key', 'value' );
+		$this->assertEquals ( array (
+				'a' => '1',
+				'b' => '2',
+				'c' => '3' 
+		), $result );
+	}
 }

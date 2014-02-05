@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,24 +14,22 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Model\BatchRequest;
 
 /**
  * A base batch write request defining the ability to get the table name
  */
-abstract class AbstractWriteRequest implements WriteRequestInterface
-{
-    /**
-     * @var string The name of the DynamoDB table
-     */
-    protected $tableName;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTableName()
-    {
-        return $this->tableName;
-    }
+abstract class AbstractWriteRequest implements WriteRequestInterface {
+	/**
+	 *
+	 * @var string The name of the DynamoDB table
+	 */
+	protected $tableName;
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getTableName() {
+		return $this->tableName;
+	}
 }

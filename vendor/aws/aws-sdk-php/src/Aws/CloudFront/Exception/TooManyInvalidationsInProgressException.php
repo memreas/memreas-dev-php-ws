@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudFront\Exception;
 
 /**
  * You have exceeded the maximum number of allowable InProgress invalidation batch requests, or invalidation objects.
  */
-class TooManyInvalidationsInProgressException extends CloudFrontException {}
+class TooManyInvalidationsInProgressException extends CloudFrontException {
+}

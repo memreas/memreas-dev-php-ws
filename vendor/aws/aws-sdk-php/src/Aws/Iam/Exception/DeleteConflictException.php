@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Iam\Exception;
 
 /**
- * The request was rejected because it attempted to delete a resource that has attached subordinate entities. The error message describes these entities.
+ * The request was rejected because it attempted to delete a resource that has attached subordinate entities.
+ * The error message describes these entities.
  */
-class DeleteConflictException extends IamException {}
+class DeleteConflictException extends IamException {
+}

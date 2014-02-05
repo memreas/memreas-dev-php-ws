@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DynamoDb\Exception;
 
 /**
- * The operation tried to access a nonexistent table or index. The resource may not be specified correctly, or its status may not be ACTIVE.
+ * The operation tried to access a nonexistent table or index.
+ * The resource may not be specified correctly, or its status may not be ACTIVE.
  */
-class ResourceNotFoundException extends DynamoDbException {}
+class ResourceNotFoundException extends DynamoDbException {
+}

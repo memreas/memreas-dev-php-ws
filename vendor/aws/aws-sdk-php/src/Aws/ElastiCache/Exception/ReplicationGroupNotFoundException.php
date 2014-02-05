@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ElastiCache\Exception;
 
 /**
  * The specified replication group does not exist.
  */
-class ReplicationGroupNotFoundException extends ElastiCacheException {}
+class ReplicationGroupNotFoundException extends ElastiCacheException {
+}

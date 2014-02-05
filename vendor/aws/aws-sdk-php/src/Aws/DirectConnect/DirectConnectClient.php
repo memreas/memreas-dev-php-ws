@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\DirectConnect;
 
 use Aws\Common\Client\AbstractClient;
@@ -50,47 +50,41 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeOfferingsIterator(array $args = array()) The input array uses the parameters of the DescribeOfferings operation
  * @method ResourceIteratorInterface getDescribeVirtualGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeVirtualGateways operation
  * @method ResourceIteratorInterface getDescribeVirtualInterfacesIterator(array $args = array()) The input array uses the parameters of the DescribeVirtualInterfaces operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-directconnect.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.DirectConnect.DirectConnectClient.html API docs
  */
-class DirectConnectClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2012-10-25';
-
-    /**
-     * Factory method to create a new AWS Direct Connect client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/directconnect-%s.php'
-            ))
-            ->setExceptionParser(new JsonQueryExceptionParser())
-            ->setIteratorsConfig(array(
-                'operations'  => array(
-                    'DescribeConnections' => array(
-                        'result_key' => 'connections',
-                    ),
-                    'DescribeOfferings' => array(
-                        'result_key' => 'offerings',
-                    ),
-                    'DescribeVirtualGateways' => array(
-                        'result_key' => 'virtualGateways',
-                    ),
-                    'DescribeVirtualInterfaces' => array(
-                        'result_key' => 'virtualInterfaces',
-                    ),
-                )
-            ))
-            ->build();
-    }
+class DirectConnectClient extends AbstractClient {
+	const LATEST_API_VERSION = '2012-10-25';
+	
+	/**
+	 * Factory method to create a new AWS Direct Connect client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/directconnect-%s.php' 
+		) )->setExceptionParser ( new JsonQueryExceptionParser () )->setIteratorsConfig ( array (
+				'operations' => array (
+						'DescribeConnections' => array (
+								'result_key' => 'connections' 
+						),
+						'DescribeOfferings' => array (
+								'result_key' => 'offerings' 
+						),
+						'DescribeVirtualGateways' => array (
+								'result_key' => 'virtualGateways' 
+						),
+						'DescribeVirtualInterfaces' => array (
+								'result_key' => 'virtualInterfaces' 
+						) 
+				) 
+		) )->build ();
+	}
 }

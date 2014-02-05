@@ -7,15 +7,15 @@ use Doctrine\Tests\Common\Annotations\Fixtures\AnnotationWithTargetSyntaxError;
 /**
  * @AnnotationWithTargetSyntaxError()
  */
-class ClassWithAnnotationWithTargetSyntaxError
-{
-    /**
-     * @AnnotationWithTargetSyntaxError()
-     */
-    public $foo;
-
-    /**
-     * @AnnotationWithTargetSyntaxError()
-     */
-    public function bar(){}
+class ClassWithAnnotationWithTargetSyntaxError {
+	/**
+	 * @AnnotationWithTargetSyntaxError()
+	 */
+	public $foo;
+	
+	/**
+	 * @AnnotationWithTargetSyntaxError()
+	 */
+	public function bar() {
+	}
 }

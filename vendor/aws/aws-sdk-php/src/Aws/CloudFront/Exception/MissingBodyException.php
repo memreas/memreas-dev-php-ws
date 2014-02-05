@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,11 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\CloudFront\Exception;
 
 /**
- * This operation requires a body. Ensure that the body is present and the Content-Type header is set.
+ * This operation requires a body.
+ * Ensure that the body is present and the Content-Type header is set.
  */
-class MissingBodyException extends CloudFrontException {}
+class MissingBodyException extends CloudFrontException {
+}

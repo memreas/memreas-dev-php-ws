@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,10 +14,10 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\ImportExport\Exception;
 
 /**
  * One or more required parameters was missing from the request.
  */
-class MissingParameterException extends ImportExportException {}
+class MissingParameterException extends ImportExportException {
+}

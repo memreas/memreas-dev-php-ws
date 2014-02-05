@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2010-2013 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
@@ -13,7 +14,6 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-
 namespace Aws\Rds;
 
 use Aws\Common\Client\AbstractClient;
@@ -98,30 +98,26 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeReservedDBInstancesOfferingsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedDBInstancesOfferings operation
  * @method ResourceIteratorInterface getDownloadDBLogFilePortionIterator(array $args = array()) The input array uses the parameters of the DownloadDBLogFilePortion operation
  * @method ResourceIteratorInterface getListTagsForResourceIterator(array $args = array()) The input array uses the parameters of the ListTagsForResource operation
- *
+ *        
  * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-rds.html User guide
  * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Rds.RdsClient.html API docs
  */
-class RdsClient extends AbstractClient
-{
-    const LATEST_API_VERSION = '2013-05-15';
-
-    /**
-     * Factory method to create a new Amazon Relational Database Service client using an array of configuration options.
-     *
-     * @param array|Collection $config Client configuration data
-     *
-     * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
-     */
-    public static function factory($config = array())
-    {
-        return ClientBuilder::factory(__NAMESPACE__)
-            ->setConfig($config)
-            ->setConfigDefaults(array(
-                Options::VERSION             => self::LATEST_API_VERSION,
-                Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/rds-%s.php'
-            ))
-            ->build();
-    }
+class RdsClient extends AbstractClient {
+	const LATEST_API_VERSION = '2013-09-09';
+	
+	/**
+	 * Factory method to create a new Amazon Relational Database Service client using an array of configuration options.
+	 *
+	 * @param array|Collection $config
+	 *        	Client configuration data
+	 *        	
+	 * @return self
+	 * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+	 */
+	public static function factory($config = array()) {
+		return ClientBuilder::factory ( __NAMESPACE__ )->setConfig ( $config )->setConfigDefaults ( array (
+				Options::VERSION => self::LATEST_API_VERSION,
+				Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/rds-%s.php' 
+		) )->build ();
+	}
 }
