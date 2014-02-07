@@ -19,7 +19,6 @@ class AWSManagerSender {
 	private $bucket = null;
 	private $sns = null;
 	private $ses = null;
-	private $ses = null;
 	private $topicArn = null;
 	private $elasticache = null;
 	private $awsTranscode = null;
