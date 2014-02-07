@@ -67,7 +67,7 @@ class AddComment {
 				$tblComment->create_time = $time;
 				$tblComment->update_time = $time;
 				$this->dbAdapter->persist ( $tblComment );
-				// $this->dbAdapter->flush();
+				$this->dbAdapter->flush();
 				
 				$status = 'sucess';
 			} else {
@@ -86,7 +86,6 @@ class AddComment {
 				$status = 'sucess';
 			}
 			
-			$status = 'sucess';
 			$message = "Comment successfuly added";
 			
 			if ($status == 'failure') {
