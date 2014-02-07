@@ -69,7 +69,7 @@ class AddComment {
 				$this->dbAdapter->persist ( $tblComment );
 				$this->dbAdapter->flush();
 				
-				$status = 'sucess';
+				$status = 'success';
 			} else {
 				$tblComment->comment_id = $uuid;
 				$tblComment->media_id = $media_id;
@@ -83,7 +83,7 @@ class AddComment {
 				$this->dbAdapter->persist ( $tblComment );
 				$this->dbAdapter->flush ();
 				
-				$status = 'sucess';
+				$status = 'success';
 			}
 			
 			$message = "Comment successfuly added";
