@@ -67,9 +67,9 @@ class AddComment {
 				$tblComment->create_time = $time;
 				$tblComment->update_time = $time;
 				$this->dbAdapter->persist ( $tblComment );
-				// $this->dbAdapter->flush();
+				$this->dbAdapter->flush();
 				
-				$status = 'sucess';
+				$status = 'success';
 			} else {
 				$tblComment->comment_id = $uuid;
 				$tblComment->media_id = $media_id;
@@ -83,10 +83,9 @@ class AddComment {
 				$this->dbAdapter->persist ( $tblComment );
 				$this->dbAdapter->flush ();
 				
-				$status = 'sucess';
+				$status = 'success';
 			}
 			
-			$status = 'sucess';
 			$message = "Comment successfuly added";
 			
 			if ($status == 'failure') {

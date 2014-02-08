@@ -53,6 +53,10 @@ class ListAllmedia {
 		$xml_output .= "<medias>";
 		
 		$from = ($page - 1) * $limit;
+
+		
+					
+						
 		if (empty ( $event_id )) {
 			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' ORDER BY m.create_date DESC";
 			$statement = $this->dbAdapter->createQuery ( $q1 );
@@ -73,16 +77,33 @@ class ListAllmedia {
 			
 			$result = $qb->getQuery ()->getArrayResult ();
 		}
+
 		
 		if (count ( $result ) <= 0) {
 			$error_flage = 2;
 			$message = "No Record found for this Event";
 		} else {
+			$qb = $this->dbAdapter->createQueryBuilder ();
+			$qb->select ( 'u.username', 'm.metadata' );
+			$qb->from ( 'Application\Entity\User', 'u' );
+			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+			$qb->where ( 'u.user_id=?1 ' );
+			$qb->setParameter(1, $result [0] ['user_id']);
+			$oUserProfile = $qb->getQuery ()->getResult();
+
+			$json_array = json_decode ( $oUserProfile[0]['metadata'], true );
+			$url1 = '';
+			if (! empty ( $json_array ['S3_files'] ['path'] ))
+			$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+			
+			$xml_output .= "<username>" . $oUserProfile[0] ['username'] . "</username>";
+			$xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
 			$xml_output .= "<page>$page</page>";
 			$xml_output .= "<status>Success</status>";
 			$xml_output .= "<user_id>" . $result [0] ['user_id'] . "</user_id>";
 			$xml_output .= "<event_id>" . $event_id . "</event_id>";
 			$xml_output .= "<message>Media List</message>";
+			
 			foreach ( $result as $row ) {
 				$url79x80 = '';
 				$url448x306 = '';
