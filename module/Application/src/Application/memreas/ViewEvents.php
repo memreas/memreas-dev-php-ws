@@ -79,6 +79,7 @@ class ViewEvents {
 						$xml_output .= "<event>";
 						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
 						$xml_output .= "<event_name>" . $row->name . "</event_name>";
+						$xml_output .= "<event_location>" . $row->location . "</event_location>";
 						$xml_output .= "<friend_can_post>" . $row->friends_can_post . "</friend_can_post>";
 						$xml_output .= "<friend_can_share>" . $row->friends_can_share . "</friend_can_share>";
 						// get like count
