@@ -33,7 +33,8 @@ class Memreastvm {
 				'GroupName' => 'S3_Access',
 				// 'PolicyName' => 'S3_Access_Policy' //This policy only allows access to memreasdev
 				'PolicyName' => 'AmazonS3FullAccess-S3_Access-201302272114'  // This policy allows full access to S3
-		 );
+		 	)
+		);
 		$iam_policy_array = $iam_policy->toArray ();
 		
 		$GroupName = ( string ) $iam_policy_array ['GroupName'];
@@ -49,8 +50,8 @@ class Memreastvm {
 				'Name' => 'S3_Access_User',
 				'Policy' => $PolicyDocument_decode,
 				'DurationSeconds' => 3600  //1 hour
-		)// 1 hour
-		null );
+			)// 1 hour
+	 	);
 		
 		$response_array = $response->toArray ();
 		$AccessKeyId = ( string ) $response_array ['Credentials'] ['AccessKeyId'];
