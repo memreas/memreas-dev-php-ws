@@ -13,6 +13,7 @@ class UpdateNotification {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $notification;
+	public $user_id;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		error_log ( "Inside__construct..." );
 		$this->message_data = $message_data;
@@ -38,7 +39,7 @@ class UpdateNotification {
 			$message = "Notification not found";
 		} else {
 			foreach ( $data->updatenotification->notification as $notification ) {
-				$user_id = (trim ( $notification->user_id ));
+				$this->user_id = $user_id = (trim ( $notification->user_id ));
 				$notification_id = (trim ( $notification->notification_id ));
 				
 				$status = trim ( $notification->status );

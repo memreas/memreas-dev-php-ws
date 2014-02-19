@@ -18,7 +18,7 @@ class Tag {
 	/**
 	 *
 	 * @var string @ORM\Column(name="tag_id", type="string", length=255, nullable=false)
-	 *      @ORM\Id
+	 *      
 	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
 	private $tag_id;

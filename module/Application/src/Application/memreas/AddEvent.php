@@ -110,6 +110,8 @@ else {
                 $tblEvent->update_time=$event_date_timestamp;
                 $this->dbAdapter->persist($tblEvent);
                 $this->dbAdapter->flush();
+
+                $this->createEventCache();
                 
                 
                 
@@ -295,6 +297,23 @@ $xml_output.= "</xml>";
 echo $xml_output;
 
     }
+  function createEventCache(){
+    $date = strtotime ( date ( 'd-m-Y' ) );
+    $query_event = "select e.name, e.event_id 
+                from Application\Entity\Event e  
+                where (e.viewable_to >=" . $date . " or e.viewable_to ='')
+                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='') 
+                    and  (e.self_destruct >=" . $date . " or e.self_destruct='') 
+                ORDER BY e.create_time DESC";
+      $statement = $this->dbAdapter->createQuery ( $query_event );
+     // $statement->setMaxResults ( $limit );
+     // $statement->setFirstResult ( $from );
+      $result = $statement->getResult ();
+      foreach ($result as $value) {
+          $this->eventIndex[$value['event_id']] = $value['name'];
+        }
+
+  }
 
 }
 

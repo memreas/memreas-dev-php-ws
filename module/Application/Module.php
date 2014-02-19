@@ -33,6 +33,7 @@ class Module {
 		$moduleRouteListener = new ModuleRouteListener ();
 		$moduleRouteListener->attach ( $eventManager );
 		$this->bootstrapSession ( $e );
+		 
 	}
 	public function bootstrapSession($e) {
 		ini_set ( 'session.use_cookies', '0' );

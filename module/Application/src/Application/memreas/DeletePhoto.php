@@ -38,6 +38,7 @@ class DeletePhoto {
 			// $row = $result->current();
 			$statement = $this->dbAdapter->createQuery ( $seldata );
 			$resseldata = $statement->getResult ();
+			$this->user_id = $resseldata[0]->user_id;
 			// print_r($resseldata);exit;
 			// print_r(count($resseldata));exit;
 			if (count ( $resseldata ) > 0) {

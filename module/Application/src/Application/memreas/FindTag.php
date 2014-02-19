@@ -34,7 +34,7 @@ class FindTag {
 		$tag = (trim ( $data->findtag->tag ));
 		$time = time ();
 		
-		// save notification in table
+		//  
 		$tblTag = $this->dbAdapter->find ( "\Application\Entity\Tag", $tag );
 		
 		if (! $tblTag) {

@@ -9,6 +9,7 @@ class AWSMemreasCache {
 	private $cache = null;
 	private $client = null;
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
+	private $key =null;
 	public function __construct() {
 		error_log ( "MemreasCache.__construct()...." . PHP_EOL );
 
@@ -40,31 +41,30 @@ class AWSMemreasCache {
 		$this->cache->addServer ( $server_endpoint, $server_port );
 		$now = date ( 'Y-m-d H:i:s' );
 		
-		$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
-		                                                         
+		//$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
+		                                                     
 		// Connected at this point
 		error_log ( "Connected to elasticache client!" . PHP_EOL );
 		error_log ( "Connected to elasticache client!" . PHP_EOL );
 		error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
+ 
 	}
 	
-	public function setCache($action, $uid, $value, $ttl = 300) { // 5 minutes
-		$key = $action . '_' . $uid;
-		$result = $this->cache->set ( $key , $value, $ttl );
+	public function setCache($key, $value, $ttl = 3000) { // 5 minutes
+ 		$result = $this->cache->set ( $key , $value, $ttl );
 		error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 		return $result;
 	}
 	
-	public function getCache($action, $uid) {
-		$key = $action . '_' . $uid;
-		$result = $this->cache->get ( $key );
-		error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+	public function getCache($key) {
+ 		$result = $this->cache->get ( $key );
+
+		error_log('JUST FETCHED THIS KEY ----> ' . $key  . print_r($result,true). PHP_EOL);
 		return $result;
 	}
 	
-	public function invalidateCache($action, $uid) {
-		$key = $action . '_' . $uid;
-		$this->cache->delete ( $key );
+	public function invalidateCache($key) {
+ 		$this->cache->delete ( $key );
 		error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
 	}
 	
@@ -79,13 +79,12 @@ class AWSMemreasCache {
 		return $response->getBody ( true );
 	}
 
-	public function fetchXML($url, $action, $uid, $xml, $invalidateCache = false) {
+	public function fetchXML($url,$key, $xml, $invalidateCache = false) {
 		
 		// echo 'Inside fetchXML action ----> ' . $url . '<BR><BR>';
 		// echo 'Inside fetchXML action ----> ' . $action . '<BR><BR>';
 		// echo 'Inside fetchXML uid ----> ' . $uid . '<BR><BR>';
-		$key = $action . '_' . $uid;
-		$listPhotos = $this->cache->get ( $key );
+ 		$listPhotos = $this->cache->get ( $key );
 		if (($invalidateCache) || (! $listPhotos)) {
 			$listPhotos = $this->fetchPostBody ( $url, $action, $xml, true );
 			$this->cache->set ( $key, $listPhotos );
@@ -99,6 +98,8 @@ class AWSMemreasCache {
 		
 		return $listPhotos;
 	}
+
+	 
 
 }
 

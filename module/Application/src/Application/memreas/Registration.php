@@ -15,6 +15,8 @@ class Registration {
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	public $status;
+	public $userIndex = array();
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
@@ -63,6 +65,7 @@ class Registration {
 			}
 		}
 		
+
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
 				$checkvalidemail = $this->is_valid_email ( $email );
@@ -118,7 +121,9 @@ class Registration {
 				
 				$this->dbAdapter->persist ( $tblUser );
 				$this->dbAdapter->flush ();
+
 				
+ 		
 				if (! empty ( $device_token ) && ! empty ( $device_type )) {
 					$device_id = MUUID::fetchUUID ();
 					
@@ -132,6 +137,10 @@ class Registration {
 					$this->dbAdapter->persist ( $tblDevice );
 					$this->dbAdapter->flush ();
 				}
+
+				//create cache
+				$this->createUserCache();
+
 				
 				// upload profile image
 				if (isset ( $_FILES ['f'] ) && ! empty ( $_FILES ['f'] ['name'] )) {
@@ -240,7 +249,7 @@ class Registration {
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 				$aws_manager->sendSeSMail ( $to, $subject, $html );
 				
-				$status = 'Success';
+				$this->status = $status = 'Success';
 				$message = "Welcome to Event App. Your profile has been created.";
 				// error_log ( "Finished..." . PHP_EOL );
 			} else {
@@ -263,6 +272,18 @@ class Registration {
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
+	}
+
+	function createUserCache(){
+
+		//create index for catch;
+				$userIndexSql = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
+				//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
+				//$userIndexSql->setMaxResults(30);
+				$userIndexArr = $userIndexSql->getResult();
+				foreach ($userIndexArr as $value) {
+					$this->userIndex[$value['user_id']] = $value['username'];
+				}
 	}
 }
 
