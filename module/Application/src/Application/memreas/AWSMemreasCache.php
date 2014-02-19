@@ -35,7 +35,7 @@ class AWSMemreasCache {
 		 * without requiring any changes to the PHP application.
 		 */
 		
-		$this->cache = new \Memcached ();
+		$this->cache = new \Memcache();
 		error_log ( "Created new Memcached client.." . PHP_EOL );
 		//$this->cache->setOption ( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE );
 		$this->cache->addServer ( $server_endpoint, $server_port );
@@ -46,12 +46,12 @@ class AWSMemreasCache {
 		// Connected at this point
 		error_log ( "Connected to elasticache client!" . PHP_EOL );
 		error_log ( "Connected to elasticache client!" . PHP_EOL );
-		error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
+	//	error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
  
 	}
 	
 	public function setCache($key, $value, $ttl = 3000) { // 5 minutes
- 		$result = $this->cache->set ( $key , $value, $ttl );
+ 		$result = $this->cache->set ( $key , $value,0, $ttl );
 		error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 		return $result;
 	}
