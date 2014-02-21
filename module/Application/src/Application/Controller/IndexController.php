@@ -59,6 +59,8 @@ use Application\memreas\RegisterDevice;
 use Application\memreas\ListComments;
 use Application\memreas\Memreas;
 use Application\memreas\MemreasTables;
+use Application\memreas\GetEventLocation;
+
 
 class IndexController extends AbstractActionController {
 	
@@ -270,6 +272,9 @@ class IndexController extends AbstractActionController {
 						'EmailAddress' => $_GET ['email'] 
 				) );
 				echo 'Please Cheack email validate you email to recive emails';
+			} else if ($actionname == "geteventlocation") {
+				$GetEventLocation = new GetEventLocation ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $GetEventLocation->exec ();
 			}
 			$output = ob_get_clean ();
 		}

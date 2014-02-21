@@ -27,7 +27,7 @@ class GetSession {
 			
 			$xml_output .= "<username>" . $_SESSION ['user'] ['username'] . "</username>";
 			$xml_output .= "<userid>" . $_SESSION ['user'] ['user_id'] . "</userid>";
-			print_r ( $xml_output );
+			
 		}
 		$xml_output .= "</getsessionresponse>";
 		$xml_output .= "</xml>";
