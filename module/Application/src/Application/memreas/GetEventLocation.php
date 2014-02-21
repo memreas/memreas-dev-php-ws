@@ -23,28 +23,20 @@ class GetEventLocation {
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<geteventlocationresponse>";
-
-		if (empty ( $event_id )) {
-			$message = 'Event id required';
-			$status = 'Failed';
-
-		}
-		else{
-			$q1 = "select e.event_id, e.location from Application\Entity\Event e where e.event_id=:event_id";
+		$q1 = "select e.event_id, e.location from Application\Entity\Event e where e.event_id=:event_id";
 			$statement = $this->dbAdapter->createQuery ( $q1 );
 			$statement->setParameter ( 'event_id', $event_id );
 			$event = $statement->getOneOrNullResult();
-			
-			
-			if($event){
+		if (empty ( $event_id ) || empty($event)) {
+			$xml_output .= "<status>Failure</status>";
+			$xml_output .= "<message>No Record Found </message>";
+
+		}
+		else{
+				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<event_id>" . $event['event_id']. "</event_id>";
 				$xml_output .= "<location>" . $event['location'] . "</location>";
-			}
-			
-		}	
-			
-			
-		
+			}	
 		$xml_output .= "</geteventlocationresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
