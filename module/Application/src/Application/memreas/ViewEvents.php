@@ -49,19 +49,19 @@ class ViewEvents {
 		$xml_output .= "<xml><viewevents>";
 		// ---------------------------my events----------------------------
 		if ($is_my_event) {
-			$query_event = "select e 
-                from Application\Entity\Event e  
-                where e.user_id='" . $user_id . "' 
+			$query_event = "select e
+                from Application\Entity\Event e
+                where e.user_id='" . $user_id . "'
                     and  (e.viewable_to >=" . $date . " or e.viewable_to ='')
-                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='') 
-                    and  (e.self_destruct >=" . $date . " or e.self_destruct='') 
+                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
+                    and  (e.self_destruct >=" . $date . " or e.self_destruct='')
                 ORDER BY e.create_time DESC";
 			$statement = $this->dbAdapter->createQuery ( $query_event );
 			$statement->setMaxResults ( $limit );
 			$statement->setFirstResult ( $from );
 			$result_event = $statement->getResult ();
 			error_log ( "cklDid I get here?" . PHP_EOL );
-			
+
 			if ($result_event) {
 				if (count ( $result_event ) <= 0) {
 					$xml_output .= "<status>Failure</status>";
@@ -75,7 +75,7 @@ class ViewEvents {
 				}
 				if (count ( $result_event ) > 0) {
 					foreach ( $result_event as $row ) { // get media
-						
+
 						$xml_output .= "<event>";
 						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
 						$xml_output .= "<event_name>" . $row->name . "</event_name>";
@@ -92,7 +92,7 @@ class ViewEvents {
 						$commCountSql->setParameter ( 1, $row->event_id );
 						$commCount = $commCountSql->getSingleScalarResult ();
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
-						
+
 						// get event friends
 						$qb = $this->dbAdapter->createQueryBuilder ();
 						$qb->select ( 'u.username', 'm.metadata' );
@@ -100,38 +100,38 @@ class ViewEvents {
 						$qb->leftjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
 						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 						$qb->where ( 'ef.event_id=?1 ' );
-						
+
 						$qb->setParameter ( 1, $row->event_id );
 						$query_ef_result = $qb->getQuery ()->getResult ();
-						
+
 						$xml_output .= '<event_friends>';
 						foreach ( $query_ef_result as $efRow ) {
 							$xml_output .= '<event_friend>';
-							
+
 							$xml_output .= "<username>" . $efRow ['username'] . "</username>";
 							$json_array = json_decode ( $efRow ['metadata'], true );
 							$url1 = '';
 							if (! empty ( $json_array ['S3_files'] ['path'] ))
 								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-							
+
 							$xml_output .= "<username>" . $efRow ['username'] . "</username>";
 							$xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
-							
+
 							$xml_output .= '</event_friend>';
 						}
 						$xml_output .= '</event_friends>';
-						
+
 						// get comments
 						$cdata = array (
 								'listcomments' => array (
 										'event_id' => $row->event_id,
 										'limit' => 5,
-										'page' => 1 
+										'page' => 1
 								)
-								 
+
 						);
 						$xml_output .= $this->comments->exec ( $cdata );
-						
+
 						/*
 						 * $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata FROM Application\Entity\EventMedia event_media inner join Application\Entity\Event event on event.event_id=event_media.event_id inner join Application\Entity\Media media on event_media.media_id=media.media_id where event.user_id='$user_id' and event.event_id='" . $row->event_id . "' ORDER BY media.create_date DESC"; $statement = $this->dbAdapter->createQuery($query_event_media); $query_event_media_result = $statement->getResult();
 						 */
@@ -147,9 +147,9 @@ class ViewEvents {
 						$qb->setParameter ( 2, $row->event_id );
 						$query_event_media_result = $qb->getQuery ()->getResult ();
 						// error_log("SQL ----> " . $qb->getQuery()->getSQL() . PHP_EOL);
-						
+
 						if (count ( $query_event_media_result ) > 0) {
-							
+
 							foreach ( $query_event_media_result as $row1 ) {
 								$url = "";
 								$type = "";
@@ -157,13 +157,13 @@ class ViewEvents {
 								$url79x80 = '';
 								$url448x306 = '';
 								$url98x78 = '';
-								
+
 								if (isset ( $row1 ['metadata'] )) {
 									$json_array = json_decode ( $row1 ['metadata'], true );
 									$url = $json_array ['S3_files'] ['path'];
 									if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 										$type = "image";
-										
+
 										$url79x80 = isset ( $json_array ['S3_files'] ['79x80'] ) ? $json_array ['S3_files'] ['79x80'] : '';
 										$url448x306 = isset ( $json_array ['S3_files'] ['448x306'] ) ? $json_array ['S3_files'] ['448x306'] : '';
 										$url98x78 = isset ( $json_array ['S3_files'] ['98x78'] ) ? $json_array ['S3_files'] ['98x78'] : '';
@@ -196,7 +196,7 @@ class ViewEvents {
 							$xml_output .= "<event_media_98x78></event_media_98x78>";
 							$xml_output .= "<event_media_448x306></event_media_448x306>";
 						}
-						
+
 						$xml_output .= "</event>";
 					}
 					$xml_output .= "</events>";
@@ -212,7 +212,7 @@ class ViewEvents {
 			// get friend id for repected user id
 			// for singal user at a time friend id and friend id both r deffer
 			$getfriendid_loginuser = "SELECT f
-       from Application\Entity\Friend f 
+       from Application\Entity\Friend f
        where f.network='memreas' and f.social_username in(
                 select u.username
                 from Application\Entity\User u
@@ -223,12 +223,12 @@ class ViewEvents {
 			// $row = $result->current();
 			$statement = $this->dbAdapter->createQuery ( $getfriendid_loginuser );
 			$result_getfriendid = $statement->getResult ();
-			
+
 			if (count ( $result_getfriendid ) <= 0) {
 				$error_flag = 2;
 				$message = "No Record Found";
 			} else {
-				
+
 				foreach ( $result_getfriendid as $row_getfriendid ) {
 					// print_r($row_getfriendid);
 					// $q_getuserid = "SELECT user_id FROM user_friend WHERE friend_id='" . $row_getfriendid['friend_id'] . "'";
@@ -265,24 +265,24 @@ class ViewEvents {
                     event.event_id=event_friend.event_id
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
-                    and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
+                    and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                     and event_friend.friend_id='" . $row_getfriendid->friend_id . "' ORDER BY user.username ASC,event.create_time DESC ";
 					// $result_friendevent = mysql_query($q_friendsevent) or die(mysql_error());
 					// $statement = $this->dbAdapter->createStatement($q_friendsevent);
 					// $result_friendevent = $statement->execute();
 					// $row = $result->current();
-					
+
 					$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 					$result_friendevent = $statement->getArrayResult ();
-					
+
 					$xml_output .= "<friends>";
 					$user_id = null;
 					$array = array ();
 					foreach ( $result_friendevent as $row_friendsevent ) {
-						
+
 						$array [$row_friendsevent [0] ['username']] [] = $row_friendsevent;
 					}
-					
+
 					foreach ( $array as $key => $value ) {
 						$url1 = null;
 						$pic_79x80 = '';
@@ -298,19 +298,19 @@ class ViewEvents {
 							// $row = $result->current();
 							$statement = $this->dbAdapter->createQuery ( $q );
 							$re = $statement->getArrayResult ();
-							
+
 							$row = array_pop ( $re );
-							
+
 							$json_array = json_decode ( $row ['metadata'], true );
 							if (! empty ( $json_array ['S3_files'] ['path'] ))
 								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-							
+
 							if (! empty ( $json_array ['S3_files'] ['79x80'] ))
 								$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['79x80'];
-							
+
 							if (! empty ( $json_array ['S3_files'] ['448x306'] ))
 								$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['448x306'];
-							
+
 							if (! empty ( $json_array ['S3_files'] ['98x78'] ))
 								$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['98x78'];
 						}
@@ -318,13 +318,13 @@ class ViewEvents {
 						$xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
 						$xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
 						$xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
-						
+
 						$xml_output .= "<event_creator_user_id>" . $value [0] [0] ['user_id'] . "</event_creator_user_id>";
 						$xml_output .= "<events>";
 						foreach ( $value as $row_friendsevent ) {
 							// print_r($row_friendsevent);
 							$url = '';
-							
+
 							$xml_output .= "<event>";
 							$xml_output .= "<event_id>" . $row_friendsevent ['event_id'] . "</event_id>";
 							$xml_output .= "<event_name>" . $row_friendsevent ['name'] . "</event_name>";
@@ -341,12 +341,12 @@ class ViewEvents {
 							$qb->where ( 'event.event_id = ?1 ' );
 							$qb->orderBy ( 'media.create_date', 'DESC' );
 							$qb->setParameter ( 1, $row_friendsevent ['event_id'] );
-							
+
 							$query_event_media_result = $qb->getQuery ()->getResult ();
-							
+
 							if (count ( $query_event_media_result ) > 0) {
 								foreach ( $query_event_media_result as $row ) {
-									
+
 									$url = '';
 									$type = "";
 									$thum_url = '';
@@ -355,7 +355,7 @@ class ViewEvents {
 									$url98x78 = '';
 									if (isset ( $row ['metadata'] )) {
 										$json_array = json_decode ( $row ['metadata'], true );
-										
+
 										$url = $json_array ['S3_files'] ['path'];
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 											$type = "image";
@@ -396,41 +396,39 @@ class ViewEvents {
 						$xml_output .= "</events>";
 						$xml_output .= "</friend>";
 					}
-					
+
 					$xml_output .= "</friends>";
-					
+
 					// }
 					// }
 					// }
 				}
 			}
 		}
-		
-		/*
-		 * if ($is_friend_event) { // $q = "SELECT event.event_id ,event.name,uf.friend_id,friend.social_username,friend.url_image // FROM user_friend as uf // inner join friend on uf.friend_id=friend.friend_id // inner join event on uf.friend_id=event.user_id // where uf.user_id='$user_id' // ORDER BY uf.friend_id ASC // LIMIT $from , $limit";// //get friend id $getuser="SELECT friend.friend_id ,event_friend.event_id from friend where network='memreas' and social_username in( select username from user where user_id='$user_id')"; $resultgetuser = mysql_query($getuser); if (!$resultgetuser) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($resultgetuser) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($resultgetuser) > 0) { $row_getuser= mysql_fetch_assoc($resultgetuser); //-------------------get user's friends and his name & pic $q = "SELECT uf.friend_id,uf.user_id,friend.social_username,friend.url_image FROM user_friend as uf inner join friend on uf.friend_id=friend.friend_id where uf.friend_id='".$row_getuser['friend_id']."' ORDER BY uf.friend_id ASC LIMIT $from , $limit"; $result = mysql_query($q); if (!$result) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($result) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($result) > 0) { $xml_output.="<status>Success</status>"; $xml_output.="<message>My Friends Event List</message>"; $xml_output.="<page>$page</page>"; while ($row2 = mysql_fetch_array($result)) {//get media // echo "<pre>";print_r($row2); // $q_freinds_event = "select event_id,name from event where user_id='" . $row2['user_id']."' ORDER BY create_time DESC"; $q_freinds_event="SELECT event.* FROM friend INNER JOIN event_friend ON friend.friend_id = event_friend.friend_id INNER JOIN event ON event_friend.event_id = event.event_id where event_friend.friend_id='".$row_getuser['friend_id']."'"; $rfe = mysql_query($q_freinds_event); if (!$rfe) { $error_flag = 1; $message = mysql_error(); } // else if (mysql_num_rows($rfe)<= 0){ // $error_flag = 2; // $message ="Record not found"; // } else if (mysql_num_rows($rfe)> 0){ // print_r($rfe); $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator>" . $row2['social_username'] . "</event_creator>"; $xml_output.="<profile_pic><![CDATA[" . $row2['url_image'] . "]]></profile_pic>"; $xml_output.="<event_creator_user_id>" . $row2['friend_id'] . "</event_creator_user_id>"; $xml_output.="<events>"; while ($row4 = mysql_fetch_assoc($rfe)) { $xml_output.="<event>"; $xml_output.="<event_id>" . $row4['event_id'] . "</event_id>"; $xml_output.="<event_name>" . $row4['name'] . "</event_name>"; $query_event_friend = "SELECT event.event_id ,event.name,media.media_id,media.metadata FROM event inner join event_media on event.event_id=event_media.event_id inner join media on event_media.media_id=media.media_id where event.event_id='" . $row4['event_id'] . "' and event.event_id='".$row4['event_id']."' ORDER BY media.create_date DESC LIMIT 1"; $result_event_friend = mysql_query($query_event_friend); if ($result_event_friend) { if ($row = mysql_fetch_assoc($result_event_friend)) { $url = ''; $type=""; if (isset($row['metadata'])) { $json_array = json_decode($row['metadata'], true); $url = $json_array['S3_files']['path']; if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) $type = "image"; else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) $type = "video"; else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio'])) $type = "audio"; else $type = "Type not Mentioned"; } $xml_output.="<event_media_type>" . $type . "</event_media_type>"; $xml_output.="<event_media_url><![CDATA[" . $url . "]]></event_media_url>"; $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>"; } } else { $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; } $xml_output.= "</event>"; }$xml_output.= "</events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; } } }}
-		 */
-		
-		if ($error_flag) {
-			// echo $xml_output;
-			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-			$xml_output .= "<xml><viewevents>";
-			$xml_output .= "<status>Failure</status>";
-			$xml_output .= "<message>$message</message>";
-			$xml_output .= "<events></events>";
-			$xml_output .= "</friends></friends>";
+
+
+		if ($is_friend_event) { // $q = "SELECT event.event_id ,event.name,uf.friend_id,friend.social_username,friend.url_image // FROM user_friend as uf // inner join friend on uf.friend_id=friend.friend_id // inner join event on uf.friend_id=event.user_id // where uf.user_id='$user_id' // ORDER BY uf.friend_id ASC // LIMIT $from , $limit";// //get friend id $getuser="SELECT friend.friend_id ,event_friend.event_id from friend where network='memreas' and social_username in( select username from user where user_id='$user_id')"; $resultgetuser = mysql_query($getuser); if (!$resultgetuser) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($resultgetuser) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($resultgetuser) > 0) { $row_getuser= mysql_fetch_assoc($resultgetuser); //-------------------get user's friends and his name & pic $q = "SELECT uf.friend_id,uf.user_id,friend.social_username,friend.url_image FROM user_friend as uf inner join friend on uf.friend_id=friend.friend_id where uf.friend_id='".$row_getuser['friend_id']."' ORDER BY uf.friend_id ASC LIMIT $from , $limit"; $result = mysql_query($q); if (!$result) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($result) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($result) > 0) { $xml_output.="<status>Success</status>"; $xml_output.="<message>My Friends Event List</message>"; $xml_output.="<page>$page</page>"; while ($row2 = mysql_fetch_array($result)) {//get media // echo "<pre>";print_r($row2); // $q_freinds_event = "select event_id,name from event where user_id='" . $row2['user_id']."' ORDER BY create_time DESC"; $q_freinds_event="SELECT event.* FROM friend INNER JOIN event_friend ON friend.friend_id = event_friend.friend_id INNER JOIN event ON event_friend.event_id = event.event_id where event_friend.friend_id='".$row_getuser['friend_id']."'"; $rfe = mysql_query($q_freinds_event); if (!$rfe) { $error_flag = 1; $message = mysql_error(); } // else if (mysql_num_rows($rfe)<= 0){ // $error_flag = 2; // $message ="Record not found"; // } else if (mysql_num_rows($rfe)> 0){ // print_r($rfe); $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator>" . $row2['social_username'] . "</event_creator>"; $xml_output.="<profile_pic><![CDATA[" . $row2['url_image'] . "]]></profile_pic>"; $xml_output.="<event_creator_user_id>" . $row2['friend_id'] . "</event_creator_user_id>"; $xml_output.="<events>"; while ($row4 = mysql_fetch_assoc($rfe)) { $xml_output.="<event>"; $xml_output.="<event_id>" . $row4['event_id'] . "</event_id>"; $xml_output.="<event_name>" . $row4['name'] . "</event_name>"; $query_event_friend = "SELECT event.event_id ,event.name,media.media_id,media.metadata FROM event inner join event_media on event.event_id=event_media.event_id inner join media on event_media.media_id=media.media_id where event.event_id='" . $row4['event_id'] . "' and event.event_id='".$row4['event_id']."' ORDER BY media.create_date DESC LIMIT 1"; $result_event_friend = mysql_query($query_event_friend); if ($result_event_friend) { if ($row = mysql_fetch_assoc($result_event_friend)) { $url = ''; $type=""; if (isset($row['metadata'])) { $json_array = json_decode($row['metadata'], true); $url = $json_array['S3_files']['path']; if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) $type = "image"; else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) $type = "video"; else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio'])) $type = "audio"; else $type = "Type not Mentioned"; } $xml_output.="<event_media_type>" . $type . "</event_media_type>"; $xml_output.="<event_media_url><![CDATA[" . $url . "]]></event_media_url>"; $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>"; } } else { $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; } $xml_output.= "</event>"; }$xml_output.= "</events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; } } }}
+		    if ($error_flag) {
+			    // echo $xml_output;
+			    $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+			    $xml_output .= "<xml><viewevents>";
+			    $xml_output .= "<status>Failure</status>";
+			    $xml_output .= "<message>$message</message>";
+			    $xml_output .= "<events></events>";
+			    $xml_output .= "<friends></friends>";
+		    }
 		}
-		// }
 		// -----------------------------public events-----------------------------
 		if ($is_public_event) {
-			
+
 			$q_public = "select distinct event.user_id,event.user_id ,user.username,user.profile_photo
-                        from Application\Entity\Event event  , Application\Entity\User user  
-                        where event.public=1  
+                        from Application\Entity\Event event  , Application\Entity\User user
+                        where event.public=1
                         and event.user_id=user.user_id
-                        and event.user_id != '$user_id' 
+                        and event.user_id != '$user_id'
                         and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
-                        and  (event.viewable_from <=" . $date . " or event.viewable_from ='')     
-                        and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
+                        and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
+                        and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                         ORDER BY event.create_time DESC ";
 			error_log ( "Inside Public event dql string ----> " . $q_public . PHP_EOL );
 			// LIMIT $from , $limit";
@@ -438,35 +436,35 @@ class ViewEvents {
 			// $statement = $this->dbAdapter->createStatement($q_public);
 			// $result_pub = $statement->execute();
 			// $row = $result->current();
-			
+
 			$statement = $this->dbAdapter->createQuery ( $q_public );
 			$statement->setMaxResults ( $limit );
 			$statement->setFirstResult ( $from );
 			$result_pub = $statement->getResult ();
-			
+
 			/*
 			 * if (!$result_pub) { $xml_output.="<status>Failure</status>"; $xml_output.="<message>" . mysql_error() . "</message>"; $xml_output.="<page>0</page>"; $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator></event_creator>"; $xml_output.="<profile_pic><![CDATA[]]></profile_pic>"; $xml_output.="<profile_pic_79x80></profile_pic_79x80>"; $xml_output.="<profile_pic_448x306></profile_pic_448x306>"; $xml_output.="<profile_pic_98x78></profile_pic_98x78>"; $xml_output.="<event_creator_user_id></event_creator_user_id>"; $xml_output.="<events><event>"; $xml_output.="<event_id></event_id>"; $xml_output.="<event_name></event_name>"; $xml_output.="<friend_can_post></friend_can_post>"; $xml_output.="<friend_can_share></friend_can_share>"; $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; $xml_output.="<event_media_video_thum></event_media_video_thum>"; $xml_output.="<event_media_79x80></event_media_79x80>"; $xml_output.="<event_media_98x78></event_media_98x78>"; $xml_output.="<event_media_448x306></event_media_448x306>"; $xml_output.= "</event></events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; }
 			 */
 			if (count ( $result_pub ) == 0) {
-				
+
 				$xml_output .= "<friends> <status>Failure</status>";
 				$xml_output .= "<message>No record found</message>";
 				$xml_output .= "</friends>";
 			} else {
-				
+
 				error_log ( "Inside else " . PHP_EOL );
-				
+
 				$xml_output .= "<friends>";
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>Public Event List</message>";
 				$xml_output .= "<page>$page</page>";
-				
+
 				foreach ( $result_pub as $row3 ) {
 					$pic = '';
 					$xml_output .= "<friend>";
 					$xml_output .= "<event_creator>" . $row3 ['username'] . "</event_creator>";
 					if ($row3 ['profile_photo']) {
-						
+
 						$q_profile_photo = "select m from Application\Entity\Media m  where m.is_profile_pic=1 and m.user_id='" . $row3 ['user_id'] . "'";
 						// $result_profile_pic = mysql_query($q_profile_photo) or die(mysql_error());
 						// $statement = $this->dbAdapter->createStatement($q_profile_photo);
@@ -475,7 +473,7 @@ class ViewEvents {
 						$statement = $this->dbAdapter->createQuery ( $q_profile_photo );
 						$statement->setMaxResults ( 1 );
 						$result_profile_pic = $statement->getArrayResult ();
-						
+
 						if ($result_profile_pic) {
 							if ($row6 = array_pop ( $result_profile_pic )) {
 								$json_array = json_decode ( $row6 ['metadata'], true );
@@ -483,13 +481,13 @@ class ViewEvents {
 								// print_r($json_array['S3_files']);
 								if (! empty ( $json_array ['S3_files'] ['path'] ))
 									$pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-								
+
 								if (! empty ( $json_array ['S3_files'] ['79x80'] ))
 									$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['79x80'];
-								
+
 								if (! empty ( $json_array ['S3_files'] ['448x306'] ))
 									$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['448x306'];
-								
+
 								if (! empty ( $json_array ['S3_files'] ['98x78'] ))
 									$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['98x78'];
 							}
@@ -500,15 +498,15 @@ class ViewEvents {
 					$xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
 					$xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
 					$xml_output .= "<event_creator_user_id>" . $row3 ['user_id'] . "</event_creator_user_id>";
-					$qub_event = "select event  
-                    from Application\Entity\Event event 
-                    where event.public=1 and event.user_id='" . $row3 ['user_id'] . "' 
+					$qub_event = "select event
+                    from Application\Entity\Event event
+                    where event.public=1 and event.user_id='" . $row3 ['user_id'] . "'
                           and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                           and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
-                          and  (event.self_destruct >=" . $date . " or event.self_destruct='') 
+                          and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                           ORDER BY event.create_time DESC";
 					error_log ( "dql qub event ---> " . $qub_event . PHP_EOL );
-					
+
 					// $result2 = mysql_query($qub_event) or die(mysql_error
 					// $statement = $this->dbAdapter->createStatement($qub_event);
 					// $result2 = $statement->execute();
@@ -516,11 +514,11 @@ class ViewEvents {
 					$statement = $this->dbAdapter->createQuery ( $qub_event );
 					// $statement::setMaxResults(1);
 					$result2 = $statement->getResult ();
-					
+
 					if ($result2) {
 						$xml_output .= "<events>";
 						foreach ( $result2 as $row5 ) {
-							
+
 							$xml_output .= "<event>";
 							$xml_output .= "<event_id>" . $row5->event_id . "</event_id>";
 							$xml_output .= "<event_name>" . $row5->name . "</event_name>";
@@ -533,15 +531,15 @@ class ViewEvents {
 							$qb->select ( 'event_media.event_id', 'media.media_id', 'media.metadata' );
 							$qb->from ( 'Application\Entity\Media', 'media' );
 							$qb->join ( 'Application\Entity\EventMedia', 'event_media', 'WITH', 'event_media.media_id = media.media_id' );
-							
+
 							$qb->where ( 'event_media.event_id = ?1 ' );
 							$qb->orderBy ( 'media.create_date', 'DESC' );
 							$qb->setParameter ( 1, $row5->event_id );
-							
+
 							$result_event_public = $qb->getQuery ()->getResult ();
-							
+
 							// echo "<pre>";print_r($result_event_public);
-							
+
 							$only_audio_in_event = 0;
 							if (count ( $result_event_public ) > 0) {
 								foreach ( $result_event_public as $row ) {
@@ -553,9 +551,9 @@ class ViewEvents {
 									$url79x80 = '';
 									$url448x306 = '';
 									$url98x78 = '';
-									
+
 									if (isset ( $row ['metadata'] )) {
-										
+
 										$json_array = json_decode ( $row ['metadata'], true );
 										$url = $json_array ['S3_files'] ['path'];
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
@@ -612,7 +610,7 @@ class ViewEvents {
 				$xml_output .= "</friends>";
 			}
 		}
-		
+
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
 		error_log ( "View Events.xml_output ---->  $xml_output" . PHP_EOL );
