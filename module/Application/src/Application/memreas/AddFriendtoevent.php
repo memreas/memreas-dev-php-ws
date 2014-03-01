@@ -30,10 +30,17 @@ class AddFriendtoevent {
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 		error_log ( "Exit AddFriendtoevent.__construct()" . PHP_EOL );
 	}
-	public function exec() {
+	public function exec($frmweb = '') {
 		error_log ( "Enter AddFriendtoevent.exec()" . PHP_EOL );
 		error_log ( "Enter AddFriendtoevent.exec() xml ----> " . $_POST ['xml'] . PHP_EOL );
-		$data = simplexml_load_string ( $_POST ['xml'] );
+
+		if (empty ( $frmweb )) { 
+			$data = simplexml_load_string ( $_POST ['xml'] );
+		} else {
+			
+			$data =  simplexml_load_string( $frmweb );
+		}
+		
 		$friend_array = $data->addfriendtoevent->friends->friend;
 		$user_id = (trim ( $data->addfriendtoevent->user_id ));
 		$event_id = (trim ( $data->addfriendtoevent->event_id ));
@@ -176,10 +183,9 @@ class AddFriendtoevent {
 					} // end if (count($r) > 0) else
 					$nmessage = $userOBj->username . ' want to add you to ' . $eventOBj->name . ' event';
 					// save nofication intable
-					$ndata ['addNotification'] ['meta'] = $nmessage;
-					if ($network_name == 'memreas') {
-						$ndata = array (
+					$ndata = array (
 								'addNotification' => array (
+									'network_name' => $network_name,
 										'user_id' => $friend_id,
 										'meta' => $nmessage,
 										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
@@ -189,12 +195,18 @@ class AddFriendtoevent {
 										) ) 
 								) 
 						);
-						$this->AddNotification->exec ( $ndata );
+					if ($network_name == 'memreas') {
 						// send push message add user id
-						$this->notification->add ( $friend_id );
+ 						$this->notification->add ( $friend_id );
 					} else {
-						$this->notification->addFriend ( $friend_id );
+						$nmessage = $userOBj->username . ' invite you to !' . $eventOBj->name . ' event';
+						$ndata ['addNotification'] ['meta'] = $nmessage;
+						//add non memeras
+ 						$this->notification->addFriend ( $friend_id );
 					}
+					//add notification in  db.
+					$this->AddNotification->exec ( $ndata );
+
 				} // endif (!empty($event_id) && $error == 0)
 			} // end foreach
 		} // end if (!empty($friend_array))
@@ -217,7 +229,12 @@ class AddFriendtoevent {
 		$xml_output .= "<event_id>$event_id</event_id>";
 		$xml_output .= "</addfriendtoeventresponse>";
 		$xml_output .= "</xml>";
-		echo $xml_output;
+
+		if($frmweb == ''){
+			echo $xml_output;
+		}
+
+		
 	} // end exec
 } // end class
 ?>

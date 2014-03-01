@@ -128,9 +128,9 @@ class AddComment {
 				
 				$cdata ['addNotification'] ['meta'] = $nmessage;
 				foreach ( $efusers as $ef ) {
-					if ($ef ['network'] == 'memreas') {
-						$cdata = array (
+					$cdata = array (
 								'addNotification' => array (
+										'network_name' => $ef ['network'],
 										'user_id' => $ef ['friend_id'],
 										'meta' => $nmessage,
 										'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
@@ -140,12 +140,12 @@ class AddComment {
 										) ) 
 								) 
 						);
-						
-						$this->AddNotification->exec ( $cdata );
+					if ($ef ['network'] == 'memreas') {
 						$this->notification->add ( $ef ['friend_id'] );
 					} else {
 						$this->notification->addFriend ( $ef ['friend_id'] );
 					}
+					$this->AddNotification->exec ( $cdata );
 				}
 				
 				$this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );

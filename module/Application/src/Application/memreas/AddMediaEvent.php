@@ -209,9 +209,9 @@ class AddMediaEvent {
 					$ndata ['addNotification'] ['meta'] = $nmessage;
 					foreach ( $efusers as $ef ) {
 						$friendId = $ef ['friend_id'];
-						if ($ef ['network'] == 'memreas') {
-							$ndata = array (
+						$ndata = array (
 									'addNotification' => array (
+											'network_name' => $ef ['network'],
 											'user_id' => $friendId,
 											'meta' => $nmessage,
 											'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
@@ -222,11 +222,12 @@ class AddMediaEvent {
 											) ) 
 									) 
 							);
-							$this->AddNotification->exec ( $ndata );
+						if ($ef ['network'] == 'memreas') {
 							$this->notification->add ( $friendId );
 						} else {
 							$this->notification->addFriend ( $ef ['friend_id'] );
 						}
+						$this->AddNotification->exec ( $ndata );
 					}
 					
 					if (! empty ( $ndata ['addNotification'] ['meta'] )) {

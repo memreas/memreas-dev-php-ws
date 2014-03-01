@@ -14,7 +14,7 @@ class Notification {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $userIds;
-	protected $firends;
+	protected $friends;
 	protected $message;
 	protected $gcm;
 	protected $apns;
@@ -57,10 +57,12 @@ class Notification {
 		$this->userIds [] = $userid;
 	}
 	public function addFriend($friendid) {
-		$this->firends [] = $friendid;
+		$this->friends  = $friendid;
 	}
 	public function send() {
 		try {
+			
+			
 			// mobile notification.
 			if (count ( $this->userIds ) > 0) {
 				$get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in('" . join ( '\' , \'', $this->userIds ) . "')";
@@ -129,10 +131,11 @@ class Notification {
 		return $this->$name;
 	}
 	public function webNotification() {
-		if (count ( $this->firends ) > 0) {
+		if (count ( $this->friends ) > 0) {
 			// web notification
-			$get_user = "SELECT f  FROM  Application\Entity\Friend f where f.friend_id in('" . join ( '\' , \'', $this->firends ) . "')";
+			$get_user = "SELECT f  FROM  Application\Entity\Friend f where f.friend_id in(?1)";
 			$statement = $this->dbAdapter->createQuery ( $get_user );
+			$statement->setParameter(1, $this->friends);
 			$users = $statement->getArrayResult ();
 			
 			if (count ( $users ) > 0) {

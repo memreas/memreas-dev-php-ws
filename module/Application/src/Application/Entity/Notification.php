@@ -16,6 +16,9 @@ class Notification {
 	const ADD_COMMENT = '3';
 	const ADD_MEDIA = '4';
 	const ADD_EVENT = '5';
+	const EMAIL = '0';
+	const MEMERAS = '1';
+	const NONMEMERAS = '2';
 	
 	/**
 	 *
@@ -61,6 +64,16 @@ class Notification {
 	 * @var string @ORM\Column(name="is_read", type="string", length=1, nullable=false)
 	 */
 	private $is_read = 0;
+	/**
+	 *
+	 * @var string @ORM\Column(name="short_code", type="string", length=10, nullable=false)
+	 */
+	private $short_code ;
+	/**
+	 *
+	 * @var string @ORM\Column(name="notification_method", type="string", length=10, nullable=false)
+	 */
+	private $notification_method = 0;
 	
 	/**
 	 *

@@ -9,12 +9,13 @@ use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
 use Application\memreas\RmWorkDir;
 use \Exception;
-
+use Application\memreas\addfriendtoevent;
 class Registration {
 	protected $message_data;
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	protected $addfriendtoevent;
 	public $status;
 	public $userIndex = array();
 	public function __construct($message_data, $memreas_tables, $service_locator) {
@@ -22,6 +23,9 @@ class Registration {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		if (! $this->addfriendtoevent) {
+			$this->addfriendtoevent = new addfriendtoevent ($message_data, $memreas_tables, $service_locator);
+		}
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function is_valid_email($email) {
@@ -44,7 +48,7 @@ class Registration {
 			$device_token = trim ( $data->registration->device_token );
 			$device_type = trim ( $data->registration->device_type );
 			$invited_by = trim ( $data->registration->invited_by );
-			$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
+			//$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 		} else {
 			/*
 			 * error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['email'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['password'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['device_token'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['device_type'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
@@ -58,14 +62,14 @@ class Registration {
 			if (isset ( $_REQUEST ['invited_by'] ) && (! empty ( $_REQUEST ['invited_by'] ))) {
 				$invited_by = $_REQUEST ['invited_by'];
 				
-				if (! $this->is_valid_email ( $invited_by ))
-					throw new \Exception ( 'fail: please enter valid email address for invited by.' );
+				//if (! $this->is_valid_email ( $invited_by ))
+					//throw new \Exception ( 'fail: please enter valid email address for invited by.' );
 			} else {
 				$invited_by = null;
 			}
 		}
 		
-
+		//$this->FunctionName($invited_by);exit;
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
 				$checkvalidemail = $this->is_valid_email ( $email );
@@ -99,48 +103,68 @@ class Registration {
 				/*
 				 * MD5 Encrypting password
 				 */
-				$passwrd = $password;
-				$password = md5 ( $password );
-				$roleid = 2;
-				$statusid = 0;
+				$passwrd     = $password;
+				$password    = md5 ( $password );
+				$roleid      = 2;
+				$statusid    = 0;
 				$forgottoken = "";
-				$created = strtotime ( date ( 'Y-m-d H:i:s' ) );
-				$modified = strtotime ( date ( 'Y-m-d H:i:s' ) );
+				$created     = strtotime ( date ( 'Y-m-d H:i:s' ) );
+				$modified    = strtotime ( date ( 'Y-m-d H:i:s' ) );
 				
-				$tblUser = new \Application\Entity\User ();
-				$tblUser->email_address = $email;
-				$tblUser->password = $password;
-				$tblUser->user_id = $user_id;
-				$tblUser->username = $username;
-				$tblUser->role = $roleid;
+				$tblUser                  = new \Application\Entity\User ();
+				$tblUser->email_address   = $email;
+				$tblUser->password        = $password;
+				$tblUser->user_id         = $user_id;
+				$tblUser->username        = $username;
+				$tblUser->role            = $roleid;
 				$tblUser->disable_account = $statusid;
-				$tblUser->forgot_token = $forgottoken;
-				$tblUser->create_date = $created;
-				$tblUser->update_time = $modified;
-				$tblUser->invited_by = $invited_by;
+				$tblUser->forgot_token    = $forgottoken;
+				$tblUser->create_date     = $created;
+				$tblUser->update_time     = $modified;
+				$tblUser->invited_by      = $invited_by;
 				
 				$this->dbAdapter->persist ( $tblUser );
 				$this->dbAdapter->flush ();
 
 				
- 		
+ 				//saving decive token
 				if (! empty ( $device_token ) && ! empty ( $device_type )) {
 					$device_id = MUUID::fetchUUID ();
 					
 					$tblDevice = new \Application\Entity\Device ();
-					$tblDevice->device_id = $device_id;
+					$tblDevice->device_id    = $device_id;
 					$tblDevice->device_token = $device_token;
-					$tblDevice->user_id = $user_id;
-					$tblDevice->device_type = $device_type;
-					$tblDevice->create_time = $created;
-					$tblDevice->update_time = $modified;
+					$tblDevice->user_id      = $user_id;
+					$tblDevice->device_type  = $device_type;
+					$tblDevice->create_time  = $created;
+					$tblDevice->update_time  = $modified;
 					$this->dbAdapter->persist ( $tblDevice );
 					$this->dbAdapter->flush ();
 				}
 
 				//create cache
 				$this->createUserCache();
-
+				//invite by code
+				$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
+				$statement      = $this->dbAdapter->createQuery ( $q_notification );
+				$statement->setParameter ( 'short_code', $invited_by );
+				$statement->setParameter ( 'notification_type', 2 );
+				$row_notification = $statement->getOneOrNullResult();
+				$ndata            = json_decode($row_notification->links);
+ 				
+				if(!empty($ndata->from_id)&& !empty($ndata->event_id)){
+									
+									$xml_input = "<xml><addfriendtoevent>
+									<user_id>{$ndata->from_id}</user_id>
+									<event_id>{$ndata->event_id}</event_id>
+									<friends><friend>
+									<network_name>memreas</network_name>
+									<friend_name>$username</friend_name> 
+									<profile_pic_url><![CDATA[url]]> 
+									</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
+									//add frient to event
+									$this->addfriendtoevent->exec($xml_input);
+				}
 				
 				// upload profile image
 				if (isset ( $_FILES ['f'] ) && ! empty ( $_FILES ['f'] ['name'] )) {
@@ -188,15 +212,15 @@ class Registration {
 							) 
 					);
 					$json_str = json_encode ( $json_array );
-					$time = time ();
+					$time     = time ();
 					$tblMedia = new \Application\Entity\Media ();
 					
-					$tblMedia->media_id = $media_id;
-					$tblMedia->user_id = $user_id;
+					$tblMedia->media_id       = $media_id;
+					$tblMedia->user_id        = $user_id;
 					$tblMedia->is_profile_pic = '1';
-					$tblMedia->metadata = $json_str;
-					$tblMedia->create_date = $time;
-					$tblMedia->update_date = $time;
+					$tblMedia->metadata       = $json_str;
+					$tblMedia->create_date    = $time;
+					$tblMedia->update_date    = $time;
 					
 					$this->dbAdapter->persist ( $tblMedia );
 					$this->dbAdapter->flush ();
@@ -210,13 +234,13 @@ class Registration {
 					
 					// Now publish the message so any photo is thumbnailed.
 					$message_data = array (
-							'user_id' => $user_id,
-							'media_id' => $media_id,
+							'user_id'      => $user_id,
+							'media_id'     => $media_id,
 							'content_type' => $content_type,
-							's3path' => $s3_data ['s3path'],
-							's3file_name' => $s3_data ['s3file_name'],
-							'isVideo' => 0,
-							'email' => $email 
+							's3path'       => $s3_data ['s3path'],
+							's3file_name'  => $s3_data ['s3file_name'],
+							'isVideo'      => 0,
+							'email'        => $email 
 					);
 					
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
@@ -236,9 +260,9 @@ class Registration {
 				// Always set content-type when sending HTML email
 				$to = $email;
 				$viewVar = array (
-						'email' => $email,
+						'email'    => $email,
 						'username' => $username,
-						'passwrd' => $passwrd 
+						'passwrd'  => $passwrd 
 				);
 				$viewModel = new ViewModel ( $viewVar );
 				$viewModel->setTemplate ( 'email/register' );
@@ -285,6 +309,32 @@ class Registration {
 					$this->userIndex[$value['user_id']] = $value['username'];
 				}
 	}
+
+
+	public function FunctionName($invited_by ='')
+	{
+		$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
+				$statement      = $this->dbAdapter->createQuery ( $q_notification );
+				$statement->setParameter ( 'short_code', $invited_by );
+				$statement->setParameter ( 'notification_type', 2 );
+				$row_notification = $statement->getOneOrNullResult();
+				$ndata            = json_decode($row_notification->links);
+ 				print_r($ndata);exit;
+				if(!empty($ndata->from_id)&& !empty($ndata->event_id)){
+
+					$xml_input= "<xml><addfriendtoevent>
+									<user_id>{$ndata->from_id}</user_id>
+									<event_id>{$ndata->event_id}</event_id>
+									<friends><friend>
+									<network_name>memreas</network_name>
+									<friend_name>$username</friend_name> 
+									<profile_pic_url><![CDATA[url]]> 
+									</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
+				//add frient to event
+				$this->addfriendtoevent->exec($xml_input);
+				}
+	}
+
 }
 
 ?>
