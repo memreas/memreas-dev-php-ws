@@ -9,7 +9,7 @@ use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
 use Application\memreas\RmWorkDir;
 use \Exception;
-use Application\memreas\addfriendtoevent;
+use Application\memreas\Addfriendtoevent;
 class Registration {
 	protected $message_data;
 	protected $memreas_tables;
@@ -24,7 +24,7 @@ class Registration {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		if (! $this->addfriendtoevent) {
-			$this->addfriendtoevent = new addfriendtoevent ($message_data, $memreas_tables, $service_locator);
+			$this->addfriendtoevent = new Addfriendtoevent ($message_data, $memreas_tables, $service_locator);
 		}
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
