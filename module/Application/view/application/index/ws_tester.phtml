@@ -59,6 +59,7 @@ echo "user_id ----> " . $user_id;
             var getsession = '<xml><getsession><sid>1</sid></getsession></xml>';
             var geteventlocation = '<xml><geteventlocation><event_id>1</event_id></geteventlocation></xml>';
             var geteventcount = '<xml><geteventcount><event_id>1</event_id></geteventcount></xml>';
+            var getuserdetails = '<xml><getuserdetails><user_id>1</user_id></getuserdetails></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -188,6 +189,8 @@ echo "user_id ----> " . $user_id;
                         xml = geteventlocation;
                     }else if ($("#input_action").val() == "geteventcount") {
                         xml = geteventcount;
+                    }else if ($("#input_action").val() == "getuserdetails") {
+                        xml = getuserdetails;
                     }
 
 
@@ -234,7 +237,7 @@ echo "user_id ----> " . $user_id;
 				<table>
 					<tr>
 						<td>select action
-						
+
 						<td><select id="input_action">
 								<option>registration</option>
 								<option>login</option>
@@ -276,7 +279,8 @@ echo "user_id ----> " . $user_id;
 								<option>listcomments</option>
                                 <option>geteventlocation</option>
                                  <option>geteventcount</option>
-                                 
+                                 <option>getuserdetails</option>
+
 
 
 
@@ -285,7 +289,7 @@ echo "user_id ----> " . $user_id;
 
 
 						</select>
-					
+
 					</tr>
 					<!-- Not working....
                         <tr>
@@ -300,36 +304,36 @@ echo "user_id ----> " . $user_id;
 					<input type="hidden" id="input_format" value="xml">
 					<tr>
 						<td>select url
-						
+
 						<td><select id="codebase">
 								<option>new_code</option>
 								<option>original_code</option>
 						</select>
-					
+
 					</tr>
 					<tr>
 						<td>Input (modify below as needed):
-					
+
 					</tr>
 					<tr>
 						<td colspan="2"><textarea id="action_input" name="action_input"
 								rows="10" cols="120"></textarea>
-					
+
 					</tr>
 
 					<tr>
 						<td><input id="btnOK" type="button" name="btnOK" value="submit">
-					
+
 					</tr>
 
 					<tr>
 						<td>Output:
-					
+
 					</tr>
 					<tr>
 						<td colspan="2"><textarea id="action_output" name="action_output"
 								rows="10" cols="120">Result will be shown here.</textarea>
-					
+
 					</tr>
 
 				</table>
