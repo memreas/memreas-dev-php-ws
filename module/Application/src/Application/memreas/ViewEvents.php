@@ -446,7 +446,6 @@ class ViewEvents {
 			 * if (!$result_pub) { $xml_output.="<status>Failure</status>"; $xml_output.="<message>" . mysql_error() . "</message>"; $xml_output.="<page>0</page>"; $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator></event_creator>"; $xml_output.="<profile_pic><![CDATA[]]></profile_pic>"; $xml_output.="<profile_pic_79x80></profile_pic_79x80>"; $xml_output.="<profile_pic_448x306></profile_pic_448x306>"; $xml_output.="<profile_pic_98x78></profile_pic_98x78>"; $xml_output.="<event_creator_user_id></event_creator_user_id>"; $xml_output.="<events><event>"; $xml_output.="<event_id></event_id>"; $xml_output.="<event_name></event_name>"; $xml_output.="<friend_can_post></friend_can_post>"; $xml_output.="<friend_can_share></friend_can_share>"; $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; $xml_output.="<event_media_video_thum></event_media_video_thum>"; $xml_output.="<event_media_79x80></event_media_79x80>"; $xml_output.="<event_media_98x78></event_media_98x78>"; $xml_output.="<event_media_448x306></event_media_448x306>"; $xml_output.= "</event></events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; }
 			 */
 			if (count ( $result_pub ) == 0) {
-
 				$xml_output .= "<friends> <status>Failure</status>";
 				$xml_output .= "<message>No record found</message>";
 				$xml_output .= "</friends>";

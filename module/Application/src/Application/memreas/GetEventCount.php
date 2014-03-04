@@ -29,16 +29,16 @@ class GetEventCount {
 			$event = $statement->getOneOrNullResult();
 
 		// get like count
-		$likeCountSql = $this->dbAdapter->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
+		$likeCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND 'c.like'= 1" );
 		$likeCountSql->setParameter ( 1, $event_id );
 		$likeCount = $likeCountSql->getSingleScalarResult ();
-		
+
 		// get comment count for event
 		$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= 'text'" );
 		$commCountSql->setParameter ( 1, $event_id );
 		$commCount = $commCountSql->getSingleScalarResult ();
-		
-		
+
+
 		if (empty ( $event_id ) || empty($event)) {
 			$xml_output .= "<status>Failure</status>";
 			$xml_output .= "<message>No Record Found </message>";
@@ -50,7 +50,7 @@ class GetEventCount {
 				$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
 				$xml_output .= "<like_count>" . $likeCount . "</like_count>";
 
-			}	
+			}
 		$xml_output .= "</geteventcountresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;

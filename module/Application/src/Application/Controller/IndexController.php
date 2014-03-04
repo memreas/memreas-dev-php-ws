@@ -65,7 +65,7 @@ use Application\memreas\GetEventCount;
 
 
 class IndexController extends AbstractActionController {
-	
+
 	// protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
 	// protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
 	protected $url = "http://test";
@@ -83,7 +83,7 @@ class IndexController extends AbstractActionController {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
 		$arr = json_decode ( $json, TRUE );
-		
+
 		return $arr;
 	}
 	public function array2xml($array, $xml = false) {
@@ -102,11 +102,11 @@ class IndexController extends AbstractActionController {
 	}
 	public function fetchXML($action, $xml) {
 		$guzzle = new Client ();
-		
+
 		$request = $guzzle->post ( $this->url, null, array (
 				'action' => $action,
 				// 'cache_me' => true,
-				'xml' => $xml 
+				'xml' => $xml
 		) );
 		$response = $request->send ();
 		return $data = $response->getBody ( true );
@@ -114,12 +114,12 @@ class IndexController extends AbstractActionController {
 	public function indexAction() {
 		error_log ( "Inside indexAction" . PHP_EOL );
 		// $path = $this->security("application/index/ws_tester.phtml");
-		
+
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
-		
+
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
-		
+
 		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
 			$json = $_REQUEST ['json'];
@@ -132,18 +132,18 @@ class IndexController extends AbstractActionController {
 			$actionname = isset ( $_REQUEST ['action'] ) ? $_REQUEST ['action'] : '';
 			$message_data ['xml'] = '';
 		}
-		
+
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
 			// Fetch the elasticache handle
 			error_log ( "Need to create MemreasCache..." . PHP_EOL );
 			// $this->aws = new AWSManagerSender($this->service_locator);
 			// $this->elasticache = new MemreasCache($this->aws->);
 			// $update_elasticache_flag = false;
-			
+
 			// Debugging
 			// $this->elasticache->set('hello', 'world', 600);
 			// End Debugging
-			
+
 			// Capture the echo from the includes in case we need to convert back to json
 			ob_start ();
 			$memreas_tables = new MemreasTables ( $this->getServiceLocator () );
@@ -271,7 +271,7 @@ class IndexController extends AbstractActionController {
 				$aws_manager = new AWSManagerSender ( $this->service_locator );
 				$client = $aws_manager->ses ();
 				$client->verifyEmailAddress ( array (
-						'EmailAddress' => $_GET ['email'] 
+						'EmailAddress' => $_GET ['email']
 				) );
 				echo 'Please Cheack email validate you email to recive emails';
 			} else if ($actionname == "geteventlocation") {
@@ -283,7 +283,7 @@ class IndexController extends AbstractActionController {
 			}
 			$output = ob_get_clean ();
 		}
-		
+
 		// memreas related calls...
 		// $memreas = new Memreas();
 		// $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -291,18 +291,18 @@ class IndexController extends AbstractActionController {
 		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
 			error_log ( "Final XML ----> " . $message_data ['data'] );
-			
+
 			$json_arr = array (
-					"data" => $message_data ['data'] 
+					"data" => $message_data ['data']
 			);
 			$json = json_encode ( $json_arr );
-			
+
 			error_log ( "Callback ---> " . $callback . "(" . $json . ")" );
 			header ( "Content-type: plain/text" );
 			// callback json
 			echo $callback . "(" . $json . ")";
 			// Need to exit here to avoid ZF2 framework view.
-			
+
 			exit ();
 		}
 		error_log ( "path ----> " . PHP_EOL );
@@ -318,14 +318,14 @@ class IndexController extends AbstractActionController {
 	}
 	public function galleryAction() {
 		$path = $this->security ( "application/index/gallery.phtml" );
-		
+
 		$action = 'listallmedia';
 		$session = new Container ( 'user' );
 		$xml = "<xml><listallmedia><event_id></event_id><user_id>" . $session->offsetGet ( 'user_id' ) . "</user_id><device_id></device_id><limit>10</limit><page>1</page></listallmedia></xml>";
 		$result = $this->fetchXML ( $action, $xml );
-		
+
 		$view = new ViewModel ( array (
-				'xml' => $result 
+				'xml' => $result
 		) );
 		$view->setTemplate ( $path ); // path to phtml file under view folder
 		return $view;
@@ -333,14 +333,14 @@ class IndexController extends AbstractActionController {
 	}
 	public function eventAction() {
 		$path = $this->security ( "application/index/event.phtml" );
-		
+
 		$action = 'listallmedia';
 		$session = new Container ( 'user' );
 		$xml = "<xml><listallmedia><event_id></event_id><user_id>" . $session->offsetGet ( 'user_id' ) . "</user_id><device_id></device_id><limit>10</limit><page>1</page></listallmedia></xml>";
 		$result = $this->fetchXML ( $action, $xml );
-		
+
 		$view = new ViewModel ( array (
-				'xml' => $result 
+				'xml' => $result
 		) );
 		$view->setTemplate ( $path ); // path to phtml file under view folder
 		return $view;
@@ -377,27 +377,27 @@ class IndexController extends AbstractActionController {
 		$postData = $request->getPost ()->toArray ();
 		$username = $postData ['username'];
 		$password = $postData ['password'];
-		
+
 		// Original Web Service Call...
 		// Setup the URL and action
 		$action = 'login';
 		$xml = "<xml><login><username>$username</username><password>$password</password></login></xml>";
 		$redirect = 'gallery';
-		
+
 		// Guzzle the LoginWeb Service
 		$result = $this->fetchXML ( $action, $xml );
 		$data = simplexml_load_string ( $result );
-		
+
 		// ZF2 Authenticate
 		if ($data->loginresponse->status == 'success') {
 			$this->setSession ( $username );
 			// Redirect here
 			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => $redirect 
+					'action' => $redirect
 			) );
 		} else {
 			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => "index" 
+					'action' => "index"
 			) );
 		}
 	}
@@ -406,7 +406,7 @@ class IndexController extends AbstractActionController {
 		$this->getAuthService ()->clearIdentity ();
 		$session = new Container ( 'user' );
 		$session->getManager ()->destroy ();
-		
+
 		$view = new ViewModel ();
 		$view->setTemplate ( 'application/index/index.phtml' ); // path to phtml file under view folder
 		return $view;
@@ -429,20 +429,20 @@ class IndexController extends AbstractActionController {
 		$email = $postData ['email'];
 		$username = $postData ['username'];
 		$password = $postData ['password'];
-		
+
 		// Setup the URL and action
 		$action = 'registration';
 		$xml = "<xml><registration><email>$email</email><username>$username</username><password>$password</password></registration></xml>";
 		$redirect = 'event';
-		
+
 		// Guzzle the Registration Web Service
 		$result = $this->fetchXML ( $action, $xml );
 		$data = simplexml_load_string ( $result );
-		
+
 		// ZF2 Authenticate
 		if ($data->registrationresponse->status == 'success') {
 			$this->setSession ( $username );
-			
+
 			// If there's a profile pic upload it...
 			if (isset ( $_FILES ['file'] )) {
 				$file = $_FILES ['file'];
@@ -450,12 +450,12 @@ class IndexController extends AbstractActionController {
 				$filetype = $file ['type'];
 				$filetmp_name = $file ['tmp_name'];
 				$filesize = $file ['size'];
-				
+
 				// echo "filename ----> $fileName<BR>";
 				// echo "filetype ----> $filetype<BR>";
 				// echo "filetmp_name ----> $filetmp_name<BR>";
 				// echo "filesize ----> $filesize<BR>";
-				
+
 				$url = MemreasConstants::ORIGINAL_URL;
 				$guzzle = new Client ();
 				$session = new Container ( 'user' );
@@ -465,28 +465,28 @@ class IndexController extends AbstractActionController {
 						'event_id' => "",
 						'device_id' => "",
 						'is_profile_pic' => 1,
-						'is_server_image' => 0 
+						'is_server_image' => 0
 				) )->addPostFiles ( array (
-						'f' => $filetmp_name 
+						'f' => $filetmp_name
 				) );
 			}
 			$response = $request->send ();
 			$data = $response->getBody ( true );
 			$xml = simplexml_load_string ( $result );
-			
+
 			// ZF2 Authenticate
 			error_log ( "addmediaevent result -----> " . $data );
 			if ($xml->addmediaeventresponse->status == 'success') {
 				// Do nothing even if it fails...
 			}
-			
+
 			// Redirect here
 			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => $redirect 
+					'action' => $redirect
 			) );
 		} else {
 			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => "index" 
+					'action' => "index"
 			) );
 		}
 	}
@@ -501,14 +501,14 @@ class IndexController extends AbstractActionController {
 		if (! $this->authservice) {
 			$this->authservice = $this->getServiceLocator ()->get ( 'AuthService' );
 		}
-		
+
 		return $this->authservice;
 	}
 	public function getSessionStorage() {
 		if (! $this->storage) {
 			$this->storage = $this->getServiceLocator ()->get ( 'application\Model\MyAuthStorage' );
 		}
-		
+
 		return $this->storage;
 	}
 	public function security($path) {
