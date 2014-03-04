@@ -60,6 +60,7 @@ echo "user_id ----> " . $user_id;
             var geteventlocation = '<xml><geteventlocation><event_id>1</event_id></geteventlocation></xml>';
             var geteventcount = '<xml><geteventcount><event_id>1</event_id></geteventcount></xml>';
             var getuserdetails = '<xml><getuserdetails><user_id>1</user_id></getuserdetails></xml>';
+            var saveuserdetails = '<xml><saveuserdetails><user_id>1</user_id><email>email</email></saveuserdetails></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -191,6 +192,8 @@ echo "user_id ----> " . $user_id;
                         xml = geteventcount;
                     }else if ($("#input_action").val() == "getuserdetails") {
                         xml = getuserdetails;
+                    }else if ($("#input_action").val() == "saveuserdetails") {
+                        xml = saveuserdetails;
                     }
 
 
@@ -280,6 +283,7 @@ echo "user_id ----> " . $user_id;
                                 <option>geteventlocation</option>
                                  <option>geteventcount</option>
                                  <option>getuserdetails</option>
+                                 <option>saveuserdetails</option>
 
 
 

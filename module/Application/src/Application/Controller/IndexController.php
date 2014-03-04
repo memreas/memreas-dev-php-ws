@@ -62,6 +62,7 @@ use Application\memreas\MemreasTables;
 use Application\memreas\GetEventLocation;
 use Application\memreas\GetEventCount;
 use Application\memreas\GetUserDetails;
+use Application\memreas\SaveUserDetails;
 
 
 
@@ -285,6 +286,10 @@ class IndexController extends AbstractActionController {
             else if ($actionname == "getuserdetails"){
                 $GetUserDetails = new GetUserDetails($message_data, $memreas_tables, $this->getServiceLocator ());
                 $result = $GetUserDetails->exec();
+            }
+            else if ($actionname == "saveuserdetails"){
+                $SaveUserDetails = new SaveUserDetails($message_data, $memreas_tables, $this->getServiceLocator ());
+                $result = $SaveUserDetails->exec();
             }
 			$output = ob_get_clean ();
 		}
