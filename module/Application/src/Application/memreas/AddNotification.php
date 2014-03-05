@@ -54,8 +54,7 @@ class AddNotification {
 			&& $network_name !== 'memreas'  
 			 ){
 			$uuid = explode('-', $this->notification_id);
-        	$short_code_10 = base_convert($uuid [0], 16, 10);
-        	$tblNotification->short_code = $this->getSortCode($short_code_10);
+        	$tblNotification->short_code = $this->getSortCode($uuid [0]);
         	$tblNotification->notification_method = Notification::NONMEMERAS;
         	$tblNotification->meta .= ' code '.$tblNotification->short_code;
 		}else if($network_name == 'memreas'){
@@ -89,23 +88,15 @@ class AddNotification {
 		}
 	}
 
-function getSortCode($id,$chars='0abcdfghjkmnpqrstvwxyz123456789ABCDFGHJKLMNPQRSTVWXYZ(!@${}^&*-)')
+function getSortCode($str)
 {
-	$code ='';
-	$length = strlen($chars);
-    while ($id > $length - 1) {
-    	// determine the value of the next higher character
-        // in the short code should be and prepend
-        $l = $id % $length;
-        $code = $chars[$l] .$code;
-        // reset $id to remaining value to be converted
-        $id = intval($id / $length);
-    }
-
-    // remaining value of $id is less than the length of
-    // self::$chars
-    $code = $chars[$id] . $code;
-	return   $code;
+	$raw = '';
+        for ($i=0; $i < strlen($str); $i+=2)
+        {
+            $raw .= chr(hexdec(substr($str, $i, 2)));
+        }
+        return rtrim(base64_encode($raw),'=');
+	
 }
 
 
