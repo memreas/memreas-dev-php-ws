@@ -29,7 +29,7 @@ class GetEventCount {
 			$event = $statement->getOneOrNullResult();
 
 		// get like count
-		$likeCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND 'c.like'= 1" );
+		$likeCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like=1" );
 		$likeCountSql->setParameter ( 1, $event_id );
 		$likeCount = $likeCountSql->getSingleScalarResult ();
 

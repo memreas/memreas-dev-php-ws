@@ -39,15 +39,15 @@ class LikeMedia {
 			$message = 'user_id is empty';
 			$status = 'Failure';
 		} else {
-			$q = "select c.comment_id from Application\Entity\Comment c where c.media_id ='$media_id' and c.type = 'like' and c. user_id='$user_id'";
+			$q = "select c.comment_id from Application\Entity\Comment c where c.media_id ='$media_id' and c.type = 'like' and c. user_id='$user_id' AND c.like=1";
 			// $result = mysql_query($q);
 			// $statement = $this->dbAdapter->createStatement($q);
 			// $result = $statement->execute();
 			// $row = $result->current();
-			
+
 			$statement = $this->dbAdapter->createQuery ( $q );
 			$row = $statement->getResult ();
-			
+
 			if (! empty ( $row [0] )) {
 				$status = 'Success';
 				$message = 'You Already Like This Media';
@@ -60,27 +60,28 @@ class LikeMedia {
 				$statement = $this->dbAdapter->createQuery ( $q_event_media );
 				$result_event_media = $statement->getResult ();
 				// echo '<pre>';print_r($result_event_media);exit;
-				
+
 				if (empty ( $result_event_media [0] )) {
-					
+
 					$status = 'Failure';
 					$message = "No Media for this Event";
 				} else {
 					$comment_id = MUUID::fetchUUID ();
 					// $row = mysql_fetch_assoc($result_event_media);
-					
+
 					$tblComment = new \Application\Entity\Comment ();
 					$tblComment->comment_id = $comment_id;
 					$tblComment->media_id = $media_id;
 					$tblComment->user_id = $user_id;
 					$tblComment->type = 'like';
+                    $tblComment->like = 1;
 					$tblComment->event_id = $result_event_media [0]->event_id;
 					$tblComment->create_time = $time;
 					$tblComment->update_time = $time;
-					
+
 					$this->dbAdapter->persist ( $tblComment );
 					$this->dbAdapter->flush ();
-					
+
 					/*
 					 * $q_comment = "INSERT INTO Application\Entity\Comment (comment_id,`media_id`, `user_id`, `type`, `event_id`, `create_time`, `update_time`) VALUES ('$comment_id','$media_id', '$user_id', 'like', '" . $row['event_id'] . "', '$time', '$time')";
 					 */
@@ -89,17 +90,17 @@ class LikeMedia {
 					// $result = $statement->execute
 					// $statement = $this->dbAdapter->createQuery($q_comment);
 					// $result = $statement->getResult();
-					
+
 					$status = "Success";
 					$message .= "You Like succesfully";
 				}
 			}
 		}
-		
+
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
-		
+
 		$xml_output .= "<likemediaresponse>";
 		$xml_output .= "<status>" . $status . "</status>";
 		$xml_output .= "<message>" . $message . "</message>";
