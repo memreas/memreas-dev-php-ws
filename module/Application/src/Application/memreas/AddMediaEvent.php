@@ -7,6 +7,7 @@ use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AddNotification;
 use Application\memreas\MUUID;
+use \Exception;
 
 class AddMediaEvent {
 	protected $message_data;
@@ -82,7 +83,7 @@ class AddMediaEvent {
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
 			}
 			$time = time ();
-			
+
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media table
 			// ////////////////////////////////////////////////////////////////////
@@ -106,7 +107,7 @@ class AddMediaEvent {
 				$isVideo = 0;
 				$s3path = $user_id . '/';
 				$media_id = MUUID::fetchUUID ();
-				
+
 				// ///////////////////////////////////////
 				// create metadata based on content type
 				// ///////////////////////////////////////
@@ -150,7 +151,7 @@ class AddMediaEvent {
 					 */
 				}
 				$json_str = json_encode ( $json_array );
-				
+
 				// ///////////////////////////////////////
 				// check media type and update tables...
 				// ///////////////////////////////////////
@@ -163,10 +164,10 @@ class AddMediaEvent {
 					// $row = $result->current();
 					$statement = $this->dbAdapter->createQuery ( $update_media );
 					$rs_is_profil = $statement->getResult ();
-					
+
 					if (! $rs_is_profil)
 						throw new Exception ( 'Error : ' . mysql_error () );
-					
+
 					error_log ( "AddMediaEvent exec - just udpated Media " . PHP_EOL );
 				} else {
 					// insert into media table
@@ -182,7 +183,7 @@ class AddMediaEvent {
 					$this->dbAdapter->flush ();
 					error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
 				}
-				
+
 				// $event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
 				if (isset ( $event_id ) && ! empty ( $event_id )) {
 					$tblEventMedia = new \Application\Entity\EventMedia ();
@@ -201,7 +202,7 @@ class AddMediaEvent {
 					$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id' );
 					$qb->where ( 'ef.event_id = ?1' );
 					$qb->setParameter ( 1, $event_id );
-					
+
 					$efusers = $qb->getQuery ()->getResult ();
 					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 					$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
@@ -218,9 +219,9 @@ class AddMediaEvent {
 											'links' => json_encode ( array (
 													'event_id' => $event_id,
 													'from_id' => $user_id,
-													'friend_id' => $friendId 
-											) ) 
-									) 
+													'friend_id' => $friendId
+											) )
+									)
 							);
 						if ($ef ['network'] == 'memreas') {
 							$this->notification->add ( $friendId );
@@ -229,16 +230,16 @@ class AddMediaEvent {
 						}
 						$this->AddNotification->exec ( $ndata );
 					}
-					
+
 					if (! empty ( $ndata ['addNotification'] ['meta'] )) {
 						$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
 						$this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
 						$this->notification->event_id = $event_id;
-						
+
 						$this->notification->send ();
 					}
 				}
-				
+
 				// if (!$is_audio) {
 				if (! $is_server_image) {
 					$message_data = array (
@@ -248,17 +249,17 @@ class AddMediaEvent {
 							's3path' => $s3path,
 							's3file_name' => $s3file_name,
 							'isVideo' => $isVideo,
-							'email' => $email 
+							'email' => $email
 					);
-					
+
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$response = $aws_manager->snsProcessMediaPublish ( $message_data );
-					
+
 					if ($response == 1) {
 						$status = 'Success';
 						$message = "Media Successfully add";
 					} else
-						throw new Exception ( 'Error In snsProcessMediaPublish' );
+						throw new \Exception ( 'Error In snsProcessMediaPublish' );
 				} else {
 					$status = 'Success';
 					$message = "Media Successfully add";
