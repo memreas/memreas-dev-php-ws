@@ -17,6 +17,7 @@ class AWSManagerSender {
 	private $aws = null;
 	private $s3 = null;
 	private $bucket = null;
+	private $sqs = null;
 	private $sns = null;
 	private $ses = null;
 	private $topicArn = null;
@@ -48,7 +49,10 @@ class AWSManagerSender {
 		// Fetch the SNS class
 		$this->sns = $this->aws->get ( 'sns' );
 		
-		// Fetch the SNS class
+		// Fetch the SQS class
+		$this->sqs = $this->aws->get ( 'sqs' );
+		
+		// Fetch the SES class
 		$this->ses = $this->aws->get ( 'ses' );
 		
 		// Fetch the
@@ -62,18 +66,30 @@ class AWSManagerSender {
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;
-		//$message_data['memreastranscoder'] = 1;
+		$message_data['memreastranscoder'] = 1;
 		$json = json_encode ( $message_data );
 		error_log ( "INPUT JSON ----> " . $json );
 		
 		try {
+
+			/*
+			 * Publish to worker tier here
+			 */
+
+			$this->sqs->sendMessage(array(
+					'QueueUrl'          => MemreasConstants::QUEUEURL,
+					'MessageBody'       => $json,
+					//'Subject'			=> 'Hello',
+					//'MessageBody'       => 'Hello World!',
+			));
+			
 			/* - publish to topic here */
-			$result = $this->sns->publish ( array (
-					'TopicArn' => $this->topicArn,
-					'Message' => $json,
-					'Subject' => 'snsProcessMediaPublish' 
-			) );
-		} catch ( Exception $e ) {
+			//$result = $this->sns->publish ( array (
+			//		'TopicArn' => $this->topicArn,
+			//		'Message' => $json,
+			//		'Subject' => 'snsProcessMediaPublish' 
+			//) );
+		} catch ( \Exception $e ) {
 			error_log ( "Caught exception: -------> " . print_r ( $e->getMessage (), true ) . PHP_EOL );
 			throw $e;
 		}
