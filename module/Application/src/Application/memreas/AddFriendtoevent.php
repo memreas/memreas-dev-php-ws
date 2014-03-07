@@ -34,13 +34,13 @@ class AddFriendtoevent {
 		error_log ( "Enter AddFriendtoevent.exec()" . PHP_EOL );
 		error_log ( "Enter AddFriendtoevent.exec() xml ----> " . $_POST ['xml'] . PHP_EOL );
 
-		if (empty ( $frmweb )) { 
+		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
 		} else {
-			
+
 			$data =  simplexml_load_string( $frmweb );
 		}
-		
+
 		$friend_array = $data->addfriendtoevent->friends->friend;
 		$user_id = (trim ( $data->addfriendtoevent->user_id ));
 		$event_id = (trim ( $data->addfriendtoevent->event_id ));
@@ -50,10 +50,10 @@ class AddFriendtoevent {
 		$message1 = "";
 		$time = time ();
 		$error = 0;
-		
+
 		$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 		$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
-		
+
 		// add group to event_group
 		if (! empty ( $group_array )) {
 			error_log ( "Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL );
@@ -63,7 +63,7 @@ class AddFriendtoevent {
 					$check = "SELECT e  FROM  Application\Entity\EventGroup e  where e.event_id='" . $event_id . "' and e.group_id='" . $group_id . "'";
 					$statement = $this->dbAdapter->createQuery ( $check );
 					$result_check = $statement->getResult ();
-					
+
 					if ($result_check->count () > 0) {
 						$message1 = 'event group already exist.';
 						$status = 'Failure';
@@ -72,17 +72,17 @@ class AddFriendtoevent {
 						$tblEventGroup = new \Application\Entity\EventGroup ();
 						$tblEventGroup->group_id = $group_id;
 						$tblEventGroup->event_id = $event_id;
-						
+
 						$this->dbAdapter->persist ( $tblEventGroup );
 						$this->dbAdapter->flush ();
-						
+
 						$message1 = 'event group Successfully added ';
 						$status = 'Success';
 					}
 				} // end if ($group_id != 'null')
 			} // end foreach
 		} // end if (!empty($group_array))
-		  
+
 		// add friends to event loop
 		if (! empty ( $friend_array )) {
 			foreach ( $friend_array as $key => $value ) {
@@ -99,11 +99,11 @@ class AddFriendtoevent {
 				} else {
 					error_log ( "Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL );
 					// //
-					
+
 					if ($network_name == 'memreas') {
 						$r = $this->dbAdapter->getRepository ( 'Application\Entity\User' )->findOneBy ( array (
 								'username' => $friend_name,
-								'disable_account' => 0 
+								'disable_account' => 0
 						) );
 						$friend_id = $r->user_id;
 					} else {
@@ -116,7 +116,7 @@ class AddFriendtoevent {
 					$tblFriend->url_image = $profile_pic_url;
 					$tblFriend->create_date = $time;
 					$tblFriend->update_date = $time;
-					
+
 					try {
 						$this->dbAdapter->persist ( $tblFriend );
 						$this->dbAdapter->flush ();
@@ -127,27 +127,27 @@ class AddFriendtoevent {
 						$error = 1;
 					}
 				} // end if ($result_friend) else
-				  
+
 				// add to user_friend
 				if (isset ( $friend_id ) && ! empty ( $friend_id )) {
 					$check_user_frind = "SELECT u  FROM  Application\Entity\UserFriend u where u.user_id='$user_id' and u.friend_id='$friend_id'";
-					
+
 					$statement = $this->dbAdapter->createQuery ( $check_user_frind );
 					$r = $statement->getResult ();
-					
+
 					if (count ( $r ) > 0) {
 						$status = "success";
 						$message .= $friend_name . " is already in your friend list. ";
 					} else {
-						
+
 						$tblUserFriend = new \Application\Entity\UserFriend ();
 						$tblUserFriend->friend_id = $friend_id;
 						$tblUserFriend->user_id = $user_id;
-						
+
 						try {
 							$this->dbAdapter->persist ( $tblUserFriend );
 							$this->dbAdapter->flush ();
-							
+
 							$message .= 'Event Friend Successfully added';
 							$status = 'Success';
 						} catch ( \Exception $exc ) {
@@ -161,7 +161,7 @@ class AddFriendtoevent {
 					$check_event_frind = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='$event_id' and e.friend_id='$friend_id'";
 					$statement = $this->dbAdapter->createQuery ( $check_event_frind );
 					$r = $statement->getResult ();
-					
+
 					if (count ( $r ) > 0) {
 						$status = "Success";
 						$message .= "$friend_name is already in your Event Friend list.";
@@ -170,7 +170,7 @@ class AddFriendtoevent {
 						$tblEventFriend = new \Application\Entity\EventFriend ();
 						$tblEventFriend->friend_id = $friend_id;
 						$tblEventFriend->event_id = $event_id;
-						
+
 						try {
 							$this->dbAdapter->persist ( $tblEventFriend );
 							$this->dbAdapter->flush ();
@@ -191,9 +191,9 @@ class AddFriendtoevent {
 										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
 										'links' => json_encode ( array (
 												'event_id' => $event_id,
-												'from_id' => $user_id 
-										) ) 
-								) 
+												'from_id' => $user_id
+										) )
+								)
 						);
 					if ($network_name == 'memreas') {
 						// send push message add user id
@@ -210,7 +210,7 @@ class AddFriendtoevent {
 				} // endif (!empty($event_id) && $error == 0)
 			} // end foreach
 		} // end if (!empty($friend_array))
-		
+
 		if (! empty ( $ndata ['addNotification'] ['meta'] )) {
 			// set nofication data and call send method
 			$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
@@ -218,7 +218,7 @@ class AddFriendtoevent {
 			$this->notification->event_id = $event_id;
 			$this->notification->send ();
 		} // end if (!empty($data['addNotification']['meta']))
-		  
+
 		// add friends to event loop end
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -234,7 +234,7 @@ class AddFriendtoevent {
 			echo $xml_output;
 		}
 
-		
+
 	} // end exec
 } // end class
 ?>
