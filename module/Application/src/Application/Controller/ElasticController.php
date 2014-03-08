@@ -523,7 +523,7 @@ class ElasticController extends AbstractActionController {
              */
             if ($cache_me) {
                 
-                $this->elasticache->setCache("$actionname_".$uid, $output);
+                $this->elasticache->setCache($actionname . '_' . $uid, $output);
             }
 
             /*
