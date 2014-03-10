@@ -9,8 +9,11 @@ class AWSMemreasCache {
 	private $cache = null;
 	private $client = null;
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
-	private $key =null;
+	private $isCacheEnable =true;
 	public function __construct() {
+		if(!$this->isCacheEnable){
+			return null;
+		}
 		error_log ( "MemreasCache.__construct()...." . PHP_EOL );
 
 		/**
@@ -40,32 +43,47 @@ class AWSMemreasCache {
 		//$this->cache->setOption ( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE );
 		$this->cache->addServer ( $server_endpoint, $server_port );
 		$now = date ( 'Y-m-d H:i:s' );
-		
 		//$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
-		                                                     
+	                           
 		// Connected at this point
-		error_log ( "Connected to elasticache client!" . PHP_EOL );
-		error_log ( "Connected to elasticache client!" . PHP_EOL );
+ 		error_log ( "Connected to elasticache client!" . PHP_EOL );
 	//	error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
  
 	}
 	
 	public function setCache($key, $value, $ttl = 3000) { // 5 minutes
- 		$result = $this->cache->set ( $key , $value,0, $ttl );
-		error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
+		if(!$this->isCacheEnable){
+			return null;
+		}
+			$result = $this->cache->set ( $key , $value,0, $ttl );
+			error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
+		
+ 		
+		
 		return $result;
 	}
 	
 	public function getCache($key) {
- 		$result = $this->cache->get ( $key );
+		if(!$this->isCacheEnable){
+			return null;
+		}
+		
+ 			$result = $this->cache->get ( $key );
+ 			error_log('JUST FETCHED THIS KEY ----> ' . $key  . print_r($result,true). PHP_EOL);
 
-		error_log('JUST FETCHED THIS KEY ----> ' . $key  . print_r($result,true). PHP_EOL);
+ 	 
 		return $result;
 	}
 	
 	public function invalidateCache($key) {
- 		$this->cache->delete ( $key );
-		error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+		if(!$this->isCacheEnable){
+			return null;
+		}
+		 
+ 			$this->cache->delete ( $key );
+ 			error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+ 		 
+		
 	}
 	
 	public function fetchPostBody($url, $action, $xml, $cache_me = false) {

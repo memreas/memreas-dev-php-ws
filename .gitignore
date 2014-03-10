@@ -9,4 +9,3 @@ nbproject
 .log
 composer.lock
 vendor/
-data/
