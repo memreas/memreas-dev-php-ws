@@ -65,6 +65,7 @@ echo "user_id ----> " . $user_id;
             var getgroupfriends = '<xml><getgroupfriends><group_id>1</group_id><network>facebook</network></getgroupfriends></xml>';
             var addfriendtogroup = '<xml><addfriendtogroup><group_id>1</group_id><network>facebook</network><friends><friend><friend_name>friend name</friend_name><profile_pic_url>picture url</profile_pic_url></friend><friend><friend_name>friend name2</friend_name><profile_pic_url>picture url2</profile_pic_url></friend></friends></addfriendtogroup></xml>';
             var removefriendgroup = '<xml><removefriendgroup><group_id>1</group_id><friends><friend><friend_id>1</friend_id></friend><friend><friend_id>2</friend_id></friend></friends></removefriendgroup></xml>';
+            var geteventpeople = '<xml><geteventpeople><event_id>1</event_id></geteventpeople></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -206,6 +207,8 @@ echo "user_id ----> " . $user_id;
                         xml = addfriendtogroup;
                     }else if ($("#input_action").val() == "removefriendgroup") {
                         xml = removefriendgroup;
+                    }else if ($("#input_action").val() == "geteventpeople") {
+                        xml = geteventpeople;
                     }
 
 
@@ -300,6 +303,7 @@ echo "user_id ----> " . $user_id;
                                  <option>getgroupfriends</option>
                                  <option>addfriendtogroup</option>
                                  <option>removefriendgroup</option>
+                                 <option>geteventpeople</option>
 
 
 

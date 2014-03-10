@@ -67,6 +67,7 @@ use Application\memreas\GetUserGroups;
 use Application\memreas\GetGroupFriends;
 use Application\memreas\AddFriendToGroup;
 use Application\memreas\RemoveFriendGroup;
+use Application\memreas\GetEventPeople;
 
 
 
@@ -306,6 +307,9 @@ class IndexController extends AbstractActionController {
             }else if ($actionname == "removefriendgroup"){
                 $RemoveFriendGroup = new RemoveFriendGroup($message_data, $memreas_tables, $this->getServiceLocator ());
                 $result = $RemoveFriendGroup->exec();
+            }else if ($actionname == "geteventpeople"){
+                $GetEventPeople = new GetEventPeople($message_data, $memreas_tables, $this->getServiceLocator ());
+                $result = $GetEventPeople->exec();
             }
 			$output = ob_get_clean ();
 		}
