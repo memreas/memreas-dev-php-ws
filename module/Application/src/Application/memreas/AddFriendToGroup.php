@@ -53,9 +53,9 @@ class AddFriendToGroup{
             $message = 'This group does not exist';
         }
         else{
-            foreach ($friends as $friend){
-                $friend_name = addslashes(trim($friend->friend_name));
-                $friend_photo = addslashes(trim($friend->profile_pic_url));
+            foreach ($friends->friend as $friend){
+                $friend_name = $friend->friend_name;
+                $friend_photo = $friend->profile_pic_url;
 
                 //Check if friend has existed or not
                 $query = $this->dbAdapter->createQueryBuilder();
