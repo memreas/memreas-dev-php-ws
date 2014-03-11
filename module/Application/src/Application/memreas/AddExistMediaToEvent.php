@@ -30,8 +30,8 @@ class AddExistMediaToEvent {
         } else {
             $data = json_decode ( json_encode ( $frmweb ) );
         }
-        $event_id = trim ( $data->addexistmediatoevent->event_id );
-        $medias = trim ($data->addexistmediatoevent->media_ids);
+        $event_id = $data->addexistmediatoevent->event_id;
+        $medias = $data->addexistmediatoevent->media_ids;
 
         //Check if event is existed or not
         $query_event = $this->dbAdapter->createQueryBuilder();
@@ -46,8 +46,7 @@ class AddExistMediaToEvent {
             $message = 'Event does not exist';
         }
         else{
-            foreach ($medias->media_id as $media){
-                $media_id = $media->media_id;
+            foreach ($medias->media_id as $media_id){
 
                 //Check if media is existed or not
                 $media_query = $this->dbAdapter->createQueryBuilder();
@@ -57,7 +56,6 @@ class AddExistMediaToEvent {
                             ->setParameter(1, $media_id);
                 $result = $media_query->getQuery()->getResult();
                 if (!empty($result)){
-
                     //Check if media is added or not
                     $check_media = $this->dbAdapter->createQueryBuilder();
                     $check_media->select('em')
@@ -65,7 +63,7 @@ class AddExistMediaToEvent {
                                 ->where("em.event_id='$event_id' AND em.media_id='$media_id'");
                     $result = $check_media->getQuery()->getResult();
                     if (empty($result)){
-                        $EventMediaInstance = new Application\Entity\EventMedia();
+                        $EventMediaInstance = new \Application\Entity\EventMedia();
                         $EventMediaInstance->event_id = $event_id;
                         $EventMediaInstance->media_id = $media_id;
                         $this->dbAdapter->persist ($EventMediaInstance);
