@@ -11,6 +11,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\Entity\User;
+use Application\Entity\Media;
 
 class GetUserDetails {
     protected $message_data;
@@ -54,6 +55,23 @@ class GetUserDetails {
             $output .= '<user_id>' . $result_user[0]->user_id . '</user_id>';
             $output .= '<username>' . $result_user[0]->username . '</username>';
             $output .= '<email>' . $result_user[0]->email_address . '</email>';
+
+            //Get user profile
+            $profile_query = $this->dbAdapter->createQueryBuilder();
+            $profile_query->select('m')
+                            ->from('Application\Entity\Media', 'm')
+                            ->where("m.user_id = '{$result_user[0]->user_id}' AND m.is_profile_pic = 1");
+            $profile = $profile_query->getQuery()->getResult();
+            if (empty($profile))
+                $output .= '<profile></profile>';
+            else{
+                $profile_image = json_decode($profile[0]->metadata, true);
+                $profile_image = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                $is_image =  getimagesize($profile_image);
+                if ($is_image[0] > 0)
+                    $output .= '<profile>' . $profile_image . '</profile>';
+                else $output .= '<profile></profile>';
+            }
         }
 
         if ($frmweb) {

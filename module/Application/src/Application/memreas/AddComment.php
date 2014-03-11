@@ -21,7 +21,7 @@ class AddComment {
 		if (! $this->AddNotification) {
 			$this->AddNotification = new AddNotification ( $message_data, $memreas_tables, $service_locator );
 		}
-		
+
 		if (! $this->notification) {
 			$this->notification = new Notification ( $service_locator );
 		}
@@ -56,7 +56,7 @@ class AddComment {
 			$tblComment = new \Application\Entity\Comment ();
 			$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 			$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
-			
+
 			if (! $audio_media_id) {
 				$tblComment->comment_id = $uuid;
 				$tblComment->media_id = $media_id;
@@ -68,7 +68,7 @@ class AddComment {
 				$tblComment->update_time = $time;
 				$this->dbAdapter->persist ( $tblComment );
 				$this->dbAdapter->flush();
-				
+
 				$status = 'success';
 			} else {
 				$tblComment->comment_id = $uuid;
@@ -82,38 +82,38 @@ class AddComment {
 				$tblComment->update_time = $time;
 				$this->dbAdapter->persist ( $tblComment );
 				$this->dbAdapter->flush ();
-				
+
 				$status = 'success';
 			}
-			
+
 			$message = "Comment successfuly added";
-			
+
 			if ($status == 'failure') {
 				$status = 'failure';
 			} else {
-				
+
 				// add tags
 				$metaTag = array (
 						'comment_ids' => array (
-								$uuid => '' 
+								$uuid => ''
 						),
 						'event_ids' => array (
-								$event_id => '' 
+								$event_id => ''
 						),
 						'media_ids' => array (
-								$media_id => '' 
+								$media_id => ''
 						),
 						'user_ids' => array (
-								$user_id => '' 
-						) 
+								$user_id => ''
+						)
 				)
 				;
-				
+
 				// add tags
 				// $this->addTag->getEventname($comment,$metaTag);
 				// $this->addTag->getUserName($comment,$metaTag);
 				$this->addTag->getKeyword ( $comment, $metaTag );
-				
+
 				// TODO send notification owner of the event and all who commented.
 				$query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
 				$qb = $this->dbAdapter->createQueryBuilder ();
@@ -122,10 +122,10 @@ class AddComment {
 				$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id' );
 				$qb->where ( 'ef.event_id = ?1' );
 				$qb->setParameter ( 1, $event_id );
-				
+
 				$efusers = $qb->getQuery ()->getResult ();
 				$nmessage = $userOBj->username . ' Has commented on ' . $eventOBj->name . ' event';
-				
+
 				$cdata ['addNotification'] ['meta'] = $nmessage;
 				foreach ( $efusers as $ef ) {
 					$cdata = array (
@@ -136,9 +136,9 @@ class AddComment {
 										'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
 										'links' => json_encode ( array (
 												'event_id' => $event_id,
-												'from_id' => $user_id 
-										) ) 
-								) 
+												'from_id' => $user_id
+										) )
+								)
 						);
 					if ($ef ['network'] == 'memreas') {
 						$this->notification->add ( $ef ['friend_id'] );
@@ -147,24 +147,24 @@ class AddComment {
 					}
 					$this->AddNotification->exec ( $cdata );
 				}
-				
+
 				$this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );
 				$this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
 				$this->notification->event_id = $event_id;
 				$this->notification->media_id = $media_id;
 				$this->notification->send ();
 			}
-			
+
 			// echo '<pre>';print_r($result);exit;
 		}
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
-		
+
 		$xml_output .= "<addcommentresponse>";
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
-		
+
 		$xml_output .= "</addcommentresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
