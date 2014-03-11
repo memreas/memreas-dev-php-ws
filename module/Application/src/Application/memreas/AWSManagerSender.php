@@ -66,7 +66,6 @@ class AWSManagerSender {
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;
-		$message_data['memreastranscoder'] = 1;
 		$json = json_encode ( $message_data );
 		error_log ( "INPUT JSON ----> " . $json );
 		
