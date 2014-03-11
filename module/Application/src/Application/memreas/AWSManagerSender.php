@@ -66,6 +66,7 @@ class AWSManagerSender {
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;
+		$message_data['memreastranscoder'] = 1;
 		$json = json_encode ( $message_data );
 		error_log ( "INPUT JSON ----> " . $json );
 		
@@ -74,20 +75,20 @@ class AWSManagerSender {
 			/*
 			 * Publish to worker tier here
 			 */
-/*
-			$this->sqs->sendMessage(array(
+			$result = $this->sqs->sendMessage(array(
 					'QueueUrl'          => MemreasConstants::QUEUEURL,
 					'MessageBody'       => $json,
 					//'Subject'			=> 'Hello',
 					//'MessageBody'       => 'Hello World!',
 			));
-*/			
 			/* - publish to topic here */
+/*
 			$result = $this->sns->publish ( array (
 					'TopicArn' => $this->topicArn,
 					'Message' => $json,
 					'Subject' => 'snsProcessMediaPublish' 
 			) );
+*/			
 		} catch ( \Exception $e ) {
 			error_log ( "Caught exception: -------> " . print_r ( $e->getMessage (), true ) . PHP_EOL );
 			throw $e;
