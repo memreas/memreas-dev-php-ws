@@ -75,20 +75,20 @@ class AWSManagerSender {
 			/*
 			 * Publish to worker tier here
 			 */
-/*
-			$this->sqs->sendMessage(array(
+			$result = $this->sqs->sendMessage(array(
 					'QueueUrl'          => MemreasConstants::QUEUEURL,
 					'MessageBody'       => $json,
 					//'Subject'			=> 'Hello',
 					//'MessageBody'       => 'Hello World!',
 			));
-*/			
 			/* - publish to topic here */
+/*
 			$result = $this->sns->publish ( array (
 					'TopicArn' => $this->topicArn,
 					'Message' => $json,
 					'Subject' => 'snsProcessMediaPublish' 
 			) );
+*/			
 		} catch ( \Exception $e ) {
 			error_log ( "Caught exception: -------> " . print_r ( $e->getMessage (), true ) . PHP_EOL );
 			throw $e;

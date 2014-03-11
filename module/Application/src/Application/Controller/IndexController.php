@@ -562,7 +562,7 @@ class IndexController extends AbstractActionController {
              /*
              * TODO - Cache here
              */
-            if ($cache_me) {
+            if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
 
                 $this->elasticache->setCache($actionname . '_' . $uid, $output);
             }
@@ -570,7 +570,7 @@ class IndexController extends AbstractActionController {
             /*
              * TODO - Invalidate cache here
              */
-            if ($invalidate_me) {
+            if ($invalidate_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
                 $this->elasticache->invalidateCache($invalidate_action.'_'.$uid);
             }
 
