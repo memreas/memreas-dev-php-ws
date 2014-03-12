@@ -69,6 +69,7 @@ class Registration {
 			}
 		}
 		
+
 		//$this->FunctionName($invited_by);exit;
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
@@ -299,15 +300,35 @@ class Registration {
 	}
 
 	function createUserCache(){
+		$qb = $this->dbAdapter->createQueryBuilder ();
+						$qb->select ( 'u.username', 'm.metadata' );
+						$qb->from ( 'Application\Entity\User', 'u' );
+						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+						
 
 		//create index for catch;
-				$userIndexSql = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
+			$userIndexArr = $qb->getQuery()->getResult();
+			//	$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
 				//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
 				//$userIndexSql->setMaxResults(30);
-				$userIndexArr = $userIndexSql->getResult();
-				foreach ($userIndexArr as $value) {
-					$this->userIndex[$value['user_id']] = $value['username'];
+				//$userIndexArr = $qb->getResult();
+				echo '<pre>';print_r($userIndexArr);
+				foreach ($userIndexArr as $row) {
+					$json_array = json_decode ( $row ['metadata'], true );
+							$url1 = '/img/profile-pic.jpg';
+							if (empty ( $json_array ['S3_files'] ['path'] )){
+
+							}else{
+								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+				
+							}
+
+					$this->userIndex[$row['username']] = array('username' =>$row['username'],
+																'profile_photo' => $url1
+															);
 				}
+				
+
 	}
 
 
