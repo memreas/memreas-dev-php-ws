@@ -6,6 +6,7 @@
 namespace Application\Model;
 
 class MemreasConstants {
+	const MEMREAS_TRANSCODER = false;
 	const MEMREASDB = 'memreasintdb';
 	const S3BUCKET = "memreasdev";
 	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
