@@ -70,6 +70,7 @@ use Application\memreas\AddFriendToGroup;
 use Application\memreas\RemoveFriendGroup;
 use Application\memreas\GetEventPeople;
 use Application\memreas\AddExistMediaToEvent;
+use Application\memreas\GetMediaLike;
 
 
 
@@ -557,6 +558,9 @@ class IndexController extends AbstractActionController {
             }else if ($actionname == "addexistmediatoevent"){
                 $AddExistMediaToEvent = new AddExistMediaToEvent($message_data, $memreas_tables, $this->getServiceLocator ());
                 $result = $AddExistMediaToEvent->exec();
+            }else if ($actionname == "getmedialike"){
+                $GetMediaLike = new GetMediaLike($message_data, $memreas_tables, $this->getServiceLocator ());
+                $result = $GetMediaLike->exec();
             }
 			$output = ob_get_clean ();
              /*

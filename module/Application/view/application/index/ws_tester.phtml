@@ -67,6 +67,7 @@ echo "user_id ----> " . $user_id;
             var removefriendgroup = '<xml><removefriendgroup><group_id>1</group_id><friends><friend><friend_id>1</friend_id></friend><friend><friend_id>2</friend_id></friend></friends></removefriendgroup></xml>';
             var geteventpeople = '<xml><geteventpeople><event_id>1</event_id></geteventpeople></xml>';
             var addexistmediatoevent = '<xml><addexistmediatoevent><event_id>1</event_id><media_ids><media_id>1</media_id><media_id>2</media_id></media_ids></addexistmediatoevent></xml>';
+            var getmedialike = '<xml><getmedialike><media_id>1</media_id></getmedialike></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -212,6 +213,8 @@ echo "user_id ----> " . $user_id;
                         xml = geteventpeople;
                     }else if ($("#input_action").val() == "addexistmediatoevent") {
                         xml = addexistmediatoevent;
+                    }else if ($("#input_action").val() == "getmedialike") {
+                        xml = getmedialike;
                     }
 
 
@@ -308,6 +311,7 @@ echo "user_id ----> " . $user_id;
                                  <option>removefriendgroup</option>
                                  <option>geteventpeople</option>
                                  <option>addexistmediatoevent</option>
+                                 <option>getmedialike</option>
 
 
 
