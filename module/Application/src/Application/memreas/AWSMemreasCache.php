@@ -9,7 +9,7 @@ class AWSMemreasCache {
 	private $cache = null;
 	private $client = null;
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
-	private $isCacheEnable =true;
+	private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
 	public function __construct() {
 		if(!$this->isCacheEnable){
 			return null;

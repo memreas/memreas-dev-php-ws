@@ -312,19 +312,17 @@ class Registration {
 				//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
 				//$userIndexSql->setMaxResults(30);
 				//$userIndexArr = $qb->getResult();
-				echo '<pre>';print_r($userIndexArr);
 				foreach ($userIndexArr as $row) {
 					$json_array = json_decode ( $row ['metadata'], true );
-							$url1 = '/img/profile-pic.jpg';
-							if (empty ( $json_array ['S3_files'] ['path'] )){
-
-							}else{
-								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-				
-							}
-
-					$this->userIndex[$row['username']] = array('username' =>$row['username'],
-																'profile_photo' => $url1
+					
+					if (empty ( $json_array ['S3_files'] ['path'] )){
+						$url1 = '/memreas/img/profile-pic.jpg';
+					}else{
+						$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+					}
+					$this->userIndex[$row['username']] = array(
+															'username'      => $row['username'],
+															'profile_photo' => $url1
 															);
 				}
 				
