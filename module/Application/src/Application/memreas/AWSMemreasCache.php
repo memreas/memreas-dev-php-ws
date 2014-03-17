@@ -9,7 +9,7 @@ class AWSMemreasCache {
 	private $cache = null;
 	private $client = null;
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
-	private $isCacheEnable =true;
+	private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
 	public function __construct() {
 		if(!$this->isCacheEnable){
 			return null;
@@ -22,7 +22,7 @@ class AWSMemreasCache {
 		 */
 		
 		/* Configuration endpoint to use to initialize memcached client. This is only an example. */
-		$server_endpoint = MemreasConstants::ELASTICACHE_SERVER_ENDPOINT;
+		$server_endpoint = 'localhost';// MemreasConstants::ELASTICACHE_SERVER_ENDPOINT;
 		/* Port for connecting to the ElastiCache cluster. This is only an example */
 		$server_port = MemreasConstants::ELASTICACHE_SERVER_PORT;
 		

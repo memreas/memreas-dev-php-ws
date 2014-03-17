@@ -69,6 +69,7 @@ class Registration {
 			}
 		}
 
+
 		//$this->FunctionName($invited_by);exit;
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
@@ -307,39 +308,58 @@ class Registration {
 	}
 
 	function createUserCache(){
+		$qb = $this->dbAdapter->createQueryBuilder ();
+						$qb->select ( 'u.username', 'm.metadata' );
+						$qb->from ( 'Application\Entity\User', 'u' );
+						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+						
+
 		//create index for catch;
-		$userIndexSql = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
-		//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
-		//$userIndexSql->setMaxResults(30);
-		$userIndexArr = $userIndexSql->getResult();
-		foreach ($userIndexArr as $value) {
-			$this->userIndex[$value['user_id']] = $value['username'];
-		}
+			$userIndexArr = $qb->getQuery()->getResult();
+			//	$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
+				//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
+				//$userIndexSql->setMaxResults(30);
+				//$userIndexArr = $qb->getResult();
+				foreach ($userIndexArr as $row) {
+					$json_array = json_decode ( $row ['metadata'], true );
+					
+					if (empty ( $json_array ['S3_files'] ['path'] )){
+						$url1 = '/memreas/img/profile-pic.jpg';
+					}else{
+						$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+					}
+					$this->userIndex[$row['username']] = array(
+															'username'      => $row['username'],
+															'profile_photo' => $url1
+															);
+				}
+				
+
 	}
 
 
 	public function FunctionName($invited_by ='')
 	{
 		$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
-		$statement      = $this->dbAdapter->createQuery ( $q_notification );
-		$statement->setParameter ( 'short_code', $invited_by );
-		$statement->setParameter ( 'notification_type', 2 );
-		$row_notification = $statement->getOneOrNullResult();
-		$ndata            = json_decode($row_notification->links);
- 		print_r($ndata);exit;
-		if(!empty($ndata->from_id)&& !empty($ndata->event_id)){
+				$statement      = $this->dbAdapter->createQuery ( $q_notification );
+				$statement->setParameter ( 'short_code', $invited_by );
+				$statement->setParameter ( 'notification_type', 2 );
+				$row_notification = $statement->getOneOrNullResult();
+				$ndata            = json_decode($row_notification->links);
+ 				print_r($ndata);exit;
+				if(!empty($ndata->from_id)&& !empty($ndata->event_id)){
 
-			$xml_input= "<xml><addfriendtoevent>
-							<user_id>{$ndata->from_id}</user_id>
-							<event_id>{$ndata->event_id}</event_id>
-							<friends><friend>
-							<network_name>memreas</network_name>
-							<friend_name>$username</friend_name>
-							<profile_pic_url><![CDATA[url]]>
-							</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
-		    //add frient to event
-		    $this->addfriendtoevent->exec($xml_input);
-		}
+					$xml_input= "<xml><addfriendtoevent>
+									<user_id>{$ndata->from_id}</user_id>
+									<event_id>{$ndata->event_id}</event_id>
+									<friends><friend>
+									<network_name>memreas</network_name>
+									<friend_name>$username</friend_name> 
+									<profile_pic_url><![CDATA[url]]> 
+									</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
+				//add frient to event
+				$this->addfriendtoevent->exec($xml_input);
+				}
 	}
 
 }

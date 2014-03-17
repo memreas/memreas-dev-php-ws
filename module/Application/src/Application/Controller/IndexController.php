@@ -458,8 +458,22 @@ class IndexController extends AbstractActionController {
                             $mc = $registration->userIndex;
                             $this->elasticache->setCache("@person",$mc );
                         }
-                        $result =  preg_grep("/$search/", $mc);
-                        echo json_encode(array_values($result));
+                        $search_result = array();
+                        foreach ($mc as &$pr){
+                            if(strpos($pr['username'],$search)!==false){
+                                $pr['username'] = '@'.$pr['username'];
+                                $search_result[] = $pr;
+                                
+                            }
+                        }
+                        
+                        $result['count']= count($search_result);
+                        $result['search']= $search_result;
+
+                        //$result =  preg_grep("/$search/", $mc);
+                        //echo '<pre>';print_r($result);
+                        
+                        echo json_encode($result);
 
                     break;
                     case '!':
