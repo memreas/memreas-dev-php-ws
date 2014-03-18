@@ -115,8 +115,8 @@ class AddMediaEvent {
 				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
 					$s3path = $user_id . '/image/';
 					$json_array = array ();
-					$json_array ['S3_files'] ['path'] = $s3url;
-					$json_array ['S3_files'] ['Full'] = $s3url;
+					$json_array ['S3_files'] ['path'] = $s3path . $s3url;
+					$json_array ['S3_files'] ['Full'] = $s3path . $s3url;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
@@ -128,8 +128,8 @@ class AddMediaEvent {
 					$isVideo = 1;
 					$s3path = $user_id . '/media/';
 					$json_array = array ();
-					$json_array ['S3_files'] ['path'] = $s3url;
-					$json_array ['S3_files'] ['Full'] = $s3url;
+					$json_array ['S3_files'] ['path'] = $s3path . $s3url;
+					$json_array ['S3_files'] ['Full'] = $s3path . $s3url;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['type'] ['video'] ['format'] = $file_type [1];
@@ -140,8 +140,8 @@ class AddMediaEvent {
 				} else if (strcasecmp ( 'audio', $file_type [0] ) == 0) {
 					$is_audio = 1;
 					$json_array = array ();
-					$json_array ['S3_files'] ['path'] = $s3url;
-					$json_array ['S3_files'] ['Full'] = $s3url;
+					$json_array ['S3_files'] ['path'] = $s3path . $s3url;
+					$json_array ['S3_files'] ['Full'] = $s3path . $s3url;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['type'] ['audio'] ['format'] = $file_type [1];
@@ -155,34 +155,34 @@ class AddMediaEvent {
 				// ///////////////////////////////////////
 				// check media type and update tables...
 				// ///////////////////////////////////////
-				if ($is_profile_pic) {
-					// if profile pic then update media
-					$update_media = "UPDATE Application\Entity\Media  m  SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='" . $user_id;
-					// $rs_is_profil = mysql_query($update_media);
-					// $statement3 = $this->dbAdapter->createStatement($update_media);
-					// $rs_is_profil = $statement3->execute();
-					// $row = $result->current();
-					$statement = $this->dbAdapter->createQuery ( $update_media );
-					$rs_is_profil = $statement->getResult ();
+				// insert into media table
+				$now = date ( 'Y-m-d H:i:s' );
+				$tblMedia = new \Application\Entity\Media ();
+				$tblMedia->media_id = $media_id;
+				$tblMedia->user_id = $user_id;
+				$tblMedia->is_profile_pic = $is_profile_pic;
+				$tblMedia->metadata = $json_str;
+				$tblMedia->create_date = $now;
+				$tblMedia->update_date = $now;
+				$this->dbAdapter->persist ( $tblMedia );
+				$this->dbAdapter->flush ();
+				error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
 
-					if (! $rs_is_profil)
-						throw new Exception ( 'Error : ' . mysql_error () );
+                if ($is_profile_pic) {
+                    // if profile pic then update media
+                    $update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
+                    // $rs_is_profil = mysql_query($update_media);
+                    // $statement3 = $this->dbAdapter->createStatement($update_media);
+                    // $rs_is_profil = $statement3->execute();
+                    // $row = $result->current();
+                    $statement = $this->dbAdapter->createQuery ( $update_media );
+                    $rs_is_profil = $statement->getResult ();
 
-					error_log ( "AddMediaEvent exec - just udpated Media " . PHP_EOL );
-				} else {
-					// insert into media table
-					$now = date ( 'Y-m-d H:i:s' );
-					$tblMedia = new \Application\Entity\Media ();
-					$tblMedia->media_id = $media_id;
-					$tblMedia->user_id = $user_id;
-					$tblMedia->is_profile_pic = $is_profile_pic;
-					$tblMedia->metadata = $json_str;
-					$tblMedia->create_date = $now;
-					$tblMedia->update_date = $now;
-					$this->dbAdapter->persist ( $tblMedia );
-					$this->dbAdapter->flush ();
-					error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
-				}
+                    /*if (! $rs_is_profil)
+                        throw new Exception ( 'Error : ' . mysql_error () );*/
+
+                    error_log ( "AddMediaEvent exec - just udpated Media " . PHP_EOL );
+                }
 
 				// $event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
 				if (isset ( $event_id ) && ! empty ( $event_id )) {

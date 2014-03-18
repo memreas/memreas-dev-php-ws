@@ -67,10 +67,7 @@ class GetUserDetails {
             else{
                 $profile_image = json_decode($profile[0]->metadata, true);
                 $profile_image = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
-                $is_image =  getimagesize($profile_image);
-                if ($is_image[0] > 0)
-                    $output .= '<profile>' . $profile_image . '</profile>';
-                else $output .= '<profile></profile>';
+                $output .= '<profile>' . $profile_image . '</profile>';
             }
         }
 
