@@ -22,7 +22,7 @@ class AWSMemreasCache {
 		 */
 		
 		/* Configuration endpoint to use to initialize memcached client. This is only an example. */
-		$server_endpoint = 'localhost';// MemreasConstants::ELASTICACHE_SERVER_ENDPOINT;
+		$server_endpoint = MemreasConstants::ELASTICACHE_SERVER_ENDPOINT;
 		/* Port for connecting to the ElastiCache cluster. This is only an example */
 		$server_port = MemreasConstants::ELASTICACHE_SERVER_PORT;
 		
