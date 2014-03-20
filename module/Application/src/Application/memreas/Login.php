@@ -41,7 +41,7 @@ class Login {
 		} else {
 			$flagpass = 1;
 		}
-		
+
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
@@ -55,11 +55,11 @@ class Login {
 				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
 			}
 			$statement = $this->dbAdapter->createQuery ( $sql );
-			
+
 			$row = $statement->getResult ();
-			
+
 			if (! empty ( $row )) {
-				
+
 				$this->setSession ( $row [0] );
 				if (! empty ( $devicetoken ) && ! empty ( $devicetype )) {
 					$qb = $this->dbAdapter->createQueryBuilder ();
@@ -68,7 +68,7 @@ class Login {
 					setParameter ( 1, $row [0]->user_id )->setParameter ( 2, $devicetype )->getQuery ();
 					$p = $q->execute ();
 				}
-				
+
 				$user_id = trim ( $row [0]->user_id );
 				$xml_output .= "<status>success</status>";
 				$xml_output .= "<message>User logged in successfully.</message>";
@@ -90,7 +90,7 @@ class Login {
 		$user->disable_account = '';
 		$user->create_date = '';
 		$user->update_time = '';
-		
+
 		$this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ( true );
 		error_log ( "Inside setSession got new Container..." );
 		$_SESSION ['user'] ['user_id'] = $user->user_id;

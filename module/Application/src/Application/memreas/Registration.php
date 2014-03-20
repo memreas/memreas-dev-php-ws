@@ -85,17 +85,12 @@ class Registration {
 				    /*
 				     * TODO: Fix email check prior to go-beta...
 				     */
-				    $sql = "SELECT u FROM Application\Entity\User u where u.email_address = '$email' or u.username = '$username'";
-				    $sql = "SELECT u FROM Application\Entity\User u  where u.username = '" . $username . "'";
-				    error_log ( "Inside Registration sql ..." . $sql . PHP_EOL );
-				    $statement = $this->dbAdapter->createQuery ( $sql );
-				    try {
-					    $result = $statement->getOneOrNullResult ();
-				    } catch ( \Exception $e ) {
-					    error_log ( "SQL Failed ---> $sql " . PHP_EOL );
-					    error_log ( "Caught exception $e" . PHP_EOL );
-				    }
+				    $sql = "SELECT u FROM Application\Entity\User u where u.email_address = '$email'";//" or u.username = '$username'";
+				    $statement = $this->dbAdapter->createQuery( $sql );
+
+					$result = $statement->getResult();
 				    if (! empty ( $result )) {
+                        $result = $result[0];
                         $status = 'Failure';
 					    if (($result->email_address == $email) && ($result->username != $username)) {
 						    // throw new \Exception('Your profile is not created successfully. Email is already exist.');
@@ -312,7 +307,7 @@ class Registration {
 						$qb->select ( 'u.username', 'm.metadata' );
 						$qb->from ( 'Application\Entity\User', 'u' );
 						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-						
+
 
 		//create index for catch;
 			$userIndexArr = $qb->getQuery()->getResult();
@@ -322,7 +317,7 @@ class Registration {
 				//$userIndexArr = $qb->getResult();
 				foreach ($userIndexArr as $row) {
 					$json_array = json_decode ( $row ['metadata'], true );
-					
+
 					if (empty ( $json_array ['S3_files'] ['path'] )){
 						$url1 = '/memreas/img/profile-pic.jpg';
 					}else{
@@ -333,7 +328,7 @@ class Registration {
 															'profile_photo' => $url1
 															);
 				}
-				
+
 
 	}
 
@@ -354,8 +349,8 @@ class Registration {
 									<event_id>{$ndata->event_id}</event_id>
 									<friends><friend>
 									<network_name>memreas</network_name>
-									<friend_name>$username</friend_name> 
-									<profile_pic_url><![CDATA[url]]> 
+									<friend_name>$username</friend_name>
+									<profile_pic_url><![CDATA[url]]>
 									</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
 				//add frient to event
 				$this->addfriendtoevent->exec($xml_input);
