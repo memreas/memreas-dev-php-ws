@@ -72,6 +72,7 @@ use Application\memreas\GetEventPeople;
 use Application\memreas\AddExistMediaToEvent;
 use Application\memreas\GetMediaLike;
 use Application\memreas\CheckExistMedia;
+use Application\memreas\ListMemreasFriends;
 
 
 
@@ -463,16 +464,16 @@ class IndexController extends AbstractActionController {
                             if(strpos($pr['username'],$search)!==false){
                                 $pr['username'] = '@'.$pr['username'];
                                 $search_result[] = $pr;
-                                
+
                             }
                         }
-                        
+
                         $result['count']= count($search_result);
                         $result['search']= $search_result;
 
                         //$result =  preg_grep("/$search/", $mc);
                         //echo '<pre>';print_r($result);
-                        
+
                         echo json_encode($result);
 
                     break;
@@ -579,6 +580,9 @@ class IndexController extends AbstractActionController {
             }else if ($actionname == "checkexistmedia"){
                 $CheckExistMedia = new CheckExistMedia($message_data, $memreas_tables, $this->getServiceLocator ());
                 $result = $CheckExistMedia->exec();
+            }else if ($actionname == "listmemreasfriends"){
+                $ListMemreasFriends = new ListMemreasFriends($message_data, $memreas_tables, $this->getServiceLocator ());
+                $result = $ListMemreasFriends->exec();
             }
 			$output = ob_get_clean ();
              /*

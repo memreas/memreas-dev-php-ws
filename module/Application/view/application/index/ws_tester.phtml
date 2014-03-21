@@ -69,6 +69,7 @@ echo "user_id ----> " . $user_id;
             var addexistmediatoevent = '<xml><addexistmediatoevent><event_id>1</event_id><media_ids><media_id>1</media_id><media_id>2</media_id></media_ids></addexistmediatoevent></xml>';
             var getmedialike = '<xml><getmedialike><media_id>1</media_id></getmedialike></xml>';
             var checkexistmedia = '<xml><checkexistmedia><user_id>1</user_id><filename>file name</filename></checkexistmedia></xml>';
+            var listmemreasfriends = '<xml><listmemreasfriends><user_id>1</user_id></listmemreasfriends></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -218,6 +219,8 @@ echo "user_id ----> " . $user_id;
                         xml = getmedialike;
                     }else if ($("#input_action").val() == "checkexistmedia") {
                         xml = checkexistmedia;
+                    }else if ($("#input_action").val() == "listmemreasfriends") {
+                        xml = listmemreasfriends;
                     }
 
 
@@ -260,7 +263,7 @@ echo "user_id ----> " . $user_id;
 		</ul>
 
 		<div id="tabs-5">
-			<form id="index_action" name=index_action " action="/index">
+			<form id="index_action" name="index_action" action="/index">
 				<table>
 					<tr>
 						<td>select action
@@ -316,14 +319,7 @@ echo "user_id ----> " . $user_id;
                                  <option>addexistmediatoevent</option>
                                  <option>getmedialike</option>
                                  <option>checkexistmedia</option>
-
-
-
-
-
-
-
-
+                                 <option>listmemreasfriends</option>
 						</select>
 
 					</tr>
