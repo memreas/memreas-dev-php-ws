@@ -333,7 +333,6 @@ class Registration {
 
 	}
 
-
 	public function FunctionName($invited_by ='')
 	{
 		$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
