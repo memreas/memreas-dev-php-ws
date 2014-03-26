@@ -381,12 +381,15 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "viewmediadetails") {
                 $data = simplexml_load_string ( $_POST ['xml'] );
                 $mid = trim ( $data->viewmediadetails->media_id );
+                
+                //Setting given cache id is uid below
+                $uid = $mid;
 
                 $result = $this->elasticache->getCache($actionname,$mid);
 
                 if (!$result) {
-				$viewmediadetails = new ViewMediadetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $viewmediadetails->exec ();
+					$viewmediadetails = new ViewMediadetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $viewmediadetails->exec ();
                     $cache_me = true;
                 }
 
@@ -413,11 +416,6 @@ class IndexController extends AbstractActionController {
                     $invalidate_me = true;
 
                 }
-
-
-
-
-
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $changepassword->exec ();
@@ -524,9 +522,6 @@ class IndexController extends AbstractActionController {
                     $invalidate_me = true;
 
                 }
-
-
-
 			} else if ($actionname == "getsession") {
 				$logout = new GetSession ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $logout->exec ();
