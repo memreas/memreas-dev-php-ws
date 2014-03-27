@@ -152,6 +152,7 @@ class IndexController extends AbstractActionController {
              $this->elasticache = new AWSMemreasCache();
              $update_elasticache_flag = false;
              $cache_me   = false;
+             $cache_id   = null;
              $invalidate = false;
              $invalidate_me = false;
 
@@ -178,8 +179,6 @@ class IndexController extends AbstractActionController {
                 if ($registration->status = 'Success') {
                     $this->elasticache->setCache("@person",$registration->userIndex);
                 }
-
-
 			} else if ($actionname == "addcomments") {
 				$addcomment = new AddComment ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addcomment->exec ();
@@ -205,16 +204,11 @@ class IndexController extends AbstractActionController {
                 $uid = trim ($data->likemedia->user_id);
                 $result = $this->elasticache->getCache($actionname,$uid);
                 if(!$result){
-				$likemedia = new LikeMedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $likemedia->exec ();
+					$likemedia = new LikeMedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $likemedia->exec ();
                     $cache_me = true;
-
-
+                    $cache_id = $uid;
                 }
-
-
-
-
 			} else if ($actionname == "mediainappropriate") {
 				$mediainappropriate = new MediaInappropriate ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $mediainappropriate->exec ();
@@ -244,6 +238,7 @@ class IndexController extends AbstractActionController {
 				$listgroup = new ListGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
                     $result    = $listgroup->exec ();
                     $cache_me  = true;
+                    $cache_id = $uid;
                 }
 
 			} else if ($actionname == "deletephoto") {
@@ -267,12 +262,8 @@ class IndexController extends AbstractActionController {
 				$listphotos = new ListPhotos ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $listphotos->exec ();
                     $cache_me = true;
+                    $cache_id = $uid;
                 }
-
-
-
-
-
 			} else if ($actionname == "forgotpassword") {
 				$forgotpassword = new ForgotPassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $forgotpassword->exec ();
@@ -286,11 +277,11 @@ class IndexController extends AbstractActionController {
 
                 if (!$result)
                 {
-				$viewallfriends = new ViewAllfriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $viewallfriends->exec ();
+					$viewallfriends = new ViewAllfriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $viewallfriends->exec ();
                     $cache_me = true;
+                    $cache_id = $uid;
                 }
-
 			} else if ($actionname == "creategroup") {
 				$creategroup = new CreateGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $creategroup->exec ();
@@ -302,8 +293,6 @@ class IndexController extends AbstractActionController {
                     $invalidate_action = "listgroup";
                     $invalidate_me = true;
                 }
-
-
 			} else if ($actionname == "listallmedia") {
                 /*
                  * TODO: Check cache first if not there then fetch and cache...
@@ -313,9 +302,10 @@ class IndexController extends AbstractActionController {
                 $result = $this->elasticache->getCache($actionname,$uid);
 
                 if (!$result) {
-				$listallmedia = new ListAllmedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $listallmedia->exec ();
+					$listallmedia = new ListAllmedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $listallmedia->exec ();
                     $cache_me = true;
+                    $cache_id = $uid;
                 }
 			} else if ($actionname == "countviewevent") {
                 $data = simplexml_load_string ( $_POST ['xml'] );
@@ -323,13 +313,11 @@ class IndexController extends AbstractActionController {
                 $result = $this->elasticache->getCache($actionname,$uid);
 
                 if (!$result) {
-				$countviewevent = new CountViewevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $countviewevent->exec ();
+					$countviewevent = new CountViewevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $countviewevent->exec ();
                     $cache_me = true;
+                    $cache_id = $uid;
                 }
-
-
-
 			} else if ($actionname == "editevent") {
 				$editevent = new EditEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $editevent->exec ();
@@ -341,8 +329,6 @@ class IndexController extends AbstractActionController {
                     $invalidate_me = true;
 
                 }
-
-
 			} else if ($actionname == "addevent") {
 				$addevent = new AddEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addevent->exec ();
@@ -351,20 +337,18 @@ class IndexController extends AbstractActionController {
                 $uid = trim($data->addevent->user_id);
                 if (!empty($uid)) {
                     $invalidate_action = "viewevents";
-
                     $invalidate_me = true;
-
                 }
-
 			} else if ($actionname == "viewevents") {
                 $data = simplexml_load_string ( $_POST ['xml'] );
                 $uid = trim ( $data->viewevent->user_id );
                 $result = $this->elasticache->getCache($actionname,$uid);
 
                 if (!$result) {
-				$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $viewevents->exec ();
+					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->getServiceLocator () );
+					$result = $viewevents->exec ();
                     $cache_me = true;
+                    $cache_id = $uid;
                 }
 
 			} else if ($actionname == "addfriendtoevent") {
@@ -375,22 +359,18 @@ class IndexController extends AbstractActionController {
                 if (!empty($uid)) {
                     $invalidate_action = "viewevents";
                     $invalidate_me = true;
-
                 }
-
 			} else if ($actionname == "viewmediadetails") {
                 $data = simplexml_load_string ( $_POST ['xml'] );
                 $mid = trim ( $data->viewmediadetails->media_id );
                 
-                //Setting given cache id is uid below
-                $uid = $mid;
-
                 $result = $this->elasticache->getCache($actionname,$mid);
 
                 if (!$result) {
 					$viewmediadetails = new ViewMediadetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
 					$result = $viewmediadetails->exec ();
                     $cache_me = true;
+                    $cache_id = $mid;
                 }
 
 			} else if ($actionname == "snsProcessMediaPublish") {
@@ -412,9 +392,7 @@ class IndexController extends AbstractActionController {
                 $uid = trim( $data->addNotification->user_id );
                 if (!empty($uid)) {
                     $invalidate_action = "listnotification";
-
                     $invalidate_me = true;
-
                 }
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -428,6 +406,8 @@ class IndexController extends AbstractActionController {
 				$listnotification = new ListNotification ( $message_data, $memreas_tables, $this->getServiceLocator () );
                     $result = $listnotification->exec();
                     $cache_me = true;
+                    //Setting uid to mid given cache id is uid below
+                    $cache_id = $mid;
                 }
 
 			} else if ($actionname == "updatenotification") {
@@ -584,8 +564,7 @@ class IndexController extends AbstractActionController {
              * TODO - Cache here
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-
-                $this->elasticache->setCache($actionname . '_' . $uid, $output);
+                $this->elasticache->setCache($actionname . '_' . $cache_id, $output);
             }
 
             /*
@@ -603,19 +582,18 @@ class IndexController extends AbstractActionController {
 		// $result = $memreas->login($message_data, $memreas_tables, $this->getServiceLocator());
 		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
-			error_log ( "Final XML ----> " . $message_data ['data'] );
+//error_log ( "Final XML ----> " . $message_data ['data'] );
 
 			$json_arr = array (
 					"data" => $message_data ['data']
 			);
 			$json = json_encode ( $json_arr );
 
-			error_log ( "Callback ---> " . $callback . "(" . $json . ")" );
+//error_log ( "Callback ---> " . $callback . "(" . $json . ")" );
 			header ( "Content-type: plain/text" );
 			// callback json
 			echo $callback . "(" . $json . ")";
 			// Need to exit here to avoid ZF2 framework view.
-
 			exit ();
 		}
 		error_log ( "path ----> " . PHP_EOL );
