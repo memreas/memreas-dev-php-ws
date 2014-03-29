@@ -81,8 +81,19 @@ class AddMediaEvent {
 				$email = isset ( $_POST ['email'] ) ? $_POST ['email'] : '';
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
+
 			}
 			$time = time ();
+
+error_log ( "event_id ---> " . $event_id . PHP_EOL );
+error_log ( "media_id ---> " . $media_id . PHP_EOL );
+error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
+error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
+error_log ( "content_type ---> " . $content_type . PHP_EOL );
+error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
+error_log ( "s3url ---> " . $s3url . PHP_EOL );
+error_log ( "email ---> " . $email . PHP_EOL );
+error_log ( "location ---> " . $location . PHP_EOL );
 
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media table
@@ -115,8 +126,10 @@ class AddMediaEvent {
 				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
 					$s3path = $user_id . '/image/';
 					$json_array = array ();
-					$json_array ['S3_files'] ['path'] = $s3path . $s3url;
-					$json_array ['S3_files'] ['Full'] = $s3path . $s3url;
+					//$s3file = isset ( $_POST ['s3file_name'] ) ? $s3path.$s3file_name : $s3url;
+					$s3file = $s3url;
+					$json_array ['S3_files'] ['path'] = $s3file;
+					$json_array ['S3_files'] ['Full'] = $s3file;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
@@ -128,8 +141,9 @@ class AddMediaEvent {
 					$isVideo = 1;
 					$s3path = $user_id . '/media/';
 					$json_array = array ();
-					$json_array ['S3_files'] ['path'] = $s3path . $s3url;
-					$json_array ['S3_files'] ['Full'] = $s3path . $s3url;
+					$s3file = isset ( $_POST ['s3file_name'] ) ? $s3path.$s3file_name : $s3url;
+					$json_array ['S3_files'] ['path'] = $s3file;
+					$json_array ['S3_files'] ['Full'] = $s3file;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['type'] ['video'] ['format'] = $file_type [1];

@@ -6,21 +6,21 @@
 namespace Application\Model;
 
 class MemreasConstants {
-	const MEMREAS_TRANSCODER = false;
+	const MEMREAS_TRANSCODER = true;
 	
 	const MEMREASDB = 'memreasintdb';
 	const S3BUCKET = "memreasdev";
 	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/awseb-e-8zdmyxfwy5-stack-AWSEBWorkerQueue-1RTF4RETMQXT8';
 	// const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
-	const ORIGINAL_URL = "http://memreasdev-ws.elasticbeanstalk.com/";
-	const MEDIA_URL = "http://memreasdev-ws.elasticbeanstalk.com/?action=addmediaevent";
+	const ORIGINAL_URL = "http://memreasdev-ws-elastic.elasticbeanstalk.com/";
+	const MEDIA_URL = "http://memreasdev-ws-elastic.elasticbeanstalk.com/?action=addmediaevent";
 	const URL = "/index";
 	
 	// ElastiCache section
 	const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";
 	const ELASTICACHE_SERVER_PORT = "11211";
-	const ELASTICACHE_SERVER_USE = true;
+	const ELASTICACHE_SERVER_USE = false;
 	
 	// const SITEURL = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";
 	const DATA_PATH = "/data/";

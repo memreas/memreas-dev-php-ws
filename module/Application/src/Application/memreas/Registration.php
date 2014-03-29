@@ -85,7 +85,7 @@ class Registration {
 				    /*
 				     * TODO: Fix email check prior to go-beta...
 				     */
-				    $sql = "SELECT u FROM Application\Entity\User u where u.email_address = '$email'";//" or u.username = '$username'";
+				    $sql = "SELECT u FROM Application\Entity\User u where u.username = '".$username."'";//" or u.email_address = '".$email_address."'";
 				    $statement = $this->dbAdapter->createQuery( $sql );
 
 					$result = $statement->getResult();
