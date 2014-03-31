@@ -144,7 +144,7 @@ class ListAllmedia {
 					}
 					
 					$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
-					if (isset ( $data->listallmedia->RTMP )) {
+					if (isset ( $data->listallmedia->rtmp ) && isset ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$host = MemreasConstants::CLOUDFRONT_STREAMING_HOST;
 					}
 					$xml_output .= "<media>";

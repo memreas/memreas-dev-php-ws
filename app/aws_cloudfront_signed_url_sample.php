@@ -9,7 +9,14 @@
 $private_key_filename = 'key/pk-APKAJC22BYF2JGZTOC6A.pem';
 $key_pair_id = 'APKAJC22BYF2JGZTOC6A';
 $expires = time () + 300; // 5 min from now
+$s3file = '8ee4827e-3586-4552-916c-13807a565e8e/media/web/2013-02-09_15-54-15_980.mp4.mp4';
+$dhost = 'http://d1ckv7o9k6o3x9.cloudfront.net/';
+$shost = 'rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:';
 ?>
+
+
+rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:
+
 
 <html>
 <head>
