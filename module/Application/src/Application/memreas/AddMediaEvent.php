@@ -183,6 +183,11 @@ error_log ( "location ---> " . $location . PHP_EOL );
 				error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
 
                 if ($is_profile_pic) {
+                    //Remove previous profile images
+                    $remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> $media_id";
+                    $remove_result = $this->dbAdapter->createQuery($remove_old_profile);
+                    $remove_result->getResult();
+
                     // if profile pic then update media
                     $update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
                     // $rs_is_profil = mysql_query($update_media);
