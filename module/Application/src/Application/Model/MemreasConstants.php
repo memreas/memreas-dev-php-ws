@@ -32,7 +32,7 @@ class MemreasConstants {
 	const FOLDER_VIDEO = "uploadVideo";
 	const VIDEO = "/data/media/uploadVideo";
 	const AUDIO = "/data/media/upload_audio";
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:';
 	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d1ckv7o9k6o3x9.cloudfront.net/';
 	const MEMREAS_TRANSCODER_URL = 'http://memreasbackend.elasticbeanstalk.com/';
 	// const MEMREAS_TRANSCODER_URL = 'http://192.168.1.13/memreas-dev-php-backend/app/';

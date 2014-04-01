@@ -1,23 +1,99 @@
 <?php
-// chdir(dirname(__DIR__));
+ chdir(dirname(__DIR__));
 
 // Setup autoloading
 // require 'init_autoloader.php';
+
+function rsa_sha1_sign($policy, $private_key_filename) {
+    $signature = "";
+
+    // load the private key
+    $fp = fopen($private_key_filename, "r");
+    $priv_key = fread($fp, 8192);
+    fclose($fp);
+    $pkeyid = openssl_get_privatekey($priv_key);
+
+    // compute signature
+    openssl_sign($policy, $signature, $pkeyid);
+
+    // free the key from memory
+    openssl_free_key($pkeyid);
+
+    return $signature;
+}
+
+function url_safe_base64_encode($value) {
+    $encoded = base64_encode($value);
+    // replace unsafe characters +, = and / with the safe characters -, _ and ~
+    return str_replace(
+        array('+', '=', '/'),
+        array('-', '_', '~'),
+        $encoded);
+}
+
+function create_stream_name($stream, $policy, $signature, $key_pair_id, $expires) {
+    $result = $stream;
+    
+    $path="";  //Change made here to fix missing $path variable
+    
+    // if the stream already contains query parameters, attach the new query parameters to the end
+    // otherwise, add the query parameters
+    $separator = strpos($stream, '?') == FALSE ? '?' : '&';
+    // the presence of an expires time means we're using a canned policy
+    if($expires) {
+        $result .= $path . $separator . "Expires=" . $expires . "&Signature=" . $signature . "&Key-Pair-Id=" . $key_pair_id;
+    } 
+    // not using a canned policy, include the policy itself in the stream name
+    else {
+        $result .= $path . $separator . "Policy=" . $policy . "&Signature=" . $signature . "&Key-Pair-Id=" . $key_pair_id;
+    }
+
+    // new lines would break us, so remove them
+    return str_replace('\n', '', $result);
+}
+
+function encode_query_params($stream_name) {
+    // the adobe flash player has trouble with query parameters being passed into it, 
+    // so replace the bad characters with their url-encoded forms
+    return str_replace(
+        array('?', '=', '&'),
+        array('%3F', '%3D', '%26'),
+        $stream_name);
+}
+
+function get_canned_policy_stream_name($video_path, $private_key_filename, $key_pair_id, $expires) {
+    // this policy is well known by CloudFront, but you still need to sign it, since it contains your parameters
+    $canned_policy = '{"Statement":[{"Resource":"' . $video_path . '","Condition":{"DateLessThan":{"AWS:EpochTime":'. $expires . '}}}]}';
+    // the policy contains characters that cannot be part of a URL, so we base64 encode it
+    $encoded_policy = url_safe_base64_encode($canned_policy);
+    // sign the original policy, not the encoded version
+    $signature = rsa_sha1_sign($canned_policy, $private_key_filename);
+    // make the signature safe to be included in a url
+    $encoded_signature = url_safe_base64_encode($signature);
+
+    // combine the above into a stream name
+    $stream_name = create_stream_name($video_path, null, $encoded_signature, $key_pair_id, $expires);
+    // url-encode the query string characters to work around a flash player bug
+    
+    // Commented this line there was no need to encode the query params for JW Player 
+    //return encode_query_params($stream_name);
+    
+    return $stream_name;
+
+}
 
 // Path to your private key. Be very careful that this file is not accessible
 // from the web!
 $private_key_filename = 'key/pk-APKAJC22BYF2JGZTOC6A.pem';
 $key_pair_id = 'APKAJC22BYF2JGZTOC6A';
 $expires = time () + 300; // 5 min from now
-$s3file = '8ee4827e-3586-4552-916c-13807a565e8e/media/web/2013-02-09_15-54-15_980.mp4.mp4';
-$dhost = 'http://d1ckv7o9k6o3x9.cloudfront.net/';
-$shost = 'rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:';
+//http://d3sisat5gdssl6.cloudfront.net/MVI_1716.MOV.transcode.mp4
+$s3video = 'MVI_1716.MOV.transcode.mp4';
+//$s3video = 'MVI_1716.MOV.mp4';
+$dhost = 'http://d3sisat5gdssl6.cloudfront.net/';
+$shost = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
+//$shost = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/';
 ?>
-
-
-rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:
-
-
 <html>
 <head>
 <title>CloudFront Streaming and Downloads with signed URLs</title>
@@ -38,7 +114,8 @@ $image_path = 'http://d1ckv7o9k6o3x9.cloudfront.net/5ec827c4-4301-11e3-85d4-2200
 // Debug
 echo '<p><img src="' . $image_path . '"width="200" height="150"/></p>';
 
-$video_download_path = 'http://d1ckv7o9k6o3x9.cloudfront.net/fb4a101a-4308-11e3-85d4-22000a8a1935/media/video3.mp4';
+$video_download_path = $dhost.$s3video;
+$video_streaming_path = $shost.$s3video;
 // $video_download_path = 'http://d1ckv7o9k6o3x9.cloudfront.net/VR_MOVIE.mp4';
 // $canned_video_download_stream_name = get_canned_policy_stream_name($video_download_path, $private_key_filename, $key_pair_id, $expires);
 
@@ -49,9 +126,9 @@ $video_download_path = 'http://d1ckv7o9k6o3x9.cloudfront.net/fb4a101a-4308-11e3-
 	</p>
 
 <?php
-$video_path = '481f0560-e83e-11e2-8fd6-12313909a953/media/web/VID_20130629_215321.mp4';
+//$video_path = '481f0560-e83e-11e2-8fd6-12313909a953/media/web/VID_20130629_215321.mp4';
 // - removed //$video_path = 'VR_MOVIE.mp4';
-// $canned_policy_stream_name = get_canned_policy_stream_name($video_path, $private_key_filename, $key_pair_id, $expires);
+ $canned_policy_stream_name = $shost.get_canned_policy_stream_name($s3video, $private_key_filename, $key_pair_id, $expires);
 ?>
 <!-- Note download links without security don't care if you add a signed URL -->
 	<!-- This code is good with signed URLs -->
@@ -59,12 +136,9 @@ $video_path = '481f0560-e83e-11e2-8fd6-12313909a953/media/web/VID_20130629_21532
 	<script type='text/javascript'>
   jwplayer('player_1').setup({
     //Use this URL to access with security
-    //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:2012-05-26_12-17-55_73.mp4",
-    //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:00686bda-4838-11e3-85d4-22000a8a1935/media/VID_20130629_215321.mp4",
-    //file: "rtmp://cp67126.edgefcs.net/ondemand/mediapm/osmf/content/test/akamai_10_year_f8_512K",
-    //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:00686bda-4838-11e3-85d4-22000a8a1935/media/VID_20130629_215321.mp4",
-    file: "rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:4fa75452-4c18-11e3-85d4-22000a8a1935/media/1080p/video2.mp4",
-    //file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:fb4a101a-4308-11e3-85d4-22000a8a1935/media/video3.mp4",
+    //file: "rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:4fa75452-4c18-11e3-85d4-22000a8a1935/media/1080p/video2.mp4",
+    //file: "<?php echo $video_streaming_path; ?>",
+    file: "<?php echo $canned_policy_stream_name; ?>",
     width: "480",
     height: "270"
   });
