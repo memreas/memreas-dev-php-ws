@@ -431,6 +431,7 @@ class IndexController extends AbstractActionController {
                     case '@':
 
                         $mc = $this->elasticache->getCache('@person');
+
                         if(!$mc){
                             $registration = new registration( $message_data, $memreas_tables, $this->getServiceLocator () );
                             $registration->createUserCache();
@@ -438,8 +439,8 @@ class IndexController extends AbstractActionController {
                             $this->elasticache->setCache("@person",$mc );
                         }
                         $search_result = array();
-                        foreach ($mc as &$pr){
-                            if(strpos($pr['username'],$search)!==false){
+                        foreach ($mc as $pr){
+                            if(stripos($pr['username'],$search)!==false){
                                 $pr['username'] = '@'.$pr['username'];
                                 $search_result[] = $pr;
 
@@ -449,31 +450,93 @@ class IndexController extends AbstractActionController {
                         $result['count']= count($search_result);
                         $result['search']= $search_result;
 
-                        //$result =  preg_grep("/$search/", $mc);
                         //echo '<pre>';print_r($result);
 
                         echo json_encode($result);
 
                     break;
                     case '!':
-                        $mc = $this->elasticache->getCache('@event');
+                        $mc = $this->elasticache->getCache('!event');
                         if(!$mc){
-                            $AddEvent = new AddEvent( $message_data, $memreas_tables, $this->getServiceLocator () );
-                            $AddEvent->createEventCache();
-                            $mc = $AddEvent->eventIndex;
-                            $this->elasticache->setCache("@event",$mc );
+                        	$eventRep = $this->getServiceLocator ()->get('doctrine.entitymanager.orm_default')
+                            ->getRepository('Application\Entity\Event');                 
+                            $mc = $eventRep->createEventCache();
+                            $this->elasticache->setCache("!event",$mc );
                         }
-                        $result =  preg_grep("/$search/", $mc);
-                        echo json_encode(array_values($result));
+                        $search_result = array();
+                        foreach ($mc as $er){
+                            if(stripos($er['name'],$search)!==false){
+                                $er['name'] = '!'.$er['name'];
+                                $search_result[] = $er;
+                                
+                            }
+                        }
+                        
+                        $result['count']= count($search_result);
+                        $result['search']= $search_result;
+
+                        //$result =  preg_grep("/$search/", $mc);
+                        //echo '<pre>';print_r($result);
+                        
+                        echo json_encode($result);
                     break;
                     default:
-				$findtag = new FindTag ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $findtag->exec ();
+						$findtag = new FindTag ( $message_data, $memreas_tables, $this->getServiceLocator () );
+						$result = $findtag->exec ();
                         $result =  preg_grep("/$search/", $mc);
                         echo json_encode(array_values($result));
                     break;
                 }
 
+            }
+            else if ($actionname == "findevent") {
+            	$data = simplexml_load_string ( $_POST ['xml'] );
+                $tag = (trim ( $data->findevent->tag ));
+                $search = substr($tag, 1) ;
+                $eventRep = $this->getServiceLocator ()->get('doctrine.entitymanager.orm_default')
+                            ->getRepository('Application\Entity\Event');
+                $mc = $this->elasticache->getCache('!event');
+                if(!$mc){
+                	$mc = $eventRep->createEventCache();
+                    $this->elasticache->setCache("!event",$mc );
+		        }
+
+	          	$search_result = array(); 
+	          	$page = trim ( $data->findevent->page );
+				if (empty ( $page )) {
+					$page = 1;
+				}
+				
+				$limit = trim ( $data->findevent->limit );
+				if (empty ( $limit )) {
+					$limit = 20;
+				}
+		
+				$from = ($page - 1) * $limit;
+				$rc=1;
+                foreach ($mc as $eid => $er){
+
+                	if(stripos($er['name'],$search)!==false){
+                		
+                		if($rc  > $from && $rc  <= ($from +$limit)  ){ 
+                			$er['name'] = '!'.$er['name'];
+	                    	$er['comment_count'] = $eventRep->getLikeCount($eid);
+	                    	$er['like_count'] = $eventRep->getLikeCount($eid);
+	                    	$er['friends'] = $eventRep->getEventFriends($eid);
+	                        $search_result[] = $er;            
+                		}
+
+                		$rc+=1;                    
+	                }
+	            }
+                $result['count']= $rc;
+                $result['page']= $page;
+                $result['totalPage']= intval($rc/$limit);
+                $result['search']= $search_result;
+                //$result =  preg_grep("/$search/", $mc);              
+                //echo '<pre>';print_r($result);
+                echo json_encode($result);
+				
             }
             else if ($actionname == "signedurl") {
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->getServiceLocator () );
