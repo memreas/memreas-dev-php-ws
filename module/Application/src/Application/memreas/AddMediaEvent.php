@@ -118,7 +118,6 @@ error_log ( "location ---> " . $location . PHP_EOL );
 				$isVideo = 0;
 				$s3path = $user_id . '/';
 				$media_id = MUUID::fetchUUID ();
-
 				// ///////////////////////////////////////
 				// create metadata based on content type
 				// ///////////////////////////////////////
@@ -184,7 +183,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 
                 if ($is_profile_pic) {
                     //Remove previous profile images
-                    $remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> $media_id";
+                    $remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id'";
                     $remove_result = $this->dbAdapter->createQuery($remove_old_profile);
                     $remove_result->getResult();
 
