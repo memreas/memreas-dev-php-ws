@@ -114,7 +114,7 @@ class AddComment {
 				// $this->addTag->getUserName($comment,$metaTag);
 				$this->addTag->getKeyword ( $comment, $metaTag );
 
-				// TODO send notification owner of the event and all who commented.
+				//  send notification owner of the event and all who commented.
 				$query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
 				$qb = $this->dbAdapter->createQueryBuilder ();
 				$qb->select ( 'f.network,f.friend_id' );
