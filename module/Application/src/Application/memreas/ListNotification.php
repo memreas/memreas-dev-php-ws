@@ -53,13 +53,13 @@ class ListNotification {
 						$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 					$pic_79x80 = '';
 					if (! empty ( $json_array ['S3_files'] ['79x80'] ))
-						$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['79x80'];
+						$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
 					$pic_448x306 = '';
 					if (! empty ( $json_array ['S3_files'] ['448x306'] ))
-						$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['448x306'];
+						$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
 					$pic_98x78 = '';
 					if (! empty ( $json_array ['S3_files'] ['98x78'] ))
-						$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['98x78'];
+						$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
 					
 					$xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
 					$xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";

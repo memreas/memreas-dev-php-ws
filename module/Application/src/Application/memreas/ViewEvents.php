@@ -162,17 +162,17 @@ class ViewEvents {
 									$json_array = json_decode ( $row1 ['metadata'], true );
 									$url = $json_array ['S3_files'] ['path'];
 									if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
-										$type = "image";
-
-										$url79x80 = isset ( $json_array ['S3_files'] ['79x80'] ) ? $json_array ['S3_files'] ['79x80'] : '';
-										$url448x306 = isset ( $json_array ['S3_files'] ['448x306'] ) ? $json_array ['S3_files'] ['448x306'] : '';
-										$url98x78 = isset ( $json_array ['S3_files'] ['98x78'] ) ? $json_array ['S3_files'] ['98x78'] : '';
+										$type       = "image";
+										$url79x80   = isset ( $json_array ['S3_files']['thumbnails'] ['79x80'] ) ? $json_array ['S3_files']['thumbnails'] ['79x80'] : '';
+										$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails']['448x306'] ) ? $json_array ['S3_files'] ['thumbnails']['448x306'] : '';
+										$url98x78   = isset ( $json_array ['S3_files'] ['thumbnails']['98x78'] ) ? $json_array ['S3_files'] ['thumbnails']['98x78'] : '';
+										
 									} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
-										$type = "video";
-										$thum_url = isset ( $json_array ['S3_files'] ['1080p_thumbails'] [0] ['Full'] ) ? $json_array ['S3_files'] ['1080p_thumbails'] [0] ['Full'] : ''; // get video thum
-										$url79x80 = isset ( $json_array ['S3_files'] ['1080p_thumbails'] [1] ['79x80'] ) ? $json_array ['S3_files'] ['1080p_thumbails'] [1] ['79x80'] : '';
-										$url448x306 = isset ( $json_array ['S3_files'] ['1080p_thumbails'] [2] ['448x306'] ) ? $json_array ['S3_files'] ['1080p_thumbails'] [2] ['448x306'] : '';
-										$url98x78 = isset ( $json_array ['S3_files'] ['1080p_thumbails'] [3] ['98x78'] ) ? $json_array ['S3_files'] ['1080p_thumbails'] [3] ['98x78'] : '';
+										$type       = "video";
+										$thum_url   = isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+										$url79x80   = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
+										$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
+										$url98x78   = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
 									} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] ))
 										continue;
 									else
@@ -302,17 +302,22 @@ class ViewEvents {
 							$row = array_pop ( $re );
 
 							$json_array = json_decode ( $row ['metadata'], true );
-							if (! empty ( $json_array ['S3_files'] ['path'] ))
+
+
+							if (! empty ( $json_array ['S3_files'] ['path'] )){
 								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+							}
 
 							if (! empty ( $json_array ['S3_files'] ['79x80'] ))
-								$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['79x80'];
+								$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
 
 							if (! empty ( $json_array ['S3_files'] ['448x306'] ))
-								$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['448x306'];
+								$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['448x306'];
 
 							if (! empty ( $json_array ['S3_files'] ['98x78'] ))
-								$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['98x78'];
+								$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
+													
+
 						}
 						$xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
 						$xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
@@ -359,15 +364,17 @@ class ViewEvents {
 										$url = $json_array ['S3_files'] ['path'];
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 											$type = "image";
-											$url79x80 = $json_array ['S3_files'] ['79x80'];
-											$url448x306 = $json_array ['S3_files'] ['448x306'];
-											$url98x78 = $json_array ['S3_files'] ['98x78'];
+											$url79x80   = isset ( $json_array ['S3_files']['thumbnails'] ['79x80'] ) ? $json_array ['S3_files']['thumbnails'] ['79x80'] : '';
+$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails']['448x306'] ) ? $json_array ['S3_files'] ['thumbnails']['448x306'] : '';
+$url98x78   = isset ( $json_array ['S3_files'] ['thumbnails']['98x78'] ) ? $json_array ['S3_files'] ['thumbnails']['98x78'] : '';
+
 										} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
-											$type = "video";
-											$thum_url = isset ( $json_array ['S3_files'] ['video_thum_path'] ) ? $json_array ['S3_files'] ['video_thum_path'] : '';
-											$url79x80 = isset ( $json_array ['S3_files'] ['video_thum_79x80'] ) ? $json_array ['S3_files'] ['video_thum_79x80'] : '';
-											$url448x306 = isset ( $json_array ['S3_files'] ['video_thum_448x306'] ) ? $json_array ['S3_files'] ['video_thum_448x306'] : '';
-											$url98x78 = isset ( $json_array ['S3_files'] ['video_thum_98x78'] ) ? $json_array ['S3_files'] ['video_thum_98x78'] : '';
+										$type       = "video";
+$thum_url   = isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+$url79x80   = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
+$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
+$url98x78   = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
+
 										} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] ))
 											continue;
 										else
@@ -479,16 +486,16 @@ class ViewEvents {
 								// echo "<pre>";
 								// print_r($json_array['S3_files']);
 								if (! empty ( $json_array ['S3_files'] ['path'] ))
-									$pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+									$pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['path'];
 
 								if (! empty ( $json_array ['S3_files'] ['79x80'] ))
-									$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['79x80'];
+									$pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
 
 								if (! empty ( $json_array ['S3_files'] ['448x306'] ))
-									$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['448x306'];
+									$pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
 
 								if (! empty ( $json_array ['S3_files'] ['98x78'] ))
-									$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['98x78'];
+									$pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
 							}
 						}
 					}
@@ -557,15 +564,16 @@ class ViewEvents {
 										$url = $json_array ['S3_files'] ['path'];
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 											$type = "image";
-											$url79x80 = empty ( $json_array ['S3_files'] ['79x80'] ) ? '' : $json_array ['S3_files'] ['79x80'];
-											$url448x306 = empty ( $json_array ['S3_files'] ['448x306'] ) ? '' : $json_array ['S3_files'] ['448x306'];
-											$url98x78 = empty ( $json_array ['S3_files'] ['98x78'] ) ? '' : $json_array ['S3_files'] ['98x78'];
+											$url79x80 = empty ( $json_array ['S3_files']['thumbnails'] ['79x80'] ) ? '' : $json_array ['S3_files']['thumbnails'] ['79x80'];
+											$url448x306 = empty ( $json_array ['S3_files'] ['thumbnails']['448x306'] ) ? '' : $json_array ['S3_files'] ['thumbnails']['448x306'];
+											$url98x78 = empty ( $json_array ['S3_files']['thumbnails'] ['98x78'] ) ? '' : $json_array ['S3_files']['thumbnails'] ['98x78'];
 										} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
-											$type = "video";
-											$thum_url = isset ( $json_array ['S3_files'] ['1080p_thumbails'] [0] ['Full'] ) ? $json_array ['S3_files'] ['1080p_thumbails'] [0] ['Full'] : '';
-											$url79x80 = '';
-											$url448x306 = '';
-											$url98x78 = '';
+											$type       = "video";
+$thum_url   = isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+$url79x80   = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
+$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
+$url98x78   = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
+
 										} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
 											$only_audio_in_event = 1;
 											continue;

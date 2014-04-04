@@ -70,9 +70,9 @@ class ViewAllfriends {
 							if ($row2 = array_pop ( $r )) {
 								$json_array = json_decode ( $row2->metadata, true );
 								$view_all_friend [$count] ['url_image'] = (empty ( $json_array ['S3_files'] ['path'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-								$view_all_friend [$count] ['url_image_79x80'] = (empty ( $json_array ['S3_files'] ['79x80'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['79x80'];
-								$view_all_friend [$count] ['url_image_448x306'] = (empty ( $json_array ['S3_files'] ['448x306'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['448x306'];
-								$view_all_friend [$count] ['url_image_98x78'] = (empty ( $json_array ['S3_files'] ['98x78'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['98x78'];
+								$view_all_friend [$count] ['url_image_79x80'] = (empty ( $json_array ['S3_files']['thumbnails'] ['79x80'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['79x80'];
+								$view_all_friend [$count] ['url_image_448x306'] = (empty ( $json_array ['S3_files']['thumbnails'] ['448x306'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
+								$view_all_friend [$count] ['url_image_98x78'] = (empty ( $json_array ['S3_files']['thumbnails'] ['98x78'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['98x78'];
 							}
 						}
 					}

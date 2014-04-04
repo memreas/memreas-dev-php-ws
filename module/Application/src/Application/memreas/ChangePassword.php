@@ -86,7 +86,7 @@ class ChangePassword {
 			try {
 				$aws_manager->sendSeSMail ( $to, $subject, $html );
 			} catch ( \Exception $exc ) {
-				$message = $exc->getMessage ();
+				$message = 'Unable to send email';
 			}
 		}
 		
