@@ -3,6 +3,8 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
+use Zend\View\Model\ViewModel;
+
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 
@@ -46,8 +48,8 @@ class ForgotPassword {
 				
 				$statement = $this->dbAdapter->createQuery ( $query );
 				$result = $statement->getResult ();
-				
-				if (count ( $result ) > 0) {
+
+ 				if (count ( $result ) > 0) {
 					$data = $result [0];
 					$username = $email;
 					$to = $email;
@@ -55,28 +57,43 @@ class ForgotPassword {
 					$password = md5 ( $pass );
 					$token = uniqid ();
 					
-					$updatequr = "UPDATE Application\Entity\User u  set u.forgot_token ='" . $token . "' where u.user_id='" . $data->user_id . "'";
+				 	$updatequr = "UPDATE Application\Entity\User u  set u.forgot_token ='" . $token . "' where u.user_id='" . $data->user_id . "'";
 					// $resofupd = mysql_query($updatequr);
 					// $statement1 = $this->dbAdapter->createStatement($updatequr);
 					// $resofupd = $statement1->execute();
 					// $row = $result->current();
 					$statement = $this->dbAdapter->createQuery ( $updatequr );
 					$resofupd = $statement->getResult ();
-					
+
 					if ($resofupd) {
 						$subject = "Welcome to Event App";
-						$message = "<p>Hello " . $data->username . ",</p>";
-						$message .= "<p>Welcome to Event App</p>";
-						$message .= "<p>Your Password Activation code is: " . $token . "</p>";
-						// $message .= "<p>Your Password is: " . $pass . "</p>";
-						$message .= "<p>Thanks and Regards,</p>";
-						$message .= "<p><b>Event App Team</b></p>";
+						
 						$headers = "MIME-Version: 1.0" . "\r\n";
 						$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
 						$headers .= 'From: <admin@eventapp.com>' . "\r\n";
+
+						///
+
+				        $viewVar = array (
+						        'email'    => $email,
+						        'username' => $data->username ,
+						        'token'  => $token
+				        );
+				         
+				        $viewModel = new ViewModel ( $viewVar );
+				        $viewModel->setTemplate ( 'email/forgotpassword' );
+				        $viewRender = $this->service_locator->get ( 'ViewRenderer' );
+				        $html = $viewRender->render ( $viewModel );
+				        //echo $html ;exit;
+				        $subject = 'Welcome to Event App';
+				        if (empty ( $aws_manager ))
+					        $aws_manager = new AWSManagerSender ( $this->service_locator );
+				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        $this->status = $status = 'Success';
+				        $message = $html;
+				        // error_log ( "Finished..." . PHP_EOL );
 						$s = mail ( $to, $subject, $message, $headers );
-						if ($s) {
-							
+						if ($s) {	
 							$xml_output .= "<status>success</status>";
 							$xml_output .= "<message>Your password is send to your email address successfully.</message>";
 						} else {
