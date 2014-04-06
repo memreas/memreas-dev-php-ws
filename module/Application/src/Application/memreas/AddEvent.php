@@ -273,17 +273,6 @@ else {
         $message.=mysql_error();
         $status = 'Failure';
     } 
-/*
-  if(strcasecmp('success', $status)==0){
-  $flag=uploadMedia();
-  if(!$flag)
-  {
-  $status="failure";
-  $message="event successfully added but error in upload media file";
-  }
-  }
- * 
- */
 ob_clean();
 header("Content-type: text/xml");
 $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";

@@ -63,8 +63,6 @@ if (strtoupper ( $actionname ) == strtoupper ( "login" )) {
 	include 'logout.php';
 } else if (strtoupper ( $actionname ) == strtoupper ( 'uploadphoto' )) {
 	include 'uploadphoto.php';
-} else if (strtoupper ( $actionname ) == strtoupper ( 'uploadmedia' )) {
-	include 'uploadmedia.php';
 } else if (strtoupper ( $actionname ) == strtoupper ( 'deletephoto' )) {
 	include 'deletephoto.php';
 } else if (strtoupper ( $actionname ) == strtoupper ( 'addevent' )) {
