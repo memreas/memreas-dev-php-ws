@@ -131,7 +131,6 @@ class ListAllmedia {
 						continue;
 					} else
 						$type = "Type not Mentioned";
-					
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] :  $json_array ['S3_files'] ['path'];
 					$media_name = basename ( $url );
 					if (isset ( $json_array ['local_filenames'] ['device'] )) {
@@ -150,6 +149,11 @@ class ListAllmedia {
 					$xml_output .= "<media>";
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
 					$xml_output .= "<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
+					if ($type == "video") {
+						$xml_output .= isset()  "<web_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['web'] . "]]></web_media_url>" : '';
+						$xml_output .= isset()  "<1080p_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['1080p'] . "]]></1080p_media_url>" : '';
+						$xml_output .= isset()  "<hls_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['hls'] . "]]></hls_media_url>" : '';
+					}
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					if (isset ( $data->listallmedia->metadata )) {
 						// error_log("Inside metadata...".PHP_EOL);
