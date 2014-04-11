@@ -31,11 +31,11 @@ class ListAllmedia {
 		if (! empty ( $_SESSION ['user'] ['user_id'] )) {
 			$user_id = $_SESSION ['user'] ['user_id'];
 		}
-		
+
 		$event_id = trim ( $data->listallmedia->event_id );
 		$device_id = trim ( $data->listallmedia->device_id );
 		$error_flage = 0;
-		
+
 		if (isset ( $data->listallmedia->page ) && ! empty ( $data->listallmedia->page )) {
 			$page = $data->listallmedia->page;
 		} else {
@@ -45,18 +45,18 @@ class ListAllmedia {
 			$limit = 10;
 		else
 			$limit = trim ( $data->listallmedia->limit );
-		
+
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<listallmediaresponse>";
 		$xml_output .= "<medias>";
-		
+
 		$from = ($page - 1) * $limit;
 
-		
-					
-						
+
+
+
 		if (empty ( $event_id )) {
 			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' ORDER BY m.create_date DESC";
 			$statement = $this->dbAdapter->createQuery ( $q1 );
@@ -74,11 +74,11 @@ class ListAllmedia {
 			$qb->setParameter ( 1, $event_id );
 			$qb->setMaxResults ( $limit );
 			$qb->setFirstResult ( $from );
-			
+
 			$result = $qb->getQuery ()->getArrayResult ();
 		}
 
-		
+
 		if (count ( $result ) <= 0) {
 			$error_flage = 2;
 			$message = "No Record found for this Event";
@@ -95,7 +95,7 @@ class ListAllmedia {
 			$url1 = '';
 			if (! empty ( $json_array ['S3_files'] ['path'] ))
 				$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-				
+
 				$xml_output .= "<username>" . $oUserProfile[0] ['username'] . "</username>";
 				$xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
 				$xml_output .= "<page>$page</page>";
@@ -103,14 +103,14 @@ class ListAllmedia {
 				$xml_output .= "<user_id>" . $result [0] ['user_id'] . "</user_id>";
 				$xml_output .= "<event_id>" . $event_id . "</event_id>";
 				$xml_output .= "<message>Media List</message>";
-				
+
 				foreach ( $result as $row ) {
 					$url79x80 = '';
 					$url448x306 = '';
 					$url98x78 = '';
 					$thum_url = '';
 					$is_download = 0;
-					
+
 					$json_array = json_decode ( $row ['metadata'], true );
 					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						$type = "image";
@@ -141,7 +141,7 @@ class ListAllmedia {
 					if (in_array ( $user_id . '_' . $device_id, $device )) {
 						$is_download = 1;
 					}
-					
+
 					$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
 					if (isset ( $data->listallmedia->rtmp ) && isset ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$host = MemreasConstants::CLOUDFRONT_STREAMING_HOST;
@@ -150,9 +150,9 @@ class ListAllmedia {
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
 					$xml_output .= "<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
 					if ($type == "video") {
-						$xml_output .= isset()  "<web_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['web'] . "]]></web_media_url>" : '';
-						$xml_output .= isset()  "<1080p_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['1080p'] . "]]></1080p_media_url>" : '';
-						$xml_output .= isset()  "<hls_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['hls'] . "]]></hls_media_url>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['web']) ?  "<web_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['web'] . "]]></web_media_url>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ?  "<1080p_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['1080p'] . "]]></1080p_media_url>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<hls_media_url><![CDATA[" . $host . $json_array ['S3_files'] ['hls'] . "]]></hls_media_url>" : '';
 					}
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					if (isset ( $data->listallmedia->metadata )) {
@@ -177,7 +177,7 @@ class ListAllmedia {
 					$xml_output .= "</media>";
 				}
 			}
-		
+
 		if ($error_flage) {
 			$xml_output .= "<status>Failure</status>";
 			$xml_output .= "<user_id></user_id>";
@@ -185,7 +185,7 @@ class ListAllmedia {
 			$xml_output .= "<message>$message</message>";
 			$xml_output .= "<media>";
 			$xml_output .= "<media_id></media_id>";
-			
+
 			$xml_output .= "<metadata></metadata>";
 			$xml_output .= "<is_downloaded></is_downloaded>";
 			$xml_output .= "<event_media_video_thum></event_media_video_thum>";
@@ -196,7 +196,7 @@ class ListAllmedia {
 			$xml_output .= "<media_name></media_name>";
 			$xml_output .= "</media>";
 		}
-		
+
 		$xml_output .= "</medias>";
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
