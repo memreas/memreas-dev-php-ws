@@ -11,7 +11,7 @@ class MemreasConstants {
 	const MEMREASDB = 'memreasintdb';
 	const S3BUCKET = "memreasdev";
 	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/awseb-e-h3wmi62uit-stack-AWSEBWorkerQueue-1CJYA9WKHLEMN';
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/awseb-e-h3wmi62uit-stack-AWSEBWorkerQueue-Y5Q01VX32SB0';
 	// const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
 	const ORIGINAL_URL = "http://memreasdev-ws-etc.elasticbeanstalk.com/";
 	const MEDIA_URL = "http://memreasdev-ws-etc.elasticbeanstalk.com/?action=addmediaevent";

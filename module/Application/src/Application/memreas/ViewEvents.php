@@ -60,7 +60,6 @@ class ViewEvents {
 			$statement->setMaxResults ( $limit );
 			$statement->setFirstResult ( $from );
 			$result_event = $statement->getResult ();
-			error_log ( "cklDid I get here?" . PHP_EOL );
 
 			if ($result_event) {
 				if (count ( $result_event ) <= 0) {

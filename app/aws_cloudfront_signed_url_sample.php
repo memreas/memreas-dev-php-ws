@@ -138,7 +138,12 @@ $video_streaming_path = $shost.$s3video;
     //Use this URL to access with security
     //file: "rtmp://s1iq2cbtoqqky.cloudfront.net/cfx/st/mp4:4fa75452-4c18-11e3-85d4-22000a8a1935/media/1080p/video2.mp4",
     //file: "<?php echo $video_streaming_path; ?>",
-    file: "<?php echo $canned_policy_stream_name; ?>",
+    //file: "<?php echo $canned_policy_stream_name; ?>",
+    file: "rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:3659887c-7386-11e3-85d4-22000a8a1935/media/web/small-2.mp4",
+    //file: "http://d1ckv7o9k6o3x9.cloudfront.net/3659887c-7386-11e3-85d4-22000a8a1935/media/web/demovideo.mp4",
+    //3659887c-7386-11e3-85d4-22000a8a1935/media/web/small-2.mp4
+    
+    
     width: "480",
     height: "270"
   });
