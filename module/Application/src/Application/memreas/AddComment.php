@@ -93,21 +93,11 @@ class AddComment {
 			} else {
 
 				// add tags
-				$metaTag = array (
-						'comment_ids' => array (
-								$uuid => ''
-						),
-						'event_ids' => array (
-								$event_id => ''
-						),
-						'media_ids' => array (
-								$media_id => ''
-						),
-						'user_ids' => array (
-								$user_id => ''
-						)
-				)
-				;
+				$metaTag['comment'][] = $uuid;
+				$metaTag['event'][] = $event_id;
+				$metaTag['media'][] = $media_id;
+				$metaTag['user'] [] = $user_id;
+						
 
 				// add tags
 				// $this->addTag->getEventname($comment,$metaTag);

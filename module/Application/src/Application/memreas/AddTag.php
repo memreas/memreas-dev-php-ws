@@ -53,22 +53,21 @@ class AddTag {
 			
 			// update tag
 			$meta_array = json_decode ( $tblTag->meta, true );
-			// echo 'orignla';print_r($meta_array);;
+			
 			$add_array = json_decode ( $meta, true );
-			
-			foreach ( $add_array ['comment_ids'] as $key => $value ) {
-				$meta_array ['comment_ids'] [$key] = $value;
+ 			foreach ( $add_array ['comment'] as $c ) {
+				$meta_array ['comment'] [] = $c;
 			}
 			
-			foreach ( $add_array ['user_ids'] as $key => $value ) {
-				$meta_array ['user_ids'] [$key] = $value;
+			foreach ( $add_array ['user'] as  $u ) {
+				$meta_array ['user'] [] = $u;
 			}
-			foreach ( $add_array ['event_ids'] as $key => $value ) {
-				$meta_array ['event_ids'] [$key] = $value;
+			foreach ( $add_array ['event'] as  $e ) {
+				$meta_array ['event'] [] = $e;
 			}
 			
-			foreach ( $add_array ['media_ids'] as $key => $value ) {
-				$meta_array ['media_ids'] [$key] = $value;
+			foreach ( $add_array ['media'] as $m ) {
+				$meta_array ['media'] [] = $m;
 			}
 			// echo 'after update';print_r($meta_array);exit;
 			

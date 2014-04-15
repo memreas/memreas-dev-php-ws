@@ -13,8 +13,8 @@ class EventRepository extends EntityRepository
     public function getLikeCount($event_id)
     {
     	$likeCountSql = $this->_em->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
-          $likeCountSql->setParameter ( 1, $event_id );
-          $likeCount = $likeCountSql->getSingleScalarResult ();
+        $likeCountSql->setParameter ( 1, $event_id );
+        $likeCount = $likeCountSql->getSingleScalarResult ();
            
         return $likeCount; 
     }
@@ -109,6 +109,43 @@ class EventRepository extends EntityRepository
     }
 
     return $eventIndex;
+  
+  }
+
+  function createDiscoverCache($tag){
+    $date = strtotime ( date ( 'd-m-Y' ) );
+    $qb = $this->_em->createQueryBuilder ();
+        $qb->select('t.meta,t.tag');
+        $qb->from('Application\Entity\Tag',  't');
+        $qb->where('t.tag LIKE ?1');
+         $qb->setParameter ( 1, "$tag%");
+        $result = $qb->getQuery ()->getResult ();
+          
+    $Index = array();
+            
+
+    foreach ($result as $row) {
+        $temp =array() ;
+        $json_array = json_decode ( $row['meta'], true );
+        foreach($json_array['comment'] as $k => $comm){
+                                $temp['name'] = $row['tag'];
+            $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
+            $temp['event_name'] = $event->name;
+            $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
+            $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata);
+ 
+            $profile = $this->_em->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
+                                        'user_id' => $json_array ['user'][$k],'is_profile_pic' => 1 ) ); 
+            $temp['commenter_photo'] = $this->getProfileUrl($profile->metadata);
+
+            $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
+            $temp['comment'] = $comment->text;
+            $Index[] =$temp;
+        }
+        
+                
+    }
+     return $Index;
   
   }
 
