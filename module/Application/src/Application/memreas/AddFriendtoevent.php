@@ -88,8 +88,9 @@ class AddFriendtoevent {
 			foreach ( $friend_array as $key => $value ) {
 				$network_name = addslashes ( trim ( $value->network_name ) );
 				$friend_name = addslashes ( trim ( $value->friend_name ) );
+				$friend_id =  trim ( $value->friend_id );
 				$profile_pic_url = stripslashes ( trim ( $value->profile_pic_url ) );
-				$friend_query = "select f.friend_id ,f.network from Application\Entity\Friend f where f.network='$network_name' and f.social_username='$friend_name'";
+				$friend_query = "select f.friend_id ,f.network from Application\Entity\Friend f where f.network='$network_name' and f.friend_id='$friend_id'";
 				$statement = $this->dbAdapter->createQuery ( $friend_query );
 				$result_friend = $statement->getOneOrNullResult ();
 				// add to friend
@@ -106,9 +107,7 @@ class AddFriendtoevent {
 								'disable_account' => 0
 						) );
 						$friend_id = $r->user_id;
-					} else {
-						$friend_id = MUUID::fetchUUID ();
-					}
+					} 
 					$tblFriend = new \Application\Entity\Friend ();
 					$tblFriend->friend_id = $friend_id;
 					$tblFriend->network = $network_name;

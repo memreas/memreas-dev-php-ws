@@ -3,7 +3,7 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
-use Application\Model\MemreasConstants;
+use Application\Model\MemreasConstants AS MC;
 use Application\Facebook\Facebook;
 use Application\TwitterOAuth\TwitterOAuth;
 use \Exception;
@@ -24,6 +24,7 @@ class Notification {
 	protected $fb;
 	protected $twitter;
 	public function __construct($service_locator) {
+		$config = $service_locator->get('Config');
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		if (! $this->gcm) {
@@ -35,22 +36,22 @@ class Notification {
 		
 		if (! $this->fb) {
 			$config = array ();
-			$config ['appId'] = '152686394870393';
-			$config ['secret'] = '62215615af53550af20c1d56736c189e';
-			$this->fbhref = 'http://apps.facebook.com/kptestfb';
+			$config ['appId'] = MC::FB_APPID;
+			$config ['secret'] = MC::FB_SECRET;
+			$this->fbhref = MC::FB_FBHREF;
 			$this->fb = new Facebook ( $config );
-			$this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
+                       	$this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
 		}
 		
 		if (! $this->twitter) {
 			
 			$config = array ();
-			$config ['consumer_key'] = '1bqpAfSWfZFuEeY3rbsKrw';
-			$config ['consumer_secret'] = 'wM0gGBCzZKl5dLRB8TQydRDfTD5ocf2hGRKSQwag';
-			$config ['oauth_token'] = '74094832-mnJlYPt02qpy1jhEYAYPMKAzrLF2jTeMiJue65Zn7';
-			$config ['oauth_token_secret'] = 'zdIrpUzuIs7llt5KLlx1TU1vWUrq28TkSNFUsschaaE4X';
+			$config ['consumer_key'] = MC::TW_CONSUMER_KEY; 
+			$config ['consumer_secret'] = MC::TW_CONSUMER_SECRET;
+			$config ['oauth_token'] = MC::TW_OAUTH_TOKEN;
+			$config ['oauth_token_secret'] = MC::TW_OAUTH_TOKEN_SECRET;
 			$config ['output_format'] = 'object';
-			$this->twitter = new TwitterOAuth ( $config );
+                        $this->twitter = new TwitterOAuth ( $config );
 		}
 	}
 	public function add($userid) {
@@ -147,12 +148,12 @@ class Notification {
 				foreach ( $users as $user ) {
 					switch (strtolower ( $user ['network'] )) {
 						case 'facebook' :
-							error_log ( 'SENDING-FB' );
-							$this->fb->api ( '/' . $user ['social_username'] . '/notifications/', 'post', $fbparams );
+							error_log ( 'SENDING-FB'.$user ['friend_id'] );
+							$this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
 							break;
 						case 'twitter' :
-							error_log ( 'SENDING-tWIIT' );
-							$twparams ['screen_name'] = $user ['social_username'];
+							error_log ( 'SENDING-tWIIT'.$user ['friend_id'] );
+							$twparams ['screen_name'] = $user ['friend_id'];
 							$this->twitter->post ( 'direct_messages/new', $twparams );
 							
 							break;

@@ -91,7 +91,7 @@ class Login {
 		$user->create_date = '';
 		$user->update_time = '';
 
-		$this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ( true );
+		$this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ();
 		error_log ( "Inside setSession got new Container..." );
 		$_SESSION ['user'] ['user_id'] = $user->user_id;
 		$_SESSION ['user'] ['username'] = $user->username;

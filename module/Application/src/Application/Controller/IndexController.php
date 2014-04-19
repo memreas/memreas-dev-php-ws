@@ -347,8 +347,8 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "addfriendtoevent") {
                 $addfriendtoevent = new AddFriendtoevent($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $addfriendtoevent->exec();
-                $uid = trim($data->addfriendtoevent->user_id);
                 $data = simplexml_load_string($_POST ['xml']);
+                $uid = trim($data->addfriendtoevent->user_id);            
                 if (!empty($uid)) {
                     $invalidate_action = "viewevents";
                     $invalidate_me = true;
@@ -451,7 +451,7 @@ class IndexController extends AbstractActionController {
                                 $rc+=1;
                             }
                         }
-                        $result['totalPage'] = 1;
+                        $result['totalPage'] =ceil($rc / $limit);
                         $result['count'] = $rc;
                         $result['search'] = $search_result;
                         //hide pagination
@@ -741,7 +741,7 @@ class IndexController extends AbstractActionController {
             // Need to exit here to avoid ZF2 framework view.
             exit();
         }
-        error_log("path ----> " . PHP_EOL);
+        error_log("Index ws done  ----> " . print_r($_COOKIE,true) . print_r($_REQUEST,true));
         if (isset($_GET ['view']) && empty($actionname)) {
             $view = new ViewModel ();
             $view->setTemplate($path); // path to phtml file under view folder

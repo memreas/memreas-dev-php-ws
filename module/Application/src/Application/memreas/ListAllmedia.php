@@ -90,6 +90,7 @@ class ListAllmedia {
 			$qb->where ( 'u.user_id=?1 ' );
 			$qb->setParameter(1, $result [0] ['user_id']);
 			$oUserProfile = $qb->getQuery ()->getResult();
+			
 
 			$json_array = json_decode ( $oUserProfile[0]['metadata'], true );
 			$url1 = '';
