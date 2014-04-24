@@ -3,9 +3,10 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
-use Application\Model\MemreasConstants;
+use Application\Model\MemreasConstants as MC;
 use Application\memreas\UUID;
-use \Exception;
+ 
+ use \Exception;
 
 class UpdateNotification {
 	protected $message_data;
@@ -14,6 +15,8 @@ class UpdateNotification {
 	protected $dbAdapter;
 	protected $notification;
 	public $user_id;
+		protected $AddNotification;
+
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		error_log ( "Inside__construct..." );
 		$this->message_data = $message_data;
@@ -21,6 +24,9 @@ class UpdateNotification {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
+		if (! $this->AddNotification) {
+			$this->AddNotification = new AddNotification ( $message_data, $memreas_tables, $service_locator );
+		}
 		if (! $this->notification) {
 			$this->notification = new Notification ( $service_locator );
 		}
@@ -51,9 +57,44 @@ class UpdateNotification {
 				} else {
 					$tblNotification->status = $status;
 					$tblNotification->is_read = 1;
-					
 					$tblNotification->update_time = $time;
+					
+					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT && $status == 1){
+						$friend_id=$tblNotification->user_id;
+						$json_data = json_decode($tblNotification->links,true);
+						$user_id   =  $json_data['from_id'];
+						$UserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
+                         					->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id));
+                         				
+
+                         					
+                        if($UserFriend){
+                        	$UserFriend->user_approve = 1;
+                         	//add ntoification 
+                        	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
+                        	$nmessage = $userOBj->username . 'Accepted Friends Request' ;
+							// save nofication intable
+ 							$ndata = array (
+								'addNotification' => array (
+									'network_name' => $network_name,
+										'user_id' => $user_id,
+										'meta' => $nmessage,
+										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
+										'links' => json_encode ( array (
+												 
+										) )
+								)
+							);
+ 								// send push message add user id
+		 						$this->notification->add ( $user_id );
+ 							//add notification in  db.
+							$this->AddNotification->exec ( $ndata );
+                         }//user friend updated
+                         					
+					}
+
 					$this->dbAdapter->flush ();
+					//$this->notification->send();
 					$status = "Sucess";
 					$message = "Notification Updated";
 					/*

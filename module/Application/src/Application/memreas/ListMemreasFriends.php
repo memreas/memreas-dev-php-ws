@@ -46,6 +46,7 @@ class ListMemreasFriends {
 
         if (!empty($user_id))
             $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
+                ->andwhere("uf.user_approve = '1'")
                 ->andwhere("uf.user_id = '$user_id'");
 
         $result = $qb->getQuery ()->getResult ();

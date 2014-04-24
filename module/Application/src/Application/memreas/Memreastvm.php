@@ -18,8 +18,15 @@ class Memreastvm {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( MemreasConstants::MEMREASDB );
+
 	}
 	public function exec() {
+		if(empty($_SESSION ['user'] ['user_id'])){
+			header ( 'Content-Type: application/json' );
+			$arr = array('status' => 'error', 'message' => 'User Not Loged in')
+		    echo json_encode ( $arr );
+		    return;
+		}
 		// S3_Access_User
 		$aws = Aws::factory ( array (
 				'key' => 'AKIAJMXGGG4BNFS42LZA',

@@ -153,7 +153,7 @@ class Notification {
 							break;
 						case 'twitter' :
 							error_log ( 'SENDING-tWIIT'.$user ['friend_id'] );
-							$twparams ['screen_name'] = $user ['friend_id'];
+							$twparams ['user_id'] = $user ['friend_id'];
 							$this->twitter->post ( 'direct_messages/new', $twparams );
 							
 							break;
@@ -164,6 +164,8 @@ class Notification {
 			}
 		}
 	}
+
+
 }
 
 ?>

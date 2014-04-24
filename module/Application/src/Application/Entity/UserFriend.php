@@ -25,7 +25,14 @@ class UserFriend {
 	 *      @ORM\Id
 	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
+
 	private $friend_id;
+
+	/**
+	 *
+	 * @var string @ORM\Column(name="user_approve", type="string", length=255, nullable=false)
+	 */
+	protected $user_approve=0;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}
