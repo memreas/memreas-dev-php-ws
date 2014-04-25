@@ -23,7 +23,7 @@ class Memreastvm {
 	public function exec() {
 		if(empty($_SESSION ['user'] ['user_id'])){
 			header ( 'Content-Type: application/json' );
-			$arr = array('status' => 'error', 'message' => 'User Not Loged in')
+			$arr = array('status' => 'error', 'message' => 'User Not Loged in');
 		    echo json_encode ( $arr );
 		    return;
 		}

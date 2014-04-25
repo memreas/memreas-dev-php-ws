@@ -80,7 +80,7 @@ class ListNotification {
 				
 				$xml_output .= "<status>failure</status>";
 				
-				$xml_output .= "<message>No record founf</message>";
+				$xml_output .= "<message>No record found</message>";
 			}
 		} else {
 			$xml_output .= "<status>failure</status>";

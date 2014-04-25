@@ -741,7 +741,7 @@ class IndexController extends AbstractActionController {
             // Need to exit here to avoid ZF2 framework view.
             exit();
         }
-        error_log("Index ws done  ----> " . print_r($_COOKIE,true) . print_r($_REQUEST,true));
+        error_log("Index ws done  ----> " );
         if (isset($_GET ['view']) && empty($actionname)) {
             $view = new ViewModel ();
             $view->setTemplate($path); // path to phtml file under view folder
