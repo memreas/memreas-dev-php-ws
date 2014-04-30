@@ -153,6 +153,7 @@ class ListAllmedia {
 					if ($type == "video") {
 						$xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $host . $json_array ['S3_files'] ['web'] . "]]></media_url_web>" : '';
 						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . $host . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['ts']) ? "<media_url_ts><![CDATA[" . $host . $json_array ['S3_files'] ['ts'] . "]]></media_url_ts>" : '';
 						$xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . $host . $json_array ['S3_files'] ['hls'] . "]]></media_url_hls>" : '';
 					}
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";

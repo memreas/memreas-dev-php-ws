@@ -29,14 +29,22 @@ class CheckExistMedia{
      *
      */
     public function exec($frmweb = false, $output = '') {
-        $error_flag = 0;
+error_log("Inside CheckExistMedia.exec()".PHP_EOL); 
+       
+    	$error_flag = 0;
         $message = '';
         if (empty ( $frmweb )) {
-            $data = simplexml_load_string ( $_POST ['xml'] );
+error_log("Inside CheckExistMedia.exec() - frmweb is empty".PHP_EOL);        
+error_log("Inside CheckExistMedia.exec() - _POST ['xml']  ----> ".$_POST ['xml'].PHP_EOL);        
+error_log("Inside CheckExistMedia.exec() - _POST ['xml']  ----> ".$_POST ['xml'].PHP_EOL);        
+			$data = simplexml_load_string ( $_POST ['xml'] );
         } else {
-            $data = json_decode ( json_encode ( $frmweb ) );
+error_log("Inside CheckExistMedia.exec() - frmweb ---> $frmweb".PHP_EOL);        
+        	$data = json_decode ( json_encode ( $frmweb ) );
         }
-        $user_id = $data->checkexistmedia->user_id;
+error_log("Inside CheckExistMedia.exec() - user_id ---> $user_id".PHP_EOL);        
+error_log("Inside CheckExistMedia.exec() - media_name ---> $media_name".PHP_EOL);        
+		$user_id = $data->checkexistmedia->user_id;
         $media_name = $data->checkexistmedia->filename;
 
         $query = $this->dbAdapter->createQueryBuilder();
@@ -46,7 +54,8 @@ class CheckExistMedia{
                 ->setParameter(1, $user_id);
         $result = $query->getQuery()->getResult();
         if (!empty($result)){
-            $pass = true;
+error_log("Inside CheckExistMedia.exec() - !empty(result)".PHP_EOL);        
+        	$pass = true;
             foreach ($result as $media){
                 $metadata = json_decode($media['metadata'], true);
                 $serverFileName = explode("/", $metadata['S3_files']['path']);
@@ -60,7 +69,8 @@ class CheckExistMedia{
             else $status = 'Failure';
         }
         else $status = 'Success';
-
+error_log("Inside CheckExistMedia.exec() - status ---> $status".PHP_EOL);
+        
         if ($frmweb) {
             return $output;
         }
