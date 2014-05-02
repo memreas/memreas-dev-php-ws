@@ -47,6 +47,10 @@ class UpdateNotification {
 			foreach ( $data->updatenotification->notification as $notification ) {
 				$this->user_id = $user_id = (trim ( $notification->user_id ));
 				$notification_id = (trim ( $notification->notification_id ));
+				$notification_message = '';
+				if(!empty($notification->message)){
+						$notification_message =  trim ( $notification->message );
+				}
 				
 				$status = trim ( $notification->status );
 				// save notification in table
@@ -59,31 +63,43 @@ class UpdateNotification {
 					$tblNotification->is_read = 1;
 					$tblNotification->update_time = $time;
 					
-					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT && $status == 1){
+					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT ){
 						$friend_id=$tblNotification->user_id;
 						$json_data = json_decode($tblNotification->links,true);
+
 						$user_id   =  $json_data['from_id'];
 						$UserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
-                         					->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id));
-                         				
+                         					->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id));                				
+                        $eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data['event_id'] );
 
-                         					
                         if($UserFriend){
-                        	$UserFriend->user_approve = 1;
-                         	//add ntoification 
                         	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
-                        	$nmessage = $userOBj->username . 'Accepted Friends Request' ;
+                        	//accepted
+                        	if($status == 1){
+                        		$UserFriend->user_approve = 1;
+                        		$nmessage = $userOBj->username . ' Accepted ' . $eventOBj->name .' ' . $notification_message;
+                        	}
+                        	 //ignored
+                        	if($status == 2){
+                        	 	$nmessage = $userOBj->username . ' Ignored ' . $eventOBj->name .' ' . $notification_message;
+                        	}
+                        	//rejected
+                        	if($status == 3){
+                        		$nmessage = $userOBj->username . ' Rejected ' . $eventOBj->name . ' ' . $notification_message ;
+                        	}
+                         	//add ntoification 
+                        	
+                        	
 							// save nofication intable
  							$ndata = array (
 								'addNotification' => array (
-									'network_name' => $network_name,
+									'network_name' => 'memreas',
 										'user_id' => $user_id,
 										'meta' => $nmessage,
 										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
-										'links' => json_encode ( array (
-												 
-										) )
-								)
+										'links' => $tblNotification->links, 
+										)
+								
 							);
  								// send push message add user id
 		 						$this->notification->add ( $user_id );
@@ -95,7 +111,7 @@ class UpdateNotification {
 
 					$this->dbAdapter->flush ();
 					//$this->notification->send();
-					$status = "Sucess";
+					$status = "success";
 					$message = "Notification Updated";
 					/*
 					 * $this->notification->setUpdateMessage($tblNotification->notification_type); $this->notification->add($tblNotification->user_id); $this->notification->type=$tblNotification->notification_type; $links = json_decode($tblNotification->links,true); $this->notification->event_id= $links['event_id']; $this->notification->send();
