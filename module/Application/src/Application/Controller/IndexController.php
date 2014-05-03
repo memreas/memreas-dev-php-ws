@@ -525,11 +525,15 @@ class IndexController extends AbstractActionController {
                         echo json_encode($result);
                         break;
                     default:
-                        $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
-                        $result = $findtag->exec();
-                        $result = preg_grep("/$search/", $mc);
+                      //  $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
+                      //  $result = $findtag->exec();
+                      //  $result = preg_grep("/$search/", $mc);
+                     $result['count'] = 0;
+                        $result['search'] = array();
+                    
+                        $result['totalPage'] = 0;
                         
-                        echo json_encode(array_values($result));
+                        echo json_encode($result);
                         break;
                 }
             } else if ($actionname == "findevent") {
