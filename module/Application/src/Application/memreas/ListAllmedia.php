@@ -54,9 +54,6 @@ class ListAllmedia {
 
 		$from = ($page - 1) * $limit;
 
-
-
-
 		if (empty ( $event_id )) {
 			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' ORDER BY m.create_date DESC";
 			$statement = $this->dbAdapter->createQuery ( $q1 );
@@ -143,18 +140,16 @@ class ListAllmedia {
 						$is_download = 1;
 					}
 
-					$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
-					if (isset ( $data->listallmedia->rtmp ) && isset ( $json_array ['S3_files'] ['type'] ['video'] )) {
-						$host = MemreasConstants::CLOUDFRONT_STREAMING_HOST;
-					}
 					$xml_output .= "<media>";
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-					$xml_output .= "<main_media_url><![CDATA[" . $host . $url . "]]></main_media_url>";
+					$xml_output .= "<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
 					if ($type == "video") {
-						$xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $host . $json_array ['S3_files'] ['web'] . "]]></media_url_web>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . $host . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['ts']) ? "<media_url_ts><![CDATA[" . $host . $json_array ['S3_files'] ['ts'] . "]]></media_url_ts>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . $host . $json_array ['S3_files'] ['hls'] . "]]></media_url_hls>" : '';
+error_log("type ---> $type".PHP_EOL);						
+						$xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web_rtmp>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p_rtmp>" : '';
+						$xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['hls'] . "]]></media_url_hls>" : '';
 					}
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					if (isset ( $data->listallmedia->metadata )) {
