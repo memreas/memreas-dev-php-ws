@@ -106,9 +106,17 @@ class AddFriendtoevent {
 								'username' => $friend_name,
 								'disable_account' => 0
 						) );
+
 						$friend_id = $r->user_id;
-					} 
-					$tblFriend = new \Application\Entity\Friend ();
+					 //check record exist in friend
+					$fr = $this->dbAdapter->getRepository ( 'Application\Entity\Friend' )->findOneBy ( array (
+								'friend_id' => $friend_id
+						) );
+
+ 					}
+
+ 					if(!$fr){
+ 						$tblFriend = new \Application\Entity\Friend ();
 					$tblFriend->friend_id = $friend_id;
 					$tblFriend->network = $network_name;
 					$tblFriend->social_username = $friend_name;
@@ -121,10 +129,14 @@ class AddFriendtoevent {
 						$this->dbAdapter->flush ();
 						error_log ( "Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL );
 					} catch ( \Exception $exc ) {
+						print_r($exc->getMessage() );exit;
 						error_log ( "Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL );
 						$status = 'failure';
 						$error = 1;
 					}
+
+ 					}
+					
 				} // end if ($result_friend) else
 
 				// add to user_friend
