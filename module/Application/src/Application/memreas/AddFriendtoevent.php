@@ -115,7 +115,7 @@ class AddFriendtoevent {
 
  					}
 
- 					if(!$fr){
+ 					if(empty($fr)){
  						$tblFriend = new \Application\Entity\Friend ();
 					$tblFriend->friend_id = $friend_id;
 					$tblFriend->network = $network_name;
