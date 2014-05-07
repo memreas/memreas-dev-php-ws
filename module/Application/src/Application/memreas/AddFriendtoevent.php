@@ -115,7 +115,7 @@ class AddFriendtoevent {
 
  					}
 
- 					if(empty($fr)){
+ 					if(empty($fr)&&!empty($friend_id)){
  						$tblFriend = new \Application\Entity\Friend ();
 					$tblFriend->friend_id = $friend_id;
 					$tblFriend->network = $network_name;
@@ -129,7 +129,7 @@ class AddFriendtoevent {
 						$this->dbAdapter->flush ();
 						error_log ( "Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL );
 					} catch ( \Exception $exc ) {
-						print_r($exc->getMessage() );exit;
+						 
 						error_log ( "Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL );
 						$status = 'failure';
 						$error = 1;
