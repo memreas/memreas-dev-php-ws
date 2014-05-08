@@ -37,16 +37,23 @@ class MemreasConstants {
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:';
 	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d1ckv7o9k6o3x9.cloudfront.net/';
 	const MEMREAS_TRANSCODER_TOPIC_ARN = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
-	const FB_APPID  = '152686394870393';
-	const FB_SECRET = '62215615af53550af20c1d56736c189e';
-	const FB_FBHREF = 'http://apps.facebook.com/kptestfb';
-	 	 
-	 
-	const TW_CONSUMER_KEY ='1bqpAfSWfZFuEeY3rbsKrw';
-	const TW_CONSUMER_SECRET = 'wM0gGBCzZKl5dLRB8TQydRDfTD5ocf2hGRKSQwag';
-	const TW_OAUTH_TOKEN = '74094832-mnJlYPt02qpy1jhEYAYPMKAzrLF2jTeMiJue65Zn7';
-	const TW_OAUTH_TOKEN_SECRET = 'zdIrpUzuIs7llt5KLlx1TU1vWUrq28TkSNFUsschaaE4X';
-	 	
 	
+	
+	const FB_APPID  = '462180953876554';
+	const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
+	const FB_FBHREF = 'http://apps.facebook.com/462180953876554';
+	 	 
+
+
+	/*
+	API key XjWz7d8AIh0hq6mDqjR7mA
+[8:01:56 PM] johnmeah2: API secret wlF52rzjDCtrFNzZ8lJRgMU9Fd4aOagkqLclomXOYg
+	 */	
+	const TW_CONSUMER_KEY ='XjWz7d8AIh0hq6mDqjR7mA';
+	const TW_CONSUMER_SECRET = 'wlF52rzjDCtrFNzZ8lJRgMU9Fd4aOagkqLclomXOYg';
+	const TW_OAUTH_TOKEN = '1941271416-nAXUjtlV99oHg5uudxGL5KyQS7CebfsC5I36j8O';
+	const TW_OAUTH_TOKEN_SECRET = 'kjdlAZaSiQZK1loivgJzF25Z1Pn7HczCcMRTNYQ45nl42';
+	 
+
 
 }
