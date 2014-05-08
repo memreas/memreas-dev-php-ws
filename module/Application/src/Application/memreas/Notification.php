@@ -64,7 +64,6 @@ class Notification {
 		try {
 			// mobile notification.
 			if (count ( $this->userIds ) > 0) {
-error_log("Inside mobile notification...".PHP_EOL);				
 				
 		 $qb = $this->dbAdapter->createQueryBuilder ();
         $qb->select ( 'f' );
@@ -76,7 +75,6 @@ error_log("Inside mobile notification...".PHP_EOL);
 				
 				
 				if (count ( $users ) > 0) {
-error_log("Inside mobile notification - count ( users ) > 0 ...".PHP_EOL);
 						
 					foreach ( $users as $user ) {
 						error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
@@ -138,18 +136,14 @@ error_log("Inside mobile notification - count ( users ) > 0 ...".PHP_EOL);
 		return $this->$name;
 	}
 	public function webNotification() {
-error_log ( "Inside web notification...".PHP_EOL );
 		if (count ( $this->friends ) > 0) {
-error_log ( "Inside web notification - count ( this->friends ) > 0...".PHP_EOL );
 			// web notification
 			$get_user = "SELECT f  FROM  Application\Entity\Friend f where f.friend_id in(?1)";
 			$statement = $this->dbAdapter->createQuery ( $get_user );
 			$statement->setParameter(1, $this->friends);
-error_log ( "Inside web notification - statement ---> $get_user . ".$this->friends.PHP_EOL );
 			$users = $statement->getArrayResult ();
 			
 			if (count ( $users ) > 0) {
-error_log ( "Inside web notification - count ( users ) > 0...".PHP_EOL );
 				$fbparams = array (
 						'href' => $this->fbhref,
 						'template' => $this->message 
@@ -165,7 +159,6 @@ error_log ( "Inside web notification - count ( users ) > 0...".PHP_EOL );
 							} catch ( \Exception $exc ) {
 
 							}
- error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
 							break;
 						case 'twitter' :
 							error_log ( 'SENDING-TWITTER'.$user ['friend_id'] );
@@ -176,7 +169,6 @@ error_log ( "Inside web notification - count ( users ) > 0...".PHP_EOL );
 
 							}
 							
- error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
 							break;
 						default :
 							break;
