@@ -399,7 +399,7 @@ class IndexController extends AbstractActionController {
                     $result = $listnotification->exec();
                     $cache_me = true;
                     //Setting uid to mid given cache id is uid below
-                    $cache_id = $mid;
+                    $cache_id = $uid;
                 }
             } else if ($actionname == "updatenotification") {
                 $updatenotification = new UpdateNotification($message_data, $memreas_tables, $this->getServiceLocator());

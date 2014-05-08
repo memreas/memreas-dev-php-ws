@@ -102,44 +102,50 @@ class AddFriendtoevent {
 					// //
 
 					if ($network_name == 'memreas') {
+error_log ( "networkname == memreas" . PHP_EOL );
 						$r = $this->dbAdapter->getRepository ( 'Application\Entity\User' )->findOneBy ( array (
 								'username' => $friend_name,
 								'disable_account' => 0
 						) );
-
 						$friend_id = $r->user_id;
-					 //check record exist in friend
-					$fr = $this->dbAdapter->getRepository ( 'Application\Entity\Friend' )->findOneBy ( array (
-								'friend_id' => $friend_id
-						) );
-
- 					}
-
- 					if(empty($fr)&&!empty($friend_id)){
- 						$tblFriend = new \Application\Entity\Friend ();
-					$tblFriend->friend_id = $friend_id;
-					$tblFriend->network = $network_name;
-					$tblFriend->social_username = $friend_name;
-					$tblFriend->url_image = $profile_pic_url;
-					$tblFriend->create_date = $time;
-					$tblFriend->update_date = $time;
-
-					try {
-						$this->dbAdapter->persist ( $tblFriend );
-						$this->dbAdapter->flush ();
-						error_log ( "Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL );
-					} catch ( \Exception $exc ) {
-						 
-						error_log ( "Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL );
-						$status = 'failure';
-						$error = 1;
+error_log ( "found friend_id in user table---> $friend_id" . PHP_EOL );
+						
+						 //check record exist in friend
+						$fr = $this->dbAdapter->getRepository ( 'Application\Entity\Friend' )->findOneBy ( array (
+									'friend_id' => $friend_id
+							) );
+error_log ( "found friend_id in user table---> $friend_id" . PHP_EOL );
 					}
 
+					/*
+					 * If friend exists as user add to friend table if not there
+					 */
+ 					if(empty($fr)&&!empty($friend_id)){
+ 						$tblFriend = new \Application\Entity\Friend ();
+						$tblFriend->friend_id = $friend_id;
+						$tblFriend->network = $network_name;
+						$tblFriend->social_username = $friend_name;
+						$tblFriend->url_image = $profile_pic_url;
+						$tblFriend->create_date = $time;
+						$tblFriend->update_date = $time;
+
+						try {
+							$this->dbAdapter->persist ( $tblFriend );
+							$this->dbAdapter->flush ();
+							error_log ( "Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL );
+						} catch ( \Exception $exc ) {
+							 
+							error_log ( "Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL );
+							$status = 'failure';
+							$error = 1;
+						}
+error_log ( "Inserted friend table ---> $friend_id" . PHP_EOL );
  					}
-					
 				} // end if ($result_friend) else
 
-				// add to user_friend
+				/*
+				 * add to user_friend
+				 */ 
 				if (isset ( $friend_id ) && ! empty ( $friend_id )) {
 					$check_user_frind = "SELECT u  FROM  Application\Entity\UserFriend u where u.user_id='$user_id' and u.friend_id='$friend_id'";
 
@@ -166,6 +172,7 @@ class AddFriendtoevent {
 							$error = 1;
 						}
 					}
+error_log ( "Inserted user_friend table ---> $friend_id" . PHP_EOL );
 				}
 				// adding friend to event
 				if (! empty ( $event_id ) && $error == 0) {
@@ -176,6 +183,7 @@ class AddFriendtoevent {
 					if (count ( $r ) > 0) {
 						$status = "Success";
 						$message .= "$friend_name is already in your Event Friend list.";
+error_log ( "$friend_name is in event friend list ---> $friend_id" . PHP_EOL );
 					} else {
 						// insert EventFriend
 						$tblEventFriend = new \Application\Entity\EventFriend ();
@@ -191,6 +199,7 @@ class AddFriendtoevent {
 							$message .= '';
 							$status = 'failure';
 						}
+error_log ( "$friend_name is in event friend list ---> $friend_id" . PHP_EOL );
 					} // end if (count($r) > 0) else
 					$nmessage = $userOBj->username . ' want to add you to ' . $eventOBj->name . ' event';
 					// save nofication intable
@@ -212,6 +221,7 @@ class AddFriendtoevent {
 					} else {
 						$nmessage = $userOBj->username . ' invite you to !' . $eventOBj->name . ' event';
 						$ndata ['addNotification'] ['meta'] = $nmessage;
+error_log("message ---> $nmessage".PHP_EOL);						
 						//add non memeras
  						$this->notification->addFriend ( $friend_id );
 					}

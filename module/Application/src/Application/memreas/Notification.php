@@ -40,7 +40,7 @@ class Notification {
 			$config ['secret'] = MC::FB_SECRET;
 			$this->fbhref = MC::FB_FBHREF;
 			$this->fb = new Facebook ( $config );
-                       	$this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
+            $this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
 		}
 		
 		if (! $this->twitter) {
@@ -51,7 +51,7 @@ class Notification {
 			$config ['oauth_token'] = MC::TW_OAUTH_TOKEN;
 			$config ['oauth_token_secret'] = MC::TW_OAUTH_TOKEN_SECRET;
 			$config ['output_format'] = 'object';
-                        $this->twitter = new TwitterOAuth ( $config );
+            $this->twitter = new TwitterOAuth ( $config );
 		}
 	}
 	public function add($userid) {
@@ -62,16 +62,17 @@ class Notification {
 	}
 	public function send() {
 		try {
-			
-			
 			// mobile notification.
 			if (count ( $this->userIds ) > 0) {
+error_log("Inside mobile notification...".PHP_EOL);				
 				$get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in('" . join ( '\' , \'', $this->userIds ) . "')";
 				$statement = $this->dbAdapter->createQuery ( $get_user_device );
+error_log("Inside mobile notification sql statement ---> $statement...".PHP_EOL);				
 				$users = $statement->getArrayResult ();
 				
 				if (count ( $users ) > 0) {
-					
+error_log("Inside mobile notification - count ( users ) > 0 ...".PHP_EOL);
+						
 					foreach ( $users as $user ) {
 						error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
 						if ($user ['device_type'] == \Application\Entity\Device::ANROID) {
@@ -93,7 +94,7 @@ class Notification {
 						error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
 					}
 				}
-				// memaras user fb twitter
+				// memreas user fb twitter
 				$this->webNotification ();
 			}
 			// non memras users fb twitter
@@ -132,14 +133,18 @@ class Notification {
 		return $this->$name;
 	}
 	public function webNotification() {
+error_log ( "Inside web notification...".PHP_EOL );
 		if (count ( $this->friends ) > 0) {
+error_log ( "Inside web notification - count ( this->friends ) > 0...".PHP_EOL );
 			// web notification
 			$get_user = "SELECT f  FROM  Application\Entity\Friend f where f.friend_id in(?1)";
 			$statement = $this->dbAdapter->createQuery ( $get_user );
 			$statement->setParameter(1, $this->friends);
+error_log ( "Inside web notification - statement ---> $get_user . ".$this->friends.PHP_EOL );
 			$users = $statement->getArrayResult ();
 			
 			if (count ( $users ) > 0) {
+error_log ( "Inside web notification - count ( users ) > 0...".PHP_EOL );
 				$fbparams = array (
 						'href' => $this->fbhref,
 						'template' => $this->message 
@@ -149,13 +154,16 @@ class Notification {
 					switch (strtolower ( $user ['network'] )) {
 						case 'facebook' :
 							error_log ( 'SENDING-FB'.$user ['friend_id'] );
-							$this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
+							$result = $this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
+error_log ( 'FB-PARAMS--->'.$fbparams );
+error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
 							break;
 						case 'twitter' :
-							error_log ( 'SENDING-tWIIT'.$user ['friend_id'] );
+							error_log ( 'SENDING-TWITTER'.$user ['friend_id'] );
 							$twparams ['user_id'] = $user ['friend_id'];
-							$this->twitter->post ( 'direct_messages/new', $twparams );
-							
+							$result = $this->twitter->post ( 'direct_messages/new', $twparams );
+error_log ( 'TWITTER-PARAMS--->'.$fbparams );
+error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
 							break;
 						default :
 							break;
