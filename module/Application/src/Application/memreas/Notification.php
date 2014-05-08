@@ -58,7 +58,7 @@ class Notification {
 		$this->userIds [] = $userid;
 	}
 	public function addFriend($friendid) {
-		$this->friends  = $friendid;
+		$this->friends[]  = $friendid;
 	}
 	public function send() {
 		try {
