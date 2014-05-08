@@ -87,7 +87,7 @@ class ListAllmedia {
 			$qb->where ( 'u.user_id=?1 ' );
 			$qb->setParameter(1, $result [0] ['user_id']);
 			$oUserProfile = $qb->getQuery ()->getResult();
-			
+
 
 			$json_array = json_decode ( $oUserProfile[0]['metadata'], true );
 			$url1 = '';
@@ -102,77 +102,87 @@ class ListAllmedia {
 				$xml_output .= "<event_id>" . $event_id . "</event_id>";
 				$xml_output .= "<message>Media List</message>";
 
+                $checkHasMedia = false;
 				foreach ( $result as $row ) {
-					$url79x80 = '';
-					$url448x306 = '';
-					$url98x78 = '';
-					$thum_url = '';
-					$is_download = 0;
+                    //Ignore user profile media
+                    if (!$row['is_profile_pic']){
+                        $checkHasMedia = true;
+					    $url79x80 = '';
+					    $url448x306 = '';
+					    $url98x78 = '';
+					    $thum_url = '';
+					    $is_download = 0;
 
-					$json_array = json_decode ( $row ['metadata'], true );
-					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
-						$type = "image";
-						if (isset ( $json_array ['S3_files']['thumbnails']['79x80'] ))
-							$url79x80 = $json_array ['S3_files']['thumbnails']['79x80'];
-						if (isset ( $json_array ['S3_files']['thumbnails']['448x306'] ))
-							$url448x306 = $json_array ['S3_files']['thumbnails']['448x306'];
-						if (isset ( $json_array ['S3_files']['thumbnails']['98x78'] ))
-							$url98x78 = $json_array ['S3_files']['thumbnails']['98x78'];
-					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
-						$type = "video";
-						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
-						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
-						$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
-						$url98x78 = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
-					} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
-						$type = "audio";
-						continue;
-					} else
-						$type = "Type not Mentioned";
-					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] :  $json_array ['S3_files'] ['path'];
-					$media_name = basename ( $url );
-					if (isset ( $json_array ['local_filenames'] ['device'] )) {
-						$device = ( array ) $json_array ['local_filenames'] ['device'];
-					} else {
-						$device = array ();
-					}
-					if (in_array ( $user_id . '_' . $device_id, $device )) {
-						$is_download = 1;
-					}
+					    $json_array = json_decode ( $row ['metadata'], true );
+					    if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
+						    $type = "image";
+						    if (isset ( $json_array ['S3_files']['thumbnails']['79x80'] ))
+							    $url79x80 = $json_array ['S3_files']['thumbnails']['79x80'];
+						    if (isset ( $json_array ['S3_files']['thumbnails']['448x306'] ))
+							    $url448x306 = $json_array ['S3_files']['thumbnails']['448x306'];
+						    if (isset ( $json_array ['S3_files']['thumbnails']['98x78'] ))
+							    $url98x78 = $json_array ['S3_files']['thumbnails']['98x78'];
+					    } else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
+						    $type = "video";
+						    $thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+						    $url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
+						    $url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
+						    $url98x78 = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
+					    } else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
+						    $type = "audio";
+						    continue;
+					    } else
+						    $type = "Type not Mentioned";
+					    $url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] :  $json_array ['S3_files'] ['path'];
+					    $media_name = basename ( $url );
+					    if (isset ( $json_array ['local_filenames'] ['device'] )) {
+						    $device = ( array ) $json_array ['local_filenames'] ['device'];
+					    } else {
+						    $device = array ();
+					    }
+					    if (in_array ( $user_id . '_' . $device_id, $device )) {
+						    $is_download = 1;
+					    }
 
-					$xml_output .= "<media>";
-					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-					$xml_output .= "<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
-					if ($type == "video") {
-error_log("type ---> $type".PHP_EOL);						
-						$xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web_rtmp>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p_rtmp>" : '';
-						$xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['hls'] . "]]></media_url_hls>" : '';
-					}
-					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
-					if (isset ( $data->listallmedia->metadata )) {
-						// error_log("Inside metadata...".PHP_EOL);
-						// error_log("Inside metadata ----> ".$row['metadata'].PHP_EOL);
-						$xml_output .= "<metadata>" . $row ['metadata'] . "</metadata>";
-					}
-					$xml_output .= "<event_media_video_thum>";
-					$xml_output .= (! empty ( $thum_url )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
-					$xml_output .= "</event_media_video_thum>";
-					$xml_output .= "<media_url_79x80><![CDATA[";
-					$xml_output .= (! empty ( $url79x80 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 : '';
-					$xml_output .= "]]></media_url_79x80>";
-					$xml_output .= "<media_url_98x78><![CDATA[";
-					$xml_output .= (! empty ( $url98x78 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 : '';
-					$xml_output .= "]]></media_url_98x78>";
-					$xml_output .= "<media_url_448x306><![CDATA[";
-					$xml_output .= (! empty ( $url448x306 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 : '';
-					$xml_output .= "]]></media_url_448x306>";
-					$xml_output .= "<type>$type</type>";
-					$xml_output .= "<media_name><![CDATA[" . $media_name . "]]></media_name>";
-					$xml_output .= "</media>";
+					    $xml_output .= "<media>";
+					    $xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
+					    $xml_output .= "<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
+					    if ($type == "video") {
+    error_log("type ---> $type".PHP_EOL);
+						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web>" : '';
+						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web_rtmp>" : '';
+						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p>" : '';
+						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p_rtmp>" : '';
+						    $xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['hls'] . "]]></media_url_hls>" : '';
+					    }
+					    $xml_output .= "<is_downloaded>$is_download</is_downloaded>";
+					    if (isset ( $data->listallmedia->metadata )) {
+						    // error_log("Inside metadata...".PHP_EOL);
+						    // error_log("Inside metadata ----> ".$row['metadata'].PHP_EOL);
+						    $xml_output .= "<metadata>" . $row ['metadata'] . "</metadata>";
+					    }
+					    $xml_output .= "<event_media_video_thum>";
+					    $xml_output .= (! empty ( $thum_url )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
+					    $xml_output .= "</event_media_video_thum>";
+					    $xml_output .= "<media_url_79x80><![CDATA[";
+					    $xml_output .= (! empty ( $url79x80 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 : '';
+					    $xml_output .= "]]></media_url_79x80>";
+					    $xml_output .= "<media_url_98x78><![CDATA[";
+					    $xml_output .= (! empty ( $url98x78 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 : '';
+					    $xml_output .= "]]></media_url_98x78>";
+					    $xml_output .= "<media_url_448x306><![CDATA[";
+					    $xml_output .= (! empty ( $url448x306 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 : '';
+					    $xml_output .= "]]></media_url_448x306>";
+					    $xml_output .= "<type>$type</type>";
+					    $xml_output .= "<media_name><![CDATA[" . $media_name . "]]></media_name>";
+					    $xml_output .= "</media>";
+                    }
 				}
+
+                //If has profile image but has no more media
+                if (!$checkHasMedia){
+                    $xml_output = str_replace(array('<status>Success</status>', '<message>Media List</message>'), array('<status>Failure</status>', '<message>No Record found for this Event</message>'), $xml_output);
+                }
 			}
 
 		if ($error_flage) {
