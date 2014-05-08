@@ -39,13 +39,20 @@ class ListMemreasFriends {
         }
         $user_id = trim ( $data->listmemreasfriends->user_id );
 
+        if(empty($user_id)){
+            $status = "Failure";
+            $message = "No data available to this user";
+
+        } else {
+
+        
+
         $qb = $this->dbAdapter->createQueryBuilder ();
         $qb->select ( 'f' );
         $qb->from ( 'Application\Entity\Friend', 'f' );
         $qb->where ( "f.network='memreas'" );
 
-        if (!empty($user_id))
-            $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
+        $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
                 ->andwhere("uf.user_approve = '1'")
                 ->andwhere("uf.user_id = '$user_id'");
 
@@ -65,6 +72,7 @@ class ListMemreasFriends {
             }
             $output .= '</friends>';
         }
+    }
 
         if ($frmweb) {
             return $output;

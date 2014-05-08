@@ -66,6 +66,7 @@ class Notification {
 			if (count ( $this->userIds ) > 0) {
 error_log("Inside mobile notification...".PHP_EOL);				
 				$get_user_device = "SELECT d  FROM  Application\Entity\Device d where d.user_id in('" . join ( '\' , \'', $this->userIds ) . "')";
+				error_log($get_user_device);
 				$statement = $this->dbAdapter->createQuery ( $get_user_device );
 error_log("Inside mobile notification sql statement ---> $statement...".PHP_EOL);				
 				$users = $statement->getArrayResult ();
@@ -99,7 +100,7 @@ error_log("Inside mobile notification - count ( users ) > 0 ...".PHP_EOL);
 			}
 			// non memras users fb twitter
 			$this->webNotification ();
-		} catch ( \Exception $exc ) {
+		} catch ( \Exception $exc ) {error_log('exp-not'.$exc->getMessage());
 		}
 	}
 	public function setUpdateMessage($notification_type, $data = '') {
