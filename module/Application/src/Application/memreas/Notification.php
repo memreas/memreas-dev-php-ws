@@ -159,16 +159,24 @@ error_log ( "Inside web notification - count ( users ) > 0...".PHP_EOL );
 					switch (strtolower ( $user ['network'] )) {
 						case 'facebook' :
 							error_log ( 'SENDING-FB'.$user ['friend_id'] );
-							$result = $this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
-error_log ( 'FB-PARAMS--->'.$fbparams );
-error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
+							try{
+								$result = $this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
+
+							} catch ( \Exception $exc ) {
+
+							}
+ error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
 							break;
 						case 'twitter' :
 							error_log ( 'SENDING-TWITTER'.$user ['friend_id'] );
 							$twparams ['user_id'] = $user ['friend_id'];
-							$result = $this->twitter->post ( 'direct_messages/new', $twparams );
-error_log ( 'TWITTER-PARAMS--->'.$fbparams );
-error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
+							try{
+								$result = $this->twitter->post ( 'direct_messages/new', $twparams );
+							} catch ( \Exception $exc ) {
+
+							}
+							
+ error_log ( 'FB-RESULT--->'.print_r($result,true).PHP_EOL );
 							break;
 						default :
 							break;
