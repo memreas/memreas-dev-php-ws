@@ -69,7 +69,7 @@ class AWSMemreasCache {
 		}
 		
  			$result = $this->cache->get ( $key );
- 			error_log('JUST FETCHED THIS KEY ----> ' . $key  . print_r($result,true). PHP_EOL);
+ 			error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
 
  	 
 		return $result;
