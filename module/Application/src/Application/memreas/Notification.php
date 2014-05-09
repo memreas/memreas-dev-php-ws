@@ -152,19 +152,19 @@ class Notification {
 				foreach ( $users as $user ) {
 					switch (strtolower ( $user ['network'] )) {
 						case 'facebook' :
-							error_log ( 'SENDING-FB'.$user ['friend_id'] );
 							try{
 								$result = $this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
+																error_log ( 'SENDING-FB'.$user ['friend_id'] );
 
 							} catch ( \Exception $exc ) {
 
 							}
 							break;
 						case 'twitter' :
-							error_log ( 'SENDING-TWITTER'.$user ['friend_id'] );
-							$twparams ['user_id'] = $user ['friend_id'];
+ 							$twparams ['user_id'] = $user ['friend_id'];
 							try{
 								$result = $this->twitter->post ( 'direct_messages/new', $twparams );
+								error_log ( 'SENDING-TWITTER'.print_r($result,true .PHP_EOL) );
 							} catch ( \Exception $exc ) {
 
 							}
