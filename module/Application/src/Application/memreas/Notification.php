@@ -157,6 +157,8 @@ class Notification {
 																error_log ( 'SENDING-FB:'.print_r($result,true .PHP_EOL) );
 
 							} catch ( \Exception $exc ) {
+ 								error_log ( 'SENDING-FB:'.print_r($exc->getMessage(),true .PHP_EOL) );
+
 
 							}
 							break;
@@ -166,7 +168,7 @@ class Notification {
 								$result = $this->twitter->post ( 'direct_messages/new', $twparams );
 								error_log ( 'SENDING-TWITTER:'.print_r($result,true .PHP_EOL) );
 							} catch ( \Exception $exc ) {
-
+                                                                error_log ( 'SENDING-tw:'.print_r($exc->getMessage(),true .PHP_EOL) );
 							}
 							
 							break;
