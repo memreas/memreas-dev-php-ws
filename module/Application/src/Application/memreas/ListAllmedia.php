@@ -105,7 +105,7 @@ class ListAllmedia {
                 $checkHasMedia = false;
 				foreach ( $result as $row ) {
                     //Ignore user profile media
-                    if (!$row['is_profile_pic']){
+                    if (!isset($row['is_profile_pic']) || !$row['is_profile_pic']){
                         $checkHasMedia = true;
 					    $url79x80 = '';
 					    $url448x306 = '';
