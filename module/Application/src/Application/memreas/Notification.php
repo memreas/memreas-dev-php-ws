@@ -97,8 +97,8 @@ class Notification {
 						error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
 					}
 				}
-				// memreas user fb twitter
-				$this->webNotification ();
+				// to do memreas user fb twitter
+				//$this->webNotification ();
 			}
 			// non memras users fb twitter
 			$this->webNotification ();
