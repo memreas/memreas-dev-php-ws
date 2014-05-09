@@ -154,7 +154,7 @@ class Notification {
 						case 'facebook' :
 							try{
 								$result = $this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
-																error_log ( 'SENDING-FB'.$user ['friend_id'] );
+																error_log ( 'SENDING-FB:'.print_r($result,true .PHP_EOL) );
 
 							} catch ( \Exception $exc ) {
 
@@ -164,7 +164,7 @@ class Notification {
  							$twparams ['user_id'] = $user ['friend_id'];
 							try{
 								$result = $this->twitter->post ( 'direct_messages/new', $twparams );
-								error_log ( 'SENDING-TWITTER'.print_r($result,true .PHP_EOL) );
+								error_log ( 'SENDING-TWITTER:'.print_r($result,true .PHP_EOL) );
 							} catch ( \Exception $exc ) {
 
 							}
