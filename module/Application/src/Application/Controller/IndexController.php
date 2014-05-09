@@ -74,6 +74,7 @@ use Application\memreas\AddExistMediaToEvent;
 use Application\memreas\GetMediaLike;
 use Application\memreas\CheckExistMedia;
 use Application\memreas\ListMemreasFriends;
+use Application\memreas\GetSocialCredentials;
 
 class IndexController extends AbstractActionController {
 
@@ -348,7 +349,7 @@ class IndexController extends AbstractActionController {
                 $addfriendtoevent = new AddFriendtoevent($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $addfriendtoevent->exec();
                 $data = simplexml_load_string($_POST ['xml']);
-                $uid = trim($data->addfriendtoevent->user_id);            
+                $uid = trim($data->addfriendtoevent->user_id);
                 if (!empty($uid)) {
                     $invalidate_action = "viewevents";
                     $invalidate_me = true;
@@ -455,7 +456,7 @@ class IndexController extends AbstractActionController {
                         $result['count'] = $rc;
                         $result['search'] = $search_result;
                         //hide pagination
-                        
+
 
                         //echo '<pre>';print_r($result);
 
@@ -471,14 +472,14 @@ class IndexController extends AbstractActionController {
                             $this->elasticache->setCache("!event", $mc);
                         }
                         $search_result = array();
-                        
+
                         foreach ($mc as $er) {
                             if (stripos($er['name'], $search) === 0) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $er['name'] = '!' . $er['name'];
                                     $search_result[] = $er;
                                 }
-                               $rc+=1; 
+                               $rc+=1;
                             }
                         }
 
@@ -486,7 +487,7 @@ class IndexController extends AbstractActionController {
                         $result['search'] = $search_result;
                         $result['page']   = $page;
                         $result['totalPage'] = ceil($rc / $limit);
-            
+
 
                         //$result =  preg_grep("/$search/", $mc);
                         //echo '<pre>';print_r($result);
@@ -503,7 +504,7 @@ class IndexController extends AbstractActionController {
                             $this->elasticache->setCache("#tag", $mc);
                         }
                         $search_result = array();
-                        
+
                         foreach ($mc as $k => $er) {
                             if (stripos($er['name'], $search) !== false) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
@@ -517,7 +518,7 @@ class IndexController extends AbstractActionController {
                         $result['search'] = $search_result;
                         $result['page']   = $page;
                         $result['totalPage'] = ceil($rc / $limit);
-            
+
 
                         //$result =  preg_grep("/$search/", $mc);
                         //echo '<pre>';print_r($result);
@@ -530,9 +531,9 @@ class IndexController extends AbstractActionController {
                       //  $result = preg_grep("/$search/", $mc);
                      $result['count'] = 0;
                         $result['search'] = array();
-                    
+
                         $result['totalPage'] = 0;
-                        
+
                         echo json_encode($result);
                         break;
                 }
@@ -564,7 +565,7 @@ class IndexController extends AbstractActionController {
                 foreach ($mc as $eid => $er) {
 
                     if (stripos($er['name'], $search) === 0) {
-                        
+
                         if ($rc >= $from && $rc < ($from + $limit)) {
                             $er['name'] = '!' . $er['name'];
                             $er['comment_count'] = $eventRep->getLikeCount($eid);
@@ -573,14 +574,14 @@ class IndexController extends AbstractActionController {
                             $search_result[] = $er;
                         }
 
-                       $rc+=1; 
+                       $rc+=1;
                     }
                 }
                 $result['count'] = $rc;
                 $result['page'] = $page;
                 $result['totalPage'] = ceil($rc / $limit);
                 $result['search'] = $search_result;
-                //$result =  preg_grep("/$search/", $mc);              
+                //$result =  preg_grep("/$search/", $mc);
                 //echo '<pre>';print_r($result);
                 echo json_encode($result);
             } else if ($actionname == "getDiscover") {
@@ -627,7 +628,7 @@ class IndexController extends AbstractActionController {
                 $result['page'] = $page;
                 $result['totalPage'] = ceil($rc / $limit);
                 $result['search'] = $search_result;
-                //$result =  preg_grep("/$search/", $mc);              
+                //$result =  preg_grep("/$search/", $mc);
                 //echo '<pre>';print_r($result);
                 echo json_encode($result);
             } else if ($actionname == "signedurl") {
@@ -709,6 +710,9 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "listmemreasfriends") {
                 $ListMemreasFriends = new ListMemreasFriends($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $ListMemreasFriends->exec();
+            } else if ($actionname == "getsocialcredentials") {
+                $GetSocialCredentials = new GetSocialCredentials($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetSocialCredentials->exec();
             }
             $output = ob_get_clean();
             /*

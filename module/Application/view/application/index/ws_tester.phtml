@@ -70,6 +70,7 @@ echo "user_id ----> " . $user_id;
             var getmedialike = '<xml><getmedialike><media_id>1</media_id></getmedialike></xml>';
             var checkexistmedia = '<xml><checkexistmedia><user_id>1</user_id><filename>file name</filename></checkexistmedia></xml>';
             var listmemreasfriends = '<xml><listmemreasfriends><user_id>1</user_id></listmemreasfriends></xml>';
+            var getsocialcredentials = '<xml><getsocialcredentials><network>facebook</network></getsocialcredentials></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -221,6 +222,8 @@ echo "user_id ----> " . $user_id;
                         xml = checkexistmedia;
                     }else if ($("#input_action").val() == "listmemreasfriends") {
                         xml = listmemreasfriends;
+                    }else if ($("#input_action").val() == "getsocialcredentials") {
+                        xml = getsocialcredentials;
                     }
 
 
@@ -320,6 +323,7 @@ echo "user_id ----> " . $user_id;
                                  <option>getmedialike</option>
                                  <option>checkexistmedia</option>
                                  <option>listmemreasfriends</option>
+                                 <option>getsocialcredentials</option>
 						</select>
 
 					</tr>
