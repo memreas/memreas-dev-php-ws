@@ -41,7 +41,7 @@ class MemreasConstants {
 	
 	const FB_APPID  = '462180953876554';
 	const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
-	const FB_FBHREF = 'http://apps.facebook.com/462180953876554';
+	const FB_FBHREF = 'https://apps.facebook.com/462180953876554';
 	 	 
 
 
