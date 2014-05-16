@@ -29,21 +29,13 @@ class CheckExistMedia{
      *
      */
     public function exec($frmweb = false, $output = '') {
-error_log("Inside CheckExistMedia.exec()".PHP_EOL); 
-       
     	$error_flag = 0;
         $message = '';
         if (empty ( $frmweb )) {
-error_log("Inside CheckExistMedia.exec() - frmweb is empty".PHP_EOL);        
-error_log("Inside CheckExistMedia.exec() - _POST ['xml']  ----> ".$_POST ['xml'].PHP_EOL);        
-error_log("Inside CheckExistMedia.exec() - _POST ['xml']  ----> ".$_POST ['xml'].PHP_EOL);        
 			$data = simplexml_load_string ( $_POST ['xml'] );
         } else {
-error_log("Inside CheckExistMedia.exec() - frmweb ---> $frmweb".PHP_EOL);        
         	$data = json_decode ( json_encode ( $frmweb ) );
         }
-error_log("Inside CheckExistMedia.exec() - user_id ---> $user_id".PHP_EOL);        
-error_log("Inside CheckExistMedia.exec() - media_name ---> $media_name".PHP_EOL);        
 		$user_id = $data->checkexistmedia->user_id;
         $media_name = $data->checkexistmedia->filename;
 
