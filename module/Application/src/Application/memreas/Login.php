@@ -50,9 +50,9 @@ class Login {
 			$username = strtolower ( $username );
 			$checkvalidemail = $this->is_valid_email ( $username );
 			if ($checkvalidemail == TRUE) {
-				$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "' and u.role= 2 and u.disable_account = 0";
+				$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
 			} else {
-				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "' and u.role = 2 and u.disable_account = 0";
+				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
 			}
 			$statement = $this->dbAdapter->createQuery ( $sql );
 

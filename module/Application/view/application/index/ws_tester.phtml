@@ -75,6 +75,7 @@ echo "user_id ----> " . $user_id;
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
             var listcomments = '<xml><listcomments><event_id>1</event_id><limit>10</limit><page>1</page> </listcomments></xml>';
+            var feedback = '<xml><feedback><user_id>1</user_id><name>kamlesh</name><email></email><message></message></feedback></xml>';
 
            $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
@@ -224,6 +225,8 @@ echo "user_id ----> " . $user_id;
                         xml = listmemreasfriends;
                     }else if ($("#input_action").val() == "getsocialcredentials") {
                         xml = getsocialcredentials;
+                    }else if ($("#input_action").val() == "feedback") {
+                        xml = getsocialcredentials;
                     }
 
 
@@ -324,6 +327,7 @@ echo "user_id ----> " . $user_id;
                                  <option>checkexistmedia</option>
                                  <option>listmemreasfriends</option>
                                  <option>getsocialcredentials</option>
+                                 <option>feedback</option>
 						</select>
 
 					</tr>
