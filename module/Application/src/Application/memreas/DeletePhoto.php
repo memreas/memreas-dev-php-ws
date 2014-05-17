@@ -31,7 +31,7 @@ class DeletePhoto {
 		if (isset ( $mediaid ) && ! empty ( $mediaid )) {
 			// $seldata = "select * from media where media_id='$mediaid'";
 			$seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'";
-			
+
 			// $resseldata = mysql_query($seldata);
 			// $statement = $this->dbAdapter->createStatement($seldata);
 			// $resseldata = $statement->execute();
@@ -49,19 +49,24 @@ class DeletePhoto {
 				}
 				// $query = "DELETE FROM media where media_id='$mediaid'";
 				$query = "DELETE FROM Application\Entity\Media m where m.media_id='$mediaid'";
-				
+
 				// $result = mysql_query($query);
 				// $statement = $this->dbAdapter->createStatement($query);
 				// $result = $statement->execute();
 				// $row = $result->current();
 				$statement = $this->dbAdapter->createQuery ( $query );
 				$result = $statement->getResult ();
-				
+
+                //Remove event media related to this media also
+                $query_event = "DELETE FROM Application\Entity\EventMedia em WHERE em.media_id='$mediaid'";
+                $event_statement = $this->dbAdapter->createQuery ( $query_event );
+                $event_result = $event_statement->getResult ();
+
 				if (count ( $result ) > 0) {
-					
+
 					$xml_output .= "<status>success</status>";
 					$xml_output .= "<message>Photo deleted successfully</message>";
-					
+
 					// if(isset($imagename))
 					// unlink('../public/userimage/'. $imagename);
 				} else {
