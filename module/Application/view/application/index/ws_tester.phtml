@@ -48,6 +48,7 @@ echo "user_id ----> " . $user_id;
             var download='<xml><download> <user_id>631da088-f43c-11e2-8fd6-12313909a953</user_id><media_id>0198ae20-033c-11e3-95ba-12313909e68b</media_id><device_id>123456</device_id></download></xml>';
             var addfriendtoevent ='<xml><addfriendtoevent><user_id>1</user_id><event_id>0</event_id><friends><friend><network_name>facebook</network_name><friend_name>nihar</friend_name><friend_id>fbid</friend_id> <profile_pic_url><![CDATA[url]]> </profile_pic_url></friend><friend><network_name>twitter</network_name><friend_name>kamlesh pawar</friend_name><friend_id>twitterid</friend_id> <profile_pic_url><![CDATA[url]]> </profile_pic_url></friend><friend><network_name>memreas</network_name><friend_name>nihar</friend_name><friend_id></friend_id><profile_pic_url><![CDATA[url]]></profile_pic_url></friend></friends></addfriendtoevent></xml>';
             var viewmediadetails= '<xml><viewmediadetails><media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id></viewmediadetails></xml>';
+            var memreas_tvm= '<xml><memreas_tvm></memreas_tvm></xml>';
             var addNotification = '<xml><addNotification><user_id>1	</user_id><event_id>2</event_id></addNotification></xml>';
             var changepassword = '<xml><changepassword><username></username><password></password><new>1	</new><retype>2</retype><token>2</token></changepassword></xml>';
             var listnotification = '<xml><listnotification><user_id>a59184c0-755b-11e3-85d4-22000a8a1935</user_id></listnotification></xml>';
@@ -160,11 +161,11 @@ echo "user_id ----> " . $user_id;
                       else if ($("#input_action").val() == "viewmediadetails") {
                         xml = viewmediadetails;
                     }
+                    else if ($("#input_action").val() == "memreas_tvm") {
+                        xml = memreas_tvm;
+                    }
                      else if ($("#input_action").val() == "snsProcessMediaPublish") {
                         xml = snsProcessMediaPublish;
-                    }
-                     else if ($("#input_action").val() == "memreastvm") {
-                        xml = memreastvm;
                     }
                     else if ($("#input_action").val() == "uploadmedia") {
                         xml = uploadmedia;
@@ -297,7 +298,7 @@ echo "user_id ----> " . $user_id;
 								<option>viewevents</option>
 								<option>viewmediadetails</option>
 								<option>snsProcessMediaPublish</option>
-								<option>memreastvm</option>
+								<option>memreas_tvm</option>
 								<option>uploadmedia</option>
 								<option>uploadadvertisement</option>
 								<option>addfriendtoevent</option>
