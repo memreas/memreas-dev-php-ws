@@ -49,7 +49,7 @@ class MemreasConstants {
 	API key XjWz7d8AIh0hq6mDqjR7mA
 [8:01:56 PM] johnmeah2: API secret wlF52rzjDCtrFNzZ8lJRgMU9Fd4aOagkqLclomXOYg
 	 */	
-	const TW_CONSUMER_KEY ='XjWz7d8AIh0hq6mDqjR7mA';
+	const TW_CONSUMER_KEY ='9jwg1vX4MgH7rfBzxqkcjI90f';
 	const TW_CONSUMER_SECRET = 'wlF52rzjDCtrFNzZ8lJRgMU9Fd4aOagkqLclomXOYg';
 	const TW_OAUTH_TOKEN = '1941271416-nAXUjtlV99oHg5uudxGL5KyQS7CebfsC5I36j8O';
 	const TW_OAUTH_TOKEN_SECRET = 'kjdlAZaSiQZK1loivgJzF25Z1Pn7HczCcMRTNYQ45nl42';

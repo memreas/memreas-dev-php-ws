@@ -274,7 +274,7 @@ class Registration {
 				        $subject = 'Welcome to Event App';
 				        if (empty ( $aws_manager ))
 					        $aws_manager = new AWSManagerSender ( $this->service_locator );
-				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        $aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
 				        $this->status = $status = 'Success';
 				        $message = "Welcome to Event App. Your profile has been created.";
 				        // error_log ( "Finished..." . PHP_EOL );

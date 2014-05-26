@@ -173,6 +173,8 @@ error_log ( "Inserted friend table ---> $friend_id" . PHP_EOL );
 						}
 					}
 error_log ( "Inserted user_friend table ---> $friend_id" . PHP_EOL );
+				
+
 				}
 				// adding friend to event
 				if (! empty ( $event_id ) && $error == 0) {
@@ -183,7 +185,7 @@ error_log ( "Inserted user_friend table ---> $friend_id" . PHP_EOL );
 					if (count ( $r ) > 0) {
 						$status = "Success";
 						$message .= "$friend_name is already in your Event Friend list.";
-error_log ( "$friend_name is in event friend list ---> $friend_id" . PHP_EOL );
+						error_log ( "$friend_name is in event friend list ---> $friend_id" . PHP_EOL );
 					} else {
 						// insert EventFriend
 						$tblEventFriend = new \Application\Entity\EventFriend ();
@@ -225,10 +227,37 @@ error_log("message ---> $nmessage".PHP_EOL);
 						//add non memeras
  						$this->notification->addFriend ( $friend_id );
 					}
-					//add notification in  db.
-					$this->AddNotification->exec ( $ndata );
+					
 
-				} // endif (!empty($event_id) && $error == 0)
+				} else{
+
+					$nmessage = $userOBj->username . ' has send friend request ';
+					// save nofication intable
+					$ndata = array (
+								'addNotification' => array (
+									'network_name' => $network_name,
+										'user_id' => $friend_id,
+										'meta' => $nmessage,
+										'notification_type' => \Application\Entity\Notification::ADD_FRIEND,
+										'links' => json_encode ( array (
+										'from_id' => $user_id
+										) )
+								)
+						);
+
+					if ($network_name == 'memreas') {
+						// send push message add user id
+ 						$this->notification->add ( $friend_id );
+					} else {
+						$ndata ['addNotification'] ['meta'] = $nmessage;
+						error_log("message ---> $nmessage".PHP_EOL);						
+						//add non memeras
+ 						$this->notification->addFriend ( $friend_id );
+					}
+					
+				}// endif (!empty($event_id) && $error == 0)
+				//add notification in  db.
+					$this->AddNotification->exec ( $ndata );
 			} // end foreach
 		} // end if (!empty($friend_array))
 
