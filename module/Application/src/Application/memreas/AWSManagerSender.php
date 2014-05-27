@@ -108,9 +108,15 @@ error_log('Just published to MemreasConstants::QUEUEURL'.MemreasConstants::QUEUE
 		$s3_data ['s3file_name'] = $file_name;
 		$s3_data ['s3file'] = $s3_data ['s3path'] . $file_name;
 		$file = $dirPath . $file_name;
-		error_log ( "file ---> $file" . PHP_EOL );
+error_log ( "file ---> $file" . PHP_EOL );
 		$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-		$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $this->bucket )->setMinPartSize ( 10 * Size::MB )->setOption ( 'ContentType', $content_type )->setKey ( $s3_data ['s3file'] )->build ();
+		$uploader = UploadBuilder::newInstance ()->setClient 
+							( $this->s3 )->setSource 
+							( $body )->setBucket 
+							( $this->bucket )->setMinPartSize 
+							( 10 * Size::MB )->setOption 
+							( 'ContentType', $content_type )->setKey 
+							( $s3_data ['s3file'] )->build ();
 		
 		// Modified - Perform the upload to S3. Abort the upload if something goes wrong
 		try {

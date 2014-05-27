@@ -39,7 +39,7 @@ class Registration {
 		$user_id = MUUID::fetchUUID ();
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
-			// error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
+error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$username = trim ( $data->registration->username );
 			$email = trim ( $data->registration->email );
@@ -50,9 +50,14 @@ class Registration {
 			$invited_by = trim ( $data->registration->invited_by );
 			//$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 		} else {
-			/*
-			 * error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['email'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['password'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['device_token'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['device_type'].PHP_EOL ); error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
-			 */
+			
+error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); 
+error_log ( "Inside Registration ----> ".$_REQUEST['email'].PHP_EOL ); 
+error_log ( "Inside Registration ----> ".$_REQUEST['password'].PHP_EOL ); 
+error_log ( "Inside Registration ----> ".$_REQUEST['device_token'].PHP_EOL ); 
+error_log ( "Inside Registration ----> ".$_REQUEST['device_type'].PHP_EOL ); 
+error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
+			
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
@@ -189,13 +194,13 @@ class Registration {
 					        if (! $move)
 						        throw new \Exception ( 'Please Upload Image.' );
 
-						        // Upload to S3 here
+						    // Upload to S3 here
 					        $media_id = MUUID::fetchUUID ();
 					        $aws_manager = new AWSManagerSender ( $this->service_locator );
 					        $s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
 
-					        // error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
-					        // error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
+error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
+error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
 
 					        // Set the metatdata
 					        // $s3path = $user_id . '/image/';
@@ -234,7 +239,7 @@ class Registration {
 					        $r = $statement->getResult ();
 					        // error_log ( "statement->getResult() ----> " . print_r ( $r, true ) . PHP_EOL );
 					        // error_log ( "*************************************************************" . PHP_EOL );
-					        // error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
+error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 
 					        // Now publish the message so any photo is thumbnailed.
 					        $message_data = array (
@@ -300,6 +305,7 @@ class Registration {
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
+error_log($xml_output.PHP_EOL);
 	}
 
 	function createUserCache(){
