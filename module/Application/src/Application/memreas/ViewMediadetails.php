@@ -41,7 +41,7 @@ class ViewMediadetails {
 			// $result_like = $statement->execute();
 			$statement = $this->dbAdapter->createQuery ( $q_like );
 			$result_like = $statement->getResult ();
-			
+
 			if (! $result_like) {
 				$status = "Failure";
 				$message .= mysql_error ();
@@ -51,19 +51,19 @@ class ViewMediadetails {
 			}
 			$q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 			$q_last_comment = "select c.text,c.audio_id from Application\Entity\Comment c where c.media_id='$media_id' and (c.type='text' or c.type='audio') ORDER BY c.create_time DESC "; // limit 1";
-			                                                                                                                                                                                
+
 			// $result_comment = mysql_query($q_comment);
 			                                                                                                                                                                                // $statement = $this->dbAdapter->createStatement($q_comment);
 			                                                                                                                                                                                // $result_comment = $statement->execute();
 			$statement = $this->dbAdapter->createQuery ( $q_comment );
 			$statement->setMaxResults ( 1 );
-			
+
 			$result_comment = $statement->getResult ();
-			
+
 			// $result_last_comment = mysql_query($q_last_comment);
 			$statement = $this->dbAdapter->createQuery ( $q_last_comment );
 			$result_last_comment = $statement->getResult ();
-			
+
 			if (count ( $result_last_comment ) <= 0) {
 				$status = "Success";
 				$message = "No TEXT Comment For this media";
@@ -90,7 +90,22 @@ class ViewMediadetails {
 				$status = "Success";
 				$message .= "Media Details";
 			}
-			
+
+            //Get media location
+            $location_query = "SELECT m.metadata FROM Application\Entity\Media m WHERE m.media_id = '{$media_id}'";
+            $statement = $this->dbAdapter->createQuery($location_query);
+            $resource = $statement->getResult();
+            $metadata = json_decode($resource[0]['metadata']);
+            $location = $metadata->S3_files->location;
+            if (empty($location)){
+                $longitude = null;
+                $latitude = null;
+            }
+            else{
+                $longitude = $location->longtitude;
+                $latitude = $location->latitude;
+            }
+
 			// $q_comment = "Select media_id,metadata from media where media_id=(SELECT audio_id FROM comment WHERE comment.media_id='$media_id' and comment.type='audio' ORDER BY create_time DESC LIMIT 1)";
 			// $result_audio = mysql_query($q_comment);
 			// if (!$result_audio) {
@@ -108,7 +123,7 @@ class ViewMediadetails {
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
-		
+
 		$xml_output .= "<viewmediadetailresponse>";
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
@@ -117,6 +132,7 @@ class ViewMediadetails {
 		$xml_output .= "<last_comment>$last_comment</last_comment>";
 		$xml_output .= (! empty ( $path )) ? "<audio_url>" . CLOUDFRONT_DOWNLOAD_HOST . $path . "</audio_url>" : "<audio_url></audio_url>";
 		$xml_output .= "<last_audiotext_comment>$audio_text</last_audiotext_comment>";
+        $xml_output .= "<location><longtitude>{$longitude}</longtitude><latitude>{$latitude}</latitude></location>";
 		$xml_output .= "</viewmediadetailresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;

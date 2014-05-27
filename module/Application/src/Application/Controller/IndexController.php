@@ -75,6 +75,7 @@ use Application\memreas\GetMediaLike;
 use Application\memreas\CheckExistMedia;
 use Application\memreas\ListMemreasFriends;
 use Application\memreas\GetSocialCredentials;
+use Application\memreas\UpdateMedia;
 
 class IndexController extends AbstractActionController {
 
@@ -713,6 +714,9 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "getsocialcredentials") {
                 $GetSocialCredentials = new GetSocialCredentials($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetSocialCredentials->exec();
+            } else if ($actionname == "updatemedia") {
+                $UpdateMedia = new UpdateMedia($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $UpdateMedia->exec();
             }
             $output = ob_get_clean();
             /*
