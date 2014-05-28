@@ -52,7 +52,7 @@ class ForgotPassword {
  				if (count ( $result ) > 0) {
 					$data = $result [0];
 					$username = $email;
-					$to = $email;
+					$to[] = $email;
 					$pass = mt_rand ( 10000, 999999 );
 					$password = md5 ( $pass );
 					$token = uniqid ();

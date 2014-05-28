@@ -50,7 +50,10 @@ class AddNotification {
 
 		
 		$tblNotification->notification_method = Notification::EMAIL ;
-		if( $tblNotification->notification_type == Notification::ADD_FRIEND_TO_EVENT 
+		 
+		if($network_name == 'email'){
+			//do nothing
+		}else if( $tblNotification->notification_type == Notification::ADD_FRIEND_TO_EVENT 
 			&& $network_name !== 'memreas'  
 			 ){
 			$uuid = explode('-', $this->notification_id);

@@ -7,6 +7,7 @@ use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
 use Application\memreas\gcm;
+use Zend\View\Model\ViewModel;
 
 class AddFriendtoevent {
 	protected $message_data;
@@ -45,6 +46,9 @@ class AddFriendtoevent {
 		$user_id = (trim ( $data->addfriendtoevent->user_id ));
 		$event_id = (trim ( $data->addfriendtoevent->event_id ));
 		$group_array = (trim ( $data->addfriendtoevent->groups ));
+		$email_array = $data->addfriendtoevent->emails->email;
+
+
 		$status = "";
 		$message = "";
 		$message1 = "";
@@ -54,6 +58,8 @@ class AddFriendtoevent {
 		$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 		$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
 
+
+			
 		// add group to event_group
 		if (! empty ( $group_array )) {
 			error_log ( "Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL );
@@ -261,6 +267,61 @@ error_log("message ---> $nmessage".PHP_EOL);
 			} // end foreach
 		} // end if (!empty($friend_array))
 
+		//email notifaction start
+		if (!empty($email_array)) {
+
+						$viewVar = array();
+						$viewModel = new ViewModel ();
+ 				        $aws_manager = new AWSManagerSender ( $this->service_locator );
+				        $viewModel->setTemplate ( 'email/event-invite' );
+				        $viewRender = $this->service_locator->get ( 'ViewRenderer' );
+
+				        //convert to array
+ 						$json = json_encode($email_array);
+						$to = json_decode($json,TRUE);
+												
+				        $viewVar['email'] = $email;	
+				        $viewVar['message'] = $nmessage;	        
+				        $viewModel->setVariables($viewVar);
+				        $html = $viewRender->render ( $viewModel );
+				        $subject = 'Event Invitation';
+				        
+				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+ 				        $this->status = $status = 'Success';
+				        $message = "Welcome to .";
+				        // save nofication intable
+					$endata = array (
+								'addNotification' => array (
+									'network_name' => 'email',
+										'user_id' => $user_id,
+										'meta' => $nmessage,
+										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
+										'links' => json_encode ( array (
+												'event_id' => $event_id,
+												'from_id' => $user_id,
+												'emails' => $json
+										) )
+								)
+						);
+					//add notification in  db.
+					$this->AddNotification->exec ( $endata );
+				        //				
+ 						try {
+							$aws_manager->sendSeSMail ( $to, $subject, $html );
+
+
+						} catch ( \Exception $exc ) {
+							error_log('exception->sendig mail'.$exc->getMessage());
+							$message = 'Unable to send email';
+						}
+		}
+		//email notication end
+		
+
+
+
+
+
 		if (! empty ( $ndata ['addNotification'] ['meta'] )) {
 			// set nofication data and call send method
 			$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
@@ -268,6 +329,9 @@ error_log("message ---> $nmessage".PHP_EOL);
 			$this->notification->event_id = $event_id;
 			$this->notification->send ();
 		} // end if (!empty($data['addNotification']['meta']))
+
+	
+
 
 		// add friends to event loop end
 		header ( "Content-type: text/xml" );

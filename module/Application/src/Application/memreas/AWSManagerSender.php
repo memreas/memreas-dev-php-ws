@@ -128,7 +128,7 @@ error_log ( "file ---> $file" . PHP_EOL );
 		
 		return $s3_data;
 	}
-	public function sendSeSMail($to, $subject, $html) {
+	public function sendSeSMail($to_array, $subject, $html) {
 		$from = 'kamleshpawar2000@yahoo.com';
 		$client = $this->ses;
 		
@@ -137,9 +137,7 @@ error_log ( "file ---> $file" . PHP_EOL );
 				'Source' => $from,
 				// Destination is required
 				'Destination' => array (
-						'ToAddresses' => array (
-								$to 
-						),
+						'ToAddresses' => $to_array,
 						'CcAddresses' => array (),
 						'BccAddresses' => array () 
 				),

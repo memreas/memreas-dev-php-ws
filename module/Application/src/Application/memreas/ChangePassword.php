@@ -71,7 +71,7 @@ class ChangePassword {
 		}
 		
 		if (! empty ( $resofupd )) {
-			$to = $result->email_address;
+			$to[] = $result->email_address;
 			$viewVar = array (
 					'email' => $to,
 					'username' => $result->username,

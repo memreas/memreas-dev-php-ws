@@ -266,7 +266,8 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        // API Info
 				        // http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
 				        // Always set content-type when sending HTML email
-				        $to = $email;
+				        $to[] = $email;
+				         
 				        $viewVar = array (
 						        'email'    => $email,
 						        'username' => $username,
