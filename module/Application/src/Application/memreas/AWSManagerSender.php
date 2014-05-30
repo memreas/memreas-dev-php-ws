@@ -129,7 +129,7 @@ error_log ( "file ---> $file" . PHP_EOL );
 		return $s3_data;
 	}
 	public function sendSeSMail($to_array, $subject, $html) {
-		$from = 'kamleshpawar2000@yahoo.com';
+		$from = MemreasConstants::ADMIN_EMAIL;
 		$client = $this->ses;
 		
 		$result = $client->sendEmail ( array (
@@ -147,7 +147,7 @@ error_log ( "file ---> $file" . PHP_EOL );
 						'Subject' => array (
 								// Data is required
 								'Data' => $subject,
-								'Charset' => 'iso-8859-1' 
+								//'Charset' => 'iso-8859-1' 
 						),
 						// Body is required
 						'Body' => array (

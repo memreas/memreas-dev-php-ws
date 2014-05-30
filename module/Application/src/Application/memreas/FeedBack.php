@@ -28,11 +28,12 @@ class FeedBack {
 				$name = trim ( $data->feedback->user_id );
 
 		$email = trim ( $data->feedback->email );
-		$message_ = trim ( $data->feedback->message );
+		$feedBackMessage = trim ( $data->feedback->message );
 		$time = time ();
-		
+		$message = '';
+
 		if (empty($user_id) || empty($name)) {
-    		$message .= 'User Not Found';
+    		$message = 'User Not Found';
     		$status = 'Failure';
 		}else if (!is_valid_email($email)) {
     		$message .= 'Please enter valid email address. ';

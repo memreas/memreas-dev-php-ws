@@ -76,6 +76,8 @@ use Application\memreas\CheckExistMedia;
 use Application\memreas\ListMemreasFriends;
 use Application\memreas\GetSocialCredentials;
 use Application\memreas\UpdateMedia;
+use Application\memreas\FeedBack;
+
 
 class IndexController extends AbstractActionController {
 
@@ -717,6 +719,9 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "updatemedia") {
                 $UpdateMedia = new UpdateMedia($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $UpdateMedia->exec();
+            } else if ($actionname == "feedback") {
+                $FeedBack = new FeedBack($this->getServiceLocator());
+                $result = $FeedBack->exec();
             }
             $output = ob_get_clean();
             /*
