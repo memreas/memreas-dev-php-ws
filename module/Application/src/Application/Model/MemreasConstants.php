@@ -16,8 +16,8 @@ class MemreasConstants {
 	//bew2 url
 	//const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
 	// const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
-	const ORIGINAL_URL = "http://memreasdev-wst.elasticbeanstalk.com/";
-	const MEDIA_URL = "http://memreasdev-wst.elasticbeanstalk.com/?action=addmediaevent";
+	const ORIGINAL_URL = "http://memreasdev-wsu.elasticbeanstalk.com/";
+	const MEDIA_URL = "http://memreasdev-wsu.elasticbeanstalk.com/?action=addmediaevent";
 	const URL = "/index";
 	
 	// ElastiCache section
