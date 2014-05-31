@@ -25,20 +25,20 @@ class FeedBack {
 		}
 		$stausMessage = $feedback_id = '';
 		$name = trim ( $data->feedback->name );
-				$name = trim ( $data->feedback->user_id );
+		$user_id = trim ( $data->feedback->user_id );
 
 		$email = trim ( $data->feedback->email );
 		$feedBackMessage = trim ( $data->feedback->message );
 		$time = time ();
 		$message = '';
 
-		if (empty($user_id) || empty($name)) {
+		if (empty($user_id) ) {
     		$message = 'User Not Found';
     		$status = 'Failure';
-		}else if (!is_valid_email($email)) {
+		}else if (!$this->is_valid_email($email)) {
     		$message .= 'Please enter valid email address. ';
     		$status = 'Failure';
-		}else if(empty($message)){
+		}else if(empty($feedBackMessage)){
 			$message .= 'Message is empty ';
     		$status = 'Failure';
 		} 
@@ -47,14 +47,16 @@ class FeedBack {
 			// add  FeedBack
 			$feedback_id = MUUID::fetchUUID ();
 			$tblFeedBack = new \Application\Entity\FeedBack();
+			$tblFeedBack->feedback_id = $feedback_id;
+			$tblFeedBack->user_id = $user_id;
+
+
 			$tblFeedBack->name = $name;
-			$tblFeedBack->email = $message;
-			$tblFeedBack->tag_type = $tag_type;
+			$tblFeedBack->email = $email;
 			$tblFeedBack->create_time = $time;
-			
-			$tblTag->update_time = $time;
-			$tblTag->meta = $meta;
-			$this->dbAdapter->persist ( $tblTag );
+			$tblFeedBack->message = $feedBackMessage;
+
+            $this->dbAdapter->persist ( $tblFeedBack );
 			$this->dbAdapter->flush ();
 			$message .= 'Feedback saved ';
     		$status = 'success';
@@ -68,8 +70,7 @@ class FeedBack {
 			$xml_output .= "<status>$status</status>";
 			$xml_output .= "<message>" . $message . "</message>";
 			$xml_output .= "<feedback_id>$feedback_id</feedback_id>";
-			$xml_output .= "<meta>$meta</meta>";
-			
+ 			
 			$xml_output .= "</feedbackresult>";
 			$xml_output .= "</xml>";
 			echo $xml_output;

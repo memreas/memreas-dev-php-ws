@@ -14,7 +14,7 @@ class FeedBack {
 	 
 	/**
 	 *
-	 * @var string @ORM\Column(name="device_id", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="feedback_id", type="string", length=255, nullable=false)
 	 *      @ORM\Id
 	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
@@ -28,13 +28,13 @@ class FeedBack {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="device_token", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="name", type="string", length=255, nullable=false)
 	 */
 	private $name;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="device_type", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="email", type="string", length=255, nullable=false)
 	 */
 	private $email;
 	
@@ -46,7 +46,7 @@ class FeedBack {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="update_time", type="string",   nullable=false)
+	 * @var string @ORM\Column(name="message", type="string",   nullable=false)
 	 */
 	private $message;
 	public function __set($name, $value) {
