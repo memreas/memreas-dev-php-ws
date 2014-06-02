@@ -114,7 +114,7 @@ class AddComment {
 				$qb->setParameter ( 1, $event_id );
 
 				$efusers = $qb->getQuery ()->getResult ();
-				$nmessage = $userOBj->username . ' Has commented on ' . $eventOBj->name . ' event';
+				$nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
 
 				$cdata ['addNotification'] ['meta'] = $nmessage;
 				foreach ( $efusers as $ef ) {
