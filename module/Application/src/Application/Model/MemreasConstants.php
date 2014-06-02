@@ -11,13 +11,20 @@ class MemreasConstants {
 	const MEMREASDB = 'memreasintdb';
 	const S3BUCKET = "memreasdev";
 	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
-	//bew url
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
-	//bew2 url
-	//const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
-	// const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
+	
+	//wsu url
 	const ORIGINAL_URL = "http://memreasdev-wsu.elasticbeanstalk.com/";
 	const MEDIA_URL = "http://memreasdev-wsu.elasticbeanstalk.com/?action=addmediaevent";
+	//bew url
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+	
+/* 	//wsg url
+	const ORIGINAL_URL = "http://memreasdev-wsg.elasticbeanstalk.com/";
+	const MEDIA_URL = "http://memreasdev-wsg.elasticbeanstalk.com/?action=addmediaevent";
+	//bew2 url
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
+ */
+	// const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
 	const URL = "/index";
 	
 	// ElastiCache section
