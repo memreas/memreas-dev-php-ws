@@ -24,7 +24,7 @@ class LogOut {
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<logoutresponse>";
-		$xml_output .= "<status>Sucess</status><message>Logedout Sucessfully</message>";
+		$xml_output .= "<status>Success</status><message>Loggedout Sucessfully</message>";
 		
 		$xml_output .= "</logoutresponse>";
 		$xml_output .= "</xml>";
