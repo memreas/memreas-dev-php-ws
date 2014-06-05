@@ -311,7 +311,7 @@ error_log($xml_output.PHP_EOL);
 
 	function createUserCache(){
 		$qb = $this->dbAdapter->createQueryBuilder ();
-						$qb->select ( 'u.username', 'm.metadata' );
+						$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 						$qb->from ( 'Application\Entity\User', 'u' );
 						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 
@@ -330,7 +330,7 @@ error_log($xml_output.PHP_EOL);
 					}else{
 						$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 					}
-					$this->userIndex[$row['username']] = array(
+					$this->userIndex[$row['user_id']] = array(
 															'username'      => $row['username'],
 															'profile_photo' => $url1
 															);

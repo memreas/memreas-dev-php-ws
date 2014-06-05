@@ -445,8 +445,28 @@ class IndexController extends AbstractActionController {
                             $mc = $registration->userIndex;
                             $this->elasticache->setCache("@person", $mc);
                         }
-                        $search_result = array();
-                        foreach ($mc as $pr) {
+
+                        //filter record
+                        $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+                        $user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
+                        $qb = $em->createQueryBuilder ();
+                        $qb->select ( 'f.friend_id' );
+                        $qb->from ( 'Application\Entity\Friend', 'f' );
+                        $qb->where ( "f.network='memreas'" );
+
+                        $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
+                                ->andwhere("uf.user_approve = '1'")
+                                ->andwhere("uf.user_id = '$user_id'");
+
+                        $UserFriends = $qb->getQuery ()->getResult ();
+
+                         $chkUserFriend = array($user_id=>'');
+                        foreach ($UserFriends as $ufRow) {
+                            $chkUserFriend[$ufRow['friend_id']]='';
+                        }
+                         
+                        foreach ($mc as $uk => $pr) {
+                            if(isset($chkUserFriend[$uk])) continue;
                             if (stripos($pr['username'], $search) !== false) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $pr['username'] = '@' . $pr['username'];
