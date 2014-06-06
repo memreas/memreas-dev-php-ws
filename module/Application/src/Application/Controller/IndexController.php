@@ -660,6 +660,11 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "showlog") {
                 echo '<pre>' . file_get_contents(getcwd() . '/php_errors.log');
                 exit();
+            } else if ($actionname == "clearlog") {
+            	unlink(getcwd().'/php_errors.log');
+            	error_log("Log has been cleared!");
+            	echo '<pre>' . file_get_contents(getcwd() . '/php_errors.log');
+                exit();
             } else if ($actionname == "doquery") {
                 $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                 $x = $em->createQuery($_GET ['sql'])->getResult();
