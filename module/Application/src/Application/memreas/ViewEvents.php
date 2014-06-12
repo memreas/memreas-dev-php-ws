@@ -49,6 +49,7 @@ class ViewEvents {
 		$xml_output .= "<xml><viewevents>";
 		// ---------------------------my events----------------------------
 		if ($is_my_event) {
+
 			$query_event = "select e
                 from Application\Entity\Event e
                 where e.user_id='" . $user_id . "'
@@ -107,8 +108,7 @@ class ViewEvents {
 						foreach ( $query_ef_result as $efRow ) {
 							$xml_output .= '<event_friend>';
 
-							$xml_output .= "<username>" . $efRow ['username'] . "</username>";
-							$json_array = json_decode ( $efRow ['metadata'], true );
+ 							$json_array = json_decode ( $efRow ['metadata'], true );
 							$url1 = '';
 							if (! empty ( $json_array ['S3_files'] ['path'] ))
 								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
@@ -210,54 +210,29 @@ class ViewEvents {
 		if ($is_friend_event) {
 			// get friend id for repected user id
 			// for singal user at a time friend id and friend id both r deffer
-			$getfriendid_loginuser = "SELECT f
-       from Application\Entity\Friend f
-       where f.network='memreas' and f.social_username in(
-                select u.username
-                from Application\Entity\User u
-                where u.user_id='$user_id')";
-			// $result_getfriendid = mysql_query($getfriendid_loginuser);
-			// $statement = $this->dbAdapter->createStatement($getfriendid_loginuser);
-			// $result_getfriendid = $statement->execute();
-			// $row = $result->current();
-			$statement = $this->dbAdapter->createQuery ( $getfriendid_loginuser );
-			$result_getfriendid = $statement->getResult ();
+			$qb = $this->dbAdapter->createQueryBuilder ();
+        	$qb->select ( 'uf' );
+        	$qb->from ( 'Application\Entity\UserFriend', 'uf' );
+			$qb->andwhere("uf.user_id = '$user_id'");
+						$qb->andwhere("uf.user_approve = '1'");
 
-			if (count ( $result_getfriendid ) <= 0) {
+
+
+			$qb->setMaxResults ( $limit );
+			$qb->setFirstResult ( $from );
+        	$result_getfriendid = $qb->getQuery ()->getResult ();
+        	 error_log($qb->getQuery ()->getSql());
+ 			if (empty ( $result_getfriendid )) {
 				$error_flag = 2;
 				$message = "No Record Found";
 			} else {
 
 				foreach ( $result_getfriendid as $row_getfriendid ) {
-					// print_r($row_getfriendid);
-					// $q_getuserid = "SELECT user_id FROM user_friend WHERE friend_id='" . $row_getfriendid['friend_id'] . "'";
-					// $result_getuserid = mysql_query($q_getuserid);
-					// if (!$result_getuserid) {
-					// $error_flag = 1;
-					// $message = mysql_error();
-					// } else if (mysql_num_rows($result_getuserid) <= 0) {
-					// $error_flag = 2;
-					// $message = "No Record Found";
-					// }
-					// else {
+					 
 					$xml_output .= "<status>Success</status>";
 					$xml_output .= "<message>My Friends Events List</message>";
 					$xml_output .= "<page>$page</page>";
-					// while ($row_getuserid = mysql_fetch_assoc($result_getuserid)) {
-					// print_r($row_getuserid);
-					// $q_getfriendid = "SELECT *
-					// from friend
-					// where network='memreas' and social_username in(
-					// select username
-					// from user
-					// where user_id='" . $row_getuserid['user_id'] . "')";
-					// $result_getcreaterfriendid = mysql_query($q_getfriendid);
-					// if (!$result_getcreaterfriendid) {
-					// $error_flag = 1;
-					// $message = mysql_error();
-					// } else {
-					// $row_eventcreater = mysql_fetch_assoc($result_getcreaterfriendid);
-					// print_r($row_eventcreater);
+					 //get user event
 					$q_friendsevent = "select event.event_id, event.name, event.friends_can_share, event.friends_can_post, user
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event, Application\Entity\User user
                     where event.user_id=user.user_id and
@@ -270,17 +245,20 @@ class ViewEvents {
 					// $statement = $this->dbAdapter->createStatement($q_friendsevent);
 					// $result_friendevent = $statement->execute();
 					// $row = $result->current();
-
 					$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 					$result_friendevent = $statement->getArrayResult ();
 
 					$xml_output .= "<friends>";
 					$user_id = null;
 					$array = array ();
+
 					foreach ( $result_friendevent as $row_friendsevent ) {
 
 						$array [$row_friendsevent [0] ['username']] [] = $row_friendsevent;
 					}
+					error_log('frind sql'.$q_friendsevent);
+
+ error_log('frind sql'.print_r($array,true));
 
 					foreach ( $array as $key => $value ) {
 						$url1 = null;
@@ -622,6 +600,7 @@ $url98x78   = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $jso
 		error_log ( "View Events.xml_output ---->  $xml_output" . PHP_EOL );
 		echo $xml_output;
 	}
-}
+
+ }
 
 ?>
