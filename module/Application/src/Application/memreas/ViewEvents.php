@@ -237,14 +237,13 @@ class ViewEvents {
 					 
 					
 					 //get user event
-					$q_friendsevent = "select event.event_id, event.name, event.friends_can_share, event.friends_can_post, user
-                    from Application\Entity\EventFriend event_friend,Application\Entity\Event event, Application\Entity\User user
-                    where event.user_id=user.user_id and
-                    event.event_id=event_friend.event_id
+					$q_friendsevent = "select event.event_id, event.name, event.friends_can_share, event.friends_can_post
+                    from Application\Entity\EventFriend event_friend,Application\Entity\Event event
+                    where event.event_id=event_friend.event_id
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                     and  (event.self_destruct >=" . $date . " or event.self_destruct='')
-                    and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY user.username ASC,event.create_time DESC ";
+                    and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
 					
 					$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 					$result_friendevent = $statement->getArrayResult ();
