@@ -208,11 +208,13 @@ class ViewEvents {
 		}
 		// ------------------------for friends event-------------------------
 		if ($is_friend_event) {
-			// get friend id for repected user id
-			// for singal user at a time friend id and friend id both r deffer
-			$qb = $this->dbAdapter->createQueryBuilder ();
-        	$qb->select ( 'uf' );
+			// get friend ids 
+ 			$qb = $this->dbAdapter->createQueryBuilder ();
+        	$qb->select ( 'u' );
         	$qb->from ( 'Application\Entity\UserFriend', 'uf' );
+        	$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'u.user_id = uf.friend_id' );
+
+
 			$qb->andwhere("uf.user_id = '$user_id'");
 						$qb->andwhere("uf.user_approve = '1'");
 
@@ -221,17 +223,19 @@ class ViewEvents {
 			$qb->setMaxResults ( $limit );
 			$qb->setFirstResult ( $from );
         	$result_getfriendid = $qb->getQuery ()->getResult ();
-        	 error_log($qb->getQuery ()->getSql());
+        	// error_log($qb->getQuery ()->getSql());
  			if (empty ( $result_getfriendid )) {
 				$error_flag = 2;
 				$message = "No Record Found";
 			} else {
-
-				foreach ( $result_getfriendid as $row_getfriendid ) {
-					 
 					$xml_output .= "<status>Success</status>";
 					$xml_output .= "<message>My Friends Events List</message>";
 					$xml_output .= "<page>$page</page>";
+					$xml_output .= "<friends>";
+
+				foreach ( $result_getfriendid as $k => $row_getfriendid ) {
+					 
+					
 					 //get user event
 					$q_friendsevent = "select event.event_id, event.name, event.friends_can_share, event.friends_can_post, user
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event, Application\Entity\User user
@@ -240,35 +244,25 @@ class ViewEvents {
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                     and  (event.self_destruct >=" . $date . " or event.self_destruct='')
-                    and event_friend.friend_id='" . $row_getfriendid->friend_id . "' ORDER BY user.username ASC,event.create_time DESC ";
-					// $result_friendevent = mysql_query($q_friendsevent) or die(mysql_error());
-					// $statement = $this->dbAdapter->createStatement($q_friendsevent);
-					// $result_friendevent = $statement->execute();
-					// $row = $result->current();
+                    and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY user.username ASC,event.create_time DESC ";
+					
 					$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 					$result_friendevent = $statement->getArrayResult ();
-
-					$xml_output .= "<friends>";
+ 
+					
 					$user_id = null;
 					$array = array ();
 
-					foreach ( $result_friendevent as $row_friendsevent ) {
-
-						$array [$row_friendsevent [0] ['username']] [] = $row_friendsevent;
-					}
-					error_log('frind sql'.$q_friendsevent);
-
- error_log('frind sql'.print_r($array,true));
-
-					foreach ( $array as $key => $value ) {
-						$url1 = null;
+					$url1 = null;
 						$pic_79x80 = '';
 						$pic_448x306 = '';
 						$pic_98x78 = '';
 						$xml_output .= "<friend>";
-						$xml_output .= "<event_creator>" . $value [0] [0] ['username'] . "</event_creator>";
-						if ($value [0] [0] ['profile_photo']) {
-							$q = "SELECT m  FROM  Application\Entity\Media m  WHERE m.user_id  LIKE '" . $value [0] [0] ['user_id'] . "' AND m.is_profile_pic =1";
+						//echo '<pre>';print_r($row_getfriendid);exit;
+						
+						$xml_output .= "<event_creator>" . $row_getfriendid->username . "</event_creator>";
+						if ($row_getfriendid->profile_photo) {
+							$q = "SELECT m  FROM  Application\Entity\Media m  WHERE m.user_id  LIKE '" . $row_getfriendid->user_id . "' AND m.is_profile_pic =1";
 							// $re = mysql_query($q); $q = "SELECT * FROM `media` WHERE `user_id` LIKE '" . $value[0]['user_id'] . "' AND `is_profile_pic` =1";
 							// $statement = $this->dbAdapter->createStatement($q);
 							// $re = $statement->execute();
@@ -278,7 +272,7 @@ class ViewEvents {
 
 							$row = array_pop ( $re );
 
-							$json_array = json_decode ( $row ['metadata'], true );
+						$json_array = json_decode ( $row ['metadata'], true );
 
 
 							if (! empty ( $json_array ['S3_files'] ['path'] )){
@@ -301,9 +295,13 @@ class ViewEvents {
 						$xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
 						$xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
 
-						$xml_output .= "<event_creator_user_id>" . $value [0] [0] ['user_id'] . "</event_creator_user_id>";
+						$xml_output .= "<event_creator_user_id>" . $row_getfriendid->user_id . "</event_creator_user_id>";
 						$xml_output .= "<events>";
-						foreach ( $value as $row_friendsevent ) {
+					foreach ( $result_friendevent as $key => $row_friendsevent ) {
+						//echo '<pre>';print_r($row_friendsevent);exit;
+					
+						
+						//foreach ( $value as $row_friendsevent ) {
 							// print_r($row_friendsevent);
 							$url = '';
 
@@ -376,17 +374,14 @@ $url98x78   = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $jso
 								$xml_output .= "<event_media_448x306></event_media_448x306>";
 							}
 							$xml_output .= "</event>";
-						}
-						$xml_output .= "</events>";
-						$xml_output .= "</friend>";
+						
+						
+						
 					}
-
-					$xml_output .= "</friends>";
-
-					// }
-					// }
-					// }
+						$xml_output .= "</events>";
+					$xml_output .= "</friend>";
 				}
+				$xml_output .= "</friends>";
 			}
 		}
 
