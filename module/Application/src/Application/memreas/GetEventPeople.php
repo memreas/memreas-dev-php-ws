@@ -7,6 +7,7 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
+use Application\Model\MemreasConstants;
 use Application\Entity\EventFriend;
 use Application\Entity\Friend;
 
@@ -43,13 +44,26 @@ class GetEventPeople {
             $message = 'No people with this event';
         }
         else{
+
             $status = 'Success';
             $output .= '<friends>';
             foreach ($event_people as $people){
+                $profile_image = $people->url_image;
+                if ($people->network == 'memreas'){
+                    $profile_query = $this->dbAdapter->createQueryBuilder();
+                    $profile_query->select('m')
+                                    ->from('Application\Entity\Media', 'm')
+                                    ->where("m.user_id = '{$people->friend_id}' AND m.is_profile_pic = 1");
+                    $profile = $profile_query->getQuery()->getResult();
+                    if (!empty($profile)){
+                        $profile_image = json_decode($profile[0]->metadata, true);
+                        $profile_image = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                    }
+                }
                 $output .= '<friend>';
                     $output .= '<friend_id>' . $people->friend_id . '</friend_id>';
                     $output .= '<friend_name>' . $people->social_username . '</friend_name>';
-                    $output .= '<photo>' . $people->url_image . '</photo>';
+                    $output .= '<photo>' . $profile_image . '</photo>';
                 $output .= '</friend>';
             }
             $output .= '</friends>';
