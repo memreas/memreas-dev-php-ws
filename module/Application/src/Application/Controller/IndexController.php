@@ -464,7 +464,7 @@ class IndexController extends AbstractActionController {
                         foreach ($UserFriends as $ufRow) {
                             $chkUserFriend[$ufRow['friend_id']]='';
                         }
-                         
+
                         foreach ($mc as $uk => $pr) {
                             if(isset($chkUserFriend[$uk])) continue;
                             if (stripos($pr['username'], $search) !== false) {
@@ -591,7 +591,7 @@ class IndexController extends AbstractActionController {
 
                         if ($rc >= $from && $rc < ($from + $limit)) {
                             $er['name'] = '!' . $er['name'];
-                            $er['comment_count'] = $eventRep->getLikeCount($eid);
+                            $er['comment_count'] = $eventRep->getCommentCount($eid);
                             $er['like_count'] = $eventRep->getLikeCount($eid);
                             $er['friends'] = $eventRep->getEventFriends($eid);
                             $search_result[] = $er;

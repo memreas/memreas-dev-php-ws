@@ -59,7 +59,7 @@ class AddFriendtoevent {
 		$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
 
 
-			
+
 		// add group to event_group
 		if (! empty ( $group_array )) {
 			error_log ( "Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL );
@@ -115,7 +115,7 @@ error_log ( "networkname == memreas" . PHP_EOL );
 						) );
 						$friend_id = $r->user_id;
 error_log ( "found friend_id in user table---> $friend_id" . PHP_EOL );
-						
+
 						 //check record exist in friend
 						$fr = $this->dbAdapter->getRepository ( 'Application\Entity\Friend' )->findOneBy ( array (
 									'friend_id' => $friend_id
@@ -140,7 +140,7 @@ error_log ( "found friend_id in user table---> $friend_id" . PHP_EOL );
 							$this->dbAdapter->flush ();
 							error_log ( "Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL );
 						} catch ( \Exception $exc ) {
-							 
+
 							error_log ( "Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL );
 							$status = 'failure';
 							$error = 1;
@@ -151,7 +151,7 @@ error_log ( "Inserted friend table ---> $friend_id" . PHP_EOL );
 
 				/*
 				 * add to user_friend
-				 */ 
+				 */
 				if (isset ( $friend_id ) && ! empty ( $friend_id )) {
 					$check_user_frind = "SELECT u  FROM  Application\Entity\UserFriend u where u.user_id='$user_id' and u.friend_id='$friend_id'";
 
@@ -179,7 +179,7 @@ error_log ( "Inserted friend table ---> $friend_id" . PHP_EOL );
 						}
 					}
 error_log ( "Inserted user_friend table ---> $friend_id" . PHP_EOL );
-				
+
 
 				}
 				// adding friend to event
@@ -229,11 +229,11 @@ error_log ( "$friend_name is in event friend list ---> $friend_id" . PHP_EOL );
 					} else {
 						$nmessage = $userOBj->username . ' invite you to !' . $eventOBj->name . ' event';
 						$ndata ['addNotification'] ['meta'] = $nmessage;
-error_log("message ---> $nmessage".PHP_EOL);						
+error_log("message ---> $nmessage".PHP_EOL);
 						//add non memeras
  						$this->notification->addFriend ( $friend_id );
 					}
-					
+
 
 				} else{
 
@@ -256,11 +256,11 @@ error_log("message ---> $nmessage".PHP_EOL);
  						$this->notification->add ( $friend_id );
 					} else {
 						$ndata ['addNotification'] ['meta'] = $nmessage;
-						error_log("message ---> $nmessage".PHP_EOL);						
+						error_log("message ---> $nmessage".PHP_EOL);
 						//add non memeras
  						$this->notification->addFriend ( $friend_id );
 					}
-					
+
 				}// endif (!empty($event_id) && $error == 0)
 				//add notification in  db.
 					$this->AddNotification->exec ( $ndata );
@@ -279,13 +279,13 @@ error_log("message ---> $nmessage".PHP_EOL);
 				        //convert to array
  						$json = json_encode($email_array);
 						$to = json_decode($json,TRUE);
-												
-				        $viewVar['email'] = $email;	
-				        $viewVar['message'] = $nmessage;	        
+
+				        $viewVar['email'] = $email;
+				        $viewVar['message'] = $nmessage;
 				        $viewModel->setVariables($viewVar);
 				        $html = $viewRender->render ( $viewModel );
 				        $subject = 'Event Invitation';
-				        
+
 				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
  				        $this->status = $status = 'Success';
 				        $message = "Welcome to .";
@@ -305,7 +305,7 @@ error_log("message ---> $nmessage".PHP_EOL);
 						);
 					//add notification in  db.
 					$this->AddNotification->exec ( $endata );
-				        //				
+				        //
  						try {
 							$aws_manager->sendSeSMail ( $to, $subject, $html );
 
@@ -316,7 +316,7 @@ error_log("message ---> $nmessage".PHP_EOL);
 						}
 		}
 		//email notication end
-		
+
 
 
 
@@ -330,7 +330,7 @@ error_log("message ---> $nmessage".PHP_EOL);
 			$this->notification->send ();
 		} // end if (!empty($data['addNotification']['meta']))
 
-	
+
 
 
 		// add friends to event loop end
@@ -339,7 +339,9 @@ error_log("message ---> $nmessage".PHP_EOL);
 		$xml_output .= "<xml>";
 		$xml_output .= "<addfriendtoeventresponse>";
 		$xml_output .= "<status>$status</status>";
-		$xml_output .= "<message>" . $message . " And " . $message1 . "</message>";
+		$xml_output .= "<message>" . $message;
+        if (!empty($message1)) $xml_output .= " And " . $message1;
+        $xml_output .= "</message>";
 		$xml_output .= "<event_id>$event_id</event_id>";
 		$xml_output .= "</addfriendtoeventresponse>";
 		$xml_output .= "</xml>";

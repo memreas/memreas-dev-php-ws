@@ -15,24 +15,32 @@ class EventRepository extends EntityRepository
     	$likeCountSql = $this->_em->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
         $likeCountSql->setParameter ( 1, $event_id );
         $likeCount = $likeCountSql->getSingleScalarResult ();
-           
-        return $likeCount; 
+
+        return $likeCount;
+    }
+
+    public function getCommentCount($event_id){
+        $commCountSql = $this->_em->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= 'text'" );
+        $commCountSql->setParameter ( 1, $event_id );
+        $commCount = $commCountSql->getSingleScalarResult ();
+
+        return $commCount;
     }
 
 
     public function getEvents($date)
     { 	$query_event = "select e.name, e.event_id ,e.location
-                from Application\Entity\Event e  
+                from Application\Entity\Event e
                 where (e.viewable_to >=" . $date . " or e.viewable_to ='')
-                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='') 
-                    and  (e.self_destruct >=" . $date . " or e.self_destruct='') 
+                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
+                    and  (e.self_destruct >=" . $date . " or e.self_destruct='')
                 ORDER BY e.create_time DESC";
                 // $statement->setMaxResults ( $limit );
      // $statement->setFirstResult ( $from );
 
       	$statement = $this->_em->createQuery ( $query_event );
-            
-        return $statement->getResult (); 
+
+        return $statement->getResult ();
     }
 
 	public function getEventFriends($event_id, $rawData=false)
@@ -70,7 +78,7 @@ class EventRepository extends EntityRepository
             $qb->setParameter ( 1, $event_id );
         return  $qb->getQuery ()->getResult ();
 	}
-	
+
 
 	public function getProfileUrl($metadata='')
 	{
@@ -97,19 +105,19 @@ class EventRepository extends EntityRepository
     $result = $this->getEvents($date);
     $eventIndex = array();
     foreach ($result as $row) {
-        $eventIndex[$row['event_id']] = $row;     
-        $mediaRows = $this->getEventMedia($row['event_id']);   
+        $eventIndex[$row['event_id']] = $row;
+        $mediaRows = $this->getEventMedia($row['event_id']);
         $eventIndex[$row['event_id']]['event_photo'] =    $this->getEventMediaUrl();
         foreach ($mediaRows as $mediaRow) {
-            
+
              $eventIndex[$row['event_id']]['event_media_url'] = $this->getEventMediaUrl($mediaRow['metadata']);
 
              break;
-        } 
+        }
     }
 
     return $eventIndex;
-  
+
   }
 
   function createDiscoverCache($tag){
@@ -120,9 +128,9 @@ class EventRepository extends EntityRepository
         $qb->where('t.tag LIKE ?1');
          $qb->setParameter ( 1, "$tag%");
         $result = $qb->getQuery ()->getResult ();
-          
+
     $Index = array();
-            
+
 
     foreach ($result as $row) {
         $temp =array() ;
@@ -133,20 +141,20 @@ class EventRepository extends EntityRepository
             $temp['event_name'] = $event->name;
             $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
             $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata);
- 
+
             $profile = $this->_em->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
-                                        'user_id' => $json_array ['user'][$k],'is_profile_pic' => 1 ) ); 
+                                        'user_id' => $json_array ['user'][$k],'is_profile_pic' => 1 ) );
             $temp['commenter_photo'] = $this->getProfileUrl($profile->metadata);
 
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
             $temp['comment'] = $comment->text;
             $Index[] =$temp;
         }
-        
-                
+
+
     }
      return $Index;
-  
+
   }
 
 
