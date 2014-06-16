@@ -11,12 +11,14 @@ class ListAllmedia {
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	protected $url_signer;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		// error_log("ListAllmedia.__construct enter" . PHP_EOL);
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->url_signer = new MemreasSignedURL($message_data, $memreas_tables, $service_locator);
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 		// error_log("ListAllmedia.__construct exit" . PHP_EOL);
 	}
@@ -91,11 +93,19 @@ class ListAllmedia {
 
 			$json_array = json_decode ( $oUserProfile[0]['metadata'], true );
 			$url1 = '';
-			if (! empty ( $json_array ['S3_files'] ['path'] ))
-				$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-
+			if (!empty ( $json_array ['S3_files']['path']))
+				
+error_log("s3Files path -----> ".$json_array['S3_files']['path'].'******'.PHP_EOL);
+				if (isset($json_array ['S3_files']['path'])) {
+					$url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+					$path = $this->url_signer->fetchSignedURL($url);
+				} else {
+					$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+				}
+error_log("signed url -----> ".$path.PHP_EOL);
+				//$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 				$xml_output .= "<username>" . $oUserProfile[0] ['username'] . "</username>";
-				$xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+				$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
 				$xml_output .= "<page>$page</page>";
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<user_id>" . $result [0] ['user_id'] . "</user_id>";
@@ -144,16 +154,28 @@ class ListAllmedia {
 						    $is_download = 1;
 					    }
 
+					    //output xml
 					    $xml_output .= "<media>";
 					    $xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-					    $xml_output .= "<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></main_media_url>";
+					    $xml_output .= "<main_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url) . "]]></main_media_url>";
+					    
+					    $path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['path']);
+					    $xml_output .= isset($json_array ['S3_files'] ['path']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
+					    
+					    
 					    if ($type == "video") {
-    error_log("type ---> $type".PHP_EOL);
-						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web>" : '';
-						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['web'] . "]]></media_url_web_rtmp>" : '';
-						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p>" : '';
-						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . MemreasConstants::CLOUDFRONT_STREAMING_HOST . $json_array ['S3_files'] ['1080p'] . "]]></media_url_1080p_rtmp>" : '';
-						    $xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['hls'] . "]]></media_url_hls>" : '';
+					    	$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['web']);
+						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
+					    	
+						    
+						    $path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['1080p']);
+						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
+						    
+						    $path = MemreasConstants::CLOUDFRONT_STREAMING_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['1080p']);
+						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
+						    
+						    $path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['hls']);
+						    $xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					    }
 					    $xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					    if (isset ( $data->listallmedia->metadata )) {
@@ -161,18 +183,27 @@ class ListAllmedia {
 						    // error_log("Inside metadata ----> ".$row['metadata'].PHP_EOL);
 						    $xml_output .= "<metadata>" . $row ['metadata'] . "</metadata>";
 					    }
+
 					    $xml_output .= "<event_media_video_thum>";
-					    $xml_output .= (! empty ( $thum_url )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url : '';
+						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($thum_url);
+					    $xml_output .= (! empty ( $thum_url )) ? $path : '';
 					    $xml_output .= "</event_media_video_thum>";
+					    
 					    $xml_output .= "<media_url_79x80><![CDATA[";
-					    $xml_output .= (! empty ( $url79x80 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 : '';
+						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url79x80);
+					    $xml_output .= (! empty ( $url79x80 )) ? $path : '';
 					    $xml_output .= "]]></media_url_79x80>";
+
 					    $xml_output .= "<media_url_98x78><![CDATA[";
-					    $xml_output .= (! empty ( $url98x78 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 : '';
+						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url98x78);
+					    $xml_output .= (! empty ( $url98x78 )) ? $path : '';
 					    $xml_output .= "]]></media_url_98x78>";
+					    
 					    $xml_output .= "<media_url_448x306><![CDATA[";
-					    $xml_output .= (! empty ( $url448x306 )) ? MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 : '';
+						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url448x306);
+					    $xml_output .= (! empty ( $url448x306 )) ? $path : '';
 					    $xml_output .= "]]></media_url_448x306>";
+
 					    $xml_output .= "<type>$type</type>";
 					    $xml_output .= "<media_name><![CDATA[" . $media_name . "]]></media_name>";
 					    $xml_output .= "</media>";

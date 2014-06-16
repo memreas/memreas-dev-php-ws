@@ -154,7 +154,7 @@ class IndexController extends AbstractActionController {
 
         if (isset($actionname) && !empty($actionname)) {
             // Fetch the elasticache handle
-            error_log("Need to create MemreasCache..." . PHP_EOL);
+            error_log("fetching MemreasCache handle..." . PHP_EOL);
             // $this->aws = new AWSManagerSender($this->service_locator);
             $this->elasticache = new AWSMemreasCache();
             $update_elasticache_flag = false;
@@ -166,6 +166,7 @@ class IndexController extends AbstractActionController {
             // Debugging
             // $this->elasticache->set('hello', 'world', 600);
             // End Debugging
+
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
             $memreas_tables = new MemreasTables($this->getServiceLocator());
@@ -258,7 +259,9 @@ class IndexController extends AbstractActionController {
                 $uid = trim($data->listphotos->userid);
                 $result = $this->elasticache->getCache($actionname, $uid);
 
+                
                 if (!$result) {
+error_log("ElastiCache - couldn't find".PHP_EOL );                	
                     $listphotos = new ListPhotos($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listphotos->exec();
                     $cache_me = true;

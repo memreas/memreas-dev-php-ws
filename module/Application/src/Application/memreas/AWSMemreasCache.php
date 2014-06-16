@@ -55,10 +55,8 @@ class AWSMemreasCache {
 		if(!$this->isCacheEnable){
 			return null;
 		}
-			$result = $this->cache->set ( $key , $value,0, $ttl );
-			error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
-		
- 		
+		$result = $this->cache->set ( $key , $value,0, $ttl );
+		error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 		
 		return $result;
 	}
@@ -68,8 +66,8 @@ class AWSMemreasCache {
 			return null;
 		}
 		
- 			$result = $this->cache->get ( $key );
- 			error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
+ 		$result = $this->cache->get ( $key );
+ 		error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
 
  	 
 		return $result;

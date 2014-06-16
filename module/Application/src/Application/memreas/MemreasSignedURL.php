@@ -12,18 +12,47 @@ class MemreasSignedURL {
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	protected $aws;
+	protected $s3;
+	protected $cloud_front;
+	
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		error_log ( "Inside__construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( MemreasConstants::MEMREASDB );
-		$this->private_key_filename = getcwd () . '/key/pk-S3AccessUser-key.pem';
+		$this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
 		$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
-		$this->expires = time () + 360000; // 100 hour from now
+		$this->expires = time () + 36000; // 10 hour from now
 		$this->signature_encoded = null;
 		$this->policy_encoded = null;
+		
+		$this->aws = Aws::factory ( array (
+				'key' => 'AKIAJMXGGG4BNFS42LZA',
+				'secret' => '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',
+				'region' => 'us-east-1' 
+		) );
+		
+		// Fetch the S3 class
+		$this->s3 = $this->aws->get ( 's3' );
+		
+		// Fetch the CloudFront class
+		$this->cloud_front = $this->aws->get ( 'CloudFront' );
+		
 	}
+	public function fetchSignedURL($path) {
+		if (MemreasConstants::SIGNURLS) {
+error_log("Inside fetchSignedURL path before... $path".PHP_EOL);
+			$expires = time() + MemreasConstants::EXPIRES;
+			//$path = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
+			//$path = $this->s3->getObjectUrl(MemreasConstants::S3BUCKET, $path, '+10 minutes');
+			$path = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $expires));
+error_log("Inside fetchSignedURL path after signing... $path".PHP_EOL);
+		}			
+		return $path;
+	}
+	
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		// 0 = not empty, 1 = empty
