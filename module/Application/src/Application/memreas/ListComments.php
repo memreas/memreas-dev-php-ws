@@ -49,7 +49,7 @@ class ListComments {
 		// $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 		
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'c.text,u.username', 'm.metadata' );
+		$qb->select ( 'c.type,c.audio_id,c.text,u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
@@ -58,7 +58,7 @@ class ListComments {
 		$qb->setFirstResult ( $from );
 		$qb->setParameter ( 1, $event_id );
 		$result_comment = $qb->getQuery ()->getResult ();
-		
+ 		
 		$output .= '<comments>';
 		
 		if (count ( $result_comment ) <= 0) {
@@ -69,6 +69,20 @@ class ListComments {
 				$output .= '<comment>';
 				$output .= "<event_id>" . $event_id . "</event_id>";
 				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
+				$output .= "<type>" . $value ['type'] . "</type>";
+				if($value ['type'] = 'audio'){
+					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
+					$json_array = json_decode ( $audio_row ['metadata'], true );
+				    $audio_url = '';
+				if (! empty ( $json_array ['S3_files'] ['path'] )){
+					$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
+
+				}
+					$output .= "<audio_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $audio_url . "]]></audio_media_url>";
+
+				}
+
+
 				$output .= "<username>" . $value ['username'] . "</username>";
 				$json_array = json_decode ( $value ['metadata'], true );
 				$url1 = '';
