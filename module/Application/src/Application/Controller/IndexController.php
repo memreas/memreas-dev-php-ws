@@ -208,7 +208,7 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "likemedia") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->likemedia->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
                 if (!$result) {
                     $likemedia = new LikeMedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $likemedia->exec();
@@ -237,7 +237,7 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "listgroup") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->listgroup->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $listgroup = new ListGroup($message_data, $memreas_tables, $this->getServiceLocator());
@@ -257,7 +257,7 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "listphotos") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->listphotos->userid);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 
                 if (!$result) {
@@ -276,7 +276,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
             } else if ($actionname == "viewallfriends") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->viewallfriends->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $viewallfriends = new ViewAllfriends($message_data, $memreas_tables, $this->getServiceLocator());
@@ -301,7 +301,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                  */
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = $data->listallmedia->user_id;
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
@@ -312,7 +312,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
             } else if ($actionname == "countviewevent") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->countviewevent->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $countviewevent = new CountViewevent($message_data, $memreas_tables, $this->getServiceLocator());
@@ -343,7 +343,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
             } else if ($actionname == "viewevents") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->viewevent->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $viewevents = new ViewEvents($message_data, $memreas_tables, $this->getServiceLocator());
@@ -399,7 +399,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
             } else if ($actionname == "listnotification") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->listnotification->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
