@@ -51,7 +51,7 @@ class AWSMemreasCache {
  
 	}
 	
-	public function setCache($key, $value, $ttl = 3000) { // 5 minutes
+	public function setCache($key, $value, $ttl = 3600) { // 1 hour
 		if(!$this->isCacheEnable){
 			return null;
 		}

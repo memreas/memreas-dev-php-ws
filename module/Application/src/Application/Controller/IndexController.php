@@ -227,7 +227,7 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "countlistallmedia") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->countlistallmedia->user_id);
-                $result = $this->elasticache->getCache($actionname, $uid);
+                $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
                 if (!$result) {
                     $countlistallmedia = new CountListallmedia($message_data, $memreas_tables, $this->getServiceLocator());
