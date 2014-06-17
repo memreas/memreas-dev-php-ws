@@ -14,7 +14,7 @@ class AWSMemreasCache {
 		if(!$this->isCacheEnable){
 			return null;
 		}
-		error_log ( "MemreasCache.__construct()...." . PHP_EOL );
+		error_log ( "MemreasCache.__construct()....".date ( 'Y-m-d H:i:s' ). PHP_EOL );
 
 		/**
 		 * Sample PHP code to show how to integrate with the Amazon ElastiCcache
@@ -26,8 +26,8 @@ class AWSMemreasCache {
 		/* Port for connecting to the ElastiCache cluster. This is only an example */
 		$server_port = MemreasConstants::ELASTICACHE_SERVER_PORT;
 		
-		error_log ( "Set endpoint $server_endpoint" . PHP_EOL );
-		error_log ( "Set port $server_port" . PHP_EOL );
+// error_log ( "Set endpoint $server_endpoint" . PHP_EOL );
+// error_log ( "Set port $server_port" . PHP_EOL );
 		
 		/**
 		 * The following will initialize a Memcached client to utilize the Auto Discovery feature.
@@ -39,15 +39,14 @@ class AWSMemreasCache {
 		 */
 		
 		$this->cache = new \Memcache();
-		error_log ( "Created new Memcached client.." . PHP_EOL );
+error_log ( "Created new Memcached client.." . PHP_EOL );
 		//$this->cache->setOption ( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE );
 		$this->cache->addServer ( $server_endpoint, $server_port );
-		$now = date ( 'Y-m-d H:i:s' );
 		//$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
 	                           
 		// Connected at this point
- 		error_log ( "Connected to elasticache client!" . PHP_EOL );
-	//	error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
+error_log ( "Connected to elasticache client!".date ( 'Y-m-d H:i:s' ). PHP_EOL );
+//	error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
  
 	}
 	
@@ -55,9 +54,10 @@ class AWSMemreasCache {
 		if(!$this->isCacheEnable){
 			return null;
 		}
-		$result = $this->cache->set ( $key , $value,0, $ttl );
-		error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
-		
+		$result = $this->cache->set ( $key , $value, 0, $ttl );
+// error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
+// error_log('VALUE ----> ' . $value . PHP_EOL);
+
 		return $result;
 	}
 	
@@ -67,9 +67,9 @@ class AWSMemreasCache {
 		}
 		
  		$result = $this->cache->get ( $key );
- 		error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
-
- 	 
+// error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
+// error_log('RESULT ----> ' . $result  . PHP_EOL);
+ 			
 		return $result;
 	}
 	
@@ -79,7 +79,7 @@ class AWSMemreasCache {
 		}
 		 
  			$this->cache->delete ( $key );
- 			error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+// error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
  		 
 		
 	}
@@ -118,9 +118,5 @@ class AWSMemreasCache {
 	 
 
 }
-
-// $memreasCache = new MemreasCache();
-// $memreasCache->listPhotos('52b855ae-b9b7-11e2-a0c7-72b539fa3d40', true);
-// error_log( $memreasCache->listPhotos('52b855ae-b9b7-11e2-a0c7-72b539fa3d40', false), 0);
 
 ?>

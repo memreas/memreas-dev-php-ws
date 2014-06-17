@@ -131,7 +131,7 @@ class IndexController extends AbstractActionController {
     }
 
     public function indexAction() {
-        error_log("Inside indexAction" . PHP_EOL);
+        error_log("Inside indexAction---> ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
         // $path = $this->security("application/index/ws_tester.phtml");
 
         $path = "application/index/ws_tester.phtml";
@@ -152,6 +152,7 @@ class IndexController extends AbstractActionController {
             $message_data ['xml'] = '';
         }
 
+error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
         if (isset($actionname) && !empty($actionname)) {
             // Fetch the elasticache handle
             error_log("fetching MemreasCache handle..." . PHP_EOL);
@@ -751,14 +752,20 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 $FeedBack = new FeedBack($this->getServiceLocator());
                 $result = $FeedBack->exec();
             }
-            echo $result;
+            
+            /*
+             * Successfully retrieved from cache so echo
+             */
+            if ($cache_me == false) {
+            	echo $result;
+            }
             $output = ob_get_clean();
+            
             /*
              * TODO - Cache here
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-                //$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
-            	$this->elasticache->setCache($actionname . '_' . $cache_id, $result);
+            	$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
             }
 
             /*
@@ -788,7 +795,8 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             // Need to exit here to avoid ZF2 framework view.
             exit();
         }
-        error_log("Index ws done  ----> " );
+
+error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
         if (isset($_GET ['view']) && empty($actionname)) {
             $view = new ViewModel ();
             $view->setTemplate($path); // path to phtml file under view folder
