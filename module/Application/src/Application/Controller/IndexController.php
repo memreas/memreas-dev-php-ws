@@ -209,7 +209,7 @@ class IndexController extends AbstractActionController {
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->likemedia->user_id);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $likemedia = new LikeMedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $likemedia->exec();
                     $cache_me = true;
@@ -229,7 +229,7 @@ class IndexController extends AbstractActionController {
                 $uid = trim($data->countlistallmedia->user_id);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $countlistallmedia = new CountListallmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $countlistallmedia->exec();
                     $cache_me = true;
@@ -278,7 +278,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $uid = trim($data->viewallfriends->user_id);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $viewallfriends = new ViewAllfriends($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $viewallfriends->exec();
                     $cache_me = true;
@@ -302,8 +302,8 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = $data->listallmedia->user_id;
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
-
-                if (!$result) {
+error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
+                if (!$result || empty($result)) {
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listallmedia->exec();
                     $cache_me = true;
@@ -314,7 +314,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $uid = trim($data->countviewevent->user_id);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $countviewevent = new CountViewevent($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $countviewevent->exec();
                     $cache_me = true;
@@ -345,7 +345,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $uid = trim($data->viewevent->user_id);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $viewevents = new ViewEvents($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $viewevents->exec();
                     $cache_me = true;
@@ -364,9 +364,9 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $data = simplexml_load_string($_POST ['xml']);
                 $mid = trim($data->viewmediadetails->media_id);
 
-                $result = $this->elasticache->getCache($actionname, $mid);
+                $result = $this->elasticache->getCache($actionname.'_'.$mid);
 
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $viewmediadetails = new ViewMediadetails($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $viewmediadetails->exec();
                     $cache_me = true;
@@ -401,7 +401,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $uid = trim($data->listnotification->user_id);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
-                if (!$result) {
+                if (!$result || empty($result)) {
                     $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listnotification->exec();
                     $cache_me = true;
@@ -442,7 +442,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
 
                         $mc = $this->elasticache->getCache('@person');
 
-                        if (!$mc) {
+                        if (!$mc || empty($mc)) {
                             $registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
                             $registration->createUserCache();
                             $mc = $registration->userIndex;
@@ -491,7 +491,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                         break;
                     case '!':
                         $mc = $this->elasticache->getCache('!event');
-                        if (!$mc) {
+                        if (!$mc || empty($mc)) {
                             $eventRep = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')
                                     ->getRepository('Application\Entity\Event');
                             $mc = $eventRep->createEventCache();
@@ -522,7 +522,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                         break;
                     case '#':
                         $mc = $this->elasticache->getCache('#tag');
-                        if (!$mc) {
+                        if (!$mc || empty($mc)) {
                             $eventRep = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')
                                     ->getRepository('Application\Entity\Event');
                             $mc = $eventRep->createDiscoverCache($tag);
@@ -570,7 +570,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $eventRep = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')
                         ->getRepository('Application\Entity\Event');
                 $mc = $this->elasticache->getCache('!event');
-                if (!$mc) {
+                if (!$mc || empty($mc)) {
                     $mc = $eventRep->createEventCache();
                     $this->elasticache->setCache("!event", $mc);
                 }
@@ -617,7 +617,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $eventRep = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')
                         ->getRepository('Application\Entity\Event');
                 $mc = $this->elasticache->getCache('#tag');
-                if (!$mc) {
+                if (!$mc || empty($mc)) {
                     $mc = $eventRep->createDiscoverCache($tag);
                     $this->elasticache->setCache("#tag", $mc);
                 }
@@ -701,7 +701,7 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $client->verifyEmailAddress(array(
                     'EmailAddress' => $_GET ['email']
                 ));
-                echo 'Please Cheack email validate you email to recive emails';
+                echo 'Please Cheack email validate you email to receive emails';
             } else if ($actionname == "geteventlocation") {
                 $GetEventLocation = new GetEventLocation($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetEventLocation->exec();
@@ -751,12 +751,14 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $FeedBack = new FeedBack($this->getServiceLocator());
                 $result = $FeedBack->exec();
             }
+            echo $result;
             $output = ob_get_clean();
             /*
              * TODO - Cache here
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-                $this->elasticache->setCache($actionname . '_' . $cache_id, $output);
+                //$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
+            	$this->elasticache->setCache($actionname . '_' . $cache_id, $result);
             }
 
             /*
