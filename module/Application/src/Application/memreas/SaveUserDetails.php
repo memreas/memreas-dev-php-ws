@@ -40,6 +40,7 @@ class SaveUserDetails {
         }
         $user_id = trim ( $data->saveuserdetails->user_id );
         $email = trim ( $data->saveuserdetails->email );
+        $password = trim ($data->saveuserdetails->password);
 
         //check if exist user's email
         $qb = $this->dbAdapter->createQueryBuilder ();
@@ -49,7 +50,10 @@ class SaveUserDetails {
         $user_info = $qb->getQuery ()->getResult ();
 
         if (empty($user_info)){
-            $query = "UPDATE Application\Entity\User u SET u.email_address = '{$email}' WHERE u.user_id = '{$user_id}'";
+            $query = "UPDATE Application\Entity\User u SET u.email_address = '{$email}'";
+            if (!empty($password))
+                $query .= ", u.password = '" . md5($password) . "'";
+            $query .= " WHERE u.user_id = '{$user_id}'";
             $qb = $this->dbAdapter->createQuery($query);
             $result = $qb->getResult();
             if ($result){
