@@ -70,15 +70,16 @@ class ListComments {
 				$output .= "<event_id>" . $event_id . "</event_id>";
 				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
 				$output .= "<type>" . $value ['type'] . "</type>";
+				$audio_url = '';
 				if($value ['type'] = 'audio'){
 					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
 					$json_array = json_decode ( $audio_row ['metadata'], true );
-				    $audio_url = '';
+				    
 				if (! empty ( $json_array ['S3_files'] ['path'] )){
 					$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
 
 				}
-					$output .= "<audio_media_url><![CDATA[" $audio_url "]]></audio_media_url>";
+					$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
 
 				}
 
