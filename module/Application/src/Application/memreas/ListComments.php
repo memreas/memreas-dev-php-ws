@@ -78,7 +78,7 @@ class ListComments {
 					$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
 
 				}
-					$output .= "<audio_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $audio_url . "]]></audio_media_url>";
+					$output .= "<audio_media_url><![CDATA[" $audio_url "]]></audio_media_url>";
 
 				}
 
