@@ -49,14 +49,16 @@ class ListComments {
 		// $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 		
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'c.type,c.audio_id,c.text,u.username', 'm.metadata' );
+		$qb->select ( 'c.type,c.audio_id,c.text,u.username,m.media_id,m.metadata' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
-		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 		$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
 		$qb->setParameter ( 1, $event_id );
+error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		
 		$result_comment = $qb->getQuery ()->getResult ();
  		
 		$output .= '<comments>';
@@ -72,17 +74,20 @@ class ListComments {
 				$output .= "<type>" . $value ['type'] . "</type>";
 				$audio_url = '';
 				if($value ['type'] = 'audio'){
-					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
-					$json_array = json_decode ( $audio_row ['metadata'], true );
-				    
-				if (! empty ( $json_array ['S3_files'] ['path'] )){
-					$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
-
+					//$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
+					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
+					//$json_array = json_decode ( $audio_row ['metadata'], true );
+					$json_array = json_decode ( $audio_row->metadata, true );
+//error_log("metadata-----> ".$audio_row->metadata.PHP_EOL);
+						
+					if (isset($json_array ['S3_files'] ['audio']) && !empty($json_array ['S3_files'] ['audio']) ){
+						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['audio'];					
+						$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
+error_log("audio_url-----> ".$audio_url.PHP_EOL);
+					} else {
+						$output .= "<audio_media_url></audio_media_url>";
+					}
 				}
-					$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
-
-				}
-
 
 				$output .= "<username>" . $value ['username'] . "</username>";
 				$json_array = json_decode ( $value ['metadata'], true );
@@ -94,7 +99,7 @@ class ListComments {
 				$output .= '</comment>';
 			}
 		}
-		$output .= '</comments>';
+			$output .= '</comments>';
 		if ($frmweb) {
 			return $output;
 		}
