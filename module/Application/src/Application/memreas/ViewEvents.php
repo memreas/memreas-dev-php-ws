@@ -109,7 +109,7 @@ class ViewEvents {
 							$xml_output .= '<event_friend>';
 
  							$json_array = json_decode ( $efRow ['metadata'], true );
-							$url1 = '';
+							$url1 = MemreasConstants::ORIGINAL_URL.'memreas/img/profile-pic.jpg';
 							if (! empty ( $json_array ['S3_files'] ['path'] ))
 								$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 
@@ -252,7 +252,7 @@ class ViewEvents {
 					$user_id = null;
 					$array = array ();
 
-					$url1 = null;
+					$url1 = MemreasConstants::ORIGINAL_URL.'memreas/img/profile-pic.jpg';
 						$pic_79x80 = '';
 						$pic_448x306 = '';
 						$pic_98x78 = '';
@@ -437,7 +437,7 @@ $url98x78   = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $jso
 				$xml_output .= "<page>$page</page>";
 
 				foreach ( $result_pub as $row3 ) {
-					$pic = '';
+					$pic = MemreasConstants::ORIGINAL_URL.'memreas/img/profile-pic.jpg';
 					$xml_output .= "<friend>";
 					$xml_output .= "<event_creator>" . $row3 ['username'] . "</event_creator>";
 					if ($row3 ['profile_photo']) {
