@@ -88,7 +88,7 @@ class ViewEvents {
 						$likeCount = $likeCountSql->getSingleScalarResult ();
 						$xml_output .= "<like_count>" . $likeCount . "</like_count>";
 						// get comment count for event
-						$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.type= 'text'" );
+						$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND (c.type= 'text' or c.type ='audio')" );
 						$commCountSql->setParameter ( 1, $row->event_id );
 						$commCount = $commCountSql->getSingleScalarResult ();
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";

@@ -74,16 +74,19 @@ error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 				$output .= "<type>" . $value ['type'] . "</type>";
 				$audio_url = '';
 				if($value ['type'] = 'audio'){
-					//$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
-					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
+					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
+					//$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
 					//$json_array = json_decode ( $audio_row ['metadata'], true );
-					$json_array = json_decode ( $audio_row->metadata, true );
+					if ($audio_row) {
+						$json_array = json_decode ( $audio_row->metadata, true );
 //error_log("metadata-----> ".$audio_row->metadata.PHP_EOL);
 						
 					if (isset($json_array ['S3_files'] ['audio']) && !empty($json_array ['S3_files'] ['audio']) ){
 						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['audio'];					
 						$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
 error_log("audio_url-----> ".$audio_url.PHP_EOL);
+					}
+					
 					} else {
 						$output .= "<audio_media_url></audio_media_url>";
 					}
