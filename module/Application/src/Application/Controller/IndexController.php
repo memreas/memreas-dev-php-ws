@@ -487,7 +487,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
 
                         //echo '<pre>';print_r($result);
 
-                        echo json_encode($result);
+                        echo json_encode($result);$result='';
 
                         break;
                     case '!':
@@ -519,7 +519,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         //$result =  preg_grep("/$search/", $mc);
                         //echo '<pre>';print_r($result);
 
-                        echo json_encode($result);
+                        echo json_encode($result);$result='';
                         break;
                     case '#':
                         $mc = $this->elasticache->getCache('#tag');
@@ -550,7 +550,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         //$result =  preg_grep("/$search/", $mc);
                         //echo '<pre>';print_r($result);
 
-                        echo json_encode($result);
+                        echo json_encode($result);$result='';
                         break;
                     default:
                       //  $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
@@ -757,7 +757,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
              * Successfully retrieved from cache so echo
              */
             if ($cache_me == false) {
-            	echo $result;
+             	echo $result;
             }
             $output = ob_get_clean();
             
