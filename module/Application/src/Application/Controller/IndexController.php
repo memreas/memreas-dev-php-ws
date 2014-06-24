@@ -437,7 +437,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 $from = ($page - 1) * $limit;
                 $rc = 0;
 
-
+                $search_result =array();
                 switch ($a) {
                     case '@':
 
