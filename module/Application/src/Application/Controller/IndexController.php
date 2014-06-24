@@ -561,7 +561,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
 
                         $result['totalPage'] = 0;
 
-                        echo json_encode($result);
+                        echo json_encode($result);$result='';
                         break;
                 }
             } else if ($actionname == "findevent") {
