@@ -66,11 +66,11 @@ class ForgotPassword {
 					$resofupd = $statement->getResult ();
 
 					if ($resofupd) {
-						$subject = "Welcome to Event App";
+						$subject = "Welcome to memreas!";
 						
 						$headers = "MIME-Version: 1.0" . "\r\n";
 						$headers .= "Content-type:text/html;charset=iso-8859-1" . "\r\n";
-						$headers .= 'From: <admin@eventapp.com>' . "\r\n";
+						$headers .= 'From: <admin@memreas.com>' . "\r\n";
 
 						///
 
@@ -85,7 +85,7 @@ class ForgotPassword {
 				        $viewRender = $this->service_locator->get ( 'ViewRenderer' );
 				        $html = $viewRender->render ( $viewModel );
 				        //echo $html ;exit;
-				        $subject = 'Welcome to Event App';
+				        $subject = 'Welcome to memreas!';
 				        if (empty ( $aws_manager ))
 					        $aws_manager = new AWSManagerSender ( $this->service_locator );
 				        $aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
