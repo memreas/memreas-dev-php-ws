@@ -326,7 +326,7 @@ error_log($xml_output.PHP_EOL);
 					$json_array = json_decode ( $row ['metadata'], true );
 
 					if (empty ( $json_array ['S3_files'] ['path'] )){
-						$url1 = '/memreas/img/profile-pic.jpg';
+						$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 					}else{
 						$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 					}
