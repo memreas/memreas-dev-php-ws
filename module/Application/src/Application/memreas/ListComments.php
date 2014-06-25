@@ -49,11 +49,11 @@ class ListComments {
 		// $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 		
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'c.type,c.audio_id,c.text,u.username,m.media_id,m.metadata' );
+		$qb->select ( 'c.type,c.audio_id,c.text,u.username,c.media_id' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
 		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+		//qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 		$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
@@ -93,8 +93,12 @@ error_log("audio_url-----> ".$audio_url.PHP_EOL);
 				}
 
 				$output .= "<username>" . $value ['username'] . "</username>";
-				$json_array = json_decode ( $value ['metadata'], true );
-				$url1 = '';
+                                $media_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
+                                if($media_row){
+                                     $json_array = json_decode ( $media_row->metadata, true );
+                                }
+                               
+				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 				if (! empty ( $json_array ['S3_files'] ['path'] ))
 					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 				$output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
