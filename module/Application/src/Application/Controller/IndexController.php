@@ -77,6 +77,9 @@ use Application\memreas\ListMemreasFriends;
 use Application\memreas\GetSocialCredentials;
 use Application\memreas\UpdateMedia;
 use Application\memreas\FeedBack;
+use Application\memreas\GetEventDetails;
+use Application\memreas\RemoveEventMedia;
+use Application\memreas\RemoveEventFriend;
 
 
 class IndexController extends AbstractActionController {
@@ -260,9 +263,9 @@ error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL)
                 $uid = trim($data->listphotos->userid);
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
 
-                
+
                 if (!$result) {
-error_log("ElastiCache - couldn't find".PHP_EOL );                	
+error_log("ElastiCache - couldn't find".PHP_EOL );
                     $listphotos = new ListPhotos($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listphotos->exec();
                     $cache_me = true;
@@ -751,8 +754,17 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             } else if ($actionname == "feedback") {
                 $FeedBack = new FeedBack($this->getServiceLocator());
                 $result = $FeedBack->exec();
+            }else if ($actionname == "geteventdetails") {
+                $GetEventDetails = new GetEventDetails($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetEventDetails->exec();
+            }else if ($actionname == "removeeventmedia") {
+                $RemoveEventMedia = new RemoveEventMedia($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $RemoveEventMedia->exec();
+            }else if ($actionname == "removeeventfriend") {
+                $RemoveEventFriend = new RemoveEventFriend($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $RemoveEventFriend->exec();
             }
-            
+
             /*
              * Successfully retrieved from cache so echo
              */
@@ -760,7 +772,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
              	echo $result;
             }
             $output = ob_get_clean();
-            
+
             /*
              * TODO - Cache here
              */

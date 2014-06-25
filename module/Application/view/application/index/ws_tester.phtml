@@ -73,6 +73,9 @@ echo "user_id ----> " . $user_id;
             var listmemreasfriends = '<xml><listmemreasfriends><user_id>1</user_id></listmemreasfriends></xml>';
             var getsocialcredentials = '<xml><getsocialcredentials><network>facebook</network></getsocialcredentials></xml>';
             var updatemedia = '<xml><updatemedia><media_id>1</media_id><location><latitude>55</latitude><longtitude>-33</longtitude></location></updatemedia></xml>';
+            var geteventdetails = '<xml><geteventdetails><event_id>1</event_id></geteventdetails></xml>';
+            var removeeventmedia = '<xml><removeeventmedia><event_id>1</event_id><media_ids><media_id>1</media_id></media_ids></removeeventmedia></xml>';
+            var removeeventfriend = '<xml><removeeventfriend><event_id>1</event_id><friend_ids><friend_id>1</friend_id></friend_ids></removeeventfriend></xml>';
 
 
             var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';
@@ -231,6 +234,12 @@ echo "user_id ----> " . $user_id;
                         xml = feedback;
                     }else if ($("#input_action").val() == "updatemedia") {
                         xml = updatemedia;
+                    }else if ($("#input_action").val() == "geteventdetails") {
+                        xml = geteventdetails;
+                    }else if ($("#input_action").val() == "removeeventmedia") {
+                        xml = removeeventmedia;
+                    }else if ($("#input_action").val() == "removeeventfriend") {
+                        xml = removeeventfriend;
                     }
 
 
@@ -333,6 +342,9 @@ echo "user_id ----> " . $user_id;
                                  <option>getsocialcredentials</option>
                                  <option>feedback</option>
                                  <option>updatemedia</option>
+                                 <option>geteventdetails</option>
+                                 <option>removeeventmedia</option>
+                                 <option>removeeventfriend</option>
 						</select>
 
 					</tr>
