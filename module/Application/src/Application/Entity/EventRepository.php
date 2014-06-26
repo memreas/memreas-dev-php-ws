@@ -83,7 +83,7 @@ class EventRepository extends EntityRepository
 	public function getProfileUrl($metadata='')
 	{
 		$json_array = json_decode ( $metadata, true );
-        $url = '/memreas/img/profile-pic.jpg';
+        $url = MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
         if (! empty ( $json_array ['S3_files'] ['path'] )){
             $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
         }
@@ -144,7 +144,9 @@ class EventRepository extends EntityRepository
 
             $profile = $this->_em->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
                                         'user_id' => $json_array ['user'][$k],'is_profile_pic' => 1 ) );
-            $temp['commenter_photo'] = $this->getProfileUrl($profile->metadata);
+            $profileMeta = empty($profile->metadata)?'':$profile->metadata;
+                 $temp['commenter_photo'] = $this->getProfileUrl($profileMeta);
+             
 
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
             $temp['comment'] = $comment->text;
