@@ -244,9 +244,7 @@ class AddFriendtoevent {
                             $this->notification->addFriend($friend_id);
                         }
                     } // end if (count($r) > 0) else
-                } 
-                
-                if( empty($event_id) && !empty($sendMessage)) {
+                } else if( empty($event_id) && !empty($sendMessage)) {
                     //add friend
                     $nmessage = $userOBj->username . ' has send friend request ';
                     // save nofication intable
