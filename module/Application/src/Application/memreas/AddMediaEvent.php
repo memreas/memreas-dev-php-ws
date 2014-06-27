@@ -38,6 +38,7 @@ class AddMediaEvent {
 		try {
 			$media_id = '';
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
+				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (isset ( $data->addmediaevent->user_id )) {
 					$user_id = addslashes ( trim ( $data->addmediaevent->user_id ) );
