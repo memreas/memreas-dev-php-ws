@@ -12,6 +12,8 @@ namespace Application\Model;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Session\SaveHandler\SaveHandlerInterface;
 use Zend\Session\Container;
+use \Exception;
+
 
 /**
  * DB Table Gateway session save handler
@@ -143,7 +145,15 @@ class DbTableGateway implements SaveHandlerInterface {
 		if (! empty ( $_SESSION ['user'] ['user_id'] )) {
 			$data ['user_id'] = $_SESSION ['user'] ['user_id'];
 		}
- 		return ( bool ) $this->tableGateway->insert ( $data );
+ 		try {
+ 			return ( bool )$this->tableGateway->insert ( $data );
+ 		} catch (\Exception $e) {
+ 			return ( bool ) $this->tableGateway->update ( $data, array (
+					$this->options->getIdColumn () => $id,
+					$this->options->getNameColumn () => $this->sessionName 
+			) );
+ 			
+ 		} 
 	}
 	
 	/**

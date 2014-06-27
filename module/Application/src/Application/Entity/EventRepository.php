@@ -29,7 +29,7 @@ class EventRepository extends EntityRepository
 
 
     public function getEvents($date)
-    { 	$query_event = "select e.name, e.event_id ,e.location
+    { 	$query_event = "select e.name, e.event_id ,e.location,e.user_id
                 from Application\Entity\Event e
                 where (e.viewable_to >=" . $date . " or e.viewable_to ='')
                     and  (e.viewable_from <=" . $date . " or e.viewable_from ='')

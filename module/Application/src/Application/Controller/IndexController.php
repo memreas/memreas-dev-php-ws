@@ -502,8 +502,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             $this->elasticache->setCache("!event", $mc);
                         }
                         $search_result = array();
-
-                        foreach ($mc as $er) {
+                         foreach ($mc as $er) {
                             if (stripos($er['name'], $search) === 0) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $er['name'] = '!' . $er['name'];
@@ -520,7 +519,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
 
 
                         //$result =  preg_grep("/$search/", $mc);
-                        //echo '<pre>';print_r($result);
+                       //echo '<pre>';print_r($result);
 
                         echo json_encode($result);$result='';
                         break;
@@ -613,7 +612,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 $result['search'] = $search_result;
                 //$result =  preg_grep("/$search/", $mc);
                 //echo '<pre>';print_r($result);
-                echo json_encode($result);
+                echo json_encode($result);$result='';
             } else if ($actionname == "getDiscover") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $tag = (trim($data->getDiscover->tag));
@@ -661,6 +660,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 //$result =  preg_grep("/$search/", $mc);
                 //echo '<pre>';print_r($result);
                 echo json_encode($result);
+                $result='';
             } else if ($actionname == "signedurl") {
                 $signedurl = new MemreasSignedURL($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $signedurl->exec();
