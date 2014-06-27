@@ -69,14 +69,18 @@ class UpdateNotification {
 
 						$user_id   =  $json_data['from_id'];
 						$UserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
-                         					->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id));                				
+                         					->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id)); 
+                        $EventFriend = $this->dbAdapter->getRepository( "\Application\Entity\EventFriend")
+                         					->findOneBy(array('event_id' => $json_data['event_id'] ,'friend_id' => $friend_id)); 					               				
                         $eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data['event_id'] );
-
-                        if($UserFriend){
+                         if($UserFriend){
                         	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
                         	//accepted
                         	if($status == 1){
-                        		$UserFriend->user_approve = 1;
+                        		$UserFriend->user_approve = 1;            $this->dbAdapter->persist ( $UserFriend );
+
+                        		$EventFriend->user_approve =1;
+                        		 $this->dbAdapter->persist ( $EventFriend );
                         		$nmessage = $userOBj->username . ' Accepted ' . $eventOBj->name .' ' . $notification_message;
                         	}
                         	 //ignored
@@ -123,6 +127,7 @@ class UpdateNotification {
                         	//accepted
                         	if($status == 1){
                         		$UserFriend->user_approve = 1;
+                        		 $this->dbAdapter->persist ( $UserFriend );
                         		$nmessage = $userOBj->username . ' Accepted Friend Request' .' ' . $notification_message;
                         	}
                         	 //ignored

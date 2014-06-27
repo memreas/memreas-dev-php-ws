@@ -94,6 +94,7 @@ class DbTableGateway implements SaveHandlerInterface {
 	 * @return string
 	 */
 	public function read($id) {
+ 
 		$rows = $this->tableGateway->select ( array (
 				$this->options->getIdColumn () => $id,
 				$this->options->getNameColumn () => $this->sessionName 
@@ -117,7 +118,7 @@ class DbTableGateway implements SaveHandlerInterface {
 	 * @return bool
 	 */
 	public function write($id, $data) {
-		$datetime = date ( "Y-m-d H:i:s", time () );
+  		$datetime = date ( "Y-m-d H:i:s", time () );
 		$data = array (
 				$this->options->getModifiedColumn () => time (),
 				$this->options->getDataColumn () => ( string ) $data,
@@ -142,8 +143,7 @@ class DbTableGateway implements SaveHandlerInterface {
 		if (! empty ( $_SESSION ['user'] ['user_id'] )) {
 			$data ['user_id'] = $_SESSION ['user'] ['user_id'];
 		}
-		error_log ( 'inserting in user_session' . PHP_EOL );
-		return ( bool ) $this->tableGateway->insert ( $data );
+ 		return ( bool ) $this->tableGateway->insert ( $data );
 	}
 	
 	/**
