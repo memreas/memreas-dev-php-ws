@@ -90,14 +90,20 @@ class EventRepository extends EntityRepository
 
               return $url;
 	}
-	public function getEventMediaUrl($metadata='')
+	public function getEventMediaUrl($metadata='',$size='')
 	{
-		$json_array = json_decode ( $metadata, true );
-        $url = '/memreas/img/small-pic-3.jpg';
-        if (! empty ( $json_array ['S3_files'] ['path'] )){
-            $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-        }
-
+	$json_array = json_decode ( $metadata, true );
+        $url = MemreasConstants::ORIGINAL_URL.'/memreas/img/small-pic-3.jpg';
+        if (empty($size)) {
+            
+            if (! empty ( $json_array ['S3_files'] ['path'] )){
+                $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+            }
+        }  else {
+            if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']) ){
+                $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails'] ['79x80'];
+            }
+        }        
               return $url;
 	}
      function createEventCache(){
@@ -140,7 +146,7 @@ class EventRepository extends EntityRepository
             $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
             $temp['event_name'] = $event->name;
             $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
-            $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata);
+            $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
 
             $profile = $this->_em->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
                                         'user_id' => $json_array ['user'][$k],'is_profile_pic' => 1 ) );
