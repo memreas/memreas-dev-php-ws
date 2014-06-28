@@ -145,6 +145,8 @@ class EventRepository extends EntityRepository
                                 $temp['name'] = $row['tag'];
             $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
             $temp['event_name'] = $event->name;
+                        $temp['event_id'] = $event->event_id;
+
             $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
             $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
 
