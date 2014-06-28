@@ -113,10 +113,10 @@ class EventRepository extends EntityRepository
     foreach ($result as $row) {
         $eventIndex[$row['event_id']] = $row;
         $mediaRows = $this->getEventMedia($row['event_id']);
-        $eventIndex[$row['event_id']]['event_photo'] =    $this->getEventMediaUrl();
         foreach ($mediaRows as $mediaRow) {
 
-             $eventIndex[$row['event_id']]['event_media_url'] = $this->getEventMediaUrl($mediaRow['metadata']);
+            $eventIndex[$row['event_id']]['event_media_url'] = $this->getEventMediaUrl($mediaRow['metadata']);
+            $eventIndex[$row['event_id']]['event_photo'] =    $this->getEventMediaUrl($mediaRow['metadata'],'thumb');
 
              break;
         }
