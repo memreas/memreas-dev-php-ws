@@ -97,13 +97,13 @@ class ViewMediadetails {
             $resource = $statement->getResult();
             $metadata = json_decode($resource[0]['metadata']);
             $location = $metadata->S3_files->location;
-            if (empty($location)){
-                $longitude = null;
-                $latitude = null;
-            }
-            else{
+            if (isset($location->longtitude) && !empty($location->longtitude)) {
                 $longitude = $location->longtitude;
                 $latitude = $location->latitude;
+            }
+            else {
+                $longitude = null;
+                $latitude = null;
             }
 
 			// $q_comment = "Select media_id,metadata from media where media_id=(SELECT audio_id FROM comment WHERE comment.media_id='$media_id' and comment.type='audio' ORDER BY create_time DESC LIMIT 1)";
