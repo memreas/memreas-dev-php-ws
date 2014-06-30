@@ -126,19 +126,16 @@ error_log("signed url -----> ".$path.PHP_EOL);
 					    $json_array = json_decode ( $row ['metadata'], true );
 					    if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						    $type = "image";
-						    if (isset ( $json_array ['S3_files']['thumbnails']['79x80'] ))
-							    $url79x80 = $json_array ['S3_files']['thumbnails']['79x80'];
-						    if (isset ( $json_array ['S3_files']['thumbnails']['448x306'] ))
-							    $url448x306 = $json_array ['S3_files']['thumbnails']['448x306'];
-						    if (isset ( $json_array ['S3_files']['thumbnails']['98x78'] ))
-							    $url98x78 = $json_array ['S3_files']['thumbnails']['98x78'];
+						    $url79x80 = (isset( $json_array ['S3_files']['thumbnails']['79x80']) && !empty( $json_array ['S3_files']['thumbnails']['79x80'])) ? $json_array ['S3_files']['thumbnails']['79x80'] : "";
+						    $url448x306 = (isset( $json_array ['S3_files']['thumbnails']['448x306']) && !empty( $json_array ['S3_files']['thumbnails']['448x306'])) ? $json_array ['S3_files']['thumbnails']['448x306'] : "";
+						    $url98x78 = (isset( $json_array ['S3_files']['thumbnails']['98x78']) && !empty( $json_array ['S3_files']['thumbnails']['98x78'])) ? $json_array ['S3_files']['thumbnails']['98x78'] : "";
 					    } else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						    $type = "video";
-						    $thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
-						    $url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
-						    $url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
-						    $url98x78 = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
-					    } else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
+						    $thum_url = (isset( $json_array ['S3_files']['thumbnails']['base']) && !empty( $json_array ['S3_files']['thumbnails']['base'])) ? $json_array ['S3_files']['thumbnails']['base'] : "";
+						    $url79x80 = (isset( $json_array ['S3_files']['thumbnails']['79x80']) && !empty( $json_array ['S3_files']['thumbnails']['79x80'])) ? $json_array ['S3_files']['thumbnails']['79x80'] : "";
+						    $url448x306 = (isset( $json_array ['S3_files']['thumbnails']['448x306']) && !empty( $json_array ['S3_files']['thumbnails']['448x306'])) ? $json_array ['S3_files']['thumbnails']['448x306'] : "";
+						    $url98x78 = (isset( $json_array ['S3_files']['thumbnails']['98x78']) && !empty( $json_array ['S3_files']['thumbnails']['98x78'])) ? $json_array ['S3_files']['thumbnails']['98x78'] : "";
+						} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
 						    $type = "audio";
 						    continue;
 					    } else
@@ -164,17 +161,21 @@ error_log("signed url -----> ".$path.PHP_EOL);
 					    
 					    
 					    if ($type == "video") {
-					    	$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['web']);
+					    	$path = isset($json_array ['S3_files'] ['web']) && !empty($json_array ['S3_files'] ['web']) ? $json_array ['S3_files'] ['web'] : "";
+					    	$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($path);
 						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 					    	
 						    
-						    $path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['1080p']);
+					    	$path = isset($json_array ['S3_files'] ['1080p']) && !empty($json_array ['S3_files'] ['1080p']) ? $json_array ['S3_files'] ['1080p'] : "";
+					    	$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($path);
 						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
 						    
-						    $path = MemreasConstants::CLOUDFRONT_STREAMING_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['1080p']);
+					    	$path = isset($json_array ['S3_files'] ['1080p']) && !empty($json_array ['S3_files'] ['1080p']) ? $json_array ['S3_files'] ['1080p'] : "";
+					    	$path = MemreasConstants::CLOUDFRONT_STREAMING_HOST . $this->url_signer->fetchSignedURL($path);
 						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
 						    
-						    $path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($json_array ['S3_files'] ['hls']);
+					    	$path = isset($json_array ['S3_files'] ['hls']) && !empty($json_array ['S3_files'] ['hls']) ? $json_array ['S3_files'] ['hls'] : "";
+					    	$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($path);
 						    $xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					    }
 					    $xml_output .= "<is_downloaded>$is_download</is_downloaded>";
