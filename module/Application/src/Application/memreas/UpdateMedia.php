@@ -39,8 +39,9 @@ class UpdateMedia {
         }
         $media_id = trim ( $data->updatemedia->media_id );
 
-        $latitude = trim( $data->updatemedia->location->latitude );
-        $longtitude = trim ( $data->updatemedia->location->longtitude );
+        $address = (isset($data->updatemedia->location->address) && !empty ($data->updatemedia->location->address) ) ? trim( $data->updatemedia->location->address ) : "";
+        $latitude = (isset($data->updatemedia->location->latitude) && !empty ($data->updatemedia->location->latitude) ) ? trim( $data->updatemedia->location->latitude ) : "";
+        $longtitude = (isset($data->updatemedia->location->longtitude) && !empty ($data->updatemedia->location->longtitude) ) ? trim( $data->updatemedia->location->longtitude ) : "";
 
         $query = $this->dbAdapter->createQueryBuilder();
         $query->select("m")
@@ -54,17 +55,21 @@ class UpdateMedia {
         }
         else{
             $metadata = $media[0]->metadata;
-            $metadata = json_decode($metadata);
+            $metadata = json_decode($metadata, true);
 
             //Update media location
-            $metadata->S3_files->location = array('longtitude' => $longtitude, 'latitude' => $latitude);
+			unset($metadata["S3_files"]["location"]);
+            $metadata["S3_files"]["location"]["address"] = $address;
+			$metadata["S3_files"]["location"]["latitude"] = $latitude;
+            $metadata["S3_files"]["location"]["longtitude"] = $longtitude;
             $metadata = json_encode($metadata);
-
+                        
             $media = $media[0];
             $media->metadata = $metadata;
             $this->dbAdapter->persist ( $media );
             $this->dbAdapter->flush ();
 
+//error_log("Inside else section set media.metadata ---> ".$media->metadata.PHP_EOL);
             $message = 'Media updated';
             $status = 'Success';
             $output .= '<media_id>' . $media_id . '</media_id>';
