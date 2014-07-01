@@ -26,7 +26,7 @@ class ViewEvents {
     }
 
     public function exec() {
-        error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
+error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
         ini_set('max_execution_time', 120);
         $data = simplexml_load_string($_POST ['xml']);
         $user_id = trim($data->viewevent->user_id);
@@ -105,11 +105,13 @@ class ViewEvents {
 
                         $qb->setParameter(1, $row->event_id);
                         $query_ef_result = $qb->getQuery()->getResult();
-
+error_log("dql ----> ".$qb->getQuery()-getSQL().PHP_EOL);
+error_log("query_ef_result---->".json_encode($query_ef_result).PHP_EOL);
+                        
                         $xml_output .= '<event_friends>';
                         foreach ($query_ef_result as $efRow) {
                             $xml_output .= '<event_friend>';
-
+error_log("metadata---->".$efRow ['metadata'].PHP_EOL);
                             $json_array = json_decode($efRow ['metadata'], true);
                             $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
                             if (!empty($json_array ['S3_files'] ['path']))
@@ -260,8 +262,9 @@ class ViewEvents {
                     //echo '<pre>';print_r($row_getfriendid);exit;
 
                     $xml_output .= "<event_creator>" . $row_getfriendid->username . "</event_creator>";
-                    if ($row_getfriendid->profile_photo) {
+                    if ($row_getfriendid->profile_photo == 'true') {
                         $q = "SELECT m  FROM  Application\Entity\Media m  WHERE m.user_id  LIKE '" . $row_getfriendid->user_id . "' AND m.is_profile_pic =1";
+error_log("query ----> ".$q.PHP_EOL);
                         // $re = mysql_query($q); $q = "SELECT * FROM `media` WHERE `user_id` LIKE '" . $value[0]['user_id'] . "' AND `is_profile_pic` =1";
                         // $statement = $this->dbAdapter->createStatement($q);
                         // $re = $statement->execute();
@@ -399,7 +402,7 @@ class ViewEvents {
                         and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                         and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                         ORDER BY event.create_time DESC ";
-            error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
+//error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
             // LIMIT $from , $limit";
             // $result_pub = mysql_query($q_public);
             // $statement = $this->dbAdapter->createStatement($q_public);
@@ -420,8 +423,6 @@ class ViewEvents {
                 $xml_output .= "</friends>";
             } else {
 
-                error_log("Inside else " . PHP_EOL);
-
                 $xml_output .= "<friends>";
                 $xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>Public Event List</message>";
@@ -431,9 +432,10 @@ class ViewEvents {
                     $pic = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
                     $xml_output .= "<friend>";
                     $xml_output .= "<event_creator>" . $row3 ['username'] . "</event_creator>";
-                    if ($row3 ['profile_photo']) {
-
+//error_log("json row3------>".json_encode($row3).PHP_EOL);
+                    if ($row3 ['profile_photo'] == 'true') {
                         $q_profile_photo = "select m from Application\Entity\Media m  where m.is_profile_pic=1 and m.user_id='" . $row3 ['user_id'] . "'";
+error_log("q_profile_photo------>".$q_profile_photo.PHP_EOL);
                         // $result_profile_pic = mysql_query($q_profile_photo) or die(mysql_error());
                         // $statement = $this->dbAdapter->createStatement($q_profile_photo);
                         // $result_profile_pic = $statement->execute();
@@ -441,7 +443,8 @@ class ViewEvents {
                         $statement = $this->dbAdapter->createQuery($q_profile_photo);
                         $statement->setMaxResults(1);
                         $result_profile_pic = $statement->getArrayResult();
-
+error_log("result_profile_pic array ------>".json_encode($result_profile_pic).PHP_EOL);
+                        
                         if ($result_profile_pic) {
                             if ($row6 = array_pop($result_profile_pic)) {
                                 $json_array = json_decode($row6 ['metadata'], true);
@@ -449,15 +452,19 @@ class ViewEvents {
                                 // print_r($json_array['S3_files']);
                                 if (!empty($json_array ['S3_files'] ['path']))
                                     $pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['path'];
-
+error_log("pic------>".$pic.PHP_EOL);
+                                
                                 if (!empty($json_array ['S3_files'] ['79x80']))
                                     $pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
-
+error_log("pic_79x80------>".$pic_79x80.PHP_EOL);
+                                
                                 if (!empty($json_array ['S3_files'] ['448x306']))
                                     $pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
-
+error_log("pic_448x306------>".$pic_448x306.PHP_EOL);
+                                
                                 if (!empty($json_array ['S3_files'] ['98x78']))
                                     $pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
+error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
                             }
                         }
                     }
@@ -473,7 +480,7 @@ class ViewEvents {
                           and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                           and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                           ORDER BY event.create_time DESC";
-                    error_log("dql qub event ---> " . $qub_event . PHP_EOL);
+//error_log("dql qub event ---> " . $qub_event . PHP_EOL);
 
                     // $result2 = mysql_query($qub_event) or die(mysql_error
                     // $statement = $this->dbAdapter->createStatement($qub_event);
@@ -581,7 +588,7 @@ class ViewEvents {
 
         $xml_output .= '</viewevents>';
         $xml_output .= '</xml>';
-        error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
+//error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
         echo $xml_output;
     }
 

@@ -58,7 +58,7 @@ class ListComments {
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
 		$qb->setParameter ( 1, $event_id );
-error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		
+//error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		
 		$result_comment = $qb->getQuery ()->getResult ();
  		
 		$output .= '<comments>';
@@ -84,7 +84,7 @@ error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 					if (isset($json_array ['S3_files'] ['audio']) && !empty($json_array ['S3_files'] ['audio']) ){
 						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['audio'];					
 						$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
-error_log("audio_url-----> ".$audio_url.PHP_EOL);
+//error_log("audio_url-----> ".$audio_url.PHP_EOL);
 					}
 					
 					} else {
