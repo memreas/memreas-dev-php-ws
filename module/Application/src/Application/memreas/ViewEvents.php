@@ -230,11 +230,11 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                 $error_flag = 2;
                 $message = "No Record Found";
             } else {
-                $xml_output .= "<friends>";
                 $xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>My Friends Events List</message>";
                 $xml_output .= "<page>$page</page>";
                 
+                                $xml_output .= "<friends>";
 
                 foreach ($result_getfriendid as $k => $row_getfriendid) {
 
