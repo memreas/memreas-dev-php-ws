@@ -99,20 +99,20 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $qb = $this->dbAdapter->createQueryBuilder();
                         $qb->select('u.username', 'm.metadata');
                         $qb->from('Application\Entity\User', 'u');
-                        $qb->leftjoin('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
+                        $qb->join('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
                         $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
                         $qb->where('ef.event_id=?1 ');
-
+                        $qb->groupBy('u.username');
                         $qb->setParameter(1, $row->event_id);
+                        $qb->setMaxResults(5);
                         $query_ef_result = $qb->getQuery()->getResult();
-error_log("dql ----> ".$qb->getQuery()-getSQL().PHP_EOL);
-error_log("query_ef_result---->".json_encode($query_ef_result).PHP_EOL);
-                        
+
+                         
                         $xml_output .= '<event_friends>';
                         foreach ($query_ef_result as $efRow) {
                             $xml_output .= '<event_friend>';
-error_log("metadata---->".$efRow ['metadata'].PHP_EOL);
-                            $json_array = json_decode($efRow ['metadata'], true);
+
+                             $json_array = json_decode($efRow ['metadata'], true);
                             $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
                             if (!empty($json_array ['S3_files'] ['path']))
                                 $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
@@ -230,10 +230,11 @@ error_log("metadata---->".$efRow ['metadata'].PHP_EOL);
                 $error_flag = 2;
                 $message = "No Record Found";
             } else {
+                $xml_output .= "<friends>";
                 $xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>My Friends Events List</message>";
                 $xml_output .= "<page>$page</page>";
-                $xml_output .= "<friends>";
+                
 
                 foreach ($result_getfriendid as $k => $row_getfriendid) {
 
