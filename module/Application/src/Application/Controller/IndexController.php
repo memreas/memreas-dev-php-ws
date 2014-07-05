@@ -763,6 +763,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "removeeventfriend") {
                 $RemoveEventFriend = new RemoveEventFriend($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveEventFriend->exec();
+            }else if ($actionname == "removefriends") {
+                $RemoveFriends = new RemoveFriends($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $RemoveFriends->exec();
             }
 
             /*

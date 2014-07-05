@@ -72,6 +72,7 @@ echo "user_id ----> " . $user_id;
             var removeeventfriend = '<xml><removeeventfriend><event_id>1</event_id><friend_ids><friend_id>1</friend_id></friend_ids></removeeventfriend></xml>';	
             var removeeventmedia = '<xml><removeeventmedia><event_id>1</event_id><media_ids><media_id>1</media_id></media_ids></removeeventmedia></xml>';	
             var removefriendgroup = '<xml><removefriendgroup><group_id>1</group_id><friends><friend><friend_id>1</friend_id></friend><friend><friend_id>2</friend_id></friend></friends></removefriendgroup></xml>';	
+            var removefriends = '<xml><removefriends><user_id>1</user_id><friend_ids><friend_id>1</friend_id></friend_ids></removefriends></xml>';	
             var saveuserdetails = '<xml><saveuserdetails><user_id>1</user_id><email>email</email></saveuserdetails></xml>';	
             var signedurl = '<xml><signedurl><path>http://d1ckv7o9k6o3x9.cloudfront.net/0.jpg</path></signedurl></xml>';	
             var updatemedia = '<xml><updatemedia><media_id>1</media_id><location><address>125 Water Street New York, NY USA</address><latitude>55</latitude><longtitude>-33</longtitude></location></updatemedia></xml>';	
@@ -136,6 +137,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "memreas_tvm") { xml = memreas_tvm; }	
                     else if ($("#input_action").val() == "registerdevice") { xml = registerdevice; }	
                     else if ($("#input_action").val() == "removeeventfriend") { xml = removeeventfriend; }	
+                    else if ($("#input_action").val() == "removefriends") { xml = removefriends; }	
                     else if ($("#input_action").val() == "removeeventmedia") { xml = removeeventmedia; }	
                     else if ($("#input_action").val() == "removefriendgroup") { xml = removefriendgroup; }	
                     else if ($("#input_action").val() == "saveuserdetails") { xml = saveuserdetails; }	
@@ -235,6 +237,7 @@ echo "user_id ----> " . $user_id;
 							<option>registerdevice</option>
 							<option>registration</option>
 							<option>removeeventfriend</option>
+							<option>removefriends</option>
 							<option>removeeventmedia</option>
 							<option>removefriendgroup</option>
 							<option>saveuserdetails</option>
