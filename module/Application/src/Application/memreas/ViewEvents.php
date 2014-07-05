@@ -215,22 +215,21 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
             $qb->select('u');
             $qb->from('Application\Entity\UserFriend', 'uf');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = uf.friend_id');
-
-
-            $qb->andwhere("uf.user_id = '$user_id'");
-            $qb->andwhere("uf.user_approve = '1'");
-
-
-
+            //$qb->from('Application\Entity\EventFriend', 'ef');
+            //$qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = uf.friend_id');
+            $qb->andwhere("ef.user_id = '".$user_id."'");
+            $qb->andwhere("ef.user_approve = '1'");
             $qb->setMaxResults($limit);
             $qb->setFirstResult($from);
             $result_getfriendid = $qb->getQuery()->getResult();
-            // error_log($qb->getQuery ()->getSql());
+//error_log("Inside viewevents dql ----> ".$qb->getQuery()->getSql().PHP_EOL);
             if (empty($result_getfriendid)) {
-                $error_flag = 2;
+//error_log("Inside viewevents friends ... error empty result");
+            	$error_flag = 2;
                 $message = "No Record Found";
             } else {
-                $xml_output .= "<status>Success</status>";
+//error_log("Inside viewevents friends ... found result");
+            	$xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>My Friends Events List</message>";
                 $xml_output .= "<page>$page</page>";
                 
@@ -589,7 +588,7 @@ error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
 
         $xml_output .= '</viewevents>';
         $xml_output .= '</xml>';
-//error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
+error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
         echo $xml_output;
     }
 

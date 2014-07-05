@@ -34,9 +34,10 @@ class UpdateNotification {
 	public function exec($frmweb = '') {
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
+error_log("UpdateNotification::_POST ['xml']--->".$_POST ['xml'].PHP_EOL);
 		} else {
-			
 			$data = json_decode ( json_encode ( $frmweb ) );
+error_log("UpdateNotification::frmweb--->".$frmweb.PHP_EOL);
 		}
 		$message = '';
 		$time = time ();
@@ -64,6 +65,7 @@ class UpdateNotification {
 					$tblNotification->update_time = $time;
 					
 					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT ){
+error_log("UpdateNotification::ADD_FRIEND_TO_EVENT".PHP_EOL);						
 						$friend_id=$tblNotification->user_id;
 						$json_data = json_decode($tblNotification->links,true);
 
@@ -74,16 +76,18 @@ class UpdateNotification {
                          					->findOneBy(array('event_id' => $json_data['event_id'] ,'friend_id' => $friend_id)); 					               				
                         $eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data['event_id'] );
                          if($UserFriend){
-                        	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
+error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if userfriend...status is $status".PHP_EOL);						
+                         	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
                         	//accepted
                         	if($status == 1){
-                        		$UserFriend->user_approve = 1;            $this->dbAdapter->persist ( $UserFriend );
-
-                        		$EventFriend->user_approve =1;
-                        		 $this->dbAdapter->persist ( $EventFriend );
+                        		$UserFriend->user_approve = 1;            
+                        		$this->dbAdapter->persist ( $UserFriend );
+                        		$EventFriend->user_approve = 1;
+                        		$this->dbAdapter->persist ( $EventFriend );
                         		$nmessage = $userOBj->username . ' Accepted ' . $eventOBj->name .' ' . $notification_message;
+error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if status==1 ... just set event_friend".PHP_EOL);						
                         	}
-                        	 //ignored
+                        	//ignored
                         	if($status == 2){
                         	 	$nmessage = $userOBj->username . ' Ignored ' . $eventOBj->name .' ' . $notification_message;
                         	}
@@ -114,6 +118,7 @@ class UpdateNotification {
 					}
 						
 					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND ){
+error_log("UpdateNotification::ADD_FRIEND".PHP_EOL);						
 						$friend_id=$tblNotification->user_id;
 						$json_data = json_decode($tblNotification->links,true);
 
