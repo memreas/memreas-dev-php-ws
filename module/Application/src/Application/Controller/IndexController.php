@@ -80,6 +80,7 @@ use Application\memreas\FeedBack;
 use Application\memreas\GetEventDetails;
 use Application\memreas\RemoveEventMedia;
 use Application\memreas\RemoveEventFriend;
+use Application\memreas\RemoveFriends;
 
 
 class IndexController extends AbstractActionController {
