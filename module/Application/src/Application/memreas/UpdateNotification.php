@@ -138,7 +138,8 @@ class UpdateNotification {
                         		/*
                         		 * TODO : If the receiver accepts thes add the sender as a friend of the receiver  
                         		 */
-                        		$tblFriend = new \Application\Entity\Friend();
+                        		
+/*                         		$tblFriend = new \Application\Entity\Friend();
                         		$tblFriend->friend_id = $user_id;
                         		$tblFriend->network = 'memreas';
                         		$tblFriend->social_username = "";
@@ -159,7 +160,7 @@ class UpdateNotification {
                         			error_log("Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL);
                         			$status = 'failure';
                         			$error = 1;
-                        		}
+                        		} */
                         		
                         		$tblUserFriend = new \Application\Entity\UserFriend ();
                         		$tblUserFriend->friend_id = $friend_id;
