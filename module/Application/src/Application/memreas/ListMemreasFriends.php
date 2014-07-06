@@ -50,7 +50,7 @@ class ListMemreasFriends {
         $qb = $this->dbAdapter->createQueryBuilder ();
         $qb->select ( 'f' );
         $qb->from ( 'Application\Entity\Friend', 'f' );
-        $qb->where ( "f.network='memreas'" );
+        $qb->where ( "LOWER(f.network)='memreas'" );
 
         $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
                 ->andwhere("uf.user_approve = '1'")

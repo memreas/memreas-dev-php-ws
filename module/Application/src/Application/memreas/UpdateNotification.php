@@ -15,10 +15,10 @@ class UpdateNotification {
 	protected $dbAdapter;
 	protected $notification;
 	public $user_id;
-		protected $AddNotification;
+	protected $AddNotification;
 
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-		error_log ( "Inside UpdateNotification __construct..." );
+//error_log ( "Inside UpdateNotification __construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
@@ -34,10 +34,10 @@ class UpdateNotification {
 	public function exec($frmweb = '') {
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
-error_log("UpdateNotification::_POST ['xml']--->".$_POST ['xml'].PHP_EOL);
+//error_log("UpdateNotification::_POST ['xml']--->".$_POST ['xml'].PHP_EOL);
 		} else {
 			$data = json_decode ( json_encode ( $frmweb ) );
-error_log("UpdateNotification::frmweb--->".$frmweb.PHP_EOL);
+//error_log("UpdateNotification::frmweb--->".$frmweb.PHP_EOL);
 		}
 		$message = '';
 		$time = time ();
@@ -65,7 +65,7 @@ error_log("UpdateNotification::frmweb--->".$frmweb.PHP_EOL);
 					$tblNotification->update_time = $time;
 					
 					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT ){
-error_log("UpdateNotification::ADD_FRIEND_TO_EVENT".PHP_EOL);						
+//error_log("UpdateNotification::ADD_FRIEND_TO_EVENT".PHP_EOL);						
 						$friend_id=$tblNotification->user_id;
 						$json_data = json_decode($tblNotification->links,true);
 
@@ -76,7 +76,7 @@ error_log("UpdateNotification::ADD_FRIEND_TO_EVENT".PHP_EOL);
                          					->findOneBy(array('event_id' => $json_data['event_id'] ,'friend_id' => $friend_id)); 					               				
                         $eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data['event_id'] );
                          if($UserFriend){
-error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if userfriend...status is $status".PHP_EOL);						
+//error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if userfriend...status is $status".PHP_EOL);						
                          	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
                         	//accepted
                         	if($status == 1){
@@ -85,7 +85,7 @@ error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if userfriend...statu
                         		$EventFriend->user_approve = 1;
                         		$this->dbAdapter->persist ( $EventFriend );
                         		$nmessage = $userOBj->username . ' Accepted ' . $eventOBj->name .' ' . $notification_message;
-error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if status==1 ... just set event_friend".PHP_EOL);						
+//error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if status==1 ... just set event_friend".PHP_EOL);						
                         	}
                         	//ignored
                         	if($status == 2){
@@ -118,7 +118,7 @@ error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if status==1 ... just
 					}
 						
 					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND ){
-error_log("UpdateNotification::ADD_FRIEND".PHP_EOL);						
+//error_log("UpdateNotification::ADD_FRIEND".PHP_EOL);						
 						$friend_id=$tblNotification->user_id;
 						$json_data = json_decode($tblNotification->links,true);
 
@@ -134,6 +134,49 @@ error_log("UpdateNotification::ADD_FRIEND".PHP_EOL);
                         		$UserFriend->user_approve = 1;
                         		 $this->dbAdapter->persist ( $UserFriend );
                         		$nmessage = $userOBj->username . ' Accepted Friend Request' .' ' . $notification_message;
+                        		
+                        		/*
+                        		 * TODO : If the receiver accepts thes add the sender as a friend of the receiver  
+                        		 */
+                        		$tblFriend = new \Application\Entity\Friend();
+                        		$tblFriend->friend_id = $user_id;
+                        		$tblFriend->network = 'memreas';
+                        		$tblFriend->social_username = "";
+                        		$tblFriend->url_image = "";
+                        		$tblFriend->create_date = $time;
+                        		$tblFriend->update_date = $time;
+                        		
+                        		$tblUserFriend = new \Application\Entity\UserFriend ();
+                        		$tblUserFriend->friend_id = $user_id;
+                        		$tblUserFriend->user_id = $friend_id;
+                        		
+                         		try {
+                        			$this->dbAdapter->persist($tblFriend);
+                        			$this->dbAdapter->persist($tblUserFriend);
+                        			$this->dbAdapter->flush();
+                        			//error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
+                        		} catch (\Exception $exc) {
+                        			error_log("Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL);
+                        			$status = 'failure';
+                        			$error = 1;
+                        		}
+                        		
+                        		$tblUserFriend = new \Application\Entity\UserFriend ();
+                        		$tblUserFriend->friend_id = $friend_id;
+                        		$tblUserFriend->user_id = $user_id;
+                        		
+                        		try {
+                        			$this->dbAdapter->persist($tblUserFriend);
+                        			$this->dbAdapter->flush();
+                        			$sendMessage=1;
+                        			$message .= 'User Friend Successfully added';
+                        			$status = 'Success';
+                        		} catch (\Exception $exc) {
+                        			$status = 'Failure';
+                        			$error = 1;
+                        		}
+                        		
+                        		
                         	}
                         	 //ignored
                         	if($status == 2){

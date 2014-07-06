@@ -19,7 +19,7 @@ class AddFriendtoevent {
     protected $AddNotification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
-        error_log("Enter AddFriendtoevent.__construct()" . PHP_EOL);
+//error_log("Enter AddFriendtoevent.__construct()" . PHP_EOL);
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
@@ -31,22 +31,22 @@ class AddFriendtoevent {
             $this->notification = new Notification($service_locator);
         }
         // $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
-        error_log("Exit AddFriendtoevent.__construct()" . PHP_EOL);
+//error_log("Exit AddFriendtoevent.__construct()" . PHP_EOL);
     }
 
     public function exec($frmweb = '') {
-error_log("Enter AddFriendtoevent.exec()" . PHP_EOL);
+//error_log("Enter AddFriendtoevent.exec()" . PHP_EOL);
 
         if (empty($frmweb)) {
             $data = simplexml_load_string($_POST ['xml']);
-error_log("Enter AddFriendtoevent.exec() xml ----> " . $_POST ['xml'] . PHP_EOL);
+//error_log("Enter AddFriendtoevent.exec() xml ----> " . $_POST ['xml'] . PHP_EOL);
         } else {
             $data = simplexml_load_string($frmweb);
-error_log("Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL);
+//error_log("Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL);
         }
 
         $friend_array = $data->addfriendtoevent->friends->friend;
-error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_array) . PHP_EOL);
+//error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_array) . PHP_EOL);
         $user_id = (trim($data->addfriendtoevent->user_id));
         $event_id = (trim($data->addfriendtoevent->event_id));
         $group_array = (trim($data->addfriendtoevent->groups));
@@ -69,7 +69,7 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
 
         // add group to event_group
         if (!empty($group_array) && !$error) {
-error_log("Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL);
+//error_log("Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL);
             foreach ($group_array as $key => $value) {
                 $group_id = $value->group->group_id;
                 if ($group_id != 'null') {
@@ -98,8 +98,8 @@ error_log("Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL);
         // add friends to event loop
         if (!empty($friend_array) && !$error) {
             foreach ($friend_array as $key => $value) {
-error_log("AddFriendtoevent.exec() key ----> $key".PHP_EOL);
-error_log("AddFriendtoevent.exec() value ----> $value".PHP_EOL);
+//error_log("AddFriendtoevent.exec() key ----> $key".PHP_EOL);
+//error_log("AddFriendtoevent.exec() value ----> $value".PHP_EOL);
 				$network_name = addslashes(trim($value->network_name));
                 $friend_name = addslashes(trim($value->friend_name));
                 $friend_id = trim($value->friend_id);
@@ -107,19 +107,17 @@ error_log("AddFriendtoevent.exec() value ----> $value".PHP_EOL);
                 $friend_query = "select f.friend_id ,f.network from Application\Entity\Friend f where f.network='$network_name' and f.friend_id='$friend_id'";
                 $statement = $this->dbAdapter->createQuery($friend_query);
                 $result_friend = $statement->getOneOrNullResult();
-error_log("AddFriendtoevent.exec() network_name ----> " . $network_name . PHP_EOL);
-error_log("AddFriendtoevent.exec() friend_name ----> " . $friend_name . PHP_EOL);
-error_log("AddFriendtoevent.exec() friend_id ----> " . $friend_id . PHP_EOL);
-error_log("AddFriendtoevent.exec() profile_pic_url ----> " . $profile_pic_url . PHP_EOL);
+//error_log("AddFriendtoevent.exec() network_name ----> " . $network_name . PHP_EOL);
+//error_log("AddFriendtoevent.exec() friend_name ----> " . $friend_name . PHP_EOL);
+//error_log("AddFriendtoevent.exec() friend_id ----> " . $friend_id . PHP_EOL);
+//error_log("AddFriendtoevent.exec() profile_pic_url ----> " . $profile_pic_url . PHP_EOL);
 				// add to friend
                 if ($result_friend) {
                     $friend_id = $result_friend ['friend_id'];
                     $network_name = $result_friend ['network'];
                 } else {
-                    error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
-                    // //
-
-                    if ($network_name == 'memreas') {
+//error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
+                	if ($network_name == 'memreas') {
                         $r = $this->dbAdapter->getRepository('Application\Entity\User')->findOneBy(array(
                             'username' => $friend_name,
                             'disable_account' => 0
@@ -129,14 +127,12 @@ error_log("AddFriendtoevent.exec() profile_pic_url ----> " . $profile_pic_url . 
                             $error = 1;
                             $message .= 'Friend Not Found';
                         } else {
-error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
-
+//error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
                             $friend_id = $r->user_id;
                             $fr = $this->dbAdapter->getRepository('Application\Entity\Friend')->findOneBy(array(
                                 'friend_id' => $friend_id
                                     ));
                         }
-
                        //check record exist in friend
                     }
 
@@ -145,11 +141,11 @@ error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
                      */
                     if (empty($fr) && !empty($friend_id)) {
                     	
-                                            /*
-                    	 * TODO: Need to get proper profile url here ... and remove from input xml
+                        /*
+                    	 * TODO: Need to get proper profile url here
                     	 */
                     	try {
-error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
+//error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                     		$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
 	                    			'user_id' => $friend_id,
 	                    			'is_profile_pic' => '1'
@@ -157,7 +153,7 @@ error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
 	                    	$metadata = $profile_pic->metatdata;
 	                    	$profile_image = json_decode($metadata, true);
 	                    	$profile_pic_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
-error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
+//error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL);
                     	}
@@ -173,14 +169,13 @@ error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
                         try {
                             $this->dbAdapter->persist($tblFriend);
                             $this->dbAdapter->flush();
-                            error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
+//error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
                         } catch (\Exception $exc) {
-
                             error_log("Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL);
                             $status = 'failure';
                             $error = 1;
                         }
-                        error_log("Inserted friend table ---> $friend_id" . PHP_EOL);
+//error_log("Inserted friend table ---> $friend_id" . PHP_EOL);
                     }
                 } // end if ($result_friend) else
 
@@ -341,7 +336,7 @@ error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
             try {
                 $aws_manager->sendSeSMail($to, $subject, $html);
             } catch (\Exception $exc) {
-                error_log('exception->sendig mail' . $exc->getMessage());
+                error_log('exception->sending mail' . $exc->getMessage());
                 $message = 'Unable to send email';
             }
         }

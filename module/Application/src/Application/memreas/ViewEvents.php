@@ -100,7 +100,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $qb->select('u.username', 'm.metadata');
                         $qb->from('Application\Entity\User', 'u');
                         $qb->join('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
-                        $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
+                        //$qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
                         $qb->where('ef.event_id=?1 ');
                         $qb->groupBy('u.username');
                         $qb->setParameter(1, $row->event_id);
@@ -112,7 +112,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         foreach ($query_ef_result as $efRow) {
                             $xml_output .= '<event_friend>';
 
-                             $json_array = json_decode($efRow ['metadata'], true);
+                            $json_array = json_decode($efRow ['metadata'], true);
                             $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
                             if (!empty($json_array ['S3_files'] ['path']))
                                 $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
@@ -215,29 +215,24 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
             $qb->select('u');
             $qb->from('Application\Entity\UserFriend', 'uf');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = uf.friend_id');
-            //$qb->from('Application\Entity\EventFriend', 'ef');
-            //$qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = uf.friend_id');
-            $qb->andwhere("ef.user_id = '".$user_id."'");
-            $qb->andwhere("ef.user_approve = '1'");
+            $qb->andwhere("uf.user_id = '".$user_id."'");
+            $qb->andwhere("uf.user_approve = '1'");
             $qb->setMaxResults($limit);
             $qb->setFirstResult($from);
             $result_getfriendid = $qb->getQuery()->getResult();
-//error_log("Inside viewevents dql ----> ".$qb->getQuery()->getSql().PHP_EOL);
+error_log("Inside viewevents dql ----> ".$qb->getQuery()->getSql().PHP_EOL);
             if (empty($result_getfriendid)) {
-//error_log("Inside viewevents friends ... error empty result");
+error_log("Inside viewevents friends ... error empty result");
             	$error_flag = 2;
                 $message = "No Record Found";
             } else {
-//error_log("Inside viewevents friends ... found result");
+error_log("Inside viewevents friends ... found result");
             	$xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>My Friends Events List</message>";
                 $xml_output .= "<page>$page</page>";
-                
-                                $xml_output .= "<friends>";
+                $xml_output .= "<friends>";
 
                 foreach ($result_getfriendid as $k => $row_getfriendid) {
-
-
                     //get user event
                     $q_friendsevent = "select event.event_id, event.name, event.friends_can_share, event.friends_can_post
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event
@@ -245,11 +240,11 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                     and  (event.self_destruct >=" . $date . " or event.self_destruct='')
-                    and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
-
+                    and event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
+                    //and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
+error_log("q_friendsevent ----> $q_friendsevent".PHP_EOL);
                     $statement = $this->dbAdapter->createQuery($q_friendsevent);
                     $result_friendevent = $statement->getArrayResult();
-
 
                     $user_id = null;
                     $array = array();
