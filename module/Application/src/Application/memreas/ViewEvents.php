@@ -99,14 +99,14 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $qb = $this->dbAdapter->createQueryBuilder();
                         $qb->select('u.username', 'm.metadata');
                         $qb->from('Application\Entity\User', 'u');
-                        //$qb->join('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
+                        $qb->join('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
                         $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
                         $qb->where('ef.event_id=?1 ');
                         $qb->groupBy('u.username');
                         $qb->setParameter(1, $row->event_id);
                         $qb->setMaxResults(5);
                         $query_ef_result = $qb->getQuery()->getResult();
-
+//error_log("qb->getQuery()->getSQL() ----> ".$qb->getQuery()->getSQL().PHP_EOL);
                          
                         $xml_output .= '<event_friends>';
                         foreach ($query_ef_result as $efRow) {
