@@ -17,7 +17,7 @@ class AddFriendtoevent {
     protected $dbAdapter;
     protected $notification;
     protected $AddNotification;
-
+ 
     public function __construct($message_data, $memreas_tables, $service_locator) {
 //error_log("Enter AddFriendtoevent.__construct()" . PHP_EOL);
         $this->message_data = $message_data;

@@ -53,9 +53,9 @@ class ListMemreasFriends {
         $qb->where ( "LOWER(f.network)='memreas'" );
 
         $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
-                ->andwhere("uf.user_approve = '1'")
-                ->andwhere("uf.user_id = '$user_id'")
-                ->orWhere("uf.friend_id = '$user_id'");
+                ->andwhere("uf.user_approve = '1'");
+                //error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);     
+
         $result = $qb->getQuery ()->getResult ();
         if (empty($result)) {
             $status = "Failure";
