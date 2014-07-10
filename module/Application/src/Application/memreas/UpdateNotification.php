@@ -203,6 +203,8 @@ class UpdateNotification {
 
 public function addFriendRevRec($user_id,$friend_id)
 {
+									$time = time ();
+
 								/*
                         		 * If the receiver accepts thes add the sender as a friend of the receiver  
                         		 */
