@@ -61,7 +61,7 @@ class UpdateMedia {
 			unset($metadata["S3_files"]["location"]);
             $metadata["S3_files"]["location"]["address"] = $address;
 			$metadata["S3_files"]["location"]["latitude"] = $latitude;
-            $metadata["S3_files"]["location"]["longtitude"] = $longtitude;
+            $metadata["S3_files"]["location"]["longitude"] = $longtitude;
             $metadata = json_encode($metadata);
                         
             $media = $media[0];
