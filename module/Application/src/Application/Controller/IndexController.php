@@ -456,7 +456,10 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
 
                         //filter record
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-                        $user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
+                        //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
+                        if (isset($this->findtag->user_id))
+                            $user_id = $this->findtag->user_id;
+                        else $user_id = 0;
                         $qb = $em->createQueryBuilder ();
                         $qb->select ( 'f.friend_id' );
                         $qb->from ( 'Application\Entity\Friend', 'f' );
