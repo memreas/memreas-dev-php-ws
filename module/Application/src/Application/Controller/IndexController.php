@@ -466,20 +466,23 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         $qb->where ( "f.network='memreas'" );
 
                         $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
-                                ->andwhere("uf.user_approve = '1'")
+                                ->andwhere("uf.user_approve != '1'")
                                 ->andwhere("uf.user_id = '$user_id'");
 
                         $UserFriends = $qb->getQuery ()->getResult ();
 
-                         $chkUserFriend = array($user_id=>'');
+                         $chkUserFriend = array();
                         foreach ($UserFriends as $ufRow) {
                             $chkUserFriend[$ufRow['friend_id']]='';
                         }
-                         foreach ($mc as $uk => $pr) {
-                            if(isset($chkUserFriend[$uk])) continue;
+                        foreach ($mc as $uk => $pr) {
                             if (stripos($pr['username'], $search) !== false) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $pr['username'] = '@' . $pr['username'];
+                                   
+                                    if(isset($chkUserFriend[$uk])){
+                                            $pr['friend_request_sent']=1;
+                                    } ;
                                     $search_result[] = $pr;
                                 }
                                 $rc+=1;
