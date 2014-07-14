@@ -182,7 +182,7 @@ error_log("signed url -----> ".$path.PHP_EOL);
 					    if (isset ( $data->listallmedia->metadata )) {
 						    // error_log("Inside metadata...".PHP_EOL);
 						    // error_log("Inside metadata ----> ".$row['metadata'].PHP_EOL);
-						    $xml_output .= "<metadata>" . $row ['metadata'] . "</metadata>";
+						    $xml_output .= "<metadata><![CDATA[" . $row ['metadata'] . "]]></metadata>";
 					    }
 
 					    $xml_output .= "<event_media_video_thum>";
