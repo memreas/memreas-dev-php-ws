@@ -41,7 +41,7 @@ class UpdateMedia {
 
         $address = (isset($data->updatemedia->location->address) && !empty ($data->updatemedia->location->address) ) ? trim( $data->updatemedia->location->address ) : "";
         $latitude = (isset($data->updatemedia->location->latitude) && !empty ($data->updatemedia->location->latitude) ) ? trim( $data->updatemedia->location->latitude ) : "";
-        $longtitude = (isset($data->updatemedia->location->longtitude) && !empty ($data->updatemedia->location->longtitude) ) ? trim( $data->updatemedia->location->longtitude ) : "";
+        $longitude = (isset($data->updatemedia->location->longitude) && !empty ($data->updatemedia->location->longitude) ) ? trim( $data->updatemedia->location->longitude ) : "";
 
         $query = $this->dbAdapter->createQueryBuilder();
         $query->select("m")
@@ -61,7 +61,7 @@ class UpdateMedia {
 			unset($metadata["S3_files"]["location"]);
             $metadata["S3_files"]["location"]["address"] = $address;
 			$metadata["S3_files"]["location"]["latitude"] = $latitude;
-            $metadata["S3_files"]["location"]["longitude"] = $longtitude;
+            $metadata["S3_files"]["location"]["longitude"] = $longitude;
             $metadata = json_encode($metadata);
                         
             $media = $media[0];

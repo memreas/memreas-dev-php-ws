@@ -97,8 +97,8 @@ class ViewMediadetails {
             $resource = $statement->getResult();
             $metadata = json_decode($resource[0]['metadata']);
             $location = $metadata->S3_files->location;
-            if (isset($location->longtitude) && !empty($location->longtitude)) {
-                $longitude = $location->longtitude;
+            if (isset($location->longitude) && !empty($location->longitude)) {
+                $longitude = $location->longitude;
                 $latitude = $location->latitude;
             }
             else {
@@ -132,7 +132,7 @@ class ViewMediadetails {
 		$xml_output .= "<last_comment>$last_comment</last_comment>";
 		$xml_output .= (! empty ( $path )) ? "<audio_url>" . CLOUDFRONT_DOWNLOAD_HOST . $path . "</audio_url>" : "<audio_url></audio_url>";
 		$xml_output .= "<last_audiotext_comment>$audio_text</last_audiotext_comment>";
-        $xml_output .= "<location><longtitude>{$longitude}</longtitude><latitude>{$latitude}</latitude></location>";
+        $xml_output .= "<location><longitude>{$longitude}</longitude><latitude>{$latitude}</latitude></location>";
 		$xml_output .= "</viewmediadetailresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
