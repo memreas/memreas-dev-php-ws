@@ -476,7 +476,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             $chkUserFriend[$ufRow['friend_id']]='';
                         }
                         foreach ($mc as $uk => $pr) {
+
                             if (stripos($pr['username'], $search) !== false) {
+                                if($uk == $user_id) continue;
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $pr['username'] = '@' . $pr['username'];
                                    
