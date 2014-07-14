@@ -425,6 +425,8 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             } else if ($actionname == "findtag") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $tag = (trim($data->findtag->tag));
+                $user_id = (trim($data->findtag->user_id));
+                $user_id = empty($user_id)?0:$user_id;
                 $a = $tag[0];
                 $search = substr($tag, 1);
 
@@ -457,9 +459,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         //filter record
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
-                        if (isset($this->findtag->user_id))
-                            $user_id = $this->findtag->user_id;
-                        else $user_id = 0;
+                        
                         $qb = $em->createQueryBuilder ();
                         $qb->select ( 'f.friend_id' );
                         $qb->from ( 'Application\Entity\Friend', 'f' );
@@ -475,8 +475,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         foreach ($UserFriends as $ufRow) {
                             $chkUserFriend[$ufRow['friend_id']]='';
                         }
-
-                        foreach ($mc as $uk => $pr) {
+                         foreach ($mc as $uk => $pr) {
                             if(isset($chkUserFriend[$uk])) continue;
                             if (stripos($pr['username'], $search) !== false) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
