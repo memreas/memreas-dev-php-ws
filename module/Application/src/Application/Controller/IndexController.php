@@ -456,6 +456,22 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             $this->elasticache->setCache("@person", $mc);
                         }
 
+                        $user_ids = array();
+                        foreach ($mc as $uk => $pr) {
+
+                            if (stripos($pr['username'], $search) !== false) {
+                                if($uk == $user_id) continue;
+                                if ($rc >= $from && $rc < ($from + $limit)) {
+                                    $pr['username'] = '@' . $pr['username'];
+                                   
+                                   
+                                    $search_result[] = $pr;
+                                    $user_ids[]= $uk;
+                                }
+                                $rc+=1;
+                            }
+                        }
+
                         //filter record
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
@@ -467,29 +483,21 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
 
                         $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
                                 ->andwhere("uf.user_approve != '1'")
-                                ->andwhere("uf.user_id = '$user_id'");
+                                ->andwhere("uf.user_id = '$user_id'")
+                                ->andwhere('uf.friend_id IN (:f)')
+                                ->setParameter('f', $user_ids );
+
 
                         $UserFriends = $qb->getQuery ()->getResult ();
-
-                         $chkUserFriend = array();
+                        $chkUserFriend = array();
                         foreach ($UserFriends as $ufRow) {
                             $chkUserFriend[$ufRow['friend_id']]='';
                         }
-                        foreach ($mc as $uk => $pr) {
-
-                            if (stripos($pr['username'], $search) !== false) {
-                                if($uk == $user_id) continue;
-                                if ($rc >= $from && $rc < ($from + $limit)) {
-                                    $pr['username'] = '@' . $pr['username'];
-                                   
-                                    if(isset($chkUserFriend[$uk])){
-                                            $pr['friend_request_sent']=1;
+                        foreach ($search_result as $k => &$srRow) {
+                             if(isset($chkUserFriend[$user_ids[$k]])){
+                                            $srRow['friend_request_sent']=1;
                                     } ;
-                                    $search_result[] = $pr;
-                                }
-                                $rc+=1;
-                            }
-                        }
+                         }
                         $result['totalPage'] =ceil($rc / $limit);
                         $result['count'] = $rc;
                         $result['search'] = $search_result;
@@ -510,14 +518,40 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             $this->elasticache->setCache("!event", $mc);
                         }
                         $search_result = array();
+                        $event_ids = array();
                          foreach ($mc as $er) {
                             if (stripos($er['name'], $search) === 0) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $er['name'] = '!' . $er['name'];
                                     $search_result[] = $er;
+                                    $event_ids[]=$er['event_id'];
                                 }
                                $rc+=1;
                             }
+                        }
+                         //filter record
+                        $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
+                        //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
+                        $qb = $em->createQueryBuilder ();
+                        $qb->select ( 'ef' );
+                        $qb->from ( 'Application\Entity\EventFriend', 'ef' );
+                        $qb->andWhere('ef.event_id IN (:e)')
+                            ->andWhere('ef.friend_id =:f')
+                            ->andWhere('ef.user_approve != 1')
+                            ->setParameter('f', $user_id )
+                            ->setParameter('e', $event_ids );
+                                 
+
+                        $EventFriends = $qb->getQuery ()->getArrayResult();
+                      
+                         $chkEventFriend = array();
+                        foreach ($EventFriends as $efRow) {
+                            $chkEventFriend[$efRow['friend_id']]='';
+                        }
+                         foreach ($search_result as &$srRow) {
+                           if(isset($chkEventFriend[$srRow['user_id']])){
+                            $srRow['event_request_sent'] =1;
+                           }
                         }
 
                         $result['count']  = $rc;
@@ -541,6 +575,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             $this->elasticache->setCache("#tag", $mc);
                         }
                         $search_result = array();
+
 
                         foreach ($mc as $k => $er) {
                             if (stripos($er['name'], $search) !== false) {
