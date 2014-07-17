@@ -72,7 +72,7 @@ class AddExistMediaToEvent {
                 }
             }
             $status = 'Success';
-            $message = 'Medias successfully added';
+            $message = 'Medias successfully updated';
         }
 
 
