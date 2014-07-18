@@ -82,6 +82,7 @@ use Application\memreas\RemoveEventMedia;
 use Application\memreas\RemoveEventFriend;
 use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
+use Application\memreas\GetPlans;
 
 
 class IndexController extends AbstractActionController {
@@ -813,6 +814,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getfriends") {
                 $GetFriends = new GetFriends($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetFriends->exec();
+            }else if ($actionname == "getplans") {
+                $GetPlans = new GetPlans($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetPlans->exec();
             }
 
             /*

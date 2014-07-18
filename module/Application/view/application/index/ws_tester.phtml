@@ -81,6 +81,7 @@ echo "user_id ----> " . $user_id;
             var viewevents ='<xml><viewevent><user_id>1</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>2</page><limit>2</limit></viewevent></xml>';	
             var viewmediadetails= '<xml><viewmediadetails><media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id></viewmediadetails></xml>';	
             var getfriends = '<xml><getfriends><user_id>1</user_id></getfriends></xml>';
+            var getplans = '<xml><getplans><user_id>1</user_id></getplans></xml>';
 
             $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
@@ -153,6 +154,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "viewmediadetails") { xml = viewmediadetails; }	
 					else if ($("#input_action").val() == "registration") { xml = registration; } 
 					else if ($("#input_action").val() == "getfriends") { xml = getfriends; }
+					else if ($("#input_action").val() == "getplans") { xml = getplans; }
                 	$("#action_input").val(xml);
                 });
             });
@@ -253,6 +255,7 @@ echo "user_id ----> " . $user_id;
 							<option>viewevents</option>
 							<option>viewmediadetails</option>
 							<option>getfriends</option>
+							<option>getplans</option>
 						</select>
 
 					</tr>
