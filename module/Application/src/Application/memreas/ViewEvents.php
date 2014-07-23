@@ -240,7 +240,8 @@ error_log("Inside viewevents friends ... found result");
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                     and  (event.self_destruct >=" . $date . " or event.self_destruct='')
-                    and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
+                    and event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
+                    //and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
 error_log("q_friendsevent ----> $q_friendsevent".PHP_EOL);
                     $statement = $this->dbAdapter->createQuery($q_friendsevent);
                     $result_friendevent = $statement->getArrayResult();
