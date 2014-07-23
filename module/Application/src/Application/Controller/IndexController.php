@@ -479,12 +479,12 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
                         
                         $qb = $em->createQueryBuilder ();
-                        $qb->select ( 'f.friend_id' );
+                        $qb->select ( 'f.friend_id,uf.user_approve' );
                         $qb->from ( 'Application\Entity\Friend', 'f' );
                         $qb->where ( "f.network='memreas'" );
 
                         $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
-                                ->andwhere("uf.user_approve != '1'")
+                               // ->andwhere("uf.user_approve != '1'")
                                 ->andwhere("uf.user_id = '$user_id'")
                                 ->andwhere('uf.friend_id IN (:f)')
                                 ->setParameter('f', $user_ids );
@@ -493,10 +493,14 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         $UserFriends = $qb->getQuery ()->getResult ();
                         $chkUserFriend = array();
                         foreach ($UserFriends as $ufRow) {
-                            $chkUserFriend[$ufRow['friend_id']]='';
+                            $chkUserFriend[$ufRow['friend_id']]=$ufRow['user_approve'];
                         }
                         foreach ($search_result as $k => &$srRow) {
-                             if(isset($chkUserFriend[$user_ids[$k]])){
+                                if(isset($chkUserFriend[$user_ids[$k]])){
+                                    if($chkUserFriend[$user_ids[$k]]== 1){
+                                    unset($search_result[$k]);
+                                    continue;
+                                    } 
                                             $srRow['friend_request_sent']=1;
                                     } ;
                          }
