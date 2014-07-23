@@ -249,7 +249,18 @@ error_log("q_friendsevent ----> $q_friendsevent".PHP_EOL);
                     $user_id = null;
                     $array = array();
 
-                    $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+                    $profile = $this->dbAdapter->createQueryBuilder()
+                        ->select('m')
+                        ->from('Application\Entity\Media', 'm')
+                        ->where("m.user_id = '{$row_getfriendid->user_id}' AND m.is_profile_pic = 1")
+                        ->getQuery()->getResult();
+
+                    if (!empty($profile)){
+                        $profile_image = json_decode($profile[0]->metadata, true);
+                        $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                    }
+                    else $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+
                     $pic_79x80 = '';
                     $pic_448x306 = '';
                     $pic_98x78 = '';
@@ -424,7 +435,19 @@ error_log("query ----> ".$q.PHP_EOL);
                 $xml_output .= "<page>$page</page>";
 
                 foreach ($result_pub as $row3) {
-                    $pic = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+
+                    $profile = $this->dbAdapter->createQueryBuilder()
+                        ->select('m')
+                        ->from('Application\Entity\Media', 'm')
+                        ->where("m.user_id = '{$row3['user_id']}' AND m.is_profile_pic = 1")
+                        ->getQuery()->getResult();
+
+                    if (!empty($profile)){
+                        $profile_image = json_decode($profile[0]->metadata, true);
+                        $pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                    }
+                    else $pic = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+
                     $xml_output .= "<friend>";
                     $xml_output .= "<event_creator>" . $row3 ['username'] . "</event_creator>";
 //error_log("json row3------>".json_encode($row3).PHP_EOL);
