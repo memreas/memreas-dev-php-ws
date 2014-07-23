@@ -233,15 +233,14 @@ error_log("Inside viewevents friends ... found result");
                 $xml_output .= "<friends>";
 
                 foreach ($result_getfriendid as $k => $row_getfriendid) {
-                    //get user event
+                    //get friend's events
                     $q_friendsevent = "select event.event_id, event.name, event.friends_can_share, event.friends_can_post
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event
                     where event.event_id=event_friend.event_id
                     and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
                     and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                     and  (event.self_destruct >=" . $date . " or event.self_destruct='')
-                    and event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
-                    //and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
+                    and event_friend.friend_id='" . $row_getfriendid->user_id . "' ORDER BY event.create_time DESC ";
 error_log("q_friendsevent ----> $q_friendsevent".PHP_EOL);
                     $statement = $this->dbAdapter->createQuery($q_friendsevent);
                     $result_friendevent = $statement->getArrayResult();

@@ -125,36 +125,40 @@ class AddComment {
 				$qb->where ( 'ef.event_id = ?1' );
 				$qb->setParameter ( 1, $event_id );
 
-				$efusers = $qb->getQuery ()->getResult ();
-				$nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
+                //Check if comment is made by owner or not
+                if ($eventOBj->user_id != $user_id){
 
-				$cdata ['addNotification'] ['meta'] = $nmessage;
-				foreach ( $efusers as $ef ) {
-					$cdata = array (
-								'addNotification' => array (
-										'network_name' => $ef ['network'],
-										'user_id' => $ef ['friend_id'],
-										'meta' => $nmessage,
-										'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
-										'links' => json_encode ( array (
-												'event_id' => $event_id,
-												'from_id' => $user_id
-										) )
-								)
-						);
-					if ($ef ['network'] == 'memreas') {
-						$this->notification->add ( $ef ['friend_id'] );
-					} else {
-						$this->notification->addFriend ( $ef ['friend_id'] );
-					}
-					$this->AddNotification->exec ( $cdata );
-				}
+                    $efusers = $qb->getQuery ()->getResult ();
+                    $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
 
-				$this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );
-				$this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
-				$this->notification->event_id = $event_id;
-				$this->notification->media_id = $media_id;
-				$this->notification->send ();
+                    $cdata ['addNotification'] ['meta'] = $nmessage;
+                    foreach ( $efusers as $ef ) {
+                        $cdata = array (
+                                    'addNotification' => array (
+                                            'network_name' => $ef ['network'],
+                                            'user_id' => $ef ['friend_id'],
+                                            'meta' => $nmessage,
+                                            'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
+                                            'links' => json_encode ( array (
+                                                    'event_id' => $event_id,
+                                                    'from_id' => $user_id
+                                            ) )
+                                    )
+                            );
+                        if ($ef ['network'] == 'memreas') {
+                            $this->notification->add ( $ef ['friend_id'] );
+                        } else {
+                            $this->notification->addFriend ( $ef ['friend_id'] );
+                        }
+                        $this->AddNotification->exec ( $cdata );
+                    }
+
+                    $this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );
+                    $this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
+                    $this->notification->event_id = $event_id;
+                    $this->notification->media_id = $media_id;
+                    $this->notification->send ();
+                }
 			}
 
 			// echo '<pre>';print_r($result);exit;
