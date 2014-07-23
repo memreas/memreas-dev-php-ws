@@ -497,12 +497,12 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         }
                         foreach ($search_result as $k => &$srRow) {
                                 if(isset($chkUserFriend[$user_ids[$k]])){
-                                    if($chkUserFriend[$user_ids[$k]]== 1){
-                                    unset($search_result[$k]);
+                        
+                                   $srRow['friend_request_sent']=$chkUserFriend[$user_ids[$k]];
                                     continue;
                                     } 
-                                            $srRow['friend_request_sent']=1;
-                                    } ;
+                        
+                                    
                          }
                         $result['totalPage'] =ceil($rc / $limit);
                         $result['count'] = $rc;
@@ -543,7 +543,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         $qb->from ( 'Application\Entity\EventFriend', 'ef' );
                         $qb->andWhere('ef.event_id IN (:e)')
                             ->andWhere('ef.friend_id =:f')
-                            ->andWhere('ef.user_approve != 1')
+                          //  ->andWhere('ef.user_approve != 1')
                             ->setParameter('f', $user_id )
                             ->setParameter('e', $event_ids );
                                  
@@ -552,11 +552,11 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                       
                          $chkEventFriend = array();
                         foreach ($EventFriends as $efRow) {
-                            $chkEventFriend[$efRow['friend_id']]='';
+                            $chkEventFriend[$efRow['event_id']]=$efRow['user_approve'];
                         }
-                         foreach ($search_result as &$srRow) {
-                           if(isset($chkEventFriend[$srRow['user_id']])){
-                            $srRow['event_request_sent'] =1;
+                         foreach ($search_result as $k =>  &$srRow) {
+                           if(isset($chkEventFriend[$event_ids[$k]])){
+                            $srRow['event_request_sent'] =$chkEventFriend[$event_ids[$k]];
                            }
                         }
 
