@@ -49,7 +49,7 @@ class ListComments {
 		// $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 		
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'c.type,c.audio_id,c.text,u.username,c.media_id' );
+		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
 		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
@@ -73,7 +73,7 @@ class ListComments {
 				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
 				$output .= "<type>" . $value ['type'] . "</type>";
 				$audio_url = '';
-				if($value ['type'] = 'audio'){
+				if($value ['type'] == 'audio'){
 					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
 					//$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
 					//$json_array = json_decode ( $audio_row ['metadata'], true );
@@ -93,9 +93,13 @@ class ListComments {
 				}
 
 				$output .= "<username>" . $value ['username'] . "</username>";
-                                $media_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
+                                $media_row  = $this->dbAdapter->createQueryBuilder()
+                                    ->select('m')
+                                    ->from('Application\Entity\Media', 'm')
+                                    ->where("m.user_id = '{$value['user_id']}' AND m.is_profile_pic = 1")
+                                    ->getQuery()->getResult();
                                 if($media_row){
-                                     $json_array = json_decode ( $media_row->metadata, true );
+                                     $json_array = json_decode ( $media_row[0]->metadata, true );
                                 }
                                
 				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
