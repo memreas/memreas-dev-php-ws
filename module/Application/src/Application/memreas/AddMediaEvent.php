@@ -206,6 +206,18 @@ error_log ( "location ---> " . $location . PHP_EOL );
                     $statement = $this->dbAdapter->createQuery ( $update_media );
                     $rs_is_profil = $statement->getResult ();
 
+                    //Update friend table profile image if this user is memreas network
+                    $user_detail = $this->dbAdapter->createQueryBuilder ()
+                                            ->select ( 'u' )
+                                            ->from ( 'Application\Entity\User', 'u' )
+                                            ->where ( "u.user_id=?1" )
+                                            ->setParameter(1, $user_id)
+                                            ->getQuery ()->getResult ();
+
+                    $full_path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $s3file;
+                    $update_friend_photo = "Update Application\Entity\Friend f SET f.url_image = '{$full_path}' WHERE f.social_username = '{$user_detail[0]->username}' AND f.network = 'memreas'";
+                    $this->dbAdapter->createQuery($update_friend_photo)->getResult();
+
                     /*if (! $rs_is_profil)
                         throw new Exception ( 'Error : ' . mysql_error () );*/
 
