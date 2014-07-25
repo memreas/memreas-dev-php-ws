@@ -220,7 +220,7 @@ error_log("signed url -----> ".$path.PHP_EOL);
 		if ($error_flage) {
 			$xml_output .= "<status>Failure</status>";
 			$xml_output .= "<user_id></user_id>";
-			$xml_output .= "<event_id></event_id>";
+			$xml_output .= "<event_id>" . $event_id . "</event_id>";
 			$xml_output .= "<message>$message</message>";
 			$xml_output .= "<media>";
 			$xml_output .= "<media_id></media_id>";
