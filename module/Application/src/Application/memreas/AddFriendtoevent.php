@@ -61,7 +61,7 @@ class AddFriendtoevent {
 
         $userOBj = $this->dbAdapter->find('Application\Entity\User', $user_id);
         $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);
-
+        var_dump($user_id);
         if (empty($userOBj)) {
             $error = 1;
             $message = "User Not Found";

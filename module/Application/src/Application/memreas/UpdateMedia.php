@@ -37,11 +37,15 @@ class UpdateMedia {
         } else {
             $data = json_decode ( json_encode ( $frmweb ) );
         }
-        $media_id = trim ( $data->updatemedia->media_id );
+        $media_arr = trim($data->updatemedia->media->count());
+                    
+if($data->updatemedia->media->count()){
+    foreach ($data->updatemedia->media as $media){
+        $media_id = trim ($media->media_id );
 
-        $address = (isset($data->updatemedia->location->address) && !empty ($data->updatemedia->location->address) ) ? trim( $data->updatemedia->location->address ) : "";
-        $latitude = (isset($data->updatemedia->location->latitude) && !empty ($data->updatemedia->location->latitude) ) ? trim( $data->updatemedia->location->latitude ) : "";
-        $longitude = (isset($data->updatemedia->location->longitude) && !empty ($data->updatemedia->location->longitude) ) ? trim( $data->updatemedia->location->longitude ) : "";
+        $address = (isset($media->location->address) && !empty ($media->location->address) ) ? trim( $media->location->address ) : "";
+        $latitude = (isset($media->location->latitude) && !empty ($media->location->latitude) ) ? trim( $media->location->latitude ) : "";
+        $longitude = (isset($media->location->longitude) && !empty ($media->location->longitude) ) ? trim( $media->location->longitude ) : "";
 
         $query = $this->dbAdapter->createQueryBuilder();
         $query->select("m")
@@ -58,9 +62,9 @@ class UpdateMedia {
             $metadata = json_decode($metadata, true);
 
             //Update media location
-			unset($metadata["S3_files"]["location"]);
+            unset($metadata["S3_files"]["location"]);
             $metadata["S3_files"]["location"]["address"] = $address;
-			$metadata["S3_files"]["location"]["latitude"] = $latitude;
+            $metadata["S3_files"]["location"]["latitude"] = $latitude;
             $metadata["S3_files"]["location"]["longitude"] = $longitude;
             $metadata = json_encode($metadata);
                         
@@ -72,9 +76,12 @@ class UpdateMedia {
 //error_log("Inside else section set media.metadata ---> ".$media->metadata.PHP_EOL);
             $message = 'Media updated';
             $status = 'Success';
-            $output .= '<media_id>' . $media_id . '</media_id>';
+           
         }
-
+        }
+         $output .= '<media_id>' . $media_id . '</media_id>';
+}
+         
         header ( "Content-type: text/xml" );
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         $xml_output .= "<xml>";
