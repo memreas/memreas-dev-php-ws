@@ -89,7 +89,7 @@ class IndexController extends AbstractActionController {
 
     // protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
     // protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
-    protected $url = "http://test";
+    protected $url = "http://ws";
     protected $user_id;
     protected $storage;
     protected $authservice;
@@ -535,7 +535,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                                $rc+=1;
                             }
                         }
-                         //filter record
+                         //filter record !event should show public events and events you've been invited to
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
                         $qb = $em->createQueryBuilder ();

@@ -67,7 +67,7 @@ class EventRepository extends EntityRepository
 
 	}
 
-	public function getEventMedia($event_id)
+	public function getEventMedia($event_id,$limit =false)
 	{
 		$qb = $this->_em->createQueryBuilder ();
         	$qb->select ( 'media.metadata' );
@@ -76,6 +76,7 @@ class EventRepository extends EntityRepository
             $qb->where ( 'event_media.event_id=?1' );
             $qb->orderBy ( 'media.create_date', 'DESC' ) ;
             $qb->setParameter ( 1, $event_id );
+            if($limit) $qb->setMaxResults ( $limit );
         return  $qb->getQuery ()->getResult ();
 	}
 

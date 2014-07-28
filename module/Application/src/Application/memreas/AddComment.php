@@ -141,7 +141,8 @@ class AddComment {
                                             'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
                                             'links' => json_encode ( array (
                                                     'event_id' => $event_id,
-                                                    'from_id' => $user_id
+                                                    'from_id' => $user_id,
+                                                    'comment_id' => $uuid
                                             ) )
                                     )
                             );
