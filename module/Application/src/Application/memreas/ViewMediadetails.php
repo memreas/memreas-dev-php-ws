@@ -100,8 +100,10 @@ class ViewMediadetails {
             if (isset($location->longitude) && !empty($location->longitude)) {
                 $longitude = $location->longitude;
                 $latitude = $location->latitude;
+                $address = $location->address;
             }
             else {
+                $address = '';
                 $longitude = null;
                 $latitude = null;
             }
@@ -132,7 +134,7 @@ class ViewMediadetails {
 		$xml_output .= "<last_comment>$last_comment</last_comment>";
 		$xml_output .= (! empty ( $path )) ? "<audio_url>" . CLOUDFRONT_DOWNLOAD_HOST . $path . "</audio_url>" : "<audio_url></audio_url>";
 		$xml_output .= "<last_audiotext_comment>$audio_text</last_audiotext_comment>";
-        $xml_output .= "<location><longitude>{$longitude}</longitude><latitude>{$latitude}</latitude></location>";
+        $xml_output .= "<location><address>{$address}</address><longitude>{$longitude}</longitude><latitude>{$latitude}</latitude></location>";
 		$xml_output .= "</viewmediadetailresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
