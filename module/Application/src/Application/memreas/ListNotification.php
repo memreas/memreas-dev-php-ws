@@ -95,7 +95,7 @@ class ListNotification {
                         }
                     } else if ($row['notification_type'] == Notification::ADD_COMMENT) {
                         $commenId= isset($links['comment_id'])?$links['comment_id']:'0';
-                        $commentRec = $this->dbAdapter->find('Application\Entity\Comment', $links['comment_id']);
+                        $commentRec = $this->dbAdapter->find('Application\Entity\Comment', $commenId);
                         if(isset($comment->text)){
                             
                             $xml_output .= "<comment><![CDATA[$comment->text]]></comment>";
