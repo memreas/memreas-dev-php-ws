@@ -94,7 +94,7 @@ class ListNotification {
                         $xml_output .= "<event_media_url><![CDATA[$eventMediaUrl]]></event_media_url>";
                         }
                     } else if ($row['notification_type'] == Notification::ADD_COMMENT) {
-
+                        $commenId= isset($links['comment_id'])?$links['comment_id']:'0';
                         $commentRec = $this->dbAdapter->find('Application\Entity\Comment', $links['comment_id']);
                         if(isset($comment->text)){
                             
