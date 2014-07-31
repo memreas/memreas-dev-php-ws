@@ -95,14 +95,13 @@ class ListNotification {
                         }
                     } else if ($row['notification_type'] == Notification::ADD_COMMENT) {
                         $commenId= isset($links['comment_id'])?$links['comment_id']:'0';
-                        $commentRec = $this->dbAdapter->find('Application\Entity\Comment', $commenId);
-                        if(isset($comment->text)){
-                            
+                        $comment = $this->dbAdapter->find('Application\Entity\Comment', $commenId);
+
+                        if(!empty($comment)){
                             $xml_output .= "<comment><![CDATA[$comment->text]]></comment>";
                             $xml_output .= "<comment_id>$comment->comment_id</comment_id>";
                             $xml_output .= "<comment_time>$comment->create_time</comment_time>";
                         }else{
-                            
                             $xml_output .= "<comment><![CDATA[]]></comment>";
                             $xml_output .= "<comment_id></comment_id>";
                             $xml_output .= "<comment_time></comment_time>";
