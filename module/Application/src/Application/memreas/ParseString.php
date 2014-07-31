@@ -4,12 +4,12 @@ namespace Application\memreas;
 
 class ParseString {
 	public static function getKeyword($string) {
-		preg_match_all ( '/(^|\s)#(\w*[a-zA-Z_]+\w*)/', $string, $keywords );
+		preg_match_all ( '/#(.*?)#|#(.*?)\s/', $string, $keywords );
 		
 		return $keywords;
 	}
 	public static function getEventname($string) {
-		preg_match_all ( '/(^|\s)!(\w*[a-zA-Z_]+\w*)/', $string, $events );
+		preg_match_all ( '/!(.*?)!|!(.*?)\s/', $string, $events );
 		return $events;
 	}
 	public static function getUserName($string) {
@@ -19,3 +19,4 @@ class ParseString {
 }
 
 ?>
+ 

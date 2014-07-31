@@ -121,18 +121,20 @@ class AddComment {
 				$qb = $this->dbAdapter->createQueryBuilder ();
 				$qb->select ( 'f.network,f.friend_id' );
 				$qb->from ( 'Application\Entity\EventFriend', 'ef' );
-				$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id' );
+				$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
 				$qb->where ( 'ef.event_id = ?1' );
 				$qb->setParameter ( 1, $event_id );
 
                 //Check if comment is made by owner or not
-                if ($eventOBj->user_id != $user_id){
+               
 
                     $efusers = $qb->getQuery ()->getResult ();
                     $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
 
                     $cdata ['addNotification'] ['meta'] = $nmessage;
                     foreach ( $efusers as $ef ) {
+                    	if ($eventOBj->user_id == $ef ['friend_id']) continue;
+
                         $cdata = array (
                                     'addNotification' => array (
                                             'network_name' => $ef ['network'],
@@ -159,7 +161,7 @@ class AddComment {
                     $this->notification->event_id = $event_id;
                     $this->notification->media_id = $media_id;
                     $this->notification->send ();
-                }
+                
 			}
 
 			// echo '<pre>';print_r($result);exit;
