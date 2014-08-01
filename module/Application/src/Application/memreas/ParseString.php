@@ -4,7 +4,7 @@ namespace Application\memreas;
 
 class ParseString {
 	public static function getKeyword($string) {
-		preg_match_all ( '/#(.*?)#|#(.*?)\s/', $string, $keywords );
+		preg_match_all ( '/(^|\s)#(\w*[a-zA-Z_]+\w*)/', $string, $keywords );
 		
 		return $keywords;
 	}

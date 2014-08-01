@@ -560,14 +560,18 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                            }
                         }
 
+                        $comments = $eventRep->createDiscoverCache($tag);
+
+                         
                         $result['count']  = $rc;
                         $result['search'] = $search_result;
+                        $result['comments'] = empty($comments)?array():$comments;
                         $result['page']   = $page;
                         $result['totalPage'] = ceil($rc / $limit);
 
 
                         //$result =  preg_grep("/$search/", $mc);
-                       //echo '<pre>';print_r($result);
+                        //echo '<pre>';print_r($result);
 
                         echo json_encode($result);$result='';
                         break;

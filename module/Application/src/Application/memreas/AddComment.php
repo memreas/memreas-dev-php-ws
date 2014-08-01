@@ -112,7 +112,7 @@ class AddComment {
 						
 
 				// add tags
-				// $this->addTag->getEventname($comment,$metaTag);
+				$this->addTag->getEventname($comment,$metaTag);
 				// $this->addTag->getUserName($comment,$metaTag);
 				$this->addTag->getKeyword ( $comment, $metaTag );
 
