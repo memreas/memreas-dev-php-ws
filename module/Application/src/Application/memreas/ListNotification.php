@@ -24,6 +24,11 @@ class ListNotification {
     }
 
     public function exec() {
+        $oClass = new \ReflectionClass ('Application\Entity\Notification');
+        $array = $oClass->getConstants ();
+        unset($array['EMAIL'],$array['MEMERAS'],$array['NONMEMERAS']);
+        $array = array_flip($array);
+        
         $error_flag = 0;
         $message = '';
         $data = simplexml_load_string($_POST ['xml']);
@@ -79,10 +84,18 @@ class ListNotification {
                         $xml_output .= "<event_id>{$links['event_id']}</event_id>";
                     else
                         $xml_output .= "<event_id></event_id>";
+
                     $xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
 
                     $xml_output .= "<meta>{$row['meta']}</meta>";
                     $xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
+
+                    if(isset($array[$row['notification_type']])){
+                        $xml_output .= "<notification_type_text>".$array[$row['notification_type']]."</notification_type_text>";
+                    }else{
+                        $xml_output .= "<notification_type_text>NOT_FOUND</notification_type_text>";
+                    }
+                   
                     $xml_output .= "<notification_status>{$row['status']}</notification_status>";
                     if ($row['notification_type'] == Notification::ADD_FRIEND_TO_EVENT) {
 
@@ -107,8 +120,6 @@ class ListNotification {
                             $xml_output .= "<comment_time></comment_time>";
                             
                         }
-                    
-                       
                     }
 
                     $xml_output .= "</notification>";

@@ -238,7 +238,7 @@ class AddFriendtoevent {
                         }
 //error_log("$friend_name is in event friend list ---> event id ---> $event_id" . PHP_EOL);
 
-                        $nmessage = $userOBj->username . ' want to add you to ' . $eventOBj->name . ' event';
+                        $nmessage = '<b>'.$userOBj->username . ' </b> want to add you to <u><b>' . $eventOBj->name . '</b></u> event';
                         // save nofication intable
                         $ndata = array(
                             'addNotification' => array(
@@ -256,7 +256,7 @@ class AddFriendtoevent {
                             // send push message add user id
                             $this->notification->add($friend_id);
                         } else {
-                            $nmessage = $userOBj->username . ' invite you to !' . $eventOBj->name . ' event';
+                            $nmessage = '<b>'.$userOBj->username . '</b> invite you to <u><b>!' . $eventOBj->name . '</b></u> event';
                             $ndata ['addNotification'] ['meta'] = $nmessage;
                             error_log("message ---> $nmessage" . PHP_EOL);
                             //add non memeras
@@ -265,7 +265,7 @@ class AddFriendtoevent {
                     } // end if (count($r) > 0) else
                 } else if( empty($event_id) && !empty($sendMessage)) {
                     //add friend
-                    $nmessage = $userOBj->username . ' has send friend request ';
+                    $nmessage = '<b>'.$userOBj->username . '</b>  has send friend request ';
                     // save nofication intable
                     $ndata = array(
                         'addNotification' => array(

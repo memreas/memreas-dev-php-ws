@@ -112,7 +112,7 @@ class AddComment {
 						
 
 				// add tags
-				// $this->addTag->getEventname($comment,$metaTag);
+				$this->addTag->getEventname($comment,$metaTag);
 				// $this->addTag->getUserName($comment,$metaTag);
 				$this->addTag->getKeyword ( $comment, $metaTag );
 
@@ -129,7 +129,7 @@ class AddComment {
                
 
                     $efusers = $qb->getQuery ()->getResult ();
-                    $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
+                    $nmessage = '<b>'.$userOBj->username . '</b> Has commented on <u><b>!' . $eventOBj->name . '</b></u> event';
 
                     $cdata ['addNotification'] ['meta'] = $nmessage;
                     foreach ( $efusers as $ef ) {
