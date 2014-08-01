@@ -1,5 +1,5 @@
 <?php
 
-echo "Inside Deploy test ws-3";
+echo "Inside Deploy test ws-5";
 
 ?>
