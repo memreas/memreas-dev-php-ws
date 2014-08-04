@@ -121,7 +121,7 @@ class AddComment {
 				$qb = $this->dbAdapter->createQueryBuilder ();
 				$qb->select ( 'f.network,f.friend_id' );
 				$qb->from ( 'Application\Entity\Friend', 'f' );
-				$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
+				$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=0' );
 				$qb->where ( 'ef.event_id = ?1' );
 				$qb->setParameter ( 1, $event_id );
 
@@ -129,7 +129,7 @@ class AddComment {
                
 
                     $efusers = $qb->getQuery ()->getResult ();
-                    $nmessage = '<b>'.$userOBj->username . '</b> Has commented on <u><b>!' . $eventOBj->name . '</b></u> event';
+                    $nmessage = htmlspecialchars('<b>'.$userOBj->username . '</b> Has commented on <u><b>!' . $eventOBj->name . '</b></u> event');
 
                     $cdata ['addNotification'] ['meta'] = $nmessage;
                     foreach ( $efusers as $ef ) {
