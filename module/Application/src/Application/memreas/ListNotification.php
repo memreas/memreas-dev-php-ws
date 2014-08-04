@@ -87,7 +87,7 @@ class ListNotification {
 
                     $xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
 
-                    $xml_output .= "<meta>{$row['meta']}</meta>";
+                    $xml_output .= "<meta><![CDATA[{$row['meta']}]]</meta>";
                     $xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
 
                     if(isset($array[$row['notification_type']])){
