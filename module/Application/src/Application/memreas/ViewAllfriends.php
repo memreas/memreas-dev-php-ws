@@ -35,7 +35,7 @@ class ViewAllfriends {
 			$error_flag = 1;
 			$message = 'User id is empty';
 		} else {
-			$q = "SELECT u FROM Application\Entity\User u WHERE u.user_id != '$user_id' AND u.role=2 AND u.disable_account =0";
+			$q = "SELECT u FROM Application\Entity\User u WHERE u.user_id != '$user_id' AND u.role=2 AND u.disable_account =0 ORDER BY u.username ";
 			$statement = $this->dbAdapter->createQuery ( $q );
 			$result = $statement->getResult ();
 			if (! $result) {
