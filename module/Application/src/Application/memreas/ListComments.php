@@ -33,6 +33,8 @@ class ListComments {
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
 		$event_id = trim ( $data->listcomments->event_id );
+		$media_id = trim ( $data->listcomments->media_id );
+
 		
 		$page = trim ( $data->listcomments->page );
 		if (empty ( $page )) {
@@ -49,16 +51,24 @@ class ListComments {
 		// $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 		
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id' );
+		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id,c.event_id' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
 		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		//qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-		$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
+		if(!empty($event_id)){
+			$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
+			$qb->setParameter ( 1, $event_id );
+
+		}else 	if(!empty($media_id)){
+			$qb->where ( "c.media_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
+			$qb->setParameter ( 1, $media_id );
+
+
+		}
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
-		$qb->setParameter ( 1, $event_id );
-//error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		
+ //error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		
 		$result_comment = $qb->getQuery ()->getResult ();
  		
 		$output .= '<comments>';
@@ -69,7 +79,7 @@ class ListComments {
 		} else {
 			foreach ( $result_comment as $value ) {
 				$output .= '<comment>';
-				$output .= "<event_id>" . $event_id . "</event_id>";
+				$output .= "<event_id>" . $value ['event_id'] . "</event_id>";
 				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
 				$output .= "<type>" . $value ['type'] . "</type>";
 				$audio_url = '';
