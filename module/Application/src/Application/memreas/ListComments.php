@@ -57,15 +57,18 @@ class ListComments {
 		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		//qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 		if(!empty($event_id)){
-			$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
+			$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio')" );
 			$qb->setParameter ( 1, $event_id );
+        }
 
-		}else 	if(!empty($media_id)){
-			$qb->where ( "c.media_id=?1 AND (c.type='text' or c.type='audio') ORDER BY c.create_time DESC" );
-			$qb->setParameter ( 1, $media_id );
+		if(!empty($media_id)){
+			$qb->andWhere ( "c.media_id=?2" );
+			$qb->setParameter ( 2, $media_id );
+        }
+
+        $qb->orderBy('c.create_time', 'DESC');
 
 
-		}
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
  //error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		

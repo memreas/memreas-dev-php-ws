@@ -256,7 +256,7 @@ error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL)
                 $deletephoto = new DeletePhoto($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $deletephoto->exec();
 
-                $uid = $result->user_id;
+                $uid = isset($result->user_id) ? $result->user_id : '';
                 if (!empty($uid)) {
                     $invalidate_action = "listallmedia";
                     $invalidate_me = true;

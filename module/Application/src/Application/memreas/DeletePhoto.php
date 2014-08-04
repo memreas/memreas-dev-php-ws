@@ -78,6 +78,7 @@ class DeletePhoto {
 		} else {
 			$xml_output .= "<status>failure</status><message>Please check that you have given media id.</message>";
 		}
+        $xml_output .= "<media_id>{$mediaid}</media_id>";
 		$xml_output .= "</deletephotoresponse>";
 		$xml_output .= "</xml>\n";
 		echo $xml_output;
