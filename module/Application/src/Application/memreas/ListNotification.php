@@ -62,7 +62,7 @@ class ListNotification {
                     $xml_output .= "<notification>";
                     if ($profile_pic)
                         $json_array = json_decode($profile_pic->metadata, true);
-                    $url1 = null;
+                    $url1 = MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
                     if (!empty($json_array ['S3_files'] ['path']))
                         $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
                     $pic_79x80 = '';
@@ -74,7 +74,7 @@ class ListNotification {
                     $pic_98x78 = '';
                     if (!empty($json_array ['S3_files'] ['98x78']))
                         $pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
-
+                    
                     $xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
                     $xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
                     $xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
@@ -97,6 +97,8 @@ class ListNotification {
                     }
                    
                     $xml_output .= "<notification_status>{$row['status']}</notification_status>";
+                    $xml_output .= "<notification_updated>{$row['update_time']}</notification_updated>";
+
                     if ($row['notification_type'] == Notification::ADD_FRIEND_TO_EVENT) {
 
                         $eventMedia = $eventRepository->getEventMedia($links['event_id'], 1);
