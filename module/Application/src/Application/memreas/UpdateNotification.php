@@ -227,13 +227,13 @@ public function addFriendRevRec($user_id,$friend_id)
 	                    			    $profile_pic_url = MC::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
                          			
 	                    			}
-	                    			
+
 		                        	$userFOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 
                         			$tblFriend = new \Application\Entity\Friend();
                         			$tblFriend->friend_id = $user_id;
                         			$tblFriend->network = 'memreas';
-                        			$tblFriend->social_username = empty($userFOBj->username)?'':$userFOBj->username;
+                        			$tblFriend->social_username = empty($userFOBj)?'':$userFOBj->username;
                         			$tblFriend->url_image = $profile_pic_url;
                         			$tblFriend->create_date = $time;
                         			$tblFriend->update_date = $time;
