@@ -31,7 +31,7 @@ class UpdateMedia {
      */
     public function exec($frmweb = false, $output = '') {
         $error_flag = 0;
-        $message = '';
+         $status = $message = '';
         if (empty ( $frmweb )) {
             $data = simplexml_load_string ( $_POST ['xml'] );
         } else {
