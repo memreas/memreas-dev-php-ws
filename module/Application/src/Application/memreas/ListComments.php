@@ -33,7 +33,11 @@ class ListComments {
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
 		$event_id = trim ( $data->listcomments->event_id );
-		$media_id = trim ( $data->listcomments->media_id );
+		$media_id=0;
+		if(!empty($data->listcomments->media_id)){
+			$media_id = trim ( $data->listcomments->media_id );
+		}
+		
 
 		
 		$page = trim ( $data->listcomments->page );
