@@ -35,46 +35,34 @@ class ViewAllfriends {
 			$error_flag = 1;
 			$message = 'User id is empty';
 		} else {
-			$q = "SELECT u FROM Application\Entity\User u WHERE u.user_id != '$user_id' AND u.role=2 AND u.disable_account =0 ORDER BY u.username ";
-			$statement = $this->dbAdapter->createQuery ( $q );
-			$result = $statement->getResult ();
-			if (! $result) {
+		  $qb = $this->dbAdapter->createQueryBuilder ();
+        $qb->select ( 'f' );
+        $qb->from ( 'Application\Entity\Friend', 'f' );
+        $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
+           ->andwhere("uf.user_approve = '1'")
+           ->andwhere("uf.user_id = :userid")
+           ->setParameter ( 'userid', $user_id );
+        $qb->orderBy('f.social_username', 'ASC');
+
+               // error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);     
+
+        $result = $qb->getQuery ()->getResult ();
+
+ 			if (! $result) {
 				$error_flag = 1;
 				$message = mysql_error ();
 			} else {
 				if (count ( $result ) > 0) {
 					$xml_output .= "<status>Success</status><message>Friends list</message>";
 					foreach ( $result as $row1 ) {
-						$count ++;
-						$view_all_friend [$count] ['id'] = $row1->user_id;
-						if (isset ( $row1->facebook_username ) && ! empty ( $row1->facebook_username )) {
-							$view_all_friend [$count] ['network'] = 'Facebook';
-						} elseif (isset ( $row1->twitter_username ) && ! empty ( $row1->twitter_username )) {
-							$view_all_friend [$count] ['network'] = 'Twitter';
-						} else {
-							$view_all_friend [$count] ['network'] = 'Memreas';
-						}
-						$view_all_friend [$count] ['social_username'] = $row1->username;
-						$view_all_friend [$count] ['url_image'] = '';
-						if (isset ( $row1->profile_photo ) && ! empty ( $row1->profile_photo ) && $row1->profile_photo == 1) {
-							$q_profile_photo = "SELECT m
-                                        FROM Application\Entity\Media m
-                                        WHERE m.`user_id` LIKE '" . $row1->user_id . "'
-                                        AND m.`is_profile_pic` =1";
-							// LIMIT 1";
-							$view_all_friend [$count] ['q'] = $q_profile_photo;
-							
-							$statement = $this->dbAdapter->createQuery ( $q_profile_photo );
-							$statement->setMaxResults ( 1 );
-							$r = $statement->getResult ();
-							if ($row2 = array_pop ( $r )) {
-								$json_array = json_decode ( $row2->metadata, true );
-								$view_all_friend [$count] ['url_image'] = (empty ( $json_array ['S3_files'] ['path'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-								$view_all_friend [$count] ['url_image_79x80'] = (empty ( $json_array ['S3_files']['thumbnails'] ['79x80'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['79x80'];
-								$view_all_friend [$count] ['url_image_448x306'] = (empty ( $json_array ['S3_files']['thumbnails'] ['448x306'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
-								$view_all_friend [$count] ['url_image_98x78'] = (empty ( $json_array ['S3_files']['thumbnails'] ['98x78'] )) ? "" : MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['98x78'];
-							}
-						}
+ 						$count ++;
+						$view_all_friend [$count] ['id'] = $row1->friend_id;
+						 
+						$view_all_friend [$count] ['network'] = $row1->network;
+						
+						$view_all_friend [$count] ['social_username'] = $row1->social_username;
+						$view_all_friend [$count] ['url_image'] = $row1->url_image;
+						 
 					}
 				} else {
 					$error_flag = 2;
