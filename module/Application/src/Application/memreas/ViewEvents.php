@@ -214,7 +214,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
             $q_friendsevent = "select event.user_id,event.event_id, event.name, event.friends_can_share, event.friends_can_post
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event
                     where event.event_id=event_friend.event_id
-                    and event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
+                    and event_friend.user_approve=1 AND event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
                     //error_log("q_friendsevent ----> $q_friendsevent".PHP_EOL);
                     $statement = $this->dbAdapter->createQuery($q_friendsevent);
                     $result_friendevent = $statement->getArrayResult();
