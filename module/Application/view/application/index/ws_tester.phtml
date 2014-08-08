@@ -156,6 +156,8 @@ echo "user_id ----> " . $user_id;
 					else if ($("#input_action").val() == "getfriends") { xml = getfriends; }
 					else if ($("#input_action").val() == "getplans") { xml = getplans; }
                 	$("#action_input").val(xml);
+                    $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
+
                 });
             });
 
@@ -295,7 +297,7 @@ echo "user_id ----> " . $user_id;
 					</tr>
 
 					<tr>
-						<td>Output:
+						<td><a id ="link_output" href="#" target='_new'>Output:</a>
 
 					</tr>
 					<tr>
