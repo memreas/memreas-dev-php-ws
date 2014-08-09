@@ -157,9 +157,9 @@ class IndexController extends AbstractActionController {
         }
         //$actionname = $this->security($actionname);
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-error_log("Inside indexAction---> $actionname ".print_r ( $_GET,true ). PHP_EOL);
-error_log("Inside indexAction---> $actionname ".print_r ( $_POST,true ). PHP_EOL);
-error_log("Inside indexAction---> $actionname ".print_r ( $_COOKIE,true ). PHP_EOL);
+error_log("Inside indexAction---> get ".print_r ( $_GET,true ). PHP_EOL);
+error_log("Inside indexAction---> post ".print_r ( $_POST,true ). PHP_EOL);
+error_log("Inside indexAction---> cookie ".print_r ( $_COOKIE,true ). PHP_EOL);
 
  
         if (isset($actionname) && !empty($actionname)) {
