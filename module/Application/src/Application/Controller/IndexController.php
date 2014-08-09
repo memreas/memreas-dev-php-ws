@@ -138,8 +138,6 @@ class IndexController extends AbstractActionController {
 
     public function indexAction() {
         error_log("Inside indexAction---> ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-        // $path = $this->security("application/index/ws_tester.phtml");
-
         $path = "application/index/ws_tester.phtml";
         $output = '';
 
@@ -157,8 +155,13 @@ class IndexController extends AbstractActionController {
             $actionname = isset($_REQUEST ['action']) ? $_REQUEST ['action'] : '';
             $message_data ['xml'] = '';
         }
-
+        //$actionname = $this->security($actionname);
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+error_log("Inside indexAction---> $actionname ".print_r ( $_GET,true ). PHP_EOL);
+error_log("Inside indexAction---> $actionname ".print_r ( $_POST,true ). PHP_EOL);
+error_log("Inside indexAction---> $actionname ".print_r ( $_COOKIE,true ). PHP_EOL);
+
+ 
         if (isset($actionname) && !empty($actionname)) {
             // Fetch the elasticache handle
             error_log("fetching MemreasCache handle..." . PHP_EOL);
@@ -177,7 +180,11 @@ error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL)
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
             $memreas_tables = new MemreasTables($this->getServiceLocator());
-            if ($actionname == "login") {
+            if($actionname == 'notlogin'){
+                $result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+                $result .= "<xml><error>Please Login </error></xml>";
+        
+            } else if ($actionname == "login") {
                 $login = new Login($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $login->exec();
             } else if ($actionname == "registration") {
@@ -1090,15 +1097,32 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         return $this->storage;
     }
 
-    public function security($path) {
+    public function security($actionname) {
         // if already login do nothing
-        $session = new Container("user");
+        /*$session = new Container("user");
         if (!$session->offsetExists('user_id')) {
             error_log("Not there so logout");
             $this->logoutAction();
             return "application/index/index.phtml";
+        }*/
+
+        $public= array(
+            'login',
+            'registration',
+            'forgotpassword'
+            );
+         if(in_array($actionname, $public)|| empty($actionname)){
+            return $actionname;
+        } else {
+            $session = new Container("user");
+            error_log('ws-session-user_is ->'.$session->user_id);
+            if (!$session->offsetExists('user_id')) {
+                return 'notlogin';
+            }
+            return $actionname;
+
         }
-        return $path;
+        
         // return $this->redirect()->toRoute('index', array('action' => 'login'));
     }
 
