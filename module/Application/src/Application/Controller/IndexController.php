@@ -155,12 +155,9 @@ class IndexController extends AbstractActionController {
             $actionname = isset($_REQUEST ['action']) ? $_REQUEST ['action'] : '';
             $message_data ['xml'] = '';
         }
-        //$actionname = $this->security($actionname);
+       $actionname = $this->security($actionname);
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-error_log("Inside indexAction---> get ".print_r ( $_GET,true ). PHP_EOL);
-error_log("Inside indexAction---> post ".print_r ( $_POST,true ). PHP_EOL);
-error_log("Inside indexAction---> cookie ".print_r ( $_COOKIE,true ). PHP_EOL);
-
+   
  
         if (isset($actionname) && !empty($actionname)) {
             // Fetch the elasticache handle
