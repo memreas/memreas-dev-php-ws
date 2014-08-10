@@ -154,7 +154,11 @@ class IndexController extends AbstractActionController {
             $actionname = isset($_REQUEST ['action']) ? $_REQUEST ['action'] : '';
             $message_data ['xml'] = '';
         }
-       $actionname = $this->security($actionname);
+        
+        /*
+         * TODO: SID still needs debugging - see TODO sections
+         */
+       //$actionname = $this->security($actionname);
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
    
  
@@ -1094,7 +1098,11 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 
     public function security($actionname) {
 
-        $public= array(
+        /*
+         * TODO: This function isn't working properly.  I added in session_id($sid) per docs 
+         * but the session variables aren't retained  
+         */
+    	$public= array(
             'login',
             'registration',
             'forgotpassword',
@@ -1115,8 +1123,12 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 	    	        error_log('sid ->'.$sid);
 	        		
 	    	        //Zend\Session\SessionManager setId($sid);
+			        /*
+			         * TODO: match this to login.php and you'll see the vars aren't retained.  Not sure why.  
+			         */
 	    	        session_id($sid);
 	    	        error_log('Just set sid..');
+	    	        error_log ( "session_status ---> " . session_status() . PHP_EOL );
 	    	        error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
 	    	        error_log("user_id after login -----> ".$_SESSION ['user'] ['user_id'].PHP_EOL);
 	    	        error_log("username after login -----> ".$_SESSION ['user'] ['username'].PHP_EOL);

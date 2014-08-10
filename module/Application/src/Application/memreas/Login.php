@@ -103,6 +103,9 @@ class Login {
 		$session->offsetSet('user', json_encode($user));
 		error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet('sid') . PHP_EOL );
 */		
+        /*
+         * TODO: Session storage isn't working properly if I set session id after but works here.  
+         */
 		$_SESSION ['user'] ['user_id'] = $user->user_id;
 		$_SESSION ['user'] ['username'] = $user->username;
 		$_SESSION ['user'] ['user'] = json_encode ( $user );
