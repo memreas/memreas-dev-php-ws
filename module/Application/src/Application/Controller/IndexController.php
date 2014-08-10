@@ -11,6 +11,7 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\Session\SessionManager;
 use Zend\Session\Container;
 use Application\Model;
 use Application\Form;
