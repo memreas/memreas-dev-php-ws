@@ -1108,21 +1108,25 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         	/*
         	 * Set the session 
         	 */
-        	$data = simplexml_load_string ( $_POST ['xml'] );
-        	if (isset($data->sid) && !empty($data->sid)) {
-        		$sid = trim ( $data->sid );
-    	        error_log('sid ->'.$sid);
-        		
-    	        //Zend\Session\SessionManager setId($sid);
-    	        session_id($sid);
-    	        error_log('Just set sid..');
-        	
-	            $session = new Container("user");
-    	        error_log('ws-session-user_id ->'.$session->user_id);
-    	        error_log('ws-session-username ->'.$session->username);
-            if (!$session->offsetExists('user_id')) {
-                return 'notlogin';
-            }
+        	if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
+	        	$data = simplexml_load_string ( $_POST ['xml'] );
+	        	if (isset($data->sid) && !empty($data->sid)) {
+	        		$sid = trim ( $data->sid );
+	    	        error_log('sid ->'.$sid);
+	        		
+	    	        //Zend\Session\SessionManager setId($sid);
+	    	        session_id($sid);
+	    	        error_log('Just set sid..');
+	    	        session_start();
+	    	        error_log('Resume session based on sid');
+	    	        
+		            $session = new Container("user");
+	    	        error_log('ws-session-user_id ->'.$session->user_id);
+	    	        error_log('ws-session-username ->'.$session->username);
+	            if (!$session->offsetExists('user_id')) {
+	                return 'notlogin';
+	            }
+        	}
             return $actionname;
 
         }
