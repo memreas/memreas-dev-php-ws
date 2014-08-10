@@ -96,7 +96,7 @@ class Login {
 		error_log ( "Inside setSession got new Container..." );
 		$session = new Container('user');
 		$session->offsetSet('user_id', $user->user_id);
-		$session->offsetSet('username', $username);
+		$session->offsetSet('username', $user->$username);
 		$session->offsetSet('sid', session_id());
 		$session->offsetSet('user', json_encode($user));
 		error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet('sid') . PHP_EOL );
