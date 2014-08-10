@@ -1121,8 +1121,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 	    	        error_log('Resume session based on sid');
 	    	        
 		            $session = new Container("user");
-	    	        error_log('ws-session-user_id ->'.$session->user_id);
-	    	        error_log('ws-session-username ->'.$session->username);
+	    	        error_log('ws-session-user_id ->'.$session->offsetGet('user_id'));
+	    	        error_log('ws-session-username ->'.$session->offsetGet('username'));
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }
