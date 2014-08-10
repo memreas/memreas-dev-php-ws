@@ -34,6 +34,15 @@ class Memreastvm {
 		// 'region' => Region::us_east_1
 				) );
 		
+		// CloudFront_Access_User
+		$cloudfront = Aws::factory ( array (
+				'key' => 'AKIAI2QRE4WCJ7N6U7VQ',
+				'secret' => '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'
+				// 'region' => Region::us_east_1
+		) );
+		
+		
+		
 		// Fetch the policy
 		$iam_handle = $aws->get ( 'iam' );
 		$iam_policy = $iam_handle->getGroupPolicy ( array (

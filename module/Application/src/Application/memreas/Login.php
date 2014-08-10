@@ -2,6 +2,7 @@
 
 namespace Application\memreas;
 
+use Zend\Session\SessionManager;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 
@@ -96,7 +97,10 @@ class Login {
 		$_SESSION ['user'] ['user_id'] = $user->user_id;
 		$_SESSION ['user'] ['username'] = $user->username;
 		$_SESSION ['user'] ['user'] = json_encode ( $user );
-		error_log ( "Inside setSession set user data..." );
+		$_SESSION ['user'] ['sid'] = session_id();
+		error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
+		
+		
 	}
 }
 ?>

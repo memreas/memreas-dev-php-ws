@@ -89,6 +89,7 @@ class IndexController extends AbstractActionController {
 
     // protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
     // protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
+    protected $xml_in;
     protected $url = "http://ws";
     protected $user_id;
     protected $storage;
@@ -649,9 +650,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 $from = ($page - 1) * $limit;
                 $rc = 0;
                 foreach ($mc as $eid => $er) {
-
                     if (stripos($er['name'], $search) === 0) {
-
                         if ($rc >= $from && $rc < ($from + $limit)) {
                             $er['name'] = '!' . $er['name'];
                             $er['comment_count'] = $eventRep->getCommentCount($eid);
@@ -1095,24 +1094,32 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
     }
 
     public function security($actionname) {
-        // if already login do nothing
-        /*$session = new Container("user");
-        if (!$session->offsetExists('user_id')) {
-            error_log("Not there so logout");
-            $this->logoutAction();
-            return "application/index/index.phtml";
-        }*/
 
         $public= array(
             'login',
             'registration',
-            'forgotpassword'
+            'forgotpassword',
+        	'checkusername',
+        	'changepassword'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
-            $session = new Container("user");
-            error_log('ws-session-user_is ->'.$session->user_id);
+        	
+        	/*
+        	 * Set the session 
+        	 */
+        	$data = simplexml_load_string ( $_POST ['xml'] );
+        	if (isset($data->sid) && !empty($data->sid)) {
+        		$sid = trim ( $data->sid );
+    	        error_log('sid ->'.$sid);
+        		
+    	        setId($sid);
+    	        error_log('Just set sid..');
+        	
+	            $session = new Container("user");
+    	        error_log('ws-session-user_id ->'.$session->user_id);
+    	        error_log('ws-session-username ->'.$session->username);
             if (!$session->offsetExists('user_id')) {
                 return 'notlogin';
             }
