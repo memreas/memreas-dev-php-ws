@@ -1117,10 +1117,13 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 	    	        //Zend\Session\SessionManager setId($sid);
 	    	        session_id($sid);
 	    	        error_log('Just set sid..');
-	    	        session_start();
-	    	        error_log('Resume session based on sid');
+	    	        error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
+	    	        error_log("user_id after login -----> ".$_SESSION ['user'] ['user_id'].PHP_EOL);
+	    	        error_log("username after login -----> ".$_SESSION ['user'] ['username'].PHP_EOL);
+	    	        error_log("sid after login -----> ".$_SESSION ['user'] ['sid'].PHP_EOL);
 	    	        
-		            $session = new Container("user");
+	    	        
+	    	        $session = new Container("user");
 	    	        error_log('ws-session-user_id ->'.$session->offsetGet('user_id'));
 	    	        error_log('ws-session-username ->'.$session->offsetGet('username'));
 	            if (!$session->offsetExists('user_id')) {

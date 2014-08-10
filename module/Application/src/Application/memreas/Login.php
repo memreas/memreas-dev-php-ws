@@ -93,6 +93,8 @@ class Login {
 		$user->update_time = '';
 
 		$this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ();
+
+/*		
 		error_log ( "Inside setSession got new Container..." );
 		$session = new Container('user');
 		$session->offsetSet('user_id', $user->user_id);
@@ -100,14 +102,12 @@ class Login {
 		$session->offsetSet('sid', session_id());
 		$session->offsetSet('user', json_encode($user));
 		error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet('sid') . PHP_EOL );
-		
-		/*
+*/		
 		$_SESSION ['user'] ['user_id'] = $user->user_id;
 		$_SESSION ['user'] ['username'] = $user->username;
 		$_SESSION ['user'] ['user'] = json_encode ( $user );
 		$_SESSION ['user'] ['sid'] = session_id();
 		error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
-		*/
 		
 	}
 }
