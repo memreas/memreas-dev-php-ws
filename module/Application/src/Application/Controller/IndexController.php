@@ -1113,7 +1113,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         		$sid = trim ( $data->sid );
     	        error_log('sid ->'.$sid);
         		
-    	        setId($sid);
+    	        //Zend\Session\SessionManager setId($sid);
+    	        session_id($sid);
     	        error_log('Just set sid..');
         	
 	            $session = new Container("user");
