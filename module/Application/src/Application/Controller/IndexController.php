@@ -7,7 +7,6 @@
  * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
-
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
@@ -84,72 +83,70 @@ use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
 use Application\memreas\GetPlans;
 
-
 class IndexController extends AbstractActionController {
-
-    // protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
-    // protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
-    protected $xml_in;
-    protected $url = "http://ws";
-    protected $user_id;
-    protected $storage;
-    protected $authservice;
-    protected $userTable;
-    protected $eventTable;
-    protected $mediaTable;
-    protected $eventmediaTable;
-    protected $friendmediaTable;
-    protected $elasticache;
-    protected $aws;
-
-    public function xml2array($xmlstring) {
-        $xml = simplexml_load_string($xmlstring);
-        $json = json_encode($xml);
-        $arr = json_decode($json, TRUE);
-
-        return $arr;
-    }
-
-    public function array2xml($array, $xml = false) {
-        if ($xml === false) {
-            $xml = new \SimpleXMLElement('<?xml version=\'1.0\' encoding=\'utf-8\'?><' . key($array) . '/>');
-            $array = $array [key($array)];
-        }
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                array2xml($value, $xml->addChild($key));
-            } else {
-                $xml->addChild($key, $value);
-            }
-        }
-        return $xml->asXML();
-    }
-
-    public function fetchXML($action, $xml) {
-        $guzzle = new Client ();
-
-        $request = $guzzle->post($this->url, null, array(
-            'action' => $action,
-            // 'cache_me' => true,
-            'xml' => $xml
-                ));
-        $response = $request->send();
-        return $data = $response->getBody(true);
-    }
-
-    public function indexAction() {
-        error_log("Inside indexAction---> ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-        $path = "application/index/ws_tester.phtml";
-        $output = '';
-
-        $callback = isset($_REQUEST ['callback']) ? $_REQUEST ['callback'] : '';
-
-        if (isset($_REQUEST ['json'])) {
-            // Fetch parms
-            $json = $_REQUEST ['json'];
-            $jsonArr = json_decode($json, true);
-            $actionname = $jsonArr ['action'];
-            $type = $jsonArr ['type'];
+	
+	// protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
+	// protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
+	protected $xml_in;
+	protected $url = "http://ws";
+	protected $user_id;
+	protected $storage;
+	protected $authservice;
+	protected $userTable;
+	protected $eventTable;
+	protected $mediaTable;
+	protected $eventmediaTable;
+	protected $friendmediaTable;
+	protected $elasticache;
+	protected $aws;
+	
+	public function xml2array($xmlstring) {
+		$xml = simplexml_load_string ( $xmlstring );
+		$json = json_encode ( $xml );
+		$arr = json_decode ( $json, TRUE );
+		
+		return $arr;
+	}
+	
+	public function array2xml($array, $xml = false) {
+		if ($xml === false) {
+			$xml = new \SimpleXMLElement ( '<?xml version=\'1.0\' encoding=\'utf-8\'?><' . key ( $array ) . '/>' );
+			$array = $array [key ( $array )];
+		}
+		foreach ( $array as $key => $value ) {
+			if (is_array ( $value )) {
+				array2xml ( $value, $xml->addChild ( $key ) );
+			} else {
+				$xml->addChild ( $key, $value );
+			}
+		}
+		return $xml->asXML ();
+	}
+	
+	public function fetchXML($action, $xml) {
+		$guzzle = new Client ();
+		
+		$request = $guzzle->post ( $this->url, null, array (
+				'action' => $action,
+				// 'cache_me' => true,
+				'xml' => $xml 
+		) );
+		$response = $request->send ();
+		return $data = $response->getBody ( true );
+	}
+	public function indexAction() {
+		error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
+		$path = "application/index/ws_tester.phtml";
+		$output = '';
+		
+		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
+		
+		if (isset ( $_REQUEST ['json'] )) {
+			// Fetch parms
+			$json = $_REQUEST ['json'];
+			$jsonArr = json_decode ( $json, true );
+			$actionname = $jsonArr ['action'];
+			$type = $jsonArr ['type'];
             $message_data = $jsonArr ['json'];
             $_POST ['xml'] = $message_data ['xml'];
         } else {
@@ -998,6 +995,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         $session = new Container('user');
         $session->offsetSet('user_id', $user->user_id);
         $session->offsetSet('username', $username);
+        $session->offsetSet('sid', session_id());
         $session->offsetSet('user', json_encode($user));
     }
 
@@ -1131,5 +1129,5 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
     }
 
 }
-
+}
 // end class IndexController
