@@ -154,11 +154,14 @@ class IndexController extends AbstractActionController {
             $actionname = isset($_REQUEST ['action']) ? $_REQUEST ['action'] : '';
             $message_data ['xml'] = '';
         }
+                    
         
         /*
          * TODO: SID still needs debugging - see TODO sections
          */
-       //$actionname = $this->security($actionname);
+       $actionname = $this->security($actionname);
+                    
+                    
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
    
  
