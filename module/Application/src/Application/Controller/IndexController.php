@@ -159,7 +159,7 @@ class IndexController extends AbstractActionController {
         /*
          * TODO: SID still needs debugging - see TODO sections
          */
-       $actionname = $this->security($actionname);
+        $actionname = $this->security($actionname);
                     
                     
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
@@ -1110,7 +1110,10 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
             'registration',
             'forgotpassword',
         	'checkusername',
-        	'changepassword'	
+        	'changepassword',
+            'showlog',
+            'clearlog',
+            'doquery'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;

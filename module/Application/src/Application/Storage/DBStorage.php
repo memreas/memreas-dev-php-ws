@@ -52,7 +52,7 @@ class DBStorage {
  		} elseif (isset ( $_POST ['xml'] )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$sid = trim ( $data->sid );
-                        if (! empty ( $sid )) {
+            if (! empty ( $sid )) {
 				$sessionManager->setId ( $sid );
 			}
                         }
