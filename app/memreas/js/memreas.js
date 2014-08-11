@@ -7,6 +7,7 @@
 /////////////////////
 // memreas action ws
 /////////////////////
+var sid=0;
 jQuery.fetchWS = function (base_url) {
 
 	//var base_url = '/index';
@@ -18,22 +19,30 @@ jQuery.fetchWS = function (base_url) {
     
     //if () {}
     data = '{"action": "' + $("#input_action").val() + '", ' + 
-    '"type":"jsonp", ' + 
+     '"type":"jsonp", ' + 
     '"codebase":"' + $("#codebase").val() + '", ' + 
     '"json": ' + json_actionInputValue  + 
+
+
     '}';
-   
-	$.ajax( {
+ 	$.ajax( {
 	  type:'post', 
-	  url: base_url,
+	  url: base_url ,
 	  dataType: 'jsonp',
-	  data: 'json=' + data,
+	  data: { sid: $("#sid").val(), json: data},
 	  success: function(json){
 	  	var resp = JSON.stringify(json, null, '\t');
 alert("resp:" + resp);
 	  	var html_str = "";
 	  	var html_button = "";
 	  	$("#action_output").val(resp);
+	  	if($("#input_action").val() == 'login'){
+var obj = jQuery.parseJSON( resp );
+  xmlDoc = $.parseXML( obj.data ),
+  $xml = $( xmlDoc ),
+  $sid = $xml.find( "sid" );
+	  		$("#sid").val($sid.html()) ;
+	  	}
 	  	return true;
 	  },
 	  error: function (jqXHR, textStatus, errorThrown) {
