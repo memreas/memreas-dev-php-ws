@@ -49,7 +49,13 @@ class DBStorage {
 		
 		if (!empty( $_REQUEST ['sid'] )) {
 			$sessionManager->setId ( $_REQUEST ['sid'] );
- 		} 
+ 		} elseif (isset ( $_POST ['xml'] )) {
+			$data = simplexml_load_string ( $_POST ['xml'] );
+			$sid = trim ( $data->sid );
+                        if (! empty ( $sid )) {
+				$sessionManager->setId ( $sid );
+			}
+                        }
 		
 		// $sessionManager->start();
 		$container = new Container ( 'user' );

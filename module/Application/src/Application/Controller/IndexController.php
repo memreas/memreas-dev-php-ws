@@ -200,7 +200,7 @@ error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL)
                 //first letter of name
                 $uid = $uid[0];
                 $actionname = '@';
-                if ($registration->status = 'Success') {
+                if ($registration->status == 'Success') {
                     $this->elasticache->setCache("@person", $registration->userIndex);
                 }
             } else if ($actionname == "addcomments") {
@@ -1115,43 +1115,15 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
-        	
-        	/*
-        	 * Set the session 
-        	 */
-        	if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
-	        	$data = simplexml_load_string ( $_POST ['xml'] );
-	        	if (isset($data->sid) && !empty($data->sid)) {
-	        		$sid = trim ( $data->sid );
-	    	        error_log('sid ->'.$sid);
-	        		
-	    	        //Zend\Session\SessionManager setId($sid);
-			        /*
-			         * TODO: match this to login.php and you'll see the vars aren't retained.  Not sure why.  
-			         */
-	    	        session_id($sid);
-	    	        error_log('Just set sid..');
-	    	        error_log ( "session_status ---> " . session_status() . PHP_EOL );
-	    	        error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
-	    	        error_log("user_id after login -----> ".$_SESSION ['user'] ['user_id'].PHP_EOL);
-	    	        error_log("username after login -----> ".$_SESSION ['user'] ['username'].PHP_EOL);
-	    	        error_log("sid after login -----> ".$_SESSION ['user'] ['sid'].PHP_EOL);
-	    	        
-	    	        
 	    	        $session = new Container("user");
-	    	        error_log('ws-session-user_id ->'.$session->offsetGet('user_id'));
-	    	        error_log('ws-session-username ->'.$session->offsetGet('username'));
+            error_log('ws-session-user_is ->'.$session->user_id);
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }
-        	}
-            return $actionname;
-
-        }
-        
+            return $actionname;       
         // return $this->redirect()->toRoute('index', array('action' => 'login'));
-    }
+        }
 
-}
+    }
 }
 // end class IndexController
