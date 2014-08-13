@@ -36,9 +36,9 @@ class Email {
                   $subject =  $email['subject'];
                   $viewModel->clearVariables();
                   $viewModel->setVariables($value);
-                  echo '<pre>';print_r($value);print_r($email);
+                 // echo '<pre>';print_r($value);print_r($email);
                   $html = $viewRender->render($viewModel);
-            echo $html ;exit;
+            //echo $html ;exit;
                 try {
                 	$aws_manager->sendSeSMail($value->email, $subject, $html);
             	} catch (\Exception $exc) {
