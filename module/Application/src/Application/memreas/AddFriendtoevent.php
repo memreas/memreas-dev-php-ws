@@ -8,7 +8,9 @@ use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
 use Application\memreas\gcm;
 use Zend\View\Model\ViewModel;
+use Application\memreas\Email;
 
+ 
 class AddFriendtoevent {
 
     protected $message_data;
@@ -17,6 +19,8 @@ class AddFriendtoevent {
     protected $dbAdapter;
     protected $notification;
     protected $AddNotification;
+    protected $email;
+
  
     public function __construct($message_data, $memreas_tables, $service_locator) {
 //error_log("Enter AddFriendtoevent.__construct()" . PHP_EOL);
@@ -68,7 +72,7 @@ class AddFriendtoevent {
 
         // add group to event_group
         if (!empty($group_array) && !$error) {
-//error_log("Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL);
+            //error_log("Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL);
             foreach ($group_array as $key => $value) {
                 $group_id = $value->group->group_id;
                 if ($group_id != 'null') {
@@ -115,7 +119,7 @@ class AddFriendtoevent {
                     $friend_id = $result_friend ['friend_id'];
                     $network_name = $result_friend ['network'];
                 } else {
-//error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
+                    //error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
                 	if ($network_name == 'memreas') {
                         $r = $this->dbAdapter->getRepository('Application\Entity\User')->findOneBy(array(
                             'username' => $friend_name,
@@ -126,13 +130,14 @@ class AddFriendtoevent {
                             $error = 1;
                             $message .= 'Friend Not Found';
                         } else {
-//error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
+                        //error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
+                            //check record exist in friend
                             $friend_id = $r->user_id;
                             $fr = $this->dbAdapter->getRepository('Application\Entity\Friend')->findOneBy(array(
                                 'friend_id' => $friend_id
                                     ));
                         }
-                       //check record exist in friend
+                       
                     }
 
                     /*
@@ -144,7 +149,7 @@ class AddFriendtoevent {
                     	 * TODO: Need to get proper profile url here
                     	 */
                     	try {
-//error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
+                            //error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                     		$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
 	                    			'user_id' => $friend_id,
 	                    			'is_profile_pic' => '1'
@@ -152,7 +157,7 @@ class AddFriendtoevent {
 	                    	$metadata = $profile_pic->metatdata;
 	                    	$profile_image = json_decode($metadata, true);
 	                    	$profile_pic_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
-//error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
+                            //error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL);
                     	}
@@ -168,13 +173,14 @@ class AddFriendtoevent {
                         try {
                             $this->dbAdapter->persist($tblFriend);
                             $this->dbAdapter->flush();
-//error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
+
+                        //error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL);
                             $status = 'failure';
                             $error = 1;
                         }
-//error_log("Inserted friend table ---> $friend_id" . PHP_EOL);
+                        //error_log("Inserted friend table ---> $friend_id" . PHP_EOL);
                     }
                 } // end if ($result_friend) else
 
@@ -183,7 +189,6 @@ class AddFriendtoevent {
                  */
                 if (isset($friend_id) && !empty($friend_id)) {
                     $check_user_frind = "SELECT u  FROM  Application\Entity\UserFriend u where u.user_id='$user_id' and u.friend_id='$friend_id'";
-
                     $statement = $this->dbAdapter->createQuery($check_user_frind);
                     $r = $statement->getResult();
 
@@ -207,7 +212,8 @@ class AddFriendtoevent {
                             $status = 'Failure';
                             $error = 1;
                         }
-//error_log("Inserted user_friend table ---> $friend_id" . PHP_EOL);
+                        //error_log("Inserted user_friend table ---> $friend_id" . PHP_EOL);
+
                     }
                 }
                 // adding friend to event
@@ -220,7 +226,7 @@ class AddFriendtoevent {
                         $status = "Success";
                         $error = 1;
                         $message .= "$friend_name is already in your Event Friend list.";
-//error_log("$friend_name is already in your Event Friend list. ---> $friend_id" . PHP_EOL);
+                        //error_log("$friend_name is already in your Event Friend list. ---> $friend_id" . PHP_EOL);
                     } else {
                         // insert EventFriend
                         $tblEventFriend = new \Application\Entity\EventFriend ();
@@ -236,9 +242,9 @@ class AddFriendtoevent {
                             $message .= '';
                             $status = 'failure';
                         }
-//error_log("$friend_name is in event friend list ---> event id ---> $event_id" . PHP_EOL);
+                        //error_log("$friend_name is in event friend list ---> event id ---> $event_id" . PHP_EOL);
 
-                        $nmessage = '<b>'.$userOBj->username . ' </b> want to add you to <u><b>' . $eventOBj->name . '</b></u> event';
+                        $nmessage = $userOBj->username . ' want to add you to ' . $eventOBj->name . ' event';
                         // save nofication intable
                         $ndata = array(
                             'addNotification' => array(
@@ -252,11 +258,13 @@ class AddFriendtoevent {
                                 ))
                             )
                         );
+                                            Email::$item['type'] = 'event-invite';
+
                         if ($network_name == 'memreas') {
                             // send push message add user id
                             $this->notification->add($friend_id);
+                            $this->sendMailFriend[] = array();
                         } else {
-                            $nmessage = '<b>'.$userOBj->username . '</b> invite you to <u><b>!' . $eventOBj->name . '</b></u> event';
                             $ndata ['addNotification'] ['meta'] = $nmessage;
                             error_log("message ---> $nmessage" . PHP_EOL);
                             //add non memeras
@@ -265,7 +273,7 @@ class AddFriendtoevent {
                     } // end if (count($r) > 0) else
                 } else if( empty($event_id) && !empty($sendMessage)) {
                     //add friend
-                    $nmessage = '<b>'.$userOBj->username . '</b>  has send friend request ';
+                    $nmessage = $userOBj->username . ' has send friend request ';
                     // save nofication intable
                     $ndata = array(
                         'addNotification' => array(
@@ -278,11 +286,12 @@ class AddFriendtoevent {
                             ))
                         )
                     );
+                    Email::$item['type'] = 'friend-request';
 
                     if ($network_name == 'memreas') {
                         // send push message add user id
                         $this->notification->add($friend_id);
-                    } else {
+                     } else {
                         $ndata ['addNotification'] ['meta'] = $nmessage;
                         error_log("message ---> $nmessage" . PHP_EOL);
                         //add non memeras
@@ -290,7 +299,17 @@ class AddFriendtoevent {
                     }
                 }// endif (!empty($event_id) && $error == 0)
                 //add notification in  db.
-                if(!empty($ndata))     $this->AddNotification->exec($ndata);
+                if(!empty($ndata)) {
+                	$this->AddNotification->exec($ndata);
+                Email::$item['name'] =$userOBj->username;
+                Email::$item['email'] =$userOBj->email_address;
+                Email::$item['message'] =$ndata ['addNotification'] ['meta'];
+
+                Email::collect();
+                }   
+                	 
+
+
             } // end foreach
         } // end if (!empty($friend_array))
         //email notifaction start
@@ -340,13 +359,14 @@ class AddFriendtoevent {
             }
         }
         //email notication end
-
-        if (!empty($ndata ['addNotification'] ['meta']) && !$error) {
+         if (!empty($ndata ['addNotification'] ['meta']) && !$error) {
             // set nofication data and call send method
             $this->notification->setMessage($ndata ['addNotification'] ['meta']);
             $this->notification->type = $ndata ['addNotification']['notification_type'];
             $this->notification->event_id = $event_id;
             $this->notification->send();
+            Email::sendmail($this->service_locator);
+
          } // end if (!empty($data['addNotification']['meta']))
         // add friends to event loop end
         header("Content-type: text/xml");

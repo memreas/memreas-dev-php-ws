@@ -83,6 +83,8 @@ use Application\memreas\RemoveEventFriend;
 use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
 use Application\memreas\GetPlans;
+use Application\memreas\Mem;
+
 
 class IndexController extends AbstractActionController {
 	
@@ -162,7 +164,7 @@ class IndexController extends AbstractActionController {
         $actionname = $this->security($actionname);
                     
                     
-error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+        error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
    
  
         if (isset($actionname) && !empty($actionname)) {
@@ -539,6 +541,8 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             if (stripos($er['name'], $search) === 0) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $er['name'] = '!' . $er['name'];
+                                    $er['created_on'] = Mem::formatDateDiff($er['create_time']);
+
                                     $search_result[] = $er;
                                     $event_ids[]=$er['event_id'];
                                 }
@@ -563,10 +567,12 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                          $chkEventFriend = array();
                         foreach ($EventFriends as $efRow) {
                             $chkEventFriend[$efRow['event_id']]=$efRow['user_approve'];
+
                         }
                          foreach ($search_result as $k =>  &$srRow) {
                            if(isset($chkEventFriend[$event_ids[$k]])){
                             $srRow['event_request_sent'] =$chkEventFriend[$event_ids[$k]];
+
                            }
                         }
 

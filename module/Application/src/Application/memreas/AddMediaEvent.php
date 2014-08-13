@@ -246,7 +246,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$efusers = $qb->getQuery ()->getResult ();
 					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 					$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
-					$nmessage = '<b>'.$userOBj->username . '</b> Added Media to  <u><b>' . $eventOBj->name . '</b></u> event';
+					$nmessage = $userOBj->username . 'Added Media to  ' . $eventOBj->name . ' event';
 					$ndata ['addNotification'] ['meta'] = $nmessage;
 					foreach ( $efusers as $ef ) {
 						$friendId = $ef ['friend_id'];

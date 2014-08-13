@@ -3,6 +3,8 @@
 namespace Application\memreas;
 
 use Application\memreas\MUUID;
+use Application\memreas\Email;
+
 
 class AddComment {
 	protected $message_data;
@@ -12,6 +14,7 @@ class AddComment {
 	protected $notification;
 	protected $AddNotification;
 	protected $addTag;
+
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 // error_log ( "Inside AddComment__construct..." );
 		$this->message_data = $message_data;
@@ -129,7 +132,7 @@ class AddComment {
                
 
                     $efusers = $qb->getQuery ()->getResult ();
-                    $nmessage = htmlspecialchars('<b>'.$userOBj->username . '</b> Has commented on <u><b>!' . $eventOBj->name . '</b></u> event');
+                    $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
 
                     $cdata ['addNotification'] ['meta'] = $nmessage;
                     foreach ( $efusers as $ef ) {
@@ -154,6 +157,11 @@ class AddComment {
                             $this->notification->addFriend ( $ef ['friend_id'] );
                         }
                         $this->AddNotification->exec ( $cdata );
+                        Email::$item['type'] ='user-comment';
+                    	Email::$item['name'] =$userOBj->username;
+                		Email::$item['email'] =$userOBj->email_address;
+                		Email::$item['message'] =$ndata ['addNotification'] ['meta'];
+                		Email::collect();
                     }
 
                     $this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );
@@ -161,6 +169,9 @@ class AddComment {
                     $this->notification->event_id = $event_id;
                     $this->notification->media_id = $media_id;
                     $this->notification->send ();
+                    
+                	Email::sendmail($this->service_locator);
+
                 
 			}
 
@@ -176,9 +187,8 @@ class AddComment {
 
 		$xml_output .= "</addcommentresponse>";
 		$xml_output .= "</xml>";
-		echo $xml_output;
+		
 error_log("Leaving Add Comment exec()".PHP_EOL);
+echo $xml_output;
 	}
 }
-
-?>

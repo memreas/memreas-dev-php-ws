@@ -6,6 +6,8 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\Entity\Notification;
+use Application\memreas\Mem;
+
 
 class ListNotification {
 
@@ -88,6 +90,7 @@ class ListNotification {
                     $xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
 
                     $xml_output .= "<meta><![CDATA[{$row['meta']}]]></meta>";
+
                     $xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
 
                     if(isset($array[$row['notification_type']])){
@@ -98,6 +101,8 @@ class ListNotification {
                    
                     $xml_output .= "<notification_status>{$row['status']}</notification_status>";
                     $xml_output .= "<notification_updated>{$row['update_time']}</notification_updated>";
+                    $xml_output .= '<updated_about>'.Mem::formatDateDiff($row['update_time']).'</updated_about>';
+
 
                     if ($row['notification_type'] == Notification::ADD_FRIEND_TO_EVENT) {
 

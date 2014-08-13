@@ -6,6 +6,9 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\MUUID;
 use Application\Entity\Notification;
+use Application\memreas\Email;
+
+
 
 class AddNotification {
 	protected $message_data;
@@ -13,6 +16,10 @@ class AddNotification {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $notification_id;
+	protected $aws_manager;
+ 
+
+
 	public $sendShortCode=false;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		error_log ( "Inside__construct..." );
@@ -20,6 +27,9 @@ class AddNotification {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->aws_manager = new AWSManagerSender($service_locator);
+		$this->viewRender = $service_locator->get('ViewRenderer');     
+
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec($frmweb = '') {
@@ -57,12 +67,15 @@ class AddNotification {
 			&& $network_name !== 'memreas'  
 			 ){
 			$uuid = explode('-', $this->notification_id);
+			$short_code =  $this->getSortCode($uuid [0]);
         	$tblNotification->short_code = $this->getSortCode($uuid [0]);
         	$tblNotification->notification_method = Notification::NONMEMERAS;
         	$tblNotification->meta .= ' code '.$tblNotification->short_code;
+        	Email::$item['short_code'] = $short_code;
+        	$this->composeNonMemarsMail($data);
 		}else if($network_name == 'memreas'){
 			$tblNotification->notification_method = Notification::MEMERAS ;
-		}  
+ 		}  
 		
 		$tblNotification->create_time = $time;
 		$tblNotification->update_time = $time;
@@ -101,7 +114,7 @@ function getSortCode($str)
         return rtrim(base64_encode($raw),'=');
 	
 }
-
+	 
 
 }
 
