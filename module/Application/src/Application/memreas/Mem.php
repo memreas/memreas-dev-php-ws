@@ -15,8 +15,12 @@ class Mem {
 	}
 	
         public static function formatDateDiff($start, $end=null) { 
-          $start ='@'.$start;
-    if(!($start instanceof DateTime)) { 
+                        $pos = strpos($start, '-');
+
+                        if ($pos === false) {
+                                    $start ='@'.$start;
+                                    }   
+                if(!($start instanceof DateTime)) { 
         $start = new \DateTime($start); 
     } 
     
