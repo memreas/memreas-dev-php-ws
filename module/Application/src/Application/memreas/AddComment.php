@@ -124,7 +124,7 @@ class AddComment {
 				$qb = $this->dbAdapter->createQueryBuilder ();
 				$qb->select ( 'f.network,f.friend_id' );
 				$qb->from ( 'Application\Entity\Friend', 'f' );
-				$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=0' );
+				$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
 				$qb->where ( 'ef.event_id = ?1' );
 				$qb->setParameter ( 1, $event_id );
 
