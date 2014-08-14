@@ -104,7 +104,10 @@ class ListNotification {
                     $xml_output .= '<updated_about>'.Mem::formatDateDiff($row['update_time']).'</updated_about>';
 
 
-                    if ($row['notification_type'] == Notification::ADD_FRIEND_TO_EVENT) {
+                    if ($row['notification_type'] == Notification::ADD_FRIEND_TO_EVENT ||
+                        $row['notification_type'] == Notification::ADD_MEDIA
+
+                        ) {
 
                         $eventMedia = $eventRepository->getEventMedia($links['event_id'], 1);
                         //echo'<pre>';print_r($eventMedia);
