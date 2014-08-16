@@ -40,7 +40,7 @@ class Email {
                   $html = $viewRender->render($viewModel);
             //echo $html ;exit;
                 try {
-                	$aws_manager->sendSeSMail($value->email, $subject, $html);
+                	$aws_manager->sendSeSMail(array($value['email']), $subject, $html);
             	} catch (\Exception $exc) {
                 	error_log('exception->sending mail' . $exc->getMessage());
             	}

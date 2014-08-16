@@ -6,8 +6,8 @@ use \Exception;
 class Mem {
 	protected static $service_locator;
 	protected static $dbAdapter;
-  public static $item;
-  protected static $collection;
+    public static $item;
+    protected static $collection;
                         
 	public static function collect() {
                  self::$collection [] = self::$item;
@@ -67,6 +67,8 @@ class Mem {
     // Prepend 'since ' or whatever you like 
     return $interval->format($format); 
   }
+
+  
 }
 	 
 	
