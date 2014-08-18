@@ -81,9 +81,11 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $xml_output .= "<event>";
                         $xml_output .= "<event_id>" . $row->event_id . "</event_id>";
                         $xml_output .= "<event_name>" . $row->name . "</event_name>";
-                        $xml_output .= "<event_location>" . $row->location . "</event_location>";
-                        $xml_output .= "<friend_can_post>" . $row->friends_can_post . "</friend_can_post>";
-                        $xml_output .= "<friend_can_share>" . $row->friends_can_share . "</friend_can_share>";
+                        $xml_output .= "<event_location>" . $row->location . "</event_location>"; 
+                        $friends_can_post = empty($row->friends_can_post)?'no':'yes';
+                        $xml_output .= "<friend_can_post>" .$friends_can_post  . "</friend_can_post>";
+                        $friends_can_share = empty($row->friends_can_share)?'no':'yes';
+                        $xml_output .= "<friend_can_share>" . $friends_can_share . "</friend_can_share>";
                         // get like count
                         $likeCountSql = $this->dbAdapter->createQuery('SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1');
                         $likeCountSql->setParameter(1, $row->event_id);
