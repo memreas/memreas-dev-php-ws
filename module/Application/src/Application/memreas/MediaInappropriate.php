@@ -20,10 +20,14 @@ class MediaInappropriate {
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
-	public function exec() {
+	public function exec($frmweb = false, $output = '') {
 		$time = "";
-		
-		$data = simplexml_load_string ( $_POST ['xml'] );
+        if (empty ( $frmweb )) {
+		    $data = simplexml_load_string ( $_POST ['xml'] );
+        }
+        else {
+            $data = json_decode ( json_encode ( $frmweb ) );
+        }
 		// echo "<pre>";
 		// print_r($data);
 		$message = ' ';
