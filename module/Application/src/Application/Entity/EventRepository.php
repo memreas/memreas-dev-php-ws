@@ -167,6 +167,21 @@ class EventRepository extends EntityRepository
      return $Index;
 
   }
+   function chkEventFriendRule($eventId,$friendId)
+    { 
+
+        $status = 'no';
+         $qb = $this->_em->createQueryBuilder ();
+            $qb->select ( 'uf.friend_id' );
+            $qb->from ( 'Application\Entity\EventFriend', 'ef' );
+            $qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.user_id = ef.friend_id' );
+            $qb->andWhere ( 'uf.friend_id=?2 AND ef.event_id=?1' );
+            $qb->setParameter ( 1, $eventId );
+            $qb->setParameter ( 2, $friendId );
+
+ 
+        return $qb->getQuery ()->getResult ();
+    }
 
 
 }

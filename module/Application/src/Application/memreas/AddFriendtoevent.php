@@ -64,11 +64,23 @@ class AddFriendtoevent {
         $error = 0;
 
         $userOBj = $this->dbAdapter->find('Application\Entity\User', $user_id);
-        $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);
+       // $eventOBj = $this->dbAdapter->find('Application\Entity\Event', $event_id);
+        $eventRepo=$this->dbAdapter->getRepository('Application\Entity\Event');
+       $eventOBj=$eventRepo->findOneBy(array(
+                            'event_id' => $event_id
+                                ));
+      
          if (empty($userOBj)) {
             $error = 1;
             $message = "User Not Found";
         }
+        $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
+        
+       if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){ 
+            $error =1;
+            $message .= "add friends to event not allowed.";
+        } 
+ 
 
         // add group to event_group
         if (!empty($group_array) && !$error) {
@@ -218,6 +230,7 @@ class AddFriendtoevent {
                 }
                 // adding friend to event
                 if (!empty($event_id) && $error == 0) {
+
                     $check_event_friend = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='$event_id' and e.friend_id='$friend_id'";
                     $statement = $this->dbAdapter->createQuery($check_event_friend);
                     $r = $statement->getResult();
