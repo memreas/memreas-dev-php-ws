@@ -11,8 +11,8 @@ use \Exception;
 class Email {
 	protected static $service_locator;
 	protected static $dbAdapter;
-        public static $item;
-        protected static $collection;
+  public static $item= array();
+  protected static $collection=array();
                         
 	public static function collect() {
                  self::$collection [] = self::$item;
@@ -47,8 +47,7 @@ class Email {
             } 
 	}
         public static  function getSubject($item){
-            
-          $data= array(
+           $data= array(
               'user-registration'=>array('subject' =>"Welcome to event app" ,
                                     'message'=>'',
                                     'template' =>'email/register'),

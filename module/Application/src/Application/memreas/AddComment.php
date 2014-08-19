@@ -64,10 +64,21 @@ class AddComment {
 			$messages = 'user_id is empty';
 			$status = 'Failure';
 		} else {
-			$uuid = MUUID::fetchUUID ();
-			$tblComment = new \Application\Entity\Comment ();
 			$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 			$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
+			if(!$userOBj){
+				$messages = 'user not found';
+			    $status = 'Failure';
+			} else if(!$eventOBj){
+				$messages = 'event_id not found';
+			    $status = 'Failure';
+			}else {
+				
+			
+			$uuid = MUUID::fetchUUID ();
+			$tblComment = new \Application\Entity\Comment ();
+
+			
 				
 			if (!isset($audio_media_id) || empty($audio_media_id)) {
 
@@ -177,6 +188,7 @@ class AddComment {
 
 			// echo '<pre>';print_r($result);exit;
 		}
+	}
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";

@@ -42,7 +42,7 @@ class ListNotification {
         $xml_output .= "<listnotificationresponse>";
         if (isset($userid) && !empty($userid)) {
 
-            $query_user_notification = "SELECT m FROM Application\Entity\Notification m   where m.user_id ='$userid' AND m.is_read = '0' AND m.notification_method > 0  ORDER BY m.create_time DESC";
+            $query_user_notification = "SELECT m FROM Application\Entity\Notification m   where m.user_id ='$userid' AND m.is_read = '0' AND m.notification_method > 0  ORDER BY m.update_time DESC";
             $statement = $this->dbAdapter->createQuery($query_user_notification);
             $result = $statement->getArrayResult();
 
