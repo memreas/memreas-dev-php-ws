@@ -113,10 +113,14 @@ class UpdateNotification {
 										)
 								
 							);
- 								// send push message add user id
+
+							if($status != 2 ){
+								// send push message add user id
 		 						$this->notification->add ( $user_id );
- 							//add notification in  db.
-							$this->AddNotification->exec ( $ndata );
+	 							//add notification in  db.
+								$this->AddNotification->exec ( $ndata );
+							}
+ 								
                          }//user friend updated
                          					
 					}
@@ -166,12 +170,14 @@ class UpdateNotification {
 										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_RESPONSE,
 										'links' => $tblNotification->links, 
 										)
-								
 							);
- 								// send push message add user id
+ 								
+							if($status != 2 ){
+								// send push message add user id
 		 						$this->notification->add ( $user_id );
- 							//add notification in  db.
-							$this->AddNotification->exec ( $ndata );
+	 							//add notification in  db.
+								$this->AddNotification->exec ( $ndata );
+							}
                          }//user friend updated
                          					
 					}
@@ -203,58 +209,54 @@ class UpdateNotification {
 
 public function addFriendRevRec($user_id,$friend_id)
 {
-									
+		
 
-								/*
-                        		 * If the receiver accepts thes add the sender as a friend of the receiver  
-                        		 */
+	/*
+	 * If the receiver accepts thes add the sender as a friend of the receiver  
+	 */
 
-								$time = time ();
-                        		$inUserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
-                         		         		->findOneBy(array('user_id' => $friend_id,'friend_id' => $user_id));
-                        		
-                        		$inFriend = $this->dbAdapter->find ( 'Application\Entity\Friend', $user_id );
+	$time = time ();
+	$inUserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
+		         		->findOneBy(array('user_id' => $friend_id,'friend_id' => $user_id));
+	
+	$inFriend = $this->dbAdapter->find ( 'Application\Entity\Friend', $user_id );
 
-                        		if(!$inFriend){
-                        			$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
-	                    			'user_id' => $user_id,
-	                    			'is_profile_pic' => '1'
-	                    			));
-	                    			$profile_pic_url =MC::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
-	                    			if($profile_pic){
-	                    				$metadata = $profile_pic->metadata;
-	                    			    $profile_image = json_decode($metadata, true);
-	                    			    $profile_pic_url = MC::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
-                         			
-	                    			}
+	if(!$inFriend){
+		$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
+		'user_id' => $user_id,
+		'is_profile_pic' => '1'
+		));
+		$profile_pic_url =MC::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
+		if($profile_pic){
+			$metadata = $profile_pic->metadata;
+		    $profile_image = json_decode($metadata, true);
+		    $profile_pic_url = MC::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+			
+		}
 
-		                        	$userFOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
+    	$userFOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 
-                        			$tblFriend = new \Application\Entity\Friend();
-                        			$tblFriend->friend_id = $user_id;
-                        			$tblFriend->network = 'memreas';
-                        			$tblFriend->social_username = empty($userFOBj)?'':$userFOBj->username;
-                        			$tblFriend->url_image = $profile_pic_url;
-                        			$tblFriend->create_date = $time;
-                        			$tblFriend->update_date = $time;
+		$tblFriend = new \Application\Entity\Friend();
+		$tblFriend->friend_id = $user_id;
+		$tblFriend->network = 'memreas';
+		$tblFriend->social_username = empty($userFOBj)?'':$userFOBj->username;
+		$tblFriend->url_image = $profile_pic_url;
+		$tblFriend->create_date = $time;
+		$tblFriend->update_date = $time;
 
-                        			$this->dbAdapter->persist($tblFriend);
-                          			 
-                        		}
+		$this->dbAdapter->persist($tblFriend);
+			 
+	}
 
-                        		
-                         		if(!$inUserFriend){
-									$tblUserFriend = new \Application\Entity\UserFriend ();
-	                        		$tblUserFriend->friend_id = $user_id;
-	                        		$tblUserFriend->user_id = $friend_id;
-	                        		$tblUserFriend->user_approve = 1;
-	                        		$this->dbAdapter->persist($tblUserFriend);
- 	                        		 
-                         		}
-                        		
-                        		
-                        		
-                        		
+	
+		if(!$inUserFriend){
+		$tblUserFriend = new \Application\Entity\UserFriend ();
+		$tblUserFriend->friend_id = $user_id;
+		$tblUserFriend->user_id = $friend_id;
+		$tblUserFriend->user_approve = 1;
+		$this->dbAdapter->persist($tblUserFriend);
+    		 
+		}                       		
 }
 
 
