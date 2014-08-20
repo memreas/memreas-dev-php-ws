@@ -74,13 +74,16 @@ class AddFriendtoevent {
             $error = 1;
             $message = "User Not Found";
         }
-        $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
-        
-       if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){ 
-            $error =1;
-            $message .= "add friends to event not allowed.";
-        } 
+         if($eventOBj){
+            $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
+           if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){ 
+                $error =1;
+                $message .= "add friends to event not allowed.";
+            } 
  
+
+        }
+        
 
         // add group to event_group
         if (!empty($group_array) && !$error) {
