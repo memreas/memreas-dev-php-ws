@@ -143,23 +143,30 @@ class EventRepository extends EntityRepository
         $temp =array() ;
         $json_array = json_decode ( $row['meta'], true );
         foreach($json_array['comment'] as $k => $comm){
-                                $temp['name'] = $row['tag'];
+            $temp['name'] = $row['tag'];
             $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
             $temp['event_name'] = $event->name;
-                        $temp['event_id'] = $event->event_id;
-
+            $temp['event_id'] = $event->event_id;
             $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
             $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
 
-            $profile = $this->_em->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
-                                        'user_id' => $json_array ['user'][$k],'is_profile_pic' => 1 ) );
-            $profileMeta = empty($profile->metadata)?'':$profile->metadata;
-                 $temp['commenter_photo'] = $this->getProfileUrl($profileMeta);
+            
+
+
+           
+
              
 
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
             $temp['comment'] = $comment->text;
-            $Index[] =$temp;
+            $temp['update_time'] = $comment->update_time;
+             $commenter = $this->getUser($comment->user_id);
+              $temp['commenter_photo'] = $commenter[$comment->user_id]['profile_photo'];
+             $temp['commenter_name'] = '@'.$commenter[$comment->user_id]['username'];
+
+           
+
+             $Index[] =$temp;
         }
 
 
@@ -182,6 +189,23 @@ class EventRepository extends EntityRepository
  
         return $qb->getQuery ()->getResult ();
     }
+function getUser($user_id,$allRow=''){
+    $o=null;
+            $qb = $this->_em->createQueryBuilder ();
+               $qb->select ( 'u.user_id','u.username', 'm.metadata' );
+                $qb->from ( 'Application\Entity\User', 'u' );
+                $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+                $qb->where ( 'u.user_id=?1 ' );
+                $qb->setParameter ( 1, $user_id );
+                $rows = $qb->getQuery ()->getResult ();
+               $row =$rows[0] ;
 
+                $o[$row['user_id']]['username'] = $row['username'];
+                $o[$row['user_id']]['profile_photo'] = $this->getProfileUrl($row['metadata']);
+
+    return $o;
+
+
+}
 
 }
