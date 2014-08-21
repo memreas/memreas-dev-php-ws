@@ -103,10 +103,10 @@ class ViewAllfriends {
 		$res = $statement->getResult ();
 		$xml_output .= "<groups>";
 		if (count ( $res ) <= 0) {
-			$xml_output .= "<group>";
+			/*$xml_output .= "<group>";
 			$xml_output .= "<group_id></group_id>";
 			$xml_output .= "<group_name></group_name>";
-			$xml_output .= "</group>";
+			$xml_output .= "</group>";*/
 		} else
 			foreach ( $res as $row ) {
 				$xml_output .= "<group>";
