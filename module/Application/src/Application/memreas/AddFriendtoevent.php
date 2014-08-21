@@ -185,7 +185,6 @@ class AddFriendtoevent {
                         $tblFriend->url_image = $profile_pic_url;
                         $tblFriend->create_date = $time;
                         $tblFriend->update_date = $time;
-                        echo '<pre>'; print_r ($tblFriend); die();
 
                         try {
                             $this->dbAdapter->persist($tblFriend);
