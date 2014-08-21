@@ -1,5 +1,5 @@
 <?php
 
-echo "Deploy for WS v1.1.2 - Add friend to event - ready for review";
+echo "Deploy for WS v1.1.3 - Debug - ready for review";
 
 ?>

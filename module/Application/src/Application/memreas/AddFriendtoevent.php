@@ -178,8 +178,6 @@ class AddFriendtoevent {
                             error_log("Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL);
                     	}
 
-                        echo $friend_name; die();
-
                     	$tblFriend = new \Application\Entity\Friend ();
                         $tblFriend->friend_id = $friend_id;
                         $tblFriend->network = $network_name;
