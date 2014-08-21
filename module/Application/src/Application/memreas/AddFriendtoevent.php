@@ -148,6 +148,7 @@ class AddFriendtoevent {
                         //error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
                             //check record exist in friend
                             $friend_id = $r->user_id;
+                            $friend_name = $r->username;
                             $fr = $this->dbAdapter->getRepository('Application\Entity\Friend')->findOneBy(array(
                                 'friend_id' => $friend_id
                                     ));
