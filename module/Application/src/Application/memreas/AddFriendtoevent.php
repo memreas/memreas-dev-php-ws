@@ -177,7 +177,9 @@ class AddFriendtoevent {
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL);
                     	}
- 						
+
+                        echo $friend_name; die();
+
                     	$tblFriend = new \Application\Entity\Friend ();
                         $tblFriend->friend_id = $friend_id;
                         $tblFriend->network = $network_name;
@@ -185,6 +187,7 @@ class AddFriendtoevent {
                         $tblFriend->url_image = $profile_pic_url;
                         $tblFriend->create_date = $time;
                         $tblFriend->update_date = $time;
+                        echo '<pre>'; print_r ($tblFriend); die();
 
                         try {
                             $this->dbAdapter->persist($tblFriend);
