@@ -160,9 +160,9 @@ class EventRepository extends EntityRepository
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
             $temp['comment'] = $comment->text;
             $temp['update_time'] = $comment->update_time;
-             $commenter = $this->getUser($comment->user_id);
-              $temp['commenter_photo'] = $commenter[$comment->user_id]['profile_photo'];
-             $temp['commenter_name'] = '@'.$commenter[$comment->user_id]['username'];
+             $commenter = $this->getUser($comment->user_id,'row');
+              $temp['commenter_photo'] = $commenter['profile_photo'];
+             $temp['commenter_name'] = '@'.$commenter['username'];
 
            
 
@@ -192,16 +192,19 @@ class EventRepository extends EntityRepository
 function getUser($user_id,$allRow=''){
     $o=null;
             $qb = $this->_em->createQueryBuilder ();
-               $qb->select ( 'u.user_id','u.username', 'm.metadata' );
-                $qb->from ( 'Application\Entity\User', 'u' );
-                $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-                $qb->where ( 'u.user_id=?1 ' );
-                $qb->setParameter ( 1, $user_id );
-                $rows = $qb->getQuery ()->getResult ();
+               $qb->select ( 'u.email_address','u.user_id','u.username', 'm.metadata' );
+               $qb->from ( 'Application\Entity\User', 'u' );
+               $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+               $qb->where ( 'u.user_id=?1 ' );
+               $qb->setParameter ( 1, $user_id );
+               $rows = $qb->getQuery()->getResult();
+               
                $row =$rows[0] ;
-
-                $o[$row['user_id']]['username'] = $row['username'];
-                $o[$row['user_id']]['profile_photo'] = $this->getProfileUrl($row['metadata']);
+               $row['profile_photo'] = $this->getProfileUrl($row['metadata']);
+                if($allRow){
+                 return $row;  
+               }
+                $o[$row['user_id']]=$row;
 
     return $o;
 

@@ -131,28 +131,28 @@ class AddComment {
 				$this->addTag->getKeyword ( $comment, $metaTag );
 
 				//  send notification owner of the event and all who commented.
-				$query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
-				$qb = $this->dbAdapter->createQueryBuilder ();
+ 				$qb = $this->dbAdapter->createQueryBuilder ();
 				$qb->select ( 'f.network,f.friend_id' );
 				$qb->from ( 'Application\Entity\Friend', 'f' );
 				$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
-				$qb->where ( 'ef.event_id = ?1' );
+				$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
 				$qb->setParameter ( 1, $event_id );
+				$qb->setParameter ( 2, $user_id );
 
-                //Check if comment is made by owner or not
-               
+				
 
-                    $efusers = $qb->getQuery ()->getResult ();
-                    $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
+                 //Check if comment is made by owner or not
+              	$eventRepo =  $this->dbAdapter->getRepository('Application\Entity\Event');
+                $efusers = $qb->getQuery ()->getResult ();
+                $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
 
                     $cdata ['addNotification'] ['meta'] = $nmessage;
                     foreach ( $efusers as $ef ) {
-                    	if ($eventOBj->user_id == $ef ['friend_id']) continue;
-
+ 
                         $cdata = array (
                                     'addNotification' => array (
                                             'network_name' => $ef ['network'],
-                                            'user_id' => $eventOBj->user_id,
+                                            'user_id' => $ef['friend_id'],
                                             'meta' => $nmessage,
                                             'notification_type' => \Application\Entity\Notification::ADD_COMMENT,
                                             'links' => json_encode ( array (
@@ -164,15 +164,17 @@ class AddComment {
                             );
                         if ($ef ['network'] == 'memreas') {
                             $this->notification->add ( $ef ['friend_id'] );
-                        } else {
+                            $friendUser = $eventRepo->getUser($ef['friend_id'],'row');
+                            Email::$item['type'] ='user-comment';
+                            Email::$item['name'] =$friendUser['username'];
+                            Email::$item['email'] =$friendUser['email_address'];
+                            Email::$item['message'] =$comment;
+                            Email::collect();
+                         } else {
                             $this->notification->addFriend ( $ef ['friend_id'] );
                         }
                         $this->AddNotification->exec ( $cdata );
-                        Email::$item['type'] ='user-comment';
-                    	Email::$item['name'] =$userOBj->username;
-                		Email::$item['email'] =$userOBj->email_address;
-                		Email::$item['message'] =$ndata ['addNotification'] ['meta'];
-                		Email::collect();
+                       
                     }
 
                     $this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );

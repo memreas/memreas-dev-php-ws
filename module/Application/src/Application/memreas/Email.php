@@ -11,8 +11,8 @@ use \Exception;
 class Email {
 	protected static $service_locator;
 	protected static $dbAdapter;
-  public static $item= array();
-  protected static $collection=array();
+        public static $item= array();
+        protected static $collection=array();
                         
 	public static function collect() {
                  self::$collection [] = self::$item;
@@ -25,7 +25,7 @@ class Email {
 	 
 	 
 	public static  function sendmail($servicemanager){
-			$aws_manager = new AWSManagerSender($servicemanager);
+		$aws_manager = new AWSManagerSender($servicemanager);
             $viewModel = new ViewModel (array());
             
             
@@ -38,7 +38,7 @@ class Email {
                   $viewModel->setVariables($value);
                  // echo '<pre>';print_r($value);print_r($email);
                   $html = $viewRender->render($viewModel);
-            //echo $html ;exit;
+                   //echo $html ;exit;
                 try {
                 	$aws_manager->sendSeSMail(array($value['email']), $subject, $html);
             	} catch (\Exception $exc) {
