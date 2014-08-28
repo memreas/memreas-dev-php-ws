@@ -149,20 +149,12 @@ class EventRepository extends EntityRepository
             $temp['event_id'] = $event->event_id;
             $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
             $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
-
-            
-
-
-           
-
-             
-
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
             $temp['comment'] = $comment->text;
             $temp['update_time'] = $comment->update_time;
-             $commenter = $this->getUser($comment->user_id,'row');
-              $temp['commenter_photo'] = $commenter['profile_photo'];
-             $temp['commenter_name'] = '@'.$commenter['username'];
+            $commenter = $this->getUser($comment->user_id,'row');
+            $temp['commenter_photo'] = $commenter['profile_photo'];
+            $temp['commenter_name'] = '@'.$commenter['username'];
 
            
 
@@ -190,6 +182,10 @@ class EventRepository extends EntityRepository
         return $qb->getQuery ()->getResult ();
     }
 function getUser($user_id,$allRow=''){
+  //check in catch
+
+  //if found return
+//else get from db
     $o=null;
             $qb = $this->_em->createQueryBuilder ();
                $qb->select ( 'u.email_address','u.user_id','u.username', 'm.metadata' );

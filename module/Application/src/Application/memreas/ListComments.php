@@ -94,12 +94,13 @@ class ListComments {
 					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
 					//$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
 					//$json_array = json_decode ( $audio_row ['metadata'], true );
+					//error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
+
 					if ($audio_row) {
 						$json_array = json_decode ( $audio_row->metadata, true );
 //error_log("metadata-----> ".$audio_row->metadata.PHP_EOL);
-						
-					if (isset($json_array ['S3_files'] ['audio']) && !empty($json_array ['S3_files'] ['audio']) ){
-						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['audio'];					
+ 					if (isset($json_array ['S3_files'] ['type']['audio'])  ){
+						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
 						$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
 //error_log("audio_url-----> ".$audio_url.PHP_EOL);
 					}

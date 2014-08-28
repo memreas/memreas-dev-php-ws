@@ -31,6 +31,7 @@ class Email {
             
             $viewRender = $servicemanager->get('ViewRenderer');
             foreach (self::$collection as $value) {
+                  if(empty($value['email'])) continue;
                   $email = self::getSubject($value);
                   $viewModel->setTemplate($email['template']);
                   $subject =  $email['subject'];

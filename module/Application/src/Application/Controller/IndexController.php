@@ -84,12 +84,13 @@ use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
 use Application\memreas\GetPlans;
 use Application\memreas\Mem;
+use Application\memreas\GetOrderHistory;
 
 
 class IndexController extends AbstractActionController {
 	
 	// protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
-	// protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
+	//protected $url = "http://memreasdev-wsu.elasticbeanstalk.com/";
 	protected $xml_in;
 	protected $url = "http://ws";
 	protected $user_id;
@@ -161,7 +162,7 @@ class IndexController extends AbstractActionController {
         /*
          * TODO: SID still needs debugging - see TODO sections
          */
-        $actionname = $this->security($actionname);
+        //$actionname = $this->security($actionname);
                     
                     
         error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
@@ -606,7 +607,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         foreach ($mc as $k => $er) {
                             if (stripos($er['name'], $search) !== false) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
+                                    $er['updated_on'] = Mem::formatDateDiff($er['update_time']);
                                     $search_result[$k] = $er;
+
                                 }
                                  $rc+=1;
                             }
@@ -839,12 +842,15 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getplans") {
                 $GetPlans = new GetPlans($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetPlans->exec();
+            }else if ($actionname == "getorderhistory") {
+                $GetPlans = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetPlans->exec();
             }
 
             /*
              * Successfully retrieved from cache so echo
              */
-            if ($cache_me == false) {
+            if ($cache_me == false && !empty($result)) {
              	echo $result;
             }
             $output = ob_get_clean();

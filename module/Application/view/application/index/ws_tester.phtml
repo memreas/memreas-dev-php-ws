@@ -82,6 +82,8 @@ echo "user_id ----> " . $user_id;
             var viewmediadetails= '<xml><viewmediadetails><media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id></viewmediadetails></xml>';	
             var getfriends = '<xml><getfriends><user_id>1</user_id></getfriends></xml>';
             var getplans = '<xml><getplans><user_id>1</user_id></getplans></xml>';
+            var getorderhistory = '<xml><getorderhistory><user_name>1</user_name></getorderhistory></xml>';
+
 
             $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
@@ -155,6 +157,8 @@ echo "user_id ----> " . $user_id;
 					else if ($("#input_action").val() == "registration") { xml = registration; } 
 					else if ($("#input_action").val() == "getfriends") { xml = getfriends; }
 					else if ($("#input_action").val() == "getplans") { xml = getplans; }
+                    else if ($("#input_action").val() == "getorderhistory") { xml = getorderhistory; }
+
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
 
@@ -258,6 +262,7 @@ echo "user_id ----> " . $user_id;
 							<option>viewmediadetails</option>
 							<option>getfriends</option>
 							<option>getplans</option>
+                            <option>getorderhistory</option>
 						</select>
 
 					</tr>

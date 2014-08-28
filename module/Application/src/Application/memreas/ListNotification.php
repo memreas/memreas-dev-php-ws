@@ -141,7 +141,7 @@ class ListNotification {
                 }
             } else {
                 $xml_output .= "<status>failure</status>";
-                $xml_output .= "<message>User id is not given.</message>";
+                $xml_output .= "<message>No record found</message>";
             }
 
             $xml_output .= "</notifications></listnotificationresponse>";

@@ -5,6 +5,8 @@ use \Exception;
 
 class Mem {
 	protected static $service_locator;
+    protected static $catch;
+
 	protected static $dbAdapter;
     public static $item;
     protected static $collection;
