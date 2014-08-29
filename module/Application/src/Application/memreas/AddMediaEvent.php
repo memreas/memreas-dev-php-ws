@@ -151,6 +151,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
 					$json_array ['S3_files'] ['content_type'] = $content_type;
+					$json_array ['S3_files'] ['is_video'] = $is_video;
 					$json_array ['S3_files'] ['type'] ['video'] ['format'] = $file_type [1];
 					error_log ( "json_array ---> " . json_encode ( $json_array ) );
 					/*
@@ -167,6 +168,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
 					$json_array ['S3_files'] ['content_type'] = $content_type;
+					$json_array ['S3_files'] ['is_audio'] = $is_audio;
 					$json_array ['S3_files'] ['type'] ['audio'] ['format'] = $file_type [1];
 					error_log ( "json_array ---> " . json_encode ( $json_array ) );
 					/*
