@@ -905,7 +905,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         } else {
             // xml output
             echo $output;
-error_log("Output data as xml ----> ".$output.PHP_EOL);
+error_log("Output data as xml -----> ".$output.PHP_EOL);
             exit();
         }
     }
