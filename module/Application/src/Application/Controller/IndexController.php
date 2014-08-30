@@ -185,7 +185,10 @@ class IndexController extends AbstractActionController {
 
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
-error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL);            
+            if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
+				error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL);
+            }
+                        
             $memreas_tables = new MemreasTables($this->getServiceLocator());
             if($actionname == 'notlogin'){
                 $result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
