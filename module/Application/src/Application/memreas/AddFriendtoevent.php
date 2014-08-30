@@ -129,17 +129,27 @@ class AddFriendtoevent {
 //error_log("AddFriendtoevent.exec() friend_name ----> " . $friend_name . PHP_EOL);
 //error_log("AddFriendtoevent.exec() friend_id ----> " . $friend_id . PHP_EOL);
 //error_log("AddFriendtoevent.exec() profile_pic_url ----> " . $profile_pic_url . PHP_EOL);
-				// add to friend
+		// add to friend
                 if ($result_friend) {
                     $friend_id = $result_friend ['friend_id'];
                     $network_name = $result_friend ['network'];
                 } else {
                     //error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
+                    
                 	if ($network_name == 'memreas') {
-                        $r = $this->dbAdapter->getRepository('Application\Entity\User')->findOneBy(array(
+                        if(!empty($friend_id)){
+                             $r = $this->dbAdapter->getRepository('Application\Entity\User')->findOneBy(array(
+                            'user_id' => $friend_id,
+                            'disable_account' => 0
+                                ));
+
+                        } else {
+                            $r = $this->dbAdapter->getRepository('Application\Entity\User')->findOneBy(array(
                             'username' => $friend_name,
                             'disable_account' => 0
                                 ));
+                        }
+                        
 
                         if (empty($r)) {
                             $error = 1;
@@ -155,6 +165,8 @@ class AddFriendtoevent {
                         }
                        
                     }
+                    //check user canot add himself as friend
+                    if($friend_id == $user_id) continue;
 
                     /*
                      * If friend exists as user add to friend table if not there
@@ -275,13 +287,17 @@ class AddFriendtoevent {
                                 ))
                             )
                         );
-                                            Email::$item['type'] = 'event-invite';
+                        Email::$item['type'] = 'event-invite';
 
                         if ($network_name == 'memreas') {
                             // send push message add user id
                             $this->notification->add($friend_id);
-                            $this->sendMailFriend[] = array();
-                        } else {
+                            $this->AddNotification->exec($ndata);
+                            Email::$item['name'] =$userOBj->username;
+                            Email::$item['email'] =$userOBj->email_address;
+                            Email::$item['message'] =$ndata ['addNotification'] ['meta'];
+                            Email::collect();
+                         } else {
                             $ndata ['addNotification'] ['meta'] = $nmessage;
                             error_log("message ---> $nmessage" . PHP_EOL);
                             //add non memeras
@@ -308,6 +324,13 @@ class AddFriendtoevent {
                     if ($network_name == 'memreas') {
                         // send push message add user id
                         $this->notification->add($friend_id);
+                        //collect email data
+                        $this->AddNotification->exec($ndata);
+                        Email::$item['name'] =$userOBj->username;
+                        Email::$item['email'] =$userOBj->email_address;
+                        Email::$item['message'] =$ndata ['addNotification'] ['meta'];
+                        Email::collect();
+                          
                      } else {
                         $ndata ['addNotification'] ['meta'] = $nmessage;
                         error_log("message ---> $nmessage" . PHP_EOL);
@@ -316,14 +339,7 @@ class AddFriendtoevent {
                     }
                 }// endif (!empty($event_id) && $error == 0)
                 //add notification in  db.
-                if(!empty($ndata)) {
-                	$this->AddNotification->exec($ndata);
-                Email::$item['name'] =$userOBj->username;
-                Email::$item['email'] =$userOBj->email_address;
-                Email::$item['message'] =$ndata ['addNotification'] ['meta'];
-
-                Email::collect();
-                }   
+               
                 	 
 
 
