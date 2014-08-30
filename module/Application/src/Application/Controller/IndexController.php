@@ -852,15 +852,16 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
              * Successfully retrieved from cache so echo
              */
             if ($cache_me == false && !empty($result)) {
-             	echo $result;
-            }
 error_log("Output data as json ----> ".json_encode($result).PHP_EOL);
+            	echo $result;
+            }
             $output = ob_get_clean();
 
             /*
              * TODO - Cache here
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
+error_log("Output data as json ----> ".json_encode(output).PHP_EOL);
             	$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
             }
 
