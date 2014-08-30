@@ -90,7 +90,7 @@ use Application\memreas\GetOrderHistory;
 class IndexController extends AbstractActionController {
 	
 	// protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
-	//protected $url = "http://memreasdev-wsu.elasticbeanstalk.com/";
+	// protected $url = "http://memreasdev-wsu.elasticbeanstalk.com/";
 	protected $xml_in;
 	protected $url = "http://ws";
 	protected $user_id;
@@ -185,6 +185,7 @@ class IndexController extends AbstractActionController {
 
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
+error_log("Input data as json ----> ".json_encode($message_data).PHP_EOL);            
             $memreas_tables = new MemreasTables($this->getServiceLocator());
             if($actionname == 'notlogin'){
                 $result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -853,6 +854,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             if ($cache_me == false && !empty($result)) {
              	echo $result;
             }
+error_log("Output data as json ----> ".json_encode($result).PHP_EOL);
             $output = ob_get_clean();
 
             /*
