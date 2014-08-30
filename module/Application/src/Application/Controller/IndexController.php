@@ -893,6 +893,7 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
             // callback json
             echo $callback . "(" . $json . ")";
             // Need to exit here to avoid ZF2 framework view.
+error_log("Output data as json ----> ".$json.PHP_EOL);
             exit();
         }
 
@@ -904,6 +905,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         } else {
             // xml output
             echo $output;
+error_log("Output data as xml ----> ".$output.PHP_EOL);
             exit();
         }
     }
