@@ -852,7 +852,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
              * Successfully retrieved from cache so echo
              */
             if ($cache_me == false && !empty($result)) {
-error_log("Output data as json ----> ".json_encode($result).PHP_EOL);
+error_log("Output data as json ----> ".$result.PHP_EOL);
             	echo $result;
             }
             $output = ob_get_clean();
@@ -862,14 +862,17 @@ error_log("Output data as json ----> ".json_encode($result).PHP_EOL);
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
 error_log("Output data as json ----> ".json_encode(output).PHP_EOL);
-            	$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
+error_log("setCache action_name + uid ----> ".$actionname . '_' . $cache_id.PHP_EOL);
+error_log("setCache output ----> ".$output.PHP_EOL);
+				$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
             }
 
             /*
              * TODO - Invalidate cache here
              */
             if ($invalidate_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-                $this->elasticache->invalidateCache($invalidate_action . '_' . $uid);
+error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
+            	$this->elasticache->invalidateCache($invalidate_action . '_' . $uid);
             }
         }
         // memreas related calls...
