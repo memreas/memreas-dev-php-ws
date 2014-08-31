@@ -3,6 +3,7 @@
 namespace Application\memreas;
 
 use Aws\Common\Aws;
+use Aws\CloudFront\CloudFrontClient;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
@@ -22,8 +23,10 @@ class MemreasSignedURL {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( MemreasConstants::MEMREASDB );
-		$this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
-		$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
+		//$this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
+		//$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
+		$this->private_key_filename = getcwd () . '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
+		$this->key_pair_id = 'APKAISSKGZE3DR5HQCHA';
 		$this->expires = time () + 36000; // 10 hour from now
 		$this->signature_encoded = null;
 		$this->policy_encoded = null;
@@ -37,20 +40,39 @@ class MemreasSignedURL {
 		// Fetch the S3 class
 		$this->s3 = $this->aws->get ( 's3' );
 		
+		
+		$this->aws = Aws::factory ( array (
+				'key' => 'AKIAJ5JYKD6J3GCXMUAQ',
+				'secret' => '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',
+				'region' => 'us-east-1' 
+		) );
+		
 		// Fetch the CloudFront class
 		$this->cloud_front = $this->aws->get ( 'CloudFront' );
 		
+		/*
+		$this->cloud_front = CloudFrontClient::factory(array(
+				'private_key' => $this->private_key_filename,
+				'key_pair_id' => $this->key_pair_id,
+		));
+		*/
+		
 	}
+	
 	public function fetchSignedURL($path) {
-		if (MemreasConstants::SIGNURLS) {
-error_log("Inside fetchSignedURL path before... $path".PHP_EOL);
-			$expires = time() + MemreasConstants::EXPIRES;
-			//$path = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
-			//$path = $this->s3->getObjectUrl(MemreasConstants::S3BUCKET, $path, '+10 minutes');
-			$path = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $expires));
-error_log("Inside fetchSignedURL path after signing... $path".PHP_EOL);
+		if ((MemreasConstants::SIGNURLS) && !empty($path) && !is_array($path)) {
+			$this->expires = time() + MemreasConstants::EXPIRES;
+
+			//doesn't work...
+			//$path = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $this->expires));
+
+			$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
+//error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
+	
+			return $signed_url;
+		} else {
+			return ""; //path is empty
 		}			
-		return $path;
 	}
 	
 	public function exec() {
@@ -63,6 +85,7 @@ error_log("Inside fetchSignedURL path after signing... $path".PHP_EOL);
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<signedurlresponse>";
+
 		if (isset ( $path ) && ! empty ( $path )) {
 			$signedurl = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
 			$xml_output .= "<status>success</status>";

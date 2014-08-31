@@ -85,7 +85,11 @@ class ListAllmedia {
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'u.username', 'm.metadata' );
 			$qb->from ( 'Application\Entity\User', 'u' );
-			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+			
+			//Changed by JMeah 31-AUG-2014
+			//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+			
 			$qb->where ( 'u.user_id=?1 ' );
 			$qb->setParameter(1, $result [0] ['user_id']);
 			$oUserProfile = $qb->getQuery ()->getResult();
@@ -94,15 +98,21 @@ class ListAllmedia {
 			$json_array = json_decode ( $oUserProfile[0]['metadata'], true );
 			$url1 = '';
 			if (!empty ( $json_array ['S3_files']['path']))
+
 				
-error_log("s3Files path -----> ".$json_array['S3_files']['path'].'******'.PHP_EOL);
+//error_log("s3Files path -----> ".print_r($json_array['S3_files']['path'],true).'******'.PHP_EOL);
+//$str = is_array($json_array['S3_files']['path']) ? 'json_array[S3_files][path] IS an Array!!' : 'json_array[S3_files][path] IS NOT an Array!!';			 
+//error_log("s3Files isArray(path) -----> ".$str.'******'.PHP_EOL);
+
 				if (isset($json_array ['S3_files']['path'])) {
 					$url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+//error_log("s3Files url -----> ".$url.'******'.PHP_EOL);
 					$path = $this->url_signer->fetchSignedURL($url);
+//error_log("s3Files path -----> ".$path.'******'.PHP_EOL);
 				} else {
 					$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 				}
-error_log("signed url -----> ".$path.PHP_EOL);
+//error_log("signed url -----> ".$path.PHP_EOL);
 				//$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 				$xml_output .= "<username>" . $oUserProfile[0] ['username'] . "</username>";
 				$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
@@ -174,7 +184,7 @@ error_log("signed url -----> ".$path.PHP_EOL);
 					    	$path = MemreasConstants::CLOUDFRONT_STREAMING_HOST . $this->url_signer->fetchSignedURL($path);
 						    $xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
 						    
-					    	$path = isset($json_array ['S3_files'] ['hls']) && !empty($json_array ['S3_files'] ['hls']) ? $json_array ['S3_files'] ['hls'] : "";
+					    	$path = isset($json_array ['S3_files'] ['hls']) && !empty($json_array ['S3_files'] ['hls']) ? $json_array ['S3_files'] ['hls'] : "WHERE-IS-HLS?";
 					    	$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($path);
 						    $xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					    }

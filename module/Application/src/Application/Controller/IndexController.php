@@ -139,7 +139,7 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-		error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
+error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -165,7 +165,7 @@ class IndexController extends AbstractActionController {
         //$actionname = $this->security($actionname);
                     
                     
-        error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
    
  
         if (isset($actionname) && !empty($actionname)) {
@@ -864,7 +864,7 @@ error_log("Output data as json ----> ".$result.PHP_EOL);
              * TODO - Cache here
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-error_log("Output data as json ----> ".json_encode(output).PHP_EOL);
+error_log("Output data as json ----> ".json_encode($output).PHP_EOL);
 error_log("setCache action_name + uid ----> ".$actionname . '_' . $cache_id.PHP_EOL);
 error_log("setCache output ----> ".$output.PHP_EOL);
 				$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
@@ -896,20 +896,21 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
             // callback json
             echo $callback . "(" . $json . ")";
             // Need to exit here to avoid ZF2 framework view.
-error_log("Output data as json ----> ".$json.PHP_EOL);
+//error_log("Output data as json ----> ".$json.PHP_EOL);
             exit();
         }
 
-error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
         if (isset($_GET ['view']) && empty($actionname)) {
             $view = new ViewModel ();
             $view->setTemplate($path); // path to phtml file under view folder
+error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
             return $view;
         } else {
             // xml output
             echo $output;
-error_log("Output data as xml -----> ".$output.PHP_EOL);
-            exit();
+//error_log("Output data as xml -----> ".$output.PHP_EOL);
+error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+			exit();
         }
     }
 
