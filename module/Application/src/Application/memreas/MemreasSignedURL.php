@@ -71,7 +71,7 @@ class MemreasSignedURL {
 	
 			return $signed_url;
 		} else {
-			return ""; //path is empty
+			return $path; //path is empty
 		}			
 	}
 	

@@ -13,7 +13,7 @@ class MemreasConstants {
 	const MEDIA_URL = "http://memreasdev-wsu.elasticbeanstalk.com/?action=addmediaevent";
 	//bew url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
-	const SIGNURLS = false;
+	const SIGNURLS = true;
 	
 	//Same across...
 	const URL = "/index";
