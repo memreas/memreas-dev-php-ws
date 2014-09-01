@@ -273,11 +273,14 @@ class AddFriendtoevent {
                         }
                         //error_log("$friend_name is in event friend list ---> event id ---> $event_id" . PHP_EOL);
 
-                        $nmessage = $userOBj->username . ' want to add you to ' . $eventOBj->name . ' event';
+                        /*
+                         * TODO: add href for !memreas 
+                         */
+                        $nmessage = $userOBj->username . ' invites you to !' . $eventOBj->name;
                         // save nofication intable
                         $ndata = array(
                             'addNotification' => array(
-                                'network_name' => $network_name,
+                                'network_name' => strtolower($network_name),
                                 'user_id' => $friend_id,
                                 'meta' => $nmessage,
                                 'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
