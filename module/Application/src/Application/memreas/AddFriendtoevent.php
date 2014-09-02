@@ -49,6 +49,8 @@ class AddFriendtoevent {
 //error_log("Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL);
         }
 
+        $owner = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
+
         $friend_array = $data->addfriendtoevent->friends->friend;
 //error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_array) . PHP_EOL);
         $user_id = (trim($data->addfriendtoevent->user_id));
@@ -74,14 +76,14 @@ class AddFriendtoevent {
             $error = 1;
             $message = "User Not Found";
         }
-         if($eventOBj){
+
+        //Check if this event is friend adding or owner
+         if($eventOBj && ($eventOBj->user_id != $owner)){
             $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
-           if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){ 
+           if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){
                 $error =1;
                 $message .= "add friends to event not allowed.";
-            } 
- 
-
+            }
         }
         
 
