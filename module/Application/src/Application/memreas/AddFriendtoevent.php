@@ -169,9 +169,9 @@ class AddFriendtoevent {
                     if($friend_id == $user_id) continue;
 
                     /*
-                     * If friend exists as user add to friend table if not there
+                     * If friend record does not exist add to friend table if not there
                      */
-                    if (empty($fr) && !empty($friend_id)) {
+                    if (empty($fr) && !empty($friend_id) && !empty($friend_name)) {
                     	
                         /*
                     	 * TODO: Need to get proper profile url here
@@ -271,6 +271,7 @@ class AddFriendtoevent {
                             $message .= '';
                             $status = 'failure';
                         }
+                    }
                         //error_log("$friend_name is in event friend list ---> event id ---> $event_id" . PHP_EOL);
 
                         /*
@@ -296,8 +297,10 @@ class AddFriendtoevent {
                             // send push message add user id
                             $this->notification->add($friend_id);
                             $this->AddNotification->exec($ndata);
-                            Email::$item['name'] =$userOBj->username;
-                            Email::$item['email'] =$userOBj->email_address;
+                            $friendUser = $eventRepo->getUser($friend_id,'row');
+
+                            Email::$item['name'] =$friendUser['username'];
+                            Email::$item['email'] =$friendUser['email_address'];
                             Email::$item['message'] =$ndata ['addNotification'] ['meta'];
                             Email::collect();
                          } else {
@@ -306,7 +309,7 @@ class AddFriendtoevent {
                             //add non memeras
                             $this->notification->addFriend($friend_id);
                         }
-                    } // end if (count($r) > 0) else
+                    // end if (count($r) > 0) else
                 } else if( empty($event_id) && !empty($sendMessage)) {
                     //add friend
                     $nmessage = $userOBj->username . ' has send friend request ';
@@ -329,8 +332,10 @@ class AddFriendtoevent {
                         $this->notification->add($friend_id);
                         //collect email data
                         $this->AddNotification->exec($ndata);
-                        Email::$item['name'] =$userOBj->username;
-                        Email::$item['email'] =$userOBj->email_address;
+                        $friendUser = $eventRepo->getUser($friend_id,'row');
+
+                        Email::$item['name'] =$friendUser['username'];
+                        Email::$item['email'] =$friendUser['email_address'];
                         Email::$item['message'] =$ndata ['addNotification'] ['meta'];
                         Email::collect();
                           
