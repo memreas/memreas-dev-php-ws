@@ -147,6 +147,14 @@ class AddComment {
                 $nmessage = $userOBj->username . ' Has commented on !' . $eventOBj->name . ' event';
 
                     $cdata ['addNotification'] ['meta'] = $nmessage;
+
+                    //add event owner in notifcation list
+                    if($eventOBj->user_id != $user_id){
+                    	 $efusers[] = array(
+ 										'network' => 'memreas',
+										'friend_id' =>	$eventOBj->user_id
+                    	 			) ;
+                    	}
                     foreach ( $efusers as $ef ) {
  
                         $cdata = array (
@@ -176,6 +184,9 @@ class AddComment {
                         $this->AddNotification->exec ( $cdata );
                        
                     }
+
+                    
+
 
                     $this->notification->setMessage ( $cdata ['addNotification'] ['meta'] );
                     $this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
