@@ -8,6 +8,7 @@ use Application\memreas\AWSManagerSender;
 use Application\memreas\AddNotification;
 use Application\memreas\MUUID;
 use \Exception;
+use Application\memreas\Email;
 
 class AddMediaEvent {
 	protected $message_data;
@@ -241,15 +242,27 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$qb = $this->dbAdapter->createQueryBuilder ();
 					$qb->select ( 'f.network,f.friend_id' );
 					$qb->from ( 'Application\Entity\EventFriend', 'ef' );
-					$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id' );
-					$qb->where ( 'ef.event_id = ?1' );
+					$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
+					$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
 					$qb->setParameter ( 1, $event_id );
+					$qb->setParameter ( 2, $user_id );
 
 					$efusers = $qb->getQuery ()->getResult ();
 					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
-					$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
+					$eventOBj=$eventRepo->findOneBy(array(
+                            'event_id' => $event_id
+                                ));
 					$nmessage = $userOBj->username . 'Added Media to  ' . $eventOBj->name . ' event';
 					$ndata ['addNotification'] ['meta'] = $nmessage;
+					$eventRepo=$this->dbAdapter->getRepository('Application\Entity\Event');
+					
+					//add event owner in notifcation list
+                    if($eventOBj->user_id != $user_id){
+                    	 $efusers[] = array(
+ 										'network' => 'memreas',
+										'friend_id' =>	$eventOBj->user_id
+                    	 			) ;
+                    }
 					foreach ( $efusers as $ef ) {
 						$friendId = $ef ['friend_id'];
 						$ndata = array (
@@ -267,9 +280,15 @@ error_log ( "location ---> " . $location . PHP_EOL );
 							);
 						if ($ef ['network'] == 'memreas') {
 							$this->notification->add ( $friendId );
+							$friendUser = $eventRepo->getUser($friend_id,'row');
+	                        Email::$item['name'] =$friendUser['username'];
+     	                    Email::$item['email'] =$friendUser['email_address'];
+                        	Email::$item['message'] =$ndata ['addNotification'] ['meta'];
+                        	Email::collect();
 						} else {
 							$this->notification->addFriend ( $ef ['friend_id'] );
 						}
+						//save in db
 						$this->AddNotification->exec ( $ndata );
 					}
 
@@ -277,8 +296,8 @@ error_log ( "location ---> " . $location . PHP_EOL );
 						$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
 						$this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
 						$this->notification->event_id = $event_id;
-
 						$this->notification->send ();
+						Email::sendmail($this->service_locator);
 					}
 				}
 
