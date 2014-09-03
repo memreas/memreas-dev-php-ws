@@ -49,7 +49,7 @@ class AddFriendtoevent {
 //error_log("Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL);
         }
 
-        $owner = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
+       // $owner = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
 
         $friend_array = $data->addfriendtoevent->friends->friend;
 //error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_array) . PHP_EOL);
@@ -77,14 +77,7 @@ class AddFriendtoevent {
             $message = "User Not Found";
         }
 
-        //Check if this event is friend adding or owner
-         if($eventOBj && ($eventOBj->user_id != $owner)){
-            $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
-           if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){
-                $error =1;
-                $message .= "add friends to event not allowed.";
-            }
-        }
+      
         
 
         // add group to event_group
@@ -117,6 +110,14 @@ class AddFriendtoevent {
         } // end if (!empty($group_array))
         // add friends to event loop
         if (!empty($friend_array) && !$error) {
+              //Check if this event is friend adding or owner
+         if($eventOBj && ($eventOBj->user_id != $user_id)){
+            $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
+           if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){
+                $error =1;
+                $message .= "add friends to event not allowed.";
+            }
+        }
             foreach ($friend_array as $key => $value) {
 //error_log("AddFriendtoevent.exec() key ----> $key".PHP_EOL);
 //error_log("AddFriendtoevent.exec() value ----> $value".PHP_EOL);
