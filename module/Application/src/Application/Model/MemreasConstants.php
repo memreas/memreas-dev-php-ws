@@ -9,18 +9,18 @@ class MemreasConstants {
 
 	
 	//wsu url
-	const ORIGINAL_URL = "http://memreasdev-wsu.elasticbeanstalk.com/";
-	const MEDIA_URL = "http://memreasdev-wsu.elasticbeanstalk.com/?action=addmediaevent";
+	const ORIGINAL_URL = "http://memreasdev-wsg.elasticbeanstalk.com/";
+	const MEDIA_URL = "http://memreasdev-wsg.elasticbeanstalk.com/?action=addmediaevent";
 	//bew url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
-	const SIGNURLS = false;
+	const SIGNURLS = true;
 	
 	//Same across...
 	const URL = "/index";
 	const MEMREAS_TRANSCODER = true;
 	const MEMREASDB = 'memreasintdb';
 	const S3HOST = 'https://s3.amazonaws.com/';
-	const S3BUCKET = "memreasdev";
+	const S3BUCKET = "memreasdevsec";
 	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
 	
 	// ElastiCache section
