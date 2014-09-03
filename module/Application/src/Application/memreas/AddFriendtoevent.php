@@ -185,9 +185,9 @@ class AddFriendtoevent {
 	                    			'user_id' => $friend_id,
 	                    			'is_profile_pic' => '1'
 	                    	));
-	                    	$metadata = $profile_pic->metatdata;
-	                    	$profile_image = json_decode($metadata, true);
-	                    	$profile_pic_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+	                    	 
+	                      	$profile_pic_url = $eventRepo->getProfileUrl($profile_pic->metatdata);
+                                
                             //error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL);
