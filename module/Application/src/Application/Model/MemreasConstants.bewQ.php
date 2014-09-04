@@ -6,13 +6,11 @@
 namespace Application\Model;
 
 class MemreasConstants {
-
-	
-	//wsu url
+	//wsg url
 	const ORIGINAL_URL = "http://memreasdev-wsg.elasticbeanstalk.com/";
 	const MEDIA_URL = "http://memreasdev-wsg.elasticbeanstalk.com/?action=addmediaevent";
 	//bew url
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
 	const SIGNURLS = true;
 	
 	//Same across...
