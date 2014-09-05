@@ -22,6 +22,27 @@ class ListAllmedia {
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 		// error_log("ListAllmedia.__construct exit" . PHP_EOL);
 	}
+	
+	/*
+	 * 5-SEP-2014
+	 * JM Change to allow for multiple thumbnails in response
+	 * sends back simple json encoded array
+	 */
+	public function signArrayOfUrls($obj){
+		if (is_array($obj)) {
+			$arr = array();
+			foreach ( $obj as $url ) {
+				$arr[] = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url);
+			}
+		} else {
+			$arr[] = $obj;  //this should be string not array
+		}
+//error_log('%%%%%%%%%%%%%%%%%%%%%%%%'.PHP_EOL);		
+//error_log("signArrayOfUrls ---------> ".json_encode ($arr).PHP_EOL);		
+//error_log('%%%%%%%%%%%%%%%%%%%%%%%%'.PHP_EOL);		
+
+		return json_encode ($arr);
+	}
 	public function exec() {
 		// error_log("ListAllmedia.exec enter" . PHP_EOL);
 		// error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
@@ -199,20 +220,23 @@ class ListAllmedia {
 						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($thum_url);
 					    $xml_output .= (! empty ( $thum_url )) ? $path : '';
 					    $xml_output .= "</event_media_video_thum>";
-					    
+
+					    /*
+					     * 5-SEP-2014 
+					     * JM Change to allow for multiple thumbnails in response
+					     * sends back simple json encoded array
+					     */
 					    $xml_output .= "<media_url_79x80><![CDATA[";
-						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url79x80);
-					    $xml_output .= (! empty ( $url79x80 )) ? $path : '';
+						$xml_output .= $this->signArrayOfUrls($url79x80);
 					    $xml_output .= "]]></media_url_79x80>";
 
 					    $xml_output .= "<media_url_98x78><![CDATA[";
-						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url98x78);
-					    $xml_output .= (! empty ( $url98x78 )) ? $path : '';
+						$xml_output .= $this->signArrayOfUrls($url98x78);
 					    $xml_output .= "]]></media_url_98x78>";
+
 					    
 					    $xml_output .= "<media_url_448x306><![CDATA[";
-						$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url448x306);
-					    $xml_output .= (! empty ( $url448x306 )) ? $path : '';
+						$xml_output .= $this->signArrayOfUrls($url448x306);
 					    $xml_output .= "]]></media_url_448x306>";
 
 					    $xml_output .= "<type>$type</type>";
