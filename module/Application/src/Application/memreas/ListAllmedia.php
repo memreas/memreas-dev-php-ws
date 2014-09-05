@@ -37,9 +37,6 @@ class ListAllmedia {
 		} else {
 			$arr[] = $obj;  //this should be string not array
 		}
-//error_log('%%%%%%%%%%%%%%%%%%%%%%%%'.PHP_EOL);		
-//error_log("signArrayOfUrls ---------> ".json_encode ($arr).PHP_EOL);		
-//error_log('%%%%%%%%%%%%%%%%%%%%%%%%'.PHP_EOL);		
 
 		return json_encode ($arr);
 	}
