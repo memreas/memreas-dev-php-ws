@@ -24,6 +24,7 @@ class ViewMediadetails {
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$media_id = trim ( $data->viewmediadetails->media_id );
+		$event_id = trim ( $data->viewmediadetails->event_id );
 		$error_flag = 0;
 		$totale_like = 0;
 		$totale_comment = 0;
@@ -35,8 +36,14 @@ class ViewMediadetails {
 			$status = "Failure";
 			$message = "Plz enter media id";
 		} else {
+
 			$q_like = "SELECT COUNT(c.type) as totale_like FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and c.type='like'";
-			// $result_like = mysql_query($q_like);
+			if(!empty($event_id)){
+
+			$q_like = "SELECT COUNT(c.type) as totale_like FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and c.event_id='$event_id' and c.type='like'";
+
+			}
+ 			// $result_like = mysql_query($q_like);
 			// $statement = $this->dbAdapter->createStatement($q_like);
 			// $result_like = $statement->execute();
 			$statement = $this->dbAdapter->createQuery ( $q_like );
@@ -51,9 +58,13 @@ class ViewMediadetails {
 			}
 			$q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 			$q_last_comment = "select c.text,c.audio_id from Application\Entity\Comment c where c.media_id='$media_id' and (c.type='text' or c.type='audio') ORDER BY c.create_time DESC "; // limit 1";
-
-			// $result_comment = mysql_query($q_comment);
-			                                                                                                                                                                                // $statement = $this->dbAdapter->createStatement($q_comment);
+			if(!empty($event_id)){
+				$q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and c.event_id='$event_id' and (c.type='text' or c.type='audio')";
+				$q_last_comment = "select c.text,c.audio_id from Application\Entity\Comment c where c.media_id='$media_id'  and c.event_id='$event_id' and (c.type='text' or c.type='audio') ORDER BY c.create_time DESC "; // limit 1";
+			
+			}
+	
+	
 			                                                                                                                                                                                // $result_comment = $statement->execute();
 			$statement = $this->dbAdapter->createQuery ( $q_comment );
 			$statement->setMaxResults ( 1 );
@@ -132,7 +143,7 @@ class ViewMediadetails {
 		$xml_output .= "<totle_like_on_media>$totale_like</totle_like_on_media>";
 		$xml_output .= "<totle_comment_on_media>$totale_comment</totle_comment_on_media>";
 		$xml_output .= "<last_comment>$last_comment</last_comment>";
-		$xml_output .= (! empty ( $path )) ? "<audio_url>" . CLOUDFRONT_DOWNLOAD_HOST . $path . "</audio_url>" : "<audio_url></audio_url>";
+		$xml_output .= (! empty ( $path )) ? "<audio_url>" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path . "</audio_url>" : "<audio_url></audio_url>";
 		$xml_output .= "<last_audiotext_comment>$audio_text</last_audiotext_comment>";
         $xml_output .= "<location><address>{$address}</address><longitude>{$longitude}</longitude><latitude>{$latitude}</latitude></location>";
 		$xml_output .= "</viewmediadetailresponse>";
