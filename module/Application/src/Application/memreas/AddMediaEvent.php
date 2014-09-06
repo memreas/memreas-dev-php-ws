@@ -164,6 +164,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
 					$json_array = array ();
 					$json_array ['S3_files'] ['path'] = $s3file;
+					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 					$json_array ['S3_files'] ['full'] = $s3file;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
