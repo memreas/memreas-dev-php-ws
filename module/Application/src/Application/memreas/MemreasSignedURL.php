@@ -64,9 +64,9 @@ class MemreasSignedURL {
 			$this->expires = time() + MemreasConstants::EXPIRES;
 
 			//doesn't work...
-			$signed_url = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $this->expires));
+			//$signed_url = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $this->expires));
 
-			//$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
+			$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
 //error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
 	
 			return $signed_url;
