@@ -21,7 +21,7 @@ class MemreasConstants {
 	const MEMREASDB = 'memreasintdb';
 	const S3HOST = 'https://s3.amazonaws.com/';
 	const S3BUCKET = "memreasdevsec";
-	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
+	const MEMREAS_PAY_URL = "http://memreasdev-pay.elasticbeanstalk.com";
 	
 	// ElastiCache section
 	const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";

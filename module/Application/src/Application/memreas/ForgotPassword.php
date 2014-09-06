@@ -30,7 +30,6 @@ class ForgotPassword {
 			return $result;
 		}
 		
-		// require 'config.php';
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$email = trim ( $data->forgotpassword->email );
 		header ( "Content-type: text/xml" );

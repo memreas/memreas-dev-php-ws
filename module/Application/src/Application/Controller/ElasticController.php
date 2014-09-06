@@ -63,8 +63,6 @@ use Application\memreas\MemreasTables;
 
 class ElasticController extends AbstractActionController {
     
-    // protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
-    // protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
     protected $url = "http://test";
     protected $user_id;
     protected $storage;

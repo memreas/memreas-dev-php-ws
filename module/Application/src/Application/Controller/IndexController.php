@@ -89,8 +89,6 @@ use Application\memreas\GetOrderHistory;
 
 class IndexController extends AbstractActionController {
 	
-	// protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
-	// protected $url = "http://memreasdev-wsu.elasticbeanstalk.com/";
 	protected $xml_in;
 	protected $url = "http://ws";
 	protected $user_id;

@@ -18,6 +18,8 @@ class MemreasConstants {
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
 	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d3sisat5gdssl6.cloudfront.net/';
 	const SIGNURLS = true;
+	const MEMREAS_PAY_URL = "http://memreasdev-pay.elasticbeanstalk.com";
+	
 	
 	//Same across...
 	const URL = "/index";

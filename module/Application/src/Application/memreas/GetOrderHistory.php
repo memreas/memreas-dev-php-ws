@@ -36,7 +36,7 @@
             $guzzle = new Client();
 
             $request = $guzzle->post(
-                'http://memreasdev-pay.elasticbeanstalk.com',
+                MEMREAS_PAY_URL,
                 null,
                 array(
                     'action' => 'list',

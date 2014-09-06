@@ -1,4 +1,5 @@
 <?php
+/*
 // error_reporting(0);
 // ini_set("display_errors",0);
 // define("RECORD_PER_PAGE_LIMIT", 10);
@@ -30,6 +31,8 @@ ini_set ( "gd.jpeg_ignore_warning", 1 );
 // added for S3 and Cloudfront
 define ( 'CLOUDFRONT_STREAMING_HOST', 'http://s1iq2cbtodqqky.cloudfront.net/' );
 define ( 'CLOUDFRONT_DOWNLOAD_HOST', 'http://d1ckv7o9k6o3x9.cloudfront.net/' );
-define ( 'S3BUCKET', 'memreasdev' );
+define ( 'S3BUCKET', 'memreasdevsec' );
 define ( 'MEMREAS_TRANSCODER_URL', 'http://memreas-rest-backend.localhost/index/transcoder' );
 define ( 'MEMREAS_TRANSCODER_TOPIC_ARN', 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker' );
+
+*/

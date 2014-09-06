@@ -1,12 +1,6 @@
 <?php
 use Application\Model\MemreasConstants;
 
-// require_once 'Application\Index\ws\config.php';
-// $vendor_autoloader = dirname(__DIR__) . '/' . 'vendor/autoload.php';
-
-// require $vendor_autoloader;
-// require 'memreascache.php';
-
 use Guzzle\Http\Client;
 function fetchXML($url, $action, $xml) {
 	$guzzle = new Client ();
@@ -56,9 +50,6 @@ if (isset ( $_POST ['formSubmit'] ) == "Submit") {
 	
 	if (! empty ( $varAction )) {
 		// Test ListPhotos;
-		// $url = "http://192.168.1.8/eventapp_zend2.1/webservices/index_memreas.php";
-		// $url = "http://192.168.1.8/eventapp_zend2.1/webservices/index.php";
-		// MemreasConstants::URL = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index.php";
 		$action = $varAction;
 		
 		if ($varAction == 'login') {
