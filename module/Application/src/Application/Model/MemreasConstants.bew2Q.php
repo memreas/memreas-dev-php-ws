@@ -9,8 +9,14 @@ class MemreasConstants {
  	//wsg url
 	const ORIGINAL_URL = "http://memreasdev-wsg.elasticbeanstalk.com/";
 	const MEDIA_URL = "http://memreasdev-wsg.elasticbeanstalk.com/?action=addmediaevent";
+	
 	//bew2 url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
+	
+	//memreasdevsec related
+	const S3BUCKET = "memreasdevsec";
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d3sisat5gdssl6.cloudfront.net/';
 	const SIGNURLS = true;
 	
 	//Same across...
@@ -18,8 +24,7 @@ class MemreasConstants {
 	const MEMREAS_TRANSCODER = true;
 	const MEMREASDB = 'memreasintdb';
 	const S3HOST = 'https://s3.amazonaws.com/';
-	const S3BUCKET = "memreasdevsec";
-	const TOPICARN = "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
+	const EXPIRES = 36000; // 10 hour
 	
 	// ElastiCache section
 	const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";
@@ -35,10 +40,6 @@ class MemreasConstants {
 	const FOLDER_VIDEO = "uploadVideo";
 	const VIDEO = "/data/media/uploadVideo";
 	const AUDIO = "/data/media/upload_audio";
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1iq2cbtodqqky.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d1ckv7o9k6o3x9.cloudfront.net/';
-	const EXPIRES = 36000; // 10 hour
-	const MEMREAS_TRANSCODER_TOPIC_ARN = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
 	
 	
 	const FB_APPID  = '462180953876554';
