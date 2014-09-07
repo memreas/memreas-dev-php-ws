@@ -23,23 +23,6 @@ class ListAllmedia {
 		// error_log("ListAllmedia.__construct exit" . PHP_EOL);
 	}
 	
-	/*
-	 * 5-SEP-2014
-	 * JM Change to allow for multiple thumbnails in response
-	 * sends back simple json encoded array
-	 */
-	public function signArrayOfUrls($obj){
-		if (is_array($obj)) {
-			$arr = array();
-			foreach ( $obj as $url ) {
-				$arr[] = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
-			}
-		} else {
-			$arr[] = $obj;  //this should be string not array
-		}
-
-		return json_encode ($arr);
-	}
 	public function exec() {
 		// error_log("ListAllmedia.exec enter" . PHP_EOL);
 		// error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
@@ -182,28 +165,28 @@ class ListAllmedia {
 					    //output xml
 					    $xml_output .= "<media>";
 					    $xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-					    $xml_output .= "<main_media_url><![CDATA[" . $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url) . "]]></main_media_url>";
+					    $xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url) . "]]></main_media_url>";
 					    
-					    $path = $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+					    $path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
 					    $xml_output .= isset($json_array ['S3_files'] ['path']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 					    
 					    
 					    if ($type == "video") {
 					    	$path = isset($json_array ['S3_files'] ['web']) && !empty($json_array ['S3_files'] ['web']) ? $json_array ['S3_files'] ['web'] : "";
-					    	$path = $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
+					    	$path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
 						    $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 					    	
 						    
 					    	$path = isset($json_array ['S3_files'] ['1080p']) && !empty($json_array ['S3_files'] ['1080p']) ? $json_array ['S3_files'] ['1080p'] : "";
-					    	$path = $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
+					    	$path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
 					    	$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
 						    
 					    	$path = isset($json_array ['S3_files'] ['1080p']) && !empty($json_array ['S3_files'] ['1080p']) ? $json_array ['S3_files'] ['1080p'] : "";
-					    	$path = $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
+					    	$path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
 					    	$xml_output .= isset($json_array ['S3_files'] ['1080p']) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
 						    
 					    	$path = isset($json_array ['S3_files'] ['hls']) && !empty($json_array ['S3_files'] ['hls']) ? $json_array ['S3_files'] ['hls'] : '';
-					    	$path = $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
+					    	$path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path);
 					    	$xml_output .= isset($json_array ['S3_files'] ['hls']) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					    }
 					    $xml_output .= "<is_downloaded>$is_download</is_downloaded>";
@@ -214,7 +197,7 @@ class ListAllmedia {
 					    }
 
 					    $xml_output .= "<event_media_video_thum>";
-						$path = $this->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url);
+						$path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url);
 					    $xml_output .= (! empty ( $thum_url )) ? $path : '';
 					    $xml_output .= "</event_media_video_thum>";
 
@@ -224,16 +207,16 @@ class ListAllmedia {
 					     * sends back simple json encoded array
 					     */
 					    $xml_output .= "<media_url_79x80><![CDATA[";
-						$xml_output .= $this->signArrayOfUrls($url79x80);
+						$xml_output .= $this->url_signer->signArrayOfUrls($url79x80);
 					    $xml_output .= "]]></media_url_79x80>";
 
 					    $xml_output .= "<media_url_98x78><![CDATA[";
-						$xml_output .= $this->signArrayOfUrls($url98x78);
+						$xml_output .= $this->url_signer->signArrayOfUrls($url98x78);
 					    $xml_output .= "]]></media_url_98x78>";
 
 					    
 					    $xml_output .= "<media_url_448x306><![CDATA[";
-						$xml_output .= $this->signArrayOfUrls($url448x306);
+						$xml_output .= $this->url_signer->signArrayOfUrls($url448x306);
 					    $xml_output .= "]]></media_url_448x306>";
 
 					    $xml_output .= "<type>$type</type>";

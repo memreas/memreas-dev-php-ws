@@ -18,13 +18,15 @@ class GetUserDetails {
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    protected $url_signer;
+    
     public function __construct($message_data, $memreas_tables, $service_locator) {
         error_log ( "Inside__construct..." );
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-        // $this->dbAdapter = $P->get(MemreasConstants::MEMREASDB);
+    	$this->url_signer = new MemreasSignedURL($message_data, $memreas_tables, $service_locator);
     }
 
     /*
@@ -66,7 +68,7 @@ class GetUserDetails {
                 $output .= '<profile></profile>';
             else{
                 $profile_image = json_decode($profile[0]->metadata, true);
-                $profile_image = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                $profile_image = $this->url_signer(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path']);
                 $output .= '<profile>' . $profile_image . '</profile>';
             }
         }

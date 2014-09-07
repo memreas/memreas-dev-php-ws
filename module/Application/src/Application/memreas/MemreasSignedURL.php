@@ -76,6 +76,24 @@ error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
 		}			
 	}
 	
+	/*
+	 * 5-SEP-2014
+	 * JM Change to allow for multiple thumbnails in response
+	 * sends back simple json encoded array
+	 */
+	public function signArrayOfUrls($obj){
+		if (is_array($obj)) {
+			$arr = array();
+			foreach ( $obj as $url ) {
+				$arr[] = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
+			}
+		} else {
+			$arr[] = $obj;  //this should be string not array
+		}
+
+		return json_encode ($arr);
+	}
+	
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		// 0 = not empty, 1 = empty
