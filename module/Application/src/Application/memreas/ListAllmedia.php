@@ -32,7 +32,7 @@ class ListAllmedia {
 		if (is_array($obj)) {
 			$arr = array();
 			foreach ( $obj as $url ) {
-				$arr[] = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $this->url_signer->fetchSignedURL($url);
+				$arr[] = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
 			}
 		} else {
 			$arr[] = $obj;  //this should be string not array
