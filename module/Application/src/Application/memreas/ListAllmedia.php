@@ -165,7 +165,7 @@ class ListAllmedia {
 					    //output xml
 					    $xml_output .= "<media>";
 					    $xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-					    $xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url) . "]]></main_media_url>";
+					    $xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url) . "]]></main_media_url>";
 					    
 					    $path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
 					    $xml_output .= isset($json_array ['S3_files'] ['path']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
