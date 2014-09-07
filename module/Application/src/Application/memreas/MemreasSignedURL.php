@@ -88,7 +88,7 @@ error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
 				$arr[] = $this->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
 			}
 		} else {
-			$arr[] = $obj;  //this should be string not array
+			$arr[] = $this->fetchSignedURL($obj);  //this should be string not array
 		}
 
 		return json_encode ($arr);
