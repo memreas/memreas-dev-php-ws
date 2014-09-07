@@ -54,7 +54,7 @@ class ListAllmedia {
 
 		$event_id = trim ( $data->listallmedia->event_id );
 		$device_id = trim ( $data->listallmedia->device_id );
-		$error_flage = 0;
+		$error_flag = 0;
 
 		if (isset ( $data->listallmedia->page ) && ! empty ( $data->listallmedia->page )) {
 			$page = $data->listallmedia->page;
@@ -97,7 +97,7 @@ class ListAllmedia {
 
 
 		if (count ( $result ) <= 0) {
-			$error_flage = 2;
+			$error_flag = 2;
 			$message = "No Record found for this Event";
 		} else {
 			$qb = $this->dbAdapter->createQueryBuilder ();
@@ -248,7 +248,7 @@ class ListAllmedia {
                 }
 			}
 
-		if ($error_flage) {
+		if ($error_flag) {
 			$xml_output .= "<status>Failure</status>";
 			$xml_output .= "<user_id></user_id>";
 			$xml_output .= "<event_id>" . $event_id . "</event_id>";
