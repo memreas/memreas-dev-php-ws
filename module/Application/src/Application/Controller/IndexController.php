@@ -876,25 +876,19 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
             	$this->elasticache->invalidateCache($invalidate_action . '_' . $uid);
             }
         }
-        // memreas related calls...
-        // $memreas = new Memreas();
-        // $memreas_tables = new MemreasTables($this->getServiceLocator());
-        // $result = $memreas->login($message_data, $memreas_tables, $this->getServiceLocator());
+
         if (!empty($callback)) {
             $message_data ['data'] = $output;
-//error_log ( "Final XML ----> " . $message_data ['data'] );
 
             $json_arr = array(
                 "data" => $message_data ['data']
             );
             $json = json_encode($json_arr);
 
-//error_log ( "Callback ---> " . $callback . "(" . $json . ")" );
             header("Content-type: plain/text");
             // callback json
             echo $callback . "(" . $json . ")";
             // Need to exit here to avoid ZF2 framework view.
-//error_log("Output data as json ----> ".$json.PHP_EOL);
             exit();
         }
 
@@ -911,67 +905,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 			exit();
         }
     }
-
-    public function galleryAction() {
-        $path = $this->security("application/index/gallery.phtml");
-
-        $action = 'listallmedia';
-        $session = new Container('user');
-        $xml = "<xml><listallmedia><event_id></event_id><user_id>" . $session->offsetGet('user_id') . "</user_id><device_id></device_id><limit>10</limit><page>1</page></listallmedia></xml>";
-        $result = $this->fetchXML($action, $xml);
-
-        $view = new ViewModel(array(
-            'xml' => $result
-                ));
-        $view->setTemplate($path); // path to phtml file under view folder
-        return $view;
-        // return new ViewModel();
-    }
-
-    public function eventAction() {
-        $path = $this->security("application/index/event.phtml");
-
-        $action = 'listallmedia';
-        $session = new Container('user');
-        $xml = "<xml><listallmedia><event_id></event_id><user_id>" . $session->offsetGet('user_id') . "</user_id><device_id></device_id><limit>10</limit><page>1</page></listallmedia></xml>";
-        $result = $this->fetchXML($action, $xml);
-
-        $view = new ViewModel(array(
-            'xml' => $result
-                ));
-        $view->setTemplate($path); // path to phtml file under view folder
-        return $view;
-        // return new ViewModel();
-    }
-
-    public function shareAction() {
-        $path = $this->security("application/index/share.phtml");
-        $view = new ViewModel ();
-        $view->setTemplate($path); // path to phtml file under view folder
-        return $view;
-    }
-
-    public function queueAction() {
-        $path = $this->security("application/index/queue.phtml");
-        $view = new ViewModel ();
-        $view->setTemplate($path); // path to phtml file under view folder
-        return $view;
-    }
-
-    public function eventGalleryAction() {
-        $path = $this->security("application/index/event-gallery.phtml");
-        $view = new ViewModel ();
-        $view->setTemplate($path); // path to phtml file under view folder
-        return $view;
-    }
-
-    public function memreasMeFriendsAction() {
-        $path = $this->security("application/index/memreas-me-friends.phtml");
-        $view = new ViewModel ();
-        $view->setTemplate($path); // path to phtml file under view folder
-        return $view;
-    }
-
+    
     public function loginAction() {
         error_log("INSIDE LOGIN ACTION");
         // Fetch the post data
@@ -1135,13 +1069,13 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         	'changepassword',
             'showlog',
             'clearlog',
-            'doquery'	
+//            'doquery'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
 	    	        $session = new Container("user");
-            error_log('ws-session-user_is ->'.$session->user_id);
+            error_log('ws-session-user_id ->'.$session->user_id);
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }
