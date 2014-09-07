@@ -60,6 +60,7 @@ class MemreasSignedURL {
 	}
 	
 	public function fetchSignedURL($path) {
+error_log("Inside fetchSignedURL path before signing... ".$path.PHP_EOL);
 		if ((MemreasConstants::SIGNURLS) && !empty($path) && !is_array($path)) {
 			$this->expires = time() + MemreasConstants::EXPIRES;
 
@@ -67,7 +68,7 @@ class MemreasSignedURL {
 			//$signed_url = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $this->expires));
 
 			$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
-//error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
+error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
 	
 			return $signed_url;
 		} else {
