@@ -68,7 +68,7 @@ class GetUserDetails {
                 $output .= '<profile></profile>';
             else{
                 $profile_image = json_decode($profile[0]->metadata, true);
-                $profile_image = $this->url_signer(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path']);
+                $profile_image = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path']);
                 $output .= '<profile>' . $profile_image . '</profile>';
             }
         }
