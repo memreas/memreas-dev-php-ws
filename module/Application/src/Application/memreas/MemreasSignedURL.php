@@ -85,7 +85,7 @@ error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
 		if (is_array($obj)) {
 			$arr = array();
 			foreach ( $obj as $url ) {
-				$arr[] = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
+				$arr[] = $this->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
 			}
 		} else {
 			$arr[] = $obj;  //this should be string not array
