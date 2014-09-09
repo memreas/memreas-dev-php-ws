@@ -85,6 +85,7 @@ use Application\memreas\GetFriends;
 use Application\memreas\GetPlans;
 use Application\memreas\Mem;
 use Application\memreas\GetOrderHistory;
+use Application\memreas\RemoveGroup;
 
 
 class IndexController extends AbstractActionController {
@@ -847,6 +848,10 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getorderhistory") {
                 $GetPlans = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetPlans->exec();
+            }
+            else if ($actionname == "removegroup") {
+                $RemoveGroup = new RemoveGroup($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $RemoveGroup->exec();
             }
 
             /*
