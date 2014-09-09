@@ -72,16 +72,7 @@ class ViewAllfriends {
 		}
 		if ($error_flag) {
 			$xml_output .= "<status>Failure</status><message>$message</message>";
-			$xml_output .= "<friend>";
-			$xml_output .= "<friend_id></friend_id>";
-			$xml_output .= "<network></network>";
-			$xml_output .= "<social_username></social_username>";
-			$xml_output .= "<url><![CDATA[]]></url>";
-			$xml_output .= "<url_79x80><![CDATA[]]></url_79x80>";
-			$xml_output .= "<url_448x306><![CDATA[]]></url_448x306>";
-			$xml_output .= "<url_98x78><![CDATA[]]></url_98x78>";
-			
-			$xml_output .= "</friend>";
+			 
 		} else {
 			// echo "<pre>";print_r($view_all_friend);
 			foreach ( $view_all_friend as $friend ) {
