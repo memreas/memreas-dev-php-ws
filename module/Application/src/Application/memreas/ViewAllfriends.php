@@ -71,7 +71,7 @@ class ViewAllfriends {
 			}
 		}
 		if ($error_flag) {
-			$xml_output .= "<status>Failure</status><message>$message</message>";
+			$xml_output .= "<status>Success</status><message>$message</message>";
 			 
 		} else {
 			// echo "<pre>";print_r($view_all_friend);
