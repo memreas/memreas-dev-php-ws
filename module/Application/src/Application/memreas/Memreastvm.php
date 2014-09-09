@@ -47,8 +47,8 @@ class Memreastvm {
 		$iam_handle = $aws->get ( 'iam' );
 		$iam_policy = $iam_handle->getGroupPolicy ( array (
 				'GroupName' => 'S3_Access',
-				//'PolicyName' => 'S3_Access_Policy' //This policy only allows access to S3 IAM User
-				'PolicyName' => 'AmazonS3FullAccess-S3_Access-201302272114'  // This policy allows full access to S3
+				'PolicyName' => 'S3_Access_Policy' //This policy only allows access to S3 IAM User
+				//'PolicyName' => 'AmazonS3FullAccess-S3_Access-201302272114'  // This policy allows full access to S3
 		 	)
 		);
 		$iam_policy_array = $iam_policy->toArray ();
