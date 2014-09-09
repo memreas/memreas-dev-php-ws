@@ -123,6 +123,13 @@ class User {
 	 * @var string @ORM\Column(name="invited_by", type="string", length=255, nullable=false)
 	 */
 	private $invited_by;
+
+    /**
+     *
+     * @var string @ORM\Column(name="metadata", type="text", nullable=true)
+     */
+    private $metadata;
+
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

@@ -50,19 +50,35 @@ class SaveUserDetails {
         $user_info = $qb->getQuery ()->getResult ();
 
         if (empty($user_info)){
-            $query = "UPDATE Application\Entity\User u SET u.email_address = '{$email}'";
-            if (!empty($password))
-                $query .= ", u.password = '" . md5($password) . "'";
-            $query .= " WHERE u.user_id = '{$user_id}'";
-            $qb = $this->dbAdapter->createQuery($query);
-            $result = $qb->getResult();
-            if ($result){
-                $status = 'Success';
-                $message = 'User details updated';
+            $qb = $this->dbAdapter->createQueryBuilder ();
+            $qb->select('u')
+                ->from('Application\Entity\User', 'u')
+                ->where("u.user_id = '{$user_id}'");
+            $user_detail = $qb->getQuery ()->getResult ();
+
+            if (!empty($user_detail)){
+                $metadata = $user_detail[0]->metadata;
+                $metadata = json_decode($metadata, true);
+                $metadata['alternate_email'] = $email;
+                $metadata = json_encode($metadata);
+                $query = "UPDATE Application\Entity\User u SET u.metadata = '{$metadata}'";
+                if (!empty($password))
+                    $query .= ", u.password = '" . md5($password) . "'";
+                $query .= " WHERE u.user_id = '{$user_id}'";
+                $qb = $this->dbAdapter->createQuery($query);
+                $result = $qb->getResult();
+                if ($result){
+                    $status = 'Success';
+                    $message = 'User details updated';
+                }
+                else{
+                    $status = 'Failure';
+                    $message = 'Update user details failed';
+                }
             }
             else{
                 $status = 'Failure';
-                $message = 'Update user details failed';
+                $message = 'User does not exist';
             }
         }
         else{
