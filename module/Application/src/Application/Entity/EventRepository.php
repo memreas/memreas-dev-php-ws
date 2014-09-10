@@ -15,6 +15,7 @@ use Application\memreas\MemreasSignedURL;
 
 class EventRepository extends EntityRepository
 {
+    
     public function getLikeCount($event_id)
     {
     	$likeCountSql = $this->_em->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
@@ -91,7 +92,8 @@ class EventRepository extends EntityRepository
 		$json_array = json_decode ( $metadata, true );
         $url = MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
         if (! empty ( $json_array ['S3_files'] ['path'] )){
-            $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+            $url_signer = new MemreasSignedURL();
+            $url = $url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
         }
 
               return $url;
@@ -99,15 +101,16 @@ class EventRepository extends EntityRepository
 	public function getEventMediaUrl($metadata='',$size='')
 	{
 	$json_array = json_decode ( $metadata, true );
-        $url = MemreasConstants::ORIGINAL_URL.'/memreas/img/small-pic-3.jpg';
+        $url = MemreasConstants::ORIGINAL_URL.'/memreas/img/small-pic-3.jpg'; 
+        $url_signer = new MemreasSignedURL();
         if (empty($size)) {
-            
+           
             if (! empty ( $json_array ['S3_files'] ['path'] )){
-                $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+                $url =$url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
             }
         }  else {
             if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']) ){
-            	$url_signer = new MemreasSignedURL();
+            	
                 $url = $url_signer->signArrayOfUrls($json_array ['S3_files'] ['thumbnails'] ['79x80']);
             }
         }        
@@ -212,5 +215,7 @@ function getUser($user_id,$allRow=''){
 
 
 }
+   
+
 
 }

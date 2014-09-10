@@ -21,6 +21,8 @@ class GetEventPeople {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+        $this->url_signer = new MemreasSignedURL();
+
     }
     public function exec($frmweb = false, $output = '') {
         $error_flag = 0;
@@ -57,7 +59,7 @@ class GetEventPeople {
                     $profile = $profile_query->getQuery()->getResult();
                     if (!empty($profile)){
                         $profile_image = json_decode($profile[0]->metadata, true);
-                        $profile_image = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                        $profile_image = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path']);
                     }
                 }
                 $output .= '<friend>';

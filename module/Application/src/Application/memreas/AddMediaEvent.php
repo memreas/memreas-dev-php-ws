@@ -31,6 +31,8 @@ class AddMediaEvent {
 		if (! $this->notification) {
 			$this->notification = new Notification ( $service_locator );
 		}
+                		$this->url_signer = new MemreasSignedURL();
+
 	}
 	public function exec() {
 		error_log ( "AddMediaEvent exec..." );

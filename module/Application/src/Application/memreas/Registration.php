@@ -27,6 +27,8 @@ class Registration {
 			$this->addfriendtoevent = new AddFriendtoevent ($message_data, $memreas_tables, $service_locator);
 		}
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
+                                $this->url_signer = new MemreasSignedURL();
+
 	}
 	public function is_valid_email($email) {
 		$result = TRUE;
@@ -328,7 +330,7 @@ error_log($xml_output.PHP_EOL);
 					if (empty ( $json_array ['S3_files'] ['path'] )){
 						$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 					}else{
-						$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+						$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
 					}
 					$this->userIndex[$row['user_id']] = array(
 															'username'      => $row['username'],
