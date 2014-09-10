@@ -21,6 +21,10 @@ class MemreasSignedURL {
 	public function __construct() {
 		//$this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
 		//$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
+            //to run constrcutor once 
+            if(!empty($this->cloud_front))return;
+            
+            
 		$this->private_key_filename = getcwd () . '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 		$this->key_pair_id = 'APKAISSKGZE3DR5HQCHA';
 		$this->expires = time () + 36000; // 10 hour from now
