@@ -161,7 +161,7 @@ error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
         /*
          * TODO: SID still needs debugging - see TODO sections
          */
-        //$actionname = $this->security($actionname);
+        $actionname = $this->security($actionname);
                     
                     
 error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
