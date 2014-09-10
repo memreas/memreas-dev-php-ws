@@ -22,6 +22,7 @@ class ViewEvents {
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
         $this->comments = new ListComments($message_data, $memreas_tables, $service_locator);
+        $this->url_signer = new MemreasSignedURL();
         // $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -122,7 +123,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                                 $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 
                             $xml_output .= "<username>" . $efRow ['username'] . "</username>";
-                            $xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+                            $xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
 
                             $xml_output .= '</event_friend>';
                         }
@@ -184,12 +185,16 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                                         $type = "Type not Mentioned";
                                 }
                                 $xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-                                $xml_output .= (!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+                                $url = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
+                                $xml_output .= (!empty($url)) ? "<event_media_url><![CDATA[" .$url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+                                
                                 $xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
-                                $xml_output .= (!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
-                                $xml_output .= (!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
-                                $xml_output .= (!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
-                                $xml_output .= (!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
+                                $thum_url = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url);
+                                $xml_output .= (!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" .$thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+                                
+                                $xml_output .= (!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls($url79x80) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+                                $xml_output .= (!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls($url98x78) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+                                $xml_output .= (!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls( $url448x306) . "]]></event_media_448x306>" : "<event_media_448x306/>";
                                 break;
                             }
                         } else {
@@ -249,13 +254,18 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $json_array = json_decode($profile[0]->metadata, true);
                         if (!empty($json_array ['S3_files'] ['path'])) {
                             $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+                            $url1 = $this->url_signer->signArrayOfUrls($url);
                         }
-                        if (!empty($json_array ['S3_files'] ['79x80']))
-                            $pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
-                        if (!empty($json_array ['S3_files'] ['448x306']))
-                            $pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['448x306'];
+                        if (!empty($json_array ['S3_files'] ['79x80'])){
+                             $pic_79x80 = $this->url_signer->signArrayOfUrls( $json_array ['S3_files']['thumbnails'] ['79x80']);
+
+                        }
+                        if (!empty($json_array ['S3_files']['thumbnails'] ['448x306'])){
+                            $pic_448x306 = $this->url_signer->signArrayOfUrls($json_array ['S3_files']['thumbnails'] ['448x306']);
+
+                        }
                         if (!empty($json_array ['S3_files'] ['98x78']))
-                            $pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
+                            $pic_98x78 = $this->url_signer->signArrayOfUrls($json_array ['S3_files']['thumbnails'] ['98x78']);
                         } else {
                             $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
                             $pic_79x80 = '';
@@ -330,12 +340,12 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                                         $type = "Type not Mentioned";
                                 }
                                 $xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-                                $xml_output .= (!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
+                                $xml_output .= (!empty($url)) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url ). "]]></event_media_url>" : "<event_media_url/>";
                                 $xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
-                                $xml_output .= (!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
-                                $xml_output .= (!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
-                                $xml_output .= (!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
-                                $xml_output .= (!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
+                                $xml_output .= (!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" .$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url) . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
+                                $xml_output .= (!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls( $url79x80) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+                                $xml_output .= (!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls($url98x78) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+                                $xml_output .= (!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls($url448x306) . "]]></event_media_448x306>" : "<event_media_448x306/>";
                                 break;
                             }
                         } else {
@@ -416,7 +426,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
 
                     if (!empty($profile)){
                         $profile_image = json_decode($profile[0]->metadata, true);
-                        $pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+                        $pic =$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path']);
                     }
                     else $pic = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
 
@@ -441,19 +451,19 @@ error_log("result_profile_pic array ------>".json_encode($result_profile_pic).PH
                                 // echo "<pre>";
                                 // print_r($json_array['S3_files']);
                                 if (!empty($json_array ['S3_files'] ['path']))
-                                    $pic = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['path'];
+                                    $pic =$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['path']);
 error_log("pic------>".$pic.PHP_EOL);
                                 
                                 if (!empty($json_array ['S3_files'] ['79x80']))
-                                    $pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
+                                    $pic_79x80 =$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80']);
 error_log("pic_79x80------>".$pic_79x80.PHP_EOL);
                                 
                                 if (!empty($json_array ['S3_files'] ['448x306']))
-                                    $pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
+                                    $pic_448x306 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306']);
 error_log("pic_448x306------>".$pic_448x306.PHP_EOL);
                                 
                                 if (!empty($json_array ['S3_files'] ['98x78']))
-                                    $pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
+                                    $pic_98x78 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78']);
 error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
                             }
                         }
@@ -540,12 +550,12 @@ error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
                                     }
                                     $only_audio_in_event = 0;
                                     $xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-                                    $xml_output .= (!empty($url)) ? "<event_media_url><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url . "]]></event_media_url>" : "<event_media_url/>";
+                                    $xml_output .= (!empty($url)) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url) . "]]></event_media_url>" : "<event_media_url/>";
                                     $xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
-                                    $xml_output .= (!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
-                                    $xml_output .= (!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url79x80 . "]]></event_media_79x80>" : "<event_media_79x80/>";
-                                    $xml_output .= (!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url98x78 . "]]></event_media_98x78>" : "<event_media_98x78/>";
-                                    $xml_output .= (!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url448x306 . "]]></event_media_448x306>" : "<event_media_448x306/>";
+                                    $xml_output .= (!empty($thum_url)) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $thum_url) . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
+                                    $xml_output .= (!empty($url79x80)) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls($url79x80) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+                                    $xml_output .= (!empty($url98x78)) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls($url98x78) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+                                    $xml_output .= (!empty($url448x306)) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls( $url448x306). "]]></event_media_448x306>" : "<event_media_448x306/>";
                                     break;
                                 }
                                 if ($only_audio_in_event) {

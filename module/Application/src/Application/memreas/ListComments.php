@@ -17,6 +17,8 @@ class ListComments {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+                $this->url_signer = new MemreasSignedURL();
+
 		// $this->dbAdapter = $P->get(MemreasConstants::MEMREASDB);
 	}
 	
@@ -101,7 +103,7 @@ class ListComments {
 //error_log("metadata-----> ".$audio_row->metadata.PHP_EOL);
  					if (isset($json_array ['S3_files'] ['type']['audio'])  ){
 						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
-						$output .= "<audio_media_url><![CDATA[" .$audio_url. "]]></audio_media_url>";
+						$output .= "<audio_media_url><![CDATA[" .$this->url_signer->signArrayOfUrls($audio_url). "]]></audio_media_url>";
 //error_log("audio_url-----> ".$audio_url.PHP_EOL);
 					}
 					
@@ -123,7 +125,7 @@ class ListComments {
 				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 				if (! empty ( $json_array ['S3_files'] ['path'] ))
 					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-				$output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
 				
 				$output .= '</comment>';
 			}

@@ -22,6 +22,9 @@ class ListNotification {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+                        $this->url_signer = new MemreasSignedURL();
+
+        
         // $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -68,19 +71,19 @@ class ListNotification {
                     if (!empty($json_array ['S3_files'] ['path']))
                         $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
                     $pic_79x80 = '';
-                    if (!empty($json_array ['S3_files'] ['79x80']))
-                        $pic_79x80 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80'];
+                    if (!empty($json_array ['S3_files']['thumbnails'] ['79x80']))
+                        $pic_79x80 = $json_array ['S3_files']['thumbnails'] ['79x80'];
                     $pic_448x306 = '';
-                    if (!empty($json_array ['S3_files'] ['448x306']))
-                        $pic_448x306 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306'];
+                    if (!empty($json_array ['S3_files'] ['thumbnails']['448x306']))
+                        $pic_448x306 = $json_array ['S3_files'] ['thumbnails']['448x306'];
                     $pic_98x78 = '';
-                    if (!empty($json_array ['S3_files'] ['98x78']))
-                        $pic_98x78 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78'];
+                    if (!empty($json_array ['S3_files']['thumbnails'] ['98x78']))
+                        $pic_98x78 =  $json_array ['S3_files']['thumbnails'] ['98x78'];
                     
-                    $xml_output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
-                    $xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
-                    $xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
-                    $xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
+                    $xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
+                    $xml_output .= "<profile_pic_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls($pic_79x80) . "]]></profile_pic_79x80>";
+                    $xml_output .= "<profile_pic_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls($pic_448x306) . "]]></profile_pic_448x306>";
+                    $xml_output .= "<profile_pic_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls($pic_98x78) . "]]></profile_pic_98x78>";
 
                     if (isset($links['event_id']))
                         $xml_output .= "<event_id>{$links['event_id']}</event_id>";

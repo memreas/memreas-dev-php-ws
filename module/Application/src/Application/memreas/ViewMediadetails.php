@@ -18,6 +18,8 @@ class ViewMediadetails {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+                                $this->url_signer = new MemreasSignedURL();
+
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
@@ -142,7 +144,7 @@ class ViewMediadetails {
 		$xml_output .= "<totle_like_on_media>$totale_like</totle_like_on_media>";
 		$xml_output .= "<totle_comment_on_media>$totale_comment</totle_comment_on_media>";
 		$xml_output .= "<last_comment>$last_comment</last_comment>";
-		$xml_output .= (! empty ( $path )) ? "<audio_url>" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path . "</audio_url>" : "<audio_url></audio_url>";
+		$xml_output .= (! empty ( $path )) ? "<audio_url>" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path) . "</audio_url>" : "<audio_url></audio_url>";
 		$xml_output .= "<last_audiotext_comment>$audio_text</last_audiotext_comment>";
         $xml_output .= "<location><address>{$address}</address><longitude>{$longitude}</longitude><latitude>{$latitude}</latitude></location>";
 		$xml_output .= "</viewmediadetailresponse>";

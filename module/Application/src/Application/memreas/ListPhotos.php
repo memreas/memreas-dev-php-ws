@@ -17,6 +17,9 @@ class ListPhotos {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+                $this->url_signer = new MemreasSignedURL();
+
+
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
@@ -99,7 +102,7 @@ class ListPhotos {
 					
 					$xml_output .= "<image>";
 					$xml_output .= "<media_id>" . $metadata ['media_id'] . "</media_id>";
-					$xml_output .= "<name>" . MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $metadata ['url'] ['path'] . "</name>";
+					$xml_output .= "<name>" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $metadata ['url'] ['path']) . "</name>";
 					$download = 0;
 					// print_r();exit;
 					foreach ( $metadata ['download'] as $value ) {
