@@ -250,12 +250,13 @@ error_log ( "location ---> " . $location . PHP_EOL );
 
 					$efusers = $qb->getQuery ()->getResult ();
 					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
+					$eventRepo=$this->dbAdapter->getRepository('Application\Entity\Event');
+
 					$eventOBj=$eventRepo->findOneBy(array(
                             'event_id' => $event_id
                                 ));
 					$nmessage = $userOBj->username . 'Added Media to  ' . $eventOBj->name . ' event';
 					$ndata ['addNotification'] ['meta'] = $nmessage;
-					$eventRepo=$this->dbAdapter->getRepository('Application\Entity\Event');
 					
 					//add event owner in notifcation list
                     if($eventOBj->user_id != $user_id){
