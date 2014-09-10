@@ -18,7 +18,7 @@ class ListAllmedia {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-		$this->url_signer = new MemreasSignedURL($message_data, $memreas_tables, $service_locator);
+		$this->url_signer = new MemreasSignedURL();
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 		// error_log("ListAllmedia.__construct exit" . PHP_EOL);
 	}

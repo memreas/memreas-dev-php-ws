@@ -5,7 +5,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityRepository;
 use Application\Model\MemreasConstants;
-
+use Application\memreas\MemreasSignedURL;
 
 
 class EventRepository extends EntityRepository
