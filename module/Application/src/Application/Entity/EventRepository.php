@@ -6,12 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityRepository;
 use Application\Model\MemreasConstants;
 use Application\memreas\MemreasSignedURL;
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 1cec67407811686c4f1ba76ecad3211d5269a5ab
-
 
 class EventRepository extends EntityRepository
 {
