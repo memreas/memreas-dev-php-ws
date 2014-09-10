@@ -6,12 +6,12 @@
 namespace Application\Model;
 
 class MemreasConstants {
- 	//wsg url
-	const ORIGINAL_URL = "http://memreasdev-wsg.elasticbeanstalk.com/";
-	const MEDIA_URL = "http://memreasdev-wsg.elasticbeanstalk.com/?action=addmediaevent";
+ 	//wsu url
+	const ORIGINAL_URL = "http://memreasdev-wsu.elasticbeanstalk.com/";
+	const MEDIA_URL = "http://memreasdev-wsu.elasticbeanstalk.com/?action=addmediaevent";
 	
-	//bew2 url
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
+	//bew url
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
 	
 	//memreasdevsec related
 	const S3BUCKET = "memreasdevsec";
