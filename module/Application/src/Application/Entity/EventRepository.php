@@ -6,6 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityRepository;
 use Application\Model\MemreasConstants;
 use Application\memreas\MemreasSignedURL;
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1cec67407811686c4f1ba76ecad3211d5269a5ab
 
 
 class EventRepository extends EntityRepository
@@ -103,7 +108,7 @@ class EventRepository extends EntityRepository
         }  else {
             if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']) ){
             	$url_signer = new MemreasSignedURL();
-                $url = $url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails'] ['79x80']);
+                $url = $url_signer->signArrayOfUrls($json_array ['S3_files'] ['thumbnails'] ['79x80']);
             }
         }        
               return $url;

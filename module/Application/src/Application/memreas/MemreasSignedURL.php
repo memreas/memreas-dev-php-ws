@@ -17,13 +17,7 @@ class MemreasSignedURL {
 	protected $s3;
 	protected $cloud_front;
 	
-	public function __construct($message_data, $memreas_tables, $service_locator) {
-		$this->dbAdapter = $service_locator->get ( MemreasConstants::MEMREASDB );
-		$this->message_data = $message_data;
-		$this->memreas_tables = $memreas_tables;
-		$this->service_locator = $service_locator;
-		__construct();
-	}
+	 
 	public function __construct() {
 		//$this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
 		//$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
