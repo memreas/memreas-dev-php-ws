@@ -41,6 +41,8 @@ class SaveUserDetails {
         $user_id = trim ( $data->saveuserdetails->user_id );
         $email = trim ( $data->saveuserdetails->email );
         $password = trim ($data->saveuserdetails->password);
+        $gender = trim ($data->saveuserdetails->gender);
+        $dob = trim ($data->saveuserdetails->dob);
 
         //check if exist user's email
         $qb = $this->dbAdapter->createQueryBuilder ();
@@ -60,6 +62,8 @@ class SaveUserDetails {
                 $metadata = $user_detail[0]->metadata;
                 $metadata = json_decode($metadata, true);
                 $metadata['alternate_email'] = $email;
+                $metadata['gender'] = $gender;
+                $metadata['dob'] = $dob;
                 $metadata = json_encode($metadata);
                 $query = "UPDATE Application\Entity\User u SET u.metadata = '{$metadata}'";
                 if (!empty($password))

@@ -26,7 +26,7 @@ class GetUserDetails {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-    	$this->url_signer = new MemreasSignedURL($message_data, $memreas_tables, $service_locator);
+    	$this->url_signer = new MemreasSignedURL();
     }
 
     /*
@@ -57,6 +57,21 @@ class GetUserDetails {
             $output .= '<user_id>' . $result_user[0]->user_id . '</user_id>';
             $output .= '<username>' . $result_user[0]->username . '</username>';
             $output .= '<email>' . $result_user[0]->email_address . '</email>';
+
+            $metadata = $result_user[0]->metadata;
+            $metadata = json_decode($metadata, true);
+
+            if (isset($metadata['alternate_email']))
+                $output .= '<alternate_email>' . $metadata['alternate_email'] . '</alternate_email>';
+            else $output .= '<alternate_email></alternate_email>';
+
+            if (isset($metadata['gender']))
+                $output .= '<gender>' . $metadata['gender'] . '</gender>';
+            else $output .= '<gender></gender>';
+
+            if (isset($metadata['dob']))
+                $output .= '<dob>' . $metadata['dob'] . '</dob>';
+            else $output .= '<dob></dob>';
 
             //Get user profile
             $profile_query = $this->dbAdapter->createQueryBuilder();
