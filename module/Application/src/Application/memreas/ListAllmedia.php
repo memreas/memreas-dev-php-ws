@@ -132,6 +132,7 @@ class ListAllmedia {
 					    $url448x306 = '';
 					    $url98x78 = '';
 					    $thum_url = '';
+					    $download_url = '';
 					    $is_download = 0;
 
 					    $json_array = json_decode ( $row ['metadata'], true );
@@ -167,9 +168,12 @@ class ListAllmedia {
 					    $xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
 					    $xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url) . "]]></main_media_url>";
 					    
-					    $path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+					    $path = isset($json_array ['S3_files'] ['path']) ? $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']) : '';;
 					    $xml_output .= isset($json_array ['S3_files'] ['path']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
-					    
+
+					    $path = isset($json_array ['S3_files'] ['download']) ? $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['download']) : '';;
+					    $xml_output .= isset($json_array ['S3_files'] ['download']) ? "<media_url_download><![CDATA[" . $path . "]]></media_url_download>" : '';
+					    	
 					    
 					    if ($type == "video") {
 					    	$path = isset($json_array ['S3_files'] ['web']) && !empty($json_array ['S3_files'] ['web']) ? $json_array ['S3_files'] ['web'] : "";
