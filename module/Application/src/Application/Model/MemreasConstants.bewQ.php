@@ -7,8 +7,8 @@ namespace Application\Model;
 
 class MemreasConstants {
  	//wsu url
-	const ORIGINAL_URL = "http://memreasdev-wsu.elasticbeanstalk.com/";
-	const MEDIA_URL = "http://memreasdev-wsu.elasticbeanstalk.com/?action=addmediaevent";
+	const ORIGINAL_URL = "http://memreasdev-wsu.memreas.com/";
+	const MEDIA_URL = "http://memreasdev-wsu.memreas.com/?action=addmediaevent";
 	
 	//bew url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
@@ -16,9 +16,9 @@ class MemreasConstants {
 	//memreasdevsec related
 	const S3BUCKET = "memreasdevsec";
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d3sisat5gdssl6.cloudfront.net/';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
 	const SIGNURLS = true;
-	const MEMREAS_PAY_URL = "http://memreasdev-pay.elasticbeanstalk.com";
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
 	
 	//Same across...
