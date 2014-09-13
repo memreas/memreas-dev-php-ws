@@ -105,7 +105,11 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $qb->select('u.username', 'm.metadata');
                         $qb->from('Application\Entity\User', 'u');
                         $qb->join('Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id');
-                        $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
+                        /*
+                         * 13-SEP-2014 - removed profile pic from query
+                         */
+                        //$qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
+                        $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id');
                         $qb->where('ef.event_id=?1 ');
                         $qb->groupBy('u.username');
                         $qb->setParameter(1, $row->event_id);

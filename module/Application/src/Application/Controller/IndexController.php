@@ -91,7 +91,7 @@ use Application\memreas\RemoveGroup;
 class IndexController extends AbstractActionController {
 	
 	protected $xml_in;
-	protected $url = "http://memreasdev-wsu.elasticbeanstalk.com/";
+	protected $url = "https://memreasdev-wsu.elasticbeanstalk.com/";
 	protected $user_id;
 	protected $storage;
 	protected $authservice;
