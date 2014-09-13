@@ -47,12 +47,20 @@ class  GetGroupFriends{
         $qb->select ( 'f' );
         $qb->from ( 'Application\Entity\FriendGroup', 'fg' );
         $qb->join ('Application\Entity\Friend', 'f', 'WITH', 'fg.friend_id = f.friend_id');
-        $qb->where ( "fg.group_id=?1 AND f.network = '{$network}'" );
-        $qb->setParameter(1, $group_id);
+
+        //Add ignore group id if group id is empty
+        if (!empty($group_id)){
+            $qb->where ( "fg.group_id=?1 AND f.network = '{$network}'" );
+            $qb->setParameter(1, $group_id);
+        }
+        else $qb->where ( "f.network = '{$network}'" );
+
         $result_groups = $qb->getQuery ()->getResult();
         if (empty($result_groups)) {
             $status = "Failure";
-            $message = "You have no friend with this group network.";
+            if (!empty($group_id))
+                $message = "You have no friend with this group network.";
+            else $message = "You have no friend with this network.";
         } else {
             $status = 'Success';
             $output .= '<friends>';
