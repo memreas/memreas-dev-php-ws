@@ -7,8 +7,8 @@ namespace Application\Model;
 
 class MemreasConstants {
  	//wsu url
-	const ORIGINAL_URL = "http://memreasdev-wsu.memreas.com/";
-	const MEDIA_URL = "http://memreasdev-wsu.memreas.com/?action=addmediaevent";
+	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
+	const MEDIA_URL = "https://memreasdev-wsu.memreas.com/?action=addmediaevent";
 	
 	//bew url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
