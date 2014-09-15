@@ -86,6 +86,7 @@ use Application\memreas\GetPlans;
 use Application\memreas\Mem;
 use Application\memreas\GetOrderHistory;
 use Application\memreas\RemoveGroup;
+use Application\memreas\CheckEvent;
 
 
 class IndexController extends AbstractActionController {
@@ -189,6 +190,7 @@ error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL)
             }
                         
             $memreas_tables = new MemreasTables($this->getServiceLocator());
+
             if($actionname == 'notlogin'){
                 $result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
                 $result .= "<xml><error>Please Login </error></xml>";
@@ -853,6 +855,10 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 $RemoveGroup = new RemoveGroup($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveGroup->exec();
             }
+            else if ($actionname == "checkevent") {
+                $CheckEvent = new CheckEvent($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $CheckEvent->exec();
+            }
 
             /*
              * Successfully retrieved from cache so echo
@@ -1070,6 +1076,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
             'login',
             'registration',
             'forgotpassword',
+            'checkevent',
         	'checkusername',
         	'changepassword',
             'showlog',
