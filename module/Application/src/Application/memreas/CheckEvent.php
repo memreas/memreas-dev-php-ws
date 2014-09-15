@@ -47,7 +47,7 @@
             if (!empty($result)){
                 $status = 'success';
                 $output .= '<event_id>' . $result[0]->event_id . '</event_id>';
-                $output .= '<event_name>' . $result[0]->event_id . '</event_name>';
+                $output .= '<event_name>' . $result[0]->name . '</event_name>';
             }
             else {
                 $status = 'Failure';

@@ -51,6 +51,7 @@ error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL )
 			$device_type = trim ( $data->registration->device_type );
 			$invited_by = trim ( $data->registration->invited_by );
 			//$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
+            $assign_event = trim ( $data->registration->event_id );
 		} else {
 			
 error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); 
@@ -177,6 +178,34 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 									        //add frient to event
 									        $this->addfriendtoevent->exec($xml_input);
 				        }
+
+                        //Check if user has been assigned an event
+                        if ($assign_event){
+                            $query = $this->dbAdapter->createQueryBuilder();
+                            $query->select('e')
+                                ->from('\Application\Entity\Event', 'e')
+                                ->where('e.event_id = ?1')
+                                ->setParameter(1, $assign_event);
+                            $result = $query->getQuery()->getResult();
+
+                            $memreas_tables = new MemreasTables($this->service_locator);
+                            $message_data = '<xml><addfriendtoevent>
+                                                    <user_id>' . $result[0]->user_id . '</user_id>
+                                                    <event_id>' . $assign_event . '</event_id>
+                                                    <emails><email></email></emails>
+                                                    <friends>
+                                                        <friend>
+                                                            <network_name>memreas</network_name>
+                                                            <friend_name>' . $username . '</friend_name>
+                                                            <friend_id>' . $user_id . '</friend_id>
+                                                            <profile_pic_url></profile_pic_url>
+                                                        </friend>
+                                                    </friends></addfriendtoevent></xml>';
+
+                            $MemreasEvent = new AddFriendtoevent($message_data, $memreas_tables, $this->service_locator);
+                            $MemreasEvent->exec($message_data);
+                        }
+
 				        // upload profile image
 				        if (isset ( $_FILES ['f'] ) && ! empty ( $_FILES ['f'] ['name'] )) {
 					        $s3file_name = time () . $_FILES ['f'] ['name'];
@@ -244,6 +273,7 @@ error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL
 error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 
 					        // Now publish the message so any photo is thumbnailed.
+
 					        $message_data = array (
 							        'user_id'      => $user_id,
 							        'media_id'     => $media_id,
