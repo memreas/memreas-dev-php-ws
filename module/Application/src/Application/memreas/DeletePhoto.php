@@ -5,6 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
+use Aws\S3\S3Client;
 
 class DeletePhoto {
 	protected $message_data;
@@ -61,6 +62,12 @@ class DeletePhoto {
                 $query_event = "DELETE FROM Application\Entity\EventMedia em WHERE em.media_id='$mediaid'";
                 $event_statement = $this->dbAdapter->createQuery ( $query_event );
                 $event_result = $event_statement->getResult ();
+
+                $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
+                $S3Client->deleteObject(array(
+                    'Bucket' => MemreasConstants::S3BUCKET,
+                    'Key' => $json_array ['S3_files'] ['path']
+                ));
 
 				if (count ( $result ) > 0) {
 
