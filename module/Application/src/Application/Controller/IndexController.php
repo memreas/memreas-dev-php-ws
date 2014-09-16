@@ -535,9 +535,10 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         break;
                     case '!':
                         $mc = $this->elasticache->getCache('!event');
-                        if (!$mc || empty($mc)) {
-                            $eventRep = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')
+                        $eventRep = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default')
                                     ->getRepository('Application\Entity\Event');
+                        if (!$mc || empty($mc)) {
+                            
                             $mc = $eventRep->createEventCache();
                             $this->elasticache->setCache("!event", $mc);
                         }
@@ -548,6 +549,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $er['name'] = '!' . $er['name'];
                                     $er['created_on'] = Mem::formatDateDiff($er['create_time']);
+                                    $event_creator = $eventRep->getUser($er['user_id'],'row');
+                                    $er['event_creator_name'] ='@'. $event_creator['username'];
+                                    $er['event_creator_pic'] =$event_creator['profile_photo'];
 
                                     $search_result[] = $er;
                                     $event_ids[]=$er['event_id'];
