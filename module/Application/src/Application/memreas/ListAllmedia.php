@@ -240,7 +240,7 @@ class ListAllmedia {
 			$xml_output .= "<user_id></user_id>";
 			$xml_output .= "<event_id>" . $event_id . "</event_id>";
 			$xml_output .= "<message>$message</message>";
-			$xml_output .= "<media>";
+			/*$xml_output .= "<media>";
 			$xml_output .= "<media_id></media_id>";
 
 			$xml_output .= "<metadata></metadata>";
@@ -252,6 +252,7 @@ class ListAllmedia {
 			$xml_output .= "<type></type>";
 			$xml_output .= "<media_name></media_name>";
 			$xml_output .= "</media>";
+			*/
 		}
 
 		$xml_output .= "</medias>";
