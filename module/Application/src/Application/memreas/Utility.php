@@ -3,7 +3,7 @@
 namespace Application\memreas;
 use \Exception;
 
-class Mem {
+class Utility {
 	protected static $service_locator;
     protected static $catch;
 

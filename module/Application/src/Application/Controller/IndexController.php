@@ -83,7 +83,7 @@ use Application\memreas\RemoveEventFriend;
 use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
 use Application\memreas\GetPlans;
-use Application\memreas\Mem;
+use Application\memreas\Utility;
 use Application\memreas\GetOrderHistory;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
@@ -548,7 +548,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                             if (stripos($er['name'], $search) === 0) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
                                     $er['name'] = '!' . $er['name'];
-                                    $er['created_on'] = Mem::formatDateDiff($er['create_time']);
+                                    $er['created_on'] = Utility::formatDateDiff($er['create_time']);
                                     $event_creator = $eventRep->getUser($er['user_id'],'row');
                                     $er['event_creator_name'] ='@'. $event_creator['username'];
                                     $er['event_creator_pic'] =$event_creator['profile_photo'];
@@ -616,7 +616,7 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                         foreach ($mc as $k => $er) {
                             if (stripos($er['name'], $search) !== false) {
                                 if ($rc >= $from && $rc < ($from + $limit)) {
-                                    $er['updated_on'] = Mem::formatDateDiff($er['update_time']);
+                                    $er['updated_on'] = Utility::formatDateDiff($er['update_time']);
                                     $search_result[$k] = $er;
 
                                 }

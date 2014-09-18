@@ -255,7 +255,9 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         ->getQuery()->getResult();
 
                     if (!empty($profile)){
-                        $json_array = json_decode($profile[0]->metadata, true);
+                        $json_array = json_decode($profile[0]->metadata, true);      
+                        $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+
                         if (!empty($json_array ['S3_files'] ['path'])) {
                             $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
                             $url1 = $this->url_signer->signArrayOfUrls($url);
@@ -271,7 +273,6 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         if (!empty($json_array ['S3_files'] ['98x78']))
                             $pic_98x78 = $this->url_signer->signArrayOfUrls($json_array ['S3_files']['thumbnails'] ['98x78']);
                         } else {
-                            $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
                             $pic_79x80 = '';
                             $pic_448x306 = '';
                             $pic_98x78 = '';
