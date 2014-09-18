@@ -153,7 +153,7 @@ class ListAllmedia {
 					    } else
 						    $type = "Type not Mentioned";
 					    $url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] :  $json_array ['S3_files'] ['path'];
-					    $media_name = basename ( $url );
+					    $media_name = basename ( $json_array ['S3_files'] ['path'] );
 					    if (isset ( $json_array ['local_filenames'] ['device'] )) {
 						    $device = ( array ) $json_array ['local_filenames'] ['device'];
 					    } else {
