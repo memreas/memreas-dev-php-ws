@@ -12,12 +12,14 @@ class ViewAllfriends {
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	protected $url_signer;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		error_log ( "Inside ViewAllfriends.__construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->url_signer = new MemreasSignedURL ();
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
@@ -61,7 +63,7 @@ class ViewAllfriends {
 						$view_all_friend [$count] ['network'] = $row1->network;
 						
 						$view_all_friend [$count] ['social_username'] = $row1->social_username;
-						$view_all_friend [$count] ['url_image'] = $row1->url_image;
+						$view_all_friend [$count] ['url_image'] = $this->url_signer->fetchSignedURL ( $row1->url_image);
 						 
 					}
 				} else {
