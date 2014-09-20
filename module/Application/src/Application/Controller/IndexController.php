@@ -92,7 +92,7 @@ use Application\memreas\CheckEvent;
 class IndexController extends AbstractActionController {
 	
 	protected $xml_in;
-	protected $url = "https://memreasdev-wsu.elasticbeanstalk.com/";
+	protected $url;
 	protected $user_id;
 	protected $storage;
 	protected $authservice;
@@ -165,8 +165,9 @@ error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
         $actionname = $this->security($actionname);
                     
                     
-error_log("Inside indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-   
+error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+error_log("Inside indexAction---> _POST ['xml'] ---> ".$_POST ['xml']. PHP_EOL);
+
  
         if (isset($actionname) && !empty($actionname)) {
             // Fetch the elasticache handle

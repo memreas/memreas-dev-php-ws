@@ -49,11 +49,11 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
         $from = ($page - 1) * $limit;
         $date = strtotime(date('d-m-Y'));
         header("Content-type: text/xml");
-        $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-        $xml_output .= "<xml><viewevents>";
         // ---------------------------my events----------------------------
         if ($is_my_event) {
-
+        	$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+        	$xml_output .= "<xml><viewevents>";
+        	 
             $query_event = "select e
                 from Application\Entity\Event e
                 where e.user_id='" . $user_id . "'
@@ -179,7 +179,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                                         $url98x78 = isset($json_array ['S3_files'] ['thumbnails']['98x78']) ? $json_array ['S3_files'] ['thumbnails']['98x78'] : '';
                                     } else if (isset($json_array ['S3_files'] ['type'] ['video']) && is_array($json_array ['S3_files'] ['type'] ['video'])) {
                                         $type = "video";
-                                        $thum_url = isset($json_array ['S3_files'] ['thumbnails'] ['base']) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+                                        $thum_url = isset($json_array ['S3_files'] ['thumbnails'] ['fullsize']) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
                                         $url79x80 = isset($json_array ['S3_files'] ['thumbnails'] ['79x80']) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
                                         $url448x306 = isset($json_array ['S3_files'] ['thumbnails'] ['448x306']) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
                                         $url98x78 = isset($json_array ['S3_files'] ['thumbnails'] ['98x78']) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
@@ -223,7 +223,9 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
         }
         // ------------------------for friends event-------------------------
         if ($is_friend_event) {
-            // get friend ids 
+            $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+        	$xml_output .= "<xml><viewevents>";
+        	// get friend ids 
             $q_friendsevent = "select event.user_id,event.event_id, event.name, event.friends_can_share, event.friends_can_post
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event
                     where event.event_id=event_friend.event_id
@@ -251,7 +253,9 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                     $profile = $this->dbAdapter->createQueryBuilder()
                         ->select('m')
                         ->from('Application\Entity\Media', 'm')
-                        ->where("m.user_id = '{$k}' AND m.is_profile_pic = 1")
+                        //JM: 19-SEP-2014 removed is_profile_pic = 1 <- not all users will have profile pic
+                        //->where("m.user_id = '{$k}' AND m.is_profile_pic = 1")
+                        ->where("m.user_id = '{$k}'")
                         ->getQuery()->getResult();
 
                     if (!empty($profile)){
@@ -334,7 +338,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                                         $url98x78 = isset($json_array ['S3_files'] ['thumbnails']['98x78']) ? $json_array ['S3_files'] ['thumbnails']['98x78'] : '';
                                     } else if (isset($json_array ['S3_files'] ['type'] ['video']) && is_array($json_array ['S3_files'] ['type'] ['video'])) {
                                         $type = "video";
-                                        $thum_url = isset($json_array ['S3_files'] ['thumbnails'] ['base']) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+                                        $thum_url = isset($json_array ['S3_files'] ['thumbnails'] ['fullsize']) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
                                         $url79x80 = isset($json_array ['S3_files'] ['thumbnails'] ['79x80']) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
                                         $url448x306 = isset($json_array ['S3_files'] ['thumbnails'] ['448x306']) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
                                         $url98x78 = isset($json_array ['S3_files'] ['thumbnails'] ['98x78']) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
@@ -384,7 +388,9 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
         }
         // -----------------------------public events-----------------------------
         if ($is_public_event) {
-
+        	$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+        	$xml_output .= "<xml><viewevents>";
+        	 
             $q_public = "select distinct event.user_id,event.user_id ,user.username,user.profile_photo
                         from Application\Entity\Event event  , Application\Entity\User user
                         where event.public=1
@@ -394,7 +400,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                         and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                         ORDER BY event.create_time DESC ";
-//error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
+error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
             // LIMIT $from , $limit";
             // $result_pub = mysql_query($q_public);
             // $statement = $this->dbAdapter->createStatement($q_public);
@@ -410,12 +416,16 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
              * if (!$result_pub) { $xml_output.="<status>Failure</status>"; $xml_output.="<message>" . mysql_error() . "</message>"; $xml_output.="<page>0</page>"; $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator></event_creator>"; $xml_output.="<profile_pic><![CDATA[]]></profile_pic>"; $xml_output.="<profile_pic_79x80></profile_pic_79x80>"; $xml_output.="<profile_pic_448x306></profile_pic_448x306>"; $xml_output.="<profile_pic_98x78></profile_pic_98x78>"; $xml_output.="<event_creator_user_id></event_creator_user_id>"; $xml_output.="<events><event>"; $xml_output.="<event_id></event_id>"; $xml_output.="<event_name></event_name>"; $xml_output.="<friend_can_post></friend_can_post>"; $xml_output.="<friend_can_share></friend_can_share>"; $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; $xml_output.="<event_media_video_thum></event_media_video_thum>"; $xml_output.="<event_media_79x80></event_media_79x80>"; $xml_output.="<event_media_98x78></event_media_98x78>"; $xml_output.="<event_media_448x306></event_media_448x306>"; $xml_output.= "</event></events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; }
              */
             if (count($result_pub) == 0) {
-                $xml_output .= "<friends> <status>Failure</status>";
+error_log("Inside Public count result pub is 0" . PHP_EOL);
+            	$xml_output .= "<friends> <status>Failure</status>";
                 $xml_output .= "<message>No record found</message>";
                 $xml_output .= "</friends>";
             } else {
 
-                $xml_output .= "<friends>";
+error_log("Inside Public count result pub is NOT 0" . PHP_EOL);
+error_log("Inside Public count result pub is NOT 0 xml output so far ---> ". $xml_output . PHP_EOL);
+
+            	$xml_output .= "<friends>";
                 $xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>Public Event List</message>";
                 $xml_output .= "<page>$page</page>";
@@ -436,14 +446,8 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
 
                     $xml_output .= "<friend>";
                     $xml_output .= "<event_creator>" . $row3 ['username'] . "</event_creator>";
-//error_log("json row3------>".json_encode($row3).PHP_EOL);
                     if ($row3 ['profile_photo'] == 'true') {
                         $q_profile_photo = "select m from Application\Entity\Media m  where m.is_profile_pic=1 and m.user_id='" . $row3 ['user_id'] . "'";
-error_log("q_profile_photo------>".$q_profile_photo.PHP_EOL);
-                        // $result_profile_pic = mysql_query($q_profile_photo) or die(mysql_error());
-                        // $statement = $this->dbAdapter->createStatement($q_profile_photo);
-                        // $result_profile_pic = $statement->execute();
-                        // $row = $result->current();
                         $statement = $this->dbAdapter->createQuery($q_profile_photo);
                         $statement->setMaxResults(1);
                         $result_profile_pic = $statement->getArrayResult();
@@ -452,8 +456,7 @@ error_log("result_profile_pic array ------>".json_encode($result_profile_pic).PH
                         if ($result_profile_pic) {
                             if ($row6 = array_pop($result_profile_pic)) {
                                 $json_array = json_decode($row6 ['metadata'], true);
-                                // echo "<pre>";
-                                // print_r($json_array['S3_files']);
+
                                 if (!empty($json_array ['S3_files'] ['path']))
                                     $pic =$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['path']);
 error_log("pic------>".$pic.PHP_EOL);
@@ -484,14 +487,7 @@ error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
                           and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                           and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                           ORDER BY event.create_time DESC";
-//error_log("dql qub event ---> " . $qub_event . PHP_EOL);
-
-                    // $result2 = mysql_query($qub_event) or die(mysql_error
-                    // $statement = $this->dbAdapter->createStatement($qub_event);
-                    // $result2 = $statement->execute();
-                    // $row = $result->current();
                     $statement = $this->dbAdapter->createQuery($qub_event);
-                    // $statement::setMaxResults(1);
                     $result2 = $statement->getResult();
 
                     if ($result2) {
@@ -542,7 +538,7 @@ error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
                                             $url98x78 = empty($json_array ['S3_files']['thumbnails'] ['98x78']) ? '' : $json_array ['S3_files']['thumbnails'] ['98x78'];
                                         } else if (isset($json_array ['S3_files'] ['type'] ['video']) && is_array($json_array ['S3_files'] ['type'] ['video'])) {
                                             $type = "video";
-                                            $thum_url = isset($json_array ['S3_files'] ['thumbnails'] ['base']) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : ''; // get video thum
+                                            $thum_url = isset($json_array ['S3_files'] ['thumbnails'] ['fullsize']) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
                                             $url79x80 = isset($json_array ['S3_files'] ['thumbnails'] ['79x80']) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
                                             $url448x306 = isset($json_array ['S3_files'] ['thumbnails'] ['448x306']) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
                                             $url98x78 = isset($json_array ['S3_files'] ['thumbnails'] ['98x78']) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
@@ -592,7 +588,7 @@ error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
 
         $xml_output .= '</viewevents>';
         $xml_output .= '</xml>';
-error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
+//error_log("View Events.xml_output ---->  $xml_output" . PHP_EOL);
         echo $xml_output;
     }
 
