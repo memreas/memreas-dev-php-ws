@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Aws\S3\S3Client;
+use Application\Entity\EventMedia;
 
 class DeletePhoto {
 	protected $message_data;
@@ -23,62 +24,58 @@ class DeletePhoto {
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$mediaid = trim ( $data->deletephoto->mediaid );
-		// $photourl = trim($data->deletephoto->photourl);
+
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<deletephotoresponse>";
-		// $photoname=1;
+
 		if (isset ( $mediaid ) && ! empty ( $mediaid )) {
-			// $seldata = "select * from media where media_id='$mediaid'";
 			$seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'";
 
-			// $resseldata = mysql_query($seldata);
-			// $statement = $this->dbAdapter->createStatement($seldata);
-			// $resseldata = $statement->execute();
-			// $row = $result->current();
 			$statement = $this->dbAdapter->createQuery ( $seldata );
 			$resseldata = $statement->getResult ();
-			$this->user_id = $resseldata[0]->user_id;
-			// print_r($resseldata);exit;
-			// print_r(count($resseldata));exit;
+
 			if (count ( $resseldata ) > 0) {
-				// $selrow = mysql_fetch_array($resseldata);
-				$json_array = json_decode ( $resseldata [0]->metadata, true );
-				if (isset ( $json_array ['S3_files'] ['type'] ['image'] )) {
-					$imagename = basename ( $json_array ['S3_files'] ['path'] );
-				}
-				// $query = "DELETE FROM media where media_id='$mediaid'";
-				$query = "DELETE FROM Application\Entity\Media m where m.media_id='$mediaid'";
 
-				// $result = mysql_query($query);
-				// $statement = $this->dbAdapter->createStatement($query);
-				// $result = $statement->execute();
-				// $row = $result->current();
-				$statement = $this->dbAdapter->createQuery ( $query );
-				$result = $statement->getResult ();
+                //Check if media related to any event
+                $media_event = "SELECT em FROM Application\Entity\EventMedia em WHERE em.media_id = '$mediaid'";
+                $statement = $this->dbAdapter->createQuery($media_event);
+                $result = $statement->getResult();
+                if (count ($result) > 0)
+                    $xml_output .= '<status>failure</status><message>This media is related to an event.</message>';
+                else{
+                    $json_array = json_decode ( $resseldata [0]->metadata, true );
+                    if (isset ( $json_array ['S3_files'] ['type'] ['image'] )) {
+                        $imagename = basename ( $json_array ['S3_files'] ['path'] );
+                    }
 
-                //Remove event media related to this media also
-                $query_event = "DELETE FROM Application\Entity\EventMedia em WHERE em.media_id='$mediaid'";
-                $event_statement = $this->dbAdapter->createQuery ( $query_event );
-                $event_result = $event_statement->getResult ();
+                    $query = "DELETE FROM Application\Entity\Media m where m.media_id='$mediaid'";
 
-                $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
-                $S3Client->deleteObject(array(
-                    'Bucket' => MemreasConstants::S3BUCKET,
-                    'Key' => $json_array ['S3_files'] ['path']
-                ));
+                    $statement = $this->dbAdapter->createQuery ( $query );
+                    $result = $statement->getResult ();
 
-				if (count ( $result ) > 0) {
+                    //Remove event media related to this media also
+                    $query_event = "DELETE FROM Application\Entity\EventMedia em WHERE em.media_id='$mediaid'";
+                    $event_statement = $this->dbAdapter->createQuery ( $query_event );
+                    $event_result = $event_statement->getResult ();
 
-					$xml_output .= "<status>success</status>";
-					$xml_output .= "<message>Photo deleted successfully</message>";
+                    //Remove media resource on S3 AMZ
+                    $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
+                    $S3Client->deleteObject(array(
+                        'Bucket' => MemreasConstants::S3BUCKET,
+                        'Key' => $json_array ['S3_files'] ['path']
+                    ));
 
-					// if(isset($imagename))
-					// unlink('../public/userimage/'. $imagename);
-				} else {
-					$xml_output .= "<status>failure</status><message>No record found</message>";
-				}
+                    if (count ( $result ) > 0) {
+
+                        $xml_output .= "<status>success</status>";
+                        $xml_output .= "<message>Photo deleted successfully</message>";
+
+                    } else {
+                        $xml_output .= "<status>failure</status><message>No record found</message>";
+                    }
+                }
 			} else {
 				$xml_output .= "<status>failure</status><message>Given media id is wrong.</message>";
 			}
