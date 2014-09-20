@@ -138,7 +138,7 @@ class ListAllmedia {
 						$url98x78 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : "";
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
-						$thum_url = (isset ( $json_array ['S3_files'] ['thumbnails'] ['base'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['base'] )) ? $json_array ['S3_files'] ['thumbnails'] ['base'] : "";
+						$thum_url = (isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] )) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : "";
 						$url79x80 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : "";
 						$url448x306 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : "";
 						$url98x78 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : "";

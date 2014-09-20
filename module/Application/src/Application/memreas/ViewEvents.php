@@ -400,7 +400,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                         and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                         ORDER BY event.create_time DESC ";
-error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
+//error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
             // LIMIT $from , $limit";
             // $result_pub = mysql_query($q_public);
             // $statement = $this->dbAdapter->createStatement($q_public);
@@ -416,15 +416,10 @@ error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
              * if (!$result_pub) { $xml_output.="<status>Failure</status>"; $xml_output.="<message>" . mysql_error() . "</message>"; $xml_output.="<page>0</page>"; $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator></event_creator>"; $xml_output.="<profile_pic><![CDATA[]]></profile_pic>"; $xml_output.="<profile_pic_79x80></profile_pic_79x80>"; $xml_output.="<profile_pic_448x306></profile_pic_448x306>"; $xml_output.="<profile_pic_98x78></profile_pic_98x78>"; $xml_output.="<event_creator_user_id></event_creator_user_id>"; $xml_output.="<events><event>"; $xml_output.="<event_id></event_id>"; $xml_output.="<event_name></event_name>"; $xml_output.="<friend_can_post></friend_can_post>"; $xml_output.="<friend_can_share></friend_can_share>"; $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; $xml_output.="<event_media_video_thum></event_media_video_thum>"; $xml_output.="<event_media_79x80></event_media_79x80>"; $xml_output.="<event_media_98x78></event_media_98x78>"; $xml_output.="<event_media_448x306></event_media_448x306>"; $xml_output.= "</event></events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; }
              */
             if (count($result_pub) == 0) {
-error_log("Inside Public count result pub is 0" . PHP_EOL);
             	$xml_output .= "<friends> <status>Failure</status>";
                 $xml_output .= "<message>No record found</message>";
                 $xml_output .= "</friends>";
             } else {
-
-error_log("Inside Public count result pub is NOT 0" . PHP_EOL);
-error_log("Inside Public count result pub is NOT 0 xml output so far ---> ". $xml_output . PHP_EOL);
-
             	$xml_output .= "<friends>";
                 $xml_output .= "<status>Success</status>";
                 $xml_output .= "<message>Public Event List</message>";
@@ -451,7 +446,7 @@ error_log("Inside Public count result pub is NOT 0 xml output so far ---> ". $xm
                         $statement = $this->dbAdapter->createQuery($q_profile_photo);
                         $statement->setMaxResults(1);
                         $result_profile_pic = $statement->getArrayResult();
-error_log("result_profile_pic array ------>".json_encode($result_profile_pic).PHP_EOL);
+//error_log("result_profile_pic array ------>".json_encode($result_profile_pic).PHP_EOL);
                         
                         if ($result_profile_pic) {
                             if ($row6 = array_pop($result_profile_pic)) {
@@ -459,19 +454,19 @@ error_log("result_profile_pic array ------>".json_encode($result_profile_pic).PH
 
                                 if (!empty($json_array ['S3_files'] ['path']))
                                     $pic =$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['path']);
-error_log("pic------>".$pic.PHP_EOL);
+//error_log("pic------>".$pic.PHP_EOL);
                                 
                                 if (!empty($json_array ['S3_files'] ['79x80']))
                                     $pic_79x80 =$this->url_signer->signArrayOfUrls( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['79x80']);
-error_log("pic_79x80------>".$pic_79x80.PHP_EOL);
+//error_log("pic_79x80------>".$pic_79x80.PHP_EOL);
                                 
                                 if (!empty($json_array ['S3_files'] ['448x306']))
                                     $pic_448x306 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails']['448x306']);
-error_log("pic_448x306------>".$pic_448x306.PHP_EOL);
+//error_log("pic_448x306------>".$pic_448x306.PHP_EOL);
                                 
                                 if (!empty($json_array ['S3_files'] ['98x78']))
                                     $pic_98x78 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files']['thumbnails'] ['98x78']);
-error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
+//error_log("pic_98x78------>".$pic_98x78.PHP_EOL);
                             }
                         }
                     }

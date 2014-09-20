@@ -38,8 +38,6 @@ class AddEvent {
     public function exec() {
        
         $data = simplexml_load_string($_POST['xml']);
-//echo "<pre>";
-//print_r($data);
 $message = ' ';
 $user_id =addslashes(trim($data->addevent->user_id));
 $event_name = addslashes(trim($data->addevent->event_name));
