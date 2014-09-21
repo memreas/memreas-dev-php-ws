@@ -278,7 +278,7 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                          * TODO: add href for !memreas 
                          */
                         //$nmessage = $userOBj->username . ' invites you to !' . $eventOBj->name;
-                        $nmessage = $userOBj->username . ' invites you to https://fe.memreas.com/ ---> !' . $eventOBj->name;
+                        $nmessage = $userOBj->username . ' invites you to '.'<a href="https://fe.memreas.com/index">!'.$eventOBj->name.'</a>';
                         // save nofication intable
                         $ndata = array(
                             'addNotification' => array(
