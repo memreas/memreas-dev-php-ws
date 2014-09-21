@@ -3,7 +3,7 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
-use Application\Model\MemreasConstants AS MC;
+use Application\Model\MemreasConstants as MC;
 use Application\Facebook\Facebook;
 use Application\TwitterOAuth\TwitterOAuth;
 use \Exception;
@@ -24,7 +24,7 @@ class Notification {
 	protected $fb;
 	protected $twitter;
 	public function __construct($service_locator) {
-		$config = $service_locator->get('Config');
+		$config = $service_locator->get ( 'Config' );
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		if (! $this->gcm) {
@@ -40,42 +40,40 @@ class Notification {
 			$config ['secret'] = MC::FB_SECRET;
 			$this->fbhref = MC::FB_FBHREF;
 			$this->fb = new Facebook ( $config );
-            $this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
+			$this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
 		}
 		
 		if (! $this->twitter) {
 			
 			$config = array ();
-			$config ['consumer_key'] = MC::TW_CONSUMER_KEY; 
+			$config ['consumer_key'] = MC::TW_CONSUMER_KEY;
 			$config ['consumer_secret'] = MC::TW_CONSUMER_SECRET;
 			$config ['oauth_token'] = MC::TW_OAUTH_TOKEN;
 			$config ['oauth_token_secret'] = MC::TW_OAUTH_TOKEN_SECRET;
 			$config ['output_format'] = 'object';
-            $this->twitter = new TwitterOAuth ( $config );
+			$this->twitter = new TwitterOAuth ( $config );
 		}
 	}
 	public function add($userid) {
 		$this->userIds [] = $userid;
 	}
 	public function addFriend($friendid) {
-		$this->friends[]  = $friendid;
+		$this->friends [] = $friendid;
 	}
 	public function send() {
 		try {
 			// mobile notification.
 			if (count ( $this->userIds ) > 0) {
 				
-		 $qb = $this->dbAdapter->createQueryBuilder ();
-        $qb->select ( 'f' );
-        $qb->from ( 'Application\Entity\Device', 'f' );
-          $qb->andWhere('f.user_id IN (:x)')
-         		->setParameter('x', $this->userIds );
-
-        $users = $qb->getQuery ()->getArrayResult ();
+				$qb = $this->dbAdapter->createQueryBuilder ();
+				$qb->select ( 'f' );
+				$qb->from ( 'Application\Entity\Device', 'f' );
+				$qb->andWhere ( 'f.user_id IN (:x)' )->setParameter ( 'x', $this->userIds );
 				
+				$users = $qb->getQuery ()->getArrayResult ();
 				
 				if (count ( $users ) > 0) {
-						
+					
 					foreach ( $users as $user ) {
 						error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
 						if ($user ['device_type'] == \Application\Entity\Device::ANROID) {
@@ -98,11 +96,12 @@ class Notification {
 					}
 				}
 				// to do memreas user fb twitter
-				//$this->webNotification ();
+				// $this->webNotification ();
 			}
 			// non memras users fb twitter
 			$this->webNotification ();
-		} catch ( \Exception $exc ) {error_log('exp-notifcation class'.$exc->getMessage());
+		} catch ( \Exception $exc ) {
+			error_log ( 'exp-notifcation class' . $exc->getMessage () );
 		}
 	}
 	public function setUpdateMessage($notification_type, $data = '') {
@@ -140,7 +139,7 @@ class Notification {
 			// web notification
 			$get_user = "SELECT f  FROM  Application\Entity\Friend f where f.friend_id in(?1)";
 			$statement = $this->dbAdapter->createQuery ( $get_user );
-			$statement->setParameter(1, $this->friends);
+			$statement->setParameter ( 1, $this->friends );
 			$users = $statement->getArrayResult ();
 			
 			if (count ( $users ) > 0) {
@@ -152,23 +151,20 @@ class Notification {
 				foreach ( $users as $user ) {
 					switch (strtolower ( $user ['network'] )) {
 						case 'facebook' :
-							try{
+							try {
 								$result = $this->fb->api ( '/' . $user ['friend_id'] . '/notifications/', 'post', $fbparams );
-																error_log ( 'SENDING-FB:'.print_r($result,true .PHP_EOL) );
-
+								error_log ( 'SENDING-FB:' . print_r ( $result, true . PHP_EOL ) );
 							} catch ( \Exception $exc ) {
- 								error_log ( 'SENDING-FB:'.print_r($exc->getMessage(),true .PHP_EOL) );
-
-
+								error_log ( 'SENDING-FB:' . print_r ( $exc->getMessage (), true . PHP_EOL ) );
 							}
 							break;
 						case 'twitter' :
- 							$twparams ['user_id'] = $user ['friend_id'];
-							try{
+							$twparams ['user_id'] = $user ['friend_id'];
+							try {
 								$result = $this->twitter->post ( 'direct_messages/new', $twparams );
-								error_log ( 'SENDING-TWITTER:'.print_r($result,true .PHP_EOL) );
+								error_log ( 'SENDING-TWITTER:' . print_r ( $result, true . PHP_EOL ) );
 							} catch ( \Exception $exc ) {
-                                                                error_log ( 'SENDING-tw:'.print_r($exc->getMessage(),true .PHP_EOL) );
+								error_log ( 'SENDING-tw:'.print_r($exc->getMessage(),true .PHP_EOL) );
 							}
 							
 							break;

@@ -39,20 +39,20 @@ class AddFriendtoevent {
     }
 
     public function exec($frmweb = '') {
-//error_log("Enter AddFriendtoevent.exec()" . PHP_EOL);
+error_log("Enter AddFriendtoevent.exec()" . PHP_EOL);
 
         if (empty($frmweb)) {
             $data = simplexml_load_string($_POST ['xml']);
-//error_log("Enter AddFriendtoevent.exec() xml ----> " . $_POST ['xml'] . PHP_EOL);
+error_log("Enter AddFriendtoevent.exec() xml ----> " . $_POST ['xml'] . PHP_EOL);
         } else {
             $data = simplexml_load_string($frmweb);
-//error_log("Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL);
+error_log("Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL);
         }
 
        // $owner = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
 
         $friend_array = $data->addfriendtoevent->friends->friend;
-//error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_array) . PHP_EOL);
+error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_array) . PHP_EOL);
         $user_id = (trim($data->addfriendtoevent->user_id));
         $event_id = (trim($data->addfriendtoevent->event_id));
         $group_array = (trim($data->addfriendtoevent->groups));
@@ -76,9 +76,6 @@ class AddFriendtoevent {
             $error = 1;
             $message = "User Not Found";
         }
-
-      
-        
 
         // add group to event_group
         if (!empty($group_array) && !$error) {
@@ -180,7 +177,7 @@ class AddFriendtoevent {
                     	 * TODO: Need to get proper profile url here
                     	 */
                     	try {
-                            //error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
+//error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                     		$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
 	                    			'user_id' => $friend_id,
 	                    			'is_profile_pic' => '1'
@@ -188,7 +185,7 @@ class AddFriendtoevent {
 	                    	 
 	                      	$profile_pic_url = $eventRepo->getProfileUrl($profile_pic->metatdata);
                                 
-                            //error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
+//error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL);
                     	}
@@ -205,7 +202,7 @@ class AddFriendtoevent {
                             $this->dbAdapter->persist($tblFriend);
                             $this->dbAdapter->flush();
 
-                        //error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
+//error_log("Enter AddFriendtoevent.exec() - succeeded to insert tblFriend" . PHP_EOL);
                         } catch (\Exception $exc) {
                             error_log("Enter AddFriendtoevent.exec() - failure to insert tblFriend" . PHP_EOL);
                             $status = 'failure';
@@ -243,7 +240,7 @@ class AddFriendtoevent {
                             $status = 'Failure';
                             $error = 1;
                         }
-                        //error_log("Inserted user_friend table ---> $friend_id" . PHP_EOL);
+//error_log("Inserted user_friend table ---> $friend_id" . PHP_EOL);
 
                     }
                 }
@@ -258,7 +255,7 @@ class AddFriendtoevent {
                         $status = "Success";
                         $error = 1;
                         $message .= "$friend_name is already in your Event Friend list.";
-                        //error_log("$friend_name is already in your Event Friend list. ---> $friend_id" . PHP_EOL);
+error_log("$friend_name is already in your Event Friend list. ---> $friend_id" . PHP_EOL);
                     } else {
                         // insert EventFriend
                         $tblEventFriend = new \Application\Entity\EventFriend ();
@@ -280,7 +277,8 @@ class AddFriendtoevent {
                         /*
                          * TODO: add href for !memreas 
                          */
-                        $nmessage = $userOBj->username . ' invites you to !' . $eventOBj->name;
+                        //$nmessage = $userOBj->username . ' invites you to !' . $eventOBj->name;
+                        $nmessage = $userOBj->username . ' invites you to https://fe.memreas.com/ ---> !' . $eventOBj->name;
                         // save nofication intable
                         $ndata = array(
                             'addNotification' => array(
