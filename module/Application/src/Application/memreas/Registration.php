@@ -113,9 +113,32 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				    }
                     else{
                         $status = 'Success';
-				    /*
-				     * MD5 Encrypting password
-				     */
+                        
+                        
+                        
+                        /*
+                         * 22-SEP-2013 JM: added entry for email address verification
+                        */
+                        $email_verification_id  = MUUID::fetchUUID ();
+                        
+                        /*
+                         * Set user metadata
+                         */
+                        $meta_arr = Array();
+                        $meta_arr['user']['username' ] = $username;
+                        $meta_arr['user']['user_id' ] = $user_id;
+                        $meta_arr['user']['email_verification_id' ] = $email_verification_id;
+error_log("email_verification_id".$email_verification_id.PHP_EOL);
+                        $meta_arr['user']['email_verification_url' ] = MemreasConstants::ORIGINAL_URL.'index?actionname=index?actionname=verifyemailaddress';
+error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email_verification_url' ].PHP_EOL);
+                        $meta_arr['user']['email_verified' ] = 0;
+                        
+                        $metadata = json_encode($meta_arr);
+                        
+                        
+					    /*
+					     * MD5 Encrypting password
+					     */
 				        $passwrd     = $password;
 				        $password    = md5 ( $password );
 				        $roleid      = 2;
@@ -130,6 +153,7 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				        $tblUser->user_id         = $user_id;
 				        $tblUser->username        = $username;
 				        $tblUser->role            = $roleid;
+				        $tblUser->metadata        = $metadata;
 				        $tblUser->disable_account = $statusid;
 				        $tblUser->forgot_token    = $forgottoken;
 				        $tblUser->create_date     = $created;
@@ -235,6 +259,7 @@ error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL
 
 					        // Set the metatdata
 					        // $s3path = $user_id . '/image/';
+
 					        $json_array = array (
 							        "S3_files" => array (
 									        "path" => $s3_data ['s3path'] . $s3_data ['s3file_name'],
@@ -298,12 +323,15 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        // API Info
 				        // http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
 				        // Always set content-type when sending HTML email
+				        
+				        
+				        
 				        $to[] = $email;
 				         
 				        $viewVar = array (
 						        'email'    => $email,
 						        'username' => $username,
-						        'passwrd'  => $passwrd
+						        'email_verification_url'  => $meta_arr['user']['email_verification_url' ]
 				        );
 				        $viewModel = new ViewModel ( $viewVar );
 				        $viewModel->setTemplate ( 'email/register' );

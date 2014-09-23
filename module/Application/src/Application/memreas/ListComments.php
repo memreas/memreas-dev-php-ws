@@ -102,7 +102,8 @@ class ListComments {
 						$json_array = json_decode ( $audio_row->metadata, true );
 //error_log("metadata-----> ".$audio_row->metadata.PHP_EOL);
  					if (isset($json_array ['S3_files'] ['type']['audio'])  ){
-						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
+						//$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];					
+						$audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['audio'];					
 						$output .= "<audio_media_url><![CDATA[" .$this->url_signer->signArrayOfUrls($audio_url). "]]></audio_media_url>";
 //error_log("audio_url-----> ".$audio_url.PHP_EOL);
 					}

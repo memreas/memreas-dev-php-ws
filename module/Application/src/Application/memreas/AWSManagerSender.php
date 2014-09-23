@@ -168,6 +168,7 @@ error_log ( "file ---> $file" . PHP_EOL );
 				),
 				'ReturnPath' => $from 
 		) );
+error_log("email result ---> ".$result.PHP_EOL);		
 	}
 }
 
