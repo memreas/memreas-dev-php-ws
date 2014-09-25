@@ -18,12 +18,15 @@
         protected $memreas_tables;
         protected $service_locator;
         protected $dbAdapter;
+        protected $url_signer;
+        
         public function __construct($message_data, $memreas_tables, $service_locator) {
             error_log ( "Inside__construct..." );
             $this->message_data = $message_data;
             $this->memreas_tables = $memreas_tables;
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+			$this->url_signer = new MemreasSignedURL ();
             // $this->dbAdapter = $P->get(MemreasConstants::MEMREASDB);
         }
 
@@ -58,7 +61,7 @@
                     $output .= '<friend>';
                     $output .= '<friend_id>' . $friend->friend_id . '</friend_id>';
                     $output .= '<friend_name>' . $friend->social_username . '</friend_name>';
-                    $output .= '<photo>' . $friend->url_image . '</photo>';
+                    $output .= '<photo>' . $this->url_signer->fetchSignedURL ( $friend->url_image ) . '</photo>';
                     $output .= '</friend>';
                 }
                 $output .= '</friends>';
