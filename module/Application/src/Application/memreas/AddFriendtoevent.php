@@ -373,17 +373,10 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
             $viewVar['event_id'] = $event_id;
             $viewVar['event_name'] = $eventOBj->name;
             $viewVar['subject'] = $subject;
-error_log("viewModel->setVariables ---> viewVar['email']" . $viewVar['email'] . PHP_EOL);
-error_log("viewModel->setVariables ---> viewVar['username']" . $viewVar['username'] . PHP_EOL);
-error_log("viewModel->setVariables ---> viewVar['event_id']" . $viewVar['event_id'] . PHP_EOL);
-error_log("viewModel->setVariables ---> viewVar['event_name']" . $viewVar['event_name'] . PHP_EOL);
-error_log("viewModel->setVariables ---> viewVar['subject']" . $viewVar['subject'] . PHP_EOL);
-error_log("viewModel->setVariables ---> viewVar['message']" . $viewVar['message'] . PHP_EOL);
 			$viewModel->setVariables($viewVar);
             $html = $viewRender->render($viewModel);
             $subject = 'memreas invite';
 
-            //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
             $this->status = $status = 'Success';
             $message = "Welcome to .";
             // save nofication intable
