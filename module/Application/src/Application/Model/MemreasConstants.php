@@ -6,6 +6,10 @@
 namespace Application\Model;
 
 class MemreasConstants {
+
+	//fe url
+	const WEB_URL = "https://fe.memreas.com/";
+	
  	//wsu url
 	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
 	const MEDIA_URL = "https://memreasdev-wsu.memreas.com/?action=addmediaevent";
