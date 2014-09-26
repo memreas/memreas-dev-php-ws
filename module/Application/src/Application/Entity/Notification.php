@@ -21,8 +21,8 @@ class Notification {
 	const ADD_MEDIA = '4';
 	const ADD_EVENT = '5';
 	const EMAIL = '0';
-	const MEMERAS = '1';
-	const NONMEMERAS = '2';
+	const MEMREAS = '1';
+	const NONMEMREAS = '2';
 	
 	/**
 	 *

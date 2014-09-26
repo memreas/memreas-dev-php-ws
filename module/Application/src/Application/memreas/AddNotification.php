@@ -43,6 +43,8 @@ class AddNotification {
 		$user_id = (trim ( $data->addNotification->user_id ));
 		
 		$meta = $data->addNotification->meta;
+		$event_id = $data->addNotification->event_id;
+		$event_name = $data->addNotification->event_name;
 		
 		$status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
 		$notification_type = $data->addNotification->notification_type;
@@ -69,12 +71,12 @@ class AddNotification {
 			$uuid = explode('-', $this->notification_id);
 			$short_code =  $this->getSortCode($uuid [0]);
         	$tblNotification->short_code = $this->getSortCode($uuid [0]);
-        	$tblNotification->notification_method = Notification::NONMEMERAS;
+        	$tblNotification->notification_method = Notification::NONMEMREAS;
         	$tblNotification->meta .= ' code '.$tblNotification->short_code;
         	Email::$item['short_code'] = $short_code;
         	$this->composeNonMemarsMail($data);
 		}else if($network_name == 'memreas'){
-			$tblNotification->notification_method = Notification::MEMERAS ;
+			$tblNotification->notification_method = Notification::MEMREAS;
  		}  
 		
 		$tblNotification->create_time = $time;

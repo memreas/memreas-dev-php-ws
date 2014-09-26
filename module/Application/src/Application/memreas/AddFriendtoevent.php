@@ -77,7 +77,9 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
             $message = "User Not Found";
         }
 
-        // add group to event_group
+        /*
+         * add group to event_group
+         */
         if (!empty($group_array) && !$error) {
             //error_log("Enter AddFriendtoevent.exec() - !empty(group_array)" . PHP_EOL);
             foreach ($group_array as $key => $value) {
@@ -105,39 +107,58 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
                 } // end if ($group_id != 'null')
             } // end foreach
         } // end if (!empty($group_array))
-        // add friends to event loop
+
+        /*
+         * add friends to event loop
+         */
+        
         if (!empty($friend_array) && !$error) {
-              //Check if this event is friend adding or owner
-         if($eventOBj && ($eventOBj->user_id != $user_id)){
-            $chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
-           if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){
-                $error =1;
-                $message .= "add friends to event not allowed.";
-            }
-        }
+             /*
+              * Check if this event is friend adding or owner
+              */
+			if($eventOBj && ($eventOBj->user_id != $user_id)){
+	            /*
+	             * Level 3 Friend Checking here
+	             */
+				$chkEventFriendRule=$eventRepo->chkEventFriendRule($event_id,$friendId);
+
+				/*
+	             * Friends can share + L3 check here - backlog this functionality for now
+	             */
+				//if($eventOBj->friends_can_share == 0 || isset($chkEventFriendRule[0])   ){
+				//	$error =1;
+				//    $message .= "additional friends can't be added";
+				//}
+				if($eventOBj->friends_can_share == 0){
+					$error =1;
+				    $message .= "additional friends can't be added";
+				}
+			}
+
             foreach ($friend_array as $key => $value) {
-//error_log("AddFriendtoevent.exec() key ----> $key".PHP_EOL);
-//error_log("AddFriendtoevent.exec() value ----> $value".PHP_EOL);
-				$network_name = addslashes(trim($value->network_name));
+				
+            	$network_name = addslashes(trim($value->network_name));
                 $friend_name = addslashes(trim($value->friend_name));
                 $friend_id = trim($value->friend_id);
-                $profile_pic_url = stripslashes(trim($value->profile_pic_url));
+                $profile_pic_url = isset($value->profile_pic_url) ? stripslashes(trim($value->profile_pic_url)) : '';
+
+                /*
+            	 * Fetch from Friend table if exists 
+            	 */
                 $friend_query = "select f.friend_id ,f.network from Application\Entity\Friend f where f.network='$network_name' and f.friend_id='$friend_id'";
                 $statement = $this->dbAdapter->createQuery($friend_query);
                 $result_friend = $statement->getOneOrNullResult();
-//error_log("AddFriendtoevent.exec() network_name ----> " . $network_name . PHP_EOL);
-//error_log("AddFriendtoevent.exec() friend_name ----> " . $friend_name . PHP_EOL);
-//error_log("AddFriendtoevent.exec() friend_id ----> " . $friend_id . PHP_EOL);
-//error_log("AddFriendtoevent.exec() profile_pic_url ----> " . $profile_pic_url . PHP_EOL);
-		// add to friend
                 if ($result_friend) {
                     $friend_id = $result_friend ['friend_id'];
                     $network_name = $result_friend ['network'];
                 } else {
-                    //error_log("Enter AddFriendtoevent.exec() - insdide if (result_friend) else " . PHP_EOL);
                     
                 	if ($network_name == 'memreas') {
-                        if(!empty($friend_id)){
+                        
+		                /*
+		            	 * Fetch friend from user by id or name 
+		            	 */
+                		if(!empty($friend_id)){
                              $r = $this->dbAdapter->getRepository('Application\Entity\User')->findOneBy(array(
                             'user_id' => $friend_id,
                             'disable_account' => 0
@@ -151,12 +172,13 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
                         }
                         
 
+		                /*
+		            	 * If friend exists set friend vars 
+		            	 */
                         if (empty($r)) {
                             $error = 1;
                             $message .= 'Friend Not Found';
                         } else {
-                        //error_log("found friend_id in user table---> $friend_id" . PHP_EOL);
-                            //check record exist in friend
                             $friend_id = $r->user_id;
                             $friend_name = $r->username;
                             $fr = $this->dbAdapter->getRepository('Application\Entity\Friend')->findOneBy(array(
@@ -165,7 +187,10 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
                         }
                        
                     }
-                    //check user canot add himself as friend
+
+                    /*
+                     * check user canot add himself as friend
+                     */
                     if($friend_id == $user_id) continue;
 
                     /*
@@ -240,20 +265,25 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
                             $status = 'Failure';
                             $error = 1;
                         }
-//error_log("Inserted user_friend table ---> $friend_id" . PHP_EOL);
+error_log("Inserted user_friend table ---> $friend_id" . PHP_EOL);
 
                     }
                 }
-                // adding friend to event
+                
+                /*
+                 * adding friend to event
+                 */
                 if (!empty($event_id) && $error == 0) {
 
-                    $check_event_friend = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='$event_id' and e.friend_id='$friend_id'";
+error_log("event_id is $event_id" . PHP_EOL);
+error_log("friend_id is $friend_id" . PHP_EOL);
+					$check_event_friend = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='".$event_id."' and e.friend_id='".$friend_id."'";
                     $statement = $this->dbAdapter->createQuery($check_event_friend);
                     $r = $statement->getResult();
 
                     if (count($r) > 0) {
                         $status = "Success";
-                        $error = 1;
+                        //$error = 1;
                         $message .= "$friend_name is already in your Event Friend list.";
 error_log("$friend_name is already in your Event Friend list. ---> $friend_id" . PHP_EOL);
                     } else {
@@ -285,7 +315,9 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                                 'network_name' => strtolower($network_name),
                                 'user_id' => $friend_id,
                                 'meta' => $nmessage,
-                                'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
+                                'event_id' => $eventOBj->event_id,
+                                'event_name' => $eventOBj->name,
+                            	'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT,
                                 'links' => json_encode(array(
                                     'event_id' => $event_id,
                                     'from_id' => $user_id
@@ -307,7 +339,7 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                          } else {
                             $ndata ['addNotification'] ['meta'] = $nmessage;
                             error_log("message ---> $nmessage" . PHP_EOL);
-                            //add non memeras
+                            //add non memreas
                             $this->notification->addFriend($friend_id);
                         }
                     // end if (count($r) > 0) else
@@ -343,7 +375,7 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                      } else {
                         $ndata ['addNotification'] ['meta'] = $nmessage;
                         error_log("message ---> $nmessage" . PHP_EOL);
-                        //add non memeras
+                        //add non memreas
                         $this->notification->addFriend($friend_id);
                     }
                 }// endif (!empty($event_id) && $error == 0)
@@ -403,12 +435,16 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                 $message = 'Unable to send email';
             }
         }
+error_log("error ---> ".$error.PHP_EOL);
+error_log("ndata ['addNotification'] ['meta']".json_encode($ndata ['addNotification'] ['meta']).PHP_EOL);
         //email notication end
          if (!empty($ndata ['addNotification'] ['meta']) && !$error) {
+error_log("Inside !empty addnotification meta".PHP_EOL);
             // set nofication data and call send method
             $this->notification->setMessage($ndata ['addNotification'] ['meta']);
             $this->notification->type = $ndata ['addNotification']['notification_type'];
             $this->notification->event_id = $event_id;
+            $this->notification->event_name = $eventOBj->name;
             $this->notification->send();
             Email::sendmail($this->service_locator);
 

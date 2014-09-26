@@ -1,14 +1,14 @@
 {
-    "name": "zendframework/skeleton-application",
-    "description": "Skeleton Application for ZF2",
-    "license": "BSD-3-Clause",
+    "name": "memreas php application",
+    "description": "sharing memories just got easier",
+    "license": "none",
     "keywords": [
         "framework",
         "zf2",
         "php", 
         "sdk"
     ],
-    "homepage": "http://framework.zend.com/",
+    "homepage": "http://www.memreas.com/",
     "require": {
         "php": ">=5.4",
         "zendframework/zendframework": "2.*",
@@ -18,5 +18,5 @@
 		"sybio/image-workshop": "2.0.0",
 		"rhumsaa/uuid": "2.5.0",
 		"doctrine/doctrine-orm-module": "0.*"
-    }    
+    }
 }

@@ -27,7 +27,7 @@ class Registration {
 			$this->addfriendtoevent = new AddFriendtoevent ($message_data, $memreas_tables, $service_locator);
 		}
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
-                                $this->url_signer = new MemreasSignedURL();
+        $this->url_signer = new MemreasSignedURL();
 
 	}
 	public function is_valid_email($email) {

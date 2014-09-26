@@ -49,11 +49,14 @@ class MemreasConstants {
 	const VIDEO = "/data/media/uploadVideo";
 	const AUDIO = "/data/media/upload_audio";
 	
-	
-	const FB_APPID  = '462180953876554';
-	const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
+	//fb - memreas
+	//const FB_APPID  = '462180953876554';
+	//const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
+	//fb - memreas_test
+	const FB_APPID  = '737723032989010';
+	const FB_SECRET = 'e0c07d37803e09b4639fcd713557efe4';
+	const FB_FBHREF = 'index';
 	//const FB_FBHREF = 'https://apps.facebook.com/462180953876554';
-	const FB_FBHREF = '/index';
 	const TW_CONSUMER_KEY ='9jwg1vX4MgH7rfBzxqkcjI90f';
 	const TW_CONSUMER_SECRET = 'bDqOeHkJ7OIQ4QPNnT1PA9oz55gf51YW0REBo12aazGA0CBrbY';
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';

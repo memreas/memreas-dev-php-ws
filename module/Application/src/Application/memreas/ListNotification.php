@@ -31,7 +31,7 @@ class ListNotification {
     public function exec() {
         $oClass = new \ReflectionClass ('Application\Entity\Notification');
         $array = $oClass->getConstants ();
-        unset($array['EMAIL'],$array['MEMERAS'],$array['NONMEMERAS']);
+        unset($array['EMAIL'],$array['MEMREAS'],$array['NONMEMREAS']);
         $array = array_flip($array);
         
         $error_flag = 0;
