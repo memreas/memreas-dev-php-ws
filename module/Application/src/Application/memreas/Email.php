@@ -37,9 +37,9 @@ class Email {
                   $subject =  $email['subject'];
                   $viewModel->clearVariables();
                   $viewModel->setVariables($value);
-                 // echo '<pre>';print_r($value);print_r($email);
+                  //echo '<pre>';print_r($value);print_r($email);
                   $html = $viewRender->render($viewModel);
-                   //echo $html ;exit;
+                  //echo $html ;exit;
                 try {
                   error_log('sending-email-'.$value['email']);
                 	$aws_manager->sendSeSMail(array($value['email']), $subject, $html);
@@ -56,7 +56,7 @@ class Email {
               'event-invite'=>array('subject' =>"Event Invitation" ,
                                     'template' =>'email/event-invite'),
               'friend-request'=>array('subject' =>"Friend Request" ,
-                                    'template' =>'email/event-invite'),
+                                    'template' =>'email/friend-request'),
               'user-registration'=>array('subject' =>"" ,
                                     'template' =>''),
               'user-changepassword'=>array('subject' =>"" ,

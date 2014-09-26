@@ -181,8 +181,8 @@ error_log ( 'Inside webNotification event_name ----> ' . $this->event_name.PHP_E
 			$users = $statement->getArrayResult ();
 			
 			if (count ( $users ) > 0) {
-				//$fburl = $this->fbhref."?event_id=".$this->event_id."&event_name=".$this->event_name;
-				$fburl = $this->fbhref;
+				$fburl = $this->fbhref."?event_id=".$this->event_id."&event_name=".$this->event_name;
+				//$fburl = $this->fbhref;
 error_log ( '$fburl ----> ' . $fburl.PHP_EOL );
 error_log ( '$this->message ----> ' . $this->message.PHP_EOL );
 				$fbparams = array (
