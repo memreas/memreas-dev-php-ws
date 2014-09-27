@@ -1086,6 +1086,9 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         	'changepassword',
             'showlog',
             'clearlog',
+
+            //For stripe
+            'getplans'
 //            'doquery'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){

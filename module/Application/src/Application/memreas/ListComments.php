@@ -5,6 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
+use Application\memreas\Utility;
 
 class ListComments {
 	protected $message_data;
@@ -57,7 +58,7 @@ class ListComments {
 		// $q_comment = "SELECT COUNT(c.type) as totale_comment FROM Application\Entity\Comment c WHERE c.media_id='$media_id' and (c.type='text' or c.type='audio')";
 		
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id,c.event_id' );
+		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id,c.event_id, c.create_time' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
 		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
@@ -127,6 +128,9 @@ class ListComments {
 				if (! empty ( $json_array ['S3_files'] ['path'] ))
 					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
 				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
+				$output .= '<commented_about>'.Utility::formatDateDiff($value['create_time']).'</commented_about>';
+
+
 				
 				$output .= '</comment>';
 			}
