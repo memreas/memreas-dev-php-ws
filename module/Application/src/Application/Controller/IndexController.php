@@ -160,7 +160,7 @@ error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
                     
         
         /*
-         * TODO: SID still needs debugging - see TODO sections
+         * TODO: SID working within DBStorage as of 26-SEP-2014
          */
         $actionname = $this->security($actionname);
                     
