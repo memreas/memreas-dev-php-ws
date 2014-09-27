@@ -36,7 +36,7 @@
             $guzzle = new Client();
 
             $request = $guzzle->post(
-                MEMREAS_PAY_URL,
+                MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
                     'action' => 'listplans',
@@ -51,6 +51,7 @@
                 $plans = $data['plans'];
                 if (!empty($plans)){
                     foreach ($plans as $plan){
+                        $output .= '<user_id>' . $user_id . '</user_id>';
                         $output .= '<plan_id>' . $plan['plan']['id'] . '</plan_id>';
                         $output .= '<plan_name>' . $plan['plan']['name'] . '</plan_name>';
                         $output .= '<plan_amount>' . ($plan['plan']['amount'] / 100) . '</plan_amount>';
