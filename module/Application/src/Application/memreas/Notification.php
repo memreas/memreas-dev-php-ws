@@ -191,7 +191,7 @@ error_log ( '$this->message ----> ' . $this->message.PHP_EOL );
 				);
 
 
-				$twparams ['text'] = $this->message .'   /'. MC::WEB_URL."/index/?event_id=".$this->event_id."&event_name=".$this->event_name;
+				$twparams ['text'] = $this->message .'   /fe.memreas.com/'."index/?event_id=".$this->event_id."&event_name=".$this->event_name;
 				/*
 				 * TODO: Check to see if this sends out to all facebook friends - should only be from list
 				 */
