@@ -166,7 +166,7 @@ error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
                     
                     
 error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-error_log("Inside indexAction---> _POST ['xml'] ---> ".print_r($_POST,true). PHP_EOL);
+//error_log("Inside indexAction---> _POST ['xml'] ---> ".print_r($_POST['xml'],true). PHP_EOL);
 
  
         if (isset($actionname) && !empty($actionname)) {
