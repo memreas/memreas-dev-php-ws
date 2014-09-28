@@ -189,7 +189,9 @@ error_log ( '$this->message ----> ' . $this->message.PHP_EOL );
 						'href' => $fburl,
 						'template' => $this->message 
 				);
-				$twparams ['text'] = $this->message;
+
+
+				$twparams ['text'] = $this->message .'   /'. MemreasConstants::WEB_URL."/index/?event_id=".$this->event_id."&event_name=".$this->event_name;
 				/*
 				 * TODO: Check to see if this sends out to all facebook friends - should only be from list
 				 */
