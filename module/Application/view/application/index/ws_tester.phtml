@@ -82,9 +82,10 @@ echo "user_id ----> " . $user_id;
             var viewmediadetails= '<xml><viewmediadetails><event_id></event_id><media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id></viewmediadetails></xml>';	
             var getfriends = '<xml><getfriends><user_id>1</user_id></getfriends></xml>';
             var getplans = '<xml><getplans><user_id>1</user_id></getplans></xml>';
-            var getorderhistory = '<xml><getorderhistory><user_name>1</user_name></getorderhistory></xml>';
+            var getorderhistory = '<xml><getorderhistory><user_id>1</user_id></getorderhistory></xml>';
             var removegroup = '<xml><removegroup><group_id>1</group_id></removegroup></xml>';
             var checkevent = '<xml><checkevent><event_id>1</event_id></checkevent></xml>';
+            var getplansstatic = '<xml><getplansstatic><static>0</static></getplansstatic></xml>';
 
 
             $(document).ready(function() {
@@ -161,6 +162,7 @@ echo "user_id ----> " . $user_id;
 					else if ($("#input_action").val() == "getplans") { xml = getplans; }
                     else if ($("#input_action").val() == "getorderhistory") { xml = getorderhistory; }
                     else if ($("#input_action").val() == "checkevent") { xml = checkevent; }
+                    else if ($("#input_action").val() == "getplansstatic") { xml = getplansstatic; }
 
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -262,10 +264,11 @@ echo "user_id ----> " . $user_id;
 							<option>viewevents</option>
 							<option>viewmediadetails</option>
 							<option>getfriends</option>
-                            <option>getorderhistory</option>
                             <option>removegroup</option>
                             <option>checkevent</option>
                             <option value="getplans">Stripe - Getplans</option>
+                            <option value="getplansstatic">Stripe - GetPlansStatic</option>
+                            <option value="getorderhistory">Stripe - GetOrderHistory</option>
 						</select>
 
 					</tr>

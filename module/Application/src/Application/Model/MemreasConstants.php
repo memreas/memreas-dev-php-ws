@@ -25,7 +25,8 @@ class MemreasConstants {
 	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
 	const SIGNURLS = true;
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-	
+	//const MEMREAS_PAY_URL = "http://memreas-dev-stripe.localhost";
+
 	
 	//Same across...
 	const URL = "/index";

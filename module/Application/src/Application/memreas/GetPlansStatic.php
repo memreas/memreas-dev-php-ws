@@ -6,7 +6,7 @@
     use Application\memreas\AWSManagerSender;
     use Guzzle\Http\Client;
 
-    class GetOrderHistory {
+    class GetPlansStatic {
         protected $message_data;
         protected $memreas_tables;
         protected $service_locator;
@@ -32,15 +32,15 @@
 
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
-            $user_id = trim ( $data->getorderhistory->user_id );
+            $static = trim ( $data->getplansstatic->static );
             $guzzle = new Client();
 
             $request = $guzzle->post(
                 MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
-                    'action' => 'getorderhistory',
-                    'user_id' => $user_id
+                    'action' => 'listplansstatic',
+                    'static' => $static
                 )
             );
             $response = $request->send();
@@ -48,41 +48,34 @@
             $status = $data['status'];
 
             if ($status == 'Success'){
-                $status = 'Success';
-                $orders = $data['orders'];
-                if (!empty($orders)){
-                    $output .= '<orders>';
-                        $output .= '<user_id>' . $user_id . '</user_id>';
-                    foreach ($orders as $order){
-                        $transaction_request = json_decode($order['transaction_request'], true);
-                        $output .= '<order>';
-                            $output .= '<transaction_id>' . $order['transaction_id'] . '</transaction_id>';
-                            $output .= '<transaction_type>' . $order['transaction_type'] . '</transaction_type>';
-                            $output .= '<amount>' . $order['amount'] . '</amount>';
-                            $output .= '<transaction_receive>' . $order['transaction_sent'] . '</transaction_receive>';
-                            $output .= '<card_number>' . $transaction_request['number'] . '</card_number>';
-                        $output .= '</order>';
+                $plans = $data['plans'];
+                if (!empty($plans)){
+                    $output .= "<plans>";
+                    foreach ($plans as $plan){
+                        $output .= "<plan>";
+                        $output .= '<plan_id>' . $plan['id'] . '</plan_id>';
+                        $output .= '<plan_name>' . $plan['name'] . '</plan_name>';
+                        $output .= '<plan_amount>' . ($plan['amount'] / 100) . '</plan_amount>';
+                        $output .= '<plan_currency>' . $plan['currency'] . '</plan_currency>';
+                        if ($static) $output .= '<user_count>' . $plan['total_user'] . '</user_count>';
+                        $output .= "</plan>";
                     }
-                    $output .= '</orders>';
-                }
-                else {
+                    $output .= "</plans>";
+                }else{
                     $status = 'Failure';
-                    $message = 'No record found';
+                    $message = 'There is no plan at this time';
                 }
             }
-            else {
-                $status = 'Failure';
-                $message = $data['message'];
-            }
+            else $message = $data['message'];
 
             header ( "Content-type: text/xml" );
             $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
             $xml_output .= "<xml>";
-            $xml_output .= "<getorderhistoryresponse>";
+            $xml_output .= "<getplansresponse>";
             $xml_output .= "<status>" . $status . "</status>";
             if (isset($message)) $xml_output .= "<message>{$message}</message>";
             $xml_output .= $output;
-            $xml_output .= "</getorderhistoryresponse>";
+            $xml_output .= "</getplansresponse>";
             $xml_output .= "</xml>";
             echo $xml_output;
         }

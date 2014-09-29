@@ -83,6 +83,7 @@ use Application\memreas\RemoveEventFriend;
 use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
 use Application\memreas\GetPlans;
+use Application\memreas\GetPlansStatic;
 use Application\memreas\Utility;
 use Application\memreas\GetOrderHistory;
 use Application\memreas\RemoveGroup;
@@ -867,9 +868,12 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getplans") {
                 $GetPlans = new GetPlans($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetPlans->exec();
+            }else if ($actionname == "getplansstatic") {
+                $GetPlansStatic = new GetPlansStatic($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetPlansStatic->exec();
             }else if ($actionname == "getorderhistory") {
-                $GetPlans = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
-                $result = $GetPlans->exec();
+                $GetOrderHistory = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetOrderHistory->exec();
             }
             else if ($actionname == "removegroup") {
                 $RemoveGroup = new RemoveGroup($message_data, $memreas_tables, $this->getServiceLocator());
@@ -1104,7 +1108,9 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
     		//verify email
     		'verifyemailaddress',
             //For stripe
-            'getplans'
+            'getplans',
+            'getplansstatic',
+            'getorderhistory'
 //            'doquery'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){
