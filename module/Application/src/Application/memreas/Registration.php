@@ -132,7 +132,7 @@ error_log("email_verification_id".$email_verification_id.PHP_EOL);
 						$email_verification_url = MemreasConstants::ORIGINAL_URL.'index?action=verifyemailaddress&email_verification_id='.$email_verification_id.'&user_id='.$user_id;
                         $meta_arr['user']['email_verification_url' ] = $email_verification_url;
 error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email_verification_url' ].PHP_EOL);
-                        $meta_arr['user']['email_verified' ] = 0;
+                        $meta_arr['user']['email_verified' ] = "0";
                         
                         $metadata = json_encode($meta_arr);
                         

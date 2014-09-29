@@ -50,7 +50,7 @@ class VerifyEmailAddress {
 				/*
 				 * Update user meta
 				 */
-				$metadata['email_verified'] = 1;
+				$metadata['user']['email_verified'] = "1";
 
 				/*
 				 * Get the client's ip address and store it with date
