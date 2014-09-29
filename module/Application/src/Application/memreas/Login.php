@@ -73,12 +73,13 @@ class Login {
 				/*
 				 * 30-SEP-2014 code to check if email is verified
 				 */
-error_log("meta inside login ----> ".$row [0]->metadata.PHP_EOL);
 				$user_metadata = json_decode($row[0]->metadata, true);
-error_log("user_metadata ?? ----> ". print_r($user_metadata, true) .PHP_EOL);
-error_log("user_metadata['user']['user_id'] ----> ". $user_metadata["user"]["user_id"] .PHP_EOL);
-error_log("user_metadata['user']['email_verified'] ----> ". $user_metadata["user"]["email_verified"] .PHP_EOL);
 				$verified_email = isset($user_metadata['user']['email_verified']) ? $user_metadata['user']['email_verified'] : "0";
+				
+				/*
+				 * Remove by 3-OCT-2014 to enable email verification 
+				 */
+				$verified_email = 1;
 				if ($verified_email) {
 					$user_id = trim ( $row [0]->user_id );
 					$xml_output .= "<status>success</status>";
