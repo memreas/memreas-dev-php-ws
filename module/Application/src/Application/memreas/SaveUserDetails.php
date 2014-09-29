@@ -142,7 +142,7 @@ class SaveUserDetails {
         }
         else{
             $status = 'Failure';
-            $message = 'This email has been owned on another user';
+            $message = 'This email is already in use by another user';
         }
 
         if ($frmweb) {

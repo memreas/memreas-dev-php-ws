@@ -87,6 +87,7 @@ use Application\memreas\Utility;
 use Application\memreas\GetOrderHistory;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
+use Application\memreas\VerifyEmailAddress;
 
 
 class IndexController extends AbstractActionController {
@@ -215,6 +216,20 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
             } else if ($actionname == "addcomments") {
                 $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $addcomment->exec();
+            } else if ($actionname == "verifyemailaddress") {
+                $verifyemailaddress = new VerifyEmailAddress($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $verifyemailaddress->exec();
+                if ($result) {
+error_log("past verification - success ".PHP_EOL);
+                	$redirect = MemreasConstants::WEB_URL . "index?email_verified=1";
+                	$this->redirect()->toUrl($redirect);
+                	return false;
+                } else {
+error_log("past verification - failed ".PHP_EOL);
+                	$redirect = MemreasConstants::WEB_URL . "index?email_verified=0";
+                	$this->redirect()->toUrl($redirect);
+                	return false;
+                }
             } else if ($actionname == "checkusername" || $actionname == "chkuname") {
                 $chkuname = new ChkUname($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $chkuname->exec();
@@ -1086,7 +1101,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         	'changepassword',
             'showlog',
             'clearlog',
-
+    		//verify email
+    		'verifyemailaddress',
             //For stripe
             'getplans'
 //            'doquery'	

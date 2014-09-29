@@ -17,99 +17,63 @@ class VerifyEmailAddress {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
+	
+	
+	
 	public function exec() {
+		
+		/*
+		 * fetch input vars 
+		 */
 		if ( isset($_GET ['email_verification_id']) && isset($_GET['user_id']) ) {
-			$email_verification_id = $_GET ['email_verification_id'];
+			$email_verification_id_received = $_GET ['email_verification_id'];
 			$user_id = $_GET['user_id'];
-		}
 		
-		$data = simplexml_load_string ( $_POST ['xml'] );
-		// 0 = not empty, 1 = empty
-		$flagusername = 0;
-		$flagpass = 0;
-		$username = trim ( $data->VerifyEmailAddress->username );
-		$devicetoken = trim ( $data->VerifyEmailAddress->devicetoken );
-		$devicetype = trim ( $data->VerifyEmailAddress->devicetype );
-		$time = time ();
-		if (empty ( $username )) {
-			$flagusername = 1;
-		}
-		$password = $data->VerifyEmailAddress->password;
-		if (! empty ( $password )) {
-			$password = md5 ( $password );
-		} else {
-			$flagpass = 1;
-		}
+			/*
+			 * Get user meta here
+			 */
+			$qb = $this->dbAdapter->createQueryBuilder ();
+			$qb->select('u')
+			->from('Application\Entity\User', 'u')
+			->where("u.user_id = '{$user_id}'");
+			$user = $qb->getQuery()->getOneOrNullResult();
 
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<VerifyEmailAddressresponse>";
-		if (isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
-			$username = strtolower ( $username );
-			$checkvalidemail = $this->is_valid_email ( $username );
-			if ($checkvalidemail == TRUE) {
-				$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
-			} else {
-				$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
+			if ($user) {
+				$metadata = json_decode($user->metadata, true);
+//error_log("user->metadata ----> ".$user->metadata.PHP_EOL);				
+				$email_verification_sent = $metadata['user']['email_verification_id'];
 			}
-			$statement = $this->dbAdapter->createQuery ( $sql );
+			/*
+			 * If the codes match update the user meta else return false
+			 */
+			if ($email_verification_sent == $email_verification_id_received){
+				/*
+				 * Update user meta
+				 */
+				$metadata['email_verified'] = 1;
 
-			$row = $statement->getResult ();
-
-			if (! empty ( $row )) {
-
-				$this->setSession ( $row [0] );
-				if (! empty ( $devicetoken ) && ! empty ( $devicetype )) {
-					$qb = $this->dbAdapter->createQueryBuilder ();
-					$q = $qb->update ( '\Application\Entity\Device', 'd' )->set ( 'd.device_token', $qb->expr ()->literal ( $devicetoken ) )->set ( 'd.update_time', $qb->expr ()->literal ( $time ) )->where ( 'd.user_id = ?1 AND d.device_type = ?2' )->
-
-					setParameter ( 1, $row [0]->user_id )->setParameter ( 2, $devicetype )->getQuery ();
-					$p = $q->execute ();
+				/*
+				 * Get the client's ip address and store it with date
+				 */
+				if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR']) {
+					$clientIpAddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+				} else {
+					$clientIpAddress = $_SERVER['REMOTE_ADDR'];
 				}
-
-				$user_id = trim ( $row [0]->user_id );
-				$xml_output .= "<status>success</status>";
-				$xml_output .= "<message>User logged in successfully.</message>";
-				$xml_output .= "<userid>" . $user_id . "</userid>";
-				$xml_output .= "<sid>" . session_id () . "</sid>";
-			} else {
-				$xml_output .= "<status>failure</status><message>Your credentials don't match.  Your email address has not been validated.</message></message>";
+				$metadata['user']['email_verified_ip_address'] = $clientIpAddress;
+				$metadata['user']['email_verified_time'] = date("Y-m-d H:i:s");
+				
+				/*
+				 * Store user meta
+				 */
+				$user->metadata = json_encode($metadata);
+				$this->dbAdapter->persist($user);
+				$this->dbAdapter->flush ();
+				
+				return true;
 			}
-		} else {
-			$xml_output .= "<status>failure</status><message>Your credentials don't match.  Your email address has not been validated.</message>";
+			return false;
 		}
-		$xml_output .= "</loginresponse>";
-		$xml_output .= "</xml>";
-		echo $xml_output;
-		error_log ( "Login ---> xml_output ----> " . $xml_output . PHP_EOL );
-	}
-	public function setSession($user) {
-		$user->password = '';
-		$user->disable_account = '';
-		$user->create_date = '';
-		$user->update_time = '';
-
-		$this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ();
-
-/*		
-		error_log ( "Inside setSession got new Container..." );
-		$session = new Container('user');
-		$session->offsetSet('user_id', $user->user_id);
-		$session->offsetSet('username', $user->username);
-		$session->offsetSet('sid', session_id());
-		$session->offsetSet('user', json_encode($user));
-		error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet('sid') . PHP_EOL );
-*/		
-        /*
-         * TODO: Session storage isn't working properly if I set session id after but works here.  
-         */
-		$_SESSION ['user'] ['user_id'] = $user->user_id;
-		$_SESSION ['user'] ['username'] = $user->username;
-		$_SESSION ['user'] ['user'] = json_encode ( $user );
-		$_SESSION ['user'] ['sid'] = session_id();
-		error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
-		
 	}
 }
 ?>
