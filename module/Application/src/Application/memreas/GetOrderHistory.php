@@ -32,36 +32,48 @@
 
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
-            $user_name = trim ( $data->getorderhistory->user_name );
+            $user_id = trim ( $data->getorderhistory->user_id );
             $guzzle = new Client();
 
             $request = $guzzle->post(
-                MEMREAS_PAY_URL,
+                MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
-                    'action' => 'list',
-                    'user_name' => $user_name
+                    'action' => 'getorderhistory',
+                    'user_id' => $user_id
                 )
             );
-            $response = $request->send();print_r($response);exit;
+            $response = $request->send();
             $data = json_decode($response->getBody(true), true);
             $status = $data['status'];
-print_r($user_name);print_r($data);exit;
+
             if ($status == 'Success'){
-                $plans = $data['plans'];
-                if (!empty($plans)){
-                    foreach ($plans as $plan){
-                        $output .= '<plan_id>' . $plan['plan']['id'] . '</plan_id>';
-                        $output .= '<plan_name>' . $plan['plan']['name'] . '</plan_name>';
-                        $output .= '<plan_amount>' . ($plan['plan']['amount'] / 100) . '</plan_amount>';
-                        $output .= '<plan_currency>' . $plan['plan']['currency'] . '</plan_currency>';
+                $status = 'Success';
+                $orders = $data['orders'];
+                if (!empty($orders)){
+                    $output .= '<orders>';
+                        $output .= '<user_id>' . $user_id . '</user_id>';
+                    foreach ($orders as $order){
+                        $transaction_request = json_decode($order['transaction_request'], true);
+                        $output .= '<order>';
+                            $output .= '<transaction_id>' . $order['transaction_id'] . '</transaction_id>';
+                            $output .= '<transaction_type>' . $order['transaction_type'] . '</transaction_type>';
+                            $output .= '<amount>' . $order['amount'] . '</amount>';
+                            $output .= '<transaction_receive>' . $order['transaction_sent'] . '</transaction_receive>';
+                            $output .= '<card_number>' . $transaction_request['number'] . '</card_number>';
+                        $output .= '</order>';
                     }
-                }else{
+                    $output .= '</orders>';
+                }
+                else {
                     $status = 'Failure';
-                    $message = 'This user has no any actived plan';
+                    $message = 'No record found';
                 }
             }
-            else $message = $data['message'];
+            else {
+                $status = 'Failure';
+                $message = $data['message'];
+            }
 
             header ( "Content-type: text/xml" );
             $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";

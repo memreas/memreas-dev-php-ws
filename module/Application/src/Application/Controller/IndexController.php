@@ -857,8 +857,8 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 $GetPlansStatic = new GetPlansStatic($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetPlansStatic->exec();
             }else if ($actionname == "getorderhistory") {
-                $GetPlans = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
-                $result = $GetPlans->exec();
+                $GetOrderHistory = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetOrderHistory->exec();
             }
             else if ($actionname == "removegroup") {
                 $RemoveGroup = new RemoveGroup($message_data, $memreas_tables, $this->getServiceLocator());
@@ -1093,7 +1093,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 
             //For stripe
             'getplans',
-            'getplansstatic'
+            'getplansstatic',
+            'getorderhistory'
 //            'doquery'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){
