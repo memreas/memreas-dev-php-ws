@@ -70,11 +70,22 @@ class Login {
 					$p = $q->execute ();
 				}
 
-				$user_id = trim ( $row [0]->user_id );
-				$xml_output .= "<status>success</status>";
-				$xml_output .= "<message>User logged in successfully.</message>";
-				$xml_output .= "<userid>" . $user_id . "</userid>";
-				$xml_output .= "<sid>" . session_id () . "</sid>";
+				/*
+				 * 30-SEP-2014 code to check if email is verified
+				 */
+				$user_metadata = isset($row [0]->metadata) ? json_decode($row [0]->metadata) : 0;
+				if ($user_metadata) {
+					$verified_email = isset($user_metadata['user']['email_verified']) ? $user_metadata['user']['email_verified'] : 0;
+				}
+				if ($verified_email) {
+					$user_id = trim ( $row [0]->user_id );
+					$xml_output .= "<status>success</status>";
+					$xml_output .= "<message>User logged in successfully.</message>";
+					$xml_output .= "<userid>" . $user_id . "</userid>";
+					$xml_output .= "<sid>" . session_id () . "</sid>";
+				} else {
+					$xml_output .= "<status>failure</status><message>Please verify your email address then try again.</message>";
+				}
 			} else {
 				$xml_output .= "<status>failure</status><message>Your Username and/or Password does not match our records.Please try again.</message>";
 			}
