@@ -79,7 +79,7 @@ class Login {
 				/*
 				 * Remove by 3-OCT-2014 to enable email verification 
 				 */
-				$verified_email = 1;
+				//$verified_email = 1;
 				if ($verified_email) {
 					$user_id = trim ( $row [0]->user_id );
 					$xml_output .= "<status>success</status>";
