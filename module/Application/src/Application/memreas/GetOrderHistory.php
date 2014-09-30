@@ -54,13 +54,13 @@
                     $output .= '<orders>';
                         $output .= '<user_id>' . $user_id . '</user_id>';
                     foreach ($orders as $order){
-                        $transaction_request = json_decode($order['transaction_request'], true);
                         $output .= '<order>';
                             $output .= '<transaction_id>' . $order['transaction_id'] . '</transaction_id>';
                             $output .= '<transaction_type>' . $order['transaction_type'] . '</transaction_type>';
                             $output .= '<amount>' . $order['amount'] . '</amount>';
                             $output .= '<transaction_receive>' . $order['transaction_sent'] . '</transaction_receive>';
-                            $output .= '<card_number>' . $transaction_request['number'] . '</card_number>';
+                            $output .= '<transaction_request>' . $order['transaction_request'] . '</transaction_request>';
+                            $output .= '<transaction_response>' . $order['transaction_response'] . '</transaction_response>';
                         $output .= '</order>';
                     }
                     $output .= '</orders>';
