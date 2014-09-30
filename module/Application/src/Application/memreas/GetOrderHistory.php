@@ -33,18 +33,29 @@
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
             $user_id = trim ( $data->getorderhistory->user_id );
+            $page = trim ( $data->getorderhistory->page );
+            $limit = trim ( $data->getorderhistory->limit );
+
             $guzzle = new Client();
+
+            $request_data = array(
+                'user_id' => $user_id,
+                'page' => $page,
+                'limit' => $limit
+            );
 
             $request = $guzzle->post(
                 MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
                     'action' => 'getorderhistory',
-                    'user_id' => $user_id
+                    'data' => json_encode($request_data)
                 )
             );
+
             $response = $request->send();
             $data = json_decode($response->getBody(true), true);
+
             $status = $data['status'];
 
             if ($status == 'Success'){
@@ -52,7 +63,7 @@
                 $orders = $data['orders'];
                 if (!empty($orders)){
                     $output .= '<orders>';
-                        $output .= '<user_id>' . $user_id . '</user_id>';
+                    if ($user_id) $output .= '<user_id>' . $user_id . '</user_id>';
                     foreach ($orders as $order){
                         $output .= '<order>';
                             $output .= '<transaction_id>' . $order['transaction_id'] . '</transaction_id>';
