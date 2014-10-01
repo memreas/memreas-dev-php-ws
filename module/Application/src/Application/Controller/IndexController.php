@@ -86,6 +86,7 @@ use Application\memreas\GetPlans;
 use Application\memreas\GetPlansStatic;
 use Application\memreas\Utility;
 use Application\memreas\GetOrderHistory;
+use Application\memreas\GetOrder;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
@@ -876,6 +877,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getorderhistory") {
                 $GetOrderHistory = new GetOrderHistory($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetOrderHistory->exec();
+            }else if ($actionname == "getorder") {
+                $GetOrder = new GetOrder($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetOrder->exec();
             }
             else if ($actionname == "removegroup") {
                 $RemoveGroup = new RemoveGroup($message_data, $memreas_tables, $this->getServiceLocator());
@@ -1151,7 +1155,8 @@ Container::setDefaultManager ( $sessionManager );
             //For stripe
             'getplans',
             'getplansstatic',
-            'getorderhistory'
+            'getorderhistory',
+            'getorder'
 //            'doquery'	
             );
          if(in_array($actionname, $public)|| empty($actionname)){
