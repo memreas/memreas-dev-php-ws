@@ -89,12 +89,14 @@ use Application\memreas\GetOrderHistory;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
-
+use Zend\Db\TableGateway\TableGateway;
+use Application\Model\DbTableGatewayOptions;
+                 
 
 class IndexController extends AbstractActionController {
 	
 	protected $xml_in;
-	protected $url;
+	protected $url = "http://ws/";
 	protected $user_id;
 	protected $storage;
 	protected $authservice;
@@ -1096,6 +1098,45 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
          * TODO: This function isn't working properly.  I added in session_id($sid) per docs 
          * but the session variables aren't retained  
          */
+        error_log('inside security');
+   //     $x=   $this->elasticache->setCache('SID-ejjh313dd2ea7316umnejmdjk','kamlesh');
+   //    $x=   $this->elasticache->getCache('SID-ejjh313dd2ea7316umnejmdjk');
+   //   echo '<pre>';print_r($x);   exit;
+      $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+      error_log($ipaddress);
+        $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
+        $gwOpts = new DbTableGatewayOptions ();
+		$gwOpts->setDataColumn ( 'data' );
+		$gwOpts->setIdColumn ( 'session_id' );
+		$gwOpts->setLifetimeColumn ( 'lifetime' );
+		$gwOpts->setModifiedColumn ( 'end_date' );
+		$gwOpts->setNameColumn ( 'name' );
+		$gwOpts->ipaddress = $ipaddress;
+                $dbAdapter = $this->getServiceLocator()->get ( MemreasConstants::MEMREASDB );
+                    
+		
+	$saveHandler = new \Application\Model\DbTableGateway ( new TableGateway ( 'user_session', $dbAdapter ), $gwOpts );
+
+$sessionManager = new SessionManager();
+$sessionManager->setSaveHandler($saveHandler);
+Container::setDefaultManager ( $sessionManager );
+		$sid='';
+		if (!empty( $_REQUEST ['sid'] )) {
+                    $sid =  $_REQUEST ['sid'] ;
+ 		} elseif (isset ( $_POST ['xml'] )) {
+                    $data = simplexml_load_string ( $_POST ['xml'] );
+                    $sid = trim ( $data->sid );
+                    
+                }
+                        error_log('sid ->'.$sid);
+                        if (! empty ( $sid )) {
+				$sessionManager->setId ( $sid );
+			}
+                        $container = new Container ( 'user' );
+		if (! isset ( $container->init )) {
+			// $sessionManager->regenerateId(true);
+			$container->init = 1;
+		}
     	$public= array(
             'login',
             'registration',
