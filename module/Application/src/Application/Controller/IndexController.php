@@ -1104,6 +1104,43 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
          * TODO: This function isn't working properly.  I added in session_id($sid) per docs 
          * but the session variables aren't retained  
          */
+        $this->elasticache = new AWSMemreasCache();
+
+        error_log('inside security');
+                    
+        $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+      error_log('ip is '.$ipaddress);
+        if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
+          $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
+        }else{
+            $gwOpts = new DbTableGatewayOptions ();
+            $gwOpts->setDataColumn ( 'data' );
+            $gwOpts->setIdColumn ( 'session_id' );
+            $gwOpts->setLifetimeColumn ( 'lifetime' );
+            $gwOpts->setModifiedColumn ( 'end_date' );
+            $gwOpts->setNameColumn ( 'name' );
+            $gwOpts->ipaddress = $ipaddress;
+            $dbAdapter = $this->getServiceLocator()->get ( MemreasConstants::MEMREASDB );
+            $saveHandler = new \Application\Model\DbTableGateway ( new TableGateway ( 'user_session', $dbAdapter ), $gwOpts );
+
+        }
+        $sessionManager = new SessionManager();
+        $sessionManager->setSaveHandler($saveHandler);
+        Container::setDefaultManager ( $sessionManager );
+	$sid='';
+        
+        if (!empty( $_REQUEST ['sid'] )) {
+            $sid =  $_REQUEST ['sid'] ;
+        } elseif (isset ( $_POST ['xml'] )) {
+            $data = simplexml_load_string ( $_POST ['xml'] );
+            $sid = trim ( $data->sid );
+
+        }
+                error_log('sid ->'.$sid);
+                if (! empty ( $sid )) {
+                        $sessionManager->setId ( $sid );
+                }
+                $container = new Container ( 'user' );
     	$public= array(
             'login',
             'registration',
@@ -1122,6 +1159,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
             'getorder'
 //            'doquery'	
             );
+        $_SESSION ['user'] ['ip'] = $ipaddress;
+        $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
