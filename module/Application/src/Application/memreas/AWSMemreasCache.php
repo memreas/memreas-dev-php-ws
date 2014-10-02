@@ -42,8 +42,8 @@ class AWSMemreasCache {
 		$this->cache = new \Memcache();
 error_log ( "Created new Memcached client.." . PHP_EOL );
 		//$this->cache->setOption ( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE );
-		//$this->cache->addServer ( $server_endpoint, $server_port );
-                $this->cache->connect('localhost', 11211) or die ("Could not connect");
+		$this->cache->addServer ( $server_endpoint, $server_port );
+                //$this->cache->connect('localhost', 11211) or die ("Could not connect");
 
 		//$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
 
