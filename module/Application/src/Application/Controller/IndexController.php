@@ -1124,10 +1124,9 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
     $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
         error_log('$_SERVER[HTTP_X_FORWARDED_FOR]'.$_SERVER['HTTP_X_FORWARDED_FOR']);
 
-} else {
+}  
     $ipaddress = $_SERVER['REMOTE_ADDR'];
     error_log('$_SERVER[REMOTE_ADDR]'.$_SERVER['REMOTE_ADDR']);
-}
       error_log('ip is '.$ipaddress);
         if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
           $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
