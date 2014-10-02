@@ -136,6 +136,7 @@ class IndexController extends AbstractActionController {
 	}
 	
 	public function fetchXML($action, $xml) {
+            error_log('in fetch xml $_SERVER[REMOTE_ADDR]'.$_SERVER['REMOTE_ADDR']);
 		$guzzle = new Client ();
 		
 		$request = $guzzle->post ( $this->url, null, array (
