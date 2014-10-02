@@ -338,12 +338,12 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        $viewModel->setTemplate ( 'email/register' );
 				        $viewRender = $this->service_locator->get ( 'ViewRenderer' );
 				        $html = $viewRender->render ( $viewModel );
-				        $subject = 'Welcome to Event App';
+				        $subject = 'Welcome to memreas';
 				        if (empty ( $aws_manager ))
 					        $aws_manager = new AWSManagerSender ( $this->service_locator );
 				        $aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
 				        $this->status = $status = 'Success';
-				        $message = "Welcome to Event App. Your profile has been created.";
+				        $message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
 				        // error_log ( "Finished..." . PHP_EOL );
 			        }
                 }
