@@ -38,8 +38,8 @@ class Module {
 	public function bootstrapSession($e) {
 		ini_set ( 'session.use_cookies', '0' );
 		
-		$storage = $e->getApplication ()->getServiceManager ()->get ( 'Application\Storage\DBStorage' );
-		$storage->setSessionStorage ();
+		//$storage = $e->getApplication ()->getServiceManager ()->get ( 'Application\Storage\DBStorage' );
+		//$storage->setSessionStorage ();
 	}
 	public function getConfig() {
 		return include __DIR__ . '/config/module.config.php';

@@ -91,12 +91,13 @@ use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
 use Application\memreas\UpdatePassword;
-
+use Zend\Db\TableGateway\TableGateway;
+use Application\Model\DbTableGatewayOptions;
 
 class IndexController extends AbstractActionController {
 	
 	protected $xml_in;
-	protected $url;
+    protected $url = "http://ws/";
 	protected $user_id;
 	protected $storage;
 	protected $authservice;
@@ -176,8 +177,7 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
         if (isset($actionname) && !empty($actionname)) {
             // Fetch the elasticache handle
             error_log("fetching MemreasCache handle..." . PHP_EOL);
-            // $this->aws = new AWSManagerSender($this->service_locator);
-            $this->elasticache = new AWSMemreasCache();
+            // $this->aws = new AWSManagerSender($this->service_locator);            
             $update_elasticache_flag = false;
             $cache_me = false;
             $cache_id = null;

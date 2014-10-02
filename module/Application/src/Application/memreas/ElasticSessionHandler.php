@@ -83,7 +83,7 @@ class ElasticSessionHandler implements SaveHandlerInterface
     {
           $id = 'SID-'.$id;
           $r = $this->getCacheStorage()->getCache($id);
-          error_log($id .'read='.print_r($r,true));
+          error_log(' read catch id  '.$id .'  -> '.print_r($r,true));
         return $r;
     }
 
@@ -98,9 +98,9 @@ class ElasticSessionHandler implements SaveHandlerInterface
     {
         if(!empty($_SESSION['user']['user_id'])){
         $id = 'SID-'.$id;
-         error_log($id. 'write='.print_r($data,true));
+         error_log(' write catch id  '.$id .'  -> '.print_r($data,true));
         return $this->getCacheStorage()->setCache($id, $data);
-   } 
+    } 
         
          
         return true;
