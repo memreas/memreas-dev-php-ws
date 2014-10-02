@@ -88,6 +88,7 @@ echo "user_id ----> " . $user_id;
             var checkevent = '<xml><checkevent><event_id>1</event_id></checkevent></xml>';
             var getplansstatic = '<xml><getplansstatic><static>0</static></getplansstatic></xml>';
             var updatepassword = '<xml><updatepassword><user_id>0</user_id><old>old password</old><new>new password</new><retype>Retype new password</retype></updatepassword></xml>';
+            var getaccountdetail = '<xml><getaccountdetail><user_id>0</user_id></getaccountdetail></xml>';
 
 
             $(document).ready(function() {
@@ -167,6 +168,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "checkevent") { xml = checkevent; }
                     else if ($("#input_action").val() == "getplansstatic") { xml = getplansstatic; }
                     else if ($("#input_action").val() == "updatepassword") { xml = updatepassword; }
+                    else if ($("#input_action").val() == "getaccountdetail") { xml = getaccountdetail; }
 
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -275,6 +277,7 @@ echo "user_id ----> " . $user_id;
                             <option value="getplansstatic">Stripe - GetPlansStatic</option>
                             <option value="getorderhistory">Stripe - GetOrderHistory</option>
                             <option value="getorder">Stripe - GetOrder</option>
+                            <option value="getaccountdetail">Stripe - GetAccountDetail</option>
 						</select>
 
 					</tr>

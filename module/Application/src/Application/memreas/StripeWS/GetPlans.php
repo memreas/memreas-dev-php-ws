@@ -1,12 +1,12 @@
 <?php
-    namespace Application\memreas;
+    namespace Application\memreas\StripeWS;
 
     use Zend\Session\Container;
     use Application\Model\MemreasConstants;
     use Application\memreas\AWSManagerSender;
     use Guzzle\Http\Client;
 
-    class GetPlansStatic {
+    class GetPlans {
         protected $message_data;
         protected $memreas_tables;
         protected $service_locator;
@@ -32,15 +32,15 @@
 
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
-            $static = trim ( $data->getplansstatic->static );
+            $user_id = trim ( $data->getplans->user_id );
             $guzzle = new Client();
 
             $request = $guzzle->post(
                 MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
-                    'action' => 'listplansstatic',
-                    'static' => $static
+                    'action' => 'listplans',
+                    'user_id' => $user_id
                 )
             );
             $response = $request->send();
@@ -50,20 +50,16 @@
             if ($status == 'Success'){
                 $plans = $data['plans'];
                 if (!empty($plans)){
-                    $output .= "<plans>";
                     foreach ($plans as $plan){
-                        $output .= "<plan>";
-                        $output .= '<plan_id>' . $plan['id'] . '</plan_id>';
-                        $output .= '<plan_name>' . $plan['name'] . '</plan_name>';
-                        $output .= '<plan_amount>' . ($plan['amount'] / 100) . '</plan_amount>';
-                        $output .= '<plan_currency>' . $plan['currency'] . '</plan_currency>';
-                        if ($static) $output .= '<user_count>' . $plan['total_user'] . '</user_count>';
-                        $output .= "</plan>";
+                        $output .= '<user_id>' . $user_id . '</user_id>';
+                        $output .= '<plan_id>' . $plan['plan']['id'] . '</plan_id>';
+                        $output .= '<plan_name>' . $plan['plan']['name'] . '</plan_name>';
+                        $output .= '<plan_amount>' . ($plan['plan']['amount'] / 100) . '</plan_amount>';
+                        $output .= '<plan_currency>' . $plan['plan']['currency'] . '</plan_currency>';
                     }
-                    $output .= "</plans>";
                 }else{
                     $status = 'Failure';
-                    $message = 'There is no plan at this time';
+                    $message = 'This user has no any actived plan';
                 }
             }
             else $message = $data['message'];

@@ -1,12 +1,12 @@
 <?php
-    namespace Application\memreas;
+    namespace Application\memreas\StripeWS;
 
     use Zend\Session\Container;
     use Application\Model\MemreasConstants;
     use Application\memreas\AWSManagerSender;
     use Guzzle\Http\Client;
 
-    class GetPlans {
+    class GetAccountDetail {
         protected $message_data;
         protected $memreas_tables;
         protected $service_locator;
@@ -32,46 +32,54 @@
 
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
-            $user_id = trim ( $data->getplans->user_id );
+
+            $user_id = trim ( $data->getaccountdetail->user_id );
+
             $guzzle = new Client();
 
             $request = $guzzle->post(
                 MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
-                    'action' => 'listplans',
+                    'action' => 'getaccountdetail',
                     'user_id' => $user_id
                 )
             );
+
             $response = $request->send();
             $data = json_decode($response->getBody(true), true);
+
             $status = $data['status'];
 
             if ($status == 'Success'){
-                $plans = $data['plans'];
-                if (!empty($plans)){
-                    foreach ($plans as $plan){
-                        $output .= '<user_id>' . $user_id . '</user_id>';
-                        $output .= '<plan_id>' . $plan['plan']['id'] . '</plan_id>';
-                        $output .= '<plan_name>' . $plan['plan']['name'] . '</plan_name>';
-                        $output .= '<plan_amount>' . ($plan['plan']['amount'] / 100) . '</plan_amount>';
-                        $output .= '<plan_currency>' . $plan['plan']['currency'] . '</plan_currency>';
-                    }
-                }else{
-                    $status = 'Failure';
-                    $message = 'This user has no any actived plan';
-                }
+                $account = $data['account'];
+                $accountDetail = $data['accountDetail'];
+                $output .= "<account>";
+                    $output .= "<username>" . $account['username'] . "</username>";
+                    $output .= "<account_type>" . $account['account_type'] . "</account_type>";
+                    $output .= "<balance>" . $account['balance'] . "</balance>";
+                    $output .= "<first_name>" . $accountDetail['first_name'] . "</first_name>";
+                    $output .= "<last_name>" . $accountDetail['last_name'] . "</last_name>";
+                    $output .= "<last_name>" . $accountDetail['last_name'] . "</last_name>";
+                    $output .= "<address_line_2>" . $accountDetail['address_line_2'] . "</address_line_2>";
+                    $output .= "<city>" . $accountDetail['city'] . "</city>";
+                    $output .= "<state>" . $accountDetail['state'] . "</state>";
+                    $output .= "<postal_code>" . $accountDetail['postal_code'] . "</postal_code>";
+                $output .= "</account>";
             }
-            else $message = $data['message'];
+            else {
+                $status = 'Failure';
+                $message = $data['message'];
+            }
 
             header ( "Content-type: text/xml" );
             $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
             $xml_output .= "<xml>";
-            $xml_output .= "<getplansresponse>";
+            $xml_output .= "<getaccountdetailresponse>";
             $xml_output .= "<status>" . $status . "</status>";
             if (isset($message)) $xml_output .= "<message>{$message}</message>";
             $xml_output .= $output;
-            $xml_output .= "</getplansresponse>";
+            $xml_output .= "</getaccountdetailresponse>";
             $xml_output .= "</xml>";
             echo $xml_output;
         }

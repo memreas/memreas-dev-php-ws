@@ -82,17 +82,20 @@ use Application\memreas\RemoveEventMedia;
 use Application\memreas\RemoveEventFriend;
 use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
-use Application\memreas\GetPlans;
-use Application\memreas\GetPlansStatic;
 use Application\memreas\Utility;
-use Application\memreas\GetOrderHistory;
-use Application\memreas\GetOrder;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
 use Application\memreas\UpdatePassword;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\DbTableGatewayOptions;
+
+//Stripe Web Services
+use Application\memreas\StripeWS\GetPlans;
+use Application\memreas\StripeWS\GetPlansStatic;
+use Application\memreas\StripeWS\GetOrderHistory;
+use Application\memreas\StripeWS\GetOrder;
+use Application\memreas\StripeWS\GetAccountDetail;
 
 class IndexController extends AbstractActionController {
 	
@@ -133,7 +136,7 @@ class IndexController extends AbstractActionController {
 	}
 	
 	public function fetchXML($action, $xml) {
-		$guzzle = new Client ();
+ 		$guzzle = new Client ();
 		
 		$request = $guzzle->post ( $this->url, null, array (
 				'action' => $action,
@@ -890,6 +893,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "updatepassword") {
                 $UpdatePassword = new UpdatePassword($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $UpdatePassword->exec();
+            }else if ($actionname == "getaccountdetail") {
+                $GetAccountDetail = new GetAccountDetail($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetAccountDetail->exec();
             }
 
             /*
@@ -1109,6 +1115,13 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         error_log('inside security');
                     
         $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+        } else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else { 
+            $ipaddress = $_SERVER['REMOTE_ADDR'];
+        }       
       error_log('ip is '.$ipaddress);
         if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
           $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
@@ -1156,7 +1169,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
             'getplans',
             'getplansstatic',
             'getorderhistory',
-            'getorder'
+            'getorder',
+            'getaccountdetail'
 //            'doquery'	
             );
         $_SESSION ['user'] ['ip'] = $ipaddress;
