@@ -82,17 +82,19 @@ use Application\memreas\RemoveEventMedia;
 use Application\memreas\RemoveEventFriend;
 use Application\memreas\RemoveFriends;
 use Application\memreas\GetFriends;
-use Application\memreas\GetPlans;
-use Application\memreas\GetPlansStatic;
 use Application\memreas\Utility;
-use Application\memreas\GetOrderHistory;
-use Application\memreas\GetOrder;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
 use Application\memreas\UpdatePassword;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\DbTableGatewayOptions;
+
+//Stripe Web Services
+use Application\memreas\StripeWS\GetPlans;
+use Application\memreas\StripeWS\GetPlansStatic;
+use Application\memreas\StripeWS\GetOrderHistory;
+use Application\memreas\StripeWS\GetOrder;
 
 class IndexController extends AbstractActionController {
 	

@@ -1,12 +1,12 @@
 <?php
-    namespace Application\memreas;
+    namespace Application\memreas\StripeWS;
 
     use Zend\Session\Container;
     use Application\Model\MemreasConstants;
     use Application\memreas\AWSManagerSender;
     use Guzzle\Http\Client;
 
-    class GetPlans {
+    class GetOrder {
         protected $message_data;
         protected $memreas_tables;
         protected $service_locator;
@@ -32,46 +32,55 @@
 
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
-            $user_id = trim ( $data->getplans->user_id );
+            $transaction_id = trim ( $data->getorder->transaction_id );
+
             $guzzle = new Client();
 
             $request = $guzzle->post(
                 MemreasConstants::MEMREAS_PAY_URL,
                 null,
                 array(
-                    'action' => 'listplans',
-                    'user_id' => $user_id
+                    'action' => 'getorder',
+                    'transaction_id' => $transaction_id
                 )
             );
+
             $response = $request->send();
             $data = json_decode($response->getBody(true), true);
+
             $status = $data['status'];
 
             if ($status == 'Success'){
-                $plans = $data['plans'];
-                if (!empty($plans)){
-                    foreach ($plans as $plan){
-                        $output .= '<user_id>' . $user_id . '</user_id>';
-                        $output .= '<plan_id>' . $plan['plan']['id'] . '</plan_id>';
-                        $output .= '<plan_name>' . $plan['plan']['name'] . '</plan_name>';
-                        $output .= '<plan_amount>' . ($plan['plan']['amount'] / 100) . '</plan_amount>';
-                        $output .= '<plan_currency>' . $plan['plan']['currency'] . '</plan_currency>';
-                    }
-                }else{
+                $status = 'Success';
+                $order = $data['order'];
+                if (!empty($order)){
+                    $output .= '<order>';
+                    $output .= '<transaction_id>' . $order['transaction_id'] . '</transaction_id>';
+                    $output .= '<transaction_type>' . $order['transaction_type'] . '</transaction_type>';
+                    $output .= '<amount>' . $order['amount'] . '</amount>';
+                    $output .= '<transaction_receive>' . $order['transaction_sent'] . '</transaction_receive>';
+                    $output .= '<transaction_request>' . $order['transaction_request'] . '</transaction_request>';
+                    $output .= '<transaction_response>' . $order['transaction_response'] . '</transaction_response>';
+                    $output .= '</order>';
+                }
+                else {
                     $status = 'Failure';
-                    $message = 'This user has no any actived plan';
+                    $message = $data['message'];
                 }
             }
-            else $message = $data['message'];
+            else {
+                $status = 'Failure';
+                $message = $data['message'];
+            }
 
             header ( "Content-type: text/xml" );
             $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
             $xml_output .= "<xml>";
-            $xml_output .= "<getplansresponse>";
+            $xml_output .= "<getorderresponse>";
             $xml_output .= "<status>" . $status . "</status>";
             if (isset($message)) $xml_output .= "<message>{$message}</message>";
             $xml_output .= $output;
-            $xml_output .= "</getplansresponse>";
+            $xml_output .= "</getorderresponse>";
             $xml_output .= "</xml>";
             echo $xml_output;
         }
