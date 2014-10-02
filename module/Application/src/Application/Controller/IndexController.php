@@ -95,6 +95,7 @@ use Application\memreas\StripeWS\GetPlans;
 use Application\memreas\StripeWS\GetPlansStatic;
 use Application\memreas\StripeWS\GetOrderHistory;
 use Application\memreas\StripeWS\GetOrder;
+use Application\memreas\StripeWS\GetAccountDetail;
 
 class IndexController extends AbstractActionController {
 	
@@ -892,6 +893,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "updatepassword") {
                 $UpdatePassword = new UpdatePassword($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $UpdatePassword->exec();
+            }else if ($actionname == "getaccountdetail") {
+                $GetAccountDetail = new GetAccountDetail($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $GetAccountDetail->exec();
             }
 
             /*
@@ -1165,7 +1169,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
             'getplans',
             'getplansstatic',
             'getorderhistory',
-            'getorder'
+            'getorder',
+            'getaccountdetail'
 //            'doquery'	
             );
         $_SESSION ['user'] ['ip'] = $ipaddress;
