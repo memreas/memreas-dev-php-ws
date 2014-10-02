@@ -41,7 +41,6 @@ class SaveUserDetails {
         }
         $user_id = trim ( $data->saveuserdetails->user_id );
         $email = trim ( $data->saveuserdetails->email );
-        $password = trim ($data->saveuserdetails->password);
         $gender = trim ($data->saveuserdetails->gender);
         $dob = trim ($data->saveuserdetails->dob);
         $profile_picture = trim($data->saveuserdetails->profile_picture);
@@ -68,8 +67,6 @@ class SaveUserDetails {
                 $metadata['dob'] = $dob;
                 $metadata = json_encode($metadata);
                 $query = "UPDATE Application\Entity\User u SET u.metadata = '{$metadata}'";
-                if (!empty($password))
-                    $query .= ", u.password = '" . md5($password) . "'";
 
                 if (!empty($profile_picture))
                     $query .= ", u.profile_photo = 1";

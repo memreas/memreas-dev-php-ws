@@ -90,6 +90,7 @@ use Application\memreas\GetOrder;
 use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
+use Application\memreas\UpdatePassword;
 
 
 class IndexController extends AbstractActionController {
@@ -886,6 +887,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             else if ($actionname == "checkevent") {
                 $CheckEvent = new CheckEvent($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $CheckEvent->exec();
+            }else if ($actionname == "updatepassword") {
+                $UpdatePassword = new UpdatePassword($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $UpdatePassword->exec();
             }
 
             /*

@@ -87,6 +87,7 @@ echo "user_id ----> " . $user_id;
             var removegroup = '<xml><removegroup><group_id>1</group_id></removegroup></xml>';
             var checkevent = '<xml><checkevent><event_id>1</event_id></checkevent></xml>';
             var getplansstatic = '<xml><getplansstatic><static>0</static></getplansstatic></xml>';
+            var updatepassword = '<xml><updatepassword><user_id>0</user_id><old>old password</old><new>new password</new><retype>Retype new password</retype></updatepassword></xml>';
 
 
             $(document).ready(function() {
@@ -165,6 +166,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "getorder") { xml = getorder; }
                     else if ($("#input_action").val() == "checkevent") { xml = checkevent; }
                     else if ($("#input_action").val() == "getplansstatic") { xml = getplansstatic; }
+                    else if ($("#input_action").val() == "updatepassword") { xml = updatepassword; }
 
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -268,6 +270,7 @@ echo "user_id ----> " . $user_id;
 							<option>getfriends</option>
                             <option>removegroup</option>
                             <option>checkevent</option>
+                            <option>updatepassword</option>
                             <option value="getplans">Stripe - Getplans</option>
                             <option value="getplansstatic">Stripe - GetPlansStatic</option>
                             <option value="getorderhistory">Stripe - GetOrderHistory</option>
