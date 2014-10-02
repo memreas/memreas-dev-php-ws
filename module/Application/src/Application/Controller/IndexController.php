@@ -1111,6 +1111,13 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         error_log('inside security');
                     
         $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+    $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+} else {
+    $ipaddress = $_SERVER['REMOTE_ADDR'];
+}
       error_log('ip is '.$ipaddress);
         if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
           $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
