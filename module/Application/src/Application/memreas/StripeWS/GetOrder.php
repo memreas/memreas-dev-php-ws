@@ -47,7 +47,6 @@
 
             $response = $request->send();
             $data = json_decode($response->getBody(true), true);
-
             $status = $data['status'];
 
             if ($status == 'Success'){
@@ -61,6 +60,7 @@
                     $output .= '<transaction_receive>' . $order['transaction_sent'] . '</transaction_receive>';
                     $output .= '<transaction_request>' . $order['transaction_request'] . '</transaction_request>';
                     $output .= '<transaction_response>' . $order['transaction_response'] . '</transaction_response>';
+                    $output .= '<user_detail>' . json_encode($data['user']) . '</user_detail>';
                     $output .= '</order>';
                 }
                 else {
