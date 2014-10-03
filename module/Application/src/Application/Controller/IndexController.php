@@ -96,6 +96,7 @@ use Application\memreas\StripeWS\GetPlansStatic;
 use Application\memreas\StripeWS\GetOrderHistory;
 use Application\memreas\StripeWS\GetOrder;
 use Application\memreas\StripeWS\GetAccountDetail;
+use Application\memreas\StripeWS\Refund;
 
 class IndexController extends AbstractActionController {
 	
@@ -896,6 +897,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getaccountdetail") {
                 $GetAccountDetail = new GetAccountDetail($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetAccountDetail->exec();
+            }else if ($actionname == "refund") {
+                $Refund = new Refund($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $Refund->exec();
             }
 
             /*
@@ -1170,8 +1174,9 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
             'getplansstatic',
             'getorderhistory',
             'getorder',
-            'getaccountdetail'
-//            'doquery'	
+            'getaccountdetail',
+            'refund'
+//            'doquery'
             );
         $_SESSION ['user'] ['ip'] = $ipaddress;
         $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];

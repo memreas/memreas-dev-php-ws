@@ -89,6 +89,7 @@ echo "user_id ----> " . $user_id;
             var getplansstatic = '<xml><getplansstatic><static>0</static></getplansstatic></xml>';
             var updatepassword = '<xml><updatepassword><user_id>0</user_id><old>old password</old><new>new password</new><retype>Retype new password</retype></updatepassword></xml>';
             var getaccountdetail = '<xml><getaccountdetail><user_id>0</user_id></getaccountdetail></xml>';
+            var refund = '<xml><refund><user_id>0</user_id><amount>5</amount><reason>Refund balance</reason></refund></xml>';
 
 
             $(document).ready(function() {
@@ -169,6 +170,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "getplansstatic") { xml = getplansstatic; }
                     else if ($("#input_action").val() == "updatepassword") { xml = updatepassword; }
                     else if ($("#input_action").val() == "getaccountdetail") { xml = getaccountdetail; }
+                    else if ($("#input_action").val() == "refund") { xml = refund; }
 
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -278,6 +280,7 @@ echo "user_id ----> " . $user_id;
                             <option value="getorderhistory">Stripe - GetOrderHistory</option>
                             <option value="getorder">Stripe - GetOrder</option>
                             <option value="getaccountdetail">Stripe - GetAccountDetail</option>
+                            <option value="refund">Stripe - Refund</option>
 						</select>
 
 					</tr>
