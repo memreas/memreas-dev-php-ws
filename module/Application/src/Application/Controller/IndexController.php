@@ -90,6 +90,7 @@ use Application\memreas\UpdatePassword;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\DbTableGatewayOptions;
 use Application\memreas\GetDiskUsage;
+use Application\memreas\StripeWS\ListPayees;
 
 
 //Stripe Web Services
@@ -899,6 +900,9 @@ class IndexController extends AbstractActionController {
             }else if ($actionname == "refund") {
                 $Refund = new Refund($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $Refund->exec();
+            }else if ($actionname == "listpayees") {
+                $ListPayees = new ListPayees($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $ListPayees->exec();
             }
 
             /*
@@ -1172,7 +1176,8 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
             'getorderhistory',
             'getorder',
             'getaccountdetail',
-            'refund'
+            'refund',
+            'listpayees'
 //            'doquery'
             ,'getdiskusage'
             );
