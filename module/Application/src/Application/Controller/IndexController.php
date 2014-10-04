@@ -89,6 +89,8 @@ use Application\memreas\VerifyEmailAddress;
 use Application\memreas\UpdatePassword;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\DbTableGatewayOptions;
+use Application\memreas\GetDiskUsage;
+
 
 //Stripe Web Services
 use Application\memreas\StripeWS\GetPlans;
@@ -896,6 +898,9 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
             }else if ($actionname == "getaccountdetail") {
                 $GetAccountDetail = new GetAccountDetail($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetAccountDetail->exec();
+            }else if ($actionname == "getdiskusage") {
+                $getdiskusage = new GetDiskUsage($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $getdiskusage->exec();
             }
 
             /*

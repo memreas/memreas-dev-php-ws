@@ -170,6 +170,10 @@ error_log ( "file ---> $file" . PHP_EOL );
 		) );
 error_log("email result ---> ".$result.PHP_EOL);		
 	}
+
+	public function __get($name) {
+		return $this->$name;
+	}
 }
 
 ?>
