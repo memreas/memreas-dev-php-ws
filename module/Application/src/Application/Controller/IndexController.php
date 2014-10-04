@@ -1174,6 +1174,7 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
             'getaccountdetail',
             'refund'
 //            'doquery'
+            ,'getdiskusage'
             );
         $_SESSION ['user'] ['ip'] = $ipaddress;
         //$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
