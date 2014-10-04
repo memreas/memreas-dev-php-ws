@@ -17,7 +17,7 @@ class MemreasConstants {
 	//memreasprod-bew url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasprod-backend-worker';
 	
-	//memreasdevsec related
+	//memreasprdsec related
 	const S3BUCKET = "memreasdprdsec";
     const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';
     const S3_APPSEC = 'xQfYNvfT0Ar+Wm/Gc4m6aacPwdT5Ors9YHE/d38H';
@@ -35,9 +35,9 @@ class MemreasConstants {
 	const EXPIRES = 36000; // 10 hour
 	
 	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";
+	const ELASTICACHE_SERVER_ENDPOINT = "memreasprdcache.142tbh.cfg.use1.cache.amazonaws.com";
 	const ELASTICACHE_SERVER_PORT = "11211";
-	const ELASTICACHE_SERVER_USE = false;
+	const ELASTICACHE_SERVER_USE = true;
 	
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";

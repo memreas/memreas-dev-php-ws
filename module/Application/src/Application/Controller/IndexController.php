@@ -140,14 +140,14 @@ class IndexController extends AbstractActionController {
 		
 		$request = $guzzle->post ( $this->url, null, array (
 				'action' => $action,
-				// 'cache_me' => true,
+				'cache_me' => true,
 				'xml' => $xml 
 		) );
 		$response = $request->send ();
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
+//error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -172,24 +172,15 @@ error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
          */
         $actionname = $this->security($actionname);
                     
-                    
-error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+//error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 //error_log("Inside indexAction---> _POST ['xml'] ---> ".print_r($_POST['xml'],true). PHP_EOL);
 
  
         if (isset($actionname) && !empty($actionname)) {
-            // Fetch the elasticache handle
-            error_log("fetching MemreasCache handle..." . PHP_EOL);
-            // $this->aws = new AWSManagerSender($this->service_locator);            
-            $update_elasticache_flag = false;
             $cache_me = false;
             $cache_id = null;
             $invalidate = false;
             $invalidate_me = false;
-
-            // Debugging
-            // $this->elasticache->set('hello', 'world', 600);
-            // End Debugging
 
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
@@ -202,14 +193,15 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
             if($actionname == 'notlogin'){
                 $result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
                 $result .= "<xml><error>Please Login </error></xml>";
+                //no caching needed
         
             } else if ($actionname == "login") {
                 $login = new Login($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $login->exec();
+                //no caching needed - cache in security here
             } else if ($actionname == "registration") {
                 $registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
-
 
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->registration->username);
@@ -222,16 +214,19 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
             } else if ($actionname == "addcomments") {
                 $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $addcomment->exec();
+                
+                /*
+                 * Invalidate listcomment here
+                 */
+                
             } else if ($actionname == "verifyemailaddress") {
                 $verifyemailaddress = new VerifyEmailAddress($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $verifyemailaddress->exec();
                 if ($result) {
-error_log("past verification - success ".PHP_EOL);
                 	$redirect = MemreasConstants::WEB_URL . "index?email_verified=1";
                 	$this->redirect()->toUrl($redirect);
                 	return false;
                 } else {
-error_log("past verification - failed ".PHP_EOL);
                 	$redirect = MemreasConstants::WEB_URL . "index?email_verified=0";
                 	$this->redirect()->toUrl($redirect);
                 	return false;
@@ -308,7 +303,6 @@ error_log("past verification - failed ".PHP_EOL);
 
 
                 if (!$result) {
-error_log("ElastiCache - couldn't find".PHP_EOL );
                     $listphotos = new ListPhotos($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listphotos->exec();
                     $cache_me = true;
@@ -349,7 +343,6 @@ error_log("ElastiCache - couldn't find".PHP_EOL );
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = $data->listallmedia->user_id;
                 $result = $this->elasticache->getCache($actionname.'_'.$uid);
-error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
                 if (!$result || empty($result)) {
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listallmedia->exec();
@@ -902,7 +895,6 @@ error_log("listallmedia cached result ----> *".$result."*".PHP_EOL);
              * Successfully retrieved from cache so echo
              */
             if ($cache_me == false && !empty($result)) {
-error_log("Output data as json ----> ".$result.PHP_EOL);
             	echo $result;
             }
             $output = ob_get_clean();
@@ -911,9 +903,9 @@ error_log("Output data as json ----> ".$result.PHP_EOL);
              * TODO - Cache here
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-error_log("Output data as json ----> ".json_encode($output).PHP_EOL);
+//error_log("Output data as json ----> ".json_encode($output).PHP_EOL);
 error_log("setCache action_name + uid ----> ".$actionname . '_' . $cache_id.PHP_EOL);
-error_log("setCache output ----> ".$output.PHP_EOL);
+//error_log("setCache output ----> ".$output.PHP_EOL);
 				$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
             }
 
@@ -944,13 +936,12 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
         if (isset($_GET ['view']) && empty($actionname)) {
             $view = new ViewModel ();
             $view->setTemplate($path); // path to phtml file under view folder
-error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
             return $view;
         } else {
             // xml output
             echo $output;
-error_log("Output data as xml -----> ".$output.PHP_EOL);
-error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+//error_log("Output data as xml -----> ".$output.PHP_EOL);
+//error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 			exit();
         }
     }
@@ -1112,7 +1103,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
          */
         $this->elasticache = new AWSMemreasCache();
 
-        error_log('inside security');
+//error_log('inside security');
                     
         $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -1140,7 +1131,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
         $sessionManager = new SessionManager();
         $sessionManager->setSaveHandler($saveHandler);
         Container::setDefaultManager ( $sessionManager );
-	$sid='';
+		$sid='';
         
         if (!empty( $_REQUEST ['sid'] )) {
             $sid =  $_REQUEST ['sid'] ;
@@ -1174,7 +1165,7 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
 //            'doquery'	
             );
         $_SESSION ['user'] ['ip'] = $ipaddress;
-        $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+        //$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
