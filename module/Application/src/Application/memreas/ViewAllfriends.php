@@ -64,7 +64,7 @@ class ViewAllfriends {
 						
 						$view_all_friend [$count] ['social_username'] = $row1->social_username;
 						$view_all_friend [$count] ['url_image'] = $this->url_signer->fetchSignedURL ( $row1->url_image);
-						 
+error_log("view_all_friend signed url ---> ". $view_all_friend [$count] ['url_image'] .PHP_EOL);						 
 					}
 				} else {
 					$error_flag = 2;
