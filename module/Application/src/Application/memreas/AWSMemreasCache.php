@@ -4,8 +4,10 @@ namespace Application\memreas;
 
 use Guzzle\Http\Client;
 use Application\Model\MemreasConstants;
+use Aws\ElastiCache;
 
 class AWSMemreasCache {
+	private $aws = null;
 	private $cache = null;
 	private $client = null;
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
@@ -39,18 +41,26 @@ class AWSMemreasCache {
 		 * without requiring any changes to the PHP application.
 		 */
 
-		$this->cache = new \Memcache();
-error_log ( "Created new Memcached client.." . PHP_EOL );
+//		$this->cache = new \Memcache();
+//error_log ( "Created new Memcached client.." . PHP_EOL );
 		//$this->cache->setOption ( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE );
-		$this->cache->addServer ( $server_endpoint, $server_port );
-                //$this->cache->connect('localhost', 11211) or die ("Could not connect");
+//		$this->cache->addServer ( $server_endpoint, $server_port );
+        //$this->cache->connect('localhost', 11211) or die ("Could not connect");
 
-		//$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
+		$now = date ( 'Y-m-d H:i:s' );
+		$dynamic_client = new \Memcached();
+		$dynamic_client->setOption( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
+		$dynamic_client->addServer($server_endpoint, $server_port);
+		$dynamic_client->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
+		
+		$this->cache = $dynamic_client;
+
+		$now = date ( 'Y-m-d H:i:s' );
+		$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
 
 		// Connected at this point
-error_log ( "Connected to elasticache client!".date ( 'Y-m-d H:i:s' ). PHP_EOL );
-//	error_log ( "Last access time is @ " . $this->cache->get ( 'LAST-USER-ID-ACCESS' ) . PHP_EOL );
-
+error_log ( "Connected to elasticache client! $now ". PHP_EOL );
+error_log ("LAST-USER-ID-ACCESS ---> ". $this->cache->get ( 'LAST-USER-ID-ACCESS' ) .PHP_EOL);
 	}
 
 	public function setCache($key, $value, $ttl = 3600) { // 1 hour

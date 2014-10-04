@@ -8,5 +8,7 @@ nbproject
 .settings
 .log
 composer.lock
+!data/session/temp.txt
+data/
 !vendor/composer/autoload_psr4.php
 vendor/

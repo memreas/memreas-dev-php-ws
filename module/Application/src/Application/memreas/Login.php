@@ -74,12 +74,12 @@ class Login {
 				 * 30-SEP-2014 code to check if email is verified
 				 */
 				$user_metadata = json_decode($row[0]->metadata, true);
-				//$verified_email = isset($user_metadata['user']['email_verified']) ? $user_metadata['user']['email_verified'] : "0";
+				$verified_email = isset($user_metadata['user']['email_verified']) ? $user_metadata['user']['email_verified'] : "0";
 				
 				/*
 				 * Remove by 3-OCT-2014 to enable email verification 
 				 */
-				$verified_email = 1;
+				//$verified_email = 1;
 				if ($verified_email) {
 					$user_id = trim ( $row [0]->user_id );
 					$xml_output .= "<status>success</status>";

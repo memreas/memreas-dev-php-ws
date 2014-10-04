@@ -32,8 +32,8 @@ class AWSManagerSender {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->aws = Aws::factory ( array (
-				'key' => 'AKIAJMXGGG4BNFS42LZA',
-				'secret' => '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',
+				'key' => MemreasConstants::S3_APPKEY,
+				'secret' => MemreasConstants::S3_APPSEC,
 				'region' => 'us-east-1' 
 		) );
 		
