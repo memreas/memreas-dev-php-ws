@@ -89,6 +89,7 @@ echo "user_id ----> " . $user_id;
             var getplansstatic = '<xml><getplansstatic><static>0</static></getplansstatic></xml>';
             var updatepassword = '<xml><updatepassword><user_id>0</user_id><old>old password</old><new>new password</new><retype>Retype new password</retype></updatepassword></xml>';
             var getaccountdetail = '<xml><getaccountdetail><user_id>0</user_id></getaccountdetail></xml>';
+             var getdiskusage = '<xml><getdiskusage><user_id>1</user_id></getdiskusage></xml>';
 
 
             $(document).ready(function() {
@@ -169,6 +170,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "getplansstatic") { xml = getplansstatic; }
                     else if ($("#input_action").val() == "updatepassword") { xml = updatepassword; }
                     else if ($("#input_action").val() == "getaccountdetail") { xml = getaccountdetail; }
+                    else if ($("#input_action").val() == "getdiskusage") { xml = getdiskusage; }
 
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -232,6 +234,7 @@ echo "user_id ----> " . $user_id;
 							<option>feedback</option>
 							<option>findtag</option>
 							<option>forgotpassword</option>
+                            <option>getdiskusage</option>
 							<option>geteventcount</option>
 							<option>geteventdetails</option>
 							<option>geteventlocation</option>
