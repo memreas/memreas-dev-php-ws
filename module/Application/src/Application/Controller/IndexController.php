@@ -100,6 +100,7 @@ use Application\memreas\StripeWS\GetOrderHistory;
 use Application\memreas\StripeWS\GetOrder;
 use Application\memreas\StripeWS\GetAccountDetail;
 use Application\memreas\StripeWS\Refund;
+use Application\memreas\StripeWS\MakePayout;
 
 class IndexController extends AbstractActionController {
 	
@@ -903,6 +904,9 @@ class IndexController extends AbstractActionController {
             }else if ($actionname == "listpayees") {
                 $ListPayees = new ListPayees($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $ListPayees->exec();
+            }else if ($actionname == "makepayout") {
+                $MakePayout = new MakePayout($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $MakePayout->exec();
             }
 
             /*
@@ -1177,7 +1181,8 @@ error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
             'getorder',
             'getaccountdetail',
             'refund',
-            'listpayees'
+            'listpayees',
+            'makepayout'
 //            'doquery'
             ,'getdiskusage'
             );
