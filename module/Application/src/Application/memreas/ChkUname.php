@@ -31,6 +31,9 @@ class ChkUname {
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		if (isset ( $username ) && ! empty ( $username )) {
+			/*
+			 * TODO: This query should be cached
+			 */
 			$query = "SELECT u FROM  Application\Entity\User as u  where u.username = '$username'";
 			// $statement = $this->dbAdapter->createStatement($query);
 			// $result = $statement->execute();

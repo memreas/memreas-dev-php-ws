@@ -39,16 +39,25 @@ class GetSocialCredentials {
         }
 
         /*
-        * PRE-CONFIG HERE
-        */
+         * PRE-CONFIG HERE
+         * 5-OCT-2014 - Change to reference constants file...
+         */
+
         //Facebook's Credentials
-        $fb_appId = '462180953876554';
-        $fb_appSecret = '23dcd2db19b17f449f39bfe9e93176e6';
+        $fb_appId = MemreasConstants::FB_APPID;
+        $fb_appSecret = MemreasConstants::FB_SECRET;;
 
         //Twitter's Credentials
-        $tw_appid = 'XjWz7d8AIh0hq6mDqjR7mA';
-        $tw_appSecret = 'wlF52rzjDCtrFNzZ8lJRgMU9Fd4aOagkqLclomXOYg';
-
+        /*
+         * TODO: Why is this different than constants file?
+         */
+        //const TW_CONSUMER_KEY ='9jwg1vX4MgH7rfBzxqkcjI90f';
+        //const TW_CONSUMER_SECRET = 'bDqOeHkJ7OIQ4QPNnT1PA9oz55gf51YW0REBo12aazGA0CBrbY';
+        //$tw_appid = 'XjWz7d8AIh0hq6mDqjR7mA';
+        //$tw_appSecret = 'wlF52rzjDCtrFNzZ8lJRgMU9Fd4aOagkqLclomXOYg';
+        $tw_appid = MemreasConstants::TW_CONSUMER_KEY;
+        $tw_appSecret = MemreasConstants::TW_CONSUMER_SECRET;;
+        
 
         $network = $data->getsocialcredentials->network;
         switch ($network){

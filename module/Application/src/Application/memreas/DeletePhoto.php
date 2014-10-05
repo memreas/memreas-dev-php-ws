@@ -61,12 +61,27 @@ class DeletePhoto {
                     $event_result = $event_statement->getResult ();
 
                     //Remove media resource on S3 AMZ
+                    /*
+                     * TODO - need to remove transcoded data also...
+                     */
                     $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
-                    $S3Client->deleteObject(array(
-                        'Bucket' => MemreasConstants::S3BUCKET,
-                        'Key' => $json_array ['S3_files'] ['path']
-                    ));
-
+                    
+                    
+                    $result = $S3Client->deleteObjects(array(
+	                    'Bucket'  => MemreasConstants::S3BUCKET,
+	                    'Objects' => array(
+		                    	array('Key' => $json_array ['S3_files'] ['path']),
+		                    	array('Key' => $json_array ['S3_files'] ['web']),
+		                    	array('Key' => $json_array ['S3_files'] ['1080p']),
+                    		)
+	                    ));
+                    
+                    $session = new Container("user");
+                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/79x80/');
+                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/448x306/');
+                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/384x216/');
+                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/98x78/');
+                    
                     if (count ( $result ) > 0) {
 
                         $xml_output .= "<status>success</status>";

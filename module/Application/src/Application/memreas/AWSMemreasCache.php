@@ -68,7 +68,7 @@ error_log ("LAST-USER-ID-ACCESS ---> ". $this->cache->get ( 'LAST-USER-ID-ACCESS
 			return null;
 		}
 		$result = $this->cache->set ( $key , $value, 0, $ttl );
-// error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
+ error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 // error_log('VALUE ----> ' . $value . PHP_EOL);
 
 		return $result;
@@ -80,7 +80,7 @@ error_log ("LAST-USER-ID-ACCESS ---> ". $this->cache->get ( 'LAST-USER-ID-ACCESS
 		}
 
  		$result = $this->cache->get ( $key );
-// error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
+ error_log('JUST FETCHED THIS KEY ----> ' . $key  . PHP_EOL);
 // error_log('RESULT ----> ' . $result  . PHP_EOL);
 
 		return $result;
@@ -128,7 +128,37 @@ error_log ("LAST-USER-ID-ACCESS ---> ". $this->cache->get ( 'LAST-USER-ID-ACCESS
 		return $listPhotos;
 	}
 
-
+	/*
+	 * Add function to invalidate cache for media
+	 */
+	public function invalidateMedia($cache_keys) {
+		// write functions for media 
+		//  - add media event (key is event_id or user_id) 
+		//  - mediainappropriate (key is user id for invalidate) 
+		//  - deletePhoto (key is user id for invalidate)
+		//  - update media
+		//  - removeeventmedia
+		
+	}
+	
+	/*
+	 * Add function to invalidate cache for events
+	 */
+	public function invalidateEvents($cache_keys) {
+	}
+	
+	/*
+	 * Add function to invalidate cache for comments
+	 */
+	public function invalidateComments($cache_keys) {
+	}
+	
+	/*
+	 * Add function to invalidate cache for friends
+	 */
+	public function invalidateFriends($cache_keys) {
+	}
+	
 
 }
 

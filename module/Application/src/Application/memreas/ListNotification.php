@@ -22,9 +22,7 @@ class ListNotification {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
-                        $this->url_signer = new MemreasSignedURL();
-
-        
+        $this->url_signer = new MemreasSignedURL();
         // $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
 
@@ -43,7 +41,7 @@ class ListNotification {
         $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         $xml_output .= "<xml>";
         $xml_output .= "<listnotificationresponse>";
-        if (isset($userid) && !empty($userid)) {
+        if (!empty($userid)) {
 
             $query_user_notification = "SELECT m FROM Application\Entity\Notification m   where m.user_id ='$userid' AND m.is_read = '0' AND m.notification_method > 0  ORDER BY m.update_time DESC";
             $statement = $this->dbAdapter->createQuery($query_user_notification);
