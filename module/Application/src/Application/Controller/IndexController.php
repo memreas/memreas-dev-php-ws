@@ -100,6 +100,7 @@ use Application\memreas\StripeWS\GetOrderHistory;
 use Application\memreas\StripeWS\GetOrder;
 use Application\memreas\StripeWS\GetAccountDetail;
 use Application\memreas\StripeWS\Refund;
+use Application\memreas\StripeWS\MakePayout;
 
 class IndexController extends AbstractActionController {
 	
@@ -1222,6 +1223,9 @@ error_log("Inside registration ... data ---> ".json_encode($message_data).PHP_EO
             	 */
             	$ListPayees = new ListPayees($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $ListPayees->exec();
+            }else if ($actionname == "makepayout") {
+                $MakePayout = new MakePayout($message_data, $memreas_tables, $this->getServiceLocator());
+                $result = $MakePayout->exec();
             }
 
             /*
@@ -1497,7 +1501,8 @@ error_log("Output data as xml -----> ".$output.PHP_EOL);
             'getorder',
             'getaccountdetail',
             'refund',
-            'listpayees'
+            'listpayees',
+            'makepayout'
 //            'doquery'
             ,'getdiskusage'
             );
