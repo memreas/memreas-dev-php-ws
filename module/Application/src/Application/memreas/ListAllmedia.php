@@ -93,7 +93,7 @@ class ListAllmedia {
 			$qb->setParameter ( 1, $result [0] ['user_id'] );
 			$oUserProfile = $qb->getQuery ()->getResult ();
 			
-			error_log ( "oUserProfile[0]['metadata']-----> " . $oUserProfile [0] ['metadata'] . PHP_EOL );
+//			error_log ( "oUserProfile[0]['metadata']-----> " . $oUserProfile [0] ['metadata'] . PHP_EOL );
 			$json_array = json_decode ( $oUserProfile [0] ['metadata'], true );
 			$url1 = '';
 			$xml_output .= "<username>" . $oUserProfile [0] ['username'] . "</username>";

@@ -18,8 +18,8 @@ class AddMediaEvent {
 	protected $AddNotification;
 	protected $notification;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-		error_log ( "AddMediaEvent __construct..." );
-		error_log ( "AddMediaEvent __construct message_data..." . print_r ( $message_data, true ) . PHP_EOL );
+//		error_log ( "AddMediaEvent __construct..." );
+//		error_log ( "AddMediaEvent __construct message_data..." . print_r ( $message_data, true ) . PHP_EOL );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
@@ -35,13 +35,13 @@ class AddMediaEvent {
 
 	}
 	public function exec() {
-		error_log ( "AddMediaEvent exec..." );
-		error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
+//		error_log ( "AddMediaEvent exec..." );
+//		error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 		$is_audio = false;
 		try {
 			$media_id = '';
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
-				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
+//				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (isset ( $data->addmediaevent->user_id )) {
 					$user_id = addslashes ( trim ( $data->addmediaevent->user_id ) );
@@ -62,7 +62,7 @@ class AddMediaEvent {
 				$s3file_name = addslashes ( trim ( $data->addmediaevent->s3file_name ) );
 				$location = json_decode ( $data->addmediaevent->location );
 				$email = isset ( $data->addmediaevent->email ) ? addslashes ( trim ( $data->addmediaevent->email ) ) : '';
-				error_log ( "location json ---> " . $data->addmediaevent->location . PHP_EOL );
+//				error_log ( "location json ---> " . $data->addmediaevent->location . PHP_EOL );
 			} else {
 				// Old code uses POST
 				// Fetch user_id
@@ -88,7 +88,7 @@ class AddMediaEvent {
 
 			}
 			$time = time ();
-
+/*
 error_log ( "event_id ---> " . $event_id . PHP_EOL );
 error_log ( "media_id ---> " . $media_id . PHP_EOL );
 error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
@@ -98,12 +98,12 @@ error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
 error_log ( "s3url ---> " . $s3url . PHP_EOL );
 error_log ( "email ---> " . $email . PHP_EOL );
 error_log ( "location ---> " . $location . PHP_EOL );
-
+*/
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media table
 			// ////////////////////////////////////////////////////////////////////
 			if ($is_server_image == 1) {
-				error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
+//				error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				if (! isset ( $media_id ) || empty ( $media_id )) {
 					throw new \Exception ( 'Error : media_id is empty' );
 				}
@@ -118,7 +118,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 				// ///////////////////////////////////////////////
 				// insert into media and event media
 				// ///////////////////////////////////////////////
-				error_log ( "AddMediaEvent exec is_server_image == 1 else " . PHP_EOL );
+//				error_log ( "AddMediaEvent exec is_server_image == 1 else " . PHP_EOL );
 				$is_video = 0;
 				$is_audio = 0;
 				$s3path = $user_id . '/';
@@ -139,7 +139,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
-					error_log ( "json_array ---> " . json_encode ( $json_array ) );
+//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
 					/*
 					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("image" => array("format" => $file_type[1])) ); error_log("$json_array ---> " . json_encode($json_array));
 					 */
@@ -156,7 +156,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['is_video'] = $is_video;
 					$json_array ['S3_files'] ['type'] ['video'] ['format'] = $file_type [1];
-					error_log ( "json_array ---> " . json_encode ( $json_array ) );
+//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
 					/*
 					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("video" => array("format" => $file_type[1],)) ); error_log("$json_array ---> " . json_encode($json_array));
 					 */
@@ -174,7 +174,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['is_audio'] = $is_audio;
 					$json_array ['S3_files'] ['type'] ['audio'] ['format'] = $file_type [1];
-					error_log ( "json_array ---> " . json_encode ( $json_array ) );
+//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
 					/*
 					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("audio" => array("format" => $file_type[1],)) ); error_log("json_array ---> " . json_encode($json_array));
 					 */
@@ -195,7 +195,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 				$tblMedia->update_date = $now;
 				$this->dbAdapter->persist ( $tblMedia );
 				$this->dbAdapter->flush ();
-				error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
+//				error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
 
                 if ($is_profile_pic) {
                     //Remove previous profile images
@@ -227,7 +227,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
                     /*if (! $rs_is_profil)
                         throw new Exception ( 'Error : ' . mysql_error () );*/
 
-                    error_log ( "AddMediaEvent exec - just udpated Media " . PHP_EOL );
+//                    error_log ( "AddMediaEvent exec - just udpated Media " . PHP_EOL );
                 }
 
 				// $event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
@@ -237,7 +237,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$tblEventMedia->event_id = $event_id;
 					$this->dbAdapter->persist ( $tblEventMedia );
 					$this->dbAdapter->flush ();
-					error_log ( "AddMediaEvent exec - just inserted EventMedia " . PHP_EOL );
+//					error_log ( "AddMediaEvent exec - just inserted EventMedia " . PHP_EOL );
 					/*
 					 * @todo send to all particiepent
 					 */
@@ -346,8 +346,8 @@ error_log ( "location ---> " . $location . PHP_EOL );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-		error_log ( $xml_output, 0 );
-		error_log ( "EXIT addmediaevent.php..." );
+//		error_log ( $xml_output, 0 );
+//		error_log ( "EXIT addmediaevent.php..." );
 	}
 }
 

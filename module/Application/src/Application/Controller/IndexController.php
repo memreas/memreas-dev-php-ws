@@ -213,7 +213,7 @@ class IndexController extends AbstractActionController {
                  */
                 
             } else if ($actionname == "registration") {
-error_log("Inside registration ... data ---> ".json_encode($message_data).PHP_EOL);
+error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
 
@@ -273,19 +273,7 @@ error_log("Inside registration ... data ---> ".json_encode($message_data).PHP_EO
                 /*
                  * Cache approach - Write Operation - Invalidate existing cache here
                  */
-                //$data = simplexml_load_string($_POST ['xml']);
-               	//if (!empty($data->addmediaevent->event_id)) {
-//               		$this->elasticache->invalidateCache("countlistallmedia_" . $data->addmediaevent->event_id);
-               	//	$this->elasticache->invalidateCache("listallmedia_" . $data->addmediaevent->event_id);
-               	//	$this->elasticache->invalidateCache("viewevents_" . $data->addmediaevent->event_id);
-               	//}
-
-               	//if (!empty($data->addmediaevent->user_id)) {
-               		//countviewevent can return me / friends / public
-               	//	$this->elasticache->invalidateCache("listallmedia_" . $data->addmediaevent->user_id);
-//               		$this->elasticache->invalidateCache("countviewevent_is_my_event_" . $data->addmediaevent->user_id);
-               	//	$this->elasticache->invalidateCache("viewevents_" . $data->addmediaevent->user_id);
-               	//}
+                $this->elasticache->invalidateMedia();
                	
             } else if ($actionname == "likemedia") {
                 $data = simplexml_load_string($_POST ['xml']);
@@ -404,19 +392,21 @@ error_log("Inside registration ... data ---> ".json_encode($message_data).PHP_EO
                  * Cache Approach: Check cache first if not there then fetch and cache...
                  *  if event_id then return that cache else user_id
                  */
-                $data = simplexml_load_string($_POST ['xml']);
+            	$data = simplexml_load_string($_POST ['xml']);
                 if (!empty($data->listallmedia->event_id)){
                 	$cache_id =  $data->listallmedia->event_id;
                 } else if (!empty($data->listallmedia->user_id)) {
                 	$cache_id =  $data->listallmedia->user_id;
                 }
+//error_log("Inside listallmedia - about to get cache key ---> ".$actionname.'_'.$cache_id);
                 
                 $result = $this->elasticache->getCache($actionname.'_'.$cache_id);
                 if (!$result || empty($result)) {
+//error_log("Inside listallmedia - no result so pull from db...");                	
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listallmedia->exec();
                     $cache_me = true;
-                }
+                } 
             } else if ($actionname == "countviewevent") {
             	/*
                  * Cache Approach: Check cache first if not there then fetch and cache...
@@ -465,10 +455,12 @@ error_log("Inside registration ... data ---> ".json_encode($message_data).PHP_EO
             	 * Cache Approach: Check cache first if not there then fetch and cache...
             	 */
             	$data = simplexml_load_string($_POST ['xml']);
-            	if (!empty($data->viewevent->is_public_event) && $data->viewevent->is_public_event){
+            	if (!empty($data->viewevent->is_public_event) && $data->viewevent->is_public_event) {
             		$cache_id =  "public";
-            	} else {
-            		$cache_id = trim ($data->viewevent->user_id);
+            	} else if (!empty($data->viewevent->is_friend_event) && $data->viewevent->is_friend_event) {
+            		$cache_id = "is_friend_event_".trim ($data->viewevent->user_id);
+            	} else if (!empty($data->viewevent->is_friend_event) && $data->viewevent->is_my_event) {
+            		$cache_id = "is_my_event_" . trim ($data->viewevent->user_id);
             	}
             	$result = $this->elasticache->getCache($actionname.'_'.$cache_id);
             	 
@@ -1278,14 +1270,13 @@ error_log("about to cache ---> ".$actionname . '_' . $cache_id.PHP_EOL);
         } else {
             // xml output
             echo $output;
-error_log("Output data as xml -----> ".$output.PHP_EOL);
+//error_log("Output data as xml -----> ".$output.PHP_EOL);
 //error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 			exit();
         }
     }
     
     public function loginAction() {
-        error_log("INSIDE LOGIN ACTION");
         // Fetch the post data
         $request = $this->getRequest();
         $postData = $request->getPost()->toArray();
@@ -1441,7 +1432,7 @@ error_log("Output data as xml -----> ".$output.PHP_EOL);
          */
         $this->elasticache = new AWSMemreasCache();
 
-//error_log('inside security');
+//error_log('just set this->elasticache in security...');
                     
         $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
@@ -1451,10 +1442,13 @@ error_log("Output data as xml -----> ".$output.PHP_EOL);
         } else { 
             $ipaddress = $_SERVER['REMOTE_ADDR'];
         }       
-      error_log('ip is '.$ipaddress);
-        if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
-          $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
-        }else{
+//error_log('ip is '.$ipaddress);
+		/*
+		 * TODO: Cache in 
+		 */
+        //if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
+        //  $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
+        //}else{
             $gwOpts = new DbTableGatewayOptions ();
             $gwOpts->setDataColumn ( 'data' );
             $gwOpts->setIdColumn ( 'session_id' );
@@ -1465,7 +1459,7 @@ error_log("Output data as xml -----> ".$output.PHP_EOL);
             $dbAdapter = $this->getServiceLocator()->get ( MemreasConstants::MEMREASDB );
             $saveHandler = new \Application\Model\DbTableGateway ( new TableGateway ( 'user_session', $dbAdapter ), $gwOpts );
 
-        }
+        //}
         $sessionManager = new SessionManager();
         $sessionManager->setSaveHandler($saveHandler);
         Container::setDefaultManager ( $sessionManager );
@@ -1478,11 +1472,11 @@ error_log("Output data as xml -----> ".$output.PHP_EOL);
             $sid = trim ( $data->sid );
 
         }
-                error_log('sid ->'.$sid);
-                if (! empty ( $sid )) {
-                        $sessionManager->setId ( $sid );
-                }
-                $container = new Container ( 'user' );
+//error_log('sid ->'.$sid);
+        if (!empty ( $sid )) {
+			$sessionManager->setId ( $sid );
+		}
+		$container = new Container ( 'user' );
     	$public= array(
             'login',
             'registration',
@@ -1506,18 +1500,19 @@ error_log("Output data as xml -----> ".$output.PHP_EOL);
 //            'doquery'
             ,'getdiskusage'
             );
-        $_SESSION ['user'] ['ip'] = $ipaddress;
+//        $_SESSION ['user'] ['ip'] = $ipaddress;
         //$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
 	    	        $session = new Container("user");
-            error_log('ws-session-user_id ->'.$session->user_id);
+//error_log('ws-session-user_id ->'.$session->user_id);
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }
-            return $actionname;       
-        // return $this->redirect()->toRoute('index', array('action' => 'login'));
+//error_log("user session ---> ".json_encode($session).PHP_EOL);	    	        
+	            return $actionname;       
+// return $this->redirect()->toRoute('index', array('action' => 'login'));
         }
 
     }
