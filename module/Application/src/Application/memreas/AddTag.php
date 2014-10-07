@@ -13,7 +13,6 @@ class AddTag {
 	protected $service_locator;
 	protected $dbAdapter;
 	public function __construct($service_locator) {
-		error_log ( "Inside__construct..." );
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);

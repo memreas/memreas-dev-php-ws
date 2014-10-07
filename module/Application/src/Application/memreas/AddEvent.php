@@ -18,7 +18,6 @@ class AddEvent {
     protected $notification;
 
     public function __construct($message_data, $memreas_tables, $service_locator) {
-        error_log("Inside__construct...");
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
@@ -38,57 +37,57 @@ class AddEvent {
     public function exec() {
        
         $data = simplexml_load_string($_POST['xml']);
-$message = ' ';
-$user_id =addslashes(trim($data->addevent->user_id));
-$event_name = addslashes(trim($data->addevent->event_name));
-$event_location = addslashes(trim($data->addevent->event_location));
-
-$event_date = addslashes(trim($data->addevent->event_date));
-$event_from = strtotime(trim($data->addevent->event_from));
-$event_to = strtotime(trim($data->addevent->event_to));
-//$event_to =(!empty($event_to)) ? strtotime('+1 day', $event_to) : '';
-
-$event_date_timestamp= time();
-$is_friend_can_share = trim($data->addevent->is_friend_can_add_friend);
-$is_friend_can_post_media = trim($data->addevent->is_friend_can_post_media);
-$event_self_destruct = strtotime(trim($data->addevent->event_self_destruct));
-$is_public = trim($data->addevent->is_public);
-//$media_array = $data->addevent->medias->media;
-//$friend_array =$data->addevent->friends->friend;
-//    print_r($friend_array);
-//print_r($media_array);
-$event_id='';
-$time = time();
-if (!isset($user_id) || empty($user_id)) {
-    $message .= 'user id is empty';
-    $status = 'Failure';
-}else if (!isset($event_name) || empty($event_name)) {
-    $message .= 'event name is empty';
-    $status = 'Failure';
-} 
-//else if (!isset($event_date) || empty($event_date)) {
-//    $message .= 'event date is empty';
-//    $status = 'Failure';
-//} 
-//else if (!isset($event_location) || empty($event_location)) {
-//    $message .= 'event location is empty';
-//    $status = 'Failure';
-//} else if (!isset($event_from) || empty($event_from)) {
-//    $message .= 'event from is empty';
-//    $status = 'Failure';
-//} else if (!isset($event_to) || empty($event_to)) {
-//    $message .= 'event to date is empty';
-//    $status = 'Failure';
-//} else if (!isset($is_friend_can_share) || empty($is_friend_can_share)) {
-//    $message .= 'frients can share field is empty';
-//    $status = 'Failure';
-//} else if (!isset($is_friend_can_post_media) || empty($is_friend_can_post_media)) {
-//    $message .= 'friend can post field is empty';
-//    $status = 'Failure';
-//} else if (!isset($event_self_destruct) || empty($event_self_destruct)) {
-//    $event_self_destruct='';
-//}
-else {
+		$message = ' ';
+		$user_id =addslashes(trim($data->addevent->user_id));
+		$event_name = addslashes(trim($data->addevent->event_name));
+		$event_location = addslashes(trim($data->addevent->event_location));
+		
+		$event_date = addslashes(trim($data->addevent->event_date));
+		$event_from = strtotime(trim($data->addevent->event_from));
+		$event_to = strtotime(trim($data->addevent->event_to));
+		//$event_to =(!empty($event_to)) ? strtotime('+1 day', $event_to) : '';
+		
+		$event_date_timestamp= time();
+		$is_friend_can_share = trim($data->addevent->is_friend_can_add_friend);
+		$is_friend_can_post_media = trim($data->addevent->is_friend_can_post_media);
+		$event_self_destruct = strtotime(trim($data->addevent->event_self_destruct));
+		$is_public = trim($data->addevent->is_public);
+		//$media_array = $data->addevent->medias->media;
+		//$friend_array =$data->addevent->friends->friend;
+		//    print_r($friend_array);
+		//print_r($media_array);
+		$event_id='';
+		$time = time();
+		if (!isset($user_id) || empty($user_id)) {
+		    $message .= 'user id is empty';
+		    $status = 'Failure';
+		}else if (!isset($event_name) || empty($event_name)) {
+		    $message .= 'event name is empty';
+		    $status = 'Failure';
+		} 
+		//else if (!isset($event_date) || empty($event_date)) {
+		//    $message .= 'event date is empty';
+		//    $status = 'Failure';
+		//} 
+		//else if (!isset($event_location) || empty($event_location)) {
+		//    $message .= 'event location is empty';
+		//    $status = 'Failure';
+		//} else if (!isset($event_from) || empty($event_from)) {
+		//    $message .= 'event from is empty';
+		//    $status = 'Failure';
+		//} else if (!isset($event_to) || empty($event_to)) {
+		//    $message .= 'event to date is empty';
+		//    $status = 'Failure';
+		//} else if (!isset($is_friend_can_share) || empty($is_friend_can_share)) {
+		//    $message .= 'frients can share field is empty';
+		//    $status = 'Failure';
+		//} else if (!isset($is_friend_can_post_media) || empty($is_friend_can_post_media)) {
+		//    $message .= 'friend can post field is empty';
+		//    $status = 'Failure';
+		//} else if (!isset($event_self_destruct) || empty($event_self_destruct)) {
+		//    $event_self_destruct='';
+		//}
+		else {
              $uuid = MUUID::fetchUUID();
              $tblEvent= new \Application\Entity\Event();
 
@@ -110,10 +109,7 @@ else {
                 $this->dbAdapter->flush();
 
                 $this->createEventCache();
-                
-                
-                
-                
+
               //add tag
               /*  $tagData = array('addtag' => array(
                     'meta' => json_encode(array('event_id' => $uuid)),
@@ -157,9 +153,9 @@ else {
   
   
    
-        $event_id = $uuid;
-        $message .= 'Event successfully added';
-        $status = 'Success';
+	        $event_id = $uuid;
+	        $message .= $event_name.' successfully added';
+	        $status = 'Success';
   //TODO send Notification
   /* 
         $data = array('addNotification' => array(

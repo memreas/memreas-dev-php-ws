@@ -22,7 +22,6 @@ class AddNotification {
 
 	public $sendShortCode=false;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-		error_log ( "Inside__construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;

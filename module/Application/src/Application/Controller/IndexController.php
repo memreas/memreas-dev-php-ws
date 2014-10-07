@@ -189,10 +189,12 @@ class IndexController extends AbstractActionController {
 
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
+            /*
             if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
 				error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL);
             }
-                        
+            */
+                      
             $memreas_tables = new MemreasTables($this->getServiceLocator());
 
             if($actionname == 'notlogin'){
@@ -273,8 +275,7 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 /*
                  * Cache approach - Write Operation - Invalidate existing cache here
                  */
-                $this->elasticache->invalidateMedia();
-               	
+               	$this->elasticache->invalidateMedia($data->addmediaevent->user_id, $data->addmediaevent->event_id);
             } else if ($actionname == "likemedia") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $cache_id = trim($data->likemedia->user_id);
@@ -293,8 +294,9 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $mediainappropriate = new MediaInappropriate($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $mediainappropriate->exec();
                 /*
-                 * TODO: Cache approach - write operation - listallmedia by event and user id, 
+                 * Cache approach - Write Operation - Invalidate existing cache here
                  */
+                $this->elasticache->invalidateMedia($data->mediainappropriate->user_id, $data->mediainappropriate->event_id);
             } else if ($actionname == "countlistallmedia") {
                 
                 /*
@@ -328,8 +330,10 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $result = $deletephoto->exec();
                 
                 /*
-                 * Cache approach - Write Operation - Invalidate existing cache here
+                 * TODO: Cache approach - Write Operation - Invalidate existing cache here
+                 *  -- need user_id or event_id --- this is based on media_id
                  */
+                
                 //$session = new Container("user");
                 //$this->elasticache->invalidateCache("listallmedia_" . $session->user_id);
                	//$this->elasticache->invalidateCache("viewevents_" . $session->user_id);
@@ -379,14 +383,9 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $uid = trim($data->creategroup->user_id);
 
                 /*
-                 * Cache approach - write operation - hold for now
+                 * Cache approach - write operation - invalidate listgroup
                  */
-                //if (!empty($uid)) {
-                //    $invalidate_action = "listgroup";
-                //    $invalidate_me = true;
-                //    $cache_id = $uid;
-                    //$this->elasticache->invalidateCache("listgroup_" . $cache_id);
-                //}
+                $this->elasticache->invalidateGroups($uid);
             } else if ($actionname == "listallmedia") {
                 /*
                  * Cache Approach: Check cache first if not there then fetch and cache...
@@ -398,11 +397,10 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 } else if (!empty($data->listallmedia->user_id)) {
                 	$cache_id =  $data->listallmedia->user_id;
                 }
-//error_log("Inside listallmedia - about to get cache key ---> ".$actionname.'_'.$cache_id);
                 
                 $result = $this->elasticache->getCache($actionname.'_'.$cache_id);
                 if (!$result || empty($result)) {
-//error_log("Inside listallmedia - no result so pull from db...");                	
+error_log("Inside listallmedia - no result so pull from db...");                	
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listallmedia->exec();
                     $cache_me = true;
@@ -428,29 +426,22 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $editevent = new EditEvent($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $editevent->exec();
                 $data = simplexml_load_string($_POST ['xml']);
-                $uid = trim($data->editevent->event_id);
+                $event_id = trim($data->editevent->event_id);
+
                 /*
-                 * Cache approach - write operation - invalidate viewevents cache here
-                 */
-                //if (!empty($uid)) {
-                //    $invalidate_action = "viewevents";
-                //    $data->addmediaevent->user_id;
-                //    $invalidate_me = true;
-                //}
+                 * Cache approach - write operation - invalidate events
+                */
+                $this->elasticache->invalidateEvents($event_id);
             } else if ($actionname == "addevent") {
                 $addevent = new AddEvent($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $addevent->exec();
-
+                $data = simplexml_load_string($_POST ['xml']);
+                
                 /*
-                 * Cache approach - write operation - invalidate viewevents cache here
+                 * Cache approach - write operation - hold for now
                  */
-               // $data = simplexml_load_string($_POST ['xml']);
-               // $uid = trim($data->addevent->user_id);
-               // if (!empty($uid)) {
-               //     $invalidate_action = "viewevents";
-               //     $invalidate_me = true;
-               // }
-            } else if ($actionname == "viewevents") {
+                $this->elasticache->invalidateEvents($data->addevent->user_id);
+			} else if ($actionname == "viewevents") {
             	/*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
             	 */
@@ -459,7 +450,7 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             		$cache_id =  "public";
             	} else if (!empty($data->viewevent->is_friend_event) && $data->viewevent->is_friend_event) {
             		$cache_id = "is_friend_event_".trim ($data->viewevent->user_id);
-            	} else if (!empty($data->viewevent->is_friend_event) && $data->viewevent->is_my_event) {
+            	} else if (!empty($data->viewevent->is_my_event) && $data->viewevent->is_my_event) {
             		$cache_id = "is_my_event_" . trim ($data->viewevent->user_id);
             	}
             	$result = $this->elasticache->getCache($actionname.'_'.$cache_id);
@@ -474,13 +465,12 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $result = $addfriendtoevent->exec();
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->addfriendtoevent->user_id);
+
                 /*
-                 * Cache approach - write operation - invalidate viewevents cache here
+                 * Cache approach - write operation - hold for now
                  */
-                //if (!empty($uid)) {
-                //    $invalidate_action = "viewevents";
-                //    $invalidate_me = true;
-                //}
+                $this->elasticache->invalidateEvents($uid);
+                $this->elasticache->invalidateGroups($uid);
             } else if ($actionname == "viewmediadetails") {
             	/*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -520,10 +510,11 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $result = $addNotification->exec();
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->addNotification->user_id);
-                //if (!empty($uid)) {
-                //    $invalidate_action = "listnotification";
-                //    $invalidate_me = true;
-                //}
+
+                /*
+                 * Cache approach - write operation - invalidate listnotification
+                 */
+                $this->elasticache->invalidateNotifications($uid);
             } else if ($actionname == "changepassword") {
                 $changepassword = new ChangePassword($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $changepassword->exec();
@@ -546,11 +537,12 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $result = $updatenotification->exec();
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = $updatenotification->user_id;
-                //if (!empty($uid)) {
-                //    $invalidate_action = "listnotification";
-                //    $invalidate_me = true;
-                //}
-            } else if ($actionname == "findtag") {
+
+                /*
+                 * Cache approach - write operation - invalidate listnotification
+                 */
+                $this->elasticache->invalidateNotifications($uid);
+			} else if ($actionname == "findtag") {
             	
             	/*
             	 * TODO: How is caching working here?
@@ -902,10 +894,10 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $result = $logout->exec();
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->clearallnotification->user_id);
-                //if (!empty($uid)) {
-                //    $invalidate_action = "listnotification";
-                //    $invalidate_me = true;
-                //}
+                /*
+                 * Cache approach - write operation - invalidate listnotification
+                 */
+                $this->elasticache->invalidateNotifications($uid);
             } else if ($actionname == "getsession") {
             	/*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -998,6 +990,12 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             	 */
                 $SaveUserDetails = new SaveUserDetails($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $SaveUserDetails->exec();
+                $data = simplexml_load_string($_POST ['xml']);
+                
+                /*
+                 * Cache approach - write operation - invalidate listnotification
+                 */
+                $this->elasticache->invalidateUser($data->saveuserdetails->user_id);
             } else if ($actionname == "getusergroups") {
             	/*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1019,11 +1017,7 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             	$data = simplexml_load_string($_POST ['xml']);
             	$group_id = trim ( $data->getgroupfriends->group_id );
             	$network = trim ($data->getgroupfriends->network);
-            	if (!empty($group_id) && !empty($network)){
-            		$cache_id =  $network ."_". $group_id;
-            	} else if (!empty($data->listcomments->media_id)) {
-            		$cache_id =  $network;
-            	}
+            	$cache_id =  $group_id;
 
             	$result = $this->elasticache->getCache($actionname.'_'.$cache_id);
 
@@ -1038,12 +1032,23 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             	 */
                 $AddFriendToGroup = new AddFriendToGroup($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $AddFriendToGroup->exec();
+                $data = simplexml_load_string($_POST ['xml']);
+                
+                /*
+                 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
+                 */
+                $session = new Container("user");
+                $this->elasticache->invalidateGroups($session->offsetGet('user_id'));
+                                
             } else if ($actionname == "removefriendgroup") {
-            	/*
-            	 * TODO: Invalidation needed
-            	 */
             	$RemoveFriendGroup = new RemoveFriendGroup($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveFriendGroup->exec();
+                
+                /*
+                 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
+                 */
+                $session = new Container("user");
+                $this->elasticache->invalidateGroups($session->offsetGet('user_id'));
             } else if ($actionname == "geteventpeople") {
             	/*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1058,11 +1063,15 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             		$cache_me = true;
             	}
             } else if ($actionname == "addexistmediatoevent") {
-            	/*
-            	 * TODO: Invalidation needed
-            	 */
                 $AddExistMediaToEvent = new AddExistMediaToEvent($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $AddExistMediaToEvent->exec();
+                
+                /*
+                 * Cache approach - write operation - need to invalidate invalidateEvents 
+                 */
+                $session = new Container("user");
+                $this->elasticache->invalidateEvents($session->offsetGet('user_id'));
+                                
             } else if ($actionname == "getmedialike") {
                 /*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1107,6 +1116,13 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             	 */
                 $UpdateMedia = new UpdateMedia($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $UpdateMedia->exec();
+                
+                /*
+                 * TODO: Cache approach - write operation - need to invalidate invalidateMedia
+                */
+                $session = new Container("user");
+                $this->elasticache->invalidateMedia($session->offsetGet('user_id'));
+                
             } else if ($actionname == "feedback") {
             	/*
             	 * Cache Approach - N/a
@@ -1127,33 +1143,61 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             		$cache_me = true;
             	}
             }else if ($actionname == "removeeventmedia") {
-            	/*
-            	 * TODO: Invalidation needed
-            	 */
                 $RemoveEventMedia = new RemoveEventMedia($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveEventMedia->exec();
+
+                /*
+                 * Cache approach - write operation - invalidateMedia
+                 */
+                $session = new Container("user");
+                $this->elasticache->invalidateMedia($session->offsetGet('user_id'));
+                
             }else if ($actionname == "removeeventfriend") {
             	/*
             	 * TODO: Invalidation needed
             	 */
             	$RemoveEventFriend = new RemoveEventFriend($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveEventFriend->exec();
-            }else if ($actionname == "removefriends") {
-            	/*
-            	 * TODO: Invalidation needed
-            	 */
+                $data = simplexml_load_string($_POST ['xml']);
+                
+                /*
+                 * Cache approach - write operation - invalidateMedia
+                 */
+                $session = new Container("user");
+                $this->elasticache->invalidateEventFriends($data->removeeventfriend->event_id, $session->offsetGet('user_id'));
+                
+            } else if ($actionname == "removefriends") {
+
             	$RemoveFriends = new RemoveFriends($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveFriends->exec();
-            }else if ($actionname == "getfriends") {
-                $GetFriends = new GetFriends($message_data, $memreas_tables, $this->getServiceLocator());
-                $result = $GetFriends->exec();
-            }else if ($actionname == "getplans") {
+
+                /*
+                 * Cache approach - write operation - invalidateFriends
+                 */
+                $session = new Container("user");
+                $this->elasticache->invalidateFriends($session->offsetGet('user_id'));
+                
+            } else if ($actionname == "getfriends") {
+
+            	/*
+            	 * Cache Approach: Check cache first if not there then fetch and cache...
+            	 */
+            	$data = simplexml_load_string($_POST ['xml']);
+            	$cache_id = trim ( $data->getfriends->user_id  );
+            	$result = $this->elasticache->getCache($actionname.'_'.$cache_id);
+            	
+            	if (!$result || empty($result)) {
+            		$GetFriends = new GetFriends($message_data, $memreas_tables, $this->getServiceLocator());
+                	$result = $GetFriends->exec();
+            		$cache_me = true;
+            	}
+            } else if ($actionname == "getplans") {
             	/*
             	 * Cache Approach: N/a for now
             	 */
             	$GetPlans = new GetPlans($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $GetPlans->exec();
-            }else if ($actionname == "getplansstatic") {
+            } else if ($actionname == "getplansstatic") {
             	/*
             	 * Cache Approach: N/a for now
             	 */
@@ -1173,11 +1217,15 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $result = $GetOrder->exec();
             }
             else if ($actionname == "removegroup") {
-            	/*
-            	 * TODO: Invalidation needed...
-            	 */
             	$RemoveGroup = new RemoveGroup($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $RemoveGroup->exec();
+                
+                /*
+                 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
+                */
+                $session = new Container("user");
+                $this->elasticache->invalidateGroups($session->offsetGet('user_id'));
+                
             }
             else if ($actionname == "checkevent") {
             	/*
@@ -1470,7 +1518,6 @@ error_log("about to cache ---> ".$actionname . '_' . $cache_id.PHP_EOL);
         } elseif (isset ( $_POST ['xml'] )) {
             $data = simplexml_load_string ( $_POST ['xml'] );
             $sid = trim ( $data->sid );
-
         }
 //error_log('sid ->'.$sid);
         if (!empty ( $sid )) {
