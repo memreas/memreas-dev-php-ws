@@ -42,7 +42,7 @@
                 'page' => $page,
                 'limit' => $limit
             );
-
+echo MemreasConstants::MEMREAS_PAY_URL; die();
             $request = $guzzle->post(
                 MemreasConstants::MEMREAS_PAY_URL,
                 null,
