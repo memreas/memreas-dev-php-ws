@@ -189,11 +189,11 @@ class IndexController extends AbstractActionController {
 
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
-            /*
+            
             if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
 				error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL);
             }
-            */
+            
                       
             $memreas_tables = new MemreasTables($this->getServiceLocator());
 
@@ -275,7 +275,8 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 /*
                  * Cache approach - Write Operation - Invalidate existing cache here
                  */
-               	$this->elasticache->invalidateMedia($data->addmediaevent->user_id, $data->addmediaevent->event_id);
+                $data = simplexml_load_string($_POST ['xml']);
+                $this->elasticache->invalidateMedia($data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id);
             } else if ($actionname == "likemedia") {
                 $data = simplexml_load_string($_POST ['xml']);
                 $cache_id = trim($data->likemedia->user_id);
@@ -1070,7 +1071,9 @@ error_log("Inside listallmedia - no result so pull from db...");
                  * Cache approach - write operation - need to invalidate invalidateEvents 
                  */
                 $session = new Container("user");
-                $this->elasticache->invalidateEvents($session->offsetGet('user_id'));
+                $data = simplexml_load_string($_POST ['xml']);
+                $event_id = $data->addexistmediatoevent->event_id;
+                $this->elasticache->invalidateMedia($session->offsetGet('user_id'), $event_id);
                                 
             } else if ($actionname == "getmedialike") {
                 /*

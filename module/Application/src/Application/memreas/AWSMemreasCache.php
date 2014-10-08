@@ -62,6 +62,7 @@ class AWSMemreasCache {
 		
 		//Debug
 		if($result) {
+			$now= 
 			error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 			// error_log('VALUE ----> ' . $value . PHP_EOL);
 		} else {
@@ -105,63 +106,62 @@ class AWSMemreasCache {
 		}
 
  		$result = $this->cache->deleteMulti ( $keys );
-error_log("print r of result ". print_r($result).PHP_EOL); 		
  		if ($result) {
 			 error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
  		} else {
  			error_log('COULD NOT DELETE THES KEYS ----> ' . json_encode($keys) . PHP_EOL);
  		}
+ 		return $result;
 	}
 
 	/*
 	 * Add function to invalidate cache for media
 	 */
-	public function invalidateMedia($user_id, $event_id = null) {
-		// write functions for media 
+	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
+error_log("Inside invalidateMedia".PHP_EOL); 		
+error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
+error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
+error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
+// write functions for media 
 		//  - add media event (key is event_id or user_id) 
 		//  - mediainappropriate (key is user id for invalidate) 
 		//  - deletePhoto (key is user id for invalidate)
 		//  - update media
 		//  - removeeventmedia
-		if (!empty($event_id)) {
-			$result = $this->invalidateCache("listallmedia_" . $event_id);
-
-			if ($result) {
-				error_log('invalidateCache JUST DELETED THIS KEY ----> ' . $event_id . PHP_EOL);
-			} else {
-				error_log('invalidateCache COULD NOT DELETE THIS KEY ----> ' . $event_id . PHP_EOL);
-			}
+		$cache_keys = array();
+		if (!empty(trim($event_id))) {
+			$cache_keys[] = "listallmedia_" . $event_id;
+			$cache_keys[] = "geteventdetails_" . $event_id;
 		}
 		
-		if (!empty($user_id)) {
-			//countviewevent can return me / friends / public
-			$cache_keys = array(
-					"listallmedia_" . $user_id,
-					"viewevents_is_my_event_" . $user_id,
-					"viewevents_is_friend_event_" . $user_id,
-					"getuserdetails_" . $user_id,
-			);
-			$result = $this->invalidateCacheMulti($cache_keys);
-			
-
-			if ($result) {
-				error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
-			} else {
-				error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($keys) . PHP_EOL);
-			}
-				
-			
-			//$this->invalidateCache("listallmedia_" . $data->addmediaevent->user_id);
-			//$this->invalidateCache("viewevents_is_my_event_" . $data->addmediaevent->user_id);
-			//$this->invalidateCache("viewevents_is_friend_event_" . $data->addmediaevent->user_id);
-			//$this->invalidateCache("getuserdetails_" . $data->addmediaevent->user_id);
+		if (!empty(trim($media_id))) {
+			$cache_keys[] = "viewmediadetails_" . $media_id;
 		}
+		
+		if (!empty(trim($user_id))) {
+			//countviewevent can return me / friends / public
+			$cache_keys[] = "listallmedia_" . $user_id;
+			$cache_keys[] = "viewevents_is_my_event_" . $user_id;
+			$cache_keys[] = "viewevents_is_friend_event_" . $user_id;
+		}
+
+		//Mecached - deleteMulti...
+		$result = $this->invalidateCacheMulti($cache_keys);
+		if ($result) {
+			$now = date ( 'Y-m-d H:i:s' );
+			error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
+		} else {
+			$now = date ( 'Y-m-d H:i:s' );
+			error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
+		}
+		
 	}
 	
 	/*
 	 * Add function to invalidate cache for events
 	 */
 	public function invalidateEvents($user_id) {
+error_log("Inside invalidateEvents".PHP_EOL); 		
 		// write functions for media 
 		//  - add event (key is event_id) 
 		//  - removeevent
@@ -185,6 +185,7 @@ error_log("print r of result ". print_r($result).PHP_EOL);
 	 * Add function to invalidate cache for event friends
 	 */
 	public function invalidateEventFriends($event_id, $user_id) {
+error_log("Inside invalidateEventFriends".PHP_EOL); 		
 		// write functions for media 
 		//  - add event friend 
 		//  - remove event friend
@@ -203,6 +204,7 @@ error_log("print r of result ". print_r($result).PHP_EOL);
 	 * Add function to invalidate cache for friends
 	 */
 	public function invalidateFriends($user_id) {
+error_log("Inside invalidateEventFriends".PHP_EOL); 		
 		// write functions for media 
 		//  - add friend 
 		//  - remove friend
