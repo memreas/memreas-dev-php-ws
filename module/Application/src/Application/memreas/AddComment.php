@@ -118,7 +118,7 @@ class AddComment {
 // error_log("Inserted Comment with audio_media_id ---> ".$audio_media_id.PHP_EOL);
 			}
 
-			$message = "Comment successfuly added";
+			$message = "Comment successfully added";
 
 			if ($status == 'failure') {
 				$status = 'failure';
