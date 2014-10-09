@@ -59,43 +59,36 @@ class DeletePhoto {
                     $event_statement = $this->dbAdapter->createQuery ( $query_event );
                     $event_result = $event_statement->getResult ();
 
-                    //Remove media resource on S3 AMZ
                     /*
-                     * TODO - need to remove transcoded data also...
+                     * Remove media resource on S3 AMZ - transcoded files should be removed also
+                     * Specify your file element in Json metadata, they will be deleted all
                      */
+                    $files_prepare = array('path', 'web', '1080p');
                     $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
-                    
-                    
-                    $result = $S3Client->deleteObjects(array(
-	                    'Bucket'  => MemreasConstants::S3BUCKET,
-	                    'Objects' => array(
-		                    	array('Key' => $json_array ['S3_files'] ['path']),
-		                    	array('Key' => $json_array ['S3_files'] ['web']),
-		                    	array('Key' => $json_array ['S3_files'] ['1080p']),
-                    		)
-	                    ));
-                    
+
+                    foreach ($files_prepare as $file){
+                        //Checking for exist object
+                        if (isset($json_array['S3_files'][$file]))
+                            $S3Client->deleteObject(array(
+                                'Bucket' => MemreasConstants::S3BUCKET,
+                                'Key' => $json_array ['S3_files'] [$file]
+                            ));
+                    }
+
                     $session = new Container("user");
-                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/79x80/');
-                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/448x306/');
-                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/384x216/');
-                    $result = $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/98x78/');
+                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/79x80/');
+                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/448x306/');
+                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/384x216/');
+                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/98x78/');
                     
                     if (count ( $result ) > 0) {
-
                         $xml_output .= "<status>success</status>";
                         $xml_output .= "<message>Photo deleted successfully</message>";
-
-                    } else {
-                        $xml_output .= "<status>failure</status><message>No record found</message>";
-                    }
+                    } else $xml_output .= "<status>failure</status><message>No record found</message>";
                 }
-			} else {
-				$xml_output .= "<status>failure</status><message>Given media id is wrong.</message>";
-			}
-		} else {
-			$xml_output .= "<status>failure</status><message>Please check that you have given media id.</message>";
-		}
+			} else $xml_output .= "<status>failure</status><message>Given media id is wrong.</message>";
+		} else $xml_output .= "<status>failure</status><message>Please check that you have given media id.</message>";
+
         $xml_output .= "<media_id>{$mediaid}</media_id>";
 		$xml_output .= "</deletephotoresponse>";
 		$xml_output .= "</xml>\n";
