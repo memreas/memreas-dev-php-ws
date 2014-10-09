@@ -4,6 +4,7 @@ namespace Application\memreas;
 
 use Application\memreas\MUUID;
 use Application\memreas\Email;
+use swearjar\Tester;
 
 
 class AddComment {
@@ -32,6 +33,8 @@ class AddComment {
 			$this->addTag = new AddTag ( $service_locator );
 		}
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
+		$this->tester = new Tester();
+ 
 	}
 	public function exec() {
 // error_log("Inside Add Comment exec()".PHP_EOL);
@@ -41,6 +44,7 @@ class AddComment {
 		$event_id = trim ( $data->addcomment->event_id );
 		$media_id = trim ( $data->addcomment->media_id );
 		$comment = trim ( $data->addcomment->comments );
+
 		$user_id = trim ( $data->addcomment->user_id );
 		$audio_media_id = trim ( $data->addcomment->audio_media_id );
 		$message = "";
@@ -77,6 +81,8 @@ class AddComment {
 			
 			$uuid = MUUID::fetchUUID ();
 			$tblComment = new \Application\Entity\Comment ();
+			//profinity check
+			$comment = $this->tester->censor($comment);
 
 			
 				

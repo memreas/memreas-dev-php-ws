@@ -17,6 +17,7 @@
         "aws/aws-sdk-php": "2.*",
 		"sybio/image-workshop": "2.0.0",
 		"rhumsaa/uuid": "2.5.0",
-		"doctrine/doctrine-orm-module": "0.*"
+		"doctrine/doctrine-orm-module": "0.*",
+        "swearjar/swearjar": "*"
     }
 }

@@ -175,7 +175,7 @@ class IndexController extends AbstractActionController {
         /*
          * TODO: SID working within security as of 4-OCT-2014
          */
-        $actionname = $this->security($actionname);
+       // $actionname = $this->security($actionname);
                     
 //error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 //error_log("Inside indexAction---> _POST ['xml'] ---> ".print_r($_POST['xml'],true). PHP_EOL);
