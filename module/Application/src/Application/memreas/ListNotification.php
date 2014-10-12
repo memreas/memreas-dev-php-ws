@@ -124,10 +124,14 @@ class ListNotification {
                             $xml_output .= "<comment><![CDATA[$comment->text]]></comment>";
                             $xml_output .= "<comment_id>$comment->comment_id</comment_id>";
                             $xml_output .= "<comment_time>$comment->create_time</comment_time>";
+                            $xml_output .= "<media_id>$comment->media_id</media_id>";
+
                         }else{
                             $xml_output .= "<comment><![CDATA[]]></comment>";
                             $xml_output .= "<comment_id></comment_id>";
                             $xml_output .= "<comment_time></comment_time>";
+                            $xml_output .= "<media_id></media_id>";
+
                             
                         }
                     }
