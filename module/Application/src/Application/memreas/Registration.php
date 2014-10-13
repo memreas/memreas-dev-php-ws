@@ -181,7 +181,9 @@ error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email
 
 				        /*
 				         * 12-OCT-2014 - This query shows up in slow query so removing - seems not used.
+				         * ......
 				         */
+				        
 				        //create cache				        
 				        //$this->createUserCache();
 				        
