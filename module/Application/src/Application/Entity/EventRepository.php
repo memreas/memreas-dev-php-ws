@@ -149,34 +149,29 @@ error_log("path 79x80 -----> ".$url.PHP_EOL);
     foreach ($result as $row) {
         $temp =array() ;
         $json_array = json_decode ( $row['meta'], true );
-       
+        error_log ('comment'. print_r($json_array['comment']))
+        foreach($json_array['comment'] as $k => $comm){
             $temp['name'] = $row['tag'];
             $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
             $temp['event_name'] = $event->name;
             $temp['event_id'] = $event->event_id;
             $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
             $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
-             $temp['comment'] = array();
-             error_log('comments: '.$temp['comment']);
-            if(count($json_array['comment']) > 0){
-                foreach($json_array['comment'] as $k => $comm){
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
-            $comment_rec['comment'] = $comment->text;
-            $comment_rec['update_time'] = $comment->update_time;
-            $comment_rec = $this->getUser($comment->user_id,'row');
-            $comment_rec['commenter_photo'] = $commenter['profile_photo'];
-            $comment_rec['commenter_name'] = '@'.$commenter['username'];
+            $temp['comment'] = $comment->text;
+            $temp['update_time'] = $comment->update_time;
+            $commenter = $this->getUser($comment->user_id,'row');
+            $temp['commenter_photo'] = $commenter['profile_photo'];
+            $temp['commenter_name'] = '@'.$commenter['username'];
 
            
 
-             $temp['comment'][] =$comment_rec;
-            }
-             
+             $Index[] =$temp;
         }
 
-         $Index[] =$temp; 
+
     }
-     return ;
+     return $Index;
 
   }
    function chkEventFriendRule($eventId,$friendId)
