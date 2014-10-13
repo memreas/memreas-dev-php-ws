@@ -179,8 +179,12 @@ error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email
 					        $this->dbAdapter->flush ();
 				        }
 
-				        //create cache
-				        $this->createUserCache();
+				        /*
+				         * 12-OCT-2014 - This query shows up in slow query so removing - seems not used.
+				         */
+				        //create cache				        
+				        //$this->createUserCache();
+				        
 				        //invite by code
 				        $q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
 				        $statement      = $this->dbAdapter->createQuery ( $q_notification );
@@ -341,7 +345,10 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        $subject = 'Welcome to memreas';
 				        if (empty ( $aws_manager ))
 					        $aws_manager = new AWSManagerSender ( $this->service_locator );
-				        $aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        /*
+				         * 9-OCT-2014 debugging perf tester
+				         */
+				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
 				        $this->status = $status = 'Success';
 				        $message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
 				        // error_log ( "Finished..." . PHP_EOL );
@@ -363,6 +370,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "<userid>" . $user_id . "</userid>";
+		$xml_output .= "<email_verification_url><![CDATA[" . $meta_arr['user']['email_verification_url' ] . "]]></email_verification_url>";
 		$xml_output .= "</registrationresponse>";
 		$xml_output .= "</xml>";
 		ob_clean ();

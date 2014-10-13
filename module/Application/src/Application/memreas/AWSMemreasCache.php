@@ -48,8 +48,8 @@ class AWSMemreasCache {
 		
 		$this->cache = $dynamic_client;
 
-		$now = date ( 'Y-m-d H:i:s' );
-		$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
+		//$now = date ( 'Y-m-d H:i:s' );
+		//$this->cache->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
 
 		// Connected at this point
 	}

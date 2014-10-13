@@ -1518,14 +1518,17 @@ error_log("about to cache ---> ".$actionname . '_' . $cache_id.PHP_EOL);
         
         if (!empty( $_REQUEST ['sid'] )) {
             $sid =  $_REQUEST ['sid'] ;
+error_log("_REQUEST[sid]---> ".$sid.PHP_EOL);            
         } elseif (isset ( $_POST ['xml'] )) {
             $data = simplexml_load_string ( $_POST ['xml'] );
             $sid = trim ( $data->sid );
+error_log("data[sid]---> ".$sid.PHP_EOL);            
         }
-//error_log('sid ->'.$sid);
+error_log('sid ->'.$sid);
         if (!empty ( $sid )) {
 			$sessionManager->setId ( $sid );
-		}
+error_log('set sid ->'.$sid);
+        }
 		$container = new Container ( 'user' );
     	$public= array(
             'login',
@@ -1556,7 +1559,7 @@ error_log("about to cache ---> ".$actionname . '_' . $cache_id.PHP_EOL);
             return $actionname;
         } else {
 	    	        $session = new Container("user");
-//error_log('ws-session-user_id ->'.$session->user_id);
+error_log('ws-session-user_id ->'.$session->user_id);
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }
