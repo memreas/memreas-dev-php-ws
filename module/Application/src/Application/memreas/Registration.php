@@ -378,6 +378,9 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 		ob_clean ();
 		echo $xml_output;
 error_log($xml_output.PHP_EOL);
+		return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
+		//Sample thumbnail for future reference
+		//"394d281a-10dc-4c49-be6a-124301b98810/media/thumbnails/98x78/IMG_0095.JPG"
 	}
 
 	function createUserCache(){
@@ -401,6 +404,7 @@ error_log($xml_output.PHP_EOL);
 					}else{
 						$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
 					}
+echo "row user_id is---------> ". $row['user_id'];					
 					$this->userIndex[$row['user_id']] = array(
 															'username'      => $row['username'],
 															'profile_photo' => $url1

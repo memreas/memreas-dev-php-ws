@@ -229,7 +229,32 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $uid = $uid[0];
                 $actionname = '@';
                 if ($registration->status == 'Success') {
-                    $this->elasticache->setCache("@person", $registration->userIndex);
+                	
+                	/*
+                	 * 12-OCT-2014 JM: Performance Testing / Tuning
+                	 * ...
+                	 */
+                	$mc = $this->elasticache->getCache('@person');
+                	if (!$mc || empty($mc)) {
+error_log ("cache is empty mc ---> " . json_encode($mc) . PHP_EOL);
+                	
+                		$registration->createUserCache();
+                		$mc = $registration->userIndex;
+                		$this->elasticache->setCache("@person", $mc);
+                	} else {
+error_log ("cache is NOT empty mc ---> " . json_encode($mc) . PHP_EOL);
+                		/*
+                		 * Add the new user
+                		 */
+                		$mc[] = $registration['user_id'];
+                		$mc[ $registration['user_id'] ] [] = array ('username' => $registration['username'], 'profile_photo' => $registration['profile_photo']);
+                		$this->elasticache->setCache("@person", $mc);
+error_log ("Added to mc ---> " . json_encode($mc) . PHP_EOL);
+                		//$s3_data ['s3path'] . $s3_data ['s3file_name']
+                		
+                	}
+                	//Shouldn't get here....
+                    //$this->elasticache->setCache("@person", $registration->userIndex);
                 }
             } else if ($actionname == "addcomments") {
                 $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
@@ -573,9 +598,9 @@ error_log("Inside listallmedia - no result so pull from db...");
                     case '@':
 
                         $mc = $this->elasticache->getCache('@person');
-
                         if (!$mc || empty($mc)) {
                             $registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
+
                             $registration->createUserCache();
                             $mc = $registration->userIndex;
                             $this->elasticache->setCache("@person", $mc);
