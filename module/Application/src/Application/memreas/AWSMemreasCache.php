@@ -130,16 +130,17 @@ error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL
 		//  - update media
 		//  - removeeventmedia
 		$cache_keys = array();
-		if (!empty(trim($event_id))) {
+		$event_id = trim($event_id);
+		if (!empty($event_id)) {
 			$cache_keys[] = "listallmedia_" . $event_id;
 			$cache_keys[] = "geteventdetails_" . $event_id;
 		}
-		
-		if (!empty(trim($media_id))) {
+		$media_id = trim($media_id);
+		if (!empty($media_id)) {
 			$cache_keys[] = "viewmediadetails_" . $media_id;
 		}
-		
-		if (!empty(trim($user_id))) {
+		$user_id = trim($user_id);
+		if (!empty($user_id)) {
 			//countviewevent can return me / friends / public
 			$cache_keys[] = "listallmedia_" . $user_id;
 			$cache_keys[] = "viewevents_is_my_event_" . $user_id;
