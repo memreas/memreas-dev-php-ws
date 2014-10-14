@@ -25,7 +25,9 @@ class MemreasConstants {
 	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3j7vnip9qhisx.cloudfront.net/';
 	const SIGNURLS = true;
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-	
+
+	//Turns off emails for perf testing
+	const SEND_EMAIL = false;
 	
 	//Same across...
 	const URL = "/index";
@@ -39,6 +41,8 @@ class MemreasConstants {
 	const ELASTICACHE_SERVER_PORT = "11211";
 	const ELASTICACHE_SERVER_USE = true;
 	const ELASTICACHE_CACHE_TTL = 600; //10 minutes
+	
+	
 	
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";

@@ -198,6 +198,10 @@ error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email
                         else $ndata = null;
 				        if(!empty($ndata->from_id)&& !empty($ndata->event_id)){
 
+	        				/*
+	        				 * 14-OCT-2014 JM: code below threw error
+	        				 */
+				        	/*
 									        $xml_input = "<xml><addfriendtoevent>
 									        <user_id>{$ndata->from_id}</user_id>
 									        <event_id>{$ndata->event_id}</event_id>
@@ -208,6 +212,19 @@ error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email
 									        </profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
 									        //add frient to event
 									        $this->addfriendtoevent->exec($xml_input);
+							*/
+				        	
+			        		$xml_input = '<xml><addfriendtoevent>'.
+					        	'<user_id>'. $ndata->from_id . '</user_id>'.
+					        	'<event_id>'.$ndata->event_id.'</event_id>'.
+					        	'<friends><friend>'.
+					        	'<network_name>memreas</network_name>'.
+					        	'<friend_name>'.$username.'</friend_name>'.
+					        	'<profile_pic_url><![CDATA['.$url.']]>'.
+					        	'</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>';
+					        
+					        //	add frient to event
+					        $this->addfriendtoevent->exec($xml_input);
 				        }
 
                         //Check if user has been assigned an event
@@ -350,9 +367,12 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        /*
 				         * 9-OCT-2014 debugging perf tester
 				         */
-				        $aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        if (MemreasConstants::SEND_EMAIL) {
+				        	$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        }
 				        $this->status = $status = 'Success';
 				        $message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
+				        
 				        // error_log ( "Finished..." . PHP_EOL );
 			        }
                 }
@@ -364,7 +384,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 			$message = $exc->getMessage ();
 			error_log ( "error message ----> $message" . PHP_EOL );
 		}
-
+		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
@@ -377,8 +397,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-error_log($xml_output.PHP_EOL);
-		return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
+		//return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
 		//Sample thumbnail for future reference
 		//"394d281a-10dc-4c49-be6a-124301b98810/media/thumbnails/98x78/IMG_0095.JPG"
 	}

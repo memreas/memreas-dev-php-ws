@@ -222,19 +222,21 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->registration->username);
                 
-                /*
-                 * Cache approach - store in @person search index
-                 */
-                //first letter of name
-                $uid = $uid[0];
-                $actionname = '@';
-                if ($registration->status == 'Success') {
+                if ($result->status == 'Success') {
+                	
+	                /*
+	                 * Cache approach - store in @person search index
+	                 */
+	                //first letter of name
+	                $uid = $uid[0];
+	                $actionname = '@';
                 	
                 	/*
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
                 	 *  input as json so we decode json returned
                 	 */
                 	$mc = json_decode($this->elasticache->getCache('@person'));
+                	
                 	if (!$mc || empty($mc)) {
 //error_log ("cache is empty mc ---> " . json_encode($mc) . PHP_EOL);
 error_log ("cache is empty". PHP_EOL);
