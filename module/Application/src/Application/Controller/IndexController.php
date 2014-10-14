@@ -232,7 +232,7 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 	
                 	/*
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
-                	 * ...
+                	 * ......
                 	 */
                 	$mc = $this->elasticache->getCache('@person');
                 	if (!$mc || empty($mc)) {
