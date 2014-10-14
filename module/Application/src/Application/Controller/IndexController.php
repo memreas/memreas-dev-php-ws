@@ -1539,6 +1539,7 @@ error_log('set sid ->'.$sid);
         	'changepassword',
             'showlog',
             'clearlog',
+            'feedback',
     		//verify email
     		'verifyemailaddress',
             //For stripe

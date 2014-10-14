@@ -72,6 +72,14 @@ class GetUserDetails {
                 $output .= '<dob>' . $metadata['dob'] . '</dob>';
             else $output .= '<dob></dob>';
 
+            //For plan
+            if (isset($metadata['subscription'])){
+                $subscription = $metadata['subscription'];
+                $output .= '<subscription><plan>' . $subscription['plan'] . '</plan><name>' . $subscription['name'] . '</name></subscription>';
+            }
+            else $output .= '<subscription><plan>FREE</plan></subscription>';
+
+
             //Get user profile
             $profile_query = $this->dbAdapter->createQueryBuilder();
             $profile_query->select('m')
