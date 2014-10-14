@@ -58,7 +58,7 @@ class AWSMemreasCache {
 		if(!$this->isCacheEnable){
 			return null;
 		}
-		$result = $this->cache->set ( $key , $value, $ttl );
+		$result = $this->cache->set ( $key , json_encode($value), $ttl );
 		
 		//Debug
 		if($result) {
@@ -67,7 +67,7 @@ class AWSMemreasCache {
 			// error_log('VALUE ----> ' . $value . PHP_EOL);
 		} else {
 			error_log('FAILED TO ADD THIS KEY ----> ' . $key . PHP_EOL);
-			error_log('FAILED TO ADD THIS KEY VALUE----> ' . print_r($value, true) . PHP_EOL);
+			//error_log('FAILED TO ADD THIS KEY VALUE----> ' . print_r($value, true) . PHP_EOL);
 		}
 
 		return $result;

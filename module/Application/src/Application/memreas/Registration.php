@@ -350,7 +350,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        /*
 				         * 9-OCT-2014 debugging perf tester
 				         */
-				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        $aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
 				        $this->status = $status = 'Success';
 				        $message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
 				        // error_log ( "Finished..." . PHP_EOL );
@@ -389,29 +389,28 @@ error_log($xml_output.PHP_EOL);
 						$qb->from ( 'Application\Entity\User', 'u' );
 						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 
-
 		//create index for catch;
-			$userIndexArr = $qb->getQuery()->getResult();
-			//	$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
-				//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
-				//$userIndexSql->setMaxResults(30);
-				//$userIndexArr = $qb->getResult();
-				foreach ($userIndexArr as $row) {
-					$json_array = json_decode ( $row ['metadata'], true );
+		$userIndexArr = $qb->getQuery()->getResult();
+		//$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
+		//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
+		//$userIndexSql->setMaxResults(30);
+		//$userIndexArr = $qb->getResult();
+		foreach ($userIndexArr as $row) {
+			$json_array = json_decode ( $row ['metadata'], true );
 
-					if (empty ( $json_array ['S3_files'] ['path'] )){
-						$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
-					}else{
-						$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
-					}
-echo "row user_id is---------> ". $row['user_id'];					
-					$this->userIndex[$row['user_id']] = array(
-															'username'      => $row['username'],
-															'profile_photo' => $url1
-															);
-				}
-
-
+			if (empty ( $json_array ['S3_files'] ['path'] )){
+				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
+			}else{
+				$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+			}
+//echo "row user_id is---------> ". $row['user_id'];					
+			$this->userIndex[$row['user_id']] = array(
+													'username'      => $row['username'],
+													'profile_photo' => $url1
+													);
+		}
+				
+		return $this->userIndex;
 	}
 
 	public function FunctionName($invited_by ='')

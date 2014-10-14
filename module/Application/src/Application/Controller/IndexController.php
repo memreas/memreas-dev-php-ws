@@ -232,24 +232,29 @@ error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
                 	
                 	/*
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
-                	 * ......
+                	 *  input as json so we decode json returned
                 	 */
-                	$mc = $this->elasticache->getCache('@person');
+                	$mc = json_decode($this->elasticache->getCache('@person'));
                 	if (!$mc || empty($mc)) {
-error_log ("cache is empty mc ---> " . json_encode($mc) . PHP_EOL);
-                	
+//error_log ("cache is empty mc ---> " . json_encode($mc) . PHP_EOL);
+error_log ("cache is empty". PHP_EOL);
+
                 		$registration->createUserCache();
                 		$mc = $registration->userIndex;
-                		$this->elasticache->setCache("@person", $mc);
+                		$this->elasticache->setCache("@person", json_encode($mc));
+error_log ("just set cache for @person key value is mc array". PHP_EOL);
+                		
                 	} else {
-error_log ("cache is NOT empty mc ---> " . json_encode($mc) . PHP_EOL);
+//error_log ("cache is NOT empty mc ---> " . json_encode($mc) . PHP_EOL);
+error_log ("cache is NOT empty". PHP_EOL);
                 		/*
                 		 * Add the new user
                 		 */
                 		$mc[] = $registration['user_id'];
                 		$mc[ $registration['user_id'] ] [] = array ('username' => $registration['username'], 'profile_photo' => $registration['profile_photo']);
-                		$this->elasticache->setCache("@person", $mc);
-error_log ("Added to mc ---> " . json_encode($mc) . PHP_EOL);
+                		$this->elasticache->setCache("@person", json_encode($mc));
+//error_log ("Added to mc ---> " . json_encode($mc) . PHP_EOL);
+error_log ("added to cache username --> " . $registration['username'] . PHP_EOL);
                 		//$s3_data ['s3path'] . $s3_data ['s3file_name']
                 		
                 	}
@@ -603,7 +608,7 @@ error_log("Inside listallmedia - no result so pull from db...");
 
                             $registration->createUserCache();
                             $mc = $registration->userIndex;
-                            $this->elasticache->setCache("@person", $mc);
+                            $this->elasticache->setCache("@person", json_encode($mc));
                         }
 
                         $user_ids = array();
