@@ -13,6 +13,7 @@ class AWSMemreasCache {
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
 	public function __construct() {
+		$this->cache = new \Memcached();
 		if(!$this->isCacheEnable){
 			return;
 		}
@@ -75,7 +76,9 @@ class AWSMemreasCache {
 	}
 
 	public function getCache($key) {
+error_log("getCache key ----> ".$key.PHP_EOL);
 		if(!$this->isCacheEnable){
+error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
 			return false;
 		}
 

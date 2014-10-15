@@ -555,7 +555,7 @@ error_log("Inside listallmedia - no result so pull from db...");
                 $cache_id = !empty($data) ? trim($data->listnotification->user_id) : null;
                 try {
                 	$result = !empty($cache_id) ? $this->elasticache->getCache($actionname.'_'.$cache_id) : false;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                 	$result = false;
                 }
 
@@ -1521,7 +1521,8 @@ error_log("Inside listallmedia - no result so pull from db...");
     	} else if (MemreasConstants::ELASTICACHE_SERVER_USE) {
     		$this->elasticache = new AWSMemreasCache();
     	} else {
-    		$this->elasticache = null;
+    		//$this->elasticache = null;
+    		$this->elasticache = new AWSMemreasCache();
     	}
 
 //error_log('just set this->elasticache in security...');
