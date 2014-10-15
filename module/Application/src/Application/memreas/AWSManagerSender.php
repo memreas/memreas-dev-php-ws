@@ -26,9 +26,6 @@ class AWSManagerSender {
 	private $service_locator = null;
 	private $dbAdapter = null;
 	public function __construct($service_locator) {
-		// print "In AWSManagerSender constructor <br>";
-		error_log ( "Inside AWSManagerSender contructor...", 0 );
-		
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->aws = Aws::factory ( array (
@@ -61,8 +58,6 @@ class AWSManagerSender {
 		// Set the topicArn
 		$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
 		
-		error_log ( "Exit AWSManagerSender constructor", 0 );
-		// print "Exit AWSManagerSender constructor <br>";
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;

@@ -215,41 +215,39 @@ class IndexController extends AbstractActionController {
                  */
                 
             } else if ($actionname == "registration") {
-error_log("f registration ... data ---> ".json_encode($message_data).PHP_EOL);
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
 
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->registration->username);
                 
-                /*
-                 * Cache approach - store in @person search index
-                 */
-                //first letter of name
-                $uid = $uid[0];
-                $actionname = '@';
                 if ($registration->status == 'Success') {
+                	
+	                /*
+	                 * Cache approach - store in @person search index
+	                 */
+	                //first letter of name
+	                $uid = $uid[0];
+	                $actionname = '@';
                 	
                 	/*
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
-                	 * ......
+                	 *  input as json so we decode json returned
                 	 */
-                	$mc = $this->elasticache->getCache('@person');
-                	if (!$mc || empty($mc)) {
-error_log ("cache is empty mc ---> " . json_encode($mc) . PHP_EOL);
+                	$mc = json_decode($this->elasticache->getCache('@person'), true);
                 	
+                	if (!$mc || empty($mc)) {
                 		$registration->createUserCache();
                 		$mc = $registration->userIndex;
-                		$this->elasticache->setCache("@person", $mc);
+                		$this->elasticache->setCache("@person", json_encode($mc));
                 	} else {
-error_log ("cache is NOT empty mc ---> " . json_encode($mc) . PHP_EOL);
                 		/*
                 		 * Add the new user
                 		 */
-                		$mc[] = $registration['user_id'];
-                		$mc[ $registration['user_id'] ] [] = array ('username' => $registration['username'], 'profile_photo' => $registration['profile_photo']);
-                		$this->elasticache->setCache("@person", $mc);
-error_log ("Added to mc ---> " . json_encode($mc) . PHP_EOL);
+                		$mc[] = $registration->user_id;
+                		$mc[ $registration->user_id ] [] = array ('username' => $registration->username, 'profile_photo' => $registration->profile_photo);
+                		$this->elasticache->setCache("@person", json_encode($mc));
+error_log ("added to cache username --> " . $registration->username . PHP_EOL);
                 		//$s3_data ['s3path'] . $s3_data ['s3file_name']
                 		
                 	}
@@ -603,7 +601,7 @@ error_log("Inside listallmedia - no result so pull from db...");
 
                             $registration->createUserCache();
                             $mc = $registration->userIndex;
-                            $this->elasticache->setCache("@person", $mc);
+                            $this->elasticache->setCache("@person", json_encode($mc));
                         }
 
                         $user_ids = array();
@@ -660,7 +658,8 @@ error_log("Inside listallmedia - no result so pull from db...");
 
                         //echo '<pre>';print_r($result);
 
-                        echo json_encode($result);$result='';
+                        echo json_encode($result);
+                        $result='';
 
                         break;
                     case '!':
@@ -1308,9 +1307,6 @@ error_log("Inside listallmedia - no result so pull from db...");
              * TODO - Cache here due to ob_get_clean
              */
             if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-//error_log("Output data as json ----> ".json_encode($output).PHP_EOL);
-error_log("about to cache ---> ".$actionname . '_' . $cache_id.PHP_EOL);
-//error_log("setCache output ----> ".$output.PHP_EOL);
 				$this->elasticache->setCache($actionname . '_' . $cache_id, $output);
             }
 
@@ -1543,16 +1539,12 @@ error_log("about to cache ---> ".$actionname . '_' . $cache_id.PHP_EOL);
         
         if (!empty( $_REQUEST ['sid'] )) {
             $sid =  $_REQUEST ['sid'] ;
-error_log("_REQUEST[sid]---> ".$sid.PHP_EOL);            
         } elseif (isset ( $_POST ['xml'] )) {
             $data = simplexml_load_string ( $_POST ['xml'] );
             $sid = trim ( $data->sid );
-error_log("data[sid]---> ".$sid.PHP_EOL);            
         }
-error_log('sid ->'.$sid);
         if (!empty ( $sid )) {
 			$sessionManager->setId ( $sid );
-error_log('set sid ->'.$sid);
         }
 		$container = new Container ( 'user' );
     	$public= array(
@@ -1585,7 +1577,7 @@ error_log('set sid ->'.$sid);
             return $actionname;
         } else {
 	    	        $session = new Container("user");
-error_log('ws-session-user_id ->'.$session->user_id);
+//error_log('ws-session-user_id ->'.$session->user_id);
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }

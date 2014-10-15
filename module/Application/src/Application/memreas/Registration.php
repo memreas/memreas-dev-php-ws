@@ -18,6 +18,10 @@ class Registration {
 	protected $addfriendtoevent;
 	public $status;
 	public $userIndex = array();
+	public $username;
+	public $user_id;
+	public $profile_photo;
+	
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
@@ -41,7 +45,7 @@ class Registration {
 		$user_id = MUUID::fetchUUID ();
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
-error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
+//error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$username = trim ( $data->registration->username );
 			$email = trim ( $data->registration->email );
@@ -53,14 +57,14 @@ error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL )
 			//$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
             $assign_event = trim ( $data->registration->event_id );
 		} else {
-			
+/* 			
 error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['email'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['password'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['device_token'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['device_type'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
-			
+ */
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
@@ -128,10 +132,10 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
                         $meta_arr['user']['username' ] = $username;
                         $meta_arr['user']['user_id' ] = $user_id;
                         $meta_arr['user']['email_verification_id' ] = $email_verification_id;
-error_log("email_verification_id".$email_verification_id.PHP_EOL);
+//error_log("email_verification_id".$email_verification_id.PHP_EOL);
 						$email_verification_url = MemreasConstants::ORIGINAL_URL.'index?action=verifyemailaddress&email_verification_id='.$email_verification_id.'&user_id='.$user_id;
                         $meta_arr['user']['email_verification_url' ] = $email_verification_url;
-error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email_verification_url' ].PHP_EOL);
+//error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email_verification_url' ].PHP_EOL);
                         $meta_arr['user']['email_verified' ] = "0";
                         
                         $metadata = json_encode($meta_arr);
@@ -198,6 +202,10 @@ error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email
                         else $ndata = null;
 				        if(!empty($ndata->from_id)&& !empty($ndata->event_id)){
 
+	        				/*
+	        				 * 14-OCT-2014 JM: code below threw error
+	        				 */
+				        	/*
 									        $xml_input = "<xml><addfriendtoevent>
 									        <user_id>{$ndata->from_id}</user_id>
 									        <event_id>{$ndata->event_id}</event_id>
@@ -208,6 +216,19 @@ error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email
 									        </profile_pic_url> </friend> </friends> </addfriendtoevent></xml>";
 									        //add frient to event
 									        $this->addfriendtoevent->exec($xml_input);
+							*/
+				        	
+			        		$xml_input = '<xml><addfriendtoevent>'.
+					        	'<user_id>'. $ndata->from_id . '</user_id>'.
+					        	'<event_id>'.$ndata->event_id.'</event_id>'.
+					        	'<friends><friend>'.
+					        	'<network_name>memreas</network_name>'.
+					        	'<friend_name>'.$username.'</friend_name>'.
+					        	'<profile_pic_url><![CDATA['.$url.']]>'.
+					        	'</profile_pic_url> </friend> </friends> </addfriendtoevent></xml>';
+					        
+					        //	add frient to event
+					        $this->addfriendtoevent->exec($xml_input);
 				        }
 
                         //Check if user has been assigned an event
@@ -350,9 +371,12 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 				        /*
 				         * 9-OCT-2014 debugging perf tester
 				         */
-				        //$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        if (MemreasConstants::SEND_EMAIL) {
+				        	$aws_manager->sendSeSMail ( $to, $subject, $html ); //Active this line when app go live
+				        }
 				        $this->status = $status = 'Success';
 				        $message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
+				        
 				        // error_log ( "Finished..." . PHP_EOL );
 			        }
                 }
@@ -364,7 +388,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 			$message = $exc->getMessage ();
 			error_log ( "error message ----> $message" . PHP_EOL );
 		}
-
+		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
@@ -377,8 +401,11 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-error_log($xml_output.PHP_EOL);
-		return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
+		
+		$this->username = $username;
+		$this->user_id = $user_id;
+		$this->profile_photo = !empty($s3_data ['s3path'] . $s3_data ['s3file_name']) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
+		//return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
 		//Sample thumbnail for future reference
 		//"394d281a-10dc-4c49-be6a-124301b98810/media/thumbnails/98x78/IMG_0095.JPG"
 	}
@@ -389,29 +416,28 @@ error_log($xml_output.PHP_EOL);
 						$qb->from ( 'Application\Entity\User', 'u' );
 						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 
-
 		//create index for catch;
-			$userIndexArr = $qb->getQuery()->getResult();
-			//	$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
-				//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
-				//$userIndexSql->setMaxResults(30);
-				//$userIndexArr = $qb->getResult();
-				foreach ($userIndexArr as $row) {
-					$json_array = json_decode ( $row ['metadata'], true );
+		$userIndexArr = $qb->getQuery()->getResult();
+		//$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
+		//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
+		//$userIndexSql->setMaxResults(30);
+		//$userIndexArr = $qb->getResult();
+		foreach ($userIndexArr as $row) {
+			$json_array = json_decode ( $row ['metadata'], true );
 
-					if (empty ( $json_array ['S3_files'] ['path'] )){
-						$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
-					}else{
-						$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
-					}
-echo "row user_id is---------> ". $row['user_id'];					
-					$this->userIndex[$row['user_id']] = array(
-															'username'      => $row['username'],
-															'profile_photo' => $url1
-															);
-				}
-
-
+			if (empty ( $json_array ['S3_files'] ['path'] )){
+				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
+			}else{
+				$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+			}
+//echo "row user_id is---------> ". $row['user_id'];					
+			$this->userIndex[$row['user_id']] = array(
+													'username'      => $row['username'],
+													'profile_photo' => $url1
+													);
+		}
+				
+		return $this->userIndex;
 	}
 
 	public function FunctionName($invited_by ='')

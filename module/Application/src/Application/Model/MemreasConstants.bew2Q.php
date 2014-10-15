@@ -27,6 +27,9 @@ class MemreasConstants {
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
 	
+	//Turns off emails for perf testing
+	const SEND_EMAIL = true;
+	
 	//Same across...
 	const URL = "/index";
 	const MEMREAS_TRANSCODER = true;

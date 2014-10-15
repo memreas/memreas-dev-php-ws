@@ -43,6 +43,7 @@ class AWSMemreasCache {
 		$now = date ( 'Y-m-d H:i:s' );
 		$dynamic_client = new \Memcached();
 		$dynamic_client->setOption( \Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
+		$dynamic_client->setOption( \Memcached::OPT_COMPRESSION, true);
 		$dynamic_client->addServer($server_endpoint, $server_port);
 		//$dynamic_client->set ( 'LAST-USER-ID-ACCESS', $now, 3600 ); // Store the data for 1 hour in the cluster, the client will decide which node to store
 		
@@ -60,14 +61,14 @@ class AWSMemreasCache {
 		}
 		$result = $this->cache->set ( $key , $value, $ttl );
 		
+		
 		//Debug
 		if($result) {
-			$now= 
 			error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 			// error_log('VALUE ----> ' . $value . PHP_EOL);
 		} else {
-			error_log('FAILED TO ADD THIS KEY ----> ' . $key . PHP_EOL);
-			error_log('FAILED TO ADD THIS KEY VALUE----> ' . print_r($value, true) . PHP_EOL);
+			error_log('FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode(). PHP_EOL);
+			//error_log('FAILED TO ADD THIS KEY VALUE----> ' . print_r($value, true) . PHP_EOL);
 		}
 
 		return $result;
