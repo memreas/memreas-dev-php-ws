@@ -26,7 +26,6 @@ use Application\memreas\AddMediaEvent;
 use Application\memreas\ChkUname;
 use Application\memreas\LikeMedia;
 use Application\memreas\MediaInappropriate;
-use Application\memreas\MemreasCache;
 use Application\memreas\CountListallmedia;
 use Application\memreas\ListGroup;
 use Application\memreas\DeletePhoto;
@@ -42,6 +41,7 @@ use Application\memreas\AddEvent;
 use Application\memreas\ViewEvents;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AWSMemreasCache;
+use Application\memreas\AWSMemreasRedisCache;
 use Application\memreas\AddFriendtoevent;
 use Application\memreas\ViewMediadetails;
 use Application\memreas\snsProcessMediaPublish;
@@ -217,13 +217,16 @@ class IndexController extends AbstractActionController {
             } else if ($actionname == "registration") {
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
-
+error_log("past registration->exec() ".PHP_EOL);
+                
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->registration->username);
                 
+error_log("past simplexml load string ".PHP_EOL);
                 if ($registration->status == 'Success') {
                 	
-	                /*
+error_log("inside registration->status success ".PHP_EOL);
+                	/*
 	                 * Cache approach - store in @person search index
 	                 */
 	                //first letter of name
@@ -234,7 +237,8 @@ class IndexController extends AbstractActionController {
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
                 	 *  input as json so we decode json returned
                 	 */
-                	$mc = json_decode($this->elasticache->getCache('@person'), true);
+error_log("about to get cache @ person ".PHP_EOL);
+	                $mc = json_decode($this->elasticache->getCache('@person'), true);
                 	
                 	if (!$mc || empty($mc)) {
                 		$registration->createUserCache();
@@ -1502,7 +1506,19 @@ error_log("Inside listallmedia - no result so pull from db...");
          * TODO: This function isn't working properly.  I added in session_id($sid) per docs 
          * but the session variables aren't retained  
          */
-        $this->elasticache = new AWSMemreasCache();
+    	if ( (MemreasConstants::ELASTICACHE_SERVER_USE) && (MemreasConstants::ELASTICACHE_REDIS_USE) ) {
+//error_log('about to create redis instance...');
+			try {
+				$this->elasticache = new AWSMemreasRedisCache();
+    		} catch (\Exception $ex) {
+    			echo "base exception ---> ". print_r($ex, true) . PHP_EOL;
+    		}
+    		exit();	
+    	} else if (MemreasConstants::ELASTICACHE_SERVER_USE) {
+    		$this->elasticache = new AWSMemreasCache();
+    	} else {
+    		$this->elasticache = null;
+    	}
 
 //error_log('just set this->elasticache in security...');
                     

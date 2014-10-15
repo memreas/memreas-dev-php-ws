@@ -401,6 +401,7 @@ error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
+error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
 		
 		$this->username = $username;
 		$this->user_id = $user_id;

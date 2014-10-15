@@ -7,28 +7,27 @@ namespace Application\Model;
 
 class MemreasConstants {
 
-	//fe2 url
-	const WEB_URL = "https://fe2.memreas.com/";
+	//memreasprod-fe url
+	const WEB_URL = "https://memreasprod-fe.memreas.com/";
 	
-	//wsg url
-	const ORIGINAL_URL = "https://memreasdev-wsg.memreas.com/";
-	const MEDIA_URL = "https://memreasdev-wsg.memreas.com/?action=addmediaevent";
+	//memreasprod-wsu url
+	const ORIGINAL_URL = "https://memreasprod-wsr.memreas.com/";
+	const MEDIA_URL = "https://memreasprod-wsr.memreas.com/?action=addmediaevent";
 	
-	//bew2 url
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
+	//memreasprod-bew url
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasprod-backend-worker';
 	
-	//memreasdevsec related
-	const S3BUCKET = "memreasdevsec";
+	//memreasprdsec related
+	const S3BUCKET = "memreasprdsec";
     const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';
     const S3_APPSEC = 'xQfYNvfT0Ar+Wm/Gc4m6aacPwdT5Ors9YHE/d38H';
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s12hcdq6y0d1zq.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3j7vnip9qhisx.cloudfront.net/';
 	const SIGNURLS = true;
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-	
-	
+
 	//Turns off emails for perf testing
-	const SEND_EMAIL = true;
+	const SEND_EMAIL = false;
 	
 	//Same across...
 	const URL = "/index";
@@ -38,12 +37,14 @@ class MemreasConstants {
 	const EXPIRES = 36000; // 10 hour
 	
 	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";
-	const ELASTICACHE_SERVER_PORT = "11211";
-	const ELASTICACHE_SERVER_USE = false;
-	const ELASTICACHE_REDIS_USE = false;
-	const ELASTICACHE_CACHE_TTL = 3600; //1 hour
-		
+	const ELASTICACHE_SERVER_ENDPOINT = "memreasprod-redis.142tbh.0001.use1.cache.amazonaws.com";
+	const ELASTICACHE_SERVER_PORT = "6379";
+	const ELASTICACHE_SERVER_USE = true;
+	const ELASTICACHE_REDIS_USE = true;
+	const ELASTICACHE_CACHE_TTL = 600; //10 minutes
+	
+	
+	
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";
 	const IMAGES_PATH = "/images/";
@@ -54,14 +55,11 @@ class MemreasConstants {
 	const VIDEO = "/data/media/uploadVideo";
 	const AUDIO = "/data/media/upload_audio";
 	
-	//fb - memreas
-	//const FB_APPID  = '462180953876554';
-	//const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
-	//fb - memreas_test
-	const FB_APPID  = '737723032989010';
-	const FB_SECRET = 'e0c07d37803e09b4639fcd713557efe4';
-	const FB_FBHREF = 'index';
+	
+	const FB_APPID  = '462180953876554';
+	const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
 	//const FB_FBHREF = 'https://apps.facebook.com/462180953876554';
+	const FB_FBHREF = '/index';
 	const TW_CONSUMER_KEY ='9jwg1vX4MgH7rfBzxqkcjI90f';
 	const TW_CONSUMER_SECRET = 'bDqOeHkJ7OIQ4QPNnT1PA9oz55gf51YW0REBo12aazGA0CBrbY';
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';

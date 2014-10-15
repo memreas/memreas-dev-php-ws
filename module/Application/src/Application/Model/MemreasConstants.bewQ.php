@@ -41,6 +41,7 @@ class MemreasConstants {
 	const ELASTICACHE_SERVER_ENDPOINT = "memreasintcache.142tbh.cfg.use1.cache.amazonaws.com";
 	const ELASTICACHE_SERVER_PORT = "11211";
 	const ELASTICACHE_SERVER_USE = false;
+	const ELASTICACHE_REDIS_USE = false;
 	const ELASTICACHE_CACHE_TTL = 3600; //1 hour
 		
 	const DATA_PATH = "/data/";
