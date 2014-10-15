@@ -14,7 +14,7 @@ class AWSMemreasCache {
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
 	public function __construct() {
 		if(!$this->isCacheEnable){
-			return null;
+			return;
 		}
 //error_log ( "MemreasCache.__construct()....".date ( 'Y-m-d H:i:s' ). PHP_EOL );
 
@@ -57,7 +57,7 @@ class AWSMemreasCache {
 
 	public function setCache($key, $value, $ttl = MemreasConstants::ELASTICACHE_CACHE_TTL) { 
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 		$result = $this->cache->set ( $key , $value, $ttl );
 		
@@ -76,7 +76,7 @@ class AWSMemreasCache {
 
 	public function getCache($key) {
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 
  		$result = $this->cache->get ( $key );
@@ -91,7 +91,7 @@ class AWSMemreasCache {
 
 	public function invalidateCache($key) {
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 
  		$result = $this->cache->delete ( $key );
@@ -104,7 +104,7 @@ class AWSMemreasCache {
 
 	public function invalidateCacheMulti($keys) {
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 
  		$result = $this->cache->deleteMulti ( $keys );

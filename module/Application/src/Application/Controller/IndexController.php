@@ -551,9 +551,13 @@ error_log("Inside listallmedia - no result so pull from db...");
             	/*
             	 * Cache Approach: Check cache first if not there then fetch and cache...
             	 */
-            	$data = simplexml_load_string($_POST ['xml']);
-                $cache_id = trim($data->listnotification->user_id);
-                $result = $this->elasticache->getCache($actionname.'_'.$cache_id);
+            	$data = !empty($_POST ['xml']) ? simplexml_load_string($_POST ['xml']) : null;
+                $cache_id = !empty($data) ? trim($data->listnotification->user_id) : null;
+                try {
+                	$result = !empty($cache_id) ? $this->elasticache->getCache($actionname.'_'.$cache_id) : false;
+                } catch (Exception $e) {
+                	$result = false;
+                }
 
                 if (!$result || empty($result)) {
                     $listnotification = new ListNotification($message_data, $memreas_tables, $this->getServiceLocator());
