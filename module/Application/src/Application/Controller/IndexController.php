@@ -1572,6 +1572,7 @@ error_log("Inside listallmedia - no result so pull from db...");
         	'changepassword',
             'showlog',
             'clearlog',
+            'feedback',
     		//verify email
     		'verifyemailaddress',
             //For stripe
