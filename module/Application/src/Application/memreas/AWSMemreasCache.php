@@ -7,13 +7,13 @@ use Application\Model\MemreasConstants;
 use Aws\ElastiCache;
 
 class AWSMemreasCache {
-	private $aws = null;
-	private $cache = null;
-	private $client = null;
+	private $aws = "";
+	private $cache = "";
+	private $client = "";
 	private $baseURL = MemreasConstants::ORIGINAL_URL;
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
 	public function __construct() {
-		$this->cache = new \Memcached();
+		//$this->cache = new \Memcached();
 		if(!$this->isCacheEnable){
 			return;
 		}

@@ -1,3 +1,10 @@
+
+
+
+
+
+
+
 <?php
 
 namespace Application\memreas;
@@ -35,14 +42,13 @@ class AWSMemreasRedisCache {
 		//$this->cache->set('foo', 'bar');
 		//error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . PHP_EOL);
 	}
-    
-	public function setCache($key, $value, $ttl = MemreasConstants::ELASTICACHE_CACHE_TTL) { 
+	
+	public function setCache($key, $value, $ttl = MemreasConstants::ELASTICACHE_CACHE_TTL) {
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 		$result = $this->cache->set ( $key , $value, $ttl );
-		
-		
+
 		//Debug
 		if($result) {
 			error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
@@ -56,58 +62,60 @@ class AWSMemreasRedisCache {
 	}
 
 	public function getCache($key) {
+		error_log("getCache key ----> ".$key.PHP_EOL);
 		if(!$this->isCacheEnable){
-			return null;
+			error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
+			return false;
 		}
 
- 		$result = $this->cache->get ( $key );
- 		if ($result) {
-			 error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
- 		} else {
- 			error_log('COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL);
- 		}
+		$result = $this->cache->get ( $key );
+		if ($result) {
+			error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+		} else {
+			error_log('COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL);
+		}
 
- 		return $result;
+		return $result;
 	}
 
 	public function invalidateCache($key) {
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 
- 		$result = $this->cache->delete ( $key );
- 		if ($result) {
-			 error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
- 		} else {
- 			error_log('COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL);
- 		}
+		$result = $this->cache->delete ( $key );
+		if ($result) {
+			error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+		} else {
+			error_log('COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL);
+		}
 	}
 
 	public function invalidateCacheMulti($keys) {
 		if(!$this->isCacheEnable){
-			return null;
+			return false;
 		}
 
- 		$result = $this->cache->deleteMulti ( $keys );
- 		if ($result) {
-			 error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
- 		} else {
- 			error_log('COULD NOT DELETE THES KEYS ----> ' . json_encode($keys) . PHP_EOL);
- 		}
- 		return $result;
+		$result = $this->cache->deleteMulti ( $keys );
+		if ($result) {
+			error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
+		} else {
+			error_log('COULD NOT DELETE THES KEYS ----> ' . json_encode($keys) . PHP_EOL);
+		}
+		return $result;
 	}
 
 	/*
 	 * Add function to invalidate cache for media
-	 */
+	*/
 	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
-//error_log("Inside invalidateMedia".PHP_EOL); 		
-//error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
-//error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
-//error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
-// write functions for media 
-		//  - add media event (key is event_id or user_id) 
-		//  - mediainappropriate (key is user id for invalidate) 
+		//error_log("Inside invalidateMedia".PHP_EOL);
+		//error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
+		//error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
+		//error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
+		// write functions for media
+		//  - add media event (key is event_id or user_id)
+		//  - mediainappropriate (key is user id for invalidate)
 		//  - deletePhoto (key is user id for invalidate)
 		//  - update media
 		//  - removeeventmedia
@@ -116,38 +124,38 @@ class AWSMemreasRedisCache {
 		if (!empty($event_id)) {
 			$cache_keys[] = "listallmedia_" . $event_id;
 			$cache_keys[] = "geteventdetails_" . $event_id;
-		}
-		$media_id = trim($media_id);
-		if (!empty($media_id)) {
-			$cache_keys[] = "viewmediadetails_" . $media_id;
-		}
-		$user_id = trim($user_id);
-		if (!empty($user_id)) {
-			//countviewevent can return me / friends / public
-			$cache_keys[] = "listallmedia_" . $user_id;
-			$cache_keys[] = "viewevents_is_my_event_" . $user_id;
-			$cache_keys[] = "viewevents_is_friend_event_" . $user_id;
-		}
-
-		//Mecached - deleteMulti...
-		$result = $this->invalidateCacheMulti($cache_keys);
-		if ($result) {
-			$now = date ( 'Y-m-d H:i:s' );
-			error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
-		} else {
-			$now = date ( 'Y-m-d H:i:s' );
-			error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
-		}
-		
 	}
-	
+	$media_id = trim($media_id);
+	if (!empty($media_id)) {
+		$cache_keys[] = "viewmediadetails_" . $media_id;
+	}
+	$user_id = trim($user_id);
+	if (!empty($user_id)) {
+		//countviewevent can return me / friends / public
+		$cache_keys[] = "listallmedia_" . $user_id;
+		$cache_keys[] = "viewevents_is_my_event_" . $user_id;
+		$cache_keys[] = "viewevents_is_friend_event_" . $user_id;
+	}
+
+	//Mecached - deleteMulti...
+	$result = $this->invalidateCacheMulti($cache_keys);
+	if ($result) {
+		$now = date ( 'Y-m-d H:i:s' );
+		error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
+	} else {
+		$now = date ( 'Y-m-d H:i:s' );
+		error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
+	}
+
+	}
+
 	/*
 	 * Add function to invalidate cache for events
-	 */
+	*/
 	public function invalidateEvents($user_id) {
-error_log("Inside invalidateEvents".PHP_EOL); 		
-		// write functions for media 
-		//  - add event (key is event_id) 
+		error_log("Inside invalidateEvents".PHP_EOL);
+		// write functions for media
+		//  - add event (key is event_id)
 		//  - removeevent
 		if (!empty($user_id)) {
 			//countviewevent can return me / friends / public
@@ -158,20 +166,20 @@ error_log("Inside invalidateEvents".PHP_EOL);
 			$this->invalidateCacheMulti($cache_keys);
 		}
 	}
-	
+
 	/*
 	 * Add function to invalidate cache for comments
-	 */
+	*/
 	public function invalidateComments($cache_keys) {
 	}
-	
+
 	/*
 	 * Add function to invalidate cache for event friends
-	 */
+	*/
 	public function invalidateEventFriends($event_id, $user_id) {
-error_log("Inside invalidateEventFriends".PHP_EOL); 		
-		// write functions for media 
-		//  - add event friend 
+		error_log("Inside invalidateEventFriends".PHP_EOL);
+		// write functions for media
+		//  - add event friend
 		//  - remove event friend
 		if (!empty($event_id)) {
 			//countviewevent can return me / friends / public
@@ -183,14 +191,14 @@ error_log("Inside invalidateEventFriends".PHP_EOL);
 			$this->invalidateCacheMulti($cache_keys);
 		}
 	}
-	
+
 	/*
 	 * Add function to invalidate cache for friends
-	 */
+	*/
 	public function invalidateFriends($user_id) {
-error_log("Inside invalidateEventFriends".PHP_EOL); 		
-		// write functions for media 
-		//  - add friend 
+		error_log("Inside invalidateEventFriends".PHP_EOL);
+		// write functions for media
+		//  - add friend
 		//  - remove friend
 		if (!empty($event_id)) {
 			//countviewevent can return me / friends / public
@@ -202,22 +210,22 @@ error_log("Inside invalidateEventFriends".PHP_EOL);
 			$this->invalidateEvents($user_id);
 		}
 	}
-	
+
 	/*
 	 * Add function to invalidate cache for notifications
-	 */
+	*/
 	public function invalidateNotifications($user_id) {
-		// write functions for groups 
-		//  - list notification  (key is user_id) 
+		// write functions for groups
+		//  - list notification  (key is user_id)
 		if (!empty($user_id)) {
 			$this->invalidateCache("listnotification_" . $user_id);
 		}
 	}
-	
-	
+
+
 	/*
 	 * Add function to invalidate cache for user
-	 */
+	*/
 	public function invalidateUser($user_id) {
 		// write functions for groups
 		//  - list group  (key is user_id)
@@ -225,19 +233,19 @@ error_log("Inside invalidateEventFriends".PHP_EOL);
 			$this->invalidateCache("getuserdetails_" . $user_id);
 		}
 	}
-	
+
 	/*
 	 * Add function to invalidate cache for groups
-	 */
+	*/
 	public function invalidateGroups($user_id) {
-		// write functions for groups 
-		//  - list group  (key is user_id) 
+		// write functions for groups
+		//  - list group  (key is user_id)
 		if (!empty($user_id)) {
 			$this->invalidateCache("listgroup_" . $user_id);
 		}
 	}
-	
+
 }
 
 ?>
-
+		
