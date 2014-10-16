@@ -152,6 +152,7 @@ error_log("path 79x80 -----> ".$url.PHP_EOL);
         if(empty($json_array['comment'][0])){
             continue;
         }
+        error_log('comment->'.print_r($json_array['comment'],true));
         foreach($json_array['comment'] as $k => $comm){
             $temp['name'] = $row['tag'];
             $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
