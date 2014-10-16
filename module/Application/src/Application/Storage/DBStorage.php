@@ -27,6 +27,7 @@ class DBStorage {
 		$this->tblGW = new TableGateway ( 'user_session', $this->adapter );
 	}
 	public function setSessionStorage() {
+error_log("Inside setSessionStorage".PHP_EOL);
 		$gwOpts = new DbTableGatewayOptions ();
 		$gwOpts->setDataColumn ( 'data' );
 		$gwOpts->setIdColumn ( 'session_id' );
@@ -39,7 +40,7 @@ class DBStorage {
 		
 		$sessionManager = new SessionManager ();
 		
-		if ($this->sessionConfig) {
+		if (!$this->sessionConfig) {
 			$sessionConfig = new \Zend\Session\Config\SessionConfig ();
 			$sessionConfig->setOptions ( $this->sessionConfig );
 			$sessionManager->setConfig ( $sessionConfig );
@@ -55,7 +56,7 @@ class DBStorage {
             if (! empty ( $sid )) {
 				$sessionManager->setId ( $sid );
 			}
-                        }
+        }
 		
 		// $sessionManager->start();
 		$container = new Container ( 'user' );
@@ -63,6 +64,7 @@ class DBStorage {
 			// $sessionManager->regenerateId(true);
 			$container->init = 1;
 		}
+error_log("Exit setSessionStorage container ---> ".print_r($container, true).PHP_EOL);
 	}
 	public function __set($name, $value) {
 		$this->$name = $value;

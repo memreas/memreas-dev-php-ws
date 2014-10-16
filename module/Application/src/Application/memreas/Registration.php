@@ -117,12 +117,9 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				    }
                     else{
                         $status = 'Success';
-                        
-                        
-                        
                         /*
                          * 22-SEP-2013 JM: added entry for email address verification
-                        */
+                         */
                         $email_verification_id  = MUUID::fetchUUID ();
                         
                         /*
@@ -139,7 +136,6 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
                         $meta_arr['user']['email_verified' ] = "0";
                         
                         $metadata = json_encode($meta_arr);
-                        
                         
 					    /*
 					     * MD5 Encrypting password
@@ -282,8 +278,8 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 					        $aws_manager = new AWSManagerSender ( $this->service_locator );
 					        $s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
 
-error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
-error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
+//error_log ( "s3_data['s3path']----> " . $s3_data ['s3path'] . PHP_EOL );
+//error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL );
 
 					        // Set the metatdata
 					        // $s3path = $user_id . '/image/';
@@ -323,10 +319,9 @@ error_log ( "s3_data['s3file_name'] ----> " . $s3_data ['s3file_name'] . PHP_EOL
 					        $r = $statement->getResult ();
 					        // error_log ( "statement->getResult() ----> " . print_r ( $r, true ) . PHP_EOL );
 					        // error_log ( "*************************************************************" . PHP_EOL );
-error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
+//error_log ( "message_data ----> " . print_r ( $message_data, true ) . PHP_EOL );
 
 					        // Now publish the message so any photo is thumbnailed.
-
 					        $message_data = array (
 							        'user_id'      => $user_id,
 							        'media_id'     => $media_id,
@@ -432,10 +427,11 @@ error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
 				$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
 			}
 //echo "row user_id is---------> ". $row['user_id'];					
-			$this->userIndex[$row['user_id']] = array(
-													'username'      => $row['username'],
+			$this->userIndex[$row['username']] = array(
+													'user_id'      => $row['user_id'],
 													'profile_photo' => $url1
 													);
+			
 		}
 				
 		return $this->userIndex;

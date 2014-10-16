@@ -13,6 +13,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
+use Zend\Session\Config\SessionConfig;
 use Application\Model;
 use Application\Form;
 use Zend\Mail\Message;
@@ -42,6 +43,7 @@ use Application\memreas\ViewEvents;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AWSMemreasCache;
 use Application\memreas\AWSMemreasRedisCache;
+use Application\memreas\MemreasRedisSaveHandler;
 use Application\memreas\AddFriendtoevent;
 use Application\memreas\ViewMediadetails;
 use Application\memreas\snsProcessMediaPublish;
@@ -87,6 +89,7 @@ use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
 use Application\memreas\UpdatePassword;
+use Application\Storage\DBStorage;
 use Zend\Db\TableGateway\TableGateway;
 use Application\Model\DbTableGatewayOptions;
 use Application\memreas\GetDiskUsage;
@@ -210,22 +213,17 @@ class IndexController extends AbstractActionController {
                 $result = $login->exec();
 
                 /*
-           
-                 * Cache approach - cached in security 
+                 * Cache approach - cached in security
                  */
-                
             } else if ($actionname == "registration") {
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
-error_log("past registration->exec() ".PHP_EOL);
                 
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->registration->username);
                 
-error_log("past simplexml load string ".PHP_EOL);
                 if ($registration->status == 'Success') {
                 	
-error_log("inside registration->status success ".PHP_EOL);
                 	/*
 	                 * Cache approach - store in @person search index
 	                 */
@@ -237,24 +235,24 @@ error_log("inside registration->status success ".PHP_EOL);
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
                 	 *  input as json so we decode json returned
                 	 */
-error_log("about to get cache @ person ".PHP_EOL);
-	                $mc = json_decode($this->elasticache->getCache('@person'), true);
-                	
-                	if (!$mc || empty($mc)) {
-                		$registration->createUserCache();
-                		$mc = $registration->userIndex;
-                		$this->elasticache->setCache("@person", json_encode($mc));
-                	} else {
-                		/*
-                		 * Add the new user
-                		 */
-                		$mc[] = $registration->user_id;
-                		$mc[ $registration->user_id ] [] = array ('username' => $registration->username, 'profile_photo' => $registration->profile_photo);
-                		$this->elasticache->setCache("@person", json_encode($mc));
+	                $this->elasticache->remSet('@person');
+	                if (empty($this->elasticache->hasSet('@person'))) {
+	                	//add to the set
+error_log ("@person set checked..." . PHP_EOL);
+	                	$this->elasticache->warmSet('@person', array_keys($registration->createUserCache()));
+error_log ("@person set added to...". $this->elasticache->hasSet('@person') . PHP_EOL);
+//						$result = $this->elasticache->getSet('@person');
+//error_log ("@person set is now ---> " . $this->elasticache->hasSet('@person') . PHP_EOL . json_encode($result) . PHP_EOL);
+	                } else {
+	                	/*
+	                	 * Add the new user
+	                	 */
+	                	$mc[] = $registration->username;
+	                	$mc[ $registration->username ] [] = array ('user_id' => $registration->user_id, 'profile_photo' => $registration->profile_photo);
+	                	$this->elasticache->addSet("@person", $mc);
 error_log ("added to cache username --> " . $registration->username . PHP_EOL);
-                		//$s3_data ['s3path'] . $s3_data ['s3file_name']
-                		
-                	}
+	                }
+	                
                 	//Shouldn't get here....
                     //$this->elasticache->setCache("@person", $registration->userIndex);
                 }
@@ -1350,8 +1348,8 @@ error_log("Inside listallmedia - no result so pull from db...");
         } else {
             // xml output
             echo $output;
-//error_log("Output data as xml -----> ".$output.PHP_EOL);
-//error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+error_log("Output data as xml -----> ".$output.PHP_EOL);
+error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 			exit();
         }
     }
@@ -1514,10 +1512,11 @@ error_log("Inside listallmedia - no result so pull from db...");
 //error_log('about to create redis instance...');
 			try {
 				$this->elasticache = new AWSMemreasRedisCache();
-    		} catch (\Exception $ex) {
+error_log('just set this->elasticache for redis in security...');
+			} catch (\Exception $ex) {
     			echo "base exception ---> ". print_r($ex, true) . PHP_EOL;
     		}
-    		exit();	
+    		//exit();	
     	} else if (MemreasConstants::ELASTICACHE_SERVER_USE) {
     		$this->elasticache = new AWSMemreasCache();
     	} else {
@@ -1525,8 +1524,9 @@ error_log("Inside listallmedia - no result so pull from db...");
     		$this->elasticache = new AWSMemreasCache();
     	}
 
-//error_log('just set this->elasticache in security...');
-                    
+    	/*
+    	 * Fetch the user's ip address
+    	 */
         $ipaddress = $this->getServiceLocator()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
@@ -1535,40 +1535,67 @@ error_log("Inside listallmedia - no result so pull from db...");
         } else { 
             $ipaddress = $_SERVER['REMOTE_ADDR'];
         }       
-//error_log('ip is '.$ipaddress);
-		/*
-		 * TODO: Cache in 
-		 */
-        //if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
-        //  $saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
-        //}else{
-            $gwOpts = new DbTableGatewayOptions ();
-            $gwOpts->setDataColumn ( 'data' );
-            $gwOpts->setIdColumn ( 'session_id' );
-            $gwOpts->setLifetimeColumn ( 'lifetime' );
-            $gwOpts->setModifiedColumn ( 'end_date' );
-            $gwOpts->setNameColumn ( 'name' );
-            $gwOpts->ipaddress = $ipaddress;
-            $dbAdapter = $this->getServiceLocator()->get ( MemreasConstants::MEMREASDB );
-            $saveHandler = new \Application\Model\DbTableGateway ( new TableGateway ( 'user_session', $dbAdapter ), $gwOpts );
+error_log('ip is '.$ipaddress);
 
-        //}
-        $sessionManager = new SessionManager();
-        $sessionManager->setSaveHandler($saveHandler);
-        Container::setDefaultManager ( $sessionManager );
-		$sid='';
-        
-        if (!empty( $_REQUEST ['sid'] )) {
-            $sid =  $_REQUEST ['sid'] ;
-        } elseif (isset ( $_POST ['xml'] )) {
-            $data = simplexml_load_string ( $_POST ['xml'] );
-            $sid = trim ( $data->sid );
-        }
-        if (!empty ( $sid )) {
-			$sessionManager->setId ( $sid );
-        }
-		$container = new Container ( 'user' );
-    	$public= array(
+
+		/*
+		 * Set the session save handle
+		 */
+		try {
+	        if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
+	          
+
+	        	/*
+	        	 * Set Redis for session caching
+	        	 */
+	        	$config = new SessionConfig();
+	        	$saveHandler = new MemreasRedisSaveHandler($this->elasticache);
+	        	$sessionManager = new SessionManager();
+	        	$sessionManager->setSaveHandler($saveHandler);
+error_log("set memreas redis save handler in session manager".PHP_EOL);	        	
+	        	Container::setDefaultManager($sessionManager);
+error_log("set default manager to memreas redis ".PHP_EOL);	        	
+	        	//$saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
+	        }else{
+	        
+	            $gwOpts = new DbTableGatewayOptions ();
+	            $gwOpts->setDataColumn ( 'data' );
+	            $gwOpts->setIdColumn ( 'session_id' );
+	            $gwOpts->setLifetimeColumn ( 'lifetime' );
+	            $gwOpts->setModifiedColumn ( 'end_date' );
+	            $gwOpts->setNameColumn ( 'name' );
+	            $gwOpts->ipaddress = $ipaddress;
+	            $dbAdapter = $this->getServiceLocator()->get ( MemreasConstants::MEMREASDB );
+	            $saveHandler = new \Application\Model\DbTableGateway ( new TableGateway ( 'user_session', $dbAdapter ), $gwOpts );
+	            $sessionManager = new SessionManager();
+	            $sessionManager->setSaveHandler($saveHandler);
+	            Container::setDefaultManager ( $sessionManager );
+	        }
+			$sid='';
+	        
+	        if (!empty( $_REQUEST ['sid'] )) {
+	            $sid =  $_REQUEST ['sid'] ;
+	        } elseif (isset ( $_POST ['xml'] )) {
+	            $data = simplexml_load_string ( $_POST ['xml'] );
+	            $sid = trim ( $data->sid );
+	        }
+	        if (!empty ( $sid )) {
+				$sessionManager->setId ( $sid );
+	        }
+error_log("passed sid section...".PHP_EOL);  
+			$user_session = new Container ( 'user' );
+			if (!isset( $user_session->init )) {
+				// $sessionManager->regenerateId(true);
+				$user_session->init = 1;
+				$user_session->sid = $sid;
+			}
+				
+			
+		} catch (Exception $e) {
+			echo 'Caught exception: ',  $e->getMessage(), "\n";
+		}      
+error_log("created session for sid --> " . $user_session->sid . PHP_EOL);        
+		$public= array(
             'login',
             'registration',
             'forgotpassword',
@@ -1598,11 +1625,11 @@ error_log("Inside listallmedia - no result so pull from db...");
             return $actionname;
         } else {
 	    	        $session = new Container("user");
-//error_log('ws-session-user_id ->'.$session->user_id);
+error_log('ws-session-user_id ->'.$session->user_id);
 	            if (!$session->offsetExists('user_id')) {
 	                return 'notlogin';
 	            }
-//error_log("user session ---> ".json_encode($session).PHP_EOL);	    	        
+error_log("user session ---> ".json_encode($session).PHP_EOL);	    	        
 	            return $actionname;       
 // return $this->redirect()->toRoute('index', array('action' => 'login'));
         }

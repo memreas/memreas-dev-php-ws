@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 <?php
 
 namespace Application\memreas;
@@ -14,20 +7,17 @@ use Application\Model\MemreasConstants;
 use Aws\ElastiCache;
 
 class AWSMemreasRedisCache {
-	private $aws = null;
-	private $cache = null;
-	private $client = null;
+	private $aws = "";
+	private $cache = "";
+	private $client = "";
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
     
     
 	public function __construct() {
-		error_log( "Inside AWSMemreasRedisCache __construct()" . PHP_EOL);
-		
 		if(!$this->isCacheEnable){
-			return null;
+			return;
 		}
 
-		error_log("About to instantiate Predis Client..." . PHP_EOL);
 		try{
 			$this->cache = new \Predis\Client([
 					'scheme' => 'tcp',
@@ -47,7 +37,8 @@ class AWSMemreasRedisCache {
 		if(!$this->isCacheEnable){
 			return false;
 		}
-		$result = $this->cache->set ( $key , $value, $ttl );
+		//$result = $this->cache->set ( $key , $value, $ttl );
+		$result = $this->cache->executeRaw(array('SETEX', $key , $ttl, $value));
 
 		//Debug
 		if($result) {
@@ -61,6 +52,33 @@ class AWSMemreasRedisCache {
 		return $result;
 	}
 
+	
+	public function warmSet($set, $keys) {
+		error_log("keys---->  " . json_encode($keys) . PHP_EOL);
+		foreach ($keys as $key) {
+			$this->addSet($set, $key);
+		}
+	}
+	
+	public function getSet($set) {
+		//return $this->cache->smembers($set, true);
+		return $this->cache->smembers($set);
+	}	
+	
+	public function remSet($set) {
+		$this->cache->executeRaw(array('DEL', $set));
+	}	
+
+	public function hasSet($set) {	
+		error_log("hasSet ---> ". $this->cache->executeRaw(array('SCARD', '@person')) .PHP_EOL);
+		return $this->cache->executeRaw(array('SCARD', '@person'));	
+	}
+	
+	//$redis->sadd('s0', 'aaa')
+	public function addSet($set, $val) {
+		$this->cache->sadd($set, $val);
+	}
+	
 	public function getCache($key) {
 		error_log("getCache key ----> ".$key.PHP_EOL);
 		if(!$this->isCacheEnable){

@@ -15,7 +15,7 @@ use Zend\Session\SaveHandler\SaveHandlerInterface;
 /**
  * Cache session save handler
  */
-class ElasticSessionHandler implements SaveHandlerInterface
+class MemreasRedisSaveHandler implements SaveHandlerInterface
 {
     /**
      * Session Save Path
@@ -98,7 +98,7 @@ error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
     {
         if(!empty($_SESSION['user']['user_id'])){
         $id = 'SID-'.$id;
-         error_log(' write catch id  '.$id .'  -> '.print_r($data,true));
+error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
         return $this->getCacheStorage()->setCache($id, $data);
     } 
         
@@ -114,7 +114,7 @@ error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
      */
     public function destroy($id)
     {
-        error_log('Session->d'.$id );
+error_log('Session->d'.$id );
          $id = 'SID-'.$id;
         return $this->getCacheStorage()->invalidateCache($id);
     }
@@ -127,7 +127,7 @@ error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
      */
     public function gc($maxlifetime)
     {
-        error_log('Session->$maxlifetime'.$maxlifetime);
+error_log('Session->$maxlifetime'.$maxlifetime);
         $cache = $this->getCacheStorage();
          
         return true;
