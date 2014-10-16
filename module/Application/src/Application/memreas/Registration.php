@@ -400,7 +400,8 @@ error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
 		
 		$this->username = $username;
 		$this->user_id = $user_id;
-		$this->profile_photo = !empty($s3_data ['s3path'] . $s3_data ['s3file_name']) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
+        $filename = $s3_data ['s3path'] . $s3_data ['s3file_name'];
+		$this->profile_photo = !empty($filename) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
 		//return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
 		//Sample thumbnail for future reference
 		//"394d281a-10dc-4c49-be6a-124301b98810/media/thumbnails/98x78/IMG_0095.JPG"
