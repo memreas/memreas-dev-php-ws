@@ -247,15 +247,15 @@ error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " u
 	                	/*
 	                	 * Add the new user
 	                	 */
-	                	$mc[] = $registration->username;
-	                	$mc[ $registration->username ] [] = array ('user_id' => $registration->user_id, 'profile_photo' => $registration->profile_photo);
-	                	$this->elasticache->addSet("@person", $registration->username, $mc[ $registration->username ]);
-error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-error_log ("added to cache username --> " . $registration->username . PHP_EOL);
+	                	//$mc[] = $registration->username;
+	                	//$mc[ $registration->username ] [] = array ('user_id' => $registration->user_id, 'profile_photo' => $registration->profile_photo);
+	                	//$this->elasticache->addSet("@person", $registration->username, $mc[ $registration->username ]);
+//error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
+//error_log ("added to cache username --> " . $registration->username . PHP_EOL);
 	                }
 	                
                 	//Shouldn't get here....
-                    //$this->elasticache->setCache("@person", $registration->userIndex);
+                    $this->elasticache->setCache("@person", $registration->userIndex);
                 }
             } else if ($actionname == "addcomments") {
                 $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
