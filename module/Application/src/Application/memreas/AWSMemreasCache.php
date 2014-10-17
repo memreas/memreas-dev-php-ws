@@ -76,7 +76,7 @@ class AWSMemreasCache {
 	}
 
 	public function hasSet($set) {
-		return false;
+		return true;
 	}
 	
 	public function getCache($key) {
