@@ -75,6 +75,10 @@ class AWSMemreasCache {
 		return $result;
 	}
 
+	public function hasSet($set) {
+		return false;
+	}
+	
 	public function getCache($key) {
 		if(!$this->isCacheEnable){
 			return false;
