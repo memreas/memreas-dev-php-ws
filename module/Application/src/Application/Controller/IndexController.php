@@ -1522,7 +1522,7 @@ error_log("Inside listallmedia - no result so pull from db...");
     		$this->elasticache = new AWSMemreasCache();
     	} else {
     		//$this->elasticache = null;
-    		$this->elasticache = new AWSMemreasRedisCache();
+    		$this->elasticache = new AWSMemreasCache();
     	}
 
     	/*
