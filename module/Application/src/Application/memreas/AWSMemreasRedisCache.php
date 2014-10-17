@@ -13,7 +13,6 @@ class AWSMemreasRedisCache {
 	private $client = "";
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
     
-    
 	public function __construct() {
 		if(!$this->isCacheEnable){
 			return;
@@ -42,11 +41,11 @@ class AWSMemreasRedisCache {
 
 		//Debug
 		if($result) {
-			error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
+			//error_log('JUST ADDED THIS KEY ----> ' . $key . PHP_EOL);
 			// error_log('VALUE ----> ' . $value . PHP_EOL);
 		} else {
-			error_log('FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode(). PHP_EOL);
-			//error_log('FAILED TO ADD THIS KEY VALUE----> ' . print_r($value, true) . PHP_EOL);
+			//error_log('FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode(). PHP_EOL);
+			error_log('FAILED TO ADD THIS KEY VALUE----> ' . $value . PHP_EOL);
 		}
 		return $result;
 	}
@@ -80,7 +79,7 @@ class AWSMemreasRedisCache {
 			$matched = 0;
 		}
 		
-		error_log("matched------> " . json_encode($matched) . PHP_EOL);
+		//error_log("matched------> " . json_encode($matched) . PHP_EOL);
 		
 		//error_log("hasSet ---> ". $this->cache->executeRaw(array('SCARD', '@person')) .PHP_EOL);
 		//return $this->cache->executeRaw(array('SCARD', '@person'));	
@@ -97,15 +96,14 @@ class AWSMemreasRedisCache {
 	}	
 
 	public function getCache($key) {
-		error_log("getCache key ----> ".$key.PHP_EOL);
 		if(!$this->isCacheEnable){
-			error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
+			//error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
 			return false;
 		}
 
 		$result = $this->cache->get ( $key );
 		if ($result) {
-			error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+			//error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
 		} else {
 			error_log('COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL);
 		}
@@ -120,7 +118,7 @@ class AWSMemreasRedisCache {
 
 		$result = $this->cache->delete ( $key );
 		if ($result) {
-			error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+			//error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
 		} else {
 			error_log('COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL);
 		}
@@ -133,7 +131,7 @@ class AWSMemreasRedisCache {
 
 		$result = $this->cache->deleteMulti ( $keys );
 		if ($result) {
-			error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
+			//error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
 		} else {
 			error_log('COULD NOT DELETE THES KEYS ----> ' . json_encode($keys) . PHP_EOL);
 		}
@@ -212,7 +210,6 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for event friends
 	*/
 	public function invalidateEventFriends($event_id, $user_id) {
-		error_log("Inside invalidateEventFriends".PHP_EOL);
 		// write functions for media
 		//  - add event friend
 		//  - remove event friend
@@ -231,7 +228,6 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for friends
 	*/
 	public function invalidateFriends($user_id) {
-		error_log("Inside invalidateEventFriends".PHP_EOL);
 		// write functions for media
 		//  - add friend
 		//  - remove friend

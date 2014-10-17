@@ -83,7 +83,6 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
     {
           $id = 'SID-'.$id;
           $r = $this->getCacheStorage()->getCache($id);
-error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
         return $r;
     }
 

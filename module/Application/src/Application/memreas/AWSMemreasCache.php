@@ -76,15 +76,13 @@ class AWSMemreasCache {
 	}
 
 	public function getCache($key) {
-error_log("getCache key ----> ".$key.PHP_EOL);
 		if(!$this->isCacheEnable){
-error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
 			return false;
 		}
 
  		$result = $this->cache->get ( $key );
  		if ($result) {
-			 error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+			 //error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
  		} else {
  			error_log('COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL);
  		}

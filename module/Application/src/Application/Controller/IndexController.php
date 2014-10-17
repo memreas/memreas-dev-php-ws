@@ -19,6 +19,7 @@ use Application\Form;
 use Zend\Mail\Message;
 use Zend\Mail\Transport\Sendmail as SendmailTransport;
 use Guzzle\Http\Client;
+use Guzzle\Plugin\Async\AsyncPlugin;
 use Application\Model\MemreasConstants;
 use Application\memreas\Login;
 use Application\memreas\Registration;
@@ -180,7 +181,7 @@ class IndexController extends AbstractActionController {
          */
        $actionname = $this->security($actionname);
                     
-//error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 //error_log("Inside indexAction---> _POST ['xml'] ---> ".print_r($_POST['xml'],true). PHP_EOL);
 
  
@@ -192,12 +193,11 @@ class IndexController extends AbstractActionController {
 
             // Capture the echo from the includes in case we need to convert back to json
             ob_start();
-            
+/*             
             if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
 				error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL);
             }
-            
-                      
+ */                      
             $memreas_tables = new MemreasTables($this->getServiceLocator());
 
             if($actionname == 'notlogin'){
@@ -250,6 +250,7 @@ error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " u
 	                	$mc[] = $registration->username;
 	                	$mc[ $registration->username ] [] = array ('user_id' => $registration->user_id, 'profile_photo' => $registration->profile_photo);
 	                	$this->elasticache->addSet("@person", $registration->username, $mc[ $registration->username ]);
+error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
 error_log ("added to cache username --> " . $registration->username . PHP_EOL);
 	                }
 	                
@@ -574,9 +575,6 @@ error_log("Inside listallmedia - no result so pull from db...");
                 $this->elasticache->invalidateNotifications($uid);
 			} else if ($actionname == "findtag") {
             	
-            	/*
-            	 * TODO: How is caching working here?
-            	 */
             	$data = simplexml_load_string($_POST ['xml']);
                 $tag = (trim($data->findtag->tag));
                 $user_id = (trim($data->findtag->user_id));
@@ -601,6 +599,13 @@ error_log("Inside listallmedia - no result so pull from db...");
                 switch ($a) {
                     case '@':
 
+                    	/*
+                    	 * TODO: Migrate to redis search - see example below
+                    	 */
+                    	//$matched = $this->elasticache->findSet('@person', 'ch-1tuser*' );
+                    	//error_log("matched------> " . json_encode($matched) . PHP_EOL);
+                    	
+                    	
                         $mc = $this->elasticache->getCache('@person');
                         if (!$mc || empty($mc)) {
                             $registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
@@ -1348,8 +1353,6 @@ error_log("Inside listallmedia - no result so pull from db...");
         } else {
             // xml output
             echo $output;
-error_log("Output data as xml -----> ".$output.PHP_EOL);
-error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
 			exit();
         }
     }
@@ -1509,10 +1512,8 @@ error_log("Exiting indexAction---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL
          * but the session variables aren't retained  
          */
     	if ( (MemreasConstants::ELASTICACHE_SERVER_USE) && (MemreasConstants::ELASTICACHE_REDIS_USE) ) {
-//error_log('about to create redis instance...');
 			try {
 				$this->elasticache = new AWSMemreasRedisCache();
-error_log('just set this->elasticache for redis in security...');
 			} catch (\Exception $ex) {
     			echo "base exception ---> ". print_r($ex, true) . PHP_EOL;
     		}
@@ -1535,7 +1536,7 @@ error_log('just set this->elasticache for redis in security...');
         } else { 
             $ipaddress = $_SERVER['REMOTE_ADDR'];
         }       
-error_log('ip is '.$ipaddress);
+//error_log('ip is '.$ipaddress);
 
 
 		/*
@@ -1553,7 +1554,6 @@ error_log('ip is '.$ipaddress);
 	        	$sessionManager->setSaveHandler($saveHandler);
 //error_log("set memreas redis save handler in session manager".PHP_EOL);	        	
 	        	Container::setDefaultManager($sessionManager);
-//error_log("set default manager to memreas redis ".PHP_EOL);	        	
 	        	//$saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
 	        }else{
 	        
@@ -1592,7 +1592,6 @@ error_log('ip is '.$ipaddress);
 		} catch (Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 		}      
-//error_log("created session for sid --> " . $user_session->sid . PHP_EOL);        
 		$public= array(
             'login',
             'registration',
@@ -1617,7 +1616,7 @@ error_log('ip is '.$ipaddress);
 //            'doquery'
             ,'getdiskusage'
             );
-//        $_SESSION ['user'] ['ip'] = $ipaddress;
+		//$_SESSION ['user'] ['ip'] = $ipaddress;
         //$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;

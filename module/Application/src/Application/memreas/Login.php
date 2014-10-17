@@ -29,13 +29,10 @@ class Login {
 		// 0 = not empty, 1 = empty
 		$flagusername = 0;
 		$flagpass = 0;
-error_log ("username --> " . trim ( $data->login->username ) . PHP_EOL);
 		$username = trim ( $data->login->username );
 		
-error_log ("devicetoken --> " . trim ( $data->login->devicetoken ) . PHP_EOL);
 		$devicetoken = trim ( $data->login->devicetoken );
 		
-error_log ("devicetype --> " . trim ( $data->login->devicetype ) . PHP_EOL);
 		$devicetype = trim ( $data->login->devicetype );
 		
 		$time = time ();
@@ -49,13 +46,11 @@ error_log ("devicetype --> " . trim ( $data->login->devicetype ) . PHP_EOL);
 			$flagpass = 1;
 		}
 
-error_log ("Past password..." . PHP_EOL);
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<loginresponse>";
 		if (isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
-error_log ("Inside if username and password..." . PHP_EOL);
 			$username = strtolower ( $username );
 			$checkvalidemail = $this->is_valid_email ( $username );
 			if ($checkvalidemail == TRUE) {
@@ -68,11 +63,9 @@ error_log ("Inside if username and password..." . PHP_EOL);
 			$row = $statement->getResult ();
 
 			if (! empty ( $row )) {
-error_log ("Inside !empty row" . PHP_EOL);
 				
 				$this->setSession ( $row [0] );
 				if (! empty ( $devicetoken ) && ! empty ( $devicetype )) {
-error_log ("Inside !empty devicetoken...." . PHP_EOL);
 					$qb = $this->dbAdapter->createQueryBuilder ();
 					$q = $qb->update ( '\Application\Entity\Device', 'd' )->set ( 'd.device_token', $qb->expr ()->literal ( $devicetoken ) )->set ( 'd.update_time', $qb->expr ()->literal ( $time ) )->where ( 'd.user_id = ?1 AND d.device_type = ?2' )->
 
@@ -86,7 +79,6 @@ error_log ("Inside !empty devicetoken...." . PHP_EOL);
 				$user_metadata = json_decode($row[0]->metadata, true);
 				$verified_email = isset($user_metadata['user']['email_verified']) ? $user_metadata['user']['email_verified'] : "0";
 				
-error_log ("past login check email verification...." . PHP_EOL);
 				if ($verified_email) {
 					$user_id = trim ( $row [0]->user_id );
 					$xml_output .= "<status>success</status>";
@@ -102,11 +94,10 @@ error_log ("past login check email verification...." . PHP_EOL);
 		} else {
 			$xml_output .= "<status>failure</status><message>Please checked that you have given all the data required for login.</message>";
 		}
-error_log ("finishing response...." . PHP_EOL);
 		$xml_output .= "</loginresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		error_log ( "Login ---> xml_output ----> " . $xml_output . PHP_EOL );
+//error_log ( "Login ---> xml_output ----> " . $xml_output . PHP_EOL );
 	}
 	public function setSession($user) {
 		
