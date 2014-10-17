@@ -5,6 +5,7 @@ namespace Application\memreas;
 use Guzzle\Http\Client;
 use Application\Model\MemreasConstants;
 use Aws\ElastiCache;
+use Predis\Collection\Iterator;
 
 class AWSMemreasRedisCache {
 	private $aws = "";
@@ -25,7 +26,6 @@ class AWSMemreasRedisCache {
 					'port'   => 6379,
 					]);
 			
-			error_log("Connected to  REDIS!" . PHP_EOL);
 		} catch (\Predis\Connection\ConnectionException $ex) {
 			error_log("exception ---> ". print_r($ex, true) . PHP_EOL);				
 		}		
@@ -48,37 +48,54 @@ class AWSMemreasRedisCache {
 			error_log('FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode(). PHP_EOL);
 			//error_log('FAILED TO ADD THIS KEY VALUE----> ' . print_r($value, true) . PHP_EOL);
 		}
-
 		return $result;
 	}
-
 	
 	public function warmSet($set, $keys) {
-		error_log("keys---->  " . json_encode($keys) . PHP_EOL);
-		foreach ($keys as $key) {
-			$this->addSet($set, $key);
+		foreach ($keys as $key => $value) {
+//error_log("set:$set:key:$key value:" . json_encode($value) . PHP_EOL);
+			$this->addSet($set, $key, json_encode($value));
 		}
 	}
 	
+	public function addSet($set, $key, $val) {
+//error_log("addSet $set:$key:$val".PHP_EOL);				
+		return $this->cache->hset("$set", "$key", "$val");
+	}
+	
+	public function hasSet($set) {
+		//Scan the hash and return 0 or the sub-array
+		$result = $this->cache->executeRaw(array('HLEN', $set));
+//error_log("hasSet result------> " . json_encode($result) . PHP_EOL);
+		return $result;
+	}
+	
+	public function findSet($set, $match="*") {
+
+		//Scan the hash and return 0 or the sub-array
+		$result = $this->cache->executeRaw(array('HSCAN', $set, 0, 'MATCH', $match));
+		if ($result) {
+			$matched = $result[0];
+		} else {
+			$matched = 0;
+		}
+		
+		error_log("matched------> " . json_encode($matched) . PHP_EOL);
+		
+		//error_log("hasSet ---> ". $this->cache->executeRaw(array('SCARD', '@person')) .PHP_EOL);
+		//return $this->cache->executeRaw(array('SCARD', '@person'));	
+		return $matched;
+
+	}
+
 	public function getSet($set) {
-		//return $this->cache->smembers($set, true);
-		return $this->cache->smembers($set);
+		return $this->cache->smembers($set, true);
 	}	
 	
 	public function remSet($set) {
 		$this->cache->executeRaw(array('DEL', $set));
 	}	
 
-	public function hasSet($set) {	
-		error_log("hasSet ---> ". $this->cache->executeRaw(array('SCARD', '@person')) .PHP_EOL);
-		return $this->cache->executeRaw(array('SCARD', '@person'));	
-	}
-	
-	//$redis->sadd('s0', 'aaa')
-	public function addSet($set, $val) {
-		$this->cache->sadd($set, $val);
-	}
-	
 	public function getCache($key) {
 		error_log("getCache key ----> ".$key.PHP_EOL);
 		if(!$this->isCacheEnable){

@@ -235,12 +235,12 @@ class IndexController extends AbstractActionController {
                 	 * 12-OCT-2014 JM: Performance Testing / Tuning
                 	 *  input as json so we decode json returned
                 	 */
-	                $this->elasticache->remSet('@person');
-	                if (empty($this->elasticache->hasSet('@person'))) {
+	                //$this->elasticache->remSet('@person');
+	                if (!$this->elasticache->hasSet('@person')) {
 	                	//add to the set
-error_log ("@person set checked..." . PHP_EOL);
-	                	$this->elasticache->warmSet('@person', array_keys($registration->createUserCache()));
-error_log ("@person set added to...". $this->elasticache->hasSet('@person') . PHP_EOL);
+error_log ("@person warming started @ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
+	                	$this->elasticache->warmSet('@person', $registration->createUserCache());
+error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
 //						$result = $this->elasticache->getSet('@person');
 //error_log ("@person set is now ---> " . $this->elasticache->hasSet('@person') . PHP_EOL . json_encode($result) . PHP_EOL);
 	                } else {
@@ -249,7 +249,7 @@ error_log ("@person set added to...". $this->elasticache->hasSet('@person') . PH
 	                	 */
 	                	$mc[] = $registration->username;
 	                	$mc[ $registration->username ] [] = array ('user_id' => $registration->user_id, 'profile_photo' => $registration->profile_photo);
-	                	$this->elasticache->addSet("@person", $mc);
+	                	$this->elasticache->addSet("@person", $registration->username, $mc[ $registration->username ]);
 error_log ("added to cache username --> " . $registration->username . PHP_EOL);
 	                }
 	                
@@ -1543,7 +1543,6 @@ error_log('ip is '.$ipaddress);
 		 */
 		try {
 	        if(MemreasConstants::ELASTICACHE_SERVER_USE){ 
-	          
 
 	        	/*
 	        	 * Set Redis for session caching
@@ -1552,9 +1551,9 @@ error_log('ip is '.$ipaddress);
 	        	$saveHandler = new MemreasRedisSaveHandler($this->elasticache);
 	        	$sessionManager = new SessionManager();
 	        	$sessionManager->setSaveHandler($saveHandler);
-error_log("set memreas redis save handler in session manager".PHP_EOL);	        	
+//error_log("set memreas redis save handler in session manager".PHP_EOL);	        	
 	        	Container::setDefaultManager($sessionManager);
-error_log("set default manager to memreas redis ".PHP_EOL);	        	
+//error_log("set default manager to memreas redis ".PHP_EOL);	        	
 	        	//$saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
 	        }else{
 	        
@@ -1572,7 +1571,6 @@ error_log("set default manager to memreas redis ".PHP_EOL);
 	            Container::setDefaultManager ( $sessionManager );
 	        }
 			$sid='';
-	        
 	        if (!empty( $_REQUEST ['sid'] )) {
 	            $sid =  $_REQUEST ['sid'] ;
 	        } elseif (isset ( $_POST ['xml'] )) {
@@ -1582,8 +1580,8 @@ error_log("set default manager to memreas redis ".PHP_EOL);
 	        if (!empty ( $sid )) {
 				$sessionManager->setId ( $sid );
 	        }
-error_log("passed sid section...".PHP_EOL);  
-			$user_session = new Container ( 'user' );
+
+	        $user_session = new Container ( 'user' );
 			if (!isset( $user_session->init )) {
 				// $sessionManager->regenerateId(true);
 				$user_session->init = 1;
@@ -1594,7 +1592,7 @@ error_log("passed sid section...".PHP_EOL);
 		} catch (Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 		}      
-error_log("created session for sid --> " . $user_session->sid . PHP_EOL);        
+//error_log("created session for sid --> " . $user_session->sid . PHP_EOL);        
 		$public= array(
             'login',
             'registration',
@@ -1624,14 +1622,11 @@ error_log("created session for sid --> " . $user_session->sid . PHP_EOL);
          if(in_array($actionname, $public)|| empty($actionname)){
             return $actionname;
         } else {
-	    	        $session = new Container("user");
-error_log('ws-session-user_id ->'.$session->user_id);
-	            if (!$session->offsetExists('user_id')) {
-	                return 'notlogin';
-	            }
-error_log("user session ---> ".json_encode($session).PHP_EOL);	    	        
+	    	$session = new Container("user");
+	        if (!$session->offsetExists('user_id')) {
+	        	return 'notlogin';
+			}
 	            return $actionname;       
-// return $this->redirect()->toRoute('index', array('action' => 'login'));
         }
 
     }

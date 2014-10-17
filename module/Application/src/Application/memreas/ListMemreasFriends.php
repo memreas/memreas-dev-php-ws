@@ -72,7 +72,7 @@ class ListMemreasFriends {
                 $output .= '<friend>';
                 $output .= '<friend_id>' . $friend->friend_id . '</friend_id>';
                 $output .= '<friend_name>' . $friend->social_username . '</friend_name>';
-                $output .= '<photo>' . $this->url_signer->fetchSignedURL ($friend->url_image) . '</photo>';
+                $output .= '<photo><![CDATA[' . $this->url_signer->fetchSignedURL ($friend->url_image) . ']]></photo>';
                 $output .= '</friend>';
             }
             $output .= '</friends>';

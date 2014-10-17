@@ -396,7 +396,7 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
+//error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
 		
 		$this->username = $username;
 		$this->user_id = $user_id;
@@ -429,6 +429,7 @@ error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
 			}
 //echo "row user_id is---------> ". $row['user_id'];					
 			$this->userIndex[$row['username']] = array(
+													'username'      => $row['username'],
 													'user_id'      => $row['user_id'],
 													'profile_photo' => $url1
 													);
