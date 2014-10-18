@@ -12,6 +12,7 @@ class MemreasConstants {
 	
 	//memreasprod-wsu url
 	const ORIGINAL_URL = "https://memreasprod-wsr.memreas.com/";
+	const ELASTICACHE_REDIS_WARM_PERSON_URL = "https://memreasprod-wsr.memreas.com/index?action=warm_person";
 	const MEDIA_URL = "https://memreasprod-wsr.memreas.com/?action=addmediaevent";
 	
 	//memreasprod-bew url

@@ -23,6 +23,7 @@ class Registration {
 	public $profile_photo;
 	
 	public function __construct($message_data, $memreas_tables, $service_locator) {
+		
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
@@ -45,7 +46,7 @@ class Registration {
 		$user_id = MUUID::fetchUUID ();
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
-//error_log ( "Inside Registration xml requet ----> " . $_POST ['xml'] . PHP_EOL );
+//error_log ( "Inside Registration xml request ----> " . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$username = trim ( $data->registration->username );
 			$email = trim ( $data->registration->email );
@@ -57,14 +58,12 @@ class Registration {
 			//$invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
             $assign_event = trim ( $data->registration->event_id );
 		} else {
-/* 			
 error_log ( "Inside Registration ----> ".$_REQUEST['username'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['email'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['password'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['device_token'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['device_type'].PHP_EOL ); 
 error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
- */
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
@@ -129,10 +128,10 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
                         $meta_arr['user']['username' ] = $username;
                         $meta_arr['user']['user_id' ] = $user_id;
                         $meta_arr['user']['email_verification_id' ] = $email_verification_id;
-//error_log("email_verification_id".$email_verification_id.PHP_EOL);
+error_log("email_verification_id".$email_verification_id.PHP_EOL);
 						$email_verification_url = MemreasConstants::ORIGINAL_URL.'index?action=verifyemailaddress&email_verification_id='.$email_verification_id.'&user_id='.$user_id;
                         $meta_arr['user']['email_verification_url' ] = $email_verification_url;
-//error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email_verification_url' ].PHP_EOL);
+error_log("meta_arr['user']['email_verification_url' ]".$meta_arr['user']['email_verification_url' ].PHP_EOL);
                         $meta_arr['user']['email_verified' ] = "0";
                         
                         $metadata = json_encode($meta_arr);
@@ -396,7 +395,7 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-//error_log("registration xml_output ---> " . $xml_output . PHP_EOL);
+//error_log("registration xml_output -------> *****" . $xml_output . "*****" . PHP_EOL);
 		
 		$this->username = $username;
 		$this->user_id = $user_id;
@@ -433,7 +432,6 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 													'user_id'      => $row['user_id'],
 													'profile_photo' => $url1
 													);
-			
 		}
 				
 		return $this->userIndex;

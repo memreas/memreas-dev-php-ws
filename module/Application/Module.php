@@ -99,7 +99,6 @@ class Module {
 							} else {
 								$sessionManager = new SessionManager ();
 							}
-							error_log ( 'sm' );
 							Container::setDefaultManager ( $sessionManager );
 							return $sessionManager;
 						},

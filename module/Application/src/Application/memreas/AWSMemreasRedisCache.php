@@ -71,6 +71,7 @@ class AWSMemreasRedisCache {
 	
 	public function findSet($set, $match="*") {
 
+error_log ("Inside findSet..." . PHP_EOL);
 		//Scan the hash and return 0 or the sub-array
 		$result = $this->cache->executeRaw(array('HSCAN', $set, 0, 'MATCH', $match));
 		if ($result) {
@@ -79,7 +80,7 @@ class AWSMemreasRedisCache {
 			$matched = 0;
 		}
 		
-		//error_log("matched------> " . json_encode($matched) . PHP_EOL);
+error_log("matched------> " . json_encode($matched) . PHP_EOL);
 		
 		//error_log("hasSet ---> ". $this->cache->executeRaw(array('SCARD', '@person')) .PHP_EOL);
 		//return $this->cache->executeRaw(array('SCARD', '@person'));	
@@ -102,12 +103,14 @@ class AWSMemreasRedisCache {
 		}
 
 		$result = $this->cache->get ( $key );
+		/*
 		if ($result) {
 			//error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
 		} else {
 			error_log('COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL);
 		}
-
+		*/
+		
 		return $result;
 	}
 
@@ -208,7 +211,7 @@ class AWSMemreasRedisCache {
 
 	/*
 	 * Add function to invalidate cache for event friends
-	*/
+	 */
 	public function invalidateEventFriends($event_id, $user_id) {
 		// write functions for media
 		//  - add event friend

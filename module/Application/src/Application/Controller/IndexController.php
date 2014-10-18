@@ -18,8 +18,7 @@ use Application\Model;
 use Application\Form;
 use Zend\Mail\Message;
 use Zend\Mail\Transport\Sendmail as SendmailTransport;
-use Guzzle\Http\Client;
-use Guzzle\Plugin\Async\AsyncPlugin;
+use GuzzleHttp\Client;
 use Application\Model\MemreasConstants;
 use Application\memreas\Login;
 use Application\memreas\Registration;
@@ -143,7 +142,8 @@ class IndexController extends AbstractActionController {
 		}
 		return $xml->asXML ();
 	}
-	
+
+	/*
 	public function fetchXML($action, $xml) {
  		$guzzle = new Client ();
 		
@@ -155,6 +155,8 @@ class IndexController extends AbstractActionController {
 		$response = $request->send ();
 		return $data = $response->getBody ( true );
 	}
+	*/
+	
 	public function indexAction() {
 //error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
 		$path = "application/index/ws_tester.phtml";
@@ -175,10 +177,6 @@ class IndexController extends AbstractActionController {
             $message_data ['xml'] = '';
         }
                     
-        
-        /*
-         * TODO: SID working within security as of 4-OCT-2014
-         */
        $actionname = $this->security($actionname);
                     
 error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
@@ -211,52 +209,88 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
             } else if ($actionname == "login") {
                 $login = new Login($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $login->exec();
-
+                $session = new Container('user');
+                $user_id = $session->offsetGet('user_id');
+                $username = $session->offsetGet('username');
+                $sid = $session->offsetGet('sid');
+                $user = $session->offsetGet('user');
+                	
+                
                 /*
-                 * Cache approach - cached in security
+                 * Cache approach - warm @person if not set here
                  */
+                if (!$this->elasticache->hasSet('@person')) {
+error_log("Inside login !hasSet ----> ".$this->elasticache->hasSet('@person').PHP_EOL);
+//error_log("Inside login sid ----> ".$sid.PHP_EOL);
+					/*
+                	 * TODO: Need to async task this so flush 200 and continue - it takes a while to load all the users...
+                	 */
+					//$url = MemreasConstants::ELASTICACHE_REDIS_WARM_PERSON_URL. "&sid=" . $sid;
+                	//$client = new Client($url);
+                	//$response = $client->get()->send();
+                	
+					$client = new \GuzzleHttp\Client();
+error_log("Inside login got client".PHP_EOL);
+						
+					try {
+						$url = MemreasConstants::ORIGINAL_URL . "?action=warm_person&sid=$sid";
+						$response = $client->get($url);
+					} catch (RequestException $e) {
+						echo $e->getRequest() . "\n";
+						if ($e->hasResponse()) {
+							echo $e->getResponse() . "\n";
+						}
+					}
+
+					/*
+					$req = $client->createRequest('GET', MemreasConstants::ORIGINAL_URL, ['action' => 'warm_person', 'sid' => $sid ]);
+					$client->send($req)->then(function ($response) {
+						echo '*********** I completed! ' . $response;
+					});
+					*/
+					
+                	$code = $response->getStatusCode();
+                	if ($code == 200) {
+                		error_log("Just called url --> ".$url.PHP_EOL);
+                	}
+                } else {
+					/*
+					 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login and cache is warm)
+					 */
+					$mc[] = $username;
+					$mc[ $username ] [] = array ('user_id' => $user_id, 'profile_photo' => '');
+					$this->elasticache->addSet("@person", $username, json_encode($mc[ $username ]));
+error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
+error_log ("added to cache username --> " . $username . PHP_EOL);
+                	}
+                	 
+            } else if ($actionname == "warm_person") {
+error_log ("Entered @person warming @ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
+            	//Return the status code here so that the SNS topic won't keep resending the message
+            	ob_start();
+            	http_response_code(200);
+            	header('Connection: close');
+            	header('Content-Length: '.ob_get_length());
+            	ob_end_flush(); 	// Strange behaviour, will not work
+            	flush();            // Unless both are called !
+
+            	//Now continue processing and warm the cache for @person
+				$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
+				$this->elasticache->warmSet('@person', $registration->createUserCache());
+//error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
+            	//						$result = $this->elasticache->getSet('@person');
+            	//error_log ("@person set is now ---> " . $this->elasticache->hasSet('@person') . PHP_EOL . json_encode($result) . PHP_EOL);
+            	/*
+            	 * TODO: Need to see if error occurs
+            	 */
+            	exit();
             } else if ($actionname == "registration") {
+error_log ("Inside if action registration..." . PHP_EOL);
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
                 
                 $data = simplexml_load_string($_POST ['xml']);
                 $uid = trim($data->registration->username);
-                
-                if ($registration->status == 'Success') {
-                	
-                	/*
-	                 * Cache approach - store in @person search index
-	                 */
-	                //first letter of name
-	                $uid = $uid[0];
-	                $actionname = '@';
-                	
-                	/*
-                	 * 12-OCT-2014 JM: Performance Testing / Tuning
-                	 *  input as json so we decode json returned
-                	 */
-	                //$this->elasticache->remSet('@person');
-	                if (!$this->elasticache->hasSet('@person')) {
-	                	//add to the set
-error_log ("@person warming started @ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-	                	$this->elasticache->warmSet('@person', $registration->createUserCache());
-error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-//						$result = $this->elasticache->getSet('@person');
-//error_log ("@person set is now ---> " . $this->elasticache->hasSet('@person') . PHP_EOL . json_encode($result) . PHP_EOL);
-	                } else {
-	                	/*
-	                	 * Add the new user
-	                	 */
-	                	//$mc[] = $registration->username;
-	                	//$mc[ $registration->username ] [] = array ('user_id' => $registration->user_id, 'profile_photo' => $registration->profile_photo);
-	                	//$this->elasticache->addSet("@person", $registration->username, $mc[ $registration->username ]);
-//error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-//error_log ("added to cache username --> " . $registration->username . PHP_EOL);
-	                }
-	                
-                	//Shouldn't get here....
-                    $this->elasticache->setCache("@person", $registration->userIndex);
-                }
             } else if ($actionname == "addcomments") {
                 $addcomment = new AddComment($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $addcomment->exec();
@@ -1353,6 +1387,7 @@ error_log("Inside listallmedia - no result so pull from db...");
         } else {
             // xml output
             echo $output;
+//error_log("output ----> ****$output***".PHP_EOL);            
 			exit();
         }
     }
@@ -1552,9 +1587,7 @@ error_log("Inside listallmedia - no result so pull from db...");
 	        	$saveHandler = new MemreasRedisSaveHandler($this->elasticache);
 	        	$sessionManager = new SessionManager();
 	        	$sessionManager->setSaveHandler($saveHandler);
-//error_log("set memreas redis save handler in session manager".PHP_EOL);	        	
 	        	Container::setDefaultManager($sessionManager);
-	        	//$saveHandler = new \Application\memreas\ElasticSessionHandler($this->elasticache);
 	        }else{
 	        
 	            $gwOpts = new DbTableGatewayOptions ();
@@ -1573,12 +1606,14 @@ error_log("Inside listallmedia - no result so pull from db...");
 			$sid='';
 	        if (!empty( $_REQUEST ['sid'] )) {
 	            $sid =  $_REQUEST ['sid'] ;
+	            
 	        } elseif (isset ( $_POST ['xml'] )) {
 	            $data = simplexml_load_string ( $_POST ['xml'] );
 	            $sid = trim ( $data->sid );
 	        }
 	        if (!empty ( $sid )) {
-				$sessionManager->setId ( $sid );
+				$sessionManager->setId($sid);
+				$sessionManager->start();
 	        }
 
 	        $user_session = new Container ( 'user' );
@@ -1591,6 +1626,7 @@ error_log("Inside listallmedia - no result so pull from db...");
 			
 		} catch (Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
+//error_log('Caught exception: '.$e->getMessage().PHP_EOL);
 		}      
 		$public= array(
             'login',
@@ -1612,16 +1648,17 @@ error_log("Inside listallmedia - no result so pull from db...");
             'getaccountdetail',
             'refund',
             'listpayees',
-            'makepayout'
+            'makepayout',
 //            'doquery'
-            ,'getdiskusage'
+            'getdiskusage',
+			'warm_person'
             );
 		//$_SESSION ['user'] ['ip'] = $ipaddress;
         //$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
          if(in_array($actionname, $public)|| empty($actionname)){
-            return $actionname;
+         	return $actionname;
         } else {
-	    	$session = new Container("user");
+        	$session = new Container("user");
 	        if (!$session->offsetExists('user_id')) {
 	        	return 'notlogin';
 			}

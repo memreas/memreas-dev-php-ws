@@ -97,7 +97,7 @@ class Login {
 		$xml_output .= "</loginresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-//error_log ( "Login ---> xml_output ----> " . $xml_output . PHP_EOL );
+//error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}
 	public function setSession($user) {
 		

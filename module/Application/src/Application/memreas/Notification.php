@@ -47,7 +47,6 @@ class Notification {
 			$this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
 		}
 		
-error_log("Inside notification constructor".PHP_EOL);
 		/*
 		 * 25-SEP-2014 JM : Attempt to upgrade to facebook PHP SDK 4.x 
 		 *
