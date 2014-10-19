@@ -143,7 +143,6 @@ class IndexController extends AbstractActionController {
 		return $xml->asXML ();
 	}
 
-	/*
 	public function fetchXML($action, $xml) {
  		$guzzle = new Client ();
 		
@@ -155,10 +154,8 @@ class IndexController extends AbstractActionController {
 		$response = $request->send ();
 		return $data = $response->getBody ( true );
 	}
-	*/
 	
 	public function indexAction() {
-//error_log ( "Inside indexAction---> " . date ( 'Y-m-d H:i:s' ) . PHP_EOL );
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -177,11 +174,8 @@ class IndexController extends AbstractActionController {
             $message_data ['xml'] = '';
         }
                     
-       $actionname = $this->security($actionname);
-                    
 error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
-//error_log("Inside indexAction---> _POST ['xml'] ---> ".print_r($_POST['xml'],true). PHP_EOL);
-
+        $actionname = $this->security($actionname);
  
         if (isset($actionname) && !empty($actionname)) {
             $cache_me = false;
@@ -209,6 +203,8 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
             } else if ($actionname == "login") {
                 $login = new Login($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $login->exec();
+                
+                //
                 $session = new Container('user');
                 $user_id = $session->offsetGet('user_id');
                 $username = $session->offsetGet('username');
@@ -219,71 +215,18 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
                 /*
                  * Cache approach - warm @person if not set here
                  */
-                if (!$this->elasticache->hasSet('@person')) {
-error_log("Inside login !hasSet ----> ".$this->elasticache->hasSet('@person').PHP_EOL);
-//error_log("Inside login sid ----> ".$sid.PHP_EOL);
-					/*
-                	 * TODO: Need to async task this so flush 200 and continue - it takes a while to load all the users...
-                	 */
-					//$url = MemreasConstants::ELASTICACHE_REDIS_WARM_PERSON_URL. "&sid=" . $sid;
-                	//$client = new Client($url);
-                	//$response = $client->get()->send();
-                	
-					$client = new \GuzzleHttp\Client();
-error_log("Inside login got client".PHP_EOL);
-						
-					try {
-						$url = MemreasConstants::ORIGINAL_URL . "?action=warm_person&sid=$sid";
-						$response = $client->get($url);
-					} catch (RequestException $e) {
-						echo $e->getRequest() . "\n";
-						if ($e->hasResponse()) {
-							echo $e->getResponse() . "\n";
-						}
-					}
-
-					/*
-					$req = $client->createRequest('GET', MemreasConstants::ORIGINAL_URL, ['action' => 'warm_person', 'sid' => $sid ]);
-					$client->send($req)->then(function ($response) {
-						echo '*********** I completed! ' . $response;
-					});
-					*/
-					
-                	$code = $response->getStatusCode();
-                	if ($code == 200) {
-                		error_log("Just called url --> ".$url.PHP_EOL);
-                	}
-                } else {
+                
+                if ($this->elasticache->hasSet('@person')) {
 					/*
 					 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login and cache is warm)
 					 */
 					$mc[] = $username;
 					$mc[ $username ] [] = array ('user_id' => $user_id, 'profile_photo' => '');
 					$this->elasticache->addSet("@person", $username, json_encode($mc[ $username ]));
-error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
+error_log ("@person set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
 error_log ("added to cache username --> " . $username . PHP_EOL);
                 	}
                 	 
-            } else if ($actionname == "warm_person") {
-error_log ("Entered @person warming @ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-            	//Return the status code here so that the SNS topic won't keep resending the message
-            	ob_start();
-            	http_response_code(200);
-            	header('Connection: close');
-            	header('Content-Length: '.ob_get_length());
-            	ob_end_flush(); 	// Strange behaviour, will not work
-            	flush();            // Unless both are called !
-
-            	//Now continue processing and warm the cache for @person
-				$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
-				$this->elasticache->warmSet('@person', $registration->createUserCache());
-//error_log ("@person set now holds ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-            	//						$result = $this->elasticache->getSet('@person');
-            	//error_log ("@person set is now ---> " . $this->elasticache->hasSet('@person') . PHP_EOL . json_encode($result) . PHP_EOL);
-            	/*
-            	 * TODO: Need to see if error occurs
-            	 */
-            	exit();
             } else if ($actionname == "registration") {
 error_log ("Inside if action registration..." . PHP_EOL);
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
@@ -940,16 +883,6 @@ error_log("Inside listallmedia - no result so pull from db...");
             	error_log("Log has been cleared!");
             	echo '<pre>' . file_get_contents(getcwd() . '/php_errors.log');
                 exit();
-            } else if ($actionname == "doquery") {
-            	/*
-            	 * 5-OCT-2014 disabled - security flaw
-             	 */
-            	       
-                //$em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-                //$x = $em->createQuery($_GET ['sql'])->getResult();
-                //echo '<pre>';
-                //print_r($x);
-                exit();
             } else if ($actionname == "logout") {
             	/*
             	 * Cache Approach: N/a
@@ -1376,8 +1309,6 @@ error_log("Inside listallmedia - no result so pull from db...");
             header("Content-type: plain/text");
             // callback json
             echo $callback . "(" . $json . ")";
-            // Need to exit here to avoid ZF2 framework view.
-            exit();
         }
 
         if (isset($_GET ['view']) && empty($actionname)) {
@@ -1388,9 +1319,30 @@ error_log("Inside listallmedia - no result so pull from db...");
             // xml output
             echo $output;
 //error_log("output ----> ****$output***".PHP_EOL);            
-			exit();
         }
-    }
+
+        /*
+         * Cache Warming section...
+         */
+        http_response_code(200);
+        header('Connection: close');
+        header('Content-Length: '.ob_get_length());
+        ob_end_flush(); 	// Strange behaviour, will not work
+        flush();            // Unless both are called !
+        
+        if (!$this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
+error_log("cache warming @person started...".date( 'Y-m-d H:i:s' ).PHP_EOL);
+        	//Return the status code here so this process continues and the user receives response
+        
+        	//Now continue processing and warm the cache for @person
+        	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
+        	$this->elasticache->warmSet('@person', $registration->createUserCache());
+error_log("cache warming @person ended...".date( 'Y-m-d H:i:s' ).PHP_EOL);
+        }
+                
+        // Need to exit here to avoid ZF2 framework view.
+        exit();
+	} // end indexcontroller...
     
     public function loginAction() {
         // Fetch the post data
@@ -1548,7 +1500,7 @@ error_log("Inside listallmedia - no result so pull from db...");
          */
     	if ( (MemreasConstants::ELASTICACHE_SERVER_USE) && (MemreasConstants::ELASTICACHE_REDIS_USE) ) {
 			try {
-				$this->elasticache = new AWSMemreasRedisCache();
+				$this->elasticache = new AWSMemreasRedisCache($this->getServiceLocator());
 			} catch (\Exception $ex) {
     			echo "base exception ---> ". print_r($ex, true) . PHP_EOL;
     		}
@@ -1611,11 +1563,18 @@ error_log("Inside listallmedia - no result so pull from db...");
 	            $data = simplexml_load_string ( $_POST ['xml'] );
 	            $sid = trim ( $data->sid );
 	        }
-	        if (!empty ( $sid )) {
-				$sessionManager->setId($sid);
-				$sessionManager->start();
-	        }
-
+			try {
+				if (!empty ( $sid )) {
+					//Set session id - uninitialized here so set to sid and start
+					session_id($sid);
+					session_start();
+					//$sessionManager->setId($sid);
+					//$sessionManager->start();
+				}
+				
+			} catch (\Exception $e) {
+				echo 'Caught exception: ',  $e->getMessage(), "\n";
+			}
 	        $user_session = new Container ( 'user' );
 			if (!isset( $user_session->init )) {
 				// $sessionManager->regenerateId(true);
@@ -1624,7 +1583,7 @@ error_log("Inside listallmedia - no result so pull from db...");
 			}
 				
 			
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 //error_log('Caught exception: '.$e->getMessage().PHP_EOL);
 		}      
@@ -1649,20 +1608,25 @@ error_log("Inside listallmedia - no result so pull from db...");
             'refund',
             'listpayees',
             'makepayout',
-//            'doquery'
-            'getdiskusage',
-			'warm_person'
+            'getdiskusage'
             );
 		//$_SESSION ['user'] ['ip'] = $ipaddress;
         //$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
          if(in_array($actionname, $public)|| empty($actionname)){
          	return $actionname;
         } else {
+        	/*
         	$session = new Container("user");
 	        if (!$session->offsetExists('user_id')) {
 	        	return 'notlogin';
 			}
-	            return $actionname;       
+	            return $actionname;
+	        */
+        	if (!session_id()) {
+        		return 'notlogin';
+        	}
+        	return $actionname;
+        	 
         }
 
     }

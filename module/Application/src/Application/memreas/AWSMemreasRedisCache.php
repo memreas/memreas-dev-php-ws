@@ -12,13 +12,18 @@ class AWSMemreasRedisCache {
 	private $cache = "";
 	private $client = "";
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
+    private $dbAdapter;
+    private $url_signer;
     
-	public function __construct() {
+	public function __construct($service_locator) {
 		if(!$this->isCacheEnable){
 			return;
 		}
 
-		try{
+    	$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+    	$this->url_signer = new MemreasSignedURL ();
+
+    	try{
 			$this->cache = new \Predis\Client([
 					'scheme' => 'tcp',
 					'host'   => MemreasConstants::ELASTICACHE_SERVER_ENDPOINT,
@@ -51,11 +56,66 @@ class AWSMemreasRedisCache {
 	}
 	
 	public function warmSet($set, $keys) {
-		foreach ($keys as $key => $value) {
-//error_log("set:$set:key:$key value:" . json_encode($value) . PHP_EOL);
-			$this->addSet($set, $key, json_encode($value));
+		sleep(3);
+		$warming = $this->cache->get('warming');
+error_log("warming--->".$warming.PHP_EOL);			
+		if (!$warming) {
+error_log("Inside warming...".PHP_EOL);			
+			$warming = $this->cache->set('warming', '1');
+			
+			$url_signer = new MemreasSignedURL();
+			$qb = $this->dbAdapter->createQueryBuilder ();
+			$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
+			$qb->from ( 'Application\Entity\User', 'u' );
+			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+			
+error_log("Inside warming fetched query...".PHP_EOL);			
+			//create index for catch;
+			$userIndexArr = $qb->getQuery()->getResult();
+			$persons = array();
+			foreach ($userIndexArr as $row) {
+				$json_array = json_decode ( $row ['metadata'], true );
+			
+				if (empty ( $json_array ['S3_files'] ['path'] )){
+					$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
+				}else{
+					$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+				}
+			
+				$person_json = json_encode(
+								array(
+									'username'      => $row['username'],
+									'user_id'      => $row['user_id'],
+									'profile_photo' => $url1
+								)); 
+				
+				/*
+				 * TODO: need to pipeline this..
+				 */
+				$persons[$row['username']] = $person_json;
+			}
+
+			//$result = $this->cache->executeRaw(array('HMSET', $set, 0, 'MATCH', $match));
+			$reply = $this->cache->hmset('@person', $persons);
+			
+			//$cmdSet = new \Predis\Command\HashSetMultiple();
+			//$arguments = $cmdSet->filterArguments(array ('@person'=>$persons));
+			//$reply = $redis->executeCommand($cmdSet);
+error_log("reply ---> ".$reply.PHP_EOL);			 
+			//Finished warming so reset flag
+			$warming = $this->cache->set('warming', '0');
+error_log("finished warming now $".$reply.PHP_EOL);
+				
+		} else {
+			error_log("Outside warming...".PHP_EOL);
 		}
-	}
+		
+// 		if (!empty($replies)) {
+// 			foreach ($replies as $reply) {
+// 				error_log("reply--->".$reply.PHP_EOL);
+// 			}
+// 		}
+	}		
 	
 	public function addSet($set, $key, $val) {
 //error_log("addSet $set:$key:$val".PHP_EOL);				
