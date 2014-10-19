@@ -60,7 +60,7 @@ class AWSMemreasRedisCache {
 		$warming = $this->cache->get('warming');
 error_log("warming--->".$warming.PHP_EOL);			
 		if (!$warming) {
-error_log("Inside warming...".PHP_EOL);			
+error_log("cache warming @person started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			$warming = $this->cache->set('warming', '1');
 			
 			$url_signer = new MemreasSignedURL();
@@ -101,11 +101,20 @@ error_log("Inside warming fetched query...".PHP_EOL);
 			//$cmdSet = new \Predis\Command\HashSetMultiple();
 			//$arguments = $cmdSet->filterArguments(array ('@person'=>$persons));
 			//$reply = $redis->executeCommand($cmdSet);
-error_log("reply ---> ".$reply.PHP_EOL);			 
 			//Finished warming so reset flag
 			$warming = $this->cache->set('warming', '0');
-error_log("finished warming now $".$reply.PHP_EOL);
-				
+			
+			
+			
+						
+$time_start = microtime(true);
+error_log("cache warming @person ended... $reply @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+			$matches = $this->findSet($set, $match="ch-1tuser-54432106b8bbc-*");
+error_log("matches[0] json ---> ".json_encode($matches[0]).PHP_EOL);
+
+$time_end = microtime(true);
+$time = $time_end - $time_start;
+error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
 		} else {
 			error_log("Outside warming...".PHP_EOL);
 		}
@@ -236,10 +245,10 @@ error_log("matched------> " . json_encode($matched) . PHP_EOL);
 	//Mecached - deleteMulti...
 	$result = $this->invalidateCacheMulti($cache_keys);
 	if ($result) {
-		$now = date ( 'Y-m-d H:i:s' );
+		$now = date ( 'Y-m-d H:i:s.u' );
 		error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
 	} else {
-		$now = date ( 'Y-m-d H:i:s' );
+		$now = date ( 'Y-m-d H:i:s.u' );
 		error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
 	}
 

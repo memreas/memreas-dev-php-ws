@@ -174,7 +174,7 @@ class IndexController extends AbstractActionController {
             $message_data ['xml'] = '';
         }
                     
-error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s' ). PHP_EOL);
+error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:i:s.u' ). PHP_EOL);
         $actionname = $this->security($actionname);
  
         if (isset($actionname) && !empty($actionname)) {
@@ -223,12 +223,10 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
 					$mc[] = $username;
 					$mc[ $username ] [] = array ('user_id' => $user_id, 'profile_photo' => '');
 					$this->elasticache->addSet("@person", $username, json_encode($mc[ $username ]));
-error_log ("@person set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s' ) . PHP_EOL);
-error_log ("added to cache username --> " . $username . PHP_EOL);
+error_log ("$username added - @person set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
                 	}
                 	 
             } else if ($actionname == "registration") {
-error_log ("Inside if action registration..." . PHP_EOL);
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $registration->exec();
                 
@@ -404,7 +402,6 @@ error_log ("Inside if action registration..." . PHP_EOL);
                 
                 $result = $this->elasticache->getCache($actionname.'_'.$cache_id);
                 if (!$result || empty($result)) {
-error_log("Inside listallmedia - no result so pull from db...");                	
                     $listallmedia = new ListAllmedia($message_data, $memreas_tables, $this->getServiceLocator());
                     $result = $listallmedia->exec();
                     $cache_me = true;
@@ -1331,13 +1328,11 @@ error_log("Inside listallmedia - no result so pull from db...");
         flush();            // Unless both are called !
         
         if (!$this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
-error_log("cache warming @person started...".date( 'Y-m-d H:i:s' ).PHP_EOL);
         	//Return the status code here so this process continues and the user receives response
         
         	//Now continue processing and warm the cache for @person
         	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
         	$this->elasticache->warmSet('@person', $registration->createUserCache());
-error_log("cache warming @person ended...".date( 'Y-m-d H:i:s' ).PHP_EOL);
         }
                 
         // Need to exit here to avoid ZF2 framework view.
