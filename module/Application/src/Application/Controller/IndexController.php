@@ -1563,13 +1563,14 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
 			try {
 				if (!empty ( $sid )) {
 					//Set session id - uninitialized here so set to sid and start
-					if (session_id()) {
-						session_destroy();
-					}
-					session_id($sid);
-					session_start();
-					//$sessionManager->setId($sid);
-					//$sessionManager->start();
+					//if (session_id()) {
+					//	session_destroy();
+					//}
+					//session_id($sid);
+					//session_start();
+					$sessionManager->getStorage()->clear('user');
+					$sessionManager->setId($sid);
+					$sessionManager->start();
 				}
 				
 			} catch (\Exception $e) {
