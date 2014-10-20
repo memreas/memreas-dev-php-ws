@@ -1327,7 +1327,9 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
         ob_end_flush(); 	// Strange behaviour, will not work
         flush();            // Unless both are called !
         
-        if (!$this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
+        //if (!$this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
+        //temp fix for redis dev - change to above once redis is working
+        if ($this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
         	//Return the status code here so this process continues and the user receives response
         
         	//Now continue processing and warm the cache for @person
