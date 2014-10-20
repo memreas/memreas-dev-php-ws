@@ -1321,11 +1321,11 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
         /*
          * Cache Warming section...
          */
-        http_response_code(200);
-        header('Connection: close');
-        header('Content-Length: '.ob_get_length());
-        ob_end_flush(); 	// Strange behaviour, will not work
-        flush();            // Unless both are called !
+        //http_response_code(200);
+        //header('Connection: close');
+        //header('Content-Length: '.ob_get_length());
+        //ob_end_flush(); 	// Strange behaviour, will not work
+        //flush();            // Unless both are called !
         
         //if (!$this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
         //temp fix for redis dev - change to above once redis is working
