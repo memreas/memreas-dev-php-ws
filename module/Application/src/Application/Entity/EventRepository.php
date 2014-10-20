@@ -103,13 +103,11 @@ class EventRepository extends EntityRepository
            
             if (! empty ( $json_array ['S3_files'] ['path'] )){
                 $url =$this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
-error_log("path url -----> ".$url.PHP_EOL);            	
             }
         }  else {
             if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']) ){
             	
                 $url =$this->url_signer->signArrayOfUrls($json_array ['S3_files'] ['thumbnails'] ['79x80']);
-error_log("path 79x80 -----> ".$url.PHP_EOL);            	
             }
         }        
               return $url;
