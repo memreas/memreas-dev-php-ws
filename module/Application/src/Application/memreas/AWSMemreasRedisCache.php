@@ -73,6 +73,7 @@ error_log("Inside warming fetched query...".PHP_EOL);
 			//create index for catch;
 			$userIndexArr = $qb->getQuery()->getResult();
 			$persons = array();
+			$usernames = array(); 
 			foreach ($userIndexArr as $row) {
 				$json_array = json_decode ( $row ['metadata'], true );
 			
@@ -93,11 +94,15 @@ error_log("Inside warming fetched query...".PHP_EOL);
 				 * TODO: need to pipeline this..
 				 */
 				$persons[$row['username']] = $person_json;
+				$usernames[] = $row['username']; 
 			}
 
 			//$result = $this->cache->executeRaw(array('HMSET', $set, 0, 'MATCH', $match));
 			$reply = $this->cache->hmset('@person', $persons);
+			//$result = $this->cache->executeRaw(array('ZADD', '',  $set));
+			//$zset_reply = $this->cache->zadd('@person_zset', '', $usernames);
 			
+				
 			//$cmdSet = new \Predis\Command\HashSetMultiple();
 			//$arguments = $cmdSet->filterArguments(array ('@person'=>$persons));
 			//$reply = $redis->executeCommand($cmdSet);
