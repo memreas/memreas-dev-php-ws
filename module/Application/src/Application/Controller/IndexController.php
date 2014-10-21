@@ -1603,6 +1603,7 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
             'showlog',
             'clearlog',
             'feedback',
+            'listallmedia',
     		//verify email
     		'verifyemailaddress',
             //For stripe
