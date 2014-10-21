@@ -55,8 +55,8 @@ class AWSMemreasRedisCache {
 		return $result;
 	}
 	
-	public function warmSet($set, $keys) {
-		sleep(3);
+	public function warmPersonSet() {
+		sleep(1);
 		$warming = $this->cache->get('warming');
 error_log("warming--->".$warming.PHP_EOL);			
 		if (!$warming) {
@@ -91,77 +91,67 @@ error_log("Inside warming fetched query...".PHP_EOL);
 								)); 
 				
 				/*
-				 * TODO: need to pipeline this..
+				 * TODO: need to send this in one shot
 				 */
 				$persons[$row['username']] = $person_json;
+				$usernames[] = 0;
 				$usernames[] = $row['username']; 
+				$result = $this->cache->zadd('@person', 0, $row['username']);
 			}
+// 			try {
+// 				$result = $this->cache->zadd('@person', $usernames);
+// 			} catch (Exception $e) {
+// 				echo 'Caught exception: ',  $e->getMessage(), "\n";
+// 			}			
 
-			//$result = $this->cache->executeRaw(array('HMSET', $set, 0, 'MATCH', $match));
-			$reply = $this->cache->hmset('@person', $persons);
-			//$result = $this->cache->executeRaw(array('ZADD', '',  $set));
-			//$zset_reply = $this->cache->zadd('@person_zset', '', $usernames);
-			
+			$reply = $this->cache->hmset('@person_hash', $persons);
+			$result = $this->cache->executeRaw(array('HLEN', '@person_hash'));
+error_log("HLEN result ---> $result".PHP_EOL);
+			$result = $this->cache->zcard('@person');
+error_log("ZCARD result ---> $result".PHP_EOL);
 				
-			//$cmdSet = new \Predis\Command\HashSetMultiple();
-			//$arguments = $cmdSet->filterArguments(array ('@person'=>$persons));
-			//$reply = $redis->executeCommand($cmdSet);
 			//Finished warming so reset flag
 			$warming = $this->cache->set('warming', '0');
-			
-			
-			
-						
-$time_start = microtime(true);
-error_log("cache warming @person ended... $reply @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-			$matches = $this->findSet($set, $match="ch-1tuser-54432106b8bbc-*");
-error_log("matches[0] json ---> ".json_encode($matches[0]).PHP_EOL);
-
-$time_end = microtime(true);
-$time = $time_end - $time_start;
-error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
+error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+				
 		} else {
 			error_log("Outside warming...".PHP_EOL);
 		}
-		
-// 		if (!empty($replies)) {
-// 			foreach ($replies as $reply) {
-// 				error_log("reply--->".$reply.PHP_EOL);
-// 			}
-// 		}
 	}		
 	
-	public function addSet($set, $key, $val) {
-//error_log("addSet $set:$key:$val".PHP_EOL);				
-		return $this->cache->hset("$set", "$key", "$val");
+	public function findPersonSet($set, $match) {
+
+		//Scan the hash and return 0 or the sub-array
+		$arr = array('ZRANGEBYLEX', '@person', "[".$match, "(".$match."z" );
+		$result = $this->cache->executeRaw(array('ZRANGEBYLEX', '@person', "[".$match, "(".$match."z" ));
+ 		if ($result != "(empty list or set)") {
+ 			$matches = $result;
+ 		} else {
+ 			$matches = 0;
+ 		}
+//error_log("matches------> " . json_encode($matches) . PHP_EOL);
+		return $matches;
+	}
+
+	public function addSet($set, $key, $val=null) {
+//error_log("addSet $set:$key:$val".PHP_EOL);
+		if (is_null($val)) {
+			return $this->cache->zadd("$set", "$key");
+		} else {
+			return $this->cache->hset("$set", "$key", "$val");
+		}				
+		
 	}
 	
 	public function hasSet($set) {
+error_log("hasSet set------> $set" . PHP_EOL);
 		//Scan the hash and return 0 or the sub-array
-		$result = $this->cache->executeRaw(array('HLEN', $set));
-//error_log("hasSet result------> " . json_encode($result) . PHP_EOL);
+		//$result = $this->cache->executeRaw(array('HLEN', $set));
+		$result = $this->cache->executeRaw(array('ZCARD', $set));
+error_log("hasSet result------> " . json_encode($result) . PHP_EOL);
 		return $result;
 	}
 	
-	public function findSet($set, $match="*") {
-
-error_log ("Inside findSet..." . PHP_EOL);
-		//Scan the hash and return 0 or the sub-array
-		$result = $this->cache->executeRaw(array('HSCAN', $set, 0, 'MATCH', $match));
-		if ($result) {
-			$matched = $result[0];
-		} else {
-			$matched = 0;
-		}
-		
-error_log("matched------> " . json_encode($matched) . PHP_EOL);
-		
-		//error_log("hasSet ---> ". $this->cache->executeRaw(array('SCARD', '@person')) .PHP_EOL);
-		//return $this->cache->executeRaw(array('SCARD', '@person'));	
-		return $matched;
-
-	}
-
 	public function getSet($set) {
 		return $this->cache->smembers($set, true);
 	}	

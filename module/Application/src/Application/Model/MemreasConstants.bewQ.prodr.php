@@ -38,7 +38,8 @@ class MemreasConstants {
 	const EXPIRES = 36000; // 10 hour
 	
 	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "memreasprod-redis.142tbh.0001.use1.cache.amazonaws.com";
+	//const ELASTICACHE_SERVER_ENDPOINT = "memreasprod-redis.142tbh.0001.use1.cache.amazonaws.com";
+	const ELASTICACHE_SERVER_ENDPOINT = "54.204.57.197"; //ubuntu standalone for redis 2.8.9 version
 	const ELASTICACHE_SERVER_PORT = "6379";
 	const ELASTICACHE_SERVER_USE = true;
 	const ELASTICACHE_REDIS_USE = true;

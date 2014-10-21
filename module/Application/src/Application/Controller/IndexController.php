@@ -215,16 +215,27 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
                 /*
                  * Cache approach - warm @person if not set here
                  */
-                
                 if ($this->elasticache->hasSet('@person')) {
+                	 
+                	$time_start = microtime(true);
+error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+                	$matches = $this->elasticache->findPersonSet('@person', "ch-1tuser-");
+error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+//error_log("matches json -----> ".json_encode($matches).PHP_EOL);
+                	
+                	$time_end = microtime(true);
+                	$time = $time_end - $time_start;
+                	error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
+                	 
 					/*
-					 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login and cache is warm)
+					 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login will force cache to warm)
 					 */
 					$mc[] = $username;
 					$mc[ $username ] [] = array ('user_id' => $user_id, 'profile_photo' => '');
-					$this->elasticache->addSet("@person", $username, json_encode($mc[ $username ]));
-error_log ("$username added - @person set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
-                	}
+					$this->elasticache->addSet("@person_hash", $username, json_encode($mc[ $username ]));
+					$this->elasticache->addSet("@person", $username);
+error_log ("$username added - @person_hash set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
+                }
                 	 
             } else if ($actionname == "registration") {
             	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
@@ -576,8 +587,8 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
                     	/*
                     	 * TODO: Migrate to redis search - see example below
                     	 */
-                    	//$matched = $this->elasticache->findSet('@person', 'ch-1tuser*' );
-                    	//error_log("matched------> " . json_encode($matched) . PHP_EOL);
+                    	//$matches = $this->elasticache->findSet('@person', 'ch-1tuser' );
+                    	//error_log("matched------> " . json_encode($matches) . PHP_EOL);
                     	
                     	
                         $mc = $this->elasticache->getCache('@person');
@@ -1321,20 +1332,21 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
         /*
          * Cache Warming section...
          */
-        //http_response_code(200);
-        //header('Connection: close');
-        //header('Content-Length: '.ob_get_length());
-        //ob_end_flush(); 	// Strange behaviour, will not work
-        //flush();            // Unless both are called !
-        
-        //if (!$this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
-        //temp fix for redis dev - change to above once redis is working
-        if ($this->elasticache->hasSet('@person') && ($actionname == 'login') ) {
+        if ( !$this->elasticache->hasSet('@person') &&
+        	 ($actionname == 'login') &&
+        		 MemreasConstants::ELASTICACHE_REDIS_USE) {
+
         	//Return the status code here so this process continues and the user receives response
+        	http_response_code(200);
+      		header('Connection: close');
+       		header('Content-Length: '.ob_get_length());
+       		ob_end_flush(); 	// Strange behaviour, will not work
+       		flush();            // Unless both are called !
+        	
         
         	//Now continue processing and warm the cache for @person
         	$registration = new Registration($message_data, $memreas_tables, $this->getServiceLocator());
-        	$this->elasticache->warmSet('@person', $registration->createUserCache());
+        	$this->elasticache->warmPersonSet();
         }
                 
         // Need to exit here to avoid ZF2 framework view.
@@ -1562,12 +1574,7 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
 	        }
 			try {
 				if (!empty ( $sid )) {
-					//Set session id - uninitialized here so set to sid and start
-					//if (session_id()) {
-					//	session_destroy();
-					//}
-					//session_id($sid);
-					//session_start();
+					//if initialized, clear, set sid, start...
 					$sessionManager->getStorage()->clear('user');
 					$sessionManager->setId($sid);
 					$sessionManager->start();
@@ -1582,8 +1589,6 @@ error_log ("$username added - @person set now holds --> ". $this->elasticache->h
 				$user_session->init = 1;
 				$user_session->sid = $sid;
 			}
-				
-			
 		} catch (\Exception $e) {
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
 //error_log('Caught exception: '.$e->getMessage().PHP_EOL);
