@@ -9,7 +9,7 @@ use Predis\Collection\Iterator;
 
 class AWSMemreasRedisCache {
 	private $aws = "";
-	private $cache = "";
+	public $cache = "";
 	private $client = "";
     private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
     private $dbAdapter;
@@ -69,11 +69,13 @@ error_log("cache warming @person started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			$qb->from ( 'Application\Entity\User', 'u' );
 			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 			
-error_log("Inside warming fetched query...".PHP_EOL);			
+//error_log("Inside warming fetched query...".PHP_EOL);			
 			//create index for catch;
 			$userIndexArr = $qb->getQuery()->getResult();
-			$persons = array();
-			$usernames = array(); 
+			$person_meta_hash = array();
+			$person_uid_hash = array();
+			$person_profile_pic_hash = array();
+				
 			foreach ($userIndexArr as $row) {
 				$json_array = json_decode ( $row ['metadata'], true );
 			
@@ -93,22 +95,34 @@ error_log("Inside warming fetched query...".PHP_EOL);
 				/*
 				 * TODO: need to send this in one shot
 				 */
-				$persons[$row['username']] = $person_json;
-				$usernames[] = 0;
-				$usernames[] = $row['username']; 
+				$person_meta_hash[$row['username']] = $person_json;
+				$person_uid_hash[$row['username']] = $row['user_id'];
+				$person_profile_pic_hash[$row['username']] = $url1;
+				//$person_usernames[] = 0;
+				//$person_usernames[] = $row['username']; 
+				//$person_user_ids[] = 0;
+				//$person_user_ids[] = $row['user_ids']; 
 				$result = $this->cache->zadd('@person', 0, $row['username']);
+				//$result = $this->cache->zadd('@person_user_id:', 0, $row['username']);
 			}
 // 			try {
 // 				$result = $this->cache->zadd('@person', $usernames);
 // 			} catch (Exception $e) {
 // 				echo 'Caught exception: ',  $e->getMessage(), "\n";
 // 			}			
-
-			$reply = $this->cache->hmset('@person_hash', $persons);
-			$result = $this->cache->executeRaw(array('HLEN', '@person_hash'));
-error_log("HLEN result ---> $result".PHP_EOL);
-			$result = $this->cache->zcard('@person');
-error_log("ZCARD result ---> $result".PHP_EOL);
+			$reply = $this->cache->hmset('@person_meta_hash', $person_meta_hash);
+			$reply = $this->cache->hmset('@person_uid_hash', $person_uid_hash);
+			$reply = $this->cache->hmset('@person_profile_pic_hash', $person_profile_pic_hash);
+			//$result = $this->cache->zadd('@person_usernames', $person_usernames);
+//error_log("ZADD result ---> $result".PHP_EOL);
+//$result = $this->cache->zcard('@person');
+//error_log("ZCARD result ---> $result".PHP_EOL);
+//$result = $this->cache->zadd('@person_user_ids', $person_user_ids);
+//error_log("ZADD result ---> $result".PHP_EOL);
+//$result = $this->cache->executeRaw(array('HLEN', '@person_uid_hash'));
+//error_log("HLEN result ---> $result".PHP_EOL);
+//$result = $this->cache->executeRaw(array('HLEN', '@person_hash'));
+//error_log("HLEN result ---> $result".PHP_EOL);
 				
 			//Finished warming so reset flag
 			$warming = $this->cache->set('warming', '0');
@@ -119,36 +133,45 @@ error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 		}
 	}		
 	
-	public function findPersonSet($set, $match) {
+	public function findSet($set, $match) {
 
+//error_log("Inside findSet... set $set match $match" . PHP_EOL);
 		//Scan the hash and return 0 or the sub-array
-		$arr = array('ZRANGEBYLEX', '@person', "[".$match, "(".$match."z" );
+		$arr = array('ZRANGEBYLEX', $set, "[".$match, "(".$match."z" );
 		$result = $this->cache->executeRaw(array('ZRANGEBYLEX', '@person', "[".$match, "(".$match."z" ));
  		if ($result != "(empty list or set)") {
  			$matches = $result;
  		} else {
  			$matches = 0;
+//error_log("error matches------> " . json_encode($matches) . PHP_EOL);
  		}
 //error_log("matches------> " . json_encode($matches) . PHP_EOL);
 		return $matches;
 	}
 
 	public function addSet($set, $key, $val=null) {
-//error_log("addSet $set:$key:$val".PHP_EOL);
-		if (is_null($val)) {
-			return $this->cache->zadd("$set", "$key");
-		} else {
-			return $this->cache->hset("$set", "$key", "$val");
-		}				
+		if (is_null($val) && !$this->cache->executeRaw(array('ZCARD', $set, $key)) ) {
 		
+//error_log("addSet $set:count------->".$this->cache->executeRaw(array('ZCARD', $set, $key)).PHP_EOL);
+//error_log("addSet $set:$key".PHP_EOL);
+			return $this->cache->zadd("$set", "$key");
+		} else if (!is_null($val)) {
+//error_log("addSet $set:$key:$val".PHP_EOL);
+			return $this->cache->hset("$set", "$key", "$val");
+		} else {
+			//do nothing key exists...
+//error_log("addSet $set:$key already exists...".PHP_EOL);
+		}				
 	}
 	
-	public function hasSet($set) {
-error_log("hasSet set------> $set" . PHP_EOL);
+	public function hasSet($set, $hash = false) {
 		//Scan the hash and return 0 or the sub-array
-		//$result = $this->cache->executeRaw(array('HLEN', $set));
-		$result = $this->cache->executeRaw(array('ZCARD', $set));
-error_log("hasSet result------> " . json_encode($result) . PHP_EOL);
+		if ($hash) {
+			$result = $this->cache->executeRaw(array('HLEN', $set));
+		} else {
+			$result = $this->cache->executeRaw(array('ZCARD', $set));
+		}
+error_log("hasSet result set $set ------> " . json_encode($result) . PHP_EOL);
 		return $result;
 	}
 	
@@ -224,30 +247,29 @@ error_log("hasSet result------> " . json_encode($result) . PHP_EOL);
 		if (!empty($event_id)) {
 			$cache_keys[] = "listallmedia_" . $event_id;
 			$cache_keys[] = "geteventdetails_" . $event_id;
-	}
-	$media_id = trim($media_id);
-	if (!empty($media_id)) {
-		$cache_keys[] = "viewmediadetails_" . $media_id;
-	}
-	$user_id = trim($user_id);
-	if (!empty($user_id)) {
-		//countviewevent can return me / friends / public
-		$cache_keys[] = "listallmedia_" . $user_id;
-		$cache_keys[] = "viewevents_is_my_event_" . $user_id;
-		$cache_keys[] = "viewevents_is_friend_event_" . $user_id;
-	}
-
-	//Mecached - deleteMulti...
-	$result = $this->invalidateCacheMulti($cache_keys);
-	if ($result) {
-		$now = date ( 'Y-m-d H:i:s.u' );
-		error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
-	} else {
-		$now = date ( 'Y-m-d H:i:s.u' );
-		error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
-	}
-
-	}
+			
+		}
+		$media_id = trim($media_id);
+		if (!empty($media_id)) {
+			$cache_keys[] = "viewmediadetails_" . $media_id;
+		}
+		$user_id = trim($user_id);
+		if (!empty($user_id)) {
+			//countviewevent can return me / friends / public
+			$cache_keys[] = "listallmedia_" . $user_id;
+			$cache_keys[] = "viewevents_is_my_event_" . $user_id;
+			$cache_keys[] = "viewevents_is_friend_event_" . $user_id;
+		}
+		//Mecached - deleteMulti...
+		$result = $this->invalidateCacheMulti($cache_keys);
+		if ($result) {
+			$now = date ( 'Y-m-d H:i:s.u' );
+			error_log('invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
+		} else {
+			$now = date ( 'Y-m-d H:i:s.u' );
+			error_log('invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode($cache_keys) . " time: " . $now . PHP_EOL);
+		}
+	} // End invalidateMedia
 
 	/*
 	 * Add function to invalidate cache for events

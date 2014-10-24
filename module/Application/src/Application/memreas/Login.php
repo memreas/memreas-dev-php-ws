@@ -97,7 +97,7 @@ class Login {
 		$xml_output .= "</loginresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-//error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
+error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}
 	public function setSession($user) {
 		
@@ -108,13 +108,13 @@ class Login {
 
 //		$this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ();
 
-//error_log ( "Inside setSession got new Container..." );
+error_log ( "Inside setSession got new Container..." );
 		$session = new Container('user');
 		$session->offsetSet('user_id', $user->user_id);
 		$session->offsetSet('username', $user->username);
 		$session->offsetSet('sid', session_id());
 		$session->offsetSet('user', json_encode($user));
-//error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet('sid') . PHP_EOL );
+error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet('sid') . PHP_EOL );
 		
         /*
          * TODO: Session storage isn't working properly if I set session id after but works here.  

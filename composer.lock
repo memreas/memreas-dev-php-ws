@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.7.1",
+            "version": "2.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "937a39ca3cee98d31a7410a17db24e0496c41494"
+                "reference": "21115c088549520a8b268557601987c12d835f4b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/937a39ca3cee98d31a7410a17db24e0496c41494",
-                "reference": "937a39ca3cee98d31a7410a17db24e0496c41494",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/21115c088549520a8b268557601987c12d835f4b",
+                "reference": "21115c088549520a8b268557601987c12d835f4b",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2014-10-16 21:37:55"
+            "time": "2014-10-23 20:13:09"
         },
         {
             "name": "doctrine/annotations",
@@ -1031,12 +1031,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nrk/predis.git",
-                "reference": "0533b50c6b7235b57661f9e97730f06a1bd0f27e"
+                "reference": "24e19a9b766fd1e414459060a2bf5268d5f62cf3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nrk/predis/zipball/0533b50c6b7235b57661f9e97730f06a1bd0f27e",
-                "reference": "0533b50c6b7235b57661f9e97730f06a1bd0f27e",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/24e19a9b766fd1e414459060a2bf5268d5f62cf3",
+                "reference": "24e19a9b766fd1e414459060a2bf5268d5f62cf3",
                 "shasum": ""
             },
             "require": {
@@ -1078,7 +1078,7 @@
                 "predis",
                 "redis"
             ],
-            "time": "2014-09-05 09:03:03"
+            "time": "2014-10-21 09:58:11"
         },
         {
             "name": "react/promise",

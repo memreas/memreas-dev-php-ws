@@ -25,7 +25,7 @@ class VerifyEmailAddress {
 		/*
 		 * fetch input vars 
 		 */
-		if ( isset($_GET ['email_verification_id']) && isset($_GET['user_id']) ) {
+	if ( isset($_GET ['email_verification_id']) && isset($_GET['user_id']) ) {
 			$email_verification_id_received = $_GET ['email_verification_id'];
 			$user_id = $_GET['user_id'];
 		

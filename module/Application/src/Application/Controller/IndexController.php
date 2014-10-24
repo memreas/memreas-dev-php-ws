@@ -203,38 +203,42 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
             } else if ($actionname == "login") {
                 $login = new Login($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $login->exec();
-                
+//error_log("login result ---> $result".PHP_EOL);                
                 //
                 $session = new Container('user');
                 $user_id = $session->offsetGet('user_id');
                 $username = $session->offsetGet('username');
                 $sid = $session->offsetGet('sid');
                 $user = $session->offsetGet('user');
-                	
+//error_log("login set variables".PHP_EOL);
                 
                 /*
                  * Cache approach - warm @person if not set here
                  */
                 if ($this->elasticache->hasSet('@person')) {
                 	 
-                	$time_start = microtime(true);
-error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-                	$matches = $this->elasticache->findPersonSet('@person', "ch-1tuser-");
-error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+//$time_start = microtime(true);
+//error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+//$matches = $this->elasticache->findSet('@person', "ch-1tuser-");
+//error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 //error_log("matches json -----> ".json_encode($matches).PHP_EOL);
                 	
-                	$time_end = microtime(true);
-                	$time = $time_end - $time_start;
-                	error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
+//$time_end = microtime(true);
+//$time = $time_end - $time_start;
+//error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
                 	 
 					/*
 					 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login will force cache to warm)
 					 */
-					$mc[] = $username;
-					$mc[ $username ] [] = array ('user_id' => $user_id, 'profile_photo' => '');
-					$this->elasticache->addSet("@person_hash", $username, json_encode($mc[ $username ]));
+					$mc[ $username ] = array ('user_id' => $user_id, 'profile_photo' => '');
+//error_log ("set array" . PHP_EOL);
+					$this->elasticache->addSet("@person_meta_hash", $username, json_encode($mc[ $username ]));
+//error_log ("addSet meta hash" . PHP_EOL);
+					$this->elasticache->addSet("@person_uid_hash", $username, $user_id);
+//error_log ("addSet uid hash" . PHP_EOL);
 					$this->elasticache->addSet("@person", $username);
-error_log ("$username added - @person_hash set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
+//error_log ("addSet person" . PHP_EOL);
+//error_log ("$username added - @person_hash set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
                 }
                 	 
             } else if ($actionname == "registration") {
@@ -261,9 +265,12 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
                 $verifyemailaddress = new VerifyEmailAddress($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $verifyemailaddress->exec();
                 if ($result) {
-                	$redirect = MemreasConstants::WEB_URL . "index?email_verified=1";
-                	$this->redirect()->toUrl($redirect);
-                	return false;
+					if (!empty($_GET('perf'))) {				
+						return true;
+					} else {
+                		$redirect = MemreasConstants::WEB_URL . "index?email_verified=1";
+                		$this->redirect()->toUrl($redirect);
+					}
                 } else {
                 	$redirect = MemreasConstants::WEB_URL . "index?email_verified=0";
                 	$this->redirect()->toUrl($redirect);
@@ -560,13 +567,19 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
                 $this->elasticache->invalidateNotifications($uid);
 			} else if ($actionname == "findtag") {
             	
-            	$data = simplexml_load_string($_POST ['xml']);
+            	/*
+            	 * fetch parameters
+            	 */
+				$data = simplexml_load_string($_POST ['xml']);
                 $tag = (trim($data->findtag->tag));
                 $user_id = (trim($data->findtag->user_id));
                 $user_id = empty($user_id)?0:$user_id;
                 $a = $tag[0];
                 $search = substr($tag, 1);
 
+            	/*
+            	 * set paging and limits
+            	 */
                 $page = trim($data->findtag->page);
                 if (empty($page)) {
                     $page = 1;
@@ -588,9 +601,17 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
                     	 * TODO: Migrate to redis search - see example below
                     	 */
                     	//$matches = $this->elasticache->findSet('@person', 'ch-1tuser' );
-                    	//error_log("matched------> " . json_encode($matches) . PHP_EOL);
-                    	
-                    	
+                    	$usernames = $this->elasticache->findSet( '@person', $search );
+						$user_meta = $this->elasticache->cache->hmget("@person_meta_hash", $usernames);
+                    	$user_ids = $this->elasticache->cache->hmget( '@person_uid_hash', $usernames );
+						//$user_ids = json_encode(array_values($users));
+error_log("usernames------> " . json_encode($usernames) . PHP_EOL);
+error_log("user_ids------> " . json_encode($user_meta) . PHP_EOL);
+error_log("user_ids------> " . json_encode($user_ids) . PHP_EOL);
+error_log("search------> " . json_encode($search) . PHP_EOL);
+						//HMGET myhash field1 field2 nofield
+
+/*                    	
                         $mc = $this->elasticache->getCache('@person');
                         if (!$mc || empty($mc)) {
                             $registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
@@ -615,7 +636,7 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
                                 $rc+=1;
                             }
                         }
-
+*/
                         //filter record
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
@@ -1326,13 +1347,13 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
         } else {
             // xml output
             echo $output;
-//error_log("output ----> ****$output***".PHP_EOL);            
+error_log("output ----> ****$output***".PHP_EOL);            
         }
 
         /*
          * Cache Warming section...
          */
-        if ( !$this->elasticache->hasSet('@person') &&
+        if ( !$this->elasticache->hasSet('@person_user_ids') &&
         	 ($actionname == 'login') &&
         		 MemreasConstants::ELASTICACHE_REDIS_USE) {
 
@@ -1590,8 +1611,8 @@ error_log ("$username added - @person_hash set now holds --> ". $this->elasticac
 				$user_session->sid = $sid;
 			}
 		} catch (\Exception $e) {
-			echo 'Caught exception: ',  $e->getMessage(), "\n";
-//error_log('Caught exception: '.$e->getMessage().PHP_EOL);
+//			echo 'Caught exception: ',  $e->getMessage(), "\n";
+			error_log('Caught exception: '.$e->getMessage().PHP_EOL);
 		}      
 		$public= array(
             'login',
