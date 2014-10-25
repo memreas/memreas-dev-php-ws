@@ -7,35 +7,15 @@ namespace Application\Model;
 
 class MemreasConstants {
 
-	//fe2 url
-	const WEB_URL = "https://fe2.memreas.com/";
-	
-	//wsg url
-	const ORIGINAL_URL = "https://memreasdev-wsg.memreas.com/";
-	const MEDIA_URL = "https://memreasdev-wsg.memreas.com/?action=addmediaevent";
-	
-	//bew2 url
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
-	
-	//memreasdevsec related
-	const S3BUCKET = "memreasdevsec";
-    const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';
-    const S3_APPSEC = 'xQfYNvfT0Ar+Wm/Gc4m6aacPwdT5Ors9YHE/d38H';
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
-	const SIGNURLS = true;
-	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-	
-	
 	//Turns off emails for perf testing
 	const SEND_EMAIL = true;
 	
-	//Same across...
-	const URL = "/index";
-	const MEMREAS_TRANSCODER = true;
-	const MEMREASDB = 'memreasintdb';
-	const S3HOST = 'https://s3.amazonaws.com/';
-	const EXPIRES = 36000; // 10 hour
+	//memreasdev2 urls
+	const WEB_URL = "https://fe2.memreas.com/";
+	const ORIGINAL_URL = "https://memreasdev-wsg.memreas.com/";
+	const MEDIA_URL = "https://memreasdev-wsg.memreas.com/?action=addmediaevent";
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
 	// ElastiCache section
 	const ELASTICACHE_SERVER_ENDPOINT = "memreasdev-redis.142tbh.0001.use1.cache.amazonaws.com";
@@ -44,6 +24,21 @@ class MemreasConstants {
 	const ELASTICACHE_REDIS_USE = false;
 	const ELASTICACHE_CACHE_TTL = 3600; //1 hour
 		
+	//memreasdevsec related
+	const S3BUCKET = "memreasdevsec";
+    const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';
+    const S3_APPSEC = 'xQfYNvfT0Ar+Wm/Gc4m6aacPwdT5Ors9YHE/d38H';
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
+	const SIGNURLS = true;
+	
+	//Same across...
+	const URL = "/index";
+	const MEMREAS_TRANSCODER = true;
+	const MEMREASDB = 'memreasintdb';
+	const S3HOST = 'https://s3.amazonaws.com/';
+	const EXPIRES = 36000; // 10 hour
+	
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";
 	const IMAGES_PATH = "/images/";

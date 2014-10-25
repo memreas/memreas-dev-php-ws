@@ -7,15 +7,30 @@ namespace Application\Model;
 
 class MemreasConstants {
 
-	//fe url
-	const WEB_URL = "https://fe.memreas.com/";
+	//Turns off emails for perf testing
+	const SEND_EMAIL = true;
 	
- 	//wsu url
+	//memreasdev urls
+	const WEB_URL = "https://fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
 	const MEDIA_URL = "https://memreasdev-wsu.memreas.com/?action=addmediaevent";
-	
-	//bew url
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
+	const ELASTICACHE_SERVER_ENDPOINT = "memreasdev-redis.142tbh.0001.use1.cache.amazonaws.com";
+	
+	//localhost urls
+// 	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
+// 	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
+// 	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
+// 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+// 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
+// 	const ELASTICACHE_SERVER_ENDPOINT = "127.0.0.1";
+	
+	// ElastiCache section
+	const ELASTICACHE_SERVER_PORT = "6379";
+	const ELASTICACHE_SERVER_USE = true;
+	const ELASTICACHE_REDIS_USE = true;
+	const ELASTICACHE_CACHE_TTL = 3600; //1 hour
 	
 	//memreasdevsec related
 	const S3BUCKET = "memreasdevsec";
@@ -24,11 +39,6 @@ class MemreasConstants {
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
 	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
 	const SIGNURLS = true;
-	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-
-	
-	//Turns off emails for perf testing
-	const SEND_EMAIL = true;
 	
 	//Same across...
 	const URL = "/index";
@@ -36,13 +46,6 @@ class MemreasConstants {
 	const MEMREASDB = 'memreasintdb';
 	const S3HOST = 'https://s3.amazonaws.com/';
 	const EXPIRES = 36000; // 10 hour
-	
-	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "memreasdev-redis.142tbh.0001.use1.cache.amazonaws.com";
-	const ELASTICACHE_SERVER_PORT = "6379";
-	const ELASTICACHE_SERVER_USE = false;
-	const ELASTICACHE_REDIS_USE = false;
-	const ELASTICACHE_CACHE_TTL = 3600; //1 hour
 	
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";

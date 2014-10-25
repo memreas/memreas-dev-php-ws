@@ -135,7 +135,7 @@ error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 	
 	public function findSet($set, $match) {
 
-//error_log("Inside findSet... set $set match $match" . PHP_EOL);
+error_log("Inside findSet... set $set match $match" . PHP_EOL);
 		//Scan the hash and return 0 or the sub-array
 		$arr = array('ZRANGEBYLEX', $set, "[".$match, "(".$match."z" );
 		$result = $this->cache->executeRaw(array('ZRANGEBYLEX', '@person', "[".$match, "(".$match."z" ));
@@ -145,7 +145,7 @@ error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
  			$matches = 0;
 //error_log("error matches------> " . json_encode($matches) . PHP_EOL);
  		}
-//error_log("matches------> " . json_encode($matches) . PHP_EOL);
+error_log("matches------> " . json_encode($matches) . PHP_EOL);
 		return $matches;
 	}
 

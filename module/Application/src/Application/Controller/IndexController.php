@@ -606,19 +606,19 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
                     	$user_ids = $this->elasticache->cache->hmget( '@person_uid_hash', $usernames );
 						//$user_ids = json_encode(array_values($users));
 error_log("usernames------> " . json_encode($usernames) . PHP_EOL);
-error_log("user_ids------> " . json_encode($user_meta) . PHP_EOL);
+error_log("user_meta------> " . json_encode($user_meta) . PHP_EOL);
 error_log("user_ids------> " . json_encode($user_ids) . PHP_EOL);
 error_log("search------> " . json_encode($search) . PHP_EOL);
 						//HMGET myhash field1 field2 nofield
 
-/*                    	
-                        $mc = $this->elasticache->getCache('@person');
+                    	
+                        //$mc = $this->elasticache->getCache('@person');
                         if (!$mc || empty($mc)) {
                             $registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
 
                             $registration->createUserCache();
                             $mc = $registration->userIndex;
-                            $this->elasticache->setCache("@person", json_encode($mc));
+                            //$this->elasticache->setCache("@person", json_encode($mc));
                         }
 
                         $user_ids = array();
@@ -636,7 +636,7 @@ error_log("search------> " . json_encode($search) . PHP_EOL);
                                 $rc+=1;
                             }
                         }
-*/
+
                         //filter record
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];

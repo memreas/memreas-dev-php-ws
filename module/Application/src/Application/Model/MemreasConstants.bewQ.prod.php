@@ -7,34 +7,8 @@ namespace Application\Model;
 
 class MemreasConstants {
 
-	//memreasprod-fe url
-	const WEB_URL = "https://memreasprod-fe.memreas.com/";
-	
-	//memreasprod-wsu url
-	const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
-	const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
-	
-	//memreasprod-bew url
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasprod-backend-worker';
-	
-	//memreasprdsec related
-	const S3BUCKET = "memreasprdsec";
-    const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';
-    const S3_APPSEC = 'xQfYNvfT0Ar+Wm/Gc4m6aacPwdT5Ors9YHE/d38H';
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s12hcdq6y0d1zq.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3j7vnip9qhisx.cloudfront.net/';
-	const SIGNURLS = true;
-	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-
 	//Turns off emails for perf testing
 	const SEND_EMAIL = false;
-	
-	//Same across...
-	const URL = "/index";
-	const MEMREAS_TRANSCODER = true;
-	const MEMREASDB = 'memreasintdb';
-	const S3HOST = 'https://s3.amazonaws.com/';
-	const EXPIRES = 36000; // 10 hour
 	
 	// ElastiCache section
 	const ELASTICACHE_SERVER_ENDPOINT = "memreasprdcache.142tbh.cfg.use1.cache.amazonaws.com";
@@ -43,7 +17,27 @@ class MemreasConstants {
 	const ELASTICACHE_REDIS_USE = false;
 	const ELASTICACHE_CACHE_TTL = 600; //10 minutes
 	
+	//memreasprod urls
+	const WEB_URL = "https://memreasprod-fe.memreas.com/";
+	const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
+	const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasprod-backend-worker';
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
+	//memreasprdsec related
+	const S3BUCKET = "memreasprdsec";
+    const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';
+    const S3_APPSEC = 'xQfYNvfT0Ar+Wm/Gc4m6aacPwdT5Ors9YHE/d38H';
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s12hcdq6y0d1zq.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3j7vnip9qhisx.cloudfront.net/';
+	const SIGNURLS = true;
+
+	//Same across...
+	const URL = "/index";
+	const MEMREAS_TRANSCODER = true;
+	const MEMREASDB = 'memreasintdb';
+	const S3HOST = 'https://s3.amazonaws.com/';
+	const EXPIRES = 36000; // 10 hour
 	
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";
