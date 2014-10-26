@@ -600,44 +600,52 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
                     	/*
                     	 * TODO: Migrate to redis search - see example below
                     	 */
-                    	//$matches = $this->elasticache->findSet('@person', 'ch-1tuser' );
-                    	$usernames = $this->elasticache->findSet( '@person', $search );
-						$user_meta = $this->elasticache->cache->hmget("@person_meta_hash", $usernames);
-                    	$user_ids = $this->elasticache->cache->hmget( '@person_uid_hash', $usernames );
-						//$user_ids = json_encode(array_values($users));
-error_log("usernames------> " . json_encode($usernames) . PHP_EOL);
-error_log("user_meta------> " . json_encode($user_meta) . PHP_EOL);
-error_log("user_ids------> " . json_encode($user_ids) . PHP_EOL);
-error_log("search------> " . json_encode($search) . PHP_EOL);
-						//HMGET myhash field1 field2 nofield
+                    	if (MemreasConstants::ELASTICACHE_SERVER_USE) {
+	                    	$usernames = $this->elasticache->findSet( '@person', $search );
+							$person_meta_hash = $this->elasticache->cache->hmget("@person_meta_hash", $usernames);
+	                    	$person_uid_hash = $this->elasticache->cache->hmget( '@person_uid_hash', $usernames );
+							$user_ids = $usernames;
+//error_log("usernames------> " . json_encode($usernames) . PHP_EOL);
+//error_log("person_meta_hash------> " . json_encode($person_meta_hash) . PHP_EOL);
+//error_log("person_uid_hash------> " . json_encode($person_uid_hash) . PHP_EOL);
+//error_log("search------> " . json_encode($search) . PHP_EOL);
+//error_log("***********************". PHP_EOL);
+//HMGET myhash field1 field2 nofield
+                    	} else {
+                    		$registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
+                    		$registration->createUserCache();
+                    		$person_meta_hash = $registration->userIndex;
+                    		
+                    	}
 
-                    	
-                        //$mc = $this->elasticache->getCache('@person');
-                        if (!$mc || empty($mc)) {
-                            $registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
-
-                            $registration->createUserCache();
-                            $mc = $registration->userIndex;
-                            //$this->elasticache->setCache("@person", json_encode($mc));
-                        }
-
+//error_log("Past mc.....". PHP_EOL);
                         $user_ids = array();
-                        foreach ($mc as $uk => $pr) {
-
-                            if (stripos($pr['username'], $search) !== false) {
-                                if($uk == $user_id) continue;
-                                if ($rc >= $from && $rc < ($from + $limit)) {
-                                    $pr['username'] = '@' . $pr['username'];
-                                   
-                                   
-                                    $search_result[] = $pr;
-                                    $user_ids[]= $uk;
-                                }
-                                $rc+=1;
-                            }
+                        //foreach ($mc as $uk => $pr) {
+                        //All entries in this hash match the search key 
+                        foreach ($person_meta_hash as $username => $usermeta) {
+//error_log("forach username $username usermeta -----> $usermeta". PHP_EOL);
+                        	$meta_arr = json_decode($usermeta,true);
+                        	$uid = $meta_arr['user_id'];
+                        	//Remove existing user 
+                            if($uid == $user_id) 
+                            	continue;
+                            //if ($rc >= $from && $rc < ($from + $limit)) { //paging isn't working for autocomplete so removing...
+                                    //$pr['username'] = '@' . $pr['username'];
+                            $meta_arr['username'] = '@' . $meta_arr['username'];
+                            $search_result[] = $meta_arr;
+                            $user_ids[]= $uid;
+                            //}
+                            $rc+=1;
                         }
+                        
+error_log("query user_ids------> " . json_encode($user_ids) . PHP_EOL);
+error_log("query search_result count------> " . count($search_result) . PHP_EOL);
 
                         //filter record
+                        /*
+                         * TODO: document filter rules - comment for now...
+                         */
+/*
                         $em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
                         //$user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
                         
@@ -652,22 +660,24 @@ error_log("search------> " . json_encode($search) . PHP_EOL);
                                 ->andwhere('uf.friend_id IN (:f)')
                                 ->setParameter('f', $user_ids );
 
-
+//error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
+                        
                         $UserFriends = $qb->getQuery ()->getResult ();
+//error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
                         $chkUserFriend = array();
                         foreach ($UserFriends as $ufRow) {
                             $chkUserFriend[$ufRow['friend_id']]=$ufRow['user_approve'];
                         }
+//error_log("user_meta------> " . print_r($user_meta, true) . PHP_EOL);
                         foreach ($search_result as $k => &$srRow) {
-                                if(isset($chkUserFriend[$user_ids[$k]])){
-                        
-                                   $srRow['friend_request_sent']=$chkUserFriend[$user_ids[$k]];
-                                    continue;
-                                    } 
-                        
-                                    
+                        	if(isset($chkUserFriend[$user_ids[$k]])){
+                            	$srRow['friend_request_sent']=$chkUserFriend[$user_ids[$k]];
+                                continue;
+                            } 
                          }
-                        $result['totalPage'] =ceil($rc / $limit);
+*/
+                        //$result['totalPage'] =ceil($rc / $limit);
+						$result['totalPage'] = 1;
                         $result['count'] = $rc;
                         $result['search'] = $search_result;
                         //hide pagination
@@ -785,10 +795,9 @@ error_log("search------> " . json_encode($search) . PHP_EOL);
                       //  $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
                       //  $result = $findtag->exec();
                       //  $result = preg_grep("/$search/", $mc);
-                     $result['count'] = 0;
-                        $result['search'] = array();
-
-                        $result['totalPage'] = 0;
+                    	$result['count'] = 0;
+                    	$result['search'] = array();
+                    	$result['totalPage'] = 0;
 
                         echo json_encode($result);$result='';
                         break;
@@ -1347,7 +1356,7 @@ error_log("search------> " . json_encode($search) . PHP_EOL);
         } else {
             // xml output
             echo $output;
-error_log("output ----> ****$output***".PHP_EOL);            
+//error_log("output ----> ****$output***".PHP_EOL);            
         }
 
         /*
