@@ -265,7 +265,7 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
                 $verifyemailaddress = new VerifyEmailAddress($message_data, $memreas_tables, $this->getServiceLocator());
                 $result = $verifyemailaddress->exec();
                 if ($result) {
-					if (!empty($_GET('perf'))) {				
+					if (!empty($_GET['perf'])) {
 						return true;
 					} else {
                 		$redirect = MemreasConstants::WEB_URL . "index?email_verified=1";
