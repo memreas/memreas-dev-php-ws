@@ -601,7 +601,8 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
                     	 * TODO: Migrate to redis search - see example below
                     	 */
                     	if (MemreasConstants::ELASTICACHE_SERVER_USE) {
-	                    	$usernames = $this->elasticache->findSet( '@person', $search );
+error_log("redis fetch...". PHP_EOL);
+                    		$usernames = $this->elasticache->findSet( '@person', $search );
 							$person_meta_hash = $this->elasticache->cache->hmget("@person_meta_hash", $usernames);
 	                    	$person_uid_hash = $this->elasticache->cache->hmget( '@person_uid_hash', $usernames );
 							$user_ids = $usernames;
@@ -612,19 +613,21 @@ error_log("Inside indexAction---> actionname ---> $actionname ".date ( 'Y-m-d H:
 //error_log("***********************". PHP_EOL);
 //HMGET myhash field1 field2 nofield
                     	} else {
+error_log("redis fetch get regindex...". PHP_EOL);
                     		$registration = new registration($message_data, $memreas_tables, $this->getServiceLocator());
                     		$registration->createUserCache();
                     		$person_meta_hash = $registration->userIndex;
                     		
                     	}
 
-//error_log("Past mc.....". PHP_EOL);
+error_log("Past mc person_meta_hash.....".json_encode($person_meta_hash). PHP_EOL);
                         $user_ids = array();
                         //foreach ($mc as $uk => $pr) {
                         //All entries in this hash match the search key 
                         foreach ($person_meta_hash as $username => $usermeta) {
-//error_log("forach username $username usermeta -----> $usermeta". PHP_EOL);
-                        	$meta_arr = json_decode($usermeta,true);
+error_log("forach username $username usermeta -----> $usermeta". PHP_EOL);
+                        	//$meta_arr = json_decode($usermeta,true);
+                        	$meta_arr = $usermeta;
                         	$uid = $meta_arr['user_id'];
                         	//Remove existing user 
                             if($uid == $user_id) 
