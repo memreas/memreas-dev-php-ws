@@ -18,8 +18,12 @@
             $this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
             // $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
         }
-        public function exec() {
-            $data = simplexml_load_string ( $_POST ['xml'] );
+        public function exec($frmweb = false, $output = '') {
+            if (empty ( $frmweb )) {
+                $data = simplexml_load_string ( $_POST ['xml'] );
+            } else {
+                $data = json_decode ( json_encode ( $frmweb ) );
+            }
             $user_id = trim ( $data->updatepassword->user_id );
             $password = trim ( $data->updatepassword->old );
             $new = trim ( $data->updatepassword->new );
