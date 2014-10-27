@@ -45,16 +45,14 @@
                 $updatequr = "UPDATE Application\Entity\User u  SET u.password ='" . $pass . "' WHERE u.user_id='" . $user_id . "'";
                 $statement = $this->dbAdapter->createQuery ( $updatequr );
                 $resofupd = $statement->getResult ();
-                $status = 'success';
-                $message = 'password changed successfully ';
+                $xml_output .= '<status>success</status>';
+                $xml_output .= '<message>password changed successfully</message>';
             }
             else{
                 $xml_output .= "<status>failure</status>";
                 $xml_output .= "<message>Username or password is invalid</message>";
             }
 
-            $xml_output .= "<status>$status</status>";
-            $xml_output .= "<message>$message</message>";
             $xml_output .= "</updatepasswordresponse>";
             $xml_output .= "</xml>";
             echo $xml_output;
