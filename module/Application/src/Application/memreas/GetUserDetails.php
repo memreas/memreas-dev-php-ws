@@ -76,7 +76,7 @@ class GetUserDetails {
             //For plan
             if (isset($metadata['subscription'])){
                 $subscription = $metadata['subscription'];
-                $output .= '<subscription><plan>' . $subscription['plan'] . '</plan><name>' . $subscription['name'] . '</name></subscription>';
+                $output .= '<subscription><plan>' . $subscription['plan'] . '</plan><plan_name>' . $subscription['name'] . '</plan_name></subscription>';
             }
             else $output .= '<subscription><plan>FREE</plan></subscription>';
 
