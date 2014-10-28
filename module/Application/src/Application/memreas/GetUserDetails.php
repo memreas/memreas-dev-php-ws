@@ -79,6 +79,29 @@ class GetUserDetails {
             }
             else $output .= '<subscription><plan>FREE</plan></subscription>';
 
+            //For account type
+            $guzzle = new Client();
+            $request = $guzzle->post(
+                MemreasConstants::MEMREAS_PAY_URL,
+                null,
+                array(
+                    'action' => 'checkusertype',
+                    'username' => $result_user[0]->username
+                )
+            );
+
+            $response = $request->send();
+            $data = json_decode($response->getBody(true), true);
+            if ($data['status'] == 'Success'){
+                $types = $data['types'];
+                $output .= '<account_type>';
+                foreach ($types as $key => $type) {
+                    if ($key > 0)
+                        $output .= ",";
+                    $output .= $type;
+                }
+                $output .= '<account_type>';
+            }
 
             //Get user profile
             $profile_query = $this->dbAdapter->createQueryBuilder();
