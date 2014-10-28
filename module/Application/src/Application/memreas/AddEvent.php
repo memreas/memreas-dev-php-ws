@@ -52,6 +52,7 @@ class AddEvent {
 		$is_friend_can_post_media = trim($data->addevent->is_friend_can_post_media);
 		$event_self_destruct = strtotime(trim($data->addevent->event_self_destruct));
 		$is_public = trim($data->addevent->is_public);
+		$price = trim($data->addevent->price);
 		//$media_array = $data->addevent->medias->media;
 		//$friend_array =$data->addevent->friends->friend;
 		//    print_r($friend_array);
@@ -91,6 +92,9 @@ class AddEvent {
              $uuid = MUUID::fetchUUID();
              $tblEvent= new \Application\Entity\Event();
 
+            $metadata = array();
+            $metadata['price'] = $price;
+
              $tblEvent->name=$event_name;
                 $tblEvent->location=$event_location;
                 $tblEvent->user_id=$user_id;
@@ -105,6 +109,7 @@ class AddEvent {
                 $tblEvent->self_destruct=$event_self_destruct;
                 $tblEvent->create_time=$event_date_timestamp;
                 $tblEvent->update_time=$event_date_timestamp;
+                $tblEvent->metadata = json_encode($metadata);
                 $this->dbAdapter->persist($tblEvent);
                 $this->dbAdapter->flush();
 
