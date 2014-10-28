@@ -12,6 +12,7 @@ use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\Entity\User;
 use Application\Entity\Media;
+use Guzzle\Http\Client;
 
 class GetUserDetails {
     protected $message_data;
