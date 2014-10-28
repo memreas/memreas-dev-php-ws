@@ -103,6 +103,7 @@ class GetUserDetails {
                 }
                 $output .= '<account_type>';
             }
+            else $output .= '<account_type>Free user</account_type>';
 
             //Get user profile
             $profile_query = $this->dbAdapter->createQueryBuilder();
