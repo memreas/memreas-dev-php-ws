@@ -89,6 +89,12 @@ class Event {
 	 * @var string @ORM\Column(name="update_time", type="string", length=255, nullable=false)
 	 */
 	private $update_time;
+
+    /**
+     *
+     * @var string @ORM\Column(name="metadata", type="string", length=10000, nullable=false)
+     */
+    private $metadata;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

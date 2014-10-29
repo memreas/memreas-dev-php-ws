@@ -12,6 +12,7 @@ use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\Entity\User;
 use Application\Entity\Media;
+use Guzzle\Http\Client;
 
 class GetUserDetails {
     protected $message_data;
@@ -75,10 +76,34 @@ class GetUserDetails {
             //For plan
             if (isset($metadata['subscription'])){
                 $subscription = $metadata['subscription'];
-                $output .= '<subscription><plan>' . $subscription['plan'] . '</plan><name>' . $subscription['name'] . '</name></subscription>';
+                $output .= '<subscription><plan>' . $subscription['plan'] . '</plan><plan_name>' . $subscription['name'] . '</plan_name></subscription>';
             }
             else $output .= '<subscription><plan>FREE</plan></subscription>';
 
+            //For account type
+            $guzzle = new Client();
+            $request = $guzzle->post(
+                MemreasConstants::MEMREAS_PAY_URL,
+                null,
+                array(
+                    'action' => 'checkusertype',
+                    'username' => $result_user[0]->username
+                )
+            );
+
+            $response = $request->send();
+            $data = json_decode($response->getBody(true), true);
+            if ($data['status'] == 'Success'){
+                $types = $data['types'];
+                $output .= '<account_type>';
+                foreach ($types as $key => $type) {
+                    if ($key > 0)
+                        $output .= ",";
+                    $output .= $type;
+                }
+                $output .= '<account_type>';
+            }
+            else $output .= '<account_type>Free user</account_type>';
 
             //Get user profile
             $profile_query = $this->dbAdapter->createQueryBuilder();

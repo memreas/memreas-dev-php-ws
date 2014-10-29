@@ -82,7 +82,8 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $xml_output .= "<event>";
                         $xml_output .= "<event_id>" . $row->event_id . "</event_id>";
                         $xml_output .= "<event_name>" . $row->name . "</event_name>";
-                        $xml_output .= "<event_location>" . $row->location . "</event_location>"; 
+                        $xml_output .= "<event_location>" . $row->location . "</event_location>";
+                        $xml_output .= "<event_metadata>" . $row->metadata . "</event_metadata>";
 
                         $friends_can_post = $row->friends_can_post == 0 ?0:1;
                         $xml_output .= "<friend_can_post>" .$friends_can_post  . "</friend_can_post>";
@@ -301,6 +302,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                         $xml_output .= "<event>";
                         $xml_output .= "<event_id>" . $row_friendsevent ['event_id'] . "</event_id>";
                         $xml_output .= "<event_name>" . $row_friendsevent ['name'] . "</event_name>";
+                        $xml_output .= "<event_metadata>" . $row_friendsevent ['metadata'] . "</event_metadata>";
                         $xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
                         $xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
                         /*
@@ -492,6 +494,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                             $xml_output .= "<event>";
                             $xml_output .= "<event_id>" . $row5->event_id . "</event_id>";
                             $xml_output .= "<event_name>" . $row5->name . "</event_name>";
+                            $xml_output .= "<event_metadata>" . $row5->metadata . "</event_metadata>";
                             $xml_output .= "<friend_can_post>" . $row5->friends_can_post . "</friend_can_post>";
                             $xml_output .= "<friend_can_share>" . $row5->friends_can_share . "</friend_can_share>";
                             /*
