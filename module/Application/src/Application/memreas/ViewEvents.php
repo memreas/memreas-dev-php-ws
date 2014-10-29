@@ -227,7 +227,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
             $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         	$xml_output .= "<xml><viewevents>";
         	// get friend ids 
-            $q_friendsevent = "select event.user_id,event.event_id, event.name, event.friends_can_share, event.friends_can_post
+            $q_friendsevent = "select event.user_id,event.event_id, event.name, event.friends_can_share, event.friends_can_post, event.metadata
                     from Application\Entity\EventFriend event_friend,Application\Entity\Event event
                     where event.event_id=event_friend.event_id
                     and event_friend.user_approve=1 AND event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
@@ -494,7 +494,6 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                             $xml_output .= "<event>";
                             $xml_output .= "<event_id>" . $row5->event_id . "</event_id>";
                             $xml_output .= "<event_name>" . $row5->name . "</event_name>";
-                            $xml_output .= "<event_metadata>" . $row5->metadata . "</event_metadata>";
                             $xml_output .= "<friend_can_post>" . $row5->friends_can_post . "</friend_can_post>";
                             $xml_output .= "<friend_can_share>" . $row5->friends_can_share . "</friend_can_share>";
                             /*
