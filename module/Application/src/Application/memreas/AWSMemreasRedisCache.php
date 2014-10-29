@@ -172,7 +172,7 @@ error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 error_log("Inside findSet... set $set match $match" . PHP_EOL);
 		//Scan the hash and return 0 or the sub-array
 		$arr = array('ZRANGEBYLEX', $set, "[".$match, "(".$match."z" );
-		$result = $this->cache->executeRaw(array('ZRANGEBYLEX', '@person', "[".$match, "(".$match."z" ));
+		$result = $this->cache->executeRaw(array('ZRANGEBYLEX', $set, "[".$match, "(".$match."z" ));
  		if ($result != "(empty list or set)") {
  			$matches = $result;
  		} else {

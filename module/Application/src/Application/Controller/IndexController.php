@@ -593,10 +593,9 @@ class IndexController extends AbstractActionController {
 							$usernames = $this->elasticache->findSet ( '@person', $search );
 							$person_meta_hash = $this->elasticache->cache->hmget ( "@person_meta_hash", $usernames );
 							$person_uid_hash = $this->elasticache->cache->hmget ( '@person_uid_hash', $usernames );
-error_log("Inside findtag about to check person uid hash for $username...".PHP_EOL);
 							if (in_array($user_id, $person_uid_hash)) {
-error_log("Inside findtag found $username...".PHP_EOL);
 								$username = $person_uid_hash[$user_id];
+error_log("Inside findtag found $username...".PHP_EOL);
 								//now remove current user
 								unset($person_meta_hash[$username]);
 								unset($person_uid_hash[$user_id]);
@@ -648,9 +647,9 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 						$qb->andwhere( "uf.user_id = '$user_id'" );
 						$qb->andwhere( 'uf.friend_id IN (:f)' );
 						$qb->setParameter( 'f', $user_ids );
-//error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
+error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
 						$UserFriends = $qb->getQuery ()->getResult ();
-//error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
+error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
 						
 						//this code checks if friend request already sent...
 						$chkUserFriend = array ();
@@ -677,6 +676,7 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
+error_log("result------> " . print_r($result, true) . PHP_EOL);
 						$result = '';
 						
 						break;
@@ -756,10 +756,13 @@ error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
 error_log ( "Inside findTag # for tag $search" . PHP_EOL );
 							$tags_public = $this->elasticache->findSet ( '#hashtag', $search );
 							$tags_uid = $this->elasticache->findSet ( '#hashtag_'.$user_id, $search );
-							$tags = array_unique(array_merge($tags_public,$tags_uid));
-							$hashtag_meta_hash = $this->elasticache->cache->hmget ( "#hashtag_meta_hash", $tags );
-							$hashtag_uid_hash = $this->elasticache->cache->hmget ( '#hashtag_uid_hash', $tags );
-							
+							$tags_unique = array_unique(array_merge($tags_public,$tags_uid));
+error_log ( "Inside findTag # tags_unique--->".json_encode($tags_unique).PHP_EOL );
+							$hashtag_public_eid_hash = $this->elasticache->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
+error_log ( "Inside findTag # hashtag_public_eid_hash--->".json_encode($hashtag_public_eid_hash).PHP_EOL );
+							$hashtag_friends_hash = $this->elasticache->cache->hmget ( '#hashtag_friends_hash_'.$user_id, $tags_unique );
+error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_friends_hash).PHP_EOL );
+								
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
 							// $usernames = $this->elasticache->findSet( '@person', $search );
