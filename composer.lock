@@ -927,16 +927,16 @@
         },
         {
             "name": "guzzlehttp/ringphp",
-            "version": "1.0.0",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/RingPHP.git",
-                "reference": "9e44b565d726d9614cd970319e6eea70ee15bff3"
+                "reference": "86df4c0ea5459b292ff8c519f8db1513ea41ca9b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/9e44b565d726d9614cd970319e6eea70ee15bff3",
-                "reference": "9e44b565d726d9614cd970319e6eea70ee15bff3",
+                "url": "https://api.github.com/repos/guzzle/RingPHP/zipball/86df4c0ea5459b292ff8c519f8db1513ea41ca9b",
+                "reference": "86df4c0ea5459b292ff8c519f8db1513ea41ca9b",
                 "shasum": ""
             },
             "require": {
@@ -973,7 +973,7 @@
                     "homepage": "https://github.com/mtdowling"
                 }
             ],
-            "time": "2014-10-13 00:59:38"
+            "time": "2014-10-29 02:00:14"
         },
         {
             "name": "guzzlehttp/streams",
@@ -1031,12 +1031,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nrk/predis.git",
-                "reference": "330fb41bdca4337b6bd86b00b5c99b4f878a3467"
+                "reference": "54d467e530a68a2f3f7a4cbbf73552f304eea7b3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nrk/predis/zipball/330fb41bdca4337b6bd86b00b5c99b4f878a3467",
-                "reference": "330fb41bdca4337b6bd86b00b5c99b4f878a3467",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/54d467e530a68a2f3f7a4cbbf73552f304eea7b3",
+                "reference": "54d467e530a68a2f3f7a4cbbf73552f304eea7b3",
                 "shasum": ""
             },
             "require": {
@@ -1078,7 +1078,7 @@
                 "predis",
                 "redis"
             ],
-            "time": "2014-10-25 15:54:22"
+            "time": "2014-10-26 09:28:56"
         },
         {
             "name": "react/promise",
