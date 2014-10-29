@@ -1,5 +1,5 @@
 <?php
-$env = getenv('APP_ENV') ?: 'production';
+//$env = getenv('APP_ENV') ?: 'production';
 
 //if ($env == 'development') {
 	

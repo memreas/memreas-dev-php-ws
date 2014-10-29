@@ -29,17 +29,36 @@ class EventRepository extends EntityRepository
 
         return $commCount;
     }
+    
+    public function getEventNames($date) {
+    	$query_event = "select e.name, e.event_id
+        	from Application\Entity\Event e
+            where (e.viewable_to >=" . $date . " or e.viewable_to ='')
+            and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
+            and  (e.self_destruct >=" . $date . " or e.self_destruct='')
+            ORDER BY e.create_time DESC";
+    	// $statement->setMaxResults ( $limit );
+    	// $statement->setFirstResult ( $from );
+    	
+      	$statement = $this->_em->createQuery ( $query_event );
+
+        return $statement->getResult();
+    	    	
+    	//example where in
+    	//$query_builder->andWhere('r.winner IN (:ids)')
+    	//->setParameter('ids', $ids);
+    }
 
 
-    public function getEvents($date)
-    { 	$query_event = "select e.name, e.event_id ,e.location,e.user_id,e.update_time,e.create_time
-                from Application\Entity\Event e
-                where (e.viewable_to >=" . $date . " or e.viewable_to ='')
-                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
-                    and  (e.self_destruct >=" . $date . " or e.self_destruct='')
-                ORDER BY e.create_time DESC";
-                // $statement->setMaxResults ( $limit );
-     // $statement->setFirstResult ( $from );
+    public function getEvents($date) {
+    	$query_event = "select e.name, e.event_id ,e.location,e.user_id,e.update_time,e.create_time
+        	from Application\Entity\Event e
+            where (e.viewable_to >=" . $date . " or e.viewable_to ='')
+            and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
+            and  (e.self_destruct >=" . $date . " or e.self_destruct='')
+            ORDER BY e.create_time DESC";
+            // $statement->setMaxResults ( $limit );
+     		// $statement->setFirstResult ( $from );
 
       	$statement = $this->_em->createQuery ( $query_event );
 
@@ -52,7 +71,8 @@ class EventRepository extends EntityRepository
 	            $qb->select ( 'u.username', 'm.metadata' );
 	            $qb->from ( 'Application\Entity\User', 'u' );
 	            $qb->leftjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
-	            $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+	            $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+	            //$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' ); //removing profile pic - not all users have
 	            $qb->where ( 'ef.event_id=?1 ' );
 	            $qb->setParameter ( 1, $event_id );
                 $rows = $qb->getQuery ()->getResult ();
@@ -112,39 +132,83 @@ class EventRepository extends EntityRepository
         }        
               return $url;
 	}
-     function createEventCache(){
-    $date = strtotime ( date ( 'd-m-Y' ) );
-    $result = $this->getEvents($date);
-    $eventIndex = array();
-    foreach ($result as $row) {
-        $eventIndex[$row['event_id']] = $row;
-        $mediaRows = $this->getEventMedia($row['event_id']);
-        foreach ($mediaRows as $mediaRow) {
-
-            $eventIndex[$row['event_id']]['event_media_url'] = $this->getEventMediaUrl($mediaRow['metadata']);
-            $eventIndex[$row['event_id']]['event_photo'] =    $this->getEventMediaUrl($mediaRow['metadata'],'thumb');
-
-             break;
-        }
-    }
-
+    public function createEventCache(){
+	    $date = strtotime ( date ( 'd-m-Y' ) );
+	    $result = $this->getEvents($date);
+	    $eventIndex = array();
+	    foreach ($result as $row) {
+	        $eventIndex[$row['event_id']] = $row;
+	        $mediaRows = $this->getEventMedia($row['event_id']);
+	        foreach ($mediaRows as $mediaRow) {
+	
+	            $eventIndex[$row['event_id']]['event_media_url'] = $this->getEventMediaUrl($mediaRow['metadata']);
+	            $eventIndex[$row['event_id']]['event_photo'] =    $this->getEventMediaUrl($mediaRow['metadata'],'thumb');
+	
+	             break;
+	        }
+	    }
     return $eventIndex;
-
   }
 
-  function createDiscoverCache($tag){
-    $date = strtotime ( date ( 'd-m-Y' ) );
-    $qb = $this->_em->createQueryBuilder ();
-        $qb->select('t.meta,t.tag');
-        $qb->from('Application\Entity\Tag',  't');
-        $qb->where('t.tag LIKE ?1');
-         $qb->setParameter ( 1, "$tag%");
-        $result = $qb->getQuery ()->getResult ();
-
+  
+  public function getHashTags() {
+	$qb = $this->_em->createQueryBuilder ();
+	$qb->select('t.tag, t.tag_id, t.meta');
+	$qb->from('Application\Entity\Tag', 't');
+	$qb->where('t.tag_type LIKE ?1');
+	$qb->setParameter ( 1, '#');
+//error_log("query---->".$qb->getDql().PHP_EOL);  	
+	$result = $qb->getQuery ()->getResult ();
+	return $result;
+ 	
+  }
+  public function filterPublicHashTags($event_ids) {
+//error_log("Inside Redis warmer filterPublicHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+  	$qb = $this->_em->createQueryBuilder ();
+  	$qb->select('e.event_id');
+  	$qb->from('Application\Entity\Event', 'e');
+  	$qb->where('e.public = 1');  
+  	$qb->andwhere('e.event_id IN (:ids)');
+  	$qb->setParameter ( 'ids', $event_ids);
+//error_log("filterPublicHashTags query---->".$qb->getDql().PHP_EOL);  	
+//error_log("filterPublicHashTags event_ids---->".json_encode($event_ids).PHP_EOL);  	
+	$result = $qb->getQuery ()->getResult ();
+//error_log("Leaving Redis warmer filterPublicHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+//error_log("Leaving Redis warmer filterPublicHashTags...result id----> ".json_encode($result).PHP_EOL);
+	return $result;
+ 	
+  }
+  public function filterFriendHashTags($event_ids, $user_id) {
+//error_log("Inside Redis warmer filterFriendHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+  	$qb = $this->_em->createQueryBuilder ();
+  	$qb->select('e.event_id');
+  	$qb->from('Application\Entity\Event', 'e');
+  	$qb->innerjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = ?1' );
+  	$qb->where('e.public = 1');  //get all hashtags
+  	$qb->andwhere ( 'ef.friend_id = ?1 ' );
+  	$qb->andwhere('e.event_id IN (:eids)');
+  	$qb->setParameter ( 1, $user_id);
+  	$qb->setParameter ( 'eids', $event_ids);
+//error_log("filterPublicHashTags query---->".$qb->getDql().PHP_EOL);
+//error_log("filterPublicHashTags event_ids---->".json_encode($event_ids).PHP_EOL);
+  	$result = $qb->getQuery ()->getResult ();
+//error_log("Leaving Redis warmer filterFriendHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+//error_log("Leaving Redis warmer filterFriendHashTags...result id----> ".json_encode($result).PHP_EOL);
+  	return $result;
+  }
+    
+  public function createDiscoverCache($tag, $event_ids = null){
+error_log("Inside Redis warmer createDiscoverCache...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
     $Index = array();
+  	$date = strtotime ( date ( 'd-m-Y' ) );
+    $qb = $this->_em->createQueryBuilder ();
+	$qb->select('t.tag,t.tag_id');
+	$qb->from('Application\Entity\Tag',  't');
+	$qb->where('t.tag LIKE ?1');
+	$qb->setParameter ( 1, "$tag%");
+	$result = $qb->getQuery ()->getResult ();
 
-
-    foreach ($result as $row) {
+	foreach ($result as $row) {
         $temp =array() ;
         $json_array = json_decode ( $row['meta'], true );
         if(empty($json_array['comment'][0])){
@@ -165,16 +229,15 @@ class EventRepository extends EntityRepository
             $commenter = $this->getUser($comment->user_id,'row');
             $temp['commenter_photo'] = $commenter['profile_photo'];
             $temp['commenter_name'] = '@'.$commenter['username'];
-
-           
-
-             $Index[] =$temp;
+            if (in_array($temp['event_id'], $event_ids)) {
+error_log("Inside Redis warmer createDiscoverCache tag:" . $temp['name'] . "event_id:" . $temp['event_id'] . " in event_ids...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+            	$Index[] =$temp;
+  			} 
+            
         }
-        
-
-
     }
-     return $Index;
+error_log("Leaving Redis warmer createDiscoverCache...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+    return $Index;
 
   }
    function chkEventFriendRule($eventId,$friendId)
@@ -192,32 +255,27 @@ class EventRepository extends EntityRepository
  
         return $qb->getQuery ()->getResult ();
     }
-function getUser($user_id,$allRow=''){
-  //check in catch
-
-  //if found return
-//else get from db
-    $o=null;
-            $qb = $this->_em->createQueryBuilder ();
-               $qb->select ( 'u.email_address','u.user_id','u.username', 'm.metadata' );
-               $qb->from ( 'Application\Entity\User', 'u' );
-               $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-               $qb->where ( 'u.user_id=?1 ' );
-               $qb->setParameter ( 1, $user_id );
-               $rows = $qb->getQuery()->getResult();
+    
+	function getUser($user_id,$allRow=''){
+		//check in catch
+		//if found return
+		//else get from db
+    	$o=null;
+        $qb = $this->_em->createQueryBuilder ();
+        $qb->select ( 'u.email_address','u.user_id','u.username', 'm.metadata' );
+        $qb->from ( 'Application\Entity\User', 'u' );
+        $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+        $qb->where ( 'u.user_id=?1 ' );
+        $qb->setParameter ( 1, $user_id );
+        $rows = $qb->getQuery()->getResult();
                
-               $row =$rows[0] ;
-               $row['profile_photo'] = $this->getProfileUrl($row['metadata']);
-                if($allRow){
-                 return $row;  
-               }
-                $o[$row['user_id']]=$row;
+        $row =$rows[0] ;
+        $row['profile_photo'] = $this->getProfileUrl($row['metadata']);
+        if($allRow){
+        	return $row;  
+        }
+        $o[$row['user_id']]=$row;
 
-    return $o;
-
-
-}
-   
-
-
+		return $o;
+	}
 }

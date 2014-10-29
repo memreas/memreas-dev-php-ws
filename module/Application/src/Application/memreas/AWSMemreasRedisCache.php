@@ -55,6 +55,62 @@ class AWSMemreasRedisCache {
 		return $result;
 	}
 	
+	public function warmHashTagSet($user_id) {
+		sleep(1);
+		$warming_hashtag = $this->cache->get('warming_hashtag');
+		if (!$warming_hashtag) {
+error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+			$warming = $this->cache->set('warming_hashtag', '1');
+				
+			//Fetch all event ids to check for public and friend
+			$tagRep = $this->dbAdapter->getRepository('Application\Entity\Event');
+			$tags = $tagRep->getHashTags();
+			$event_ids[] = array();
+			foreach ($tags as $tag) {
+//error_log("tag ----> ".$tag['tag']." :: tag_id -> ".$tag['tag_id']." :: meta -> ".$tag['meta'].PHP_EOL);
+				$tag_meta = json_decode($tag['meta'], true);
+				if (!empty($tag_meta['event'])){
+					$event_ids[] = $tag_meta['event'];
+				} 
+			}
+
+			//Now filter by public and friends and add to cache...
+			$public_event_ids = $tagRep->filterPublicHashTags($event_ids);
+			$hashtag_public_eid_hash = array();
+			foreach ($public_event_ids as $eid) {
+				$index = array_search($eid, $tags);
+error_log("adding public tag ---> ".$tags[$index]['tag'].PHP_EOL);
+				$result = $this->cache->zadd('#hashtag', 0, $tags[$index]['tag']);
+				$hashtag_public_eid_hash[$eid] = $tags[$index]['tag'];
+			}
+			$reply = $this->cache->hmset('#hashtag_public_eid_hash', $hashtag_public_eid_hash);
+			
+error_log("public_event_tags count ---> ".count($public_event_ids).PHP_EOL);
+error_log("ZCARD result ---> ".$this->cache->zcard('#hashtag').PHP_EOL);
+			$friend_event_ids = $tagRep->filterFriendHashTags($event_ids, $user_id);
+			$hashtag_friends_eid_hash = array();
+			foreach ($friend_event_ids as $eid) {
+				$tag = array_search($eid, $tags);
+				$result = $this->cache->zadd('#hashtag_'.$user_id, 0, $tag['tag']);
+				$hashtag_friends_eid_hash[$eid] = $tags[$index]['tag'];
+				
+			}
+error_log("friend_event_tags count ---> ".count($friend_event_ids).PHP_EOL);
+error_log("ZCARD result ---> ".$this->cache->zcard('#hashtag_'.$user_id).PHP_EOL);
+			$reply = $this->cache->hmset('#hashtag_friends_hash_'.$user_id, $hashtag_friends_eid_hash);
+
+				
+//$result = $this->cache->executeRaw(array('HLEN', '@person_uid_hash'));
+//error_log("HLEN result ---> $result".PHP_EOL);
+//$result = $this->cache->executeRaw(array('HLEN', '@person_hash'));
+//error_log("HLEN result ---> $result".PHP_EOL);
+			$warming = $this->cache->set('warming_hashtag', '0');
+error_log("cache warming @warming_hashtag finished...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+			
+			//$this->elasticache->setCache("!event", $mc);
+		}
+	}
+	
 	public function warmPersonSet() {
 		sleep(1);
 		$warming = $this->cache->get('warming');
@@ -98,36 +154,14 @@ error_log("cache warming @person started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 				$person_meta_hash[$row['username']] = $person_json;
 				$person_uid_hash[$row['username']] = $row['user_id'];
 				$person_profile_pic_hash[$row['username']] = $url1;
-				//$person_usernames[] = 0;
-				//$person_usernames[] = $row['username']; 
-				//$person_user_ids[] = 0;
-				//$person_user_ids[] = $row['user_ids']; 
 				$result = $this->cache->zadd('@person', 0, $row['username']);
-				//$result = $this->cache->zadd('@person_user_id:', 0, $row['username']);
 			}
-// 			try {
-// 				$result = $this->cache->zadd('@person', $usernames);
-// 			} catch (Exception $e) {
-// 				echo 'Caught exception: ',  $e->getMessage(), "\n";
-// 			}			
 			$reply = $this->cache->hmset('@person_meta_hash', $person_meta_hash);
 			$reply = $this->cache->hmset('@person_uid_hash', $person_uid_hash);
 			$reply = $this->cache->hmset('@person_profile_pic_hash', $person_profile_pic_hash);
-			//$result = $this->cache->zadd('@person_usernames', $person_usernames);
-//error_log("ZADD result ---> $result".PHP_EOL);
-//$result = $this->cache->zcard('@person');
-//error_log("ZCARD result ---> $result".PHP_EOL);
-//$result = $this->cache->zadd('@person_user_ids', $person_user_ids);
-//error_log("ZADD result ---> $result".PHP_EOL);
-//$result = $this->cache->executeRaw(array('HLEN', '@person_uid_hash'));
-//error_log("HLEN result ---> $result".PHP_EOL);
-//$result = $this->cache->executeRaw(array('HLEN', '@person_hash'));
-//error_log("HLEN result ---> $result".PHP_EOL);
-				
 			//Finished warming so reset flag
 			$warming = $this->cache->set('warming', '0');
 error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-				
 		} else {
 			error_log("Outside warming...".PHP_EOL);
 		}

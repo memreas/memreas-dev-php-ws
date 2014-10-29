@@ -97,7 +97,7 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
     {
         if(!empty($_SESSION['user']['user_id'])){
         $id = 'SID-'.$id;
-error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
+//error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
         return $this->getCacheStorage()->setCache($id, $data);
     } 
         
