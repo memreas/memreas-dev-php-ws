@@ -55,6 +55,7 @@ class GetEventDetails {
                 $output .= '<viewable_from>' . (($event_detail->viewable_from) ? date('m/d/Y', $event_detail->viewable_from) : '') . '</viewable_from>';
                 $output .= '<viewable_to>' . (($event_detail->viewable_to) ? date('m/d/Y', $event_detail->viewable_to) : '') . '</viewable_to>';
                 $output .= '<self_destruct>' . (($event_detail->self_destruct) ? date('m/d/Y', $event_detail->self_destruct) : '') . '</self_destruct>';
+                $output .= "<event_metadata>" . $event_detail->metadata . "</event_metadata>";
             $output .= '</event>';
         }
 
