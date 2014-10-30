@@ -24,7 +24,7 @@ php_value post_max_size 0
 php_flag display_errors on
 #php_flag html_errors on
 php_flag log_errors on
-php_value error_reporting 1 #E_ERROR
+#php_value error_reporting 1 #E_ERROR
 #php_value error_reporting 4 #E_PARSE
 #php_value error_reporting 8 #E_NOTICE
 #php_value error_reporting 32 #E_CORE_WARNING
