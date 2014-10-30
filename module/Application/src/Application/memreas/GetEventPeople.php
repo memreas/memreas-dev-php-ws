@@ -65,7 +65,7 @@ class GetEventPeople {
                 $output .= '<friend>';
                     $output .= '<friend_id>' . $people->friend_id . '</friend_id>';
                     $output .= '<friend_name>' . $people->social_username . '</friend_name>';
-                    $output .= '<photo>' . $profile_image . '</photo>';
+                    $output .= '<photo><![CDATA[' . $profile_image . ']]></photo>';
                 $output .= '</friend>';
             }
             $output .= '</friends>';

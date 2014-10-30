@@ -44,14 +44,15 @@ class SaveUserDetails {
         $dob = trim ($data->saveuserdetails->dob);
         $profile_picture = trim($data->saveuserdetails->profile_picture);
 
-        //check if exist user's email
-        $qb = $this->dbAdapter->createQueryBuilder ();
-        $qb->select('u')
-            ->from('Application\Entity\User', 'u')
-            ->where("u.email_address = '{$email}' AND u.user_id <> '{$user_id}'");
-        $user_info = $qb->getQuery ()->getResult ();
+        if (!empty($email)) {
+            //check if exist user's email
+            $qb = $this->dbAdapter->createQueryBuilder ();
+            $qb->select ('u')->from ('Application\Entity\User', 'u')->where ("u.email_address = '{$email}' AND u.user_id <> '{$user_id}'");
+            $check_user_info = $qb->getQuery ()->getResult ();
+        }
+        else $check_user_info = false;
 
-        if (empty($user_info)){
+        if (empty($check_user_info) || !$check_user_info){
             $qb = $this->dbAdapter->createQueryBuilder ();
             $qb->select('u')
                 ->from('Application\Entity\User', 'u')
@@ -61,7 +62,9 @@ class SaveUserDetails {
             if (!empty($user_detail)){
                 $metadata = $user_detail[0]->metadata;
                 $metadata = json_decode($metadata, true);
-                $metadata['alternate_email'] = $email;
+                if (!empty($email))
+                    $metadata['alternate_email'] = $email;
+
                 $metadata['gender'] = $gender;
                 $metadata['dob'] = $dob;
                 $metadata = json_encode($metadata);
