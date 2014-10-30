@@ -46,6 +46,7 @@ class GetEventDetails {
             $status = 'Success';
             $output .= '<event>';
                 $output .= '<event_id>' . $event_detail->event_id . '</event_id>';
+                $output .= '<event_owner>' . $event_detail->user_id . '</event_owner>';
                 $output .= '<name>' . $event_detail->name . '</name>';
                 $output .= '<location>' . $event_detail->location . '</location>';
                 $output .= '<date>' . $event_detail->date . '</date>';
@@ -55,6 +56,7 @@ class GetEventDetails {
                 $output .= '<viewable_from>' . (($event_detail->viewable_from) ? date('m/d/Y', $event_detail->viewable_from) : '') . '</viewable_from>';
                 $output .= '<viewable_to>' . (($event_detail->viewable_to) ? date('m/d/Y', $event_detail->viewable_to) : '') . '</viewable_to>';
                 $output .= '<self_destruct>' . (($event_detail->self_destruct) ? date('m/d/Y', $event_detail->self_destruct) : '') . '</self_destruct>';
+                $output .= "<event_metadata>" . $event_detail->metadata . "</event_metadata>";
             $output .= '</event>';
         }
 
