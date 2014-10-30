@@ -101,7 +101,7 @@ class GetUserDetails {
                         $output .= ",";
                     $output .= $type;
                 }
-                $output .= '<account_type>';
+                $output .= '</account_type>';
                 $output .= "<buyer_balance>" . $data['buyer_balance'] . "</buyer_balance>";
                 $output .= "<seller_balance>" . $data['buyer_balance'] . "</seller_balance>";
             }
