@@ -67,43 +67,48 @@ error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PH
 			$tags = $tagRep->getHashTags();
 			$event_ids[] = array();
 			foreach ($tags as $tag) {
-//error_log("tag ----> ".$tag['tag']." :: tag_id -> ".$tag['tag_id']." :: meta -> ".$tag['meta'].PHP_EOL);
 				$tag_meta = json_decode($tag['meta'], true);
 				if (!empty($tag_meta['event'])){
-					$event_ids[] = $tag_meta['event'];
+					$event_ids[$tag_meta['event'][0]] = $tag['tag'];
 				} 
 			}
 
 			//Now filter by public and friends and add to cache...
-			$public_event_ids = $tagRep->filterPublicHashTags($event_ids);
+			$keys = array_keys($event_ids);
+			$public_event_ids = $tagRep->filterPublicHashTags($keys);
 			$hashtag_public_eid_hash = array();
 			foreach ($public_event_ids as $eid) {
-				$index = array_search($eid, $tags);
-error_log("adding public tag ---> ".$tags[$index]['tag'].PHP_EOL);
-				$result = $this->cache->zadd('#hashtag', 0, $tags[$index]['tag']);
-				$hashtag_public_eid_hash[$eid] = $tags[$index]['tag'];
+				if (!empty($event_ids[$eid['event_id']])) {
+error_log("public_event_tags event_ids[eid['event_id']] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+error_log("public_event_tags eid['tag'] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+					$result = $this->cache->zadd('#hashtag', 0, $event_ids[$eid['event_id']]);
+					$hashtag_public_eid_hash[$eid['event_id']] = $event_ids[$eid['event_id']];
+				}
+
 			}
 			$reply = $this->cache->hmset('#hashtag_public_eid_hash', $hashtag_public_eid_hash);
-			
-error_log("public_event_tags count ---> ".count($public_event_ids).PHP_EOL);
-error_log("ZCARD result ---> ".$this->cache->zcard('#hashtag').PHP_EOL);
-			$friend_event_ids = $tagRep->filterFriendHashTags($event_ids, $user_id);
+error_log("ZCARD #hashtag result ---> ".$this->cache->zcard('#hashtag').PHP_EOL);
+
+			$friend_event_ids = $tagRep->filterFriendHashTags($keys, $user_id);
 			$hashtag_friends_eid_hash = array();
 			foreach ($friend_event_ids as $eid) {
-				$tag = array_search($eid, $tags);
-				$result = $this->cache->zadd('#hashtag_'.$user_id, 0, $tag['tag']);
-				$hashtag_friends_eid_hash[$eid] = $tags[$index]['tag'];
-				
+error_log("Insdie friend for loop...".PHP_EOL);
+				if (!empty($event_ids[$eid['event_id']])) {
+error_log("Insdie friend for loop if !empty...".PHP_EOL);
+error_log("friend_event_tags event_ids[eid['event_id']] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+error_log("friend_event_tags eid['tag'] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+					$result = $this->cache->zadd('#hashtag_'.$user_id, 0, $event_ids[$eid['event_id']]);
+					$hashtag_friends_eid_hash[$eid['event_id']] = $event_ids[$eid['event_id']];
+				}
 			}
-error_log("friend_event_tags count ---> ".count($friend_event_ids).PHP_EOL);
-error_log("ZCARD result ---> ".$this->cache->zcard('#hashtag_'.$user_id).PHP_EOL);
+//error_log("friend_event_tags count ---> ".count($friend_event_ids).PHP_EOL);
+error_log("ZCARD #hashtag_".$user_id." result ---> ".$this->cache->zcard('#hashtag_'.$user_id).PHP_EOL);
 			$reply = $this->cache->hmset('#hashtag_friends_hash_'.$user_id, $hashtag_friends_eid_hash);
-
 				
-//$result = $this->cache->executeRaw(array('HLEN', '@person_uid_hash'));
-//error_log("HLEN result ---> $result".PHP_EOL);
-//$result = $this->cache->executeRaw(array('HLEN', '@person_hash'));
-//error_log("HLEN result ---> $result".PHP_EOL);
+$result = $this->cache->executeRaw(array('HLEN', '#hashtag_friends_hash_'.$user_id));
+error_log("HLEN result ---> $result".PHP_EOL);
+$result = $this->cache->executeRaw(array('HLEN', '#hashtag_public_eid_hash'));
+error_log("HLEN result ---> $result".PHP_EOL);
 			$warming = $this->cache->set('warming_hashtag', '0');
 error_log("cache warming @warming_hashtag finished...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			

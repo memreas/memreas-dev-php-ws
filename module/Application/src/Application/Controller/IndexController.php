@@ -1371,17 +1371,18 @@ error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_fri
 			}
 			
 			if (! $this->elasticache->hasSet ( '@person' )) {
-				error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// Now continue processing and warm the cache for @person
 				$registration = new Registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$this->elasticache->warmPersonSet ();
 			}
 			
 			if (! $this->elasticache->hasSet ( '#hashtag' )) {
-				error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// warm the cache for #hashtag
 				$session = new Container ( 'user' );
 				$user_id = $session->offsetGet ( 'user_id' );
+error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				$this->elasticache->warmHashTagSet ( $user_id );
 			}
 		}

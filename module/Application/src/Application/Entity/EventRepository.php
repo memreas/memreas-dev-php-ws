@@ -159,6 +159,7 @@ class EventRepository extends EntityRepository
 	$qb->setParameter ( 1, '#');
 //error_log("query---->".$qb->getDql().PHP_EOL);  	
 	$result = $qb->getQuery ()->getResult ();
+	
 	return $result;
  	
   }
@@ -170,31 +171,27 @@ class EventRepository extends EntityRepository
   	$qb->where('e.public = 1');  
   	$qb->andwhere('e.event_id IN (:ids)');
   	$qb->setParameter ( 'ids', $event_ids);
-//error_log("filterPublicHashTags query---->".$qb->getDql().PHP_EOL);  	
-//error_log("filterPublicHashTags event_ids---->".json_encode($event_ids).PHP_EOL);  	
-	$result = $qb->getQuery ()->getResult ();
+error_log("filterPublicHashTags query---->".$qb->getDql().PHP_EOL);
+error_log("filterPublicHashTags event_ids---->".json_encode($event_ids).PHP_EOL);
+  	$result = $qb->getQuery ()->getResult ();
 //error_log("Leaving Redis warmer filterPublicHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-//error_log("Leaving Redis warmer filterPublicHashTags...result id----> ".json_encode($result).PHP_EOL);
 	return $result;
  	
   }
   public function filterFriendHashTags($event_ids, $user_id) {
 //error_log("Inside Redis warmer filterFriendHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
   	$qb = $this->_em->createQueryBuilder ();
-  	$qb->select('e.event_id');
-  	$qb->from('Application\Entity\Event', 'e');
-  	$qb->innerjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = ?1' );
-  	$qb->where('e.public = 1');  //get all hashtags
-  	$qb->andwhere ( 'ef.friend_id = ?1 ' );
-  	$qb->andwhere('e.event_id IN (:eids)');
+  	$qb->select('ef.event_id');
+  	$qb->from('Application\Entity\EventFriend', 'ef');
+  	$qb->where('ef.friend_id = ?1');  //get all hashtags
+  	$qb->andwhere('ef.user_approve = 1');  //get all hashtags
+  	$qb->andwhere('ef.event_id IN (:eids)');
   	$qb->setParameter ( 1, $user_id);
   	$qb->setParameter ( 'eids', $event_ids);
 //error_log("filterPublicHashTags query---->".$qb->getDql().PHP_EOL);
-//error_log("filterPublicHashTags event_ids---->".json_encode($event_ids).PHP_EOL);
-  	$result = $qb->getQuery ()->getResult ();
+	$result = $qb->getQuery()->getResult();
 //error_log("Leaving Redis warmer filterFriendHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-//error_log("Leaving Redis warmer filterFriendHashTags...result id----> ".json_encode($result).PHP_EOL);
-  	return $result;
+	return $result;
   }
     
   public function createDiscoverCache($tag, $event_ids = null){

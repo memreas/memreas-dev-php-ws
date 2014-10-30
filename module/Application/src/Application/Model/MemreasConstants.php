@@ -9,7 +9,6 @@ class MemreasConstants {
 
 	//Turns off emails for perf testing
 	const SEND_EMAIL = true;
-	
 	//memreasdev urls
 	const WEB_URL = "https://fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
