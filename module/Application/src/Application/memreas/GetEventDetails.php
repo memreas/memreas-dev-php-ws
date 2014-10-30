@@ -46,6 +46,7 @@ class GetEventDetails {
             $status = 'Success';
             $output .= '<event>';
                 $output .= '<event_id>' . $event_detail->event_id . '</event_id>';
+                $output .= '<event_owner>' . $event_detail->user_id . '</event_owner>';
                 $output .= '<name>' . $event_detail->name . '</name>';
                 $output .= '<location>' . $event_detail->location . '</location>';
                 $output .= '<date>' . $event_detail->date . '</date>';
