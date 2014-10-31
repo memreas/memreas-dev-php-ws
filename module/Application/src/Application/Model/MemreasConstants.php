@@ -10,24 +10,24 @@ class MemreasConstants {
 	//Turns off emails for perf testing
 	const SEND_EMAIL = true;
 	//memreasdev urls
-// 	const WEB_URL = "https://fe.memreas.com/";
-// 	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
-// 	const MEDIA_URL = "https://memreasdev-wsu.memreas.com/?action=addmediaevent";
-// 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
-// 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
-// 	const ELASTICACHE_SERVER_ENDPOINT = "memreasdev-redis.142tbh.0001.use1.cache.amazonaws.com";
-// 	const ELASTICACHE_SERVER_USE = false;
-// 	const ELASTICACHE_REDIS_USE = false;
+	const WEB_URL = "https://fe.memreas.com/";
+	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
+	const MEDIA_URL = "https://memreasdev-wsu.memreas.com/?action=addmediaevent";
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
+	const ELASTICACHE_SERVER_ENDPOINT = "memreasdev-redis.142tbh.0001.use1.cache.amazonaws.com";
+	const ELASTICACHE_SERVER_USE = false;
+	const ELASTICACHE_REDIS_USE = false;
 	
 	//localhost urls
-	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
-	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/?XDEBUG_SESSION_START=ECLIPSE_DBGP";
-	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
-	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
-	const ELASTICACHE_SERVER_ENDPOINT = "127.0.0.1";
-	const ELASTICACHE_SERVER_USE = true;
-	const ELASTICACHE_REDIS_USE = true;
+// 	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
+// 	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/?XDEBUG_SESSION_START=ECLIPSE_DBGP";
+// 	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
+// 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+// 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
+// 	const ELASTICACHE_SERVER_ENDPOINT = "127.0.0.1";
+// 	const ELASTICACHE_SERVER_USE = true;
+// 	const ELASTICACHE_REDIS_USE = true;
 	
 	// ElastiCache constant section
 	const ELASTICACHE_SERVER_PORT = "6379";
