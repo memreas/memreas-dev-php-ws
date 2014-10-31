@@ -83,13 +83,13 @@ body {
     <div class="container">
 <div class="header" style="height:91px;background: #a9b6c8;"><img src="<?php echo MemreasConstants::ORIGINAL_URL ?>memreas/img/logo.png" width="288" height="72" /></div>
 <div class="content">
-    <p>To <b><?php echo $username?></b>,</p>
+    <p>Hi <b><?php echo $username?></b>,</p>
     <p>We have received notice that the material you uploaded was "offensive in nature" / copyright infringement.  As a precaution we have taken down the media.  Any additional details are below:</p>
 
     <p>copyright infringrement:<br/>
-    owner name: <?php $report_username ?><br/>
-    related content: <?php $description ?><br/>
-    email address: <?php $report_email ?></p>
+    Reporter name: <?php echo $report_username ?><br/>
+    related content: <?php echo $description ?><br/>
+    email address: <?php echo $report_email ?></p>
 
     <p>As this is notice of copyright infringement you to re-submit your media you will need to contact the owner named above and provide resolution.</p>
 
