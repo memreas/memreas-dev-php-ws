@@ -129,7 +129,7 @@ class ListNotification {
                             $json_array = json_decode ( $mediaOBj->metadata, true );
                             $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
                             $path = $this->url_signer->fetchSignedURL ( $url );
-                            $xml_output .= "<media_path>$path</media_path>";
+                            $xml_output .= "<media_path><![CDATA[" . $path . "]]></media_path>";
 
                         }else{
                             $xml_output .= "<comment><![CDATA[]]></comment>";
