@@ -86,7 +86,7 @@ class MediaInappropriate {
                 $viewRender = $this->service_locator->get('ViewRenderer');
 
                 //convert to array
-                $to = $userOBj->email_address;
+                $to = array($userOBj->email_address);
 
                 $subject = 'Memreas media reported by user';
                 $viewVar['username'] = $userOBj->username;
