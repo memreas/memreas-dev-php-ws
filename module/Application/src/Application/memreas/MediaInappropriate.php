@@ -98,7 +98,9 @@ class MediaInappropriate {
 
                 try {
                     $aws_manager->sendSeSMail($to, $subject, $html);
-                } catch (\Exception $exc) {}
+                } catch (\Exception $exc) {
+                    echo $exc->getMessage();die();
+                }
 			}
 			
 			$status = 'Success';
