@@ -1622,15 +1622,18 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 				'login',
 				'registration',
 				'forgotpassword',
-				'checkevent',
 				'checkusername',
-				'changepassword',
 				'showlog',
 				'clearlog',
-				'feedback',
-				'listallmedia',
 				// verify email
 				'verifyemailaddress',
+
+				/*
+				 * 30-OCT-2014 These shouldn't be publicly available - why?
+				 */
+				'checkevent',
+				'feedback',
+				'listallmedia',
 				// For stripe
 				'getplans',
 				'getplansstatic',
