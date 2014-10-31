@@ -126,7 +126,7 @@ class ListNotification {
                             $xml_output .= "<comment_time>$comment->create_time</comment_time>";
                             $xml_output .= "<media_id>$comment->media_id</media_id>";
                             $mediaOBj = $this->dbAdapter->find('Application\Entity\Media', $comment->media_id);
-                            $json_array = json_decode ( $mediaOBj->metadata );
+                            $json_array = json_decode ( $mediaOBj->metadata, true );
                             $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
                             $path = $this->url_signer->fetchSignedURL ( $url );
                             $xml_output .= "<media_path>$path</media_path>";
