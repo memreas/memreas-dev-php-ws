@@ -181,7 +181,7 @@ error_log ( 'Inside webNotification event_name ----> ' . $this->event_name.PHP_E
 			
 			if (count ( $users ) > 0) {
 				$fburl = $this->fbhref."?event_id=".$this->event_id."&event_name=".$this->event_name;
-				//$fburl = $this->fbhref;
+				//it should look like https://apps.facebook.com/462180953876554/?event=060b20d2-c2d5-403c-b058-c71061a69983
 error_log ( '$fburl ----> ' . $fburl.PHP_EOL );
 error_log ( '$this->message ----> ' . $this->message.PHP_EOL );
 				$fbparams = array (
