@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
+use Zend\View\Model\ViewModel;
 
 class MediaInappropriate {
 	protected $message_data;
@@ -71,6 +72,33 @@ class MediaInappropriate {
 				// $row = $result->current();
 				// $statement = $this->dbAdapter->createQuery($query_comment);
 				// $result1 = $statement->getResult();
+
+                //Sending email to event owner
+                $mediaOBj = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+
+                $userOBj = $this->dbAdapter->find('Application\Entity\User', $mediaOBj->user_id);
+                $reporterObj = $this->dbAdapter->find('Application\Entity\User', $user_id);
+
+                $viewVar = array();
+                $viewModel = new ViewModel ();
+                $aws_manager = new AWSManagerSender($this->service_locator);
+                $viewModel->setTemplate('email/media-inappropriate');
+                $viewRender = $this->service_locator->get('ViewRenderer');
+
+                //convert to array
+                $to = array($userOBj->email_address);
+
+                $subject = 'Memreas media reported by user';
+                $viewVar['username'] = $userOBj->username;
+                $viewVar['report_username'] = $reporterObj->username;
+                $viewVar['description'] = "Media has been reported";
+                $viewVar['report_email'] = $reporterObj->email_address;
+                $viewModel->setVariables($viewVar);
+                $html = $viewRender->render($viewModel);
+
+                try {
+                    $aws_manager->sendSeSMail($to, $subject, $html);
+                } catch (\Exception $exc) {}
 			}
 			
 			$status = 'Success';
