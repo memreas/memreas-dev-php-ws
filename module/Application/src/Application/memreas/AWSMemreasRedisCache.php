@@ -73,7 +73,9 @@ error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PH
 				} 
 			}
 
-			//Now filter by public and friends and add to cache...
+			/*
+			 * Now filter by public and friends and add to cache...
+			 */
 			$keys = array_keys($event_ids);
 			$public_event_ids = $tagRep->filterPublicHashTags($keys);
 			$hashtag_public_eid_hash = array();
