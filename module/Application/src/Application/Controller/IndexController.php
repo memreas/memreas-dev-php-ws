@@ -192,6 +192,9 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
+
+error_log("Inside fe:IndexController:login - normal el() statement....".PHP_EOL);
+
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ();
 				// error_log("login result ---> $result".PHP_EOL);
