@@ -54,7 +54,7 @@
             }
             else{
                 $xml_output .= "<status>failure</status>";
-                $xml_output .= "<message>Username or password is invalid</message>";
+                $xml_output .= "<message>Current password is invalid</message>";
             }
 
             $xml_output .= "</updatepasswordresponse>";

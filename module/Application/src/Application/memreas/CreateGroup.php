@@ -38,7 +38,7 @@ class CreateGroup {
 		} else {
 
             //Checking for exist group
-            $query = "SELECT g FROM  \Application\Entity\Group as g where g.group_name = '$group_name'";
+            $query = "SELECT g FROM  \Application\Entity\Group as g where g.group_name = '$group_name' AND g.user_id = '{$user_id}'";
             $statement = $this->dbAdapter->createQuery ( $query );
             $result = $statement->getResult ();
 
