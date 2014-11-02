@@ -58,7 +58,7 @@ class AWSMemreasRedisCache {
 	public function warmHashTagSet($user_id) {
 		sleep(1);
 		$warming_hashtag = $this->cache->get('warming_hashtag');
-		if (!$warming_hashtag) {
+		if (!$warming_hashtag || ($warming_hashtag == "(nil)")) {
 error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			$warming = $this->cache->set('warming_hashtag', '1');
 				

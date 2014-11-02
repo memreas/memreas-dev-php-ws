@@ -260,12 +260,11 @@ class IndexController extends AbstractActionController {
 						return true;
 					} else {
 						$redirect = MemreasConstants::WEB_URL . "index?email_verified=1";
-						$this->redirect ()->toUrl ( $redirect );
+						return $this->redirect ()->toUrl ( $redirect );
 					}
 				} else {
 					$redirect = MemreasConstants::WEB_URL . "index?email_verified=0";
-					$this->redirect ()->toUrl ( $redirect );
-					return false;
+					return $this->redirect ()->toUrl ( $redirect );
 				}
 				/*
 				 * Cache approach - N/a
