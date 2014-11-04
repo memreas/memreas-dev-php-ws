@@ -1,5 +1,5 @@
 <?php
 
-echo "Deploy for WS v1.2.7";
+echo "Deploy for WS v1.2.8";
 
 ?>
