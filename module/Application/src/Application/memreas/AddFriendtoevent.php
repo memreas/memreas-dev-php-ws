@@ -390,9 +390,8 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
         if (!empty($email_array) && !$error) {
 
             $viewVar = array();
-            $viewModel = new ViewModel ();
             $aws_manager = new AWSManagerSender($this->service_locator);
-            $viewModel->setTemplate('email/event-invite');
+
             $viewRender = $this->service_locator->get('ViewRenderer');
 
             //convert to array
@@ -405,7 +404,9 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
             $viewVar['event_id'] = $event_id;
             $viewVar['event_name'] = $eventOBj->name;
             $viewVar['subject'] = $subject;
-			$viewModel->setVariables($viewVar);
+            $viewModel = new ViewModel ($viewVar);
+            $viewModel->setTemplate('email/event-invite');
+            $viewModel->
             $html = $viewRender->render($viewModel);
             $subject = 'memreas invite';
 
