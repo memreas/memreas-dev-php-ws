@@ -12,7 +12,7 @@ class MemreasConstants {
 	
 	//localhost urls
 	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
-	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/?XDEBUG_SESSION_START=ECLIPSE_DBGP";
+	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
 	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";

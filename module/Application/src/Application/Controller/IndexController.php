@@ -168,7 +168,7 @@ class IndexController extends AbstractActionController {
 			$message_data ['xml'] = '';
 		}
 		
-		error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+//error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->security ( $actionname );
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
@@ -192,9 +192,6 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
-
-error_log("Inside fe:IndexController:login - normal el() statement....".PHP_EOL);
-
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ();
 				// error_log("login result ---> $result".PHP_EOL);
@@ -213,7 +210,7 @@ error_log("Inside fe:IndexController:login - normal el() statement....".PHP_EOL)
 					
 					// $time_start = microtime(true);
 					// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-					// $matches = $this->elasticache->findSet('@person', "ch-1tuser-");
+					$matches = $this->elasticache->findSet('@person', "ch-1tuser-");
 					// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 					// error_log("matches json -----> ".json_encode($matches).PHP_EOL);
 					
@@ -596,10 +593,12 @@ error_log("Inside fe:IndexController:login - normal el() statement....".PHP_EOL)
 							$person_meta_hash = $this->elasticache->cache->hmget ( "@person_meta_hash", $usernames );
 							$person_uid_hash = $this->elasticache->cache->hmget ( '@person_uid_hash', $usernames );
 							if (in_array($user_id, $person_uid_hash)) {
-								$username = $person_uid_hash[$user_id];
-error_log("Inside findtag found $username...".PHP_EOL);
+error_log("Inside findtag user_id ---> $user_id".PHP_EOL);
+error_log("Inside findtag found ---> ".json_encode($person_uid_hash).PHP_EOL);
+								$username = $person_uid_hash["$user_id"];
+error_log("Inside findtag found ---> ".$username[$user_id].PHP_EOL);
 								//now remove current user
-								unset($person_meta_hash[$username]);
+								unset($person_meta_hash[$username[$user_id]]);
 								unset($person_uid_hash[$user_id]);
 								$index = array_search($username, $usernames); 
 								unset($usernames[$index]);
@@ -1357,7 +1356,7 @@ error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_fri
 		/*
 		 * Cache Warming section...
 		 */
-		if (		// ($actionname == 'login') &&
+		if (($actionname != 'listnotification') &&
 		MemreasConstants::ELASTICACHE_REDIS_USE) {
 			error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			
@@ -1372,6 +1371,10 @@ error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_fri
 				// Do nothing...
 			}
 			
+			//Debugging
+			$result = $this->elasticache->cache->executeRaw(array('DEL', '@person'));
+			$result = $this->elasticache->cache->executeRaw(array('SET', 'warming', '0'));
+			//End Debugging
 			if (! $this->elasticache->hasSet ( '@person' )) {
 error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// Now continue processing and warm the cache for @person

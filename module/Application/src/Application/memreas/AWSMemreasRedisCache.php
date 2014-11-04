@@ -130,9 +130,10 @@ error_log("cache warming @person started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 			$qb->from ( 'Application\Entity\User', 'u' );
-			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-			
-//error_log("Inside warming fetched query...".PHP_EOL);			
+			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+			//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+				
+error_log("Inside warming qb dql ----->".$qb->getDql().PHP_EOL);			
 			//create index for catch;
 			$userIndexArr = $qb->getQuery()->getResult();
 			$person_meta_hash = array();
@@ -142,6 +143,7 @@ error_log("cache warming @person started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			foreach ($userIndexArr as $row) {
 				$json_array = json_decode ( $row ['metadata'], true );
 			
+error_log("Inside warming person userindexarr username--->".$row['username']." user_id--->".$row['user_id'].PHP_EOL);			
 				if (empty ( $json_array ['S3_files'] ['path'] )){
 					$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 				}else{
@@ -159,13 +161,16 @@ error_log("cache warming @person started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 				 * TODO: need to send this in one shot
 				 */
 				$person_meta_hash[$row['username']] = $person_json;
-				$person_uid_hash[$row['username']] = $row['user_id'];
+				$person_uid_hash[$row['user_id']] = $row['username'];
 				$person_profile_pic_hash[$row['username']] = $url1;
 				$result = $this->cache->zadd('@person', 0, $row['username']);
+error_log("Inside warming zadd result ".$result." username--->".$row['username']." user_id--->".$row['user_id'].PHP_EOL);			
 			}
 			$reply = $this->cache->hmset('@person_meta_hash', $person_meta_hash);
 			$reply = $this->cache->hmset('@person_uid_hash', $person_uid_hash);
+error_log("person_uid_hash----->".json_encode($person_uid_hash).PHP_EOL);
 			$reply = $this->cache->hmset('@person_profile_pic_hash', $person_profile_pic_hash);
+error_log("person_profile_pic_hash----->".json_encode($person_profile_pic_hash).PHP_EOL);
 			//Finished warming so reset flag
 			$warming = $this->cache->set('warming', '0');
 error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
@@ -213,6 +218,13 @@ error_log("matches------> " . json_encode($matches) . PHP_EOL);
 			$result = $this->cache->executeRaw(array('ZCARD', $set));
 		}
 error_log("hasSet result set $set ------> " . json_encode($result) . PHP_EOL);
+
+
+		//Debugging
+		if ($set = "@person") {
+			return 0;
+		}
+		
 		return $result;
 	}
 	
