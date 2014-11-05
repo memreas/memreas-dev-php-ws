@@ -988,7 +988,7 @@ error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_fri
 				$client->verifyEmailAddress ( array (
 						'EmailAddress' => $_GET ['email'] 
 				) );
-				echo 'Please Cheack email validate you email to receive emails';
+				//echo 'Please Cheack email validate you email to receive emails';
 			} else if ($actionname == "geteventlocation") {
 				
 				/*
