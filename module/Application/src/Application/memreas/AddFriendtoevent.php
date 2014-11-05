@@ -345,7 +345,7 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                     // end if (count($r) > 0) else
                 } else if( empty($event_id) && !empty($sendMessage)) {
                     //add friend
-                    $nmessage = $userOBj->username . ' has send friend request ';
+                    $nmessage = $userOBj->username . ' has sent friend request. To accept <a href="https://fe.memreas.com">click here</a>.';
                     // save nofication intable
                     $ndata = array(
                         'addNotification' => array(
