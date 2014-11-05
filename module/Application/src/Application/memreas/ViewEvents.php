@@ -496,6 +496,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                             $xml_output .= "<event_name>" . $row5->name . "</event_name>";
                             $xml_output .= "<friend_can_post>" . $row5->friends_can_post . "</friend_can_post>";
                             $xml_output .= "<friend_can_share>" . $row5->friends_can_share . "</friend_can_share>";
+                            $xml_output .= "<event_metadata>" . $row5->event_metadata . "</event_metadata>";
                             /*
                              * $query_event_public = "SELECT event_media.event_id,media.media_id,media.metadata FROM Application\Entity\Media media inner join Application\Entity\EventMedia event_media on event_media.media_id=media.media_id where event_media.event_id='" . $row5['event_id'] . "' and event_media.event_id='" . $row5['event_id'] . "' ORDER BY media.create_date DESC"; //$result_event_public = mysql_query($query_event_public) or die(mysql_error()); // $statement = $this->dbAdapter->createStatement($query_event_public); // $result_event_public = $statement->execute(); //$row = $result->current(); $statement = $this->dbAdapter->createQuery($query_event_public); $result_event_public = $statement->getResult();
                              */
