@@ -14,7 +14,7 @@ class MemreasConstants {
 	const WEB_URL = "https://fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasdev-wsu.memreas.com/";
 	const MEDIA_URL = "https://memreasdev-wsu.memreas.com/?action=addmediaevent";
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
 	// ElastiCache section
