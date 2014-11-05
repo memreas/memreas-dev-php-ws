@@ -100,7 +100,7 @@ class UpdateNotification {
                         		$nmessage = $userOBj->username . ' Rejected ' . $eventOBj->name . ' ' . $notification_message ;
                         	}
                          	//add ntoification 
-                        	
+                        	$json_data['from_id'] = $this->user_id;
                         	
 							// save nofication intable
  							$ndata = array (
@@ -109,7 +109,7 @@ class UpdateNotification {
 										'user_id' => $user_id,
 										'meta' => $nmessage,
 										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT_RESPONSE,
-										'links' => $tblNotification->links, 
+										'links' => json_encode($json_data), 
 										)
 								
 							);
@@ -162,13 +162,15 @@ class UpdateNotification {
                         	
                         	
 							// save nofication intable
+                                                        	$json_data['from_id'] = $this->user_id;
+
  							$ndata = array (
 								'addNotification' => array (
 									'network_name' => 'memreas',
 										'user_id' => $user_id,
 										'meta' => $nmessage,
 										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_RESPONSE,
-										'links' => $tblNotification->links, 
+										'links' => json_encode($json_data),
 										)
 							);
  								
