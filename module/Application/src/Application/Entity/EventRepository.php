@@ -199,7 +199,7 @@ error_log("Inside Redis warmer createDiscoverCache...@".date( 'Y-m-d H:i:s.u' ).
     $Index = array();
   	$date = strtotime ( date ( 'd-m-Y' ) );
     $qb = $this->_em->createQueryBuilder ();
-	$qb->select('t.tag,t.tag_id');
+	$qb->select('t.tag,t.tag_id,t.meta');
 	$qb->from('Application\Entity\Tag',  't');
 	$qb->where('t.tag LIKE ?1');
 	$qb->setParameter ( 1, "$tag%");
@@ -226,7 +226,15 @@ error_log("Inside Redis warmer createDiscoverCache...@".date( 'Y-m-d H:i:s.u' ).
             $commenter = $this->getUser($comment->user_id,'row');
             $temp['commenter_photo'] = $commenter['profile_photo'];
             $temp['commenter_name'] = '@'.$commenter['username'];
-            if (in_array($temp['event_id'], $event_ids)) {
+            if (!empty($event_ids) ) {
+            	//For Redis lookup
+            	if (in_array($temp['event_id'], $event_ids)) {
+            		$Index[] =$temp;
+            	} else {
+            		//skip...
+            	}
+            } else {
+            	//For db lookup
 error_log("Inside Redis warmer createDiscoverCache tag:" . $temp['name'] . "event_id:" . $temp['event_id'] . " in event_ids...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
             	$Index[] =$temp;
   			} 

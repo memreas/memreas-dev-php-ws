@@ -17,8 +17,8 @@ class MemreasConstants {
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
 	const ELASTICACHE_SERVER_ENDPOINT = "127.0.0.1";
-	const ELASTICACHE_SERVER_USE = true;
-	const ELASTICACHE_REDIS_USE = true;
+	const ELASTICACHE_SERVER_USE = false;
+	const ELASTICACHE_REDIS_USE = false;
 	
 	// ElastiCache constant section
 	const ELASTICACHE_SERVER_PORT = "6379";

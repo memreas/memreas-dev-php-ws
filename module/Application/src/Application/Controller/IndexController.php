@@ -624,18 +624,16 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 								if ($uid == $user_id)
 									continue;
 								/*
-								 * TODO: 6-NOV-2014 Paging isn't working correctly?
+								 * TODO: 6-NOV-2014 Paging isn't working correctly?  Removing for now...
 								 */
 								//if ($rc >= $from && $rc < ($from + $limit)) {
-error_log("Inside findtag search for $search username: ".$meta_arr ['username'].PHP_EOL);
-error_log("Inside stripos--->".stripos($meta_arr ['username'],$search).PHP_EOL);
 									if (stripos($meta_arr ['username'],$search) !== false) {
 										$meta_arr ['username'] = '@' . $meta_arr ['username'];
 										$search_result [] = $meta_arr;
 										$user_ids [] = $uid;
 									}
 								//}
-								//$rc += 1;
+								$rc += 1;
 							}
 							// error_log("query user_ids------> " . json_encode($user_ids) . PHP_EOL);
 							// error_log("query search_result count------> " . count($search_result) . PHP_EOL);
@@ -655,7 +653,7 @@ error_log("Inside stripos--->".stripos($meta_arr ['username'],$search).PHP_EOL);
 						$qb->andwhere( "uf.user_id = '$user_id'" );
 						$qb->andwhere( 'uf.friend_id IN (:f)' );
 						$qb->setParameter( 'f', $user_ids );
-error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
+//error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
 						$UserFriends = $qb->getQuery ()->getResult ();
 //error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
 						
@@ -779,15 +777,18 @@ error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_fri
 							// $user_ids = $usernames;
 						} else {
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							$mc = $eventRep->createDiscoverCache ( $tag );
+error_log ( "createDiscoverCache------>$tag".PHP_EOL );
+							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						}
 						
-						foreach ( $mc as $k => $er ) {
-							if (stripos ( $er ['name'], $search ) !== false) {
-								if ($rc >= $from && $rc < ($from + $limit)) {
-									$er ['updated_on'] = Utility::formatDateDiff ( $er ['update_time'] );
-									$search_result [$k] = $er;
-								}
+						foreach ( $hashtag_cache as $tag => $cache_entry ) {
+error_log ( "tag------>$tag".PHP_EOL );
+error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
+							if (stripos ( $cache_entry ['name'], $search ) !== false) {
+								//if ($rc >= $from && $rc < ($from + $limit)) {
+									$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
+									$search_result [$tag] = $cache_entry;
+								//}
 								$rc += 1;
 							}
 						}

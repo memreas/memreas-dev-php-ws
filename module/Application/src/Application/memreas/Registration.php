@@ -414,7 +414,6 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 		
 		//create index for catch;
 		$userIndexArr = $qb->getQuery()->getResult();
-error_log("count userIndexArr---->".count($userIndexArr).PHP_EOL);		
 		//$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
 		//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
 		//$userIndexSql->setMaxResults(30);
