@@ -29,6 +29,7 @@
             }
             $page = trim ( $data->listpayees->page );
             $limit = trim ( $data->listpayees->limit );
+            $username = trim($data->listpayees->username);
 
             $guzzle = new Client();
 
@@ -37,6 +38,7 @@
                 null,
                 array(
                     'action' => 'listpayees',
+                    'username' => $username,
                     'page' => $page,
                     'limit' => $limit
                 )
