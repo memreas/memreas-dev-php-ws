@@ -406,12 +406,15 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 
 	function createUserCache(){
 		$qb = $this->dbAdapter->createQueryBuilder ();
-						$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
-						$qb->from ( 'Application\Entity\User', 'u' );
-						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-
+		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
+		$qb->from ( 'Application\Entity\User', 'u' );
+		// 6-NOV-2014 JM: Not all users will have profile pic...
+		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+		
 		//create index for catch;
 		$userIndexArr = $qb->getQuery()->getResult();
+error_log("count userIndexArr---->".count($userIndexArr).PHP_EOL);		
 		//$userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
 		//AND u.username LIKE :username $userIndexSql->setParameter ( 'username',  $username[0]."%");//'%'.$username[0]."%"
 		//$userIndexSql->setMaxResults(30);
@@ -424,7 +427,6 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 			}else{
 				$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
 			}
-//echo "row user_id is---------> ". $row['user_id'];					
 			$this->userIndex[$row['username']] = array(
 													'username'      => $row['username'],
 													'user_id'      => $row['user_id'],

@@ -373,6 +373,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                     $xml_output .= "</friend>";
                 }
                 $xml_output .= "</friends>";
+error_log("viewevents friends xml output----> ".$xml_output.PHP_EOL);                
             }
         }
 

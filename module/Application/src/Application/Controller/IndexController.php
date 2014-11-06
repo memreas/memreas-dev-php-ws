@@ -623,12 +623,19 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 								// Remove existing user
 								if ($uid == $user_id)
 									continue;
-									// if ($rc >= $from && $rc < ($from + $limit)) { //paging isn't working for autocomplete so removing...
-								$meta_arr ['username'] = '@' . $meta_arr ['username'];
-								$search_result [] = $meta_arr;
-								$user_ids [] = $uid;
-								// }
-								$rc += 1;
+								/*
+								 * TODO: 6-NOV-2014 Paging isn't working correctly?
+								 */
+								//if ($rc >= $from && $rc < ($from + $limit)) {
+error_log("Inside findtag search for $search username: ".$meta_arr ['username'].PHP_EOL);
+error_log("Inside stripos--->".stripos($meta_arr ['username'],$search).PHP_EOL);
+									if (stripos($meta_arr ['username'],$search) !== false) {
+										$meta_arr ['username'] = '@' . $meta_arr ['username'];
+										$search_result [] = $meta_arr;
+										$user_ids [] = $uid;
+									}
+								//}
+								//$rc += 1;
 							}
 							// error_log("query user_ids------> " . json_encode($user_ids) . PHP_EOL);
 							// error_log("query search_result count------> " . count($search_result) . PHP_EOL);
@@ -650,7 +657,7 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 						$qb->setParameter( 'f', $user_ids );
 error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
 						$UserFriends = $qb->getQuery ()->getResult ();
-error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
+//error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
 						
 						//this code checks if friend request already sent...
 						$chkUserFriend = array ();

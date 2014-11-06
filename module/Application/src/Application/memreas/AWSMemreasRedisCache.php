@@ -58,6 +58,7 @@ class AWSMemreasRedisCache {
 	public function warmHashTagSet($user_id) {
 		sleep(1);
 		$warming_hashtag = $this->cache->get('warming_hashtag');
+error_log("warming_hashtag...".$warming_hashtag.PHP_EOL);
 		if (!$warming_hashtag || ($warming_hashtag == "(nil)")) {
 error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			$warming = $this->cache->set('warming_hashtag', '1');
@@ -81,38 +82,38 @@ error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PH
 			$hashtag_public_eid_hash = array();
 			foreach ($public_event_ids as $eid) {
 				if (!empty($event_ids[$eid['event_id']])) {
-error_log("public_event_tags event_ids[eid['event_id']] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
-error_log("public_event_tags eid['tag'] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+//error_log("public_event_tags event_ids[eid['event_id']] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+//error_log("public_event_tags eid['tag'] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
 					$result = $this->cache->zadd('#hashtag', 0, $event_ids[$eid['event_id']]);
 					$hashtag_public_eid_hash[$eid['event_id']] = $event_ids[$eid['event_id']];
 				}
 
 			}
 			$reply = $this->cache->hmset('#hashtag_public_eid_hash', $hashtag_public_eid_hash);
-error_log("ZCARD #hashtag result ---> ".$this->cache->zcard('#hashtag').PHP_EOL);
+//error_log("ZCARD #hashtag result ---> ".$this->cache->zcard('#hashtag').PHP_EOL);
 
 			$friend_event_ids = $tagRep->filterFriendHashTags($keys, $user_id);
 			$hashtag_friends_eid_hash = array();
 			foreach ($friend_event_ids as $eid) {
-error_log("Insdie friend for loop...".PHP_EOL);
+//error_log("Insdie friend for loop...".PHP_EOL);
 				if (!empty($event_ids[$eid['event_id']])) {
-error_log("Insdie friend for loop if !empty...".PHP_EOL);
-error_log("friend_event_tags event_ids[eid['event_id']] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
-error_log("friend_event_tags eid['tag'] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+//error_log("Insdie friend for loop if !empty...".PHP_EOL);
+//error_log("friend_event_tags event_ids[eid['event_id']] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
+//error_log("friend_event_tags eid['tag'] ---> ".$event_ids[$eid['event_id']].PHP_EOL);
 					$result = $this->cache->zadd('#hashtag_'.$user_id, 0, $event_ids[$eid['event_id']]);
 					$hashtag_friends_eid_hash[$eid['event_id']] = $event_ids[$eid['event_id']];
 				}
 			}
 //error_log("friend_event_tags count ---> ".count($friend_event_ids).PHP_EOL);
-error_log("ZCARD #hashtag_".$user_id." result ---> ".$this->cache->zcard('#hashtag_'.$user_id).PHP_EOL);
+//error_log("ZCARD #hashtag_".$user_id." result ---> ".$this->cache->zcard('#hashtag_'.$user_id).PHP_EOL);
 			$reply = $this->cache->hmset('#hashtag_friends_hash_'.$user_id, $hashtag_friends_eid_hash);
 				
-$result = $this->cache->executeRaw(array('HLEN', '#hashtag_friends_hash_'.$user_id));
-error_log("HLEN result ---> $result".PHP_EOL);
-$result = $this->cache->executeRaw(array('HLEN', '#hashtag_public_eid_hash'));
-error_log("HLEN result ---> $result".PHP_EOL);
+			$result = $this->cache->executeRaw(array('HLEN', '#hashtag_friends_hash_'.$user_id));
+//error_log("HLEN result ---> $result".PHP_EOL);
+			$result = $this->cache->executeRaw(array('HLEN', '#hashtag_public_eid_hash'));
+//error_log("HLEN result ---> $result".PHP_EOL);
 			$warming = $this->cache->set('warming_hashtag', '0');
-error_log("cache warming @warming_hashtag finished...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+//error_log("cache warming @warming_hashtag finished...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			
 			//$this->elasticache->setCache("!event", $mc);
 		}
