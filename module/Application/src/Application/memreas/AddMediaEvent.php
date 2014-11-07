@@ -257,7 +257,7 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$eventOBj=$eventRepo->findOneBy(array(
                             'event_id' => $event_id
                                 ));
-					$nmessage = $userOBj->username . 'Added Media to  ' . $eventOBj->name . ' event';
+					$nmessage = $userOBj->username . ' Added Media to  ' . $eventOBj->name . ' event';
 					$ndata ['addNotification'] ['meta'] = $nmessage;
 					
 					//add event owner in notifcation list
