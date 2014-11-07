@@ -53,8 +53,8 @@ class AddEvent {
 		$event_self_destruct = strtotime(trim($data->addevent->event_self_destruct));
 		$is_public = trim($data->addevent->is_public);
 		$price = trim($data->addevent->price);
-		$duration = trim($data->addevent->duration);
-		$duration_type = trim($data->addevent->duration_type);
+		$duration_from = trim($data->addevent->duration_from);
+		$duration_to = trim($data->addevent->duration_to);
 		//$media_array = $data->addevent->medias->media;
 		//$friend_array =$data->addevent->friends->friend;
 		//    print_r($friend_array);
@@ -96,8 +96,8 @@ class AddEvent {
 
             $metadata = array();
             $metadata['price'] = $price;
-            $metadata['duration'] = $duration;
-            $metadata['duration_type'] = $duration_type;
+            $metadata['duration_from'] = $duration_from;
+            $metadata['duration_to'] = $duration_to;
 
              $tblEvent->name=$event_name;
                 $tblEvent->location=$event_location;
