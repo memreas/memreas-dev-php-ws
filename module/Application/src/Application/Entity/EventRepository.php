@@ -125,7 +125,11 @@ class EventRepository extends EntityRepository
                 $url =$this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
             }
         }  else {
-            if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']) ){
+            if(isset ( $json_array ['S3_files'] ['type'] ['video'] ){
+                         $url = (isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : "";
+
+
+            }else(! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']) ){
             	
                 $url =$this->url_signer->signArrayOfUrls($json_array ['S3_files'] ['thumbnails'] ['79x80']);
             }
