@@ -126,10 +126,24 @@ class ListNotification {
                             $xml_output .= "<comment_time>$comment->create_time</comment_time>";
                             $xml_output .= "<media_id>$comment->media_id</media_id>";
                             $mediaOBj = $this->dbAdapter->find('Application\Entity\Media', $comment->media_id);
+                            $eventRepository->getEventMediaUrl($eventMedia[0]['metadata'], 'thumb');
                             $json_array = json_decode ( $mediaOBj->metadata, true );
-                            $url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+                            $url =$eventRepository->getEventMediaUrl($mediaOBj->metadata, 'thumb');
+                            //$url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
                             $path = $this->url_signer->fetchSignedURL ( $url );
                             $xml_output .= "<media_path><![CDATA[" . $path . "]]></media_path>";
+                            $xml_output .= "<media_type></media_type>";
+                            if($json_array ['S3_files'] ['file_type']== 'video'){
+                                $xml_output .= '<media_type>'.$json_array ['S3_files'] ['type'] ['video']['format'].'</media_type>';
+
+                            } else if($json_array ['S3_files'] ['file_type']== 'audio'){
+                                $xml_output .= '<media_type>'.$json_array ['S3_files'] ['type'] ['audio']['format'].'</media_type>';
+
+                            }else if ($json_array ['S3_files'] ['file_type']== 'image') {
+                                        $xml_output .= '<media_type>'.$json_array ['S3_files'] ['type'] ['image']['format'].'</media_type>';
+                            }
+
+
 
                         }else{
                             $xml_output .= "<comment><![CDATA[]]></comment>";
