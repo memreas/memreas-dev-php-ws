@@ -121,12 +121,12 @@ class ListComments {
                                     ->where("m.user_id = '{$value['user_id']}' AND m.is_profile_pic = 1")
                                     ->getQuery()->getResult();
                                 if($media_row){
-                                     $json_array = json_decode ( $media_row[0]->metadata, true );
+                                     $json_array_profile = json_decode ( $media_row[0]->metadata, true );
                                 }
                                
 				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
-				if (! empty ( $json_array ['S3_files'] ['path'] ))
-					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+				if (! empty ( $json_array_profile ['S3_files'] ['path'] ))
+					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array_profile ['S3_files'] ['path'];
 				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
 				$output .= '<commented_about>'.Utility::formatDateDiff($value['create_time']).'</commented_about>';
 
