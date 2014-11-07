@@ -197,6 +197,7 @@ error_log("filterPublicHashTags event_ids---->".json_encode($event_ids).PHP_EOL)
   public function createDiscoverCache($tag, $event_ids = null){
 error_log("Inside Redis warmer createDiscoverCache...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
     $Index = array();
+    $mediaDefaultPic = MemreasConstants::ORIGINAL_URL.'/memreas/img/pic-1.jpg';
   	$date = strtotime ( date ( 'd-m-Y' ) );
     $qb = $this->_em->createQueryBuilder ();
 	$qb->select('t.tag,t.tag_id,t.meta');
@@ -217,9 +218,13 @@ error_log("Inside Redis warmer createDiscoverCache...@".date( 'Y-m-d H:i:s.u' ).
             $temp['name'] = $row['tag'];
             $event = $this->_em->find ( 'Application\Entity\Event', $json_array['event'][$k] );
             $temp['event_name'] = $event->name;
-            $temp['event_id'] = $event->event_id;
-            $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
-            $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
+            $temp['event_id'] = $event->event_id;            
+            $temp['event_photo'] =  $mediaDefaultPic;
+            if(!empty( $json_array['media'][$k])){
+                 $event_media     = $this->_em->find ( 'Application\Entity\Media', $json_array['media'][$k] );
+                 $temp['event_photo'] = $this->getEventMediaUrl($event_media->metadata,'thumb');
+            }
+           
             $comment = $this->_em->find ( 'Application\Entity\Comment', $json_array['comment'][$k] );
             $temp['comment'] = $comment->text;
             $temp['update_time'] = $comment->update_time;
