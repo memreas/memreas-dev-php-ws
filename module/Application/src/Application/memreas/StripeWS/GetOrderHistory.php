@@ -64,14 +64,18 @@
                     $output .= '<user_detail>' . json_encode($data['user']) . '</user_detail>';
                     $output .= '<orders>';
                     if ($user_id) $output .= '<user_id>' . $user_id . '</user_id>';
-                    foreach ($orders as $transaction){
+                    foreach ($orders as $order){
+                        $username = $order['username'];
+                        $transaction = $order['transaction'];
+                        $accountBalance = $order['accountBalance'];
                         $output .= '<order>';
+                            $output .= '<username>' . $username . '</username>';
                             $output .= '<transaction_id>' . $transaction['transaction_id'] . '</transaction_id>';
                             $output .= '<transaction_type>' . $transaction['transaction_type'] . '</transaction_type>';
+                            $output .= '<begin_balance>' . $accountBalance['starting_balance'] . '</begin_balance>';
                             $output .= '<amount>' . $transaction['amount'] . '</amount>';
-                            $output .= '<transaction_receive>' . $transaction['transaction_sent'] . '</transaction_receive>';
-                            $output .= '<transaction_request>' . $transaction['transaction_request'] . '</transaction_request>';
-                            $output .= '<transaction_response>' . $transaction['transaction_response'] . '</transaction_response>';
+                            $output .= '<ending_balance>' . $accountBalance['ending_balance'] . '</ending_balance>';
+                            $output .= '<transaction_sent>' . $transaction['transaction_sent'] . '</transaction_sent>';
                         $output .= '</order>';
                     }
                     $output .= '</orders>';
