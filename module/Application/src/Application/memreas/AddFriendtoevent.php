@@ -202,13 +202,19 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
                     	 * TODO: Need to get proper profile url here
                     	 */
                     	try {
-//error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
-                    		$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
-	                    			'user_id' => $friend_id,
-	                    			'is_profile_pic' => '1'
-	                    	));
-	                    	 
-	                      	$profile_pic_url = $eventRepo->getProfileUrl($profile_pic->metatdata);
+//error_log("About to fetch profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
+                     		
+	                    	 if($network_name == 'memreas'){
+                                $profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
+                                    'user_id' => $friend_id,
+                                    'is_profile_pic' => '1'
+                                ));
+                                $profile_pic_url = $eventRepo->getProfileUrl($profile_pic->metatdata);
+                             } else if (empty($profile_pic_url)) {
+                                $profile_pic_url = $eventRepo->getProfileUrl();
+
+                             }
+	                      	
                                 
 //error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);	                    	
                         } catch (\Exception $exc) {
