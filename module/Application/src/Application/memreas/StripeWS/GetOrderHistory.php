@@ -34,7 +34,7 @@
             $user_id = trim ( $data->getorderhistory->user_id );
             $page = trim ( $data->getorderhistory->page );
             $limit = trim ( $data->getorderhistory->limit );
-
+echo $user_id; die();
             $guzzle = new Client();
 
             $request_data = array(
