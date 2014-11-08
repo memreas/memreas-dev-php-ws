@@ -61,7 +61,6 @@
                 $status = 'Success';
                 $orders = $data['orders'];
                 if (!empty($orders)){
-                    $output .= '<user_detail>' . json_encode($data['user']) . '</user_detail>';
                     $output .= '<orders>';
                     if ($user_id) $output .= '<user_id>' . $user_id . '</user_id>';
                     foreach ($orders as $order){
