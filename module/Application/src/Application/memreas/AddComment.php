@@ -180,7 +180,10 @@ class AddComment {
                             $this->notification->add ( $ef ['friend_id'] );
                             $friendUser = $eventRepo->getUser($ef['friend_id'],'row');
                             Email::$item['type'] ='user-comment';
-                            Email::$item['name'] =$friendUser['username'];
+                            Email::$item['friend_name'] =$friendUser['username'];
+                            Email::$item['user_name'] =$userOBj->username;
+                            Email::$item['event_name'] =$eventOBj->name;
+
                             Email::$item['email'] =$friendUser['email_address'];
                             Email::$item['message'] =$comment;
                             Email::collect();
