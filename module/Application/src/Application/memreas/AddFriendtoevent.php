@@ -342,6 +342,7 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
                             Email::$item['email'] =$friendUser['email_address'];
                             Email::$item['message'] =$ndata ['addNotification'] ['meta'];
                             Email::$item['event_name'] =$eventOBj->name;
+                            Email::$item['username'] = $userOBj->username
 
                             Email::collect();
                          } else {
