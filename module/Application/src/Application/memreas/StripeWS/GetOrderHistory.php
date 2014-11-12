@@ -66,7 +66,6 @@
                     foreach ($orders as $order){
                         $username = $order['username'];
                         $transaction = $order['transaction'];
-                        $accountBalance = $order['accountBalance'];
                         $transactionRequest = json_decode($transaction['transaction_request'], true);
                         if (array_key_exists('description', $transactionRequest))
                             $description = $transaction['description'];
@@ -77,12 +76,7 @@
                             $output .= '<transaction_id>' . $transaction['transaction_id'] . '</transaction_id>';
                             $output .= '<transaction_type>' . $transaction['transaction_type'] . '</transaction_type>';
                             $output .= '<transaction_detail>' . $description . '</transaction_detail>';
-                            if (!empty($accountBalance)) {
-                                $output .= '<begin_balance>' . $accountBalance['starting_balance'] . '</begin_balance>';
-                                $output .= '<amount>' . $transaction['amount'] . '</amount>';
-                                $output .= '<ending_balance>' . $accountBalance['ending_balance'] . '</ending_balance>';
-                            }
-                            else $output .= '<amount>' . $transaction['amount'] . '</amount>';
+                            $output .= '<amount>' . $transaction['amount'] . '</amount>';
                             $output .= '<transaction_sent>' . $transaction['transaction_sent'] . '</transaction_sent>';
                         $output .= '</order>';
                     }
