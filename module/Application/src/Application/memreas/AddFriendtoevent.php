@@ -415,7 +415,7 @@ error_log("$friend_name is already in your Event Friend list. ---> $friend_id" .
             $viewVar['subject'] = $subject;
             $viewModel = new ViewModel ($viewVar);
             $viewModel->setTemplate('email/event-invite');
-            $viewModel->
+         
             $html = $viewRender->render($viewModel);
             $subject = 'memreas invite';
 
