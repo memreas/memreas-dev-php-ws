@@ -105,7 +105,7 @@
             $xml_output .= $output;
             $xml_output .= "</getorderhistoryresponse>";
             $xml_output .= "</xml>";
-            echo $xml_output;
+            echo $xml_output;die();
         }
     }
 
