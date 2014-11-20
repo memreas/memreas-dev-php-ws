@@ -67,8 +67,11 @@
                         $username = $order['username'];
                         $transaction = $order['transaction'];
                         $transactionRequest = json_decode($transaction['transaction_request'], true);
-                        if (is_array($transactionRequest) && array_key_exists('description', $transactionRequest))
-                            $description = $transaction['description'];
+                        if (is_array($transactionRequest)) {
+                            if (array_key_exists('description', $transactionRequest))
+                                $description = $transaction['description'];
+                            else $description = '';
+                        }
                         else $description = '';
 
                         $output .= '<order>';
@@ -77,6 +80,7 @@
                             $output .= '<transaction_type>' . $transaction['transaction_type'] . '</transaction_type>';
                             $output .= '<transaction_detail>' . $description . '</transaction_detail>';
                             $output .= '<amount>' . $transaction['amount'] . '</amount>';
+                            $output .= '<balance>' . $order['balance'] . '</balance>';
                             $output .= '<transaction_sent>' . $transaction['transaction_sent'] . '</transaction_sent>';
                         $output .= '</order>';
                     }
