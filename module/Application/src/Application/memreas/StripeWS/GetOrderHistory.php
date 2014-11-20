@@ -77,7 +77,7 @@
                         $output .= '<order>';
                             $output .= '<username>' . $username . '</username>';
                             $output .= '<transaction_id>' . $transaction['transaction_id'] . '</transaction_id>';
-                            $output .= '<transaction_type>' . $transaction['transaction_type'] . '</transaction_type>';
+                            $output .= '<transaction_type>' . str_replace("_", " ", $transaction['transaction_type']) . '</transaction_type>';
                             $output .= '<transaction_detail>' . $description . '</transaction_detail>';
                             $output .= '<amount>' . $transaction['amount'] . '</amount>';
                             $output .= '<balance>' . $order['balance'] . '</balance>';
