@@ -118,10 +118,10 @@ class GetUserDetails {
             else{
                 $profile_image = json_decode($profile[0]->metadata, true);
                 $url1= $url = MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
-                if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'])) {
-                    $url1= $json_array ['S3_files'] ['thumbnails'] ['79x80'];
+                if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'])) {
+                    $url1= $profile_image ['S3_files'] ['thumbnails'] ['79x80'];
                 }
-                $profile_image = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+                $profile_image = $this->url_signer->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['thumbnails'] ['79x80'] );
                 $output .= '<profile><![CDATA[' . $profile_image . ']]></profile>';
             }
         }
