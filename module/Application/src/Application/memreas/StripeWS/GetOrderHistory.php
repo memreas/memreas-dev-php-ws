@@ -67,7 +67,7 @@
                         $username = $order['username'];
                         $transaction = $order['transaction'];
                         $transactionRequest = json_decode($transaction['transaction_request'], true);
-                        if (array_key_exists('description', $transactionRequest))
+                        if (is_array($transactionRequest) && array_key_exists('description', $transactionRequest))
                             $description = $transaction['description'];
                         else $description = '';
 
