@@ -108,9 +108,9 @@ class EventRepository extends EntityRepository
 	{
 		$json_array = json_decode ( $metadata, true );
         $url = MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
-        if (! empty ( $json_array ['S3_files'] ['path'] )){
+        if (! empty ( ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'])){
             
-            $url = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+            $url = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80']);
         }
 
               return $url;

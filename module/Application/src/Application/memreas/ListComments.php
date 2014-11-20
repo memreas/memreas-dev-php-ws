@@ -125,8 +125,8 @@ class ListComments {
                                 }
                                
 				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
-				if (! empty ( $json_array_profile ['S3_files'] ['path'] ))
-					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array_profile ['S3_files'] ['path'];
+				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] ))
+					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'];
 				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
 				$output .= '<commented_about>'.Utility::formatDateDiff($value['create_time']).'</commented_about>';
 
