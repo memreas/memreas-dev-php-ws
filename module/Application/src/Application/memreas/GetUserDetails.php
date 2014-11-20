@@ -117,9 +117,8 @@ class GetUserDetails {
                 $output .= '<profile></profile>';
             else{
                 $profile_image = json_decode($profile[0]->metadata, true);
-                
-                if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'])) {
-                     $profile_image = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['thumbnails'] ['79x80'] );
+                 if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'])) {
+                     $profile_image = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['thumbnails'] ['79x80'][0] );
                 }else{
                  $profile_image=MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';   
                 }
