@@ -19,28 +19,29 @@ jQuery.fetchWS = function (base_url) {
     
     //if () {}
     data = '{"action": "' + $("#input_action").val() + '", ' + 
-     '"type":"jsonp", ' + 
-    '"codebase":"' + $("#codebase").val() + '", ' + 
-    '"json": ' + json_actionInputValue  + 
-
-
-    '}';
+    		'"type":"jsonp", ' + 
+    		'"codebase":"' + $("#codebase").val() + '", ' + 
+    		'"json": ' + json_actionInputValue  + 
+    		'}';
+    
  	$.ajax( {
 	  type:'post', 
 	  url: base_url ,
 	  dataType: 'jsonp',
 	  data: { sid: $("#sid").val(), json: data},
 	  success: function(json){
-	  	var resp = JSON.stringify(json, null, '\t');
-alert("resp:" + resp);
+	  	//var resp = JSON.stringify(json, null, '\t');
+	  	//var resp = jQuery.parseXML(json);
+		var resp = json;
+	  	alert("hi");
 	  	var html_str = "";
 	  	var html_button = "";
 	  	$("#action_output").val(resp);
 	  	if($("#input_action").val() == 'login'){
-var obj = jQuery.parseJSON( resp );
-  xmlDoc = $.parseXML( obj.data ),
-  $xml = $( xmlDoc ),
-  $sid = $xml.find( "sid" );
+	  		var obj = jQuery.parseJSON( resp );
+	  		xmlDoc = $.parseXML( obj.data ),
+	  		$xml = $( xmlDoc ),
+	  		$sid = $xml.find( "sid" );
 	  		$("#sid").val($sid.html()) ;
 	  	}
 	  	return true;
@@ -48,8 +49,9 @@ var obj = jQuery.parseJSON( resp );
 	  error: function (jqXHR, textStatus, errorThrown) {
        	alert(jqXHR.responseText);
        	alert(jqXHR.status);
-    	//alert(textStatus);
-       	//alert(errorThrown);
+    	alert(textStatus);
+       	alert(errorThrown);
+       	$("#action_output").val(jqXHR.responseText);
 	  }
 	});
 	return false;

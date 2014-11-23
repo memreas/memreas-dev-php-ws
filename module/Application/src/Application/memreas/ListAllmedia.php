@@ -49,7 +49,7 @@ class ListAllmedia {
 			$limit = trim ( $data->listallmedia->limit );
 		
 		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+		$xml_output = "<?xml version='1.0' encoding='utf-8' ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<listallmediaresponse>";
 		$xml_output .= "<medias>";
@@ -64,7 +64,7 @@ class ListAllmedia {
 			$result = $statement->getArrayResult ();
 		} else {
 			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'media.user_id', 'media.media_id', 'media.metadata' );
+			$qb->select ( 'media.user_id', 'media.media_id', 'media.metadata', 'media.create_date' );
 			$qb->from ( 'Application\Entity\Media', 'media' );
 			$qb->join ( 'Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id' );
 			$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id' );
@@ -161,6 +161,7 @@ class ListAllmedia {
 					// output xml
 					$xml_output .= "<media>";
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
+					$xml_output .= "<media_date>" . $row ['create_date'] . "</media_date>";
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] ) : '';

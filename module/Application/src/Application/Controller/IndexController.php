@@ -1347,6 +1347,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 			$json = json_encode ( $json_arr );
 			
 			header ( "Content-type: plain/text" );
+			//header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
 		}

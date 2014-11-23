@@ -196,7 +196,7 @@ echo "user_id ----> " . $user_id;
             //change from xml to json and back
             $(document).ready(function() {
                 $("#input_format").change(function() {
-                    alert("Changing input format");
+                    //alert("Changing input format");
                     alert($("#action_input").val());
                     var xml = $.parseXML($("#action_input").val());
                     var obj = $.xml2json(xml);
