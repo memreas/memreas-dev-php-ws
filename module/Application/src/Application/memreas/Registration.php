@@ -421,10 +421,10 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 		foreach ($userIndexArr as $row) {
 			$json_array = json_decode ( $row ['metadata'], true );
 
-			if (empty ( $json_array ['S3_files'] ['path'] )){
+			if (empty ($json_array ['S3_files'] ['thumbnails'] ['79x80'][0] )){
 				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 			}else{
-				$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+				$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST .  $json_array ['S3_files'] ['thumbnails'] ['79x80'][0]);
 			}
 			$this->userIndex[$row['username']] = array(
 													'username'      => $row['username'],
