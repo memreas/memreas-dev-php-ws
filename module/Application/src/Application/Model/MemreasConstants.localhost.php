@@ -15,7 +15,8 @@ class MemreasConstants {
 	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
 	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
-	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
+	//const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	const ELASTICACHE_SERVER_ENDPOINT = "127.0.0.1";
 	const ELASTICACHE_SERVER_USE = false;
 	const ELASTICACHE_REDIS_USE = false;
