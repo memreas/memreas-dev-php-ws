@@ -164,8 +164,8 @@ class ListAllmedia {
 
 					//$date = new \DateTime($row ['create_date']);
 					//echo 'Current time: ' . date('Y-m-d H:i:s') . "\n";
-					$format = 'Y-m-d H:i:s.u';
-					$date = \DateTime::createFromFormat($format, $row ['create_date']);
+					$format = 'Y-m-d H:i:s';
+					$date = new date($format, $row ['create_date']);
 					//echo $date->getTimestamp();
 					//$xml_output .= "<media_date>" . strtotime($row ['create_date']) . "</media_date>";
 					error_log("date----->".$date->getTimestamp().PHP_EOL);
