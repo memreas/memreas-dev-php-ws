@@ -161,7 +161,7 @@ class ListAllmedia {
 					// output xml
 					$xml_output .= "<media>";
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-					$xml_output .= "<media_date>" . $row ['create_date'] . "</media_date>";
+					$xml_output .= "<media_date>" . strtotime($row ['create_date']) . "</media_date>";
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] ) : '';
