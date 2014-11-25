@@ -169,7 +169,7 @@ class ListAllmedia {
 					//echo $date->getTimestamp();
 					//$xml_output .= "<media_date>" . strtotime($row ['create_date']) . "</media_date>";
 					error_log("date----->".$date->getTimestamp().PHP_EOL);
-					$xml_output .= "<media_date>" . ($date->getTimestamp()*1000) . "</media_date>";
+					$xml_output .= "<media_date>" . $date->getTimestamp() . "</media_date>";
 						
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
