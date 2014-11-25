@@ -58,7 +58,7 @@
             $xml_output .= $output;
             $xml_output .= "</makepayoutresponse>";
             $xml_output .= "</xml>";
-            echo $xml_output;
+            echo $xml_output; die();
         }
     }
 

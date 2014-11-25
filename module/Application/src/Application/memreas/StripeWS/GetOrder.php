@@ -81,7 +81,7 @@
             $xml_output .= $output;
             $xml_output .= "</getorderresponse>";
             $xml_output .= "</xml>";
-            echo $xml_output;
+            echo $xml_output; die();
         }
     }
 

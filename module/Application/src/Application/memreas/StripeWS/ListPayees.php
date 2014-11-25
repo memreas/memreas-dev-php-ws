@@ -74,7 +74,7 @@
             $xml_output .= $output;
             $xml_output .= "</listpayeesresponse>";
             $xml_output .= "</xml>";
-            echo $xml_output;
+            echo $xml_output; die();
         }
     }
 

@@ -80,7 +80,7 @@
             $xml_output .= $output;
             $xml_output .= "</getaccountdetailresponse>";
             $xml_output .= "</xml>";
-            echo $xml_output;
+            echo $xml_output; die();
         }
     }
 
