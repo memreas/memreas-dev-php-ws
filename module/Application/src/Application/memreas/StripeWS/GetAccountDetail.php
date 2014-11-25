@@ -55,6 +55,7 @@
                 $accountDetail = $data['accountDetail'];
                 $output .= "<account>";
                     $output .= "<username>" . $account['username'] . "</username>";
+                    $output .= "<account_id>" . $account['account_id'] . "</account_id>";
                     $output .= "<account_type>" . $account['account_type'] . "</account_type>";
                     $output .= "<balance>" . $account['balance'] . "</balance>";
                     $output .= "<first_name>" . $accountDetail['first_name'] . "</first_name>";
