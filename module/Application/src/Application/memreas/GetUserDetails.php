@@ -55,6 +55,7 @@ class GetUserDetails {
         } else {
             $status = 'Success';
             $output .= '<user_id>' . $result_user[0]->user_id . '</user_id>';
+            $output .= '<password>' . $result_user[0]->password . '</password>';
             $output .= '<username>' . $result_user[0]->username . '</username>';
             $output .= '<email>' . $result_user[0]->email_address . '</email>';
 
