@@ -32,6 +32,7 @@
                 $data = json_decode ( json_encode ( $frmweb ) );
             }
             $user_id = trim ( $data->getorderhistory->user_id );
+            $search_username = trim ( $data->getorderhistory->search_username );
             $page = trim ( $data->getorderhistory->page );
             $limit = trim ( $data->getorderhistory->limit );
 
@@ -39,6 +40,7 @@
 
             $request_data = array(
                 'user_id' => $user_id,
+                'search_username' => $search_username,
                 'page' => $page,
                 'limit' => $limit
             );
