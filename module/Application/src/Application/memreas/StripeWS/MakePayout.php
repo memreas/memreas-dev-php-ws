@@ -38,6 +38,7 @@
                 null,
                 array(
                     'action' => 'makepayout',
+                    'account_id' => $account_id,
                     'amount' => $amount,
                     'description' => $description
                 )
