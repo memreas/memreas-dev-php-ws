@@ -67,6 +67,7 @@ class DeletePhoto {
                     $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
 
                     foreach ($files_prepare as $file){
+error_log("file to delete ----> ".PHP_EOL);
                         //Checking for exist object
                         if (isset($json_array['S3_files'][$file]))
                             $S3Client->deleteObject(array(
