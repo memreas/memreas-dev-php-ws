@@ -1338,7 +1338,9 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 			// }
 		}
 		
-		if (! empty ( $callback )) {
+		
+		
+		 if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
 			
 			$json_arr = array (
@@ -1350,16 +1352,14 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 			//header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-		}
-		
-		if (isset ( $_GET ['view'] ) && empty ( $actionname )) {
+		}else if (isset ( $_GET ['view'] ) && empty ( $actionname )) {
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view folder
 			return $view;
 		} else {
-			// xml output
+			// json output
 			echo $output;
-			// error_log("output ----> ****$output***".PHP_EOL);
+			 //error_log("output ----> ****$output***".PHP_EOL);
 		}
 		
 		/*
