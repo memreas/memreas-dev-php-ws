@@ -42,27 +42,46 @@ class DeletePhoto {
                 $statement = $this->dbAdapter->createQuery($media_event);
                 $result = $statement->getResult();
                 if (count ($result) > 0)
-                    $xml_output .= '<status>failure</status><message>This media is related to an event.</message>';
+                    $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
                 else{
                     $json_array = json_decode ( $resseldata [0]->metadata, true );
                     if (isset ( $json_array ['S3_files'] ['type'] ['image'] )) {
                         $imagename = basename ( $json_array ['S3_files'] ['path'] );
                     }
-
-                    $query = "DELETE FROM Application\Entity\Media m where m.media_id='$mediaid'";
-
-                    $statement = $this->dbAdapter->createQuery ( $query );
-                    $result = $statement->getResult ();
-
-                    //Remove event media related to this media also
-                    $query_event = "DELETE FROM Application\Entity\EventMedia em WHERE em.media_id='$mediaid'";
-                    $event_statement = $this->dbAdapter->createQuery ( $query_event );
-                    $event_result = $event_statement->getResult ();
+error_log("metadata ----> ".$resseldata [0]->metadata.PHP_EOL);
+                    /*
+                     * JM: 28-NOV-2014 below commented - won't work given above if...
+                     */
+                    //Remove event media related to this media also 
+                    //$query_event = "DELETE FROM Application\Entity\EventMedia em WHERE em.media_id='$mediaid'";
+                    //$event_statement = $this->dbAdapter->createQuery ( $query_event );
+                    //$event_result = $event_statement->getResult ();
 
                     /*
                      * Remove media resource on S3 AMZ - transcoded files should be removed also
                      * Specify your file element in Json metadata, they will be deleted all
                      */
+					$file_type = $json_array['S3_files']['file_type'];
+					$files_to_delete = array();
+					if ($file_type == 'image') {
+						$files_to_delete[] = $json_array['S3_files']['path'];
+						$files_to_delete[] = $json_array['S3_files']['download'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['79x80'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['448x306'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['384x216'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['98x78'];
+					} else if ($file_type == 'video') {
+						$files_to_delete[] = $json_array['S3_files']['path'];
+						$files_to_delete[] = $json_array['S3_files']['download'];
+						$files_to_delete[] = $json_array['S3_files']['web'];
+						$files_to_delete[] = $json_array['S3_files']['1080p'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['79x80'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['448x306'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['384x216'];
+						$files_to_delete[] = $json_array['S3_files']['thumbnails']['98x78'];
+					}
+error_log("files_to_delete[]---> ".json_encode($files_to_delete[]).PHP_EOL);
+exit();
                     $files_prepare = array('path', 'web', '1080p');
                     $S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
 
@@ -77,10 +96,10 @@ error_log("file to delete ----> ".PHP_EOL);
                     }
 
                     $session = new Container("user");
-                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/79x80/');
-                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/448x306/');
-                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/384x216/');
-                    $S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/98x78/');
+                    //$S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/79x80/');
+                    //$S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/448x306/');
+                    //$S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/384x216/');
+                    //$S3Client->deleteMatchingObjects(MemreasConstants::S3BUCKET, $session->user_id.'/media/thumbnails/98x78/');
                     
                     if (count ( $result ) > 0) {
                         $xml_output .= "<status>success</status>";
