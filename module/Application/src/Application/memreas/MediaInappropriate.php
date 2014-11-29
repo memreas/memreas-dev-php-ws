@@ -78,6 +78,7 @@ class MediaInappropriate {
 
                 $userOBj = $this->dbAdapter->find('Application\Entity\User', $mediaOBj->user_id);
                 $reporterObj = $this->dbAdapter->find('Application\Entity\User', $user_id);
+                echo $user_id;
 echo '<pre>'; print_r ($reporterObj); die();
                 $viewVar = array();
                 $viewModel = new ViewModel ();
