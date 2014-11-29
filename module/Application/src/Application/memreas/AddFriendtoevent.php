@@ -267,6 +267,28 @@ error_log("AddFriendtoevent.exec() friend_array ----> " . json_encode($friend_ar
 							$sendMessage=1;
                             $message .= 'User Friend Successfully added';
                             $status = 'Success';
+
+                            $fromUserObj = $this->dbAdapter->find('Application\Entity\User', $user_id);
+                            $userOBj = $this->dbAdapter->find('Application\Entity\User', $friend_id);
+                            $viewVar = array();
+                            $viewModel = new ViewModel ();
+                            $aws_manager = new AWSManagerSender($this->service_locator);
+                            $viewModel->setTemplate('email/add-friend');
+                            $viewRender = $this->service_locator->get('ViewRenderer');
+
+                            //convert to array
+                            $to = array($userOBj->email_address);
+
+                            $subject = 'Memreas friend request';
+                            $viewVar['username'] = $userOBj->username;
+                            $viewVar['from_username'] = $fromUserObj->username;
+                            $viewModel->setVariables($viewVar);
+                            $html = $viewRender->render($viewModel);
+
+                            try {
+                                $aws_manager->sendSeSMail($to, $subject, $html);
+                            } catch (\Exception $exc) {}
+
                         } catch (\Exception $exc) {
                             $status = 'Failure';
                             $error = 1;
