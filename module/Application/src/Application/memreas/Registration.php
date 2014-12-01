@@ -101,9 +101,7 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				    
 				    } else{ 
 				    	$sql = "SELECT u FROM Application\Entity\User u where u.username = '".$username."' OR u.email_address = '".$email_address."'";
-
 				    }
-				    $sql = "SELECT u FROM Application\Entity\User u where u.username = '".$username."'";//" or u.email_address = '".$email_address."'";
 				    $statement = $this->dbAdapter->createQuery( $sql );
 
 					$result = $statement->getResult();
