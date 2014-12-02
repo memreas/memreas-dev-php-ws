@@ -109,6 +109,7 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				    $statement = $this->dbAdapter->createQuery( $sql );
 
 					$result = $statement->getResult();
+					error_log('email query result'.print_r($result,true));
 
 				    if (! empty ( $result )) {
                          $result = $result[0];
