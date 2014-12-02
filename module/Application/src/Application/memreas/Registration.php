@@ -96,17 +96,22 @@ error_log ( "Inside Registration ----> ".$_REQUEST['invited_by'].PHP_EOL );
 				    /*
 				     * TODO: Fix email check prior to go-beta...
 				     */
+				    				    error_log('ALLOW_DUPLICATE_EMAIL_FOR_TESTING === '.MemreasConstants::ALLOW_DUPLICATE_EMAIL_FOR_TESTING  );
+
 				    if(MemreasConstants::ALLOW_DUPLICATE_EMAIL_FOR_TESTING == 1){ 
+				    	error_log('allowing dupicalte email');
 				    	$sql = "SELECT u FROM Application\Entity\User u where u.username = '".$username."'";//" or u.email_address = '".$email_address."'";
-				    
 				    } else{ 
 				    	$sql = "SELECT u FROM Application\Entity\User u where u.username = '".$username."' OR u.email_address = '".$email_address."'";
+				    				    error_log('not');
+
 				    }
 				    $statement = $this->dbAdapter->createQuery( $sql );
 
 					$result = $statement->getResult();
+
 				    if (! empty ( $result )) {
-                        $result = $result[0];
+                         $result = $result[0];
                         $status = 'Failure';
 					    if (($result->email_address == $email) && ($result->username != $username)) {
 						    // throw new \Exception('Your profile is not created successfully. Email is already exist.');
