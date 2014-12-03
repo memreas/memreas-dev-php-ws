@@ -39,7 +39,7 @@ class gcm {
 		$headers = array (
 				// kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
 				
-				// given by devender/
+				// memreas test key
 				'Authorization: key=AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE',
 				'Content-Type: application/json' 
 		);
