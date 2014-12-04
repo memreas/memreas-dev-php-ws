@@ -58,14 +58,13 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
                 from Application\Entity\Event e
                 where e.user_id='" . $user_id . "'
                     and  (e.viewable_to >=" . $date . " or e.viewable_to ='')
-                       and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
                     and  (e.self_destruct >=" . $date . " or e.self_destruct='')
                 ORDER BY e.create_time DESC";
             $statement = $this->dbAdapter->createQuery($query_event);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
             $result_event = $statement->getResult();
-
+l
             if ($result_event) {
                 if (count($result_event) <= 0) {
                     $xml_output .= "<status>Failure</status>";
@@ -400,6 +399,7 @@ error_log("viewevents friends xml output----> ".$xml_output.PHP_EOL);
                         and event.user_id=user.user_id
                         and event.user_id != '$user_id'
                         and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
+                        and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                         and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                         ORDER BY event.create_time DESC ";
 //error_log("Inside Public event dql string ----> " . $q_public . PHP_EOL);
