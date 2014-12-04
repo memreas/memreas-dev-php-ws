@@ -64,7 +64,7 @@ error_log("View Events.xml_input ---->  " . $_POST ['xml'] . PHP_EOL);
             $statement->setMaxResults($limit);
             $statement->setFirstResult($from);
             $result_event = $statement->getResult();
-l
+
             if ($result_event) {
                 if (count($result_event) <= 0) {
                     $xml_output .= "<status>Failure</status>";
