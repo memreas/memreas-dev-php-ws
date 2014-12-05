@@ -76,14 +76,12 @@ class ListAllmedia {
 			
 			$result = $qb->getQuery ()->getArrayResult ();
 		}
-		$qb->getProfileUrl();
+		
 		if (count ( $result ) <= 0) {
 			$error_flag = 2;
 			$message = "No Record found for this Event";
 		} else {
-			$eventRepo =  $this->dbAdapter->getRepository('Application\Entity\Event')
 			$qb = $this->dbAdapter->createQueryBuilder ();
-
 			$qb->select ( 'u.username', 'm.metadata' );
 			$qb->from ( 'Application\Entity\User', 'u' );
 			
@@ -91,36 +89,37 @@ class ListAllmedia {
 			// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 			
-			$qb->where ( 'u.user_id=?1 AND m.is_profile_pic = 1' );
+			$qb->where ( 'u.user_id=?1 ' );
 			$qb->setParameter ( 1, $result [0] ['user_id'] );
 			$oUserProfile = $qb->getQuery ()->getResult ();
 			
 //			error_log ( "oUserProfile[0]['metadata']-----> " . $oUserProfile [0] ['metadata'] . PHP_EOL );
-
-			
+			$json_array = json_decode ( $oUserProfile [0] ['metadata'], true );
 			$url1 = '';
-			// If profie pic set it
-			$profile_metadata ='';
-			if(isset($oUserProfile[0]['metadata'])){
-				$profile_metadata =$oUserProfile[0]['metadata']
-			}
- 			 
-			$path = $eventRepo->getProfileUrl($profile_metadata);
-			$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
-				 
 			$xml_output .= "<username>" . $oUserProfile [0] ['username'] . "</username>";
 			$xml_output .= "<page>$page</page>";
 			$xml_output .= "<status>Success</status>";
 			$xml_output .= "<user_id>" . $result [0] ['user_id'] . "</user_id>";
 			$xml_output .= "<event_id>" . $event_id . "</event_id>";
 			$xml_output .= "<message>Media List</message>";
-
 				
 			$checkHasMedia = false;
 			foreach ( $result as $row ) {
 				$json_array = json_decode ( $row ['metadata'], true );
 
-				
+				// If profie pic set it
+				if ( isset ( $row ['is_profile_pic'] ) && $row ['is_profile_pic']) {
+					if (! empty ( $json_array ['S3_files'] ['path'] )) {
+						if (isset ( $json_array ['S3_files'] ['path'] )) {
+							$url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+							$path = $this->url_signer->fetchSignedURL ( $url );
+						} else {
+							$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+						} 
+					}
+
+					$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
+				}
 				
 				// Ignore user profile media
 				if (! isset ( $row ['is_profile_pic'] ) || ! $row ['is_profile_pic']) {
