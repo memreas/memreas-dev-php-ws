@@ -89,13 +89,17 @@ class ListAllmedia {
 			// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 			
-			$qb->where ( 'u.user_id=?1 ' );
+			$qb->where ( 'u.user_id=?1 AND m.is_profile_pic = 1 ' );
+
 			$qb->setParameter ( 1, $result [0] ['user_id'] );
 			$oUserProfile = $qb->getQuery ()->getResult ();
-			
-//			error_log ( "oUserProfile[0]['metadata']-----> " . $oUserProfile [0] ['metadata'] . PHP_EOL );
-			$json_array = json_decode ( $oUserProfile [0] ['metadata'], true );
-			$url1 = '';
+ //			error_log ( "oUserProfile[0]['metadata']-----> " . $oUserProfile [0] ['metadata'] . PHP_EOL );
+			$eventRepo = $this->dbAdapter->getRepository('Application\Entity\Event');
+			$path = $eventRepo->getProfileUrl($oUserProfile[0]['metadata']);
+			// If profie pic set it
+			$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
+				
+ 			$url1 = '';
 			$xml_output .= "<username>" . $oUserProfile [0] ['username'] . "</username>";
 			$xml_output .= "<page>$page</page>";
 			$xml_output .= "<status>Success</status>";
@@ -107,19 +111,7 @@ class ListAllmedia {
 			foreach ( $result as $row ) {
 				$json_array = json_decode ( $row ['metadata'], true );
 
-				// If profie pic set it
-				if ( isset ( $row ['is_profile_pic'] ) && $row ['is_profile_pic']) {
-					if (! empty ( $json_array ['S3_files'] ['path'] )) {
-						if (isset ( $json_array ['S3_files'] ['path'] )) {
-							$url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-							$path = $this->url_signer->fetchSignedURL ( $url );
-						} else {
-							$path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-						} 
-					}
-
-					$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
-				}
+				
 				
 				// Ignore user profile media
 				if (! isset ( $row ['is_profile_pic'] ) || ! $row ['is_profile_pic']) {
