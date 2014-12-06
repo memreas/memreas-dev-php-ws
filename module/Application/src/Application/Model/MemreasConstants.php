@@ -60,7 +60,7 @@ class MemreasConstants {
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
 	const ADMIN_EMAIL ='admin@memreas.com';
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;//has 1 or 0 value
-	
+	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;//has 1 or 0 value
 
 
 }

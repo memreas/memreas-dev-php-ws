@@ -393,7 +393,7 @@ error_log("viewevents friends xml output----> ".$xml_output.PHP_EOL);
         	$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
         	$xml_output .= "<xml><viewevents>";
         	 
-            $q_public = "select distinct event.user_id,event.user_id ,user.username,user.profile_photo
+            $q_public = "select distinct event.metadata,event.user_id,event.user_id ,user.username,user.profile_photo
                         from Application\Entity\Event event  , Application\Entity\User user
                         where event.public=1
                         and event.user_id=user.user_id
@@ -428,6 +428,14 @@ error_log("viewevents friends xml output----> ".$xml_output.PHP_EOL);
                 $xml_output .= "<page>$page</page>";
 
                 foreach ($result_pub as $row3) {
+
+                    if(!MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC){
+                      $event_json_array = json_decode($row3 ['metadata'], true);
+                       //skip this event hving 
+                      if(!empty($event_json_array['price'])) continue ;
+
+                    }
+
 
                     $profile = $this->dbAdapter->createQueryBuilder()
                         ->select('m')
