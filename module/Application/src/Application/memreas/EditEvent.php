@@ -34,7 +34,8 @@ class EditEvent {
 		$is_friend_can_share = trim ( $data->editevent->is_friend_can_add_friend );
 		$is_friend_can_post_media = trim ( $data->editevent->is_friend_can_post_media );
 		$event_self_destruct = strtotime ( trim ( $data->editevent->event_self_destruct ) );
-		
+        $sell_media = strtotime ( trim ( $data->editevent->sell_media ) );
+
 		$media_array = $data->editevent->medias->media;
 		$friend_array = $data->editevent->friends->friend;
 		
@@ -75,7 +76,22 @@ class EditEvent {
                                                 e.viewable_to='$event_to',
                                                 e.self_destruct='$event_self_destruct',
                                                 e.create_time='$event_date',
-                                                e.update_time='$event_date' where e.event_id='$event_id' ";
+                                                e.update_time='$event_date'";
+            //Set event to free
+            if (!$sell_media){
+                $qb = $this->dbAdapter->createQueryBuilder ();
+                $qb->select('e')
+                    ->from('Application\Entity\Event', 'e')
+                    ->where('e.event_id = ?1')
+                    ->setParameter(1, $event_id);
+                $event_detail = $qb->getQuery()->getResult();
+                $event_detail = $event_detail[0];;
+                $event_meta = json_decode($event_detail->metadata, true);
+                $event_meta['price'] = 0;
+                $query .= ", metadata = '" . json_encode($event_meta) . "'";
+            }
+
+            $query .= " where e.event_id='$event_id' ";
 			// $result = mysql_query($query);
 			// $statement = $this->dbAdapter->createStatement($query);
 			// $result = $statement->execute();
