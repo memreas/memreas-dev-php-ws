@@ -88,7 +88,7 @@ class EditEvent {
                 $event_detail = $event_detail[0];;
                 $event_meta = json_decode($event_detail->metadata, true);
                 $event_meta['price'] = 0;
-                $query .= ", metadata = '" . json_encode($event_meta) . "'";
+                $query .= ", e.metadata = '" . json_encode($event_meta) . "'";
             }
 
             $query .= " where e.event_id='$event_id' ";
