@@ -18,7 +18,7 @@ class MemreasConstants {
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
 	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "memreasdev-redis.142tbh.0001.use1.cache.amazonaws.com";
+	const ELASTICACHE_SERVER_ENDPOINT = "54.204.57.197"; 
 	const ELASTICACHE_SERVER_PORT = "6379";
 	const ELASTICACHE_SERVER_USE = false;
 	const ELASTICACHE_REDIS_USE = false;
@@ -60,7 +60,7 @@ class MemreasConstants {
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
 	const ADMIN_EMAIL ='admin@memreas.com';
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;//has 1 or 0 value
-	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;//has 1 or 0 value
+	
 
 
 }
