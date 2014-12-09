@@ -73,7 +73,7 @@ class  GetGroupFriends{
                 $output .= '<friend_network>' . $friend->network . '</friend_network>';
                 if ($friend->network != 'memreas')
                     $output .= '<friend_photo>' . $friend->url_image . '</friend_photo>';
-                else $output .= '<friend_photo>' . $this->url_signer->signArrayOfUrls($friend->url_image) . '</friend_photo>';
+                else $output .= '<friend_photo>' . urldecode($this->url_signer->signArrayOfUrls($friend->url_image)) . '</friend_photo>';
                 $output .= '</friend>';
             }
             $output .= '</friends>';
