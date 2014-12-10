@@ -19,11 +19,14 @@ class  GetGroupFriends{
     protected $memreas_tables;
     protected $service_locator;
     protected $dbAdapter;
+    protected $url_signer;
+
     public function __construct($message_data, $memreas_tables, $service_locator) {
         $this->message_data = $message_data;
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+        $this->url_signer = new MemreasSignedURL ();
         // $this->dbAdapter = $P->get(MemreasConstants::MEMREASDB);
     }
 
@@ -68,7 +71,9 @@ class  GetGroupFriends{
                 $output .= '<friend_id>' . $friend->friend_id . '</friend_id>';
                 $output .= '<friend_name>' . $friend->social_username . '</friend_name>';
                 $output .= '<friend_network>' . $friend->network . '</friend_network>';
-                $output .= '<friend_photo>' . $friend->url_image . '</friend_photo>';
+                if ($friend->network != 'memreas')
+                    $output .= '<friend_photo>' . $friend->url_image . '</friend_photo>';
+                else $output .= '<friend_photo>' . urldecode($this->url_signer->signArrayOfUrls($friend->url_image)) . '</friend_photo>';
                 $output .= '</friend>';
             }
             $output .= '</friends>';
