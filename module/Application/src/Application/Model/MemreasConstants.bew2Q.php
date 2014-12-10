@@ -9,6 +9,8 @@ class MemreasConstants {
 
 	//Turns off emails for perf testing
 	const SEND_EMAIL = true;
+	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 0;//has 1 or 0 value
+	const allow_sell_media_in_public = 0;
 	
 	//memreasdev2 urls
 	const WEB_URL = "https://fe2.memreas.com/";
@@ -62,7 +64,6 @@ class MemreasConstants {
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
 	const ADMIN_EMAIL ='admin@memreas.com';
-	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 0;//has 1 or 0 value
 	
 
 }
