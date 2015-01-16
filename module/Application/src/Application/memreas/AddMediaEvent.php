@@ -36,7 +36,7 @@ class AddMediaEvent {
 	}
 	public function exec() {
 //		error_log ( "AddMediaEvent exec..." );
-//		error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
+error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 		$is_audio = false;
 		try {
 			$media_id = '';
@@ -62,7 +62,6 @@ class AddMediaEvent {
 				$s3file_name = addslashes ( trim ( $data->addmediaevent->s3file_name ) );
 				$location = json_decode ( $data->addmediaevent->location );
 				$email = isset ( $data->addmediaevent->email ) ? addslashes ( trim ( $data->addmediaevent->email ) ) : '';
-//				error_log ( "location json ---> " . $data->addmediaevent->location . PHP_EOL );
 			} else {
 				// Old code uses POST
 				// Fetch user_id
@@ -127,8 +126,11 @@ error_log ( "location ---> " . $location . PHP_EOL );
 				// create metadata based on content type
 				// ///////////////////////////////////////
 				$file_type = explode ( '/', $content_type );
+
 				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
-					$s3path = $user_id . '/image/';
+// 					if (strcasecmp ( $content_type, 'image' ) == 0) {
+					//$s3path = $user_id . '/media/';
+					$s3path = $user_id . '/';
 					$json_array = array ();
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
 					//$s3file = $s3url;
@@ -137,15 +139,16 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
-					$json_array ['S3_files'] ['content_type'] = $content_type;
+ 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
-//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
+					//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
 					/*
 					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("image" => array("format" => $file_type[1])) ); error_log("$json_array ---> " . json_encode($json_array));
 					 */
 				} else if (strcasecmp ( 'video', $file_type [0] ) == 0) {
 					$is_video = 1;
-					$s3path = $user_id . '/media/';
+					//$s3path = $user_id . '/media/';
+					$s3path = $user_id . '/';
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
 					$json_array = array ();
 					$json_array ['S3_files'] ['path'] = $s3file;
@@ -162,7 +165,8 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					 */
 				} else if (strcasecmp ( 'audio', $file_type [0] ) == 0) {
 					$is_audio = true;
-					$s3path = $user_id . '/media/';
+					//$s3path = $user_id . '/media/';
+					$s3path = $user_id . '/';
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
 					$json_array = array ();
 					$json_array ['S3_files'] ['path'] = $s3file;
@@ -180,7 +184,8 @@ error_log ( "location ---> " . $location . PHP_EOL );
 					 */
 				}
 				$json_str = json_encode ( $json_array );
-
+error_log ( "json_str ---> " .$json_str );
+				
 				// ///////////////////////////////////////
 				// check media type and update tables...
 				// ///////////////////////////////////////

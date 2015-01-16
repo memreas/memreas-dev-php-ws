@@ -150,10 +150,12 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
+error_log("inside indexAction...".PHP_EOL);
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
+error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
 		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
@@ -168,7 +170,7 @@ class IndexController extends AbstractActionController {
 			$message_data ['xml'] = '';
 		}
 		
-//error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->security ( $actionname );
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
@@ -277,6 +279,8 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - read operation - pass for now
 				 */
 			} else if ($actionname == "addmediaevent") {
+error_log("inside indexAction addmediaevent ...".$callback.PHP_EOL);
+				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
 				
@@ -1555,11 +1559,9 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 			} catch ( \Exception $ex ) {
 				echo "base exception ---> " . print_r ( $ex, true ) . PHP_EOL;
 			}
-			// exit();
 		} else if (MemreasConstants::ELASTICACHE_SERVER_USE) {
 			$this->elasticache = new AWSMemreasCache ();
 		} else {
-			// $this->elasticache = null;
 			$this->elasticache = new AWSMemreasCache ();
 		}
 		
@@ -1632,6 +1634,7 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
+error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 		$public = array (
 				'login',
 				'registration',

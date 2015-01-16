@@ -23,8 +23,7 @@ class ListAllmedia {
 		// error_log("ListAllmedia.__construct exit" . PHP_EOL);
 	}
 	public function exec() {
-		// error_log("ListAllmedia.exec enter" . PHP_EOL);
-		// error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
+error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		// error_log("ListAllmedia.exec data ---> " . print_r($data, true) . PHP_EOL);
 		$message = ' ';
@@ -248,7 +247,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-//error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
+error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
 	}
 }
 
