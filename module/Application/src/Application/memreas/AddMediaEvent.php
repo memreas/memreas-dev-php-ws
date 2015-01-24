@@ -87,17 +87,16 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 
 			}
 			$time = time ();
-/*
-error_log ( "event_id ---> " . $event_id . PHP_EOL );
-error_log ( "media_id ---> " . $media_id . PHP_EOL );
-error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
-error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
-error_log ( "content_type ---> " . $content_type . PHP_EOL );
-error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
-error_log ( "s3url ---> " . $s3url . PHP_EOL );
-error_log ( "email ---> " . $email . PHP_EOL );
-error_log ( "location ---> " . $location . PHP_EOL );
-*/
+
+// error_log ( "event_id ---> " . $event_id . PHP_EOL );
+// error_log ( "media_id ---> " . $media_id . PHP_EOL );
+// error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
+// error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
+// error_log ( "content_type ---> " . $content_type . PHP_EOL );
+// error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
+// error_log ( "s3url ---> " . $s3url . PHP_EOL );
+// error_log ( "email ---> " . $email . PHP_EOL );
+// error_log ( "location ---> " . $location . PHP_EOL );
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media table
 			// ////////////////////////////////////////////////////////////////////

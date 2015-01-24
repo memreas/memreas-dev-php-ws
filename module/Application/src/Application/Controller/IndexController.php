@@ -151,6 +151,15 @@ class IndexController extends AbstractActionController {
 	}
 	public function indexAction() {
 error_log("inside indexAction...".PHP_EOL);
+//Checking headers for cookie info
+$headers = apache_request_headers();
+
+foreach ($headers as $header => $value) {
+	error_log("WS header: $header :: value: $value".PHP_EOL);
+}
+//End Checking headers for cookie info
+
+
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -1626,7 +1635,6 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 			}
 			$user_session = new Container ( 'user' );
 			if (! isset ( $user_session->init )) {
-				// $sessionManager->regenerateId(true);
 				$user_session->init = 1;
 				$user_session->sid = $sid;
 			}
@@ -1640,37 +1648,42 @@ error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 				'registration',
 				'forgotpassword',
 				'checkusername',
-				'showlog',
-				'clearlog',
-				// verify email
-				'verifyemailaddress',
+				'verifyemailaddress'
 
 				/*
-				 * 30-OCT-2014 These shouldn't be publicly available - why?
+				 * 15-JAN-2015 making private
 				 */
-				'checkevent',
-				'feedback',
-				'listallmedia',
-				// For stripe
-				'getplans',
-				'getplansstatic',
-				'getorderhistory',
-				'getorder',
-				'getaccountdetail',
-				'refund',
-				'listpayees',
-				'makepayout',
-				'getdiskusage' 
+// 				'showlog',
+// 				'clearlog',
+// 				'checkevent',
+// 				'feedback',
+// 				'listallmedia',
+// 				// For stripe
+// 				'getplans',
+// 				'getplansstatic',
+// 				'getorderhistory',
+// 				'getorder',
+// 				'getaccountdetail',
+// 				'refund',
+// 				'listpayees',
+// 				'makepayout',
+// 				'getdiskusage' 
 		);
-		// $_SESSION ['user'] ['ip'] = $ipaddress;
-		// $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+		$_SESSION ['user'] ['ip'] = $ipaddress;
+		$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
 		if (in_array ( $actionname, $public ) || empty ( $actionname )) {
+error_log ( 'Inside else in_array actionname ->'.$actionname.PHP_EOL );
 			return $actionname;
 		} else {
+error_log ( 'Inside else not in_array actionname ->'.$actionname.PHP_EOL );
 			/*
 			 * $session = new Container("user"); if (!$session->offsetExists('user_id')) { return 'notlogin'; } return $actionname;
 			 */
-			if (! session_id ()) {
+			$sid = session_id ();
+error_log ( 'SID IS ->'.$sid.PHP_EOL );
+			if (! $sid) {
+error_log ( 'SID IS NOT SET !!!!!'.PHP_EOL );
+								
 				return 'notlogin';
 			}
 			return $actionname;

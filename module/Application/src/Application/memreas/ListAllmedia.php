@@ -13,19 +13,15 @@ class ListAllmedia {
 	protected $dbAdapter;
 	protected $url_signer;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-		// error_log("ListAllmedia.__construct enter" . PHP_EOL);
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->url_signer = new MemreasSignedURL ();
-		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
-		// error_log("ListAllmedia.__construct exit" . PHP_EOL);
 	}
 	public function exec() {
-error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
+//error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		// error_log("ListAllmedia.exec data ---> " . print_r($data, true) . PHP_EOL);
 		$message = ' ';
 		$containt = ' ';
 		$user_id = trim ( $data->listallmedia->user_id );
@@ -84,7 +80,7 @@ error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 			$qb->select ( 'u.username', 'm.metadata' );
 			$qb->from ( 'Application\Entity\User', 'u' );
 			
-			// Changed by JMeah 31-AUG-2014
+			// Changed by JMeah 31-AUG-2014 - not all users will have profile pics...
 			// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 			
@@ -92,7 +88,6 @@ error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 
 			$qb->setParameter ( 1, $result [0] ['user_id'] );
 			$oUserProfile = $qb->getQuery ()->getResult ();
- //			error_log ( "oUserProfile[0]['metadata']-----> " . $oUserProfile [0] ['metadata'] . PHP_EOL );
 			$eventRepo = $this->dbAdapter->getRepository('Application\Entity\Event');
 			$path = $eventRepo->getProfileUrl($oUserProfile[0]['metadata']);
 			// If profie pic set it
@@ -109,15 +104,14 @@ error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 			$checkHasMedia = false;
 			foreach ( $result as $row ) {
 				$json_array = json_decode ( $row ['metadata'], true );
-
-				
 				
 				// Ignore user profile media
 				if (! isset ( $row ['is_profile_pic'] ) || ! $row ['is_profile_pic']) {
 					$checkHasMedia = true;
 					$url79x80 = '';
-					$url448x306 = '';
 					$url98x78 = '';
+					$url448x306 = '';
+					$url1280x720 = '';
 					$thum_url = '';
 					$download_url = '';
 					$is_download = 0;
@@ -125,14 +119,16 @@ error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						$type = "image";
 						$url79x80 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : "";
-						$url448x306 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : "";
 						$url98x78 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : "";
+						$url448x306 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : "";
+						$url1280x720 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['1280x720'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['1280x720'] )) ? $json_array ['S3_files'] ['thumbnails'] ['1280x720'] : "";
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$thum_url = (isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] )) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : "";
 						$url79x80 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : "";
-						$url448x306 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : "";
 						$url98x78 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : "";
+						$url448x306 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : "";
+						$url1280x720 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['1280x720'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['1280x720'] )) ? $json_array ['S3_files'] ['thumbnails'] ['1280x720'] : "";
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
 						$type = "audio";
 						continue;
@@ -153,45 +149,49 @@ error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 					$xml_output .= "<media>";
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
 
-					//$date = new \DateTime($row ['create_date']);
-					//echo 'Current time: ' . date('Y-m-d H:i:s') . "\n";
 					$format = 'Y-m-d H:i:s';
 					$date = \DateTime::createFromFormat($format, $row ['create_date']);
-					//echo $date->getTimestamp();
-					//$xml_output .= "<media_date>" . strtotime($row ['create_date']) . "</media_date>";
 					error_log("date----->".$date->getTimestamp().PHP_EOL);
 					$xml_output .= "<media_date>" . $date->getTimestamp() . "</media_date>";
 						
+					//main
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
+					//web
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['web'] ) : '';
-					$xml_output .= isset ( $json_array ['S3_files'] ['path'] ) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
+					$xml_output .= isset ( $json_array ['S3_files'] ['web'] ) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 					
+					//1080p
+					$path = isset ( $json_array ['S3_files'] ['1080p'] ) ? $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['1080p'] ) : '';
+					$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
+
+					//download
 					$path = isset ( $json_array ['S3_files'] ['download'] ) ? $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['download'] ) : '';
-					;
 					$xml_output .= isset ( $json_array ['S3_files'] ['download'] ) ? "<media_url_download><![CDATA[" . $path . "]]></media_url_download>" : '';
 					
 					if ($type == "video") {
 						/*
 						 * $path = isset($json_array ['S3_files'] ['web']) && !empty($json_array ['S3_files'] ['web']) ? $json_array ['S3_files'] ['web'] : ""; $path = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path); $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 						 */
+						if (isset ( $json_array ['S3_files'] ['1080p'] ) && ! empty ( $json_array ['S3_files'] ['1080p'] )) {
+							//progressive download
+							$path = $json_array ['S3_files'] ['1080p'] ;
+							$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path );
+							$xml_output .= "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>";
+
+							//rtmp
+							$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_STREAMING_HOST . $path );
+							$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
+						}
 						
-						$path = isset ( $json_array ['S3_files'] ['1080p'] ) && ! empty ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : "";
-						$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path );
-						$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
-						
-						$path = isset ( $json_array ['S3_files'] ['1080p'] ) && ! empty ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : "";
-						$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path );
-						$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
-						
-						$path = isset ( $json_array ['S3_files'] ['hls'] ) && ! empty ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : '';
-						$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path );
-						$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
+						if (isset ( $json_array ['S3_files'] ['hls'] ) && ! empty ( $json_array ['S3_files'] ['hls'] )) {
+							$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $path );
+							$xml_output .= "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>";
+						}
 					}
+					
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					if (isset ( $data->listallmedia->metadata )) {
-						// error_log("Inside metadata...".PHP_EOL);
-						// error_log("Inside metadata ----> ".$row['metadata'].PHP_EOL);
 						$xml_output .= "<metadata><![CDATA[" . $row ['metadata'] . "]]></metadata>";
 					}
 					
@@ -214,6 +214,10 @@ error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 					$xml_output .= "<media_url_448x306><![CDATA[";
 					$xml_output .= $this->url_signer->signArrayOfUrls ( $url448x306 );
 					$xml_output .= "]]></media_url_448x306>";
+					
+					$xml_output .= "<media_url_1280x720><![CDATA[";
+					$xml_output .= $this->url_signer->signArrayOfUrls ( $url1280x720 );
+					$xml_output .= "]]></media_url_1280x720>";
 					
 					$xml_output .= "<type>$type</type>";
 					$xml_output .= "<media_name><![CDATA[" . $media_name . "]]></media_name>";
