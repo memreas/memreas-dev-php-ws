@@ -1648,26 +1648,22 @@ error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 				'registration',
 				'forgotpassword',
 				'checkusername',
-				'verifyemailaddress'
-
-				/*
-				 * 15-JAN-2015 making private
-				 */
-// 				'showlog',
-// 				'clearlog',
-// 				'checkevent',
-// 				'feedback',
-// 				'listallmedia',
-// 				// For stripe
-// 				'getplans',
-// 				'getplansstatic',
-// 				'getorderhistory',
-// 				'getorder',
-// 				'getaccountdetail',
-// 				'refund',
-// 				'listpayees',
-// 				'makepayout',
-// 				'getdiskusage' 
+				'verifyemailaddress',
+				'showlog',
+				'clearlog',
+				'checkevent',
+				'feedback',
+				'listallmedia',
+				// For stripe
+				'getplans',
+				'getplansstatic',
+				'getorderhistory',
+				'getorder',
+				'getaccountdetail',
+				'refund',
+				'listpayees',
+				'makepayout',
+				'getdiskusage' 
 		);
 		$_SESSION ['user'] ['ip'] = $ipaddress;
 		$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
