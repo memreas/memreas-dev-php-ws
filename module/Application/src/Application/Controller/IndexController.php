@@ -1683,6 +1683,9 @@ error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 		// 				return 'notlogin';
 		// 			}
 		//		}
+		if ( isset($_COOKIE["PHPSESSID"]) && !empty($_COOKIE["PHPSESSID"]) ) {
+			error_log ( 'COOKIE is set....'.$_COOKIE["PHPSESSID"].PHP_EOL );
+		}
 		$sid = session_id ();
 		return $actionname;
 	}
