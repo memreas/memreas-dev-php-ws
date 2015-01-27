@@ -24,6 +24,8 @@ class DeletePhoto {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$mediaid = trim ( $data->deletephoto->mediaid );
 
+error_log("Deleting ---> ".$mediaid.PHP_EOL);		
+		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
@@ -44,6 +46,7 @@ class DeletePhoto {
                 if (count ($result) > 0)
                     $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
                 else{
+error_log("metadata--->".$resseldata [0]->metadata.PHP_EOL);                	
                     $json_array = json_decode ( $resseldata [0]->metadata, true );
                     if (isset ( $json_array ['S3_files'] ['type'] ['image'] )) {
                         $imagename = basename ( $json_array ['S3_files'] ['path'] );
@@ -66,15 +69,13 @@ class DeletePhoto {
 					if ($file_type == 'image') {
 						$files_to_delete[] = $json_array['S3_files']['path'];
 						$files_to_delete[] = $json_array['S3_files']['download'];
-						error_log("added to array image if...".PHP_EOL);
 					} else if ($file_type == 'video') {
 						$files_to_delete[] = $json_array['S3_files']['path'];
 						$files_to_delete[] = $json_array['S3_files']['download'];
 						$files_to_delete[] = $json_array['S3_files']['web'];
 						$files_to_delete[] = $json_array['S3_files']['1080p'];
-						error_log("added to array video if...".PHP_EOL);
 					}
-					$thumbs = array ('79x80', '448x306', '384x216', '98x78');
+					$thumbs = array ('79x80', '448x306', '384x216', '98x78', '1280x720');
 					foreach ($thumbs as $thumb) {
 						if (is_array($json_array['S3_files']['thumbnails'][$thumb])) {
 							foreach ($json_array['S3_files']['thumbnails'][$thumb] as $th) {
@@ -86,17 +87,21 @@ class DeletePhoto {
 					}
 					$S3Client = S3Client::factory(array('key' => MemreasConstants::S3_APPKEY, 'secret' => MemreasConstants::S3_APPSEC));
                     foreach ($files_to_delete as $file){
-						$S3Client->deleteObject(array(
-						 	'Bucket' => MemreasConstants::S3BUCKET,
-							'Key' => $file
-						));
+                    	 
+						if (!empty($file) && isset($file)) {
+							$S3Client->deleteObject(array(
+							 	'Bucket' => MemreasConstants::S3BUCKET,
+								'Key' => $file
+							));
+						} else {
+						}
                     }
 
-					$delete_media = "DELETE FROM Application\Entity\Media m WHERE m.media_id='{$mediaid}'";
+                    $delete_media = "DELETE FROM Application\Entity\Media m WHERE m.media_id='{$mediaid}'";
                     $media_statement = $this->dbAdapter->createQuery ( $delete_media );
                     $delete_media_result = $media_statement->getResult ();
 					
-					//if (count ( $result ) > 0) {
+                    //if (count ( $result ) > 0) {
                     if ($delete_media_result) {
                     	$xml_output .= "<status>success</status>";
                         $xml_output .= "<message>Media removed successfully</message>";

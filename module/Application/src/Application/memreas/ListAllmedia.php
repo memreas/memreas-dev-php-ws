@@ -151,7 +151,6 @@ class ListAllmedia {
 
 					$format = 'Y-m-d H:i:s';
 					$date = \DateTime::createFromFormat($format, $row ['create_date']);
-					error_log("date----->".$date->getTimestamp().PHP_EOL);
 					$xml_output .= "<media_date>" . $date->getTimestamp() . "</media_date>";
 						
 					//main
@@ -251,7 +250,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
+//error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
 	}
 }
 
