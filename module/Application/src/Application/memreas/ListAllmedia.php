@@ -136,6 +136,8 @@ class ListAllmedia {
 						$type = "Type not Mentioned";
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : $json_array ['S3_files'] ['path'];
 					$media_name = basename ( $json_array ['S3_files'] ['path'] );
+					//Prefix added for matching and sync...
+					$media_name_prefix = pathinfo( $media_name )[ 'filename' ];
 					if (isset ( $json_array ['local_filenames'] ['device'] )) {
 						$device = ( array ) $json_array ['local_filenames'] ['device'];
 					} else {
@@ -220,6 +222,7 @@ class ListAllmedia {
 					
 					$xml_output .= "<type>$type</type>";
 					$xml_output .= "<media_name><![CDATA[" . $media_name . "]]></media_name>";
+					$xml_output .= "<media_name_prefix><![CDATA[" . $media_name_prefix . "]]></media_name_prefix>";
 					$xml_output .= "</media>";
 				}
 			}
@@ -250,7 +253,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-//error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
+error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
 	}
 }
 

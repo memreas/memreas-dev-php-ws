@@ -31,7 +31,7 @@ class AddMediaEvent {
 		if (! $this->notification) {
 			$this->notification = new Notification ( $service_locator );
 		}
-                		$this->url_signer = new MemreasSignedURL();
+        $this->url_signer = new MemreasSignedURL();
 
 	}
 	public function exec() {
@@ -60,6 +60,7 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 				$content_type = addslashes ( trim ( $data->addmediaevent->content_type ) );
 				$s3url = addslashes ( trim ( $data->addmediaevent->s3url ) );
 				$s3file_name = addslashes ( trim ( $data->addmediaevent->s3file_name ) );
+				$s3file_basename_prefix = pathinfo( basename($s3file_name) )[ 'filename' ];
 				$location = json_decode ( $data->addmediaevent->location );
 				$email = isset ( $data->addmediaevent->email ) ? addslashes ( trim ( $data->addmediaevent->email ) ) : '';
 			} else {
@@ -81,6 +82,7 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 				$is_server_image = isset ( $_POST ['is_server_image'] ) ? $_POST ['is_server_image'] : 0;
 				$content_type = isset ( $_POST ['content_type'] ) ? $_POST ['content_type'] : '';
 				$s3file_name = isset ( $_POST ['s3file_name'] ) ? $_POST ['s3file_name'] : '';
+				$s3file_basename_prefix = pathinfo( basename($s3file_name) )[ 'filename' ];
 				$email = isset ( $_POST ['email'] ) ? $_POST ['email'] : '';
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
@@ -127,12 +129,12 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 				$file_type = explode ( '/', $content_type );
 
 				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
-// 					if (strcasecmp ( $content_type, 'image' ) == 0) {
-					//$s3path = $user_id . '/media/';
 					$s3path = $user_id . '/';
 					$json_array = array ();
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
-					//$s3file = $s3url;
+					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
+					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
+					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 					$json_array ['S3_files'] ['path'] = $s3file;
 					$json_array ['S3_files'] ['full'] = $s3file;
 					$json_array ['S3_files'] ['location'] = $location;
@@ -140,34 +142,29 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
  					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
-					//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
-					/*
-					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("image" => array("format" => $file_type[1])) ); error_log("$json_array ---> " . json_encode($json_array));
-					 */
 				} else if (strcasecmp ( 'video', $file_type [0] ) == 0) {
 					$is_video = 1;
-					//$s3path = $user_id . '/media/';
 					$s3path = $user_id . '/';
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
 					$json_array = array ();
+					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
+					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 					$json_array ['S3_files'] ['path'] = $s3file;
 					$json_array ['S3_files'] ['full'] = $s3file;
+					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 					$json_array ['S3_files'] ['location'] = $location;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['is_video'] = $is_video;
 					$json_array ['S3_files'] ['type'] ['video'] ['format'] = $file_type [1];
-//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
-					/*
-					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("video" => array("format" => $file_type[1],)) ); error_log("$json_array ---> " . json_encode($json_array));
-					 */
 				} else if (strcasecmp ( 'audio', $file_type [0] ) == 0) {
-					$is_audio = true;
-					//$s3path = $user_id . '/media/';
+					$is_audio = 1;
 					$s3path = $user_id . '/';
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
 					$json_array = array ();
+					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
+					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 					$json_array ['S3_files'] ['path'] = $s3file;
 					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 					$json_array ['S3_files'] ['full'] = $s3file;
@@ -177,10 +174,6 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['is_audio'] = $is_audio;
 					$json_array ['S3_files'] ['type'] ['audio'] ['format'] = $file_type [1];
-//					error_log ( "json_array ---> " . json_encode ( $json_array ) );
-					/*
-					 * $json_array = array("S3_files" => array("path" => $s3url, "Full" => $s3url,), "local_filenames" => array("device" => array("unique_device_identifier1" => $user_id . '_' . $device_id,),), "type" => array("audio" => array("format" => $file_type[1],)) ); error_log("json_array ---> " . json_encode($json_array));
-					 */
 				}
 				$json_str = json_encode ( $json_array );
 error_log ( "json_str ---> " .$json_str );
@@ -209,10 +202,6 @@ error_log ( "json_str ---> " .$json_str );
 
                     // if profile pic then update media
                     $update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
-                    // $rs_is_profil = mysql_query($update_media);
-                    // $statement3 = $this->dbAdapter->createStatement($update_media);
-                    // $rs_is_profil = $statement3->execute();
-                    // $row = $result->current();
                     $statement = $this->dbAdapter->createQuery ( $update_media );
                     $rs_is_profil = $statement->getResult ();
 
@@ -227,21 +216,14 @@ error_log ( "json_str ---> " .$json_str );
                     $full_path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $s3file;
                     $update_friend_photo = "Update Application\Entity\Friend f SET f.url_image = '{$full_path}' WHERE f.social_username = '{$user_detail[0]->username}' AND f.network = 'memreas'";
                     $this->dbAdapter->createQuery($update_friend_photo)->getResult();
-
-                    /*if (! $rs_is_profil)
-                        throw new Exception ( 'Error : ' . mysql_error () );*/
-
-//                    error_log ( "AddMediaEvent exec - just udpated Media " . PHP_EOL );
                 }
 
-				// $event_id = isset($_POST['event_id']) ? trim($_POST['event_id']) : null;
 				if (isset ( $event_id ) && ! empty ( $event_id )) {
 					$tblEventMedia = new \Application\Entity\EventMedia ();
 					$tblEventMedia->media_id = $media_id;
 					$tblEventMedia->event_id = $event_id;
 					$this->dbAdapter->persist ( $tblEventMedia );
 					$this->dbAdapter->flush ();
-//					error_log ( "AddMediaEvent exec - just inserted EventMedia " . PHP_EOL );
 					/*
 					 * @todo send to all particiepent
 					 */
@@ -309,7 +291,6 @@ error_log ( "json_str ---> " .$json_str );
 					}
 				}
 
-				// if (!$is_audio) {
 				if (! $is_server_image) {
 					$message_data = array (
 							'user_id' => $user_id,
@@ -317,6 +298,7 @@ error_log ( "json_str ---> " .$json_str );
 							'content_type' => $content_type,
 							's3path' => $s3path,
 							's3file_name' => $s3file_name,
+							's3file_basename_prefix' => $s3file_basename_prefix,
 							'is_video' => $is_video,
 							'is_audio' => $is_audio,
 							'email' => $email
@@ -351,7 +333,6 @@ error_log ( "json_str ---> " .$json_str );
 		ob_clean ();
 		echo $xml_output;
 //		error_log ( $xml_output, 0 );
-//		error_log ( "EXIT addmediaevent.php..." );
 	}
 }
 

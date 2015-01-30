@@ -76,6 +76,7 @@ class AWSManagerSender {
 						'MessageBody'       => $json,
 				));
 error_log('Just published to MemreasConstants::QUEUEURL'.MemreasConstants::QUEUEURL.PHP_EOL);
+error_log('json--->'.$json.PHP_EOL);
 			} else {
 				/* - publish to topic here */
 				$result = $this->sns->publish ( array (
