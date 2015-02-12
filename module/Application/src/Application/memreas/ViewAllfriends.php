@@ -37,34 +37,28 @@ class ViewAllfriends {
 			$error_flag = 1;
 			$message = 'User id is empty';
 		} else {
-		  $qb = $this->dbAdapter->createQueryBuilder ();
-        $qb->select ( 'f' );
-        $qb->from ( 'Application\Entity\Friend', 'f' );
-        $qb->join('Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id')
-           ->andwhere("uf.user_approve = '1'")
-           ->andwhere("uf.user_id = :userid")
-           ->setParameter ( 'userid', $user_id );
-        $qb->orderBy('f.social_username', 'ASC');
-
-               // error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);     
-
-        $result = $qb->getQuery ()->getResult ();
-
- 			if (! $result) {
+			$qb = $this->dbAdapter->createQueryBuilder ();
+			$qb->select ( 'f' );
+			$qb->from ( 'Application\Entity\Friend', 'f' );
+			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" )->andwhere ( "uf.user_id = :userid" )->setParameter ( 'userid', $user_id );
+			$qb->orderBy ( 'f.social_username', 'ASC' );
+			
+			// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
+			
+			$result = $qb->getQuery ()->getResult ();
+			
+			if (! $result) {
 				$error_flag = 1;
 				$message = mysql_error ();
 			} else {
 				if (count ( $result ) > 0) {
 					$xml_output .= "<status>Success</status><message>Friends list</message>";
 					foreach ( $result as $row1 ) {
- 						$count ++;
+						$count ++;
 						$view_all_friend [$count] ['id'] = $row1->friend_id;
-						 
 						$view_all_friend [$count] ['network'] = $row1->network;
-						
 						$view_all_friend [$count] ['social_username'] = $row1->social_username;
-						$view_all_friend [$count] ['url_image'] = $this->url_signer->fetchSignedURL ( $row1->url_image);
-error_log("view_all_friend signed url ---> ". $view_all_friend [$count] ['url_image'] .PHP_EOL);						 
+						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls (MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $row1->url_image );
 					}
 				} else {
 					$error_flag = 2;
@@ -74,19 +68,16 @@ error_log("view_all_friend signed url ---> ". $view_all_friend [$count] ['url_im
 		}
 		if ($error_flag) {
 			$xml_output .= "<status>Success</status><message>$message</message>";
-			 
 		} else {
-			// echo "<pre>";print_r($view_all_friend);
 			foreach ( $view_all_friend as $friend ) {
-				
 				$xml_output .= "<friend>";
 				$xml_output .= "<friend_id>" . $friend ['id'] . "</friend_id>";
 				$xml_output .= "<network>" . $friend ['network'] . "</network>";
 				$xml_output .= "<social_username>" . $friend ['social_username'] . "</social_username>";
 				$xml_output .= "<url><![CDATA[" . $friend ['url_image'] . "]]></url>";
-				$xml_output .= "<url_79x80><![CDATA[" . empty ( $friend ['url_image_79x80'] ) ? '' : $friend ['url_image_79x80'] . "]]></url_79x80>";
-				$xml_output .= "<url_448x306><![CDATA[" . empty ( $friend ['url_image_448x306'] ) ? '' : $friend ['url_image_448x306'] . "]]></url_448x306>";
-				$xml_output .= "<url_98x78><![CDATA[" . empty ( $friend ['url_image_98x78'] ) ? '' : $friend ['url_image_98x78'] . "]]></url_98x78>";
+				$xml_output .= "<url_79x80><![CDATA[" . empty ( $friend ['url_image_79x80'] ) ? '' : $this->url_signer->signArrayOfUrls ($friend ['url_image_79x80']) . "]]></url_79x80>";
+				$xml_output .= "<url_448x306><![CDATA[" . empty ( $friend ['url_image_448x306'] ) ? '' : $this->url_signer->signArrayOfUrls ($friend ['url_image_448x306']) . "]]></url_448x306>";
+				$xml_output .= "<url_98x78><![CDATA[" . empty ( $friend ['url_image_98x78'] ) ? '' : $this->url_signer->signArrayOfUrls ($friend ['url_image_98x78']) . "]]></url_98x78>";
 				$xml_output .= "</friend>";
 			}
 		}
@@ -96,10 +87,12 @@ error_log("view_all_friend signed url ---> ". $view_all_friend [$count] ['url_im
 		$res = $statement->getResult ();
 		$xml_output .= "<groups>";
 		if (count ( $res ) <= 0) {
-			/*$xml_output .= "<group>";
-			$xml_output .= "<group_id></group_id>";
-			$xml_output .= "<group_name></group_name>";
-			$xml_output .= "</group>";*/
+			/*
+			 * $xml_output .= "<group>";
+			 * $xml_output .= "<group_id></group_id>";
+			 * $xml_output .= "<group_name></group_name>";
+			 * $xml_output .= "</group>";
+			 */
 		} else
 			foreach ( $res as $row ) {
 				$xml_output .= "<group>";
@@ -109,7 +102,6 @@ error_log("view_all_friend signed url ---> ". $view_all_friend [$count] ['url_im
 			}
 		$xml_output .= "</groups>";
 		$xml_output .= "</xml>";
-		// echo "<pre>";print_r($view_all_friend);
 		error_log ( "Exiting ViewAllfriends.exec().xml ---> " . $xml_output . PHP_EOL );
 		echo $xml_output;
 	}

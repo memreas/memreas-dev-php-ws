@@ -150,21 +150,20 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-error_log("inside indexAction...".PHP_EOL);
+//error_log("inside indexAction...".PHP_EOL);
 //Checking headers for cookie info
-$headers = apache_request_headers();
+//$headers = apache_request_headers();
 
-foreach ($headers as $header => $value) {
-	error_log("WS header: $header :: value: $value".PHP_EOL);
-}
+//foreach ($headers as $header => $value) {
+//	error_log("WS header: $header :: value: $value".PHP_EOL);
+//}
 //End Checking headers for cookie info
-
 
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
-error_log("inside indexAction callback ...".$callback.PHP_EOL);
+//error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
 		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
@@ -179,7 +178,7 @@ error_log("inside indexAction callback ...".$callback.PHP_EOL);
 			$message_data ['xml'] = '';
 		}
 		
-error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+//error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->security ( $actionname );
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
@@ -288,7 +287,7 @@ error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-
 				 * Cache approach - read operation - pass for now
 				 */
 			} else if ($actionname == "addmediaevent") {
-error_log("inside indexAction addmediaevent ...".$callback.PHP_EOL);
+//error_log("inside indexAction addmediaevent ...".$callback.PHP_EOL);
 				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
@@ -1642,7 +1641,7 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
-error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
+//error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 		$public = array (
 				'login',
 				'registration',
@@ -1684,9 +1683,9 @@ error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 		// 			}
 		//		}
 		if ( isset($_COOKIE["PHPSESSID"]) && !empty($_COOKIE["PHPSESSID"]) ) {
-			error_log ( 'COOKIE is set....'.$_COOKIE["PHPSESSID"].PHP_EOL );
+			//error_log ( 'COOKIE is set....'.$_COOKIE["PHPSESSID"].PHP_EOL );
 		} else {
-			error_log ( 'COOKIE is NOT set....'.PHP_EOL );
+			//error_log ( 'COOKIE is NOT set....'.PHP_EOL );
 			if (!$user_session->sid)
 				$sid = session_id ();
 		}
