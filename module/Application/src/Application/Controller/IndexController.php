@@ -1666,7 +1666,10 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 				'deletephoto'
 		);
 		$_SESSION ['user'] ['ip'] = $ipaddress;
-		$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+		$_SESSION ['user'] ['HTTP_USER_AGENT']="";
+		if (isset($_SERVER['HTTP_USER_AGENT']) && !empty($_SERVER['HTTP_USER_AGENT'])) {
+			$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+		}
 		// 		if (in_array ( $actionname, $public ) || empty ( $actionname )) {
 		// 			error_log ( 'Inside else in_array actionname ->'.$actionname.PHP_EOL );
 		// 			return $actionname;

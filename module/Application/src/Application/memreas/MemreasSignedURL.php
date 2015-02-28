@@ -80,7 +80,7 @@ class MemreasSignedURL {
 				$arr[] = $this->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
 			}
 		} else {
-			$arr[] = $this->fetchSignedURL($obj);  //this should be string not array
+			$arr[] = $this->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj);  //this should be string not array
 		}
 
 		return json_encode ($arr);
