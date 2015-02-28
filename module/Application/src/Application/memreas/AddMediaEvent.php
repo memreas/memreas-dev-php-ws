@@ -18,8 +18,6 @@ class AddMediaEvent {
 	protected $AddNotification;
 	protected $notification;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-//		error_log ( "AddMediaEvent __construct..." );
-//		error_log ( "AddMediaEvent __construct message_data..." . print_r ( $message_data, true ) . PHP_EOL );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
@@ -35,13 +33,11 @@ class AddMediaEvent {
 
 	}
 	public function exec() {
-//		error_log ( "AddMediaEvent exec..." );
-error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 		$is_audio = false;
 		try {
 			$media_id = '';
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
-//				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
+error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (isset ( $data->addmediaevent->user_id )) {
 					$user_id = addslashes ( trim ( $data->addmediaevent->user_id ) );
@@ -87,23 +83,23 @@ error_log ( "AddMediaEvent _POST ----> " . print_r ( $_POST, true ) . PHP_EOL );
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
 
+error_log ( "event_id ---> " . $event_id . PHP_EOL );
+error_log ( "media_id ---> " . $media_id . PHP_EOL );
+error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
+error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
+error_log ( "content_type ---> " . $content_type . PHP_EOL );
+error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
+error_log ( "s3url ---> " . $s3url . PHP_EOL );
+error_log ( "email ---> " . $email . PHP_EOL );
+//error_log ( "location ---> " . $location . PHP_EOL );  // object json..
 			}
 			$time = time ();
 
-// error_log ( "event_id ---> " . $event_id . PHP_EOL );
-// error_log ( "media_id ---> " . $media_id . PHP_EOL );
-// error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
-// error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
-// error_log ( "content_type ---> " . $content_type . PHP_EOL );
-// error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
-// error_log ( "s3url ---> " . $s3url . PHP_EOL );
-// error_log ( "email ---> " . $email . PHP_EOL );
-// error_log ( "location ---> " . $location . PHP_EOL );
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media table
 			// ////////////////////////////////////////////////////////////////////
 			if ($is_server_image == 1) {
-//				error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
+error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				if (! isset ( $media_id ) || empty ( $media_id )) {
 					throw new \Exception ( 'Error : media_id is empty' );
 				}
@@ -332,7 +328,7 @@ error_log ( "json_str ---> " .$json_str );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-//		error_log ( $xml_output, 0 );
+error_log ( "output::" . $xml_output . PHP_EOL );
 	}
 }
 

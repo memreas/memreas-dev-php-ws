@@ -28,7 +28,7 @@ class EventFriend {
 	private $friend_id;
 	/**
 	 *
-	 * @var string @ORM\Column(name="user_approve", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="user_approve", type="integer", nullable=false)
 	 */
 	protected $user_approve=0;
 	

@@ -34,9 +34,12 @@ class AddNotification {
 	public function exec($frmweb = '') {
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
+error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
+				
 		} else {
 			
 			$data = json_decode ( json_encode ( $frmweb ) );
+error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . PHP_EOL );
 		}
 		
 		$user_id = (trim ( $data->addNotification->user_id ));
@@ -102,6 +105,7 @@ class AddNotification {
 			$xml_output .= "</addnotification>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
+error_log ( "Exit Add Notification xml_output ---> " . $xml_output . PHP_EOL );
 		}
 	}
 

@@ -10,8 +10,8 @@ class MemreasConstants {
 	//Turns off emails for perf testing
 	const SEND_EMAIL = true;
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;//has 1 or 0 value
-	const allow_sell_media_in_public = 1;
-	
+	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
+		
 	//memreasdev urls
 	const WEB_URL = "https://fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasdev-wsj.memreas.com/";

@@ -21,6 +21,7 @@ class RemoveEventMedia {
         // $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
     }
     public function exec() {
+error_log ( "Inside RemoveEventMedia _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
         $data = simplexml_load_string ( $_POST ['xml'] );
         $media_ids = $data->removeeventmedia->media_ids->media_id;
         $event_id = $data->removeeventmedia->event_id;

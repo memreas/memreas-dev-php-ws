@@ -26,9 +26,11 @@ class AddExistMediaToEvent {
         $error_flag = 0;
         $message = '';
         if (empty ( $frmweb )) {
-            $data = simplexml_load_string ( $_POST ['xml'] );
+error_log("input::".$_POST['xml'].PHP_EOL);
+        	$data = simplexml_load_string ( $_POST ['xml'] );
         } else {
-            $data = json_decode ( json_encode ( $frmweb ) );
+error_log("input::".$frmweb.PHP_EOL);
+        	$data = json_decode ( json_encode ( $frmweb ) );
         }
         $event_id = $data->addexistmediatoevent->event_id;
         $medias = $data->addexistmediatoevent->media_ids;
@@ -90,6 +92,7 @@ class AddExistMediaToEvent {
         $xml_output .= "</addexistmediatoeventresponse>";
         $xml_output .= "</xml>";
         echo $xml_output;
+error_log("output::".$xml_output.PHP_EOL);
     }
 }
 ?>
