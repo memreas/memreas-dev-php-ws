@@ -48,7 +48,7 @@ class ViewEvents {
 		header ( "Content-type: text/xml" );
 		// ---------------------------my events----------------------------
 		if ($is_my_event) {
-			error_log ( __LINE__ . PHP_EOL );
+			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
 			
@@ -63,9 +63,8 @@ class ViewEvents {
 			$statement->setFirstResult ( $from );
 			$result_event = $statement->getResult ();
 			
-			error_log ( __LINE__ . PHP_EOL );
 			if ($result_event) {
-				error_log ( __LINE__ . PHP_EOL );
+				
 				if (count ( $result_event ) <= 0) {
 					$xml_output .= "<status>Failure</status>";
 					$xml_output .= "<message>No Record Found </message>";
@@ -78,7 +77,7 @@ class ViewEvents {
 				}
 				if (count ( $result_event ) > 0) {
 					foreach ( $result_event as $row ) { // get media
-						error_log ( __LINE__ . PHP_EOL );
+						
 						$xml_output .= "<event>";
 						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
 						$xml_output .= "<event_name>" . $row->name . "</event_name>";
@@ -120,7 +119,7 @@ class ViewEvents {
 						
 						$xml_output .= '<event_friends>';
 						foreach ( $query_ef_result as $efRow ) {
-							error_log ( __LINE__ . PHP_EOL );
+							
 							$xml_output .= '<event_friend>';
 							
 							$json_array = json_decode ( $efRow ['metadata'], true );
@@ -132,7 +131,7 @@ class ViewEvents {
 							$xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
 							
 							$xml_output .= '</event_friend>';
-						} //end event_friends for loop
+						} // end event_friends for loop
 						$xml_output .= '</event_friends>';
 						
 						// get comments
@@ -144,7 +143,6 @@ class ViewEvents {
 								) 
 						);
 						$xml_output .= $this->comments->exec ( $cdata );
-						error_log ( __LINE__ . PHP_EOL );
 						
 						/*
 						 * $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata FROM Application\Entity\EventMedia event_media inner join Application\Entity\Event event on event.event_id=event_media.event_id inner join Application\Entity\Media media on event_media.media_id=media.media_id where event.user_id='$user_id' and event.event_id='" . $row->event_id . "' ORDER BY media.create_date DESC"; $statement = $this->dbAdapter->createQuery($query_event_media); $query_event_media_result = $statement->getResult();
@@ -160,9 +158,7 @@ class ViewEvents {
 						$qb->setParameter ( 1, $user_id );
 						$qb->setParameter ( 2, $row->event_id );
 						$query_event_media_result = $qb->getQuery ()->getResult ();
-						 error_log("SQL ----> " . $qb->getQuery()->getSQL() . PHP_EOL);
 						
-						error_log ( __LINE__ . PHP_EOL );
 						if (count ( $query_event_media_result ) > 0) {
 							
 							foreach ( $query_event_media_result as $row1 ) {
@@ -203,7 +199,7 @@ class ViewEvents {
 							$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 							$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
 							$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-							//break;
+							// break;
 						} else {
 							$xml_output .= "<event_media_type></event_media_type>";
 							$xml_output .= "<event_media_url></event_media_url>";
@@ -213,20 +209,18 @@ class ViewEvents {
 							$xml_output .= "<event_media_98x78></event_media_98x78>";
 							$xml_output .= "<event_media_448x306></event_media_448x306>";
 						}
-						error_log ( __LINE__ . PHP_EOL );
 						
 						$xml_output .= "</event>";
-					} //end for loop my events
+					} // end for loop my events
 					$xml_output .= "</events>";
 				}
 			} else {
 				$xml_output .= "<status>Failure</status>";
 				$xml_output .= "<message>No Record Found </message>";
 				$xml_output .= "<events></events>";
-			} //end if else $result_event
-		} //end if ($is_my_event)
-		// ------------------------for friends event-------------------------
-		error_log ( __LINE__ . PHP_EOL );
+			} // end if else $result_event
+		} // end if ($is_my_event)
+		  // ------------------------for friends event-------------------------
 		
 		if ($is_friend_event) {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -364,11 +358,11 @@ class ViewEvents {
 					}
 					$xml_output .= "</events>";
 					$xml_output .= "</friend>";
-				} //end for loop friend events
+				} // end for loop friend events
 				$xml_output .= "</friends>";
 				error_log ( "viewevents friends xml output----> " . $xml_output . PHP_EOL );
 			}
-		} //end if ($is_friend_event)
+		} // end if ($is_friend_event)
 		
 		if ($is_friend_event) { // $q = "SELECT event.event_id ,event.name,uf.friend_id,friend.social_username,friend.url_image // FROM user_friend as uf // inner join friend on uf.friend_id=friend.friend_id // inner join event on uf.friend_id=event.user_id // where uf.user_id='$user_id' // ORDER BY uf.friend_id ASC // LIMIT $from , $limit";// //get friend id $getuser="SELECT friend.friend_id ,event_friend.event_id from friend where network='memreas' and social_username in( select username from user where user_id='$user_id')"; $resultgetuser = mysql_query($getuser); if (!$resultgetuser) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($resultgetuser) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($resultgetuser) > 0) { $row_getuser= mysql_fetch_assoc($resultgetuser); //-------------------get user's friends and his name & pic $q = "SELECT uf.friend_id,uf.user_id,friend.social_username,friend.url_image FROM user_friend as uf inner join friend on uf.friend_id=friend.friend_id where uf.friend_id='".$row_getuser['friend_id']."' ORDER BY uf.friend_id ASC LIMIT $from , $limit"; $result = mysql_query($q); if (!$result) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($result) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($result) > 0) { $xml_output.="<status>Success</status>"; $xml_output.="<message>My Friends Event List</message>"; $xml_output.="<page>$page</page>"; while ($row2 = mysql_fetch_array($result)) {//get media // echo "<pre>";print_r($row2); // $q_freinds_event = "select event_id,name from event where user_id='" . $row2['user_id']."' ORDER BY create_time DESC"; $q_freinds_event="SELECT event.* FROM friend INNER JOIN event_friend ON friend.friend_id = event_friend.friend_id INNER JOIN event ON event_friend.event_id = event.event_id where event_friend.friend_id='".$row_getuser['friend_id']."'"; $rfe = mysql_query($q_freinds_event); if (!$rfe) { $error_flag = 1; $message = mysql_error(); } // else if (mysql_num_rows($rfe)<= 0){ // $error_flag = 2; // $message ="Record not found"; // } else if (mysql_num_rows($rfe)> 0){ // print_r($rfe); $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator>" . $row2['social_username'] . "</event_creator>"; $xml_output.="<profile_pic><![CDATA[" . $row2['url_image'] . "]]></profile_pic>"; $xml_output.="<event_creator_user_id>" . $row2['friend_id'] . "</event_creator_user_id>"; $xml_output.="<events>"; while ($row4 = mysql_fetch_assoc($rfe)) { $xml_output.="<event>"; $xml_output.="<event_id>" . $row4['event_id'] . "</event_id>"; $xml_output.="<event_name>" . $row4['name'] . "</event_name>"; $query_event_friend = "SELECT event.event_id ,event.name,media.media_id,media.metadata FROM event inner join event_media on event.event_id=event_media.event_id inner join media on event_media.media_id=media.media_id where event.event_id='" . $row4['event_id'] . "' and event.event_id='".$row4['event_id']."' ORDER BY media.create_date DESC LIMIT 1"; $result_event_friend = mysql_query($query_event_friend); if ($result_event_friend) { if ($row = mysql_fetch_assoc($result_event_friend)) { $url = ''; $type=""; if (isset($row['metadata'])) { $json_array = json_decode($row['metadata'], true); $url = $json_array['S3_files']['path']; if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) $type = "image"; else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) $type = "video"; else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio'])) $type = "audio"; else $type = "Type not Mentioned"; } $xml_output.="<event_media_type>" . $type . "</event_media_type>"; $xml_output.="<event_media_url><![CDATA[" . $url . "]]></event_media_url>"; $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>"; } } else { $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; } $xml_output.= "</event>"; }$xml_output.= "</events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; } } }}
 			if ($error_flag) {
@@ -381,7 +375,7 @@ class ViewEvents {
 				$xml_output .= "<friends></friends>";
 			}
 		} // end if ($is_friend_event) {if ($error_flag)}
-		error_log ( __LINE__ . PHP_EOL );
+		  
 		// -----------------------------public events-----------------------------
 		if ($is_public_event) {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -485,6 +479,9 @@ class ViewEvents {
 								$xml_output .= "<profile_pic_98x78 />";
 							}
 							
+							/*
+							 * Fetch event friends...
+							 */
 							$q_event_friend = "select friend.friend_id, friend.social_username, friend.url_image" . " from Application\Entity\Friend friend," . " Application\Entity\EventFriend event_friend" . " where event_friend.friend_id = friend.friend_id" . " and event_friend.user_approve=1" . " and event_friend.event_id = ?1 " . " order by friend.create_date desc";
 							
 							$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
@@ -516,6 +513,21 @@ class ViewEvents {
 								$xml_output .= "</event_friend>";
 							}
 							$xml_output .= "</event_friends>";
+							
+							/*
+							 * Fetch comment like and count totals...
+							 */
+							
+							// get like count
+							$likeCountSql = $this->dbAdapter->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
+							$likeCountSql->setParameter ( 1, $public_event_row ['event_id'] );
+							$likeCount = $likeCountSql->getSingleScalarResult ();
+							$xml_output .= "<event_like_total>" . $likeCount . "</event_like_total>";
+							// get comment count for event
+							$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND (c.type= 'text' or c.type ='audio')" );
+							$commCountSql->setParameter ( 1, $public_event_row ['event_id'] );
+							$commCount = $commCountSql->getSingleScalarResult ();
+							$xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
 							
 							/*
 							 * Fetch event photo thumbs...
@@ -592,11 +604,10 @@ class ViewEvents {
 						}
 					}
 					$xml_output .= " </event>";
-				} //end  for loop public events
+				} // end for loop public events
 				$xml_output .= "</events>";
 			}
-			error_log ( __LINE__ . PHP_EOL );
-		} //end if ($is_public_event)
+		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
 		error_log ( "View Events.xml_output ---->  $xml_output" . PHP_EOL );
