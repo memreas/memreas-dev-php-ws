@@ -138,7 +138,7 @@ class ViewEvents {
 						$cdata = array (
 								'listcomments' => array (
 										'event_id' => $row->event_id,
-										'limit' => 5,
+										'limit' => 50,
 										'page' => 1 
 								) 
 						);
@@ -162,6 +162,8 @@ class ViewEvents {
 						if (count ( $query_event_media_result ) > 0) {
 							
 							foreach ( $query_event_media_result as $row1 ) {
+								$xml_output .= "<event_media>";
+								
 								$url = "";
 								$type = "";
 								$thum_url = '';
@@ -185,22 +187,25 @@ class ViewEvents {
 										$url98x78 = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
 									} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] ))
 										continue;
-								} else
+								} else {
 									$type = "Type not Mentioned";
+								} // end if (isset ( $row1 ['metadata'] )) 
+								
+								$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
+								$url = $this->url_signer->signArrayOfUrls ( $url );
+								$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+								
+								$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
+								$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
+								$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+								
+								$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+								$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+								$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
+								$xml_output .= "</event_media>";
 							}
-							$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-							$url = $this->url_signer->signArrayOfUrls ( $url );
-							$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
-							
-							$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
-							$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
-							$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
-							
-							$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
-							$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
-							$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-							// break;
 						} else {
+							$xml_output .= "<event_media>";
 							$xml_output .= "<event_media_type></event_media_type>";
 							$xml_output .= "<event_media_url></event_media_url>";
 							$xml_output .= "<event_media_id></event_media_id>";
@@ -208,6 +213,7 @@ class ViewEvents {
 							$xml_output .= "<event_media_79x80></event_media_79x80>";
 							$xml_output .= "<event_media_98x78></event_media_98x78>";
 							$xml_output .= "<event_media_448x306></event_media_448x306>";
+							$xml_output .= "</event_media>";
 						}
 						
 						$xml_output .= "</event>";
@@ -294,7 +300,23 @@ class ViewEvents {
 						$xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
 						$xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
 						/*
+						 * Event Comments
+						 */
+						// get comments
+						$cdata = array (
+								'listcomments' => array (
+										'event_id' =>  $row_friendsevent ['event_id'],
+										'limit' => 50,
+										'page' => 1
+								)
+						);
+						$xml_output .= $this->comments->exec ( $cdata );
+						
+						/*
 						 * $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata FROM Application\Entity\EventMedia event_media inner join Application\Entity\Event event on event.event_id=event_media.event_id inner join Application\Entity\Media media on event_media.media_id=media.media_id where event.event_id='" . $row_friendsevent['event_id'] . "' ORDER BY media.create_date DESC"; $query_event_media_result = mysql_query($query_event_media) or die(mysql_error());
+						 */
+						/*
+						 * Event Media
 						 */
 						$qb = $this->dbAdapter->createQueryBuilder ();
 						$qb->select ( 'event_media.event_id', 'media.media_id', 'media.metadata' );
@@ -309,7 +331,6 @@ class ViewEvents {
 						
 						if (count ( $query_event_media_result ) > 0) {
 							foreach ( $query_event_media_result as $row ) {
-								
 								$url = '';
 								$type = "";
 								$thum_url = '';
@@ -331,21 +352,28 @@ class ViewEvents {
 										$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
 										$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
 										$url98x78 = isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : ''; // get video thum
-									} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] ))
+									} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
 										continue;
-									else
+									} else {
 										$type = "Type not Mentioned";
-								}
+									}
+								$xml_output .= "<event_media>";
 								$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-								$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
-								$xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
-								$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
+								$url = $this->url_signer->signArrayOfUrls ( $url );
+								$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+								
+								$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
+								$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
+								$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+								
 								$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 								$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
 								$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-								break;
+								$xml_output .= "</event_media>";
+								} // end if  (isset ( $row ['metadata'] ))
 							}
 						} else {
+							$xml_output .= "<event_media>";
 							$xml_output .= "<event_media_type></event_media_type>";
 							$xml_output .= "<event_media_url><![CDATA[]]></event_media_url>";
 							$xml_output .= "<event_media_id></event_media_id>";
@@ -353,6 +381,7 @@ class ViewEvents {
 							$xml_output .= "<event_media_79x80></event_media_79x80>";
 							$xml_output .= "<event_media_98x78></event_media_98x78>";
 							$xml_output .= "<event_media_448x306></event_media_448x306>";
+							$xml_output .= "</event_media>";
 						}
 						$xml_output .= "</event>";
 					}
@@ -528,6 +557,17 @@ class ViewEvents {
 							$commCountSql->setParameter ( 1, $public_event_row ['event_id'] );
 							$commCount = $commCountSql->getSingleScalarResult ();
 							$xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
+							
+							// get comments
+							$cdata = array (
+									'listcomments' => array (
+											'event_id' => $public_event_row ['event_id'],
+											'limit' => 50,
+											'page' => 1
+									)
+							);
+							$xml_output .= $this->comments->exec ( $cdata );
+								
 							
 							/*
 							 * Fetch event photo thumbs...
