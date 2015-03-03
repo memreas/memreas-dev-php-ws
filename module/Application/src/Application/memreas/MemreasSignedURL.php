@@ -70,17 +70,17 @@ class MemreasSignedURL {
 	 * sends back simple json encoded array
 	 */
 	public function signArrayOfUrls($obj) {
+		if (isset ( $obj ) && ! empty ( $obj )) {
+			return "";
+		}
 		if (is_array ( $obj )) {
-			$arr = array ();
 			foreach ( $obj as $url ) {
 				if (isset ( $url ) && ! empty ( $url )) {
 					$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url );
 				}
 			}
 		} else {
-			if (isset ( $obj ) && ! empty ( $obj )) {
-				$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj ); // this should be string not array
-			}
+			$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj ); // this should be string not array
 		}
 		
 		return json_encode ( $arr );
