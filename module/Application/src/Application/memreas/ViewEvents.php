@@ -59,8 +59,8 @@ class ViewEvents {
                     and  (e.self_destruct >=" . $date . " or e.self_destruct='')
                 ORDER BY e.create_time DESC";
 			$statement = $this->dbAdapter->createQuery ( $query_event );
-			$statement->setMaxResults ( $limit );
-			$statement->setFirstResult ( $from );
+			//$statement->setMaxResults ( $limit );
+			//$statement->setFirstResult ( $from );
 			$result_event = $statement->getResult ();
 			
 			if ($result_event) {
@@ -162,7 +162,6 @@ class ViewEvents {
 						if (count ( $query_event_media_result ) > 0) {
 							
 							foreach ( $query_event_media_result as $row1 ) {
-								$xml_output .= "<event_media>";
 								
 								$url = "";
 								$type = "";
@@ -191,18 +190,25 @@ class ViewEvents {
 									$type = "Type not Mentioned";
 								} // end if (isset ( $row1 ['metadata'] )) 
 								
-								$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-								$url = $this->url_signer->signArrayOfUrls ( $url );
-								$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+								try {
+									$xml_output .= "<event_media>";
+									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
+									$url = $this->url_signer->signArrayOfUrls ( $url );
+									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 								
-								$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
-								$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
-								$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+									$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
+									$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
+									$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 								
-								$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
-								$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
-								$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-								$xml_output .= "</event_media>";
+									$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+									$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+									$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
+									$xml_output .= "</event_media>";
+								} catch (Exception $e) {
+									$xml_output .= "<event_media>";
+									$xml_output .= "<error>". $e->getMessage() ."</error>";
+									$xml_output .= "</event_media>";
+								}
 							}
 						} else {
 							$xml_output .= "<event_media>";
@@ -251,9 +257,8 @@ class ViewEvents {
 				foreach ( $array as $k => $row_events ) {
 					// get friend's event
 					$profile = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->
-					// JM: 19-SEP-2014 removed is_profile_pic = 1 <- not all users will have profile pic
-					// ->where("m.user_id = '{$k}' AND m.is_profile_pic = 1")
-					where ( "m.user_id = '{$k}'" )->getQuery ()->getResult ();
+					where("m.user_id = '{$k}' AND m.is_profile_pic = 1")->getQuery ()->getResult ();
+					//where ( "m.user_id = '{$k}'" )->getQuery ()->getResult ();
 					
 					if (! empty ( $profile )) {
 						$json_array = json_decode ( $profile [0]->metadata, true );
@@ -261,13 +266,13 @@ class ViewEvents {
 							$url1 = $json_array ['S3_files'] ['path'];
 							$url1 = $this->url_signer->signArrayOfUrls ( $url1 );
 						}
-						if (! empty ( $json_array ['S3_files'] ['79x80'] )) {
+						if (! empty ( $json_array ['S3_files']  ['thumbnails']['79x80'] )) {
 							$pic_79x80 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 						}
 						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
 							$pic_448x306 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] );
 						}
-						if (! empty ( $json_array ['S3_files'] ['98x78'] ))
+						if (! empty ( $json_array ['S3_files']  ['thumbnails']['98x78'] ))
 							$pic_98x78 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] );
 					} else {
 						$url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
@@ -362,7 +367,7 @@ class ViewEvents {
 								$url = $this->url_signer->signArrayOfUrls ( $url );
 								$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 								
-								$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
+								$xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
 								$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
 								$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 								

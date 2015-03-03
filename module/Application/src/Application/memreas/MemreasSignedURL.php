@@ -70,7 +70,7 @@ class MemreasSignedURL {
 	 * sends back simple json encoded array
 	 */
 	public function signArrayOfUrls($obj) {
-		if (isset ( $obj ) && ! empty ( $obj )) {
+		if (!isset ( $obj ) && empty ( $obj )) {
 			return "";
 		}
 		if (is_array ( $obj )) {

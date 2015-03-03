@@ -17,8 +17,8 @@ class ListComments {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-                $this->url_signer = new MemreasSignedURL();
-
+		$this->url_signer = new MemreasSignedURL ();
+		
 		// $this->dbAdapter = $P->get(MemreasConstants::MEMREASDB);
 	}
 	
@@ -35,12 +35,10 @@ class ListComments {
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
 		$event_id = trim ( $data->listcomments->event_id );
-		$media_id=0;
-		if(!empty($data->listcomments->media_id)){
+		$media_id = 0;
+		if (! empty ( $data->listcomments->media_id )) {
 			$media_id = trim ( $data->listcomments->media_id );
 		}
-		
-
 		
 		$page = trim ( $data->listcomments->page );
 		if (empty ( $page )) {
@@ -60,26 +58,25 @@ class ListComments {
 		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id,c.event_id, c.create_time' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
-		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-		//qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-		if(!empty($event_id)){
+		// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+		// qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+		if (! empty ( $event_id )) {
 			$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio')" );
 			$qb->setParameter ( 1, $event_id );
-        }
-
-		if(!empty($media_id)){
+		}
+		
+		if (! empty ( $media_id )) {
 			$qb->andWhere ( "c.media_id=?2" );
 			$qb->setParameter ( 2, $media_id );
-        }
-
-        $qb->orderBy('c.create_time', 'DESC');
-
-
+		}
+		
+		$qb->orderBy ( 'c.create_time', 'DESC' );
+		
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
- //error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);		
+		// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 		$result_comment = $qb->getQuery ()->getResult ();
- 		
+		
 		$output .= '<comments>';
 		
 		if (count ( $result_comment ) <= 0) {
@@ -92,50 +89,42 @@ class ListComments {
 				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
 				$output .= "<type>" . $value ['type'] . "</type>";
 				$audio_url = '';
-				if($value ['type'] == 'audio'){
-					$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
-					//$audio_row  = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
-					//$json_array = json_decode ( $audio_row ['metadata'], true );
-					//error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
-
+				if ($value ['type'] == 'audio') {
+					$audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
+					// $audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
+					// $json_array = json_decode ( $audio_row ['metadata'], true );
+					// error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
+					
 					if ($audio_row) {
 						$json_array = json_decode ( $audio_row->metadata, true );
-//error_log("metadata-----> ".$audio_row->metadata.PHP_EOL);
- 					if (isset($json_array ['S3_files'] ['type']['audio'])){
-                        if (isset($json_array ['S3_files'] ['audio']) || array_key_exists('audio', $json_array ['S3_files']))
-                            $audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['audio'];
-                        else $audio_url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-						$output .= "<audio_media_url><![CDATA[" .$this->url_signer->signArrayOfUrls($audio_url). "]]></audio_media_url>";
-//error_log("audio_url-----> ".$audio_url.PHP_EOL);
-					}
-					
+						if (isset ( $json_array ['S3_files'] ['type'] ['audio'] )) {
+							if (isset ( $json_array ['S3_files'] ['audio'] ) || array_key_exists ( 'audio', $json_array ['S3_files'] ))
+								$audio_url = $json_array ['S3_files'] ['audio'];
+							else
+								$audio_url = $json_array ['S3_files'] ['path'];
+							$output .= "<audio_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $audio_url ) . "]]></audio_media_url>";
+						}
 					} else {
 						$output .= "<audio_media_url></audio_media_url>";
 					}
 				}
-
+				
 				$output .= "<username>" . $value ['username'] . "</username>";
-                                $media_row  = $this->dbAdapter->createQueryBuilder()
-                                    ->select('m')
-                                    ->from('Application\Entity\Media', 'm')
-                                    ->where("m.user_id = '{$value['user_id']}' AND m.is_profile_pic = 1")
-                                    ->getQuery()->getResult();
-                                if($media_row){
-                                     $json_array_profile = json_decode ( $media_row[0]->metadata, true );
-                                }
-                               
-				$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
-				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'][0] ))
-					$url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array_profile ['S3_files']  ['thumbnails'] ['79x80'][0] ;
-				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls($url1) . "]]></profile_pic>";
-				$output .= '<commented_about>'.Utility::formatDateDiff($value['create_time']).'</commented_about>';
-
-
+				$media_row = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$value['user_id']}' AND m.is_profile_pic = 1" )->getQuery ()->getResult ();
+				if ($media_row) {
+					$json_array_profile = json_decode ( $media_row [0]->metadata, true );
+				}
+				
+				$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0] ))
+					$url1 =$json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0];
+				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
+				$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
 				
 				$output .= '</comment>';
 			}
 		}
-			$output .= '</comments>';
+		$output .= '</comments>';
 		if ($frmweb) {
 			return $output;
 		}
