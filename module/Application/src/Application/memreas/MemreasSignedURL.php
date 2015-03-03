@@ -16,15 +16,13 @@ class MemreasSignedURL {
 	protected $aws;
 	protected $s3;
 	protected $cloud_front;
-	
-	 
 	public function __construct() {
-		//$this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
-		//$this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
-            //to run constrcutor once 
-            if(!empty($this->cloud_front))return;
-            
-            
+		// $this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
+		// $this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
+		// to run constrcutor once
+		if (! empty ( $this->cloud_front ))
+			return;
+		
 		$this->private_key_filename = getcwd () . '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 		$this->key_pair_id = 'APKAISSKGZE3DR5HQCHA';
 		$this->expires = time () + 36000; // 10 hour from now
@@ -48,24 +46,22 @@ class MemreasSignedURL {
 		
 		// Fetch the CloudFront class
 		$this->cloud_front = $this->aws->get ( 'CloudFront' );
-		
 	}
-	
 	public function fetchSignedURL($path) {
-//error_log("Inside fetchSignedURL path before signing... ".$path.PHP_EOL);
-		if ((MemreasConstants::SIGNURLS) && !empty($path) && !is_array($path)) {
-			$this->expires = time() + MemreasConstants::EXPIRES;
-
-			//doesn't work...
-			//$signed_url = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $this->expires));
-
+		// error_log("Inside fetchSignedURL path before signing... ".$path.PHP_EOL);
+		if ((MemreasConstants::SIGNURLS) && ! empty ( $path ) && ! is_array ( $path )) {
+			$this->expires = time () + MemreasConstants::EXPIRES;
+			
+			// doesn't work...
+			// $signed_url = $this->cloud_front->getSignedUrl(array(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST.$path, $this->expires));
+			
 			$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
-//error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
-	
+			// error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
+			
 			return $signed_url;
 		} else {
-			return $path; //path is empty
-		}			
+			return $path; // path is empty
+		}
 	}
 	
 	/*
@@ -73,19 +69,22 @@ class MemreasSignedURL {
 	 * JM Change to allow for multiple thumbnails in response
 	 * sends back simple json encoded array
 	 */
-	public function signArrayOfUrls($obj){
-		if (is_array($obj)) {
-			$arr = array();
+	public function signArrayOfUrls($obj) {
+		if (is_array ( $obj )) {
+			$arr = array ();
 			foreach ( $obj as $url ) {
-				$arr[] = $this->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url);
+				if (isset ( $url ) && ! empty ( $url )) {
+					$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url );
+				}
 			}
 		} else {
-			$arr[] = $this->fetchSignedURL(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj);  //this should be string not array
+			if (isset ( $obj ) && ! empty ( $obj )) {
+				$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj ); // this should be string not array
+			}
 		}
-
-		return json_encode ($arr);
+		
+		return json_encode ( $arr );
 	}
-	
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		// 0 = not empty, 1 = empty
@@ -96,7 +95,7 @@ class MemreasSignedURL {
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<signedurlresponse>";
-
+		
 		if (isset ( $path ) && ! empty ( $path )) {
 			$signedurl = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
 			$xml_output .= "<status>success</status>";
@@ -146,15 +145,15 @@ class MemreasSignedURL {
 		$result = $stream;
 		
 		$path = ""; // Change made here to fix missing $path variable
-		          
+		            
 		// if the stream already contains query parameters, attach the new query parameters to the end
-		          // otherwise, add the query parameters
+		            // otherwise, add the query parameters
 		$separator = strpos ( $stream, '?' ) == FALSE ? '?' : '&';
 		// the presence of an expires time means we're using a canned policy
 		if ($expires) {
 			$result .= $path . $separator . "Expires=" . $expires . "&Signature=" . $signature . "&Key-Pair-Id=" . $key_pair_id;
-		} 		// not using a canned policy, include the policy itself in the stream name
-		else {
+		}  // not using a canned policy, include the policy itself in the stream name
+else {
 			$result .= $path . $separator . "Policy=" . $policy . "&Signature=" . $signature . "&Key-Pair-Id=" . $key_pair_id;
 		}
 		
