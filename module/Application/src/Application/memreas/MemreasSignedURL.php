@@ -84,7 +84,7 @@ class MemreasSignedURL {
 		}
 		
 		$json_arr = json_encode ( $arr ) ;
-error_log("json_arr-->".$json_arr.PHP_EOL);		
+
 		return $json_arr;
 	}
 	public function exec() {
