@@ -416,7 +416,7 @@ error_log ( "Finished..." . PHP_EOL );
 			if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
 				$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
 			} else {
-				$url1 = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
+				$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 			}
 			$this->userIndex [$row ['username']] = array (
 					'username' => $row ['username'],

@@ -58,7 +58,7 @@ class ViewAllfriends {
 						$view_all_friend [$count] ['id'] = $row1->friend_id;
 						$view_all_friend [$count] ['network'] = $row1->network;
 						$view_all_friend [$count] ['social_username'] = $row1->social_username;
-						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls (MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $row1->url_image );
+						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ($row1->url_image );
 					}
 				} else {
 					$error_flag = 2;

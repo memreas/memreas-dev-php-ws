@@ -70,7 +70,7 @@ class MemreasSignedURL {
 	 * sends back simple json encoded array
 	 */
 	public function signArrayOfUrls($obj) {
-		if (!isset ( $obj ) && empty ( $obj )) {
+		if (!isset ( $obj ) || empty ( $obj )) {
 			return "";
 		}
 		if (is_array ( $obj )) {
@@ -83,7 +83,9 @@ class MemreasSignedURL {
 			$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj ); // this should be string not array
 		}
 		
-		return json_encode ( $arr );
+		$json_arr = json_encode ( $arr ) ;
+error_log("json_arr-->".$json_arr.PHP_EOL);		
+		return $json_arr;
 	}
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );

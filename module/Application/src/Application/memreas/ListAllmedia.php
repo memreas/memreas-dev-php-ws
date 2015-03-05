@@ -181,7 +181,7 @@ class ListAllmedia {
 							$xml_output .= "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>";
 
 							//rtmp
-							$path = $this->url_signer->signArrayOfUrls ( MemreasConstants::CLOUDFRONT_STREAMING_HOST . $path );
+							$path = $this->url_signer->signArrayOfUrls ( $path );
 							$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
 						}
 						

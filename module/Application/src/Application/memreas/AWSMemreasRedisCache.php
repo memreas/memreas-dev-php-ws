@@ -148,7 +148,7 @@ error_log("Inside warming person userindexarr username--->".$row['username']." u
 				if (empty ( $json_array ['S3_files'] ['path'] )){
 					$url1 = MemreasConstants::ORIGINAL_URL.'/memreas/img/profile-pic.jpg';
 				}else{
-					$url1 = $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path']);
+					$url1 = $this->url_signer->signArrayOfUrls($json_array ['S3_files'] ['path']);
 				}
 			
 				$person_json = json_encode(

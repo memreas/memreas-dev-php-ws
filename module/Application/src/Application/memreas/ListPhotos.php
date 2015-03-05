@@ -101,7 +101,7 @@ class ListPhotos {
 					
 					$xml_output .= "<image>";
 					$xml_output .= "<media_id>" . $metadata ['media_id'] . "</media_id>";
-					$xml_output .= "<name>" . $this->url_signer->signArrayOfUrls(MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $metadata ['url'] ['path']) . "</name>";
+					$xml_output .= "<name>" . $this->url_signer->signArrayOfUrls($metadata ['url'] ['path']) . "</name>";
 					$download = 0;
 					// print_r();exit;
 					foreach ( $metadata ['download'] as $value ) {
