@@ -59,8 +59,8 @@ class ViewEvents {
                     and  (e.self_destruct >=" . $date . " or e.self_destruct='')
                 ORDER BY e.create_time DESC";
 			$statement = $this->dbAdapter->createQuery ( $query_event );
-			//$statement->setMaxResults ( $limit );
-			//$statement->setFirstResult ( $from );
+			// $statement->setMaxResults ( $limit );
+			// $statement->setFirstResult ( $from );
 			$result_event = $statement->getResult ();
 			
 			if ($result_event) {
@@ -100,39 +100,82 @@ class ViewEvents {
 						$commCount = $commCountSql->getSingleScalarResult ();
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
 						
-						// get event friends
-						$qb = $this->dbAdapter->createQueryBuilder ();
-						$qb->select ( 'u.username', 'm.metadata' );
-						$qb->from ( 'Application\Entity\User', 'u' );
-						$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
-						/*
-						 * 13-SEP-2014 - removed profile pic from query
-						 */
-						// $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
-						$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-						$qb->where ( 'ef.event_id=?1 ' );
-						$qb->groupBy ( 'u.username' );
-						$qb->setParameter ( 1, $row->event_id );
-						$qb->setMaxResults ( 5 );
-						$query_ef_result = $qb->getQuery ()->getResult ();
-						// error_log("qb->getQuery()->getSQL() ----> ".$qb->getQuery()->getSQL().PHP_EOL);
+						// // get event friends
+						// $qb = $this->dbAdapter->createQueryBuilder ();
+						// $qb->select ( 'u.username', 'm.metadata' );
+						// $qb->from ( 'Application\Entity\User', 'u' );
+						// $qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
+						// /*
+						// * 13-SEP-2014 - removed profile pic from query
+						// */
+						// // $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
+						// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+						// $qb->where ( 'ef.event_id=?1 ' );
+						// $qb->groupBy ( 'u.username' );
+						// $qb->setParameter ( 1, $row->event_id );
+						// $qb->setMaxResults ( 10 );
+						// $query_ef_result = $qb->getQuery ()->getResult ();
+						// // error_log("qb->getQuery()->getSQL() ----> ".$qb->getQuery()->getSQL().PHP_EOL);
 						
-						$xml_output .= '<event_friends>';
-						foreach ( $query_ef_result as $efRow ) {
+						// $xml_output .= '<event_friends>';
+						// foreach ( $query_ef_result as $efRow ) {
+						
+						// $xml_output .= '<event_friend>';
+						
+						// $json_array = json_decode ( $efRow ['metadata'], true );
+						// $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+						// if (! empty ( $json_array ['S3_files'] ['path'] ))
+						// $url1 = $json_array ['S3_files'] ['path'];
+						
+						// $xml_output .= "<username>" . $efRow ['username'] . "</username>";
+						// $xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
+						
+						// $xml_output .= '</event_friend>';
+						// } // end event_friends for loop
+						// $xml_output .= '</event_friends>';
+						
+						/*
+						 * Fetch event friends...
+						 */
+						$q_event_friend = 
+						"select friend.friend_id, friend.social_username, friend.url_image" . 
+						" from Application\Entity\Friend friend," . 
+						" Application\Entity\EventFriend event_friend" . 
+						" where event_friend.friend_id = friend.friend_id" . 
+						" and event_friend.user_approve=1" . 
+						" and event_friend.event_id = ?1 " . 
+						" order by friend.create_date desc";
 							
-							$xml_output .= '<event_friend>';
+						$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
+						$friend_query->setParameter ( 1,   $row->event_id  );
+						
+						$friends = $friend_query->getResult ();
 							
-							$json_array = json_decode ( $efRow ['metadata'], true );
-							$url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
-							if (! empty ( $json_array ['S3_files'] ['path'] ))
-								$url1 = $json_array ['S3_files'] ['path'];
-							
-							$xml_output .= "<username>" . $efRow ['username'] . "</username>";
-							$xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
-							
-							$xml_output .= '</event_friend>';
-						} // end event_friends for loop
-						$xml_output .= '</event_friends>';
+						$xml_output .= "<event_friends>";
+						foreach ( $friends as $friend ) {
+							$xml_output .= "<event_friend>";
+						
+							if (isset ( $friend ['friend_id'] )) {
+								$xml_output .= "<event_friend_id>" . $friend ['friend_id'] . "</event_friend_id>";
+							} else {
+								$xml_output .= "<event_friend_id/>";
+							}
+						
+							if (isset ( $friend ['social_username'] )) {
+								$xml_output .= "<event_friend_social_username>" . $friend ['social_username'] . "</event_friend_social_username>";
+							} else {
+								$xml_output .= "<event_friend_social_username/>";
+							}
+						
+							if (isset ( $friend ['url_image'] )) {
+								$url = "<event_friend_url_image><![CDATA[" . $this->url_signer->signArrayOfUrls ( $friend ['url_image'] ) . "]]></event_friend_url_image>";
+								$xml_output .= $url;
+							} else {
+								$xml_output .= "<event_friend_url_image/>";
+							}
+							$xml_output .= "</event_friend>";
+						}
+						$xml_output .= "</event_friends>";
 						
 						// get comments
 						$cdata = array (
@@ -188,25 +231,25 @@ class ViewEvents {
 										continue;
 								} else {
 									$type = "Type not Mentioned";
-								} // end if (isset ( $row1 ['metadata'] )) 
+								} // end if (isset ( $row1 ['metadata'] ))
 								
 								try {
 									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$url = $this->url_signer->signArrayOfUrls ( $url );
 									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
-								
+									
 									$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
 									$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
 									$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
-								
+									
 									$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 									$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
 									$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
 									$xml_output .= "</event_media>";
-								} catch (Exception $e) {
+								} catch ( Exception $e ) {
 									$xml_output .= "<event_media>";
-									$xml_output .= "<error>". $e->getMessage() ."</error>";
+									$xml_output .= "<error>" . $e->getMessage () . "</error>";
 									$xml_output .= "</event_media>";
 								}
 							}
@@ -256,23 +299,25 @@ class ViewEvents {
 				}
 				foreach ( $array as $k => $row_events ) {
 					// get friend's event
-					$profile = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->
-					where("m.user_id = '{$k}' AND m.is_profile_pic = 1")->getQuery ()->getResult ();
-					//where ( "m.user_id = '{$k}'" )->getQuery ()->getResult ();
+					$qb = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$k}' AND m.is_profile_pic = 1" );
+					$profile = $qb->getQuery ()->getResult ();
+					// where ( "m.user_id = '{$k}'" )->getQuery ()->getResult ();
+					error_log ( "qb->getQuery()->getSQL() ----> " . $qb->getQuery ()->getSQL () . PHP_EOL );
 					
 					if (! empty ( $profile )) {
+						error_log ( "! empty ( profile )" . PHP_EOL );
 						$json_array = json_decode ( $profile [0]->metadata, true );
 						if (! empty ( $json_array ['S3_files'] ['path'] )) {
 							$url1 = $json_array ['S3_files'] ['path'];
 							$url1 = $this->url_signer->signArrayOfUrls ( $url1 );
 						}
-						if (! empty ( $json_array ['S3_files']  ['thumbnails']['79x80'] )) {
+						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
 							$pic_79x80 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 						}
 						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
 							$pic_448x306 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] );
 						}
-						if (! empty ( $json_array ['S3_files']  ['thumbnails']['98x78'] ))
+						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ))
 							$pic_98x78 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] );
 					} else {
 						$url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
@@ -304,16 +349,52 @@ class ViewEvents {
 						$xml_output .= "<event_metadata>" . $row_friendsevent ['metadata'] . "</event_metadata>";
 						$xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
 						$xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
+						
+						/*
+						 * Fetch event friends...
+						 */
+						$q_event_friend = "select friend.friend_id, friend.social_username, friend.url_image" . " from Application\Entity\Friend friend," . " Application\Entity\EventFriend event_friend" . " where event_friend.friend_id = friend.friend_id" . " and event_friend.user_approve=1" . " and event_friend.event_id = ?1 " . " order by friend.create_date desc";
+						
+						$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
+						$friend_query->setParameter ( 1, $row_friendsevent ['event_id'] );
+						$friends = $friend_query->getResult ();
+						
+						$xml_output .= "<event_friends>";
+						foreach ( $friends as $friend ) {
+							$xml_output .= "<event_friend>";
+							
+							if (isset ( $friend ['friend_id'] )) {
+								$xml_output .= "<event_friend_id>" . $friend ['friend_id'] . "</event_friend_id>";
+							} else {
+								$xml_output .= "<event_friend_id/>";
+							}
+							
+							if (isset ( $friend ['social_username'] )) {
+								$xml_output .= "<event_friend_social_username>" . $friend ['social_username'] . "</event_friend_social_username>";
+							} else {
+								$xml_output .= "<event_friend_social_username/>";
+							}
+							
+							if (isset ( $friend ['url_image'] )) {
+								$url = "<event_friend_url_image><![CDATA[" . $this->url_signer->signArrayOfUrls ( $friend ['url_image'] ) . "]]></event_friend_url_image>";
+								$xml_output .= $url;
+							} else {
+								$xml_output .= "<event_friend_url_image/>";
+							}
+							$xml_output .= "</event_friend>";
+						}
+						$xml_output .= "</event_friends>";
+						
 						/*
 						 * Event Comments
 						 */
 						// get comments
 						$cdata = array (
 								'listcomments' => array (
-										'event_id' =>  $row_friendsevent ['event_id'],
+										'event_id' => $row_friendsevent ['event_id'],
 										'limit' => 50,
-										'page' => 1
-								)
+										'page' => 1 
+								) 
 						);
 						$xml_output .= $this->comments->exec ( $cdata );
 						
@@ -362,20 +443,20 @@ class ViewEvents {
 									} else {
 										$type = "Type not Mentioned";
 									}
-								$xml_output .= "<event_media>";
-								$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-								$url = $this->url_signer->signArrayOfUrls ( $url );
-								$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
-								
-								$xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
-								$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
-								$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
-								
-								$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
-								$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
-								$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-								$xml_output .= "</event_media>";
-								} // end if  (isset ( $row ['metadata'] ))
+									$xml_output .= "<event_media>";
+									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
+									$url = $this->url_signer->signArrayOfUrls ( $url );
+									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+									
+									$xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
+									$thum_url = $this->url_signer->signArrayOfUrls ( $thum_url );
+									$xml_output .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $thum_url . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+									
+									$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+									$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+									$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
+									$xml_output .= "</event_media>";
+								} // end if (isset ( $row ['metadata'] ))
 							}
 						} else {
 							$xml_output .= "<event_media>";
@@ -568,11 +649,10 @@ class ViewEvents {
 									'listcomments' => array (
 											'event_id' => $public_event_row ['event_id'],
 											'limit' => 50,
-											'page' => 1
-									)
+											'page' => 1 
+									) 
 							);
 							$xml_output .= $this->comments->exec ( $cdata );
-								
 							
 							/*
 							 * Fetch event photo thumbs...
