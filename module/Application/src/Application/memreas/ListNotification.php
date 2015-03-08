@@ -66,7 +66,7 @@ class ListNotification {
                         $json_array = json_decode($profile_pic->metadata, true);
                     $url1 = MemreasConstants::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
                     if (!empty($json_array ['S3_files'] ['path']))
-                        $url1 = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
+                        $url1 = $json_array ['S3_files'] ['path'];
                     $pic_79x80 = '';
                     if (!empty($json_array ['S3_files']['thumbnails'] ['79x80']))
                         $pic_79x80 = $json_array ['S3_files']['thumbnails'] ['79x80'];
@@ -137,8 +137,7 @@ class ListNotification {
                             } 
                             $path = $this->url_signer->fetchSignedURL ( $url );
                             $xml_output .= "<media_path><![CDATA[" . $path . "]]></media_path>";
-                            //$url = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $json_array ['S3_files'] ['path'];
-                            
+                             
                             $xml_output .= "<media_type></media_type>";
                             if($json_array ['S3_files'] ['file_type']== 'video'){
                                 $xml_output .= '<media_type>'.$json_array ['S3_files'] ['type'] ['video']['format'].'</media_type>';

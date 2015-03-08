@@ -209,7 +209,7 @@ error_log ( "json_str ---> " .$json_str );
                                             ->setParameter(1, $user_id)
                                             ->getQuery ()->getResult ();
 
-                    $full_path = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $s3file;
+                    $full_path = $s3file;
                     $update_friend_photo = "Update Application\Entity\Friend f SET f.url_image = '{$full_path}' WHERE f.social_username = '{$user_detail[0]->username}' AND f.network = 'memreas'";
                     $this->dbAdapter->createQuery($update_friend_photo)->getResult();
                 }

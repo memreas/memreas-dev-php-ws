@@ -232,7 +232,7 @@ public function addFriendRevRec($user_id,$friend_id)
 		if($profile_pic){
 			$metadata = $profile_pic->metadata;
 		    $profile_image = json_decode($metadata, true);
-		    $profile_pic_url = MC::CLOUDFRONT_DOWNLOAD_HOST . $profile_image ['S3_files'] ['path'];
+		    $profile_pic_url = $profile_image ['S3_files'] ['path'];
 			
 		}
 
