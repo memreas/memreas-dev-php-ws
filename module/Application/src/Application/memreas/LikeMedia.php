@@ -20,6 +20,7 @@ class LikeMedia {
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
+		error_log ( "LikeMedia.xml_input ---->  " . $_POST ['xml'] . PHP_EOL );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = ' ';
 		$event_id = trim ( $data->likemedia->event_id );
@@ -62,8 +63,8 @@ class LikeMedia {
 			$row = $statement->getResult ();
 			
 			if (! empty ( $row [0] )) {
-				$status = 'Success';
-				$message = 'You Already Like This Media';
+				$status = 'Failure';
+				$message = 'like already added...';
 			} else {
 				/*
 				 * Check media and/or event id
@@ -77,7 +78,7 @@ class LikeMedia {
 					if (empty ( $result_event_media [0] )) {
 						
 						$status = 'Failure';
-						$message = "No Media for this Event";
+						$message = "media not found...";
 					}
 				} else if (!empty($event_id)) {
 					$q_event = "SELECT e  FROM Application\Entity\Event e where e.event_id='$event_id'";
@@ -88,7 +89,7 @@ class LikeMedia {
 					if (empty ( $result_event [0] )) {
 						
 						$status = 'Failure';
-						$message = "No Event found";
+						$message = "event not found...";
 					}
 				}
 				/*
@@ -114,7 +115,7 @@ class LikeMedia {
 					$this->dbAdapter->flush ();
 					
 					$status = "Success";
-					$message .= "You Like succesfully";
+					$message .= "like added...";
 				}
 			}
 		}
@@ -128,6 +129,7 @@ class LikeMedia {
 		$xml_output .= "<message>" . $message . "</message>";
 		$xml_output .= "</likemediaresponse>";
 		$xml_output .= "</xml>";
+		error_log ( "LikeMedia.xml_output ---->  $xml_output" . PHP_EOL );
 		echo $xml_output;
 	}
 }
