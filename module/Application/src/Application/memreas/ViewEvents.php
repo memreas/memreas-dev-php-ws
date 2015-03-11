@@ -46,7 +46,10 @@ class ViewEvents {
 		$from = ($page - 1) * $limit;
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		header ( "Content-type: text/xml" );
-		// ---------------------------my events----------------------------
+		
+		/*
+		 * ---------------------------my events----------------------------
+		 */
 		if ($is_my_event) {
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -55,8 +58,6 @@ class ViewEvents {
 			$query_event = "select e
                 from Application\Entity\Event e
                 where e.user_id='" . $user_id . "'
-                    and  (e.viewable_to >=" . $date . " or e.viewable_to ='')
-                    and  (e.self_destruct >=" . $date . " or e.self_destruct='')
                 ORDER BY e.create_time DESC";
 			$statement = $this->dbAdapter->createQuery ( $query_event );
 			// $statement->setMaxResults ( $limit );
@@ -100,73 +101,32 @@ class ViewEvents {
 						$commCount = $commCountSql->getSingleScalarResult ();
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
 						
-						// // get event friends
-						// $qb = $this->dbAdapter->createQueryBuilder ();
-						// $qb->select ( 'u.username', 'm.metadata' );
-						// $qb->from ( 'Application\Entity\User', 'u' );
-						// $qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
-						// /*
-						// * 13-SEP-2014 - removed profile pic from query
-						// */
-						// // $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1');
-						// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-						// $qb->where ( 'ef.event_id=?1 ' );
-						// $qb->groupBy ( 'u.username' );
-						// $qb->setParameter ( 1, $row->event_id );
-						// $qb->setMaxResults ( 10 );
-						// $query_ef_result = $qb->getQuery ()->getResult ();
-						// // error_log("qb->getQuery()->getSQL() ----> ".$qb->getQuery()->getSQL().PHP_EOL);
-						
-						// $xml_output .= '<event_friends>';
-						// foreach ( $query_ef_result as $efRow ) {
-						
-						// $xml_output .= '<event_friend>';
-						
-						// $json_array = json_decode ( $efRow ['metadata'], true );
-						// $url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
-						// if (! empty ( $json_array ['S3_files'] ['path'] ))
-						// $url1 = $json_array ['S3_files'] ['path'];
-						
-						// $xml_output .= "<username>" . $efRow ['username'] . "</username>";
-						// $xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
-						
-						// $xml_output .= '</event_friend>';
-						// } // end event_friends for loop
-						// $xml_output .= '</event_friends>';
-						
 						/*
 						 * Fetch event friends...
 						 */
-						$q_event_friend = 
-						"select friend.friend_id, friend.social_username, friend.url_image" . 
-						" from Application\Entity\Friend friend," . 
-						" Application\Entity\EventFriend event_friend" . 
-						" where event_friend.friend_id = friend.friend_id" . 
-						" and event_friend.user_approve=1" . 
-						" and event_friend.event_id = ?1 " . 
-						" order by friend.create_date desc";
-							
+						$q_event_friend = "select friend.friend_id, friend.social_username, friend.url_image" . " from Application\Entity\Friend friend," . " Application\Entity\EventFriend event_friend" . " where event_friend.friend_id = friend.friend_id" . " and event_friend.user_approve=1" . " and event_friend.event_id = ?1 " . " order by friend.create_date desc";
+						
 						$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
-						$friend_query->setParameter ( 1,   $row->event_id  );
+						$friend_query->setParameter ( 1, $row->event_id );
 						
 						$friends = $friend_query->getResult ();
-							
+						
 						$xml_output .= "<event_friends>";
 						foreach ( $friends as $friend ) {
 							$xml_output .= "<event_friend>";
-						
+							
 							if (isset ( $friend ['friend_id'] )) {
 								$xml_output .= "<event_friend_id>" . $friend ['friend_id'] . "</event_friend_id>";
 							} else {
 								$xml_output .= "<event_friend_id/>";
 							}
-						
+							
 							if (isset ( $friend ['social_username'] )) {
 								$xml_output .= "<event_friend_social_username>" . $friend ['social_username'] . "</event_friend_social_username>";
 							} else {
 								$xml_output .= "<event_friend_social_username/>";
 							}
-						
+							
 							if (isset ( $friend ['url_image'] )) {
 								$url = "<event_friend_url_image><![CDATA[" . $this->url_signer->signArrayOfUrls ( $friend ['url_image'] ) . "]]></event_friend_url_image>";
 								$xml_output .= $url;
@@ -177,7 +137,9 @@ class ViewEvents {
 						}
 						$xml_output .= "</event_friends>";
 						
-						// get comments
+						/*
+						 * get comments
+						 */
 						$cdata = array (
 								'listcomments' => array (
 										'event_id' => $row->event_id,
@@ -188,9 +150,8 @@ class ViewEvents {
 						$xml_output .= $this->comments->exec ( $cdata );
 						
 						/*
-						 * $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata FROM Application\Entity\EventMedia event_media inner join Application\Entity\Event event on event.event_id=event_media.event_id inner join Application\Entity\Media media on event_media.media_id=media.media_id where event.user_id='$user_id' and event.event_id='" . $row->event_id . "' ORDER BY media.create_date DESC"; $statement = $this->dbAdapter->createQuery($query_event_media); $query_event_media_result = $statement->getResult();
+						 * get media
 						 */
-						// get media details
 						$qb = $this->dbAdapter->createQueryBuilder ();
 						$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata' );
 						$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
@@ -275,8 +236,10 @@ class ViewEvents {
 				$xml_output .= "<events></events>";
 			} // end if else $result_event
 		} // end if ($is_my_event)
-		  // ------------------------for friends event-------------------------
 		
+		/*
+		 * ------------------------for friends event-------------------------
+		 */
 		if ($is_friend_event) {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -301,11 +264,8 @@ class ViewEvents {
 					// get friend's event
 					$qb = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$k}' AND m.is_profile_pic = 1" );
 					$profile = $qb->getQuery ()->getResult ();
-					// where ( "m.user_id = '{$k}'" )->getQuery ()->getResult ();
-					error_log ( "qb->getQuery()->getSQL() ----> " . $qb->getQuery ()->getSQL () . PHP_EOL );
 					
 					if (! empty ( $profile )) {
-						error_log ( "! empty ( profile )" . PHP_EOL );
 						$json_array = json_decode ( $profile [0]->metadata, true );
 						if (! empty ( $json_array ['S3_files'] ['path'] )) {
 							$url1 = $json_array ['S3_files'] ['path'];
@@ -490,8 +450,10 @@ class ViewEvents {
 				$xml_output .= "<friends></friends>";
 			}
 		} // end if ($is_friend_event) {if ($error_flag)}
-		  
-		// -----------------------------public events-----------------------------
+		
+		/*
+		 * -----------------------------public events-----------------------------
+		 */
 		if ($is_public_event) {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -673,7 +635,6 @@ class ViewEvents {
 							if (count ( $result_event_media_public ) > 0) {
 								error_log ( "count of media entries ..." . count ( $result_event_media_public ) . PHP_EOL );
 								foreach ( $result_event_media_public as $event_media ) {
-									$xml_output .= "<event_media>";
 									
 									if (isset ( $event_media ['metadata'] )) {
 										$json_array = json_decode ( $event_media ['metadata'], true );
@@ -696,6 +657,7 @@ class ViewEvents {
 											$type = "Type not Mentioned";
 									}
 									$only_audio_in_event = 0;
+									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
 									$xml_output .= "<event_media_id>" . $event_media ['media_id'] . "</event_media_id>";
@@ -706,6 +668,7 @@ class ViewEvents {
 									$xml_output .= "</event_media>";
 								}
 								if ($only_audio_in_event) {
+									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type></event_media_type>";
 									$xml_output .= "<event_media_url></event_media_url>";
 									$xml_output .= "<event_media_id></event_media_id>";
