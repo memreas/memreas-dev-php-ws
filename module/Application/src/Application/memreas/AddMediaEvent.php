@@ -22,7 +22,6 @@ class AddMediaEvent {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 		if (! $this->AddNotification) {
 			$this->AddNotification = new AddNotification ( $message_data, $memreas_tables, $service_locator );
 		}

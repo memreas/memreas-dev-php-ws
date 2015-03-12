@@ -253,7 +253,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
+//error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
 	}
 }
 

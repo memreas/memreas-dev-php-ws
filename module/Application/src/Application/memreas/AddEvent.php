@@ -36,7 +36,7 @@ class AddEvent {
 	public function exec() {
 		try {
 			
-			error_log ( "input::" . $_POST ['xml'] . PHP_EOL );
+			error_log ( "AddEvent::input::" . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$message = ' ';
 			$user_id = addslashes ( trim ( $data->addevent->user_id ) );
@@ -46,7 +46,6 @@ class AddEvent {
 			$event_date = addslashes ( trim ( $data->addevent->event_date ) );
 			$event_from = strtotime ( trim ( $data->addevent->event_from ) );
 			$event_to = strtotime ( trim ( $data->addevent->event_to ) );
-			// $event_to =(!empty($event_to)) ? strtotime('+1 day', $event_to) : '';
 			
 			$event_date_timestamp = time ();
 			$is_friend_can_share = trim ( $data->addevent->is_friend_can_add_friend );
@@ -218,7 +217,7 @@ class AddEvent {
 			$xml_output .= "</addeventresponse>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
-			error_log ( "output::" . $xml_output . PHP_EOL );
+error_log ( "AddEventoutput::" . $xml_output . PHP_EOL );
 		} catch ( Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
