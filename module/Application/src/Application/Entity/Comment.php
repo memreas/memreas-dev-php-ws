@@ -56,7 +56,7 @@ class Comment {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="inappropriate", type="string", length=1, nullable=false)
+	 * @var boolean @ORM\Column(name="inappropriate", type="boolean", nullable=false)
 	 */
 	private $inappropriate = 0;
 	
