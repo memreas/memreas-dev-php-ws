@@ -85,7 +85,8 @@ class ListComments {
 		} else {
 			foreach ( $result_comment as $value ) {
 				$output .= '<comment>';
-				$output .= "<event_id>" . $value ['event_id'] . "</event_id>";
+				$output .= "<comment_event_id>" . $value ['event_id'] . "</comment_event_id>";
+				$output .= "<comment_media_id>" . $value ['media_id'] . "</comment_media_id>";
 				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
 				$output .= "<type>" . $value ['type'] . "</type>";
 				$audio_url = '';

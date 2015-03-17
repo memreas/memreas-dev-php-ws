@@ -452,7 +452,6 @@ class ViewEvents {
 					$xml_output .= "</friend>";
 				} // end for loop friend events
 				$xml_output .= "</friends>";
-				error_log ( "viewevents friends xml output----> " . $xml_output . PHP_EOL );
 			}
 		} // end if ($is_friend_event)
 		
