@@ -168,6 +168,7 @@ class ViewEvents {
 							foreach ( $query_event_media_result as $row1 ) {
 								
 								$url = "";
+								$s3file_basename_prefix = "";
 								$url_web = "";
 								$url_1080p = "";
 								$type = "";
@@ -179,7 +180,9 @@ class ViewEvents {
 								if (isset ( $row1 ['metadata'] )) {
 									$json_array = json_decode ( $row1 ['metadata'], true );
 									$url = $json_array ['S3_files'] ['path'];
-									
+									if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
+										$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
+									}
 									if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 										$type = "image";
 										$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : '';
@@ -203,6 +206,7 @@ class ViewEvents {
 									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
+									$xml_output .= (! empty ( $s3file_basename_prefix )) ? "<event_media_name><![CDATA[" . $s3file_basename_prefix . "]]></event_media_name>" : '<event_media_name></event_media_name>';
 									$url = $this->url_signer->signArrayOfUrls ( $url );
 									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 									// web - video specific
@@ -225,9 +229,10 @@ class ViewEvents {
 							}
 						} else {
 							$xml_output .= "<event_media>";
+							$xml_output .= "<event_media_id></event_media_id>";
+							$xml_output .= "<event_media_name></event_media_name>";
 							$xml_output .= "<event_media_type></event_media_type>";
 							$xml_output .= "<event_media_url></event_media_url>";
-							$xml_output .= "<event_media_id></event_media_id>";
 							$xml_output .= "<event_media_video_thum></event_media_video_thum>";
 							$xml_output .= "<event_media_79x80></event_media_79x80>";
 							$xml_output .= "<event_media_98x78></event_media_98x78>";
@@ -368,9 +373,6 @@ class ViewEvents {
 						$xml_output .= $this->comments->exec ( $cdata );
 						
 						/*
-						 * $query_event_media = "SELECT event.event_id,event.name,media.media_id,media.metadata FROM Application\Entity\EventMedia event_media inner join Application\Entity\Event event on event.event_id=event_media.event_id inner join Application\Entity\Media media on event_media.media_id=media.media_id where event.event_id='" . $row_friendsevent['event_id'] . "' ORDER BY media.create_date DESC"; $query_event_media_result = mysql_query($query_event_media) or die(mysql_error());
-						 */
-						/*
 						 * Event Media
 						 */
 						$qb = $this->dbAdapter->createQueryBuilder ();
@@ -387,6 +389,7 @@ class ViewEvents {
 						if (count ( $query_event_media_result ) > 0) {
 							foreach ( $query_event_media_result as $row ) {
 								$url = '';
+								$s3file_basename_prefix = "";
 								$url_web = '';
 								$url_1080p = '';
 								$type = "";
@@ -398,6 +401,9 @@ class ViewEvents {
 									$json_array = json_decode ( $row ['metadata'], true );
 									
 									$url = $json_array ['S3_files'] ['path'];
+									if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
+										$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
+									}
 									if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 										$type = "image";
 										$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : '';
@@ -419,6 +425,7 @@ class ViewEvents {
 									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
+									$xml_output .= (! empty ( $s3file_basename_prefix )) ? "<event_media_name><![CDATA[" . $s3file_basename_prefix . "]]></event_media_name>" : '<event_media_name></event_media_name>';
 									$url = $this->url_signer->signArrayOfUrls ( $url );
 									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 									// web - video specific
@@ -437,9 +444,10 @@ class ViewEvents {
 							}
 						} else {
 							$xml_output .= "<event_media>";
+							$xml_output .= "<event_media_id></event_media_id>";
+							$xml_output .= "<event_media_name></event_media_name>";
 							$xml_output .= "<event_media_type></event_media_type>";
 							$xml_output .= "<event_media_url><![CDATA[]]></event_media_url>";
-							$xml_output .= "<event_media_id></event_media_id>";
 							$xml_output .= "<event_media_video_thum></event_media_video_thum>";
 							$xml_output .= "<event_media_79x80></event_media_79x80>";
 							$xml_output .= "<event_media_98x78></event_media_98x78>";
@@ -455,7 +463,7 @@ class ViewEvents {
 			}
 		} // end if ($is_friend_event)
 		
-		if ($is_friend_event) { // $q = "SELECT event.event_id ,event.name,uf.friend_id,friend.social_username,friend.url_image // FROM user_friend as uf // inner join friend on uf.friend_id=friend.friend_id // inner join event on uf.friend_id=event.user_id // where uf.user_id='$user_id' // ORDER BY uf.friend_id ASC // LIMIT $from , $limit";// //get friend id $getuser="SELECT friend.friend_id ,event_friend.event_id from friend where network='memreas' and social_username in( select username from user where user_id='$user_id')"; $resultgetuser = mysql_query($getuser); if (!$resultgetuser) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($resultgetuser) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($resultgetuser) > 0) { $row_getuser= mysql_fetch_assoc($resultgetuser); //-------------------get user's friends and his name & pic $q = "SELECT uf.friend_id,uf.user_id,friend.social_username,friend.url_image FROM user_friend as uf inner join friend on uf.friend_id=friend.friend_id where uf.friend_id='".$row_getuser['friend_id']."' ORDER BY uf.friend_id ASC LIMIT $from , $limit"; $result = mysql_query($q); if (!$result) { $error_flag = 1; $message = mysql_error(); } else if (mysql_num_rows($result) <= 0) { $error_flag = 2; $message = "No Record Found"; } else if (mysql_num_rows($result) > 0) { $xml_output.="<status>Success</status>"; $xml_output.="<message>My Friends Event List</message>"; $xml_output.="<page>$page</page>"; while ($row2 = mysql_fetch_array($result)) {//get media // echo "<pre>";print_r($row2); // $q_freinds_event = "select event_id,name from event where user_id='" . $row2['user_id']."' ORDER BY create_time DESC"; $q_freinds_event="SELECT event.* FROM friend INNER JOIN event_friend ON friend.friend_id = event_friend.friend_id INNER JOIN event ON event_friend.event_id = event.event_id where event_friend.friend_id='".$row_getuser['friend_id']."'"; $rfe = mysql_query($q_freinds_event); if (!$rfe) { $error_flag = 1; $message = mysql_error(); } // else if (mysql_num_rows($rfe)<= 0){ // $error_flag = 2; // $message ="Record not found"; // } else if (mysql_num_rows($rfe)> 0){ // print_r($rfe); $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator>" . $row2['social_username'] . "</event_creator>"; $xml_output.="<profile_pic><![CDATA[" . $row2['url_image'] . "]]></profile_pic>"; $xml_output.="<event_creator_user_id>" . $row2['friend_id'] . "</event_creator_user_id>"; $xml_output.="<events>"; while ($row4 = mysql_fetch_assoc($rfe)) { $xml_output.="<event>"; $xml_output.="<event_id>" . $row4['event_id'] . "</event_id>"; $xml_output.="<event_name>" . $row4['name'] . "</event_name>"; $query_event_friend = "SELECT event.event_id ,event.name,media.media_id,media.metadata FROM event inner join event_media on event.event_id=event_media.event_id inner join media on event_media.media_id=media.media_id where event.event_id='" . $row4['event_id'] . "' and event.event_id='".$row4['event_id']."' ORDER BY media.create_date DESC LIMIT 1"; $result_event_friend = mysql_query($query_event_friend); if ($result_event_friend) { if ($row = mysql_fetch_assoc($result_event_friend)) { $url = ''; $type=""; if (isset($row['metadata'])) { $json_array = json_decode($row['metadata'], true); $url = $json_array['S3_files']['path']; if (isset($json_array['S3_files']['type']['image']) && is_array($json_array['S3_files']['type']['image'])) $type = "image"; else if (isset($json_array['S3_files']['type']['video']) && is_array($json_array['S3_files']['type']['video'])) $type = "video"; else if (isset($json_array['S3_files']['type']['audio']) && is_array($json_array['S3_files']['type']['audio'])) $type = "audio"; else $type = "Type not Mentioned"; } $xml_output.="<event_media_type>" . $type . "</event_media_type>"; $xml_output.="<event_media_url><![CDATA[" . $url . "]]></event_media_url>"; $xml_output.="<event_media_id>" . $row['media_id'] . "</event_media_id>"; } } else { $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; } $xml_output.= "</event>"; }$xml_output.= "</events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; } } }}
+		if ($is_friend_event) { 
 			if ($error_flag) {
 				// echo $xml_output;
 				$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -482,9 +490,6 @@ class ViewEvents {
 			$statement = $this->dbAdapter->createQuery ( $q_public );
 			$result_pub = $statement->getArrayResult ();
 			
-			/*
-			 * if (!$result_pub) { $xml_output.="<status>Failure</status>"; $xml_output.="<message>" . mysql_error() . "</message>"; $xml_output.="<page>0</page>"; $xml_output.="<friends>"; $xml_output.="<friend>"; $xml_output.="<event_creator></event_creator>"; $xml_output.="<profile_pic><![CDATA[]]></profile_pic>"; $xml_output.="<profile_pic_79x80></profile_pic_79x80>"; $xml_output.="<profile_pic_448x306></profile_pic_448x306>"; $xml_output.="<profile_pic_98x78></profile_pic_98x78>"; $xml_output.="<event_creator_user_id></event_creator_user_id>"; $xml_output.="<events><event>"; $xml_output.="<event_id></event_id>"; $xml_output.="<event_name></event_name>"; $xml_output.="<friend_can_post></friend_can_post>"; $xml_output.="<friend_can_share></friend_can_share>"; $xml_output.="<event_media_type></event_media_type>"; $xml_output.="<event_media_url></event_media_url>"; $xml_output.="<event_media_id></event_media_id>"; $xml_output.="<event_media_video_thum></event_media_video_thum>"; $xml_output.="<event_media_79x80></event_media_79x80>"; $xml_output.="<event_media_98x78></event_media_98x78>"; $xml_output.="<event_media_448x306></event_media_448x306>"; $xml_output.= "</event></events>"; $xml_output.="</friend>"; $xml_output.="</friends>"; }
-			 */
 			if (count ( $result_pub ) == 0) {
 				error_log ( "fail - no records found..." . PHP_EOL );
 				$xml_output .= "<status>Failure</status>";
@@ -643,6 +648,7 @@ class ViewEvents {
 							
 							$only_audio_in_event = 0;
 							$url = '';
+							$s3file_basename_prefix = "";
 							$url_web = '';
 							$url_1080p = '';
 							$type = "";
@@ -657,6 +663,9 @@ class ViewEvents {
 									if (isset ( $event_media ['metadata'] )) {
 										$json_array = json_decode ( $event_media ['metadata'], true );
 										$url = $json_array ['S3_files'] ['path'];
+										if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
+											$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
+										}
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 											$type = "image";
 											$url79x80 = empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? '' : $json_array ['S3_files'] ['thumbnails'] ['79x80'];
@@ -679,8 +688,9 @@ class ViewEvents {
 									$only_audio_in_event = 0;
 									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
-									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
 									$xml_output .= "<event_media_id>" . $event_media ['media_id'] . "</event_media_id>";
+									$xml_output .= (! empty ( $s3file_basename_prefix )) ? "<event_media_name><![CDATA[" . $s3file_basename_prefix . "]]></event_media_name>" : '<event_media_name></event_media_name>';
+									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
 									// web - video specific
 									$url_web = $this->url_signer->signArrayOfUrls ( $url_web );
 									$xml_output .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $url_web . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
@@ -695,9 +705,10 @@ class ViewEvents {
 								}
 								if ($only_audio_in_event) {
 									$xml_output .= "<event_media>";
+									$xml_output .= "<event_media_id></event_media_id>";
+									$xml_output .= "<event_media_name></event_media_name>";
 									$xml_output .= "<event_media_type></event_media_type>";
 									$xml_output .= "<event_media_url></event_media_url>";
-									$xml_output .= "<event_media_id></event_media_id>";
 									$xml_output .= "<event_media_video_thum></event_media_video_thum>";
 									$xml_output .= "<event_media_79x80></event_media_79x80>";
 									$xml_output .= "<event_media_98x78></event_media_98x78>";
@@ -706,9 +717,10 @@ class ViewEvents {
 								}
 							} else {
 								$xml_output .= "<event_media>";
+								$xml_output .= "<event_media_id></event_media_id>";
+								$xml_output .= "<event_media_name></event_media_name>";
 								$xml_output .= "<event_media_type></event_media_type>";
 								$xml_output .= "<event_media_url></event_media_url>";
-								$xml_output .= "<event_media_id></event_media_id>";
 								$xml_output .= "<event_media_video_thum></event_media_video_thum>";
 								$xml_output .= "<event_media_79x80></event_media_79x80>";
 								$xml_output .= "<event_media_98x78></event_media_98x78>";
@@ -724,7 +736,7 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
-//		error_log ( "View Events.xml_output ---->  $xml_output" . PHP_EOL );
+		// error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
 		echo $xml_output;
 	}
 }

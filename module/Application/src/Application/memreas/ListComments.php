@@ -58,10 +58,9 @@ class ListComments {
 		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id,c.event_id, c.create_time' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
-		// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-		// qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 		if (! empty ( $event_id )) {
-			$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio')" );
+			//$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio' or c.type='like')" );
+			$qb->where ( "c.event_id=?1" );
 			$qb->setParameter ( 1, $event_id );
 		}
 		

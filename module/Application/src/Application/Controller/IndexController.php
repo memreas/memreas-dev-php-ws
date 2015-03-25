@@ -311,6 +311,7 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "mediainappropriate") {
+				$data = simplexml_load_string ( $_POST ['xml'] );
 				$mediainappropriate = new MediaInappropriate ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $mediainappropriate->exec ();
 				/*
