@@ -228,16 +228,16 @@ class ViewEvents {
 								}
 							}
 						} else {
-							$xml_output .= "<event_media>";
-							$xml_output .= "<event_media_id></event_media_id>";
-							$xml_output .= "<event_media_name></event_media_name>";
-							$xml_output .= "<event_media_type></event_media_type>";
-							$xml_output .= "<event_media_url></event_media_url>";
-							$xml_output .= "<event_media_video_thum></event_media_video_thum>";
-							$xml_output .= "<event_media_79x80></event_media_79x80>";
-							$xml_output .= "<event_media_98x78></event_media_98x78>";
-							$xml_output .= "<event_media_448x306></event_media_448x306>";
-							$xml_output .= "</event_media>";
+// 							$xml_output .= "<event_media>";
+// 							$xml_output .= "<event_media_id></event_media_id>";
+// 							$xml_output .= "<event_media_name></event_media_name>";
+// 							$xml_output .= "<event_media_type></event_media_type>";
+// 							$xml_output .= "<event_media_url></event_media_url>";
+// 							$xml_output .= "<event_media_video_thum></event_media_video_thum>";
+// 							$xml_output .= "<event_media_79x80></event_media_79x80>";
+// 							$xml_output .= "<event_media_98x78></event_media_98x78>";
+// 							$xml_output .= "<event_media_448x306></event_media_448x306>";
+// 							$xml_output .= "</event_media>";
 						}
 						
 						$xml_output .= "</event>";
@@ -443,16 +443,16 @@ class ViewEvents {
 								} // end if (isset ( $row ['metadata'] ))
 							}
 						} else {
-							$xml_output .= "<event_media>";
-							$xml_output .= "<event_media_id></event_media_id>";
-							$xml_output .= "<event_media_name></event_media_name>";
-							$xml_output .= "<event_media_type></event_media_type>";
-							$xml_output .= "<event_media_url><![CDATA[]]></event_media_url>";
-							$xml_output .= "<event_media_video_thum></event_media_video_thum>";
-							$xml_output .= "<event_media_79x80></event_media_79x80>";
-							$xml_output .= "<event_media_98x78></event_media_98x78>";
-							$xml_output .= "<event_media_448x306></event_media_448x306>";
-							$xml_output .= "</event_media>";
+// 							$xml_output .= "<event_media>";
+// 							$xml_output .= "<event_media_id></event_media_id>";
+// 							$xml_output .= "<event_media_name></event_media_name>";
+// 							$xml_output .= "<event_media_type></event_media_type>";
+// 							$xml_output .= "<event_media_url><![CDATA[]]></event_media_url>";
+// 							$xml_output .= "<event_media_video_thum></event_media_video_thum>";
+// 							$xml_output .= "<event_media_79x80></event_media_79x80>";
+// 							$xml_output .= "<event_media_98x78></event_media_98x78>";
+// 							$xml_output .= "<event_media_448x306></event_media_448x306>";
+// 							$xml_output .= "</event_media>";
 						}
 						$xml_output .= "</event>";
 					}
@@ -547,8 +547,6 @@ class ViewEvents {
 					$profile = $profile_query->getResult ();
 					
 					if ($profile) {
-						error_log ( "public event date is outside of from / to..." . PHP_EOL );
-						
 						$profile_image = json_decode ( $profile [0] ['metadata'], true );
 						if (! empty ( $profile_image ['S3_files'] ['path'] ))
 							$pic = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['path'] );
@@ -646,25 +644,28 @@ class ViewEvents {
 							$event_media_query->setParameter ( 1, $public_event_row ['event_id'] );
 							$result_event_media_public = $event_media_query->getResult ();
 							
-							$only_audio_in_event = 0;
-							$url = '';
-							$s3file_basename_prefix = "";
-							$url_web = '';
-							$url_1080p = '';
-							$type = "";
-							$thum_url = '';
-							$url79x80 = '';
-							$url448x306 = '';
-							$url98x78 = '';
 							if (count ( $result_event_media_public ) > 0) {
-								error_log ( "count of media entries ..." . count ( $result_event_media_public ) . PHP_EOL );
 								foreach ( $result_event_media_public as $event_media ) {
 									
+									$only_audio_in_event = 0;
+									$url = '';
+									$s3file_basename_prefix = "";
+									$url_web = '';
+									$url_1080p = '';
+									$type = "";
+									$thum_url = '';
+									$url79x80 = '';
+									$url448x306 = '';
+									$url98x78 = '';
+									$media_inappropriate = '';
 									if (isset ( $event_media ['metadata'] )) {
 										$json_array = json_decode ( $event_media ['metadata'], true );
 										$url = $json_array ['S3_files'] ['path'];
 										if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
 											$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
+										}
+										if (isset ( $json_array ['S3_files'] ['media_inappropriate'] )) {
+											$media_inappropriate = $json_array ['S3_files'] ['media_inappropriate'];
 										}
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 											$type = "image";
@@ -690,6 +691,8 @@ class ViewEvents {
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$xml_output .= "<event_media_id>" . $event_media ['media_id'] . "</event_media_id>";
 									$xml_output .= (! empty ( $s3file_basename_prefix )) ? "<event_media_name><![CDATA[" . $s3file_basename_prefix . "]]></event_media_name>" : '<event_media_name></event_media_name>';
+									//$xml_output .= (! empty ( $media_inappropriate )) ? "<event_media_inappropriate><![CDATA[" . json_encode($media_inappropriate) . "]]></event_media_inappropriate>" : '<event_media_inappropriate></event_media_inappropriate>';
+									$xml_output .= (! empty ( $media_inappropriate )) ? "<event_media_inappropriate><![CDATA[" . json_encode($media_inappropriate) . "]]></event_media_inappropriate>" : '';
 									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
 									// web - video specific
 									$url_web = $this->url_signer->signArrayOfUrls ( $url_web );
@@ -716,16 +719,16 @@ class ViewEvents {
 									$xml_output .= "</event_media>";
 								}
 							} else {
-								$xml_output .= "<event_media>";
-								$xml_output .= "<event_media_id></event_media_id>";
-								$xml_output .= "<event_media_name></event_media_name>";
-								$xml_output .= "<event_media_type></event_media_type>";
-								$xml_output .= "<event_media_url></event_media_url>";
-								$xml_output .= "<event_media_video_thum></event_media_video_thum>";
-								$xml_output .= "<event_media_79x80></event_media_79x80>";
-								$xml_output .= "<event_media_98x78></event_media_98x78>";
-								$xml_output .= "<event_media_448x306></event_media_448x306>";
-								$xml_output .= "</event_media>";
+// 								$xml_output .= "<event_media>";
+// 								$xml_output .= "<event_media_id></event_media_id>";
+// 								$xml_output .= "<event_media_name></event_media_name>";
+// 								$xml_output .= "<event_media_type></event_media_type>";
+// 								$xml_output .= "<event_media_url></event_media_url>";
+// 								$xml_output .= "<event_media_video_thum></event_media_video_thum>";
+// 								$xml_output .= "<event_media_79x80></event_media_79x80>";
+// 								$xml_output .= "<event_media_98x78></event_media_98x78>";
+// 								$xml_output .= "<event_media_448x306></event_media_448x306>";
+// 								$xml_output .= "</event_media>";
 							}
 						}
 					}
