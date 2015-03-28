@@ -177,6 +177,7 @@ class ViewEvents {
 								$url448x306 = '';
 								$url98x78 = '';
 								$s3file_download_path = '';
+								$s3file_location = '';
 								
 								if (isset ( $row1 ['metadata'] )) {
 									$json_array = json_decode ( $row1 ['metadata'], true );
@@ -184,6 +185,13 @@ class ViewEvents {
 									if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
 										$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
 									}
+									if (isset ( $json_array ['S3_files'] ['location'] )) {
+										$s3file_location = $json_array ['S3_files'] ['location'];
+									}
+									if (isset ( $json_array ['S3_files'] ['download'] )) {
+										$s3file_download_path = $json_array ['S3_files'] ['download'];
+									}
+									
 									if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 										$type = "image";
 										$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : '';
@@ -202,17 +210,13 @@ class ViewEvents {
 								} else {
 									$type = "Type not Mentioned";
 								} // end if (isset ( $row1 ['metadata'] ))
-								if (isset ( $json_array ['S3_files'] ['download'] )) {
-									$s3file_download_path = $json_array ['S3_files'] ['download'];
-								}
-								
 								
 								try {
 									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$xml_output .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
 									$xml_output .= (! empty ( $s3file_basename_prefix )) ? "<event_media_name><![CDATA[" . $s3file_basename_prefix . "]]></event_media_name>" : '<event_media_name></event_media_name>';
-									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" .  $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+									$xml_output .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 									// web - video specific
 									$xml_output .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
 									// 1080p video specific
@@ -221,12 +225,12 @@ class ViewEvents {
 									$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 									$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
 									$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-									//download urls
-									$xml_output .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode($url) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
-									$xml_output .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode($url_web) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
-									$xml_output .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode($url_1080p) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
-									$xml_output .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode($s3file_download_path) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
-										
+									// download urls
+									$xml_output .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
+									$xml_output .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
+									$xml_output .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode ( $url_1080p ) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
+									$xml_output .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode ( $s3file_download_path ) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
+									$xml_output .= (! empty ( $s3file_location )) ? "<event_media_s3file_location><![CDATA[" . json_encode ( $s3file_location ) . "]]></event_media_s3file_location>" : '';
 									$xml_output .= "</event_media>";
 								} catch ( Exception $e ) {
 									$xml_output .= "<event_media>";
@@ -405,12 +409,19 @@ class ViewEvents {
 								$url448x306 = '';
 								$url98x78 = '';
 								$s3file_download_path = '';
+								$s3file_location = '';
 								if (isset ( $row ['metadata'] )) {
 									$json_array = json_decode ( $row ['metadata'], true );
 									
 									$url = $json_array ['S3_files'] ['path'];
 									if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
 										$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
+									}
+									if (isset ( $json_array ['S3_files'] ['location'] )) {
+										$s3file_location = $json_array ['S3_files'] ['location'];
+									}
+									if (isset ( $json_array ['S3_files'] ['download'] )) {
+										$s3file_download_path = $json_array ['S3_files'] ['download'];
 									}
 									if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 										$type = "image";
@@ -430,9 +441,6 @@ class ViewEvents {
 									} else {
 										$type = "Type not Mentioned";
 									}
-									if (isset ( $json_array ['S3_files'] ['download'] )) {
-										$s3file_download_path = $json_array ['S3_files'] ['download'];
-									}
 									$xml_output .= "<event_media>";
 									$xml_output .= "<event_media_type>" . $type . "</event_media_type>";
 									$xml_output .= "<event_media_id>" . $row ['media_id'] . "</event_media_id>";
@@ -447,12 +455,13 @@ class ViewEvents {
 									$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 									$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
 									$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-									//download urls
-									$xml_output .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode($url) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
-									$xml_output .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode($url_web) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
-									$xml_output .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode($url_1080p) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
-									$xml_output .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode($s3file_download_path) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
-										
+									// download urls
+									$xml_output .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
+									$xml_output .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
+									$xml_output .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode ( $url_1080p ) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
+									$xml_output .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode ( $s3file_download_path ) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
+									$xml_output .= (! empty ( $s3file_location )) ? "<event_media_s3file_location><![CDATA[" . json_encode ( $s3file_location ) . "]]></event_media_s3file_location>" : '';
+									
 									$xml_output .= "</event_media>";
 								} // end if (isset ( $row ['metadata'] ))
 							}
@@ -673,6 +682,7 @@ class ViewEvents {
 									$url98x78 = '';
 									$media_inappropriate = '';
 									$s3file_download_path = '';
+									$s3file_location = '';
 									if (isset ( $event_media ['metadata'] )) {
 										$json_array = json_decode ( $event_media ['metadata'], true );
 										$url = $json_array ['S3_files'] ['path'];
@@ -684,6 +694,9 @@ class ViewEvents {
 										}
 										if (isset ( $json_array ['S3_files'] ['download'] )) {
 											$s3file_download_path = $json_array ['S3_files'] ['download'];
+										}
+										if (isset ( $json_array ['S3_files'] ['location'] )) {
+											$s3file_location = $json_array ['S3_files'] ['location'];
 										}
 										if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 											$type = "image";
@@ -719,12 +732,13 @@ class ViewEvents {
 									$xml_output .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 									$xml_output .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
 									$xml_output .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
-									//dowload urls 
-									$xml_output .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode($url) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
-									$xml_output .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode($url_web) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
-									$xml_output .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode($url_1080p) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
-									$xml_output .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode($s3file_download_path) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
-
+									// dowload urls
+									$xml_output .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
+									$xml_output .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
+									$xml_output .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode ( $url_1080p ) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
+									$xml_output .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode ( $s3file_download_path ) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
+									$xml_output .= (! empty ( $s3file_location )) ? "<event_media_s3file_location><![CDATA[" . json_encode ( $s3file_location ) . "]]></event_media_s3file_location>" : '';
+										
 									$xml_output .= "</event_media>";
 								}
 								if ($only_audio_in_event) {
