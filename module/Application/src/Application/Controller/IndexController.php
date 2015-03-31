@@ -189,9 +189,9 @@ class IndexController extends AbstractActionController {
 			
 			// Capture the echo from the includes in case we need to convert back to json
 			ob_start ();
-			/*
-			 * if (isset($_POST ['xml']) && !empty($_POST ['xml'])) { error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
-			 */
+			
+if (isset($_POST ['xml']) && !empty($_POST ['xml'])) { error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
+
 			$memreas_tables = new MemreasTables ( $this->getServiceLocator () );
 			
 			if ($actionname == 'notlogin') {
@@ -593,6 +593,9 @@ class IndexController extends AbstractActionController {
 				
 				$search_result = array ();
 				switch ($a) {
+					/*
+					 * @person search
+					 */
 					case '@':
 
                     	/*
@@ -600,30 +603,24 @@ class IndexController extends AbstractActionController {
                     	 */
 						$user_ids = array ();
 						if (MemreasConstants::ELASTICACHE_SERVER_USE) {
-							error_log ( "redis fetch..." . PHP_EOL );
+error_log ( "redis @ fetch..." . PHP_EOL );
 							// Redis - this codes fetches usernames by the search term then gets the hashes
 							$usernames = $this->elasticache->findSet ( '@person', $search );
 							$person_meta_hash = $this->elasticache->cache->hmget ( "@person_meta_hash", $usernames );
 							$person_uid_hash = $this->elasticache->cache->hmget ( '@person_uid_hash', $usernames );
 							if (in_array($user_id, $person_uid_hash)) {
-error_log("Inside findtag user_id ---> $user_id".PHP_EOL);
-error_log("Inside findtag found ---> ".json_encode($person_uid_hash).PHP_EOL);
 								$username = $person_uid_hash["$user_id"];
-error_log("Inside findtag found ---> ".$username[$user_id].PHP_EOL);
 								//now remove current user
 								unset($person_meta_hash[$username[$user_id]]);
 								unset($person_uid_hash[$user_id]);
 								$index = array_search($username, $usernames); 
 								unset($usernames[$index]);
-error_log("Inside findtag unset finished...".PHP_EOL);
 							}
 							$user_ids = array_keys($person_uid_hash);
-error_log("Inside findtag set user_ids...".PHP_EOL);
 							$search_result = array_values($person_meta_hash);
 							$rc = count($search_result);
-error_log("Inside findtag set search_result...".PHP_EOL);
 						} else {
-							error_log ( "redis fetch get regindex..." . PHP_EOL );
+error_log ( "@ fetch get regindex..." . PHP_EOL );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -662,20 +659,18 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 						$qb->from ( 'Application\Entity\Friend', 'f' );
 						$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' );
 						$qb->where ( "f.network='memreas'" );
-						//$qb->andwhere("uf.user_approve != '1'");
+						$qb->andwhere("uf.user_approve != '1'");
 						$qb->andwhere( "uf.user_id = '$user_id'" );
 						$qb->andwhere( 'uf.friend_id IN (:f)' );
 						$qb->setParameter( 'f', $user_ids );
 //error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
 						$UserFriends = $qb->getQuery ()->getResult ();
-//error_log("UserFriends------> " . print_r($UserFriends, true) . PHP_EOL);
 						
 						//this code checks if friend request already sent...
 						$chkUserFriend = array ();
 						foreach ( $UserFriends as $ufRow ) {
 							$chkUserFriend [$ufRow ['friend_id']] = $ufRow ['user_approve'];
 						}
-						// error_log("user_meta------> " . print_r($user_meta, true) . PHP_EOL);
 						
 						foreach ( $search_result as $k => &$srRow ) {
 							if (isset ( $chkUserFriend [$user_ids [$k]] )) {
@@ -685,7 +680,6 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 						}
 						
 						// error_log("Past mc person_meta_hash.....".json_encode($person_meta_hash). PHP_EOL);
-						//
 						// $result['totalPage'] =ceil($rc / $limit);
 						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
@@ -695,16 +689,21 @@ error_log("Inside findtag set search_result...".PHP_EOL);
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
-error_log("result------> " . print_r($result, true) . PHP_EOL);
+error_log("result------> " . json_encode($result) . PHP_EOL);
 						$result = '';
 						
 						break;
+						
+					/*
+					 * !event search
+					 */
 					case '!' :
 						
 						$mc = $this->elasticache->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
-							
+error_log("findtag empty elasticache -> createEventCache..." . PHP_EOL);
+								
 							$mc = $eventRep->createEventCache ();
 							$this->elasticache->setCache ( "!event", $mc );
 						}
@@ -718,7 +717,9 @@ error_log("result------> " . print_r($result, true) . PHP_EOL);
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
 									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-									
+error_log("event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL);
+error_log("event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL);
+
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
 								}
@@ -734,7 +735,7 @@ error_log("result------> " . print_r($result, true) . PHP_EOL);
 						$qb->select ( 'ef' );
 						$qb->from ( 'Application\Entity\EventFriend', 'ef' );
 						$qb->andWhere ( 'ef.event_id IN (:e)' )->andWhere ( 'ef.friend_id =:f' );
-                        //$qb->andWhere('ef.user_approve != 1');
+                        //$qb->andWhere('ef.user_approve = 1');
                         $qb->setParameter( 'f', $user_id );
                         $qb->setParameter( 'e', $event_ids );
 						$EventFriends = $qb->getQuery ()->getArrayResult ();
@@ -762,8 +763,13 @@ error_log("result------> " . print_r($result, true) . PHP_EOL);
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
+error_log("result------> " . json_encode($result) . PHP_EOL);
 						$result = '';
 						break;
+					
+					/*
+					 * #hashtag comment search
+					 */
 					case '#':
                     	/*
                     	 * TODO: Migrate to redis search - see example below
@@ -1372,7 +1378,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 		} else {
 			// json output
 			echo $output;
-			 //error_log("output ----> ****$output***".PHP_EOL);
+error_log("output ----> $output".PHP_EOL);
 		}
 		
 		/*

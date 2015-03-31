@@ -59,6 +59,7 @@ class FindTag {
 			
 			$xml_output .= "</tagresult>";
 			$xml_output .= "</xml>";
+error_log("FindTag xmloutput ---> ".$xml_output.PHP_EOL);
 			echo $xml_output;
 		}
 	}
