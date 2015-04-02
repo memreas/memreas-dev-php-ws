@@ -698,7 +698,10 @@ error_log("result------> " . json_encode($result) . PHP_EOL);
 					 * !event search
 					 */
 					case '!' :
-						
+
+						/*
+						 * Fetch Event Repository
+						 */
 						$mc = $this->elasticache->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
@@ -803,9 +806,10 @@ error_log ( "createDiscoverCache------>$tag".PHP_EOL );
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
 error_log ( "tag------>$tag".PHP_EOL );
 error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
-							if (stripos ( $cache_entry ['name'], $search ) !== false) {
+							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
 								//if ($rc >= $from && $rc < ($from + $limit)) {
 									$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
+									$cache_entry ['update_time'] = Utility::toDateTime ( $cache_entry ['update_time'] );
 									$search_result [$tag] = $cache_entry;
 								//}
 								$rc += 1;

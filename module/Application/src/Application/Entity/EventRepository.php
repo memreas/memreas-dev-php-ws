@@ -64,7 +64,7 @@ class EventRepository extends EntityRepository {
 		$qb->from ( 'Application\Entity\User', 'u' );
 		$qb->leftjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' ); //removing profile pic - not all users have
+		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' ); // removing profile pic - not all users have
 		$qb->where ( 'ef.event_id=?1 ' );
 		$qb->setParameter ( 1, $event_id );
 		$rows = $qb->getQuery ()->getResult ();
@@ -94,44 +94,36 @@ class EventRepository extends EntityRepository {
 	}
 	public function getProfileUrl($metadata = '') {
 		$json_array = json_decode ( $metadata, true );
-		$url = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+		// $url = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+		$url = "";
 		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
 			
 			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 		}
-		
 		return $url;
 	}
+	
 	public function getEventMediaUrl($metadata = '', $size = '') {
 		$json_array = json_decode ( $metadata, true );
-		$url = MemreasConstants::ORIGINAL_URL . '/memreas/img/small-pic-3.jpg';
-		// if (empty($size)) {
-		// if (! empty ( $json_array ['S3_files'] ['path'] )){
-		// $url =$this->url_signer->signArrayOfUrls($json_array ['S3_files'] ['path']);
-		// }
-		// } else {
-		// }
-		
-		
-		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+		$url="";
+		if (($json_array ['S3_files'] ['file_type'] != 'audio') && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+			$url= $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 		}
-		return $url;
+		return json_decode($url); 
 	}
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		$result = $this->getEvents ( $date );
 		$eventIndex = array ();
 		foreach ( $result as $row ) {
-//error_log("createEventCache->row->".json_encode($row));			
 			$eventIndex [$row ['event_id']] = $row;
 			$mediaRows = $this->getEventMedia ( $row ['event_id'] );
 			foreach ( $mediaRows as $mediaRow ) {
-//error_log("createEventCache->row->mediaRow->".json_encode($this->getEventMediaUrl ( $mediaRow ['metadata'] )));			
-				$eventIndex [$row ['event_id']] ['event_media_url'] = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
-				break;
+				$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+				if (! empty ( $event_media_url )) {
+					$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
+				}
 			}
-			$eventIndex [$row ['event_id']] ['event_photo'] = $this->getEventMediaUrl ( $mediaRow ['metadata'], 'thumb' );
 		}
 		return $eventIndex;
 	}
@@ -176,7 +168,6 @@ class EventRepository extends EntityRepository {
 		return $result;
 	}
 	public function createDiscoverCache($tag, $event_ids = null) {
-		error_log ( "Inside Redis warmer createDiscoverCache...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$Index = array ();
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		$qb = $this->_em->createQueryBuilder ();
@@ -185,41 +176,54 @@ class EventRepository extends EntityRepository {
 		$qb->where ( 't.tag LIKE ?1' );
 		$qb->setParameter ( 1, "$tag%" );
 		$result = $qb->getQuery ()->getResult ();
-		
+		// error_log("createDiscoverCache SQL--->".$qb->getQuery()->getSql().PHP_EOL);
 		foreach ( $result as $row ) {
 			$temp = array ();
 			$json_array = json_decode ( $row ['meta'], true );
+			error_log ( 'tag meta->' . $row ['meta'] . PHP_EOL );
 			if (empty ( $json_array ['comment'] [0] )) {
 				continue;
 			}
-			error_log ( 'comment->' . print_r ( $json_array ['comment'], true ) );
+			error_log ( 'comment[] as json->' . json_encode ( $json_array ['comment'] [0] ) . PHP_EOL );
 			
 			foreach ( $json_array ['comment'] as $k => $comm ) {
-				$temp ['name'] = $row ['tag'];
+				$temp ['tag_name'] = $row ['tag'];
 				$event = $this->_em->find ( 'Application\Entity\Event', $json_array ['event'] [$k] );
 				$temp ['event_name'] = $event->name;
 				$temp ['event_id'] = $event->event_id;
-				$event_media = $this->_em->find ( 'Application\Entity\Media', $json_array ['media'] [$k] );
-				$temp ['event_photo'] = MemreasConstants::ORIGINAL_URL . '/memreas/img/pic-1.jpg';
-				if (! empty ( $event_media->metadata ))
-					$temp ['event_photo'] = $this->getEventMediaUrl ( $event_media->metadata, 'thumb' );
-				
+				$media = $this->_em->find ( 'Application\Entity\Media', $json_array ['media'] [$k] );
+				if (! empty ( $media->metadata )) {
+					$temp ['event_media_url'] [] = $this->getEventMediaUrl ( $event_media->metadata, 'thumb' );
+				}
 				$comment = $this->_em->find ( 'Application\Entity\Comment', $json_array ['comment'] [$k] );
 				$temp ['comment'] = $comment->text;
 				$temp ['update_time'] = $comment->update_time;
 				$commenter = $this->getUser ( $comment->user_id, 'row' );
 				$temp ['commenter_photo'] = $commenter ['profile_photo'];
 				$temp ['commenter_name'] = '@' . $commenter ['username'];
+				if (! empty ( $temp ['event_id'] )) {
+					$event_ids [] = $temp ['event_id'];
+				}
 				if (! empty ( $event_ids )) {
 					// For Redis lookup
-					if (in_array ( $temp ['event_id'], $event_ids )) {
-						$Index [] = $temp;
-					} else {
-						// skip...
+					// if (in_array ( $temp ['event_id'], $event_ids )) {
+					foreach ( $event_ids as $event_id ) {
+						// Fetch event media
+						error_log ( "event id -->" . $event_id . PHP_EOL );
+						$event_media = $this->getEventMedia ( $event_id );
+						$i=0;
+						foreach ( $event_media as $mediaRow ) {
+							$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+							if (! empty ( $event_media_url )) {
+								$temp ['event_media_url'] ["$i"] = $event_media_url;
+								$i++;
+							}
+						}
 					}
+					$Index [] = $temp;
 				} else {
 					// For db lookup
-					error_log ( "Inside Redis warmer createDiscoverCache tag:" . $temp ['name'] . "event_id:" . $temp ['event_id'] . " in event_ids...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+					error_log ( "Inside Redis warmer createDiscoverCache tag:" . $temp ['tag_name'] . "event_id:" . $temp ['event_id'] . " in event_ids...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 					$Index [] = $temp;
 				}
 			}
@@ -251,7 +255,7 @@ class EventRepository extends EntityRepository {
 		$qb->where ( 'u.user_id=?1 ' );
 		$qb->setParameter ( 1, $user_id );
 		$rows = $qb->getQuery ()->getResult ();
-//error_log("getUser SQL --->".$qb->getQuery()->getSql());
+		// error_log("getUser SQL --->".$qb->getQuery()->getSql());
 		
 		$row = $rows [0];
 		$row ['profile_photo'] = $this->getProfileUrl ( $row ['metadata'] );
