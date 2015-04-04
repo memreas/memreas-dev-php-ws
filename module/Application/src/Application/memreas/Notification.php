@@ -59,16 +59,20 @@ class Notification {
 		}
 	}
 	public function add($userid) {
+error_log("Notification add-->".$userid.PHP_EOL);
 		$this->userIds [] = $userid;
 	}
 	public function addFriend($friendid) {
+error_log("Notification add-->".$friendid.PHP_EOL);
 		$this->friends [] = $friendid;
 	}
 	public function send() {
 		try {
+error_log("Notification::Inside send()".PHP_EOL);
 			// mobile notification.
 			if (count ( $this->userIds ) > 0) {
-				
+error_log("Notification::Inside send() user_ids>0".PHP_EOL);
+								
 				/*
 				 * Fetch devices based on Device table and userIds
 				 */
@@ -84,10 +88,12 @@ class Notification {
 				 */
 				if (count ( $users ) > 0) {
 					foreach ( $users as $user ) {
-						error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
+error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
 						if ($user ['device_type'] == \Application\Entity\Device::ANROID) {
+error_log("Notification::Inside send() this->gcm->addDevice---> ".$user ['device_token'].PHP_EOL);
 							$this->gcm->addDevice ( $user ['device_token'] );
 						} else if ($user ['device_type'] == \Application\Entity\Device::APPLE) {
+error_log("Notification::Inside send() this->apns->addDevice---> ".$user ['device_token'].PHP_EOL);
 							$this->apns->addDevice ( $user ['device_token'] );
 						}
 					}
@@ -95,13 +101,13 @@ class Notification {
 					if ($this->gcm->getDeviceCount () > 0) {
 						
 						$x = $this->gcm->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-ANROID' . print_r ( $x, true ) . PHP_EOL );
+error_log ( 'SENDING-ANROID' . print_r ( $x, true ) . PHP_EOL );
 					}
 					$x = '';
 					if ($this->apns->getDeviceCount () > 0) {
 						
 						$x = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
+error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
 					}
 				}
 				// to do memreas user fb twitter
@@ -110,7 +116,7 @@ class Notification {
 			// non memras users fb twitter
 			$this->webNotification ();
 		} catch ( \Exception $exc ) {
-			error_log ( 'exp-notifcation class' . $exc->getMessage () );
+error_log ( 'exp-notifcation class' . $exc->getMessage () );
 		}
 	}
 	public function setUpdateMessage($notification_type, $data = '') {

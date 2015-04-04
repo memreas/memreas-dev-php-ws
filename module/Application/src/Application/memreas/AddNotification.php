@@ -31,7 +31,6 @@ class AddNotification {
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
 		} else {
-			
 			$data = json_decode ( json_encode ( $frmweb ) );
 			error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . PHP_EOL );
 		}

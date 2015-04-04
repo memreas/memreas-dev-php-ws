@@ -6,7 +6,6 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
-use Application\memreas\gcm;
 use Zend\View\Model\ViewModel;
 use Application\memreas\Email;
 

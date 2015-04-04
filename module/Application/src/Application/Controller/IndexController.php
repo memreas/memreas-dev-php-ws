@@ -479,7 +479,7 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $addfriendtoevent->exec ();
+				$result = $addfriendtoevent->exec();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriendtoevent->user_id );
 				
