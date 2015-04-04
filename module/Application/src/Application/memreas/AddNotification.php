@@ -8,8 +8,6 @@ use Application\memreas\MUUID;
 use Application\Entity\Notification;
 use Application\memreas\Email;
 
-
-
 class AddNotification {
 	protected $message_data;
 	protected $memreas_tables;
@@ -17,29 +15,25 @@ class AddNotification {
 	protected $dbAdapter;
 	protected $notification_id;
 	protected $aws_manager;
- 
-
-
-	public $sendShortCode=false;
+	public $sendShortCode = false;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-		$this->aws_manager = new AWSManagerSender($service_locator);
-		$this->viewRender = $service_locator->get('ViewRenderer');     
-
+		$this->aws_manager = new AWSManagerSender ( $service_locator );
+		$this->viewRender = $service_locator->get ( 'ViewRenderer' );
+		
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec($frmweb = '') {
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
-error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
-				
+			error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
 		} else {
 			
 			$data = json_decode ( json_encode ( $frmweb ) );
-error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . PHP_EOL );
+			error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . PHP_EOL );
 		}
 		
 		$user_id = (trim ( $data->addNotification->user_id ));
@@ -61,29 +55,26 @@ error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . P
 		$tblNotification->notification_type = $notification_type;
 		$tblNotification->meta = $meta;
 		$tblNotification->links = $links;
-
 		
-		$tblNotification->notification_method = Notification::EMAIL ;
-		 
-		if($network_name == 'email'){
-			//do nothing
-		}else if( $tblNotification->notification_type == Notification::ADD_FRIEND_TO_EVENT 
-			&& $network_name !== 'memreas'  
-			 ){
-			$uuid = explode('-', $this->notification_id);
-			$short_code =  $this->getSortCode($uuid [0]);
-        	$tblNotification->short_code = $this->getSortCode($uuid [0]);
-        	$tblNotification->notification_method = Notification::NONMEMREAS;
-        	$tblNotification->meta .= ' code '.$tblNotification->short_code;
-        	Email::$item['short_code'] = $short_code;
-        	$this->composeNonMemarsMail($data);
-		}else if($network_name == 'memreas'){
+		$tblNotification->notification_method = Notification::EMAIL;
+		
+		if ($network_name == 'email') {
+			// do nothing
+		} else if ($tblNotification->notification_type == Notification::ADD_FRIEND_TO_EVENT && $network_name !== 'memreas') {
+			$uuid = explode ( '-', $this->notification_id );
+			$short_code = $this->getSortCode ( $uuid [0] );
+			$tblNotification->short_code = $this->getSortCode ( $uuid [0] );
+			$tblNotification->notification_method = Notification::NONMEMREAS;
+			$tblNotification->meta .= ' code ' . $tblNotification->short_code;
+			Email::$item ['short_code'] = $short_code;
+			$this->composeNonMemarsMail ( $data );
+		} else if ($network_name == 'memreas') {
 			$tblNotification->notification_method = Notification::MEMREAS;
- 		}  
+		}
 		
 		$tblNotification->create_time = $time;
 		$tblNotification->update_time = $time;
- 		$this->dbAdapter->persist ( $tblNotification );
+		$this->dbAdapter->persist ( $tblNotification );
 		
 		try {
 			$this->dbAdapter->flush ();
@@ -105,22 +96,16 @@ error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . P
 			$xml_output .= "</addnotification>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
-error_log ( "Exit Add Notification xml_output ---> " . $xml_output . PHP_EOL );
+			error_log ( "Exit Add Notification xml_output ---> " . $xml_output . PHP_EOL );
 		}
 	}
-
-function getSortCode($str)
-{
-	$raw = '';
-        for ($i=0; $i < strlen($str); $i+=2)
-        {
-            $raw .= chr(hexdec(substr($str, $i, 2)));
-        }
-        return rtrim(base64_encode($raw),'=');
-	
-}
-	 
-
+	function getSortCode($str) {
+		$raw = '';
+		for($i = 0; $i < strlen ( $str ); $i += 2) {
+			$raw .= chr ( hexdec ( substr ( $str, $i, 2 ) ) );
+		}
+		return rtrim ( base64_encode ( $raw ), '=' );
+	}
 }
 
 ?>

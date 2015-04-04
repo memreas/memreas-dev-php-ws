@@ -40,7 +40,7 @@ class gcm {
 				// kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
 				
 				// memreas test key
-				'Authorization: key=AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE',
+				'Authorization: key='.MemreasConstants::GCMKey,				
 				'Content-Type: application/json' 
 		);
 		

@@ -47,27 +47,6 @@ class Notification {
 			$this->fb->setAccessToken ( $config ['appId'] . '|' . $config ['secret'] );
 		}
 		
-		/*
-		 * 25-SEP-2014 JM : Attempt to upgrade to facebook PHP SDK 4.x 
-		 *
-		try {
-			FacebookSession::setDefaultApplication($config ['appId'], $config ['secret']);
-			// If you're making app-level requests:
-			$session = FacebookSession::newAppSession();
-			//$helper = new FacebookCanvasLoginHelper();
-			//	$this->session = $helper->getSession();
-if ($this->session) {
-	error_log("Just set Facebook session it's not null...".PHP_EOL);
-}
-		} catch(FacebookRequestException $ex) {
-			// When Facebook returns an error
-			error_log("FacebookRequestException occurred!".print_r($ex,true).PHP_EOL);
-		} catch(\Exception $ex) {
-			// When validation fails or other local issues
-			error_log("Exception occurred!".print_r($ex,true).PHP_EOL);
-		}
-		*/
-		
 		if (! $this->twitter) {
 			
 			$config = array ();

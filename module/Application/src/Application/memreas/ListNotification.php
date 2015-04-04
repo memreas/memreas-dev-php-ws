@@ -114,7 +114,7 @@ class ListNotification {
                         $eventMediaUrl='';
                         if(isset($eventMedia[0])){
                         $eventMediaUrl = $eventRepository->getEventMediaUrl($eventMedia[0]['metadata'], 'thumb');
-                        $xml_output .= "<event_media_url><![CDATA[$eventMediaUrl]]></event_media_url>";
+                        $xml_output .= "<event_media_url><![CDATA[".json_encode($eventMediaUrl)."]]></event_media_url>";
                         }
                     } else if ($row['notification_type'] == Notification::ADD_COMMENT) {
                         $commenId= isset($links['comment_id'])?$links['comment_id']:'0';

@@ -190,7 +190,7 @@ class IndexController extends AbstractActionController {
 			// Capture the echo from the includes in case we need to convert back to json
 			ob_start ();
 			
-if (isset($_POST ['xml']) && !empty($_POST ['xml'])) { error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
+//if (isset($_POST ['xml']) && !empty($_POST ['xml'])) { error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
 
 			$memreas_tables = new MemreasTables ( $this->getServiceLocator () );
 			
@@ -631,16 +631,19 @@ error_log ( "@ fetch get regindex..." . PHP_EOL );
 								$meta_arr = $usermeta;
 								$uid = $meta_arr ['user_id'];
 								// Remove existing user
+error_log ("username" . $username. " --- uid-->". $uid . PHP_EOL );
 								if ($uid == $user_id)
 									continue;
 								/*
 								 * TODO: 6-NOV-2014 Paging isn't working correctly?  Removing for now...
 								 */
 								//if ($rc >= $from && $rc < ($from + $limit)) {
-									if (stripos($meta_arr ['username'],$search) !== false) {
+error_log ("meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->". $search . PHP_EOL );
+								if (stripos($meta_arr ['username'],$search) !== false) {
 										$meta_arr ['username'] = '@' . $meta_arr ['username'];
 										$search_result [] = $meta_arr;
 										$user_ids [] = $uid;
+error_log ( "user_ids-->". json_encode($user_ids) . PHP_EOL );
 									}
 								//}
 								$rc += 1;
@@ -659,11 +662,13 @@ error_log ( "@ fetch get regindex..." . PHP_EOL );
 						$qb->from ( 'Application\Entity\Friend', 'f' );
 						$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' );
 						$qb->where ( "f.network='memreas'" );
-						$qb->andwhere("uf.user_approve != '1'");
+						$qb->andwhere("uf.user_approve = '1'");
 						$qb->andwhere( "uf.user_id = '$user_id'" );
 						$qb->andwhere( 'uf.friend_id IN (:f)' );
 						$qb->setParameter( 'f', $user_ids );
-//error_log("qb->getDQL();------> " . $qb->getDQL() . PHP_EOL);
+//error_log("qb->getQuery()->getSql()------> " . $qb->getDQL() . PHP_EOL);
+error_log("qb->getQuery()->getSql()------> " .$qb->getQuery()->getSql() . PHP_EOL);
+
 						$UserFriends = $qb->getQuery ()->getResult ();
 						
 						//this code checks if friend request already sent...
@@ -1382,7 +1387,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 		} else {
 			// json output
 			echo $output;
-error_log("output ----> $output".PHP_EOL);
+//error_log("output ----> $output".PHP_EOL);
 		}
 		
 		/*
