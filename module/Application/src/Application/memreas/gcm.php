@@ -9,13 +9,9 @@ class gcm {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $messages;
-	protected $device_token;
+	protected $device_token='';
 	public function __construct($service_locator) {
-		
-		// $this->dbAdapter = $service_locator->get(MEMREASDB);
 		$this->service_locator = $service_locator;
-		// $this->dbAdapter = $this->service_locator->get('doctrine.entitymanager.orm_default');
-		// $config = $this->service_locator->get('Config');
 	}
 	public function addDevice($device_token) {
 		$this->device_token [] = $device_token;
@@ -37,10 +33,8 @@ class gcm {
 		);
 		
 		$headers = array (
-				// kamlesh key/ 'Authorization: key=AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM',
-				
 				// memreas test key
-				'Authorization: key='.MemreasConstants::GCMKey,				
+				'Authorization: key='.MemreasConstants::GCM_SERVER_KEY,				
 				'Content-Type: application/json' 
 		);
 		

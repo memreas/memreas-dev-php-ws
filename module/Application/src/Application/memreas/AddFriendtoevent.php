@@ -43,6 +43,8 @@ class AddFriendtoevent {
 		$friend_array = $data->addfriendtoevent->friends->friend;
 		error_log ( "AddFriendtoevent.exec() friend_array ----> " . json_encode ( $friend_array ) . PHP_EOL );
 		$user_id = (trim ( $data->addfriendtoevent->user_id ));
+		$device_id = (trim( $data->device_id));
+		$this->notification->addDeviceId($device_id);
 		$event_id = (trim ( $data->addfriendtoevent->event_id ));
 		$group_array = (trim ( $data->addfriendtoevent->groups ));
 		$email_array = $data->addfriendtoevent->emails->email;

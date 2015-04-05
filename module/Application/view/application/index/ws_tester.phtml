@@ -23,8 +23,8 @@ echo "user_id ----> " . $user_id;
 <!-- Fetch the user_id -->
 <script type="text/javascript">
             var base_url = $("#index_action").attr("action");
-            var login = '<xml><login><username>kamlesh1</username><password>123456</password><devicetype>1</devicetype><devicetoken>aaaababababababa</devicetoken></login></xml>';
-            var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password><device_token></device_token><device_type></device_type><invited_by></invited_by></registration></xml>';
+            var login = '<xml><login><username>kamlesh1</username><password>123456</password><device_type>ANDROID</device_type><device_id>android_unique_hex_id</device_id></login></xml>';
+            var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password><device_id>apple_unique_udid</device_id><device_type>APPLE</device_type><invited_by></invited_by></registration></xml>';
             var xml = "";
             //var addmediaevent = '<xml><addcomment><event_id>jmeah1</event_id><media_id>jmeah1</media_id><comments>jmeah1</comments><user_id>jmeah1</user_id><audio_media_id>jmeah1</audio_media_id></addcomment></xml>';	
             //var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><limit>2</limit><page>1</page> </listallmedia></xml>';	

@@ -21,12 +21,18 @@ class AddFriend {
         $this->memreas_tables = $memreas_tables;
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+        if (! $this->notification) {
+	        	$this->notification = new Notification ( $service_locator );
+        }
+        
     }
 
     public function exec() {
        
         $data = simplexml_load_string($_POST['xml']);
 		$message = ' ';
+        	$device_id = (trim( $data->device_id));
+        	$this->notification->addDeviceId($device_id);
 		$user_id =addslashes(trim($data->addevent->user_id));
 		$event_name = addslashes(trim($data->addevent->event_name));
 		$event_location = addslashes(trim($data->addevent->event_location));

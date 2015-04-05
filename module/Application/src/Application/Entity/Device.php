@@ -36,7 +36,7 @@ class Device {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="device_type", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="device_type", type="string", length=10, nullable=false)
 	 */
 	private $device_type;
 	

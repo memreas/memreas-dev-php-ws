@@ -41,7 +41,8 @@ error_log ( "Inside Add Comment _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL 
 		$event_id = trim ( $data->addcomment->event_id );
 		$media_id = trim ( $data->addcomment->media_id );
 		$comment = trim ( $data->addcomment->comments );
-		
+		$device_id = (trim( $data->device_id));
+		$this->notification->addDeviceId($device_id);
 		$user_id = trim ( $data->addcomment->user_id );
 		$audio_media_id = trim ( $data->addcomment->audio_media_id );
 		$message = "";

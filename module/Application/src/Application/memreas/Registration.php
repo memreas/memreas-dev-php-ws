@@ -52,7 +52,7 @@ error_log ( "Inside Registration.exec()..." . PHP_EOL );
 			$email = trim ( $data->registration->email );
 			$email = strtolower ( $email );
 			$password = trim ( $data->registration->password );
-			$device_token = trim ( $data->registration->device_token );
+			$device_id = trim ( $data->registration->device_id);
 			$device_type = trim ( $data->registration->device_type );
 			$invited_by = trim ( $data->registration->invited_by );
 			// $invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
@@ -61,14 +61,14 @@ error_log ( "Inside Registration.exec()..." . PHP_EOL );
 			error_log ( "Inside Registration ----> " . $_REQUEST ['username'] . PHP_EOL );
 			error_log ( "Inside Registration ----> " . $_REQUEST ['email'] . PHP_EOL );
 			error_log ( "Inside Registration ----> " . $_REQUEST ['password'] . PHP_EOL );
-			error_log ( "Inside Registration ----> " . $_REQUEST ['device_token'] . PHP_EOL );
+			error_log ( "Inside Registration ----> " . $_REQUEST ['device_id'] . PHP_EOL );
 			error_log ( "Inside Registration ----> " . $_REQUEST ['device_type'] . PHP_EOL );
 			error_log ( "Inside Registration ----> " . $_REQUEST ['invited_by'] . PHP_EOL );
 			$username = trim ( $_REQUEST ['username'] );
 			$email = trim ( $_REQUEST ['email'] );
 			$email = strtolower ( $email );
 			$password = trim ( $_REQUEST ['password'] );
-			$device_token = trim ( $_REQUEST ['device_token'] );
+			$device_id = trim ( $_REQUEST ['device_id'] );
 			$device_type = trim ( $_REQUEST ['device_type'] );
 			if (isset ( $_REQUEST ['invited_by'] ) && (! empty ( $_REQUEST ['invited_by'] ))) {
 				$invited_by = $_REQUEST ['invited_by'];
@@ -164,7 +164,7 @@ error_log ( "Inside Registration.exec()..." . PHP_EOL );
 						$this->dbAdapter->flush ();
 						
 						// saving decive token
-						if (! empty ( $device_token ) && ! empty ( $device_type )) {
+						if (! empty ( $device_id ) && ! empty ( $device_type )) {
 							$device_id = MUUID::fetchUUID ();
 							
 							$tblDevice = new \Application\Entity\Device ();

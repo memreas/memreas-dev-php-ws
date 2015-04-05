@@ -27,6 +27,8 @@ class Notification {
 	protected $fb;
 	protected $session;
 	protected $twitter;
+	protected $device_id;
+	
 	public function __construct($service_locator) {
 		$config = $service_locator->get ( 'Config' );
 		$this->service_locator = $service_locator;
@@ -58,12 +60,15 @@ class Notification {
 			$this->twitter = new TwitterOAuth ( $config );
 		}
 	}
+	public function addDeviceId($deviceId) {
+		$this->device_id = $deviceId;
+	}
 	public function add($userid) {
-error_log("Notification add-->".$userid.PHP_EOL);
-		$this->userIds [] = $userid;
+error_log("Notification add userid-->".$userid.PHP_EOL);
+		$this->userIds[] = $userid;
 	}
 	public function addFriend($friendid) {
-error_log("Notification add-->".$friendid.PHP_EOL);
+error_log("Notification add friendid-->".$friendid.PHP_EOL);
 		$this->friends [] = $friendid;
 	}
 	public function send() {
@@ -71,41 +76,20 @@ error_log("Notification add-->".$friendid.PHP_EOL);
 error_log("Notification::Inside send()".PHP_EOL);
 			// mobile notification.
 			if (count ( $this->userIds ) > 0) {
-error_log("Notification::Inside send() user_ids>0".PHP_EOL);
 								
-				/*
-				 * Fetch devices based on Device table and userIds
-				 */
-				$qb = $this->dbAdapter->createQueryBuilder ();
-				$qb->select ( 'f' );
-				$qb->from ( 'Application\Entity\Device', 'f' );
-				$qb->andWhere ( 'f.user_id IN (:x)' )->setParameter ( 'x', $this->userIds );
-				
-				$users = $qb->getQuery ()->getArrayResult ();
-				
-				/*
-				 * Send out push notifications if user array exists
-				 */
-				if (count ( $users ) > 0) {
-					foreach ( $users as $user ) {
-error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
+				foreach ($this->userIds as $user) {		
 						if ($user ['device_type'] == \Application\Entity\Device::ANROID) {
-error_log("Notification::Inside send() this->gcm->addDevice---> ".$user ['device_token'].PHP_EOL);
 							$this->gcm->addDevice ( $user ['device_token'] );
 						} else if ($user ['device_type'] == \Application\Entity\Device::APPLE) {
-error_log("Notification::Inside send() this->apns->addDevice---> ".$user ['device_token'].PHP_EOL);
 							$this->apns->addDevice ( $user ['device_token'] );
 						}
-					}
 					$x = '';
 					if ($this->gcm->getDeviceCount () > 0) {
-						
 						$x = $this->gcm->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
 error_log ( 'SENDING-ANROID' . print_r ( $x, true ) . PHP_EOL );
 					}
 					$x = '';
 					if ($this->apns->getDeviceCount () > 0) {
-						
 						$x = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
 error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
 					}
@@ -242,5 +226,62 @@ error_log("Facebook session received...".PHP_EOL);
 
 
 }
+
+
+
+// public function send() {
+// 	try {
+// 		error_log("Notification::Inside send()".PHP_EOL);
+// 		// mobile notification.
+// 		if (count ( $this->userIds ) > 0) {
+// 			error_log("Notification::Inside send() user_ids>0".PHP_EOL);
+
+// 			/*
+// 			 * Fetch devices based on Device table and userIds
+// 			*/
+// 			//$qb = $this->dbAdapter->createQueryBuilder ();
+// 			//$qb->select ( 'f' );
+// 			//$qb->from ( 'Application\Entity\Device', 'f' );
+// 			//$qb->andWhere ( 'f.user_id IN (:x)' )->setParameter ( 'x', $this->userIds );
+
+// 			//$users = $qb->getQuery ()->getArrayResult ();
+// 			//error_log("Notification::Inside send() device query-->".$qb->getQuery ()->getSql().PHP_EOL);
+// 			/*
+// 			 * Send out push notifications if user array exists
+// 			 */
+// 			//if (count ( $users ) > 0) {
+// 			//	foreach ( $users as $user ) {
+// 			foreach ($this->userIds as $user) {
+// 				error_log ( 'user-id- ' . $user ['user_id'] . '  devicetype-' . $user ['device_type'] . PHP_EOL );
+// 				if ($user ['device_type'] == \Application\Entity\Device::ANROID) {
+// 					error_log("Notification::Inside send() this->gcm->addDevice---> ".$user ['device_token'].PHP_EOL);
+// 					$this->gcm->addDevice ( $user ['device_token'] );
+// 				} else if ($user ['device_type'] == \Application\Entity\Device::APPLE) {
+// 					error_log("Notification::Inside send() this->apns->addDevice---> ".$user ['device_token'].PHP_EOL);
+// 					$this->apns->addDevice ( $user ['device_token'] );
+// 				}
+// 			}
+// 			$x = '';
+// 			if ($this->gcm->getDeviceCount () > 0) {
+
+// 				$x = $this->gcm->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
+// 				error_log ( 'SENDING-ANROID' . print_r ( $x, true ) . PHP_EOL );
+// 			}
+// 			$x = '';
+// 			if ($this->apns->getDeviceCount () > 0) {
+
+// 				$x = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
+// 				error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
+// 			}
+// 			}
+// 			// to do memreas user fb twitter
+// 			// $this->webNotification ();
+// 		}
+// 		// non memras users fb twitter
+// 		$this->webNotification ();
+// 	} catch ( \Exception $exc ) {
+// 		error_log ( 'exp-notifcation class' . $exc->getMessage () );
+// 	}
+// }
 
 ?>

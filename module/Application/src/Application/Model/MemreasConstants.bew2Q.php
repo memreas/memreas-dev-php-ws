@@ -65,5 +65,5 @@ class MemreasConstants {
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
 	const ADMIN_EMAIL ='admin@memreas.com';
 	
-
+	const GCM_SERVER_KEY='AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE';
 }
