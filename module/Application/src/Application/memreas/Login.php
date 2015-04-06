@@ -135,7 +135,7 @@ error_log ( "device  not found" . PHP_EOL );
 						$xml_output .= "<message>User logged in successfully.</message>";
 						$xml_output .= "<userid>" . $user_id . "</userid>";
 						$xml_output .= "<sid>" . session_id () . "</sid>";
-						$xml_output .= "<device_token>" . $device_token . "</device_token>";
+						$xml_output .= "<device_token><![CDATA[" . $device_token . "]]></device_token>";
 					} else {
 						$xml_output .= "<status>failure</status><message>Please verify your email address then try again.</message>";
 					}

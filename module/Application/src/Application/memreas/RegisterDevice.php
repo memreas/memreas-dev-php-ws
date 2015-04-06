@@ -17,18 +17,18 @@ class RegisterDevice {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
-	public function exec($isInternalJSON=false, $internaJSON='') {
+	public function exec($isInternalJSON = false, $internaJSON = '') {
 		try {
 			error_log ( 'registerdevice.exec()' . PHP_EOL );
 			if ($isInternalJSON) {
-error_log ( 'registerdevice.exec()-> internaJSON'.$internaJSON . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> internaJSON' . $internaJSON . PHP_EOL );
 				$data = json_decode ( $internaJSON );
-error_log ( 'registerdevice.exec()-> data'.print_r($data,true) . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> data' . print_r ( $data, true ) . PHP_EOL );
 			} else {
-error_log ( 'registerdevice.exec()-> _POST [xml]'.$_POST ['xml'] . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> _POST [xml]' . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			}
-				
+			
 			$user_id = trim ( $data->registerdevice->user_id );
 			$device_id = trim ( $data->registerdevice->device_id );
 			$device_token = trim ( $data->registerdevice->device_token );
@@ -44,15 +44,16 @@ error_log ( 'registerdevice.exec()-> _POST [xml]'.$_POST ['xml'] . PHP_EOL );
 			$xml_output .= "<registerdeviceresponse>";
 			$time = time ();
 			if (! empty ( $user_id ) && ! empty ( $device_token ) && ! empty ( $device_type )) {
-				
-				$device_sql = "SELECT d FROM Application\Entity\Device d". 
-				"  where  d.user_id = '$user_id'".
-				"  and d.device_id = '$device_id'".
-				"  and d.device_type = '$device_type'";
+
+				/*
+				 * Lookup device and insert/update based on last login...
+				 */
+				$device_sql = "SELECT d FROM Application\Entity\Device d" . "  where  d.device_id = '$device_id'" . "  and d.device_type = '$device_type'";
 				$device_query = $this->dbAdapter->createQuery ( $device_sql );
 				$device_exists = $device_query->getOneOrNullResult ();
 				
-				if (!$device_exists) {
+				if (! $device_exists) {
+					error_log ( 'registerdevice.exec()->inside update' . PHP_EOL );
 					$tblDevice = new \Application\Entity\Device ();
 					$tblDevice->device_id = $device_id;
 					$tblDevice->device_token = $device_token;
@@ -62,56 +63,18 @@ error_log ( 'registerdevice.exec()-> _POST [xml]'.$_POST ['xml'] . PHP_EOL );
 					$tblDevice->update_time = $time;
 					$this->dbAdapter->persist ( $tblDevice );
 					$this->dbAdapter->flush ();
-error_log ( 'registerdevice.exec()->executed updated' . PHP_EOL );
+					error_log ( 'registerdevice.exec()->executed updated' . PHP_EOL );
 				} else {
-					//device exists so update registration id... Note: should never reach this...
+					error_log ( 'registerdevice.exec()->inside update' . PHP_EOL );
+					// device exists so update data based on last login/registration...
 					$qb = $this->dbAdapter->createQueryBuilder ();
-					$q = $qb->update ( '\Application\Entity\Device', 'd' )->set ( 'd.device_token', $qb->expr ()->literal ( $device_token ) )->set ( 'd.update_time', $qb->expr ()->literal ( $time ) )->where ( 'd.user_id = ?1 AND d.device_type = ?2' )->setParameter ( 1, $result ['user_id'] )->setParameter ( 2, $device_type )->getQuery ();
+					$q = $qb->update ( '\Application\Entity\Device', 'd' )->set ( 'd.user_id', $qb->expr ()->literal ( $user_id ) )->set ( 'd.device_token', $qb->expr ()->literal ( $device_token ) )->set ( 'd.update_time', $qb->expr ()->literal ( $time ) )->where ( 'd.device_id = ?1 AND d.device_type = ?2' )->setParameter ( 1, $device_id )->setParameter ( 2, $device_type )->getQuery ();
 					$p = $q->execute ();
-error_log ( 'registerdevice.exec()->executed updated' . PHP_EOL );
+					error_log ( 'registerdevice.exec()->executed updated' . PHP_EOL );
 				}
 				
-				
-				
-				
-// 				$qb = $this->dbAdapter->createQueryBuilder ();
-// 				$qb->select ( 'u.user_id' );
-// 				$qb->from ( 'Application\Entity\User', 'u' );
-// 				$qb->join ( 'Application\Entity\Device', 'd', 'WITH', 'u.user_id = d.user_id' );
-// 				$qb->where ( 'd.device_type = ?1 AND u.username = ?2' );
-// 				$qb->setParameter ( 1, $device_type );
-// 				$qb->setParameter ( 2, $user_id );
-// 				$result = $qb->getQuery ()->getOneOrNullResult ();
-// error_log ( 'registerdevice.exec()->qb->getQuery ()->getSql' . $qb->getQuery ()->getSql () . PHP_EOL );
-				
-// 				if ($result) {
-// error_log ( 'registerdevice.exec()->found device for user and device type' . PHP_EOL );
-// 					$qb = $this->dbAdapter->createQueryBuilder ();
-// 					$q = $qb->update ( '\Application\Entity\Device', 'd' )->set ( 'd.device_token', $qb->expr ()->literal ( $device_token ) )->set ( 'd.update_time', $qb->expr ()->literal ( $time ) )->where ( 'd.user_id = ?1 AND d.device_type = ?2' )->setParameter ( 1, $result ['user_id'] )->setParameter ( 2, $device_type )->getQuery ();
-// 					$p = $q->execute ();
-// 					error_log ( 'registerdevice.exec()->executed updated' . PHP_EOL );
-// 				} else {
-// error_log ( 'registerdevice.exec()->did not find device for user and device type' . PHP_EOL );
-// 					$sql = "SELECT u FROM Application\Entity\User u  where  u.username = '$user_id'";
-// 					$statement = $this->dbAdapter->createQuery ( $sql );
-// 					$device_exists = $statement->getOneOrNullResult ();
-					
-// 					if (! $device_exists) {
-// 						$tblDevice = new \Application\Entity\Device ();
-// 						$tblDevice->device_id = $device_id;
-// 						$tblDevice->device_token = $device_token;
-// 						$tblDevice->user_id = $result1->user_id;
-// 						$tblDevice->device_type = $device_type;
-// 						$tblDevice->create_time = $time;
-// 						$tblDevice->update_time = $time;
-// 						$this->dbAdapter->persist ( $tblDevice );
-// 						$this->dbAdapter->flush ();
-// 						error_log ( 'registerdevice.exec()->executed updated' . PHP_EOL );
-// 					}
-// 				}
-				
 				$status = 'success';
-				$message = "Device Token Saved";
+				$message = "device token saved";
 			} else {
 				$status = 'failure';
 				$message = "";

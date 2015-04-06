@@ -9,12 +9,12 @@ class gcm {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $messages;
-	protected $device_token='';
+	protected $device_tokens;
 	public function __construct($service_locator) {
 		$this->service_locator = $service_locator;
 	}
 	public function addDevice($device_token) {
-		$this->device_token [] = $device_token;
+		$this->device_tokens [] = $device_token;
 	}
 	public function getDeviceCount() {
 		return count ( $this->device_token );
@@ -23,7 +23,7 @@ class gcm {
 		$url = 'https://android.googleapis.com/gcm/send';
 		
 		$fields = array (
-				'registration_ids' => $this->device_token,
+				'registration_ids' => json_encode($this->device_tokens),
 				'data' => array (
 						"message" => $message,
 						'type' => $type,
