@@ -67,61 +67,16 @@ error_log ( "statement----->" . $statement->getSql() . PHP_EOL );
 				
 				if (! empty ( $row )) {
 					
+
+					/*
+					 * Set the session for the user data...
+					 */
 					$this->setSession ( $row [0] );
-					if (! empty ( $device_id ) && ! empty ( $device_type )) {
-						error_log ( "Inside ! empty ( device_id ) && ! empty ( device_type )" . PHP_EOL );
-						/*
-						 * Check if device is inserted and has registration id for type...
-						 * If the device exists use the regId else return empty reg id and let device obtain reg id and call register device...
-						 */
-						$q_checkdevice = "SELECT device" . " from Application\Entity\Device device" . " WHERE device.user_id=?1" . 
-						// " AND device.device_id=?2" .
-						" AND device.device_type=?2";
-						
-						error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
-						error_log ( "row [0]->user_id--->" . $row [0]->user_id . PHP_EOL );
-						error_log ( "device_id--->" . $device_id . PHP_EOL );
-						error_log ( "device_type--->" . $device_type . PHP_EOL );
-						
-						$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-						$checkdevice_query->setParameter ( 1, $row [0]->user_id );
-						// $checkdevice_query->setParameter ( 2, $device_id );
-						$checkdevice_query->setParameter ( 2, $device_type );
-						$device_found_result = $checkdevice_query->getResult ();
-						error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
-						
-						if (empty ( $device_found_result )) {
-							error_log ( "checkdevice_query empty" . PHP_EOL );
-							$device_token = '';
-						} else {
-							// error_log ( "checkdevice_query NOT empty" . PHP_EOL );
-							// $device_token = $device_found_result [0] ->device_token;
-							// error_log ( "checkdevice_query device_token----->" . $device_token . PHP_EOL );
-							$device_found = false;
-							$device_token = '';
-							foreach ( $device_found_result as $device ) {
-								$device_token = $device->device_token;
-								if ($device->device_id == $device_id) {
-									$device_found = true;
-error_log ( "found device  device_id----->" . $device_id . PHP_EOL );
-error_log ( "found device  device_token----->" . $device_token . PHP_EOL );
-									break;
-								}
-							}
-							if (! $device_found) {
-error_log ( "device  not found" . PHP_EOL );
-								$device_array = array (
-										'registerdevice' => array (
-												'user_id' => $row [0]->user_id,
-												'device_id' => $device_id,
-												'device_token' => $device_token,
-												'device_type' => $device_type 
-										) 
-								);
-								$this->registerDevice->exec ( true, json_encode($device_array) );
-							}
-						}
-					}
+					
+					/*
+					 * Check if the device is registered and update as needed
+					 */
+					$this->registerDevice->checkDevice($row [0]->user_id, $device_id, $device_type);
 					
 					/*
 					 * 30-SEP-2014 code to check if email is verified

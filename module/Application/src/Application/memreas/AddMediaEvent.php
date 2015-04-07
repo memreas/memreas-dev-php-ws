@@ -48,6 +48,11 @@ error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				} else {
 					throw new \Exception ( 'Error : device id is empty' );
 				}
+				if (isset ( $data->addmediaevent->device_type )) {
+					$device_type = addslashes ( trim ( $data->addmediaevent->device_type ) );
+				} else {
+					throw new \Exception ( 'Error : device type is empty' );
+				}
 				$event_id = isset ( $data->addmediaevent->event_id ) ? addslashes ( trim ( $data->addmediaevent->event_id ) ) : '';
 				$media_id = isset ( $data->addmediaevent->media_id ) ? addslashes ( trim ( $data->addmediaevent->media_id ) ) : '';
 				$is_profile_pic = isset ( $data->addmediaevent->is_profile_pic ) ? addslashes ( trim ( $data->addmediaevent->is_profile_pic ) ) : 0;
@@ -133,7 +138,8 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 					$json_array ['S3_files'] ['path'] = $s3file;
 					$json_array ['S3_files'] ['full'] = $s3file;
 					$json_array ['S3_files'] ['location'] = $location;
-					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
+					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_id'] = $device_id;
+					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_type'] = $device_type;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
  					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
@@ -148,7 +154,8 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 					$json_array ['S3_files'] ['full'] = $s3file;
 					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 					$json_array ['S3_files'] ['location'] = $location;
-					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
+					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_id'] = $device_id;
+					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_type'] = $device_type;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['is_video'] = $is_video;
@@ -164,7 +171,8 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 					$json_array ['S3_files'] ['full'] = $s3file;
 					$json_array ['S3_files'] ['location'] = $location;
-					$json_array ['S3_files'] ['local_filenames'] ['device'] ['unique_device_identifier1'] = $user_id . '_' . $device_id;
+					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_id'] = $device_id;
+					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_type'] = $device_type;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
 					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['is_audio'] = $is_audio;
