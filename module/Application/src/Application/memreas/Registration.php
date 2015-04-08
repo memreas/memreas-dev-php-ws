@@ -35,6 +35,7 @@ class Registration {
 	public function is_valid_email($email) {
 		$result = TRUE;
 		if (! preg_match ( '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/', $email )) {
+error_log("is_valid_email failed for $email".PHP_EOL);		
 			$result = FALSE;
 		}
 		return $result;
@@ -69,6 +70,16 @@ class Registration {
 				$invited_by = null;
 			}
 		}
+
+error_log("username--->".$username.PHP_EOL);		
+error_log("email--->".$email.PHP_EOL);		
+error_log("password--->".$password.PHP_EOL);		
+error_log("device_id--->".$device_id.PHP_EOL);		
+error_log("device_type--->".$device_type.PHP_EOL);		
+error_log("invited_by--->".$invited_by.PHP_EOL);		
+error_log("event_id--->".$event_id.PHP_EOL);		
+		
+		
 		
 		// $this->FunctionName($invited_by);exit;
 		try {
@@ -77,8 +88,8 @@ class Registration {
 				
 				if (! $checkvalidemail) {
 					// throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
-					$status = 'Failure';
-					$message = 'Your profile is not created successfully. Please enter valid email address.';
+					$status = 'failure';
+					$message = 'email address is invalid';
 				} else {
 					
 					/*
@@ -330,22 +341,30 @@ class Registration {
 			} else {
 				throw new \Exception ( 'Your profile is not created successfully. Please check all data you have inserted are proper.' );
 			}
+			header ( "Content-type: text/xml" );
+			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+			$xml_output .= "<xml>";
+			$xml_output .= "<registrationresponse>";
+			$xml_output .= "<status>$status</status>";
+			$xml_output .= "<message>$message</message>";
+			$xml_output .= "<userid>" . $user_id . "</userid>";
+			$xml_output .= "<email_verification_url><![CDATA[" . $meta_arr ['user'] ['email_verification_url'] . "]]></email_verification_url>";
+			$xml_output .= "</registrationresponse>";
+			$xml_output .= "</xml>";
 		} catch ( \Exception $exc ) {
-			$status = 'Failure';
+			$status = 'failure';
 			$message = $exc->getMessage ();
 			error_log ( "error message ----> $message" . PHP_EOL );
+			header ( "Content-type: text/xml" );
+			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+			$xml_output .= "<xml>";
+			$xml_output .= "<registrationresponse>";
+			$xml_output .= "<status>$status</status>";
+			$xml_output .= "<message>$message</message>";
+			$xml_output .= "</registrationresponse>";
+			$xml_output .= "</xml>";
 		}
 		
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<registrationresponse>";
-		$xml_output .= "<status>$status</status>";
-		$xml_output .= "<message>$message</message>";
-		$xml_output .= "<userid>" . $user_id . "</userid>";
-		$xml_output .= "<email_verification_url><![CDATA[" . $meta_arr ['user'] ['email_verification_url'] . "]]></email_verification_url>";
-		$xml_output .= "</registrationresponse>";
-		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
 		// error_log("registration xml_output -------> *****" . $xml_output . "*****" . PHP_EOL);
@@ -355,15 +374,13 @@ class Registration {
 		$filename = $s3_data ['s3path'] . $s3_data ['s3file_name'];
 		$this->profile_photo = ! empty ( $filename ) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
 		// return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
-		// Sample thumbnail for future reference
-		// "394d281a-10dc-4c49-be6a-124301b98810/media/thumbnails/98x78/IMG_0095.JPG"
-	}
+	} //end exec() 
+	
 	function createUserCache() {
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
-		// 6-NOV-2014 JM: Not all users will have profile pic...
-		// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 		
 		// create index for catch;
