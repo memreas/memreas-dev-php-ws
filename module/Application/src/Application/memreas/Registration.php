@@ -377,11 +377,14 @@ error_log("event_id--->".$event_id.PHP_EOL);
 	} //end exec() 
 	
 	function createUserCache() {
+error_log("Inside function createUserCache()".PHP_EOL); 
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+//error_log("qb --->".$qb.PHP_EOL);
+error_log("SQL Query --->".$qb->getQuery()->getSql().PHP_EOL);		
 		
 		// create index for catch;
 		$userIndexArr = $qb->getQuery ()->getResult ();
@@ -390,6 +393,7 @@ error_log("event_id--->".$event_id.PHP_EOL);
 		// $userIndexSql->setMaxResults(30);
 		// $userIndexArr = $qb->getResult();
 		foreach ( $userIndexArr as $row ) {
+error_log("Inside for loop --->".$row['username'].PHP_EOL);
 			$json_array = json_decode ( $row ['metadata'], true );
 			
 			if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {

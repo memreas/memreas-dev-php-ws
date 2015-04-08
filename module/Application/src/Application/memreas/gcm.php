@@ -17,13 +17,13 @@ class gcm {
 		$this->device_tokens [] = $device_token;
 	}
 	public function getDeviceCount() {
-		return count ( $this->device_token );
+		return count ( $this->device_tokens );
 	}
 	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '') { // Message to be sent
 		$url = 'https://android.googleapis.com/gcm/send';
 		
 		$fields = array (
-				'registration_ids' => json_encode($this->device_tokens),
+				'registration_ids' => $this->device_tokens,
 				'data' => array (
 						"message" => $message,
 						'type' => $type,
@@ -31,9 +31,9 @@ class gcm {
 						'media_id' => $media_id 
 				) 
 		);
-		
+error_log("gcm fields ---> ".json_encode($fields).PHP_EOL);		
 		$headers = array (
-				// memreas test key
+				// memreas key
 				'Authorization: key='.MemreasConstants::GCM_SERVER_KEY,				
 				'Content-Type: application/json' 
 		);
@@ -55,6 +55,7 @@ class gcm {
 		
 		// Close connection
 		curl_close ( $ch );
+error_log("result ---> ".$result.PHP_EOL);
 		
 		return $result;
 	}

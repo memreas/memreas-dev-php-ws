@@ -76,7 +76,7 @@ error_log ( "statement----->" . $statement->getSql() . PHP_EOL );
 					/*
 					 * Check if the device is registered and update as needed
 					 */
-					$this->registerDevice->checkDevice($row [0]->user_id, $device_id, $device_type);
+					$device_token = $this->registerDevice->checkDevice($row [0]->user_id, $device_id, $device_type);
 					
 					/*
 					 * 30-SEP-2014 code to check if email is verified

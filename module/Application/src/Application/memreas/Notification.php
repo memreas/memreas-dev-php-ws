@@ -84,23 +84,23 @@ error_log ( "Notification::Inside send() count ( this->userIds ) " . count ( $th
 				$devices = $qb->getQuery ()->getArrayResult ();
 				
 				foreach ( $devices as $device ) {
-					error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
-					if ($device ['device_type'] == \Application\Entity\Device::ANROID) {
+	error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
+					if ($device ['device_type'] == \Application\Entity\Device::ANDROID) {
 error_log ( "Notification::Inside send()->adding to Android list" . PHP_EOL );
-						$this->gcm->addDevice ( $user ['device_token'] );
+						$this->gcm->addDevice (  $device ['device_token'] );
 					} else if ($user ['device_type'] == \Application\Entity\Device::APPLE) {
 error_log ( "Notification::Inside send()->adding to Apple list" . PHP_EOL );
-						$this->apns->addDevice ( $user ['device_token'] );
+						$this->apns->addDevice (  $device ['device_token'] );
 					}
 					$x = '';
 					if ($this->gcm->getDeviceCount () > 0) {
 						$x = $this->gcm->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-ANROID' . print_r ( $x, true ) . PHP_EOL );
+error_log ( 'SENDING-ANROID' . print_r ( $x, true ) . PHP_EOL );
 					}
 					$x = '';
 					if ($this->apns->getDeviceCount () > 0) {
 						$x = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
+error_log ( 'SENDING-Apple' . print_r ( $x, true ) . PHP_EOL );
 					}
 				}
 			}

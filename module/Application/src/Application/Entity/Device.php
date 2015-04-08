@@ -11,8 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="device")
  */
 class Device {
-	const ANROID = '2';
-	const APPLE = '1';
+	const ANDROID = 'ANDROID';
+	const APPLE = 'APPLE';
 	
 	/**
 	 *

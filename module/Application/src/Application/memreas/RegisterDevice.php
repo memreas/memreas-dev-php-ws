@@ -68,9 +68,10 @@ class RegisterDevice {
 								'device_type' => $device_type 
 						) 
 				);
-				$this->registerDevice->exec ( true, json_encode ( $device_array ) );
+				$this->exec ( true, json_encode ( $device_array ) );
 			}
 		}
+		return $device_token;
 	}
 	// end checkDevice
 	public function exec($isInternalJSON = false, $internaJSON = '') {
