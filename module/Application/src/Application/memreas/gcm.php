@@ -19,7 +19,7 @@ class gcm {
 	public function getDeviceCount() {
 		return count ( $this->device_tokens );
 	}
-	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '') { // Message to be sent
+	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '', $user_id = '') { // Message to be sent
 		$url = 'https://android.googleapis.com/gcm/send';
 		
 		$fields = array (
@@ -28,7 +28,8 @@ class gcm {
 						"message" => $message,
 						'type' => $type,
 						'event_id' => $event_id,
-						'media_id' => $media_id 
+						'media_id' => $media_id ,
+						'user_id' => $user_id						
 				) 
 		);
 error_log("gcm fields ---> ".json_encode($fields).PHP_EOL);		

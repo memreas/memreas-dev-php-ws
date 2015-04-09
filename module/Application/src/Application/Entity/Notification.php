@@ -18,7 +18,8 @@ class Notification {
 	const ADD_EVENT = '5';
 	const ADD_FRIEND_RESPONSE = '6';
 	const ADD_FRIEND_TO_EVENT_RESPONSE = '7';
-
+	const ADMIN_ERROR = '8';
+	
 	const EMAIL = '0';
 	const MEMREAS = '1';
 	const NONMEMREAS = '2';

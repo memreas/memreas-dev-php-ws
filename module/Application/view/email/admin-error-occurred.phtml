@@ -97,14 +97,17 @@ body {
 				width="288" height="72" />
 		</div>
 		<div class="content">
-			<!-- <h2><?php echo $subject?>,</h2> -->
+			<h2>To Admin,</h2>
 
 			<p>
-You've been invited by <?php echo $username?> to <a
-					href="<?php echo MemreasConstants::WEB_URL?>index?event_id=<?php echo $event_id.'&event_name='.$event_name?>">!<?php echo $event_name?></a>
+			An error has occurred in file:  <?=$class?><br>see below for details:
 			</p>
 			<p>
-				Best Regards,<br /> <img
+			<?=$message?>
+			</p>
+
+			<p>
+				Go forth and code!<br /> <img
 					src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
 					width="103" height="20" />
 			</p>

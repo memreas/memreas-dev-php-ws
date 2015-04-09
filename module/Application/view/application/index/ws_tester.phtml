@@ -9,8 +9,7 @@ echo "user_id ----> " . $user_id;
 <head>
 <meta charset="utf-8">
 <title>memreas</title>
-<link rel="stylesheet"
-	href="/memreas/css/jquery-ui.css" />
+<link rel="stylesheet" href="/memreas/css/jquery-ui.css" />
 
 <!--jQuery Lybrary-->
 <script src="/memreas/js/jquery.js"></script>
@@ -23,77 +22,529 @@ echo "user_id ----> " . $user_id;
 <!-- Fetch the user_id -->
 <script type="text/javascript">
             var base_url = $("#index_action").attr("action");
-            var login = '<xml><login><username>kamlesh1</username><password>123456</password><device_type>ANDROID</device_type><device_id>android_unique_hex_id</device_id></login></xml>';
-            var registration = '<xml><registration><email>jmeah15@yahoo.com</email><username>jmeah15</username><password>a123456</password><device_id>apple_unique_udid</device_id><device_type>APPLE</device_type><invited_by></invited_by></registration></xml>';
-            var xml = "";
-            //var addmediaevent = '<xml><addcomment><event_id>jmeah1</event_id><media_id>jmeah1</media_id><comments>jmeah1</comments><user_id>jmeah1</user_id><audio_media_id>jmeah1</audio_media_id></addcomment></xml>';	
-            //var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><limit>2</limit><page>1</page> </listallmedia></xml>';	
-            var addcomments = '<xml> <addcomment><event_id>1</event_id><media_id>1</media_id><user_id></user_id><comments>comments</comments><audio_media_id>audio_id</audio_media_id ></addcomment></xml>';	
-            var addevent ='<xml><addevent><user_id>1</user_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend> <is_friend_can_post_media>no</is_friend_can_post_media><event_self_destruct>02/03/2013</event_self_destruct><is_public>1</is_public></addevent></xml>';	
-            var addexistmediatoevent = '<xml><addexistmediatoevent><event_id>1</event_id><media_ids><media_id>1</media_id><media_id>2</media_id></media_ids></addexistmediatoevent></xml>';	
-            var addfriendtoevent ='<xml><addfriendtoevent><user_id>1</user_id><event_id>0</event_id><emails><emai></email></emails><friends><friend><network_name>facebook</network_name><friend_name>nihar</friend_name><friend_id>fbid</friend_id> <profile_pic_url><![CDATA[url]]> </profile_pic_url></friend><friend><network_name>twitter</network_name><friend_name>kamlesh pawar</friend_name><friend_id>twitterid</friend_id> <profile_pic_url><![CDATA[url]]> </profile_pic_url></friend><friend><network_name>memreas</network_name><friend_name>nihar</friend_name><friend_id></friend_id><profile_pic_url><![CDATA[url]]></profile_pic_url></friend></friends></addfriendtoevent></xml>';	
-            var addfriendtogroup = '<xml><addfriendtogroup><group_id>1</group_id><network>facebook</network><friends><friend><friend_name>friend name</friend_name><profile_pic_url>picture url</profile_pic_url></friend><friend><friend_name>friend name2</friend_name><profile_pic_url>picture url2</profile_pic_url></friend></friends></addfriendtogroup></xml>';	
-            var addmediaevent = '<xml><addmediaevent><s3url>0.jpg</s3url><is_server_image>0</is_server_image><content_type>image/png</content_type><s3file_name>0.jpg</s3file_name><device_id>354614666375243</device_id><event_id></event_id><media_id></media_id><user_id>4b2c6d4c-42a7-11e3-85d4-22000a8a1935</user_id><is_profile_pic>0</is_profile_pic><location>{"latitude": "my_latitude","longitude": "my_longitude"}</location></addmediaevent></xml>';	
-            var addNotification = '<xml><addNotification><user_id>1	</user_id><event_id>2</event_id></addNotification></xml>';
-            var changepassword = '<xml><changepassword><username></username><password></password><new>1	</new><retype>2</retype><token>2</token></changepassword></xml>';
-            var checkexistmedia = '<xml><checkexistmedia><user_id>1</user_id><filename>file name</filename></checkexistmedia></xml>';	
-            var chkuname = '<xml><checkusername><username>nihar</username></checkusername></xml>';	
-            var clearallnotification = '<xml><clearallnotification><user_id>1</user_id></clearallnotification></xml>';	
-            var countlistallmedia = '<xml> <countlistallmedia><limit>15</limit><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id></countlistallmedia></xml>';	
-            var countviewevent = '<xml><countviewevent><user_id>1</user_id><is_my_event>1</is_my_event> <is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><limit>2</limit></countviewevent></xml>';	
-            var creategroup = '<xml><creategroup><group_name>nihar</group_name><user_id>1</user_id><friends><friend> <friend_name>abc</friend_name><network_name>facebook</network_name><profile_pic_url></profile_pic_url></friend></friends></creategroup></xml>';	
-            var deletephoto = '<xml><deletephoto><mediaid>5</mediaid></deletephoto></xml>';	
-            var download='<xml><download> <user_id>631da088-f43c-11e2-8fd6-12313909a953</user_id><media_id>0198ae20-033c-11e3-95ba-12313909e68b</media_id><device_id>123456</device_id></download></xml>';	
-            var editevent ='<xml><editevent><user_id>1</user_id><event_id>1</event_id><event_name>Event 1</event_name><event_date>22/02/2013</event_date><event_location>Ahmedabad</event_location><event_from>22/02/2013</event_from><event_to>28/02/2013</event_to><is_friend_can_add_friend>yes</is_friend_can_add_friend><is_friend_can_post_media>no</is_friend_can_post_media> <event_self_destruct>02/03/2013</event_self_destruct></editevent></xml>';	
-            var feedback = '<xml><feedback><user_id>1</user_id><name>kamlesh</name><email></email><message></message></feedback></xml>';	
-            var findtag = '<xml><findtag> <tag></tag><user_id></user_id></findtag></xml>';	
-            var forgotpassword = '<xml><forgotpassword><email>hussain.arif@sufalamtech.com</email></forgotpassword></xml>';	
-            var geteventcount = '<xml><geteventcount><event_id>1</event_id></geteventcount></xml>';	
-            var geteventdetails = '<xml><geteventdetails><event_id>1</event_id></geteventdetails></xml>';	
-            var geteventlocation = '<xml><geteventlocation><event_id>1</event_id></geteventlocation></xml>';	
-            var geteventpeople = '<xml><geteventpeople><event_id>1</event_id></geteventpeople></xml>';	
-            var getgroupfriends = '<xml><getgroupfriends><group_id>1</group_id><network>facebook</network></getgroupfriends></xml>';	
-            var getmedialike = '<xml><getmedialike><media_id>1</media_id></getmedialike></xml>';	
-            var getsession = '<xml><getsession><sid>1</sid></getsession></xml>';	
-            var getsocialcredentials = '<xml><getsocialcredentials><network>facebook</network></getsocialcredentials></xml>';	
-            var getuserdetails = '<xml><getuserdetails><user_id>1</user_id></getuserdetails></xml>';	
-            var getusergroups = '<xml><getusergroups><user_id>1</user_id></getusergroups></xml>';	
-            var likemedia = '<xml><likemedia><event_id>1</event_id> <media_id>1</media_id><user_id>1</user_id><is_like>1</is_like> </likemedia></xml>';	
-            var listallmedia = '<xml><listallmedia><event_id>1</event_id><user_id>1</user_id><device_id>123456</device_id><metadata>true</metadata><limit>2</limit><page>1</page> </listallmedia></xml>';	
-            var listcomments = '<xml><listcomments><event_id>1</event_id><media_id></media_id><limit>10</limit><page>1</page> </listcomments></xml>';	
-            var listgroup = '<xml><listgroup><user_id>1</user_id></listgroup></xml>';	
-            var listmemreasfriends = '<xml><listmemreasfriends><user_id>1</user_id></listmemreasfriends></xml>';	
-            var listnotification = '<xml><listnotification><user_id>a59184c0-755b-11e3-85d4-22000a8a1935</user_id></listnotification></xml>';	
-            var listphotos = '<xml><listphotos><userid>2</userid><deviceid>43</deviceid></listphotos></xml>';	
-            var logout = '<xml><logout><user_id>1</user_id></logout></xml>';	
-            var mediainappropriate = '<xml><mediainappropriate><media_id>1</media_id><is_appropriate>0</is_appropriate></mediainappropriate></xml>';	
-            var memreas_tvm= '<xml><memreas_tvm></memreas_tvm></xml>';	
-            var registerdevice = '<xml><registerdevice><username>sanjaydfdf</username><devicetype>1</devicetype><devicetoken>ttttsanjay</devicetoken></registerdevice></xml>';	
-            var removeeventfriend = '<xml><removeeventfriend><event_id>1</event_id><friend_ids><friend_id>1</friend_id></friend_ids></removeeventfriend></xml>';	
-            var removeeventmedia = '<xml><removeeventmedia><event_id>1</event_id><media_ids><media_id>1</media_id></media_ids></removeeventmedia></xml>';	
-            var removefriendgroup = '<xml><removefriendgroup><group_id>1</group_id><friends><friend><friend_id>1</friend_id></friend><friend><friend_id>2</friend_id></friend></friends></removefriendgroup></xml>';	
-            var removefriends = '<xml><removefriends><user_id>1</user_id><friend_ids><friend_id>1</friend_id></friend_ids></removefriends></xml>';	
-            var saveuserdetails = '<xml><saveuserdetails><user_id>1</user_id><email>email</email><password>123456</password><gender>male or female</gender><dob>12/09/1999</dob><profile_picture>https://d3sisat5gdssl6.cloudfront.net/314a89b7-67eb-4111-9539-7ede5cd60465/image/abc.bmp</profile_picture></saveuserdetails></xml>';
-            var signedurl = '<xml><signedurl><path>http://d1ckv7o9k6o3x9.cloudfront.net/0.jpg</path></signedurl></xml>';	
-            var updatemedia = '<xml><updatemedia><media><media_id>1</media_id><location><address>125 Water Street New York, NY USA</address><latitude>55</latitude><longitude>-33</longitude></location></media></updatemedia></xml>';	
-            var updatenotification = '<xml><updatenotification><notification><notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id><status>2</status><message> optinal </message></notification><notification><notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id><status>2</status></notification><notification><notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id><status>2</status></notification></updatenotification></xml>';	
-            var viewallfriends = '<xml><viewallfriends><user_id>2</user_id></viewallfriends></xml>';	
-            var viewevents ='<xml><viewevent><user_id>1</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>2</page><limit>2</limit></viewevent></xml>';	
-            var viewmediadetails= '<xml><viewmediadetails><event_id></event_id><media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id></viewmediadetails></xml>';	
-            var getfriends = '<xml><getfriends><user_id>1</user_id></getfriends></xml>';
-            var getplans = '<xml><getplans><user_id>1</user_id></getplans></xml>';
-            var getorderhistory = '<xml><getorderhistory><user_id>1</user_id><search_username></search_username><page>1</page><limit>10</limit></getorderhistory></xml>';
-            var getorder = '<xml><getorder><transaction_id>1</transaction_id></getorder></xml>';
-            var removegroup = '<xml><removegroup><group_id>1</group_id></removegroup></xml>';
-            var checkevent = '<xml><checkevent><event_id>1</event_id></checkevent></xml>';
-            var getplansstatic = '<xml><getplansstatic><static>0</static></getplansstatic></xml>';
-            var updatepassword = '<xml><updatepassword><user_id>0</user_id><old>old password</old><new>new password</new><retype>Retype new password</retype></updatepassword></xml>';
-            var getaccountdetail = '<xml><getaccountdetail><user_id>0</user_id></getaccountdetail></xml>';
-             var getdiskusage = '<xml><getdiskusage><user_id>1</user_id></getdiskusage></xml>';
-            var refund = '<xml><refund><user_id>0</user_id><amount>5</amount><reason>Refund balance</reason></refund></xml>';
-            var listpayees = '<xml><listpayees><username></username><page>1</page><limit>10</limit></listpayees></xml>';
-            var makepayout = '<xml><makepayout><account_id>1</account_id><amount>10</amount><description>description of payout</description></makepayout></xml>';
-
+            var login = '<xml>'+
+					            '<login>'+
+					            '<username>kamlesh1</username>'+
+					            '<password>123456</password>'+
+					            '<device_type>ANDROID</device_type>'+
+					            '<device_id>android_unique_hex_id</device_id>'+
+					            '</login>'+
+					            '</xml>';
+            var registration = '<xml>'+
+					            '<registration>'+
+					            '<email>jmeah15@yahoo.com</email>'+
+					            '<username>jmeah15</username>'+
+					            '<password>a123456</password>'+
+					            '<device_id>apple_unique_udid</device_id>'+
+					            '<device_type>APPLE</device_type>'+
+					            '<invited_by></invited_by>'+
+					            '</registration>'+
+					            '</xml>';
+            var addcomments = '<xml> <addcomment>'+
+					            '<event_id>1</event_id>'+
+					            '<media_id>1</media_id>'+
+					            '<user_id></user_id>'+
+					            '<comments>comments</comments>'+
+					            '<audio_media_id>audio_id</audio_media_id >'+
+					            '</addcomment>'+
+					            '</xml>';	
+            var addevent ='<xml>'+
+					            '<addevent>'+
+					            '<user_id>1</user_id>'+
+					            '<event_name>Event 1</event_name>'+
+					            '<event_date>22/02/2013</event_date>'+
+					            '<event_location>Ahmedabad</event_location>'+
+					            '<event_from>22/02/2013</event_from>'+
+					            '<event_to>28/02/2013</event_to>'+
+					            '<is_friend_can_add_friend>yes</is_friend_can_add_friend>'+
+					            '<is_friend_can_post_media>no</is_friend_can_post_media>'+
+					            '<event_self_destruct>02/03/2013</event_self_destruct>'+
+					            '<is_public>1</is_public>'+
+					            '</addevent>'+
+					            '</xml>';	
+            var addexistmediatoevent = '<xml>'+
+					            '<addexistmediatoevent>'+
+					            '<event_id>1</event_id>'+
+					            '<media_ids>'+
+					            '<media_id>1</media_id>'+
+					            '<media_id>2</media_id>'+
+					            '</media_ids>'+
+					            '</addexistmediatoevent>'+
+					            '</xml>';	
+            var addfriendtoevent ='<xml>'+
+					            '<addfriendtoevent>'+
+					            '<user_id>1</user_id>'+
+					            '<event_id>0</event_id>'+
+					            '<emails>'+
+					            '<email></email>'+
+					            '</emails>'+
+					            '<friends>'+
+					            '<friend>'+
+					            '<network_name>facebook</network_name>'+
+					            '<friend_name>nihar</friend_name>'+
+					            '<friend_id>fbid</friend_id>'+
+					            '<profile_pic_url><![CDATA[url]]> </profile_pic_url>'+
+					            '</friend>'+
+					            '<friend>'+
+					            '<network_name>twitter</network_name>'+
+					            '<friend_name>kamlesh pawar</friend_name>'+
+					            '<friend_id>twitterid</friend_id>'+
+					            '<profile_pic_url><![CDATA[url]]> </profile_pic_url>'+
+					            '</friend>'+
+					            '<friend>'+
+					            '<network_name>memreas</network_name>'+
+					            '<friend_name>nihar</friend_name>'+
+					            '<friend_id></friend_id>'+
+					            '<profile_pic_url><![CDATA[url]]></profile_pic_url>'+
+					            '</friend>'+
+					            '</friends>'+
+					            '</addfriendtoevent>'+
+					            '</xml>';	
+            var addfriendtogroup = '<xml>'+
+					            '<addfriendtogroup>'+
+					            '<group_id>1</group_id>'+
+					            '<network>facebook</network>'+
+					            '<friends>'+
+					            '<friend>'+
+					            '<friend_name>friend name</friend_name>'+
+					            '<profile_pic_url>picture url</profile_pic_url>'+
+					            '</friend>'+
+					            '<friend>'+
+					            '<friend_name>friend name2</friend_name>'+
+					            '<profile_pic_url>picture url2</profile_pic_url>'+
+					            '</friend>'+
+					            '</friends>'+
+					            '</addfriendtogroup>'+
+					            '</xml>';	
+            var addmediaevent = '<xml>'+
+					            '<addmediaevent>'+
+					            '<s3url>0.jpg</s3url>'+
+					            '<is_server_image>0</is_server_image>'+
+					            '<content_type>image/png</content_type>'+
+					            '<s3file_name>0.jpg</s3file_name>'+
+					            '<device_id>354614666375243</device_id>'+
+					            '<event_id></event_id>'+
+					            '<media_id></media_id>'+
+					            '<user_id>4b2c6d4c-42a7-11e3-85d4-22000a8a1935</user_id>'+
+					            '<is_profile_pic>0</is_profile_pic>'+
+					            '<location>{"latitude": "my_latitude","longitude": "my_longitude"}</location>'+
+					            '</addmediaevent>'+
+					            '</xml>';	
+            var addNotification = '<xml>'+
+					            '<addNotification>'+
+					            '<user_id>1</user_id>'+
+					            '<event_id>2</event_id>'+
+					            '</addNotification>'+
+					            '</xml>';
+            var changepassword = '<xml>'+
+					            '<changepassword>'+
+					            '<username></username>'+
+					            '<password></password>'+
+					            '<new>1	</new>'+
+					            '<retype>2</retype>'+
+					            '<token>2</token>'+
+					            '</changepassword>'+
+					            '</xml>';
+            var checkexistmedia = '<xml>'+
+					            '<checkexistmedia>'+
+					            '<user_id>1</user_id>'+
+					            '<filename>file name</filename>'+
+					            '</checkexistmedia>'+
+					            '</xml>';	
+            var chkuname = '<xml>'+
+					            '<checkusername>'+
+					            '<username>nihar</username>'+
+					            '</checkusername>'+
+					            '</xml>';	
+            var clearallnotification = '<xml>'+
+					            '<clearallnotification>'+
+					            '<user_id>1</user_id>'+
+					            '</clearallnotification>'+
+					            '</xml>';	
+            var countlistallmedia = '<xml> <countlistallmedia>'+
+					            '<limit>15</limit>'+
+					            '<event_id>1</event_id>'+
+					            '<user_id>1</user_id>'+
+					            '<device_id>123456</device_id>'+
+					            '</countlistallmedia>'+
+					            '</xml>';	
+            var countviewevent = '<xml>'+
+					            '<countviewevent>'+
+					            '<user_id>1</user_id>'+
+					            '<is_my_event>1</is_my_event>'+
+					            '<is_friend_event>0</is_friend_event>'+
+					            '<is_public_event>0</is_public_event>'+
+					            '<limit>2</limit>'+
+					            '</countviewevent>'+
+					            '</xml>';	
+            var creategroup = '<xml>'+
+					            '<creategroup>'+
+					            '<group_name>nihar</group_name>'+
+					            '<user_id>1</user_id>'+
+					            '<friends>'+
+					            '<friend>'+
+					            '<friend_name>abc</friend_name>'+
+					            '<network_name>facebook</network_name>'+
+					            '<profile_pic_url></profile_pic_url>'+
+					            '</friend>'+
+					            '</friends>'+
+					            '</creategroup>'+
+					            '</xml>';	
+            var deletephoto = '<xml>'+
+					            '<deletephoto>'+
+					            '<mediaid>5</mediaid>'+
+					            '</deletephoto>'+
+					            '</xml>';	
+            var download='<xml>'+
+					            '<download>'+
+					            '<user_id>631da088-f43c-11e2-8fd6-12313909a953</user_id>'+
+					            '<media_id>0198ae20-033c-11e3-95ba-12313909e68b</media_id>'+
+					            '<device_id>123456</device_id>'+
+					            '</download>'+
+					            '</xml>';	
+            var editevent ='<xml>'+
+					            '<editevent>'+
+					            '<user_id>1</user_id>'+
+					            '<event_id>1</event_id>'+
+					            '<event_name>Event 1</event_name>'+
+					            '<event_date>22/02/2013</event_date>'+
+					            '<event_location>Ahmedabad</event_location>'+
+					            '<event_from>22/02/2013</event_from>'+
+					            '<event_to>28/02/2013</event_to>'+
+					            '<is_friend_can_add_friend>yes</is_friend_can_add_friend>'+
+					            '<is_friend_can_post_media>no</is_friend_can_post_media>'+
+					            '<event_self_destruct>02/03/2013</event_self_destruct>'+
+					            '</editevent>'+
+					            '</xml>';	
+            var feedback = '<xml>'+
+					            '<feedback>'+
+					            '<user_id>1</user_id>'+
+					            '<name>kamlesh</name>'+
+					            '<email></email>'+
+					            '<message></message>'+
+					            '</feedback>'+
+					            '</xml>';	
+            var findtag = '<xml>'+
+					            '<findtag>'+
+					            '<tag></tag>'+
+					            '<user_id></user_id>'+
+					            '</findtag>'+
+					            '</xml>';	
+            var forgotpassword = '<xml>'+
+					            '<forgotpassword>'+
+					            '<email>hussain.arif@sufalamtech.com</email>'+
+					            '</forgotpassword>'+
+					            '</xml>';	
+            var geteventcount = '<xml>'+
+					            '<geteventcount>'+
+					            '<event_id>1</event_id>'+
+					            '</geteventcount>'+
+					            '</xml>';	
+            var geteventdetails = '<xml>'+
+					            '<geteventdetails>'+
+					            '<event_id>1</event_id>'+
+					            '</geteventdetails>'+
+					            '</xml>';	
+            var geteventlocation = '<xml>'+
+					            '<geteventlocation>'+
+					            '<event_id>1</event_id>'+
+					            '</geteventlocation>'+
+					            '</xml>';	
+            var geteventpeople = '<xml>'+
+					            '<geteventpeople>'+
+					            '<event_id>1</event_id>'+
+					            '</geteventpeople>'+
+					            '</xml>';	
+            var getgroupfriends = '<xml>'+
+					            '<getgroupfriends>'+
+					            '<group_id>1</group_id>'+
+					            '<network>facebook</network>'+
+					            '</getgroupfriends>'+
+					            '</xml>';	
+            var getmedialike = '<xml>'+
+					            '<getmedialike>'+
+					            '<media_id>1</media_id>'+
+					            '</getmedialike>'+
+					            '</xml>';	
+            var getsession = '<xml>'+
+					            '<getsession>'+
+					            '<sid>1</sid>'+
+					            '</getsession>'+
+					            '</xml>';	
+            var getsocialcredentials = '<xml>'+
+					            '<getsocialcredentials>'+
+					            '<network>facebook</network>'+
+					            '</getsocialcredentials>'+
+					            '</xml>';	
+            var getuserdetails = '<xml>'+
+					            '<getuserdetails>'+
+					            '<user_id>1</user_id>'+
+					            '</getuserdetails>'+
+					            '</xml>';	
+            var getusergroups = '<xml>'+
+					            '<getusergroups>'+
+					            '<user_id>1</user_id>'+
+					            '</getusergroups>'+
+					            '</xml>';	
+            var likemedia = '<xml>'+
+					            '<likemedia>'+
+					            '<event_id>1</event_id>'+
+					            '<media_id>1</media_id>'+
+					            '<user_id>1</user_id>'+
+					            '<is_like>1</is_like>'+
+					            '</likemedia>'+
+					            '</xml>';	
+            var listallmedia = '<xml>'+
+					            '<listallmedia>'+
+					            '<event_id>1</event_id>'+
+					            '<user_id>1</user_id>'+
+					            '<device_id>123456</device_id>'+
+					            '<metadata>true</metadata>'+
+					            '<limit>2</limit>'+
+					            '<page>1</page>'+
+					            '</listallmedia>'+
+					            '</xml>';	
+            var listcomments = '<xml>'+
+					            '<listcomments>'+
+					            '<event_id>1</event_id>'+
+					            '<media_id></media_id>'+
+					            '<limit>10</limit>'+
+					            '<page>1</page>'+
+					            '</listcomments>'+
+					            '</xml>';	
+            var listgroup = '<xml>'+
+					            '<listgroup>'+
+					            '<user_id>1</user_id>'+
+					            '</listgroup>'+
+					            '</xml>';	
+            var listmemreasfriends = '<xml>'+
+					            '<listmemreasfriends>'+
+					            '<user_id>1</user_id>'+
+					            '</listmemreasfriends>'+
+					            '</xml>';	
+            var listnotification = '<xml>'+
+					            '<listnotification>'+
+					            '<user_id>a59184c0-755b-11e3-85d4-22000a8a1935</user_id>'+
+					            '</listnotification>'+
+					            '</xml>';	
+            var listphotos = '<xml>'+
+					            '<listphotos>'+
+					            '<userid>2</userid>'+
+					            '<deviceid>43</deviceid>'+
+					            '</listphotos>'+
+					            '</xml>';	
+            var logout = '<xml>'+
+					            '<logout>'+
+					            '<user_id>1</user_id>'+
+					            '</logout>'+
+					            '</xml>';	
+            var mediainappropriate = '<xml>'+
+					            '<mediainappropriate>'+
+					            '<media_id>1</media_id>'+
+					            '<is_appropriate>0</is_appropriate>'+
+					            '</mediainappropriate>'+
+					            '</xml>';	
+            var memreas_tvm= '<xml>'+
+					            '<memreas_tvm>'+
+					            '</memreas_tvm>'+
+					            '</xml>';	
+            var registerdevice = '<xml>'+
+					            '<registerdevice>'+
+					            '<username>sanjaydfdf</username>'+
+					            '<devicetype>1</devicetype>'+
+					            '<devicetoken>ttttsanjay</devicetoken>'+
+					            '</registerdevice>'+
+					            '</xml>';	
+            var registercanonicaldevice = '<xml>'+
+					            '<registercanonicaldevice>'+
+					            '<device_id>e1a2d1e41c7395c</device_id>' +
+					            '<device_type>ANDROID|APPLE</device_type>'+
+					            '<canonical_device_token>APA91bFh0lmN41MaiT6xi7FPtIEbpzBbNY_f9iurCNVD3uSYYNLRSZvp_42bE1aZxDbct6tp0fwB1IgfuJgHwr8XqPDJd6FEyLs2Kr3vQekB74D4XSDHZH7Er3l_DONXiN2VLMG4l-kcMHRd-xlUCKz7jn-u8w8QXg</canonical_device_token>'+
+					            '</registercanonicaldevice>'+
+					            '</xml>';	
+            var removeeventfriend = '<xml>'+
+					            '<removeeventfriend>'+
+					            '<event_id>1</event_id>'+
+					            '<friend_ids>'+
+					            '<friend_id>1</friend_id>'+
+					            '</friend_ids>'+
+					            '</removeeventfriend>'+
+					            '</xml>';	
+            var removeeventmedia = '<xml>'+
+					            '<removeeventmedia>'+
+					            '<event_id>1</event_id>'+
+					            '<media_ids>'+
+					            '<media_id>1</media_id>'+
+					            '</media_ids>'+
+					            '</removeeventmedia>'+
+					            '</xml>';	
+            var removefriendgroup = '<xml>'+
+					            '<removefriendgroup>'+
+					            '<group_id>1</group_id>'+
+					            '<friends>'+
+					            '<friend>'+
+					            '<friend_id>1</friend_id>'+
+					            '</friend>'+
+					            '<friend>'+
+					            '<friend_id>2</friend_id>'+
+					            '</friend>'+
+					            '</friends>'+
+					            '</removefriendgroup>'+
+					            '</xml>';	
+            var removefriends = '<xml>'+
+					            '<removefriends>'+
+					            '<user_id>1</user_id>'+
+					            '<friend_ids>'+
+					            '<friend_id>1</friend_id>'+
+					            '</friend_ids>'+
+					            '</removefriends>'+
+					            '</xml>';	
+            var saveuserdetails = '<xml>'+
+					            '<saveuserdetails>'+
+					            '<user_id>1</user_id>'+
+					            '<email>email</email>'+
+					            '<password>123456</password>'+
+					            '<gender>male or female</gender>'+
+					            '<dob>12/09/1999</dob>'+
+					            '<profile_picture>https://d3sisat5gdssl6.cloudfront.net/314a89b7-67eb-4111-9539-7ede5cd60465/image/abc.bmp</profile_picture>'+
+					            '</saveuserdetails>'+
+					            '</xml>';
+            var signedurl = '<xml>'+
+					            '<signedurl>'+
+					            '<path>http://d1ckv7o9k6o3x9.cloudfront.net/0.jpg</path>'+
+					            '</signedurl>'+
+					            '</xml>';	
+            var updatemedia = '<xml>'+
+					            '<updatemedia>'+
+					            '<media>'+
+					            '<media_id>1</media_id>'+
+					            '<location>'+
+					            '<address>125 Water Street New York, NY USA</address>'+
+					            '<latitude>55</latitude>'+
+					            '<longitude>-33</longitude>'+
+					            '</location>'+
+					            '</media>'+
+					            '</updatemedia>'+
+					            '</xml>';	
+            var updatenotification = '<xml>'+
+					            '<updatenotification>'+
+					            '<notification>'+
+					            '<notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id>'+
+					            '<status>2</status>'+
+					            '<message> optinal </message>'+
+					            '</notification>'+
+					            '<notification>'+
+					            '<notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id>'+
+					            '<status>2</status>'+
+					            '</notification>'+
+					            '<notification>'+
+					            '<notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id>'+
+					            '<status>2</status>'+
+					            '</notification>'+
+					            '</updatenotification>'+
+					            '</xml>';	
+            var viewallfriends = '<xml>'+
+					            '<viewallfriends>'+
+					            '<user_id>2</user_id>'+
+					            '</viewallfriends>'+
+					            '</xml>';	
+            var viewevents ='<xml>'+
+					            '<viewevent>'+
+					            '<user_id>1</user_id>'+
+					            '<is_my_event>1</is_my_event>'+
+					            '<is_friend_event>0</is_friend_event>'+
+					            '<is_public_event>0</is_public_event>'+
+					            '<page>2</page>'+
+					            '<limit>2</limit>'+
+					            '</viewevent>'+
+					            '</xml>';	
+            var viewmediadetails= '<xml>'+
+					            '<viewmediadetails>'+
+					            '<event_id>'+
+					            '</event_id>'+
+					            '<media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id>'+
+					            '</viewmediadetails>'+
+					            '</xml>';	
+            var getfriends = '<xml>'+
+					            '<getfriends>'+
+					            '<user_id>1</user_id>'+
+					            '</getfriends>'+
+					            '</xml>';
+            var getplans = '<xml>'+
+					            '<getplans>'+
+					            '<user_id>1</user_id>'+
+					            '</getplans>'+
+					            '</xml>';
+            var getorderhistory = '<xml>'+
+					            '<getorderhistory>'+
+					            '<user_id>1</user_id>'+
+					            '<search_username>'+
+					            '</search_username>'+
+					            '<page>1</page>'+
+					            '<limit>10</limit>'+
+					            '</getorderhistory>'+
+					            '</xml>';
+            var getorder = '<xml>'+
+					            '<getorder>'+
+					            '<transaction_id>1</transaction_id>'+
+					            '</getorder>'+
+					            '</xml>';
+            var removegroup = '<xml>'+
+					            '<removegroup>'+
+					            '<group_id>1</group_id>'+
+					            '</removegroup>'+
+					            '</xml>';
+            var checkevent = '<xml>'+
+					            '<checkevent>'+
+					            '<event_id>1</event_id>'+
+					            '</checkevent>'+
+					            '</xml>';
+            var getplansstatic = '<xml>'+
+					            '<getplansstatic>'+
+					            '<static>0</static>'+
+					            '</getplansstatic>'+
+					            '</xml>';
+            var updatepassword = '<xml>'+
+					            '<updatepassword>'+
+					            '<user_id>0</user_id>'+
+					            '<old>old password</old>'+
+					            '<new>new password</new>'+
+					            '<retype>Retype new password</retype>'+
+					            '</updatepassword>'+
+					            '</xml>';
+            var getaccountdetail = '<xml>'+
+					            '<getaccountdetail>'+
+					            '<user_id>0</user_id>'+
+					            '</getaccountdetail>'+
+					            '</xml>';
+             var getdiskusage = '<xml>'+
+					            '<getdiskusage>'+
+					            '<user_id>1</user_id>'+
+					            '</getdiskusage>'+
+					            '</xml>';
+            var refund = '<xml>'+
+					            '<refund>'+
+					            '<user_id>0</user_id>'+
+					            '<amount>5</amount>'+
+					            '<reason>Refund balance</reason>'+
+					            '</refund>'+
+					            '</xml>';
+            var listpayees = '<xml>'+
+					            '<listpayees>'+
+					            '<username>'+
+					            '</username>'+
+					            '<page>1</page>'+
+					            '<limit>10</limit>'+
+					            '</listpayees>'+
+					            '</xml>';
+            var makepayout = '<xml>'+
+					            '<makepayout>'+
+					            '<account_id>1</account_id>'+
+					            '<amount>10</amount>'+
+					            '<description>description of payout</description>'+
+					            '</makepayout>'+
+					            '</xml>';
+            
 
             $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
@@ -149,7 +600,8 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "logout") { xml = logout; }	
                     else if ($("#input_action").val() == "mediainappropriate") { xml = mediainappropriate; }	
                     else if ($("#input_action").val() == "memreas_tvm") { xml = memreas_tvm; }	
-                    else if ($("#input_action").val() == "registerdevice") { xml = registerdevice; }	
+                    else if ($("#input_action").val() == "registerdevice") { xml = registerdevice; }
+                    else if ($("#input_action").val() == "registercanonicaldevice") { xml = registercanonicaldevice; }
                     else if ($("#input_action").val() == "removeeventfriend") { xml = removeeventfriend; }	
                     else if ($("#input_action").val() == "removefriends") { xml = removefriends; }	
                     else if ($("#input_action").val() == "removeeventmedia") { xml = removeeventmedia; }	
@@ -214,84 +666,86 @@ echo "user_id ----> " . $user_id;
 		</ul>
 
 		<div id="tabs-5">
-			<form id="index_action" name="index_action" action="/index?XDEBUG_SESSION=ECLIPSE_DBGP">
+			<form id="index_action" name="index_action"
+				action="/index?XDEBUG_SESSION=ECLIPSE_DBGP">
 				<table>
 					<tr>
 						<td>select action
-
-						<td><select id="input_action">						
-							<option>addcomments</option>
-							<option>addevent</option>
-							<option>addexistmediatoevent</option>
-							<option>addfriendtoevent</option>
-							<option>addfriendtogroup</option>
-							<option>addmediaevent</option>
-							<option>addNotification</option>
-							<option>changepassword</option>
-							<option>checkexistmedia</option>
-							<option>chkuname</option>
-							<option>clearallnotification</option>
-							<option>countlistallmedia</option>
-							<option>countviewevent</option>
-							<option>creategroup</option>
-							<option>deletephoto</option>
-							<option>download</option>
-							<option>editevent</option>
-							<option>feedback</option>
-							<option>findtag</option>
-							<option>forgotpassword</option>
-                            <option>getdiskusage</option>
-							<option>geteventcount</option>
-							<option>geteventdetails</option>
-							<option>geteventlocation</option>
-							<option>geteventpeople</option>
-							<option>getgroupfriends</option>
-							<option>getmedialike</option>
-							<option>getsession</option>
-							<option>getsocialcredentials</option>
-							<option>getuserdetails</option>
-							<option>getusergroups</option>
-							<option>likemedia</option>
-							<option>listallmedia</option>
-							<option>listcomments</option>
-							<option>listgroup</option>
-							<option>listmemreasfriends</option>
-							<option>listnotification</option>
-							<option>listphotos</option>
-							<option>login</option>
-							<option>logout</option>
-							<option>mediainappropriate</option>
-							<option>memreas_tvm</option>
-							<option>registerdevice</option>
-							<option>registration</option>
-							<option>removeeventfriend</option>
-							<option>removefriends</option>
-							<option>removeeventmedia</option>
-							<option>removefriendgroup</option>
-							<option>saveuserdetails</option>
-							<option>signedurl</option>
-							<option>snsProcessMediaPublish</option>
-							<option>updatemedia</option>
-							<option>updatenotification</option>
-							<option>uploadadvertisement</option>
-							<option>uploadmedia</option>
-							<option>viewallfriends</option>
-							<option>viewevents</option>
-							<option>viewmediadetails</option>
-							<option>getfriends</option>
-                            <option>removegroup</option>
-                            <option>checkevent</option>
-                            <option>updatepassword</option>
-                            <option value="getplans">Stripe - Getplans</option>
-                            <option value="getplansstatic">Stripe - GetPlansStatic</option>
-                            <option value="getorderhistory">Stripe - GetOrderHistory</option>
-                            <option value="getorder">Stripe - GetOrder</option>
-                            <option value="getaccountdetail">Stripe - GetAccountDetail</option>
-                            <option value="refund">Stripe - Refund</option>
-                            <option value="listpayees">Stripe - ListPayees</option>
-                            <option value="makepayout">Stripe - MakePayout</option>
+						
+						<td><select id="input_action">
+								<option>addcomments</option>
+								<option>addevent</option>
+								<option>addexistmediatoevent</option>
+								<option>addfriendtoevent</option>
+								<option>addfriendtogroup</option>
+								<option>addmediaevent</option>
+								<option>addNotification</option>
+								<option>changepassword</option>
+								<option>checkevent</option>
+								<option>checkexistmedia</option>
+								<option>chkuname</option>
+								<option>clearallnotification</option>
+								<option>countlistallmedia</option>
+								<option>countviewevent</option>
+								<option>creategroup</option>
+								<option>deletephoto</option>
+								<option>download</option>
+								<option>editevent</option>
+								<option>feedback</option>
+								<option>findtag</option>
+								<option>forgotpassword</option>
+								<option>getdiskusage</option>
+								<option>geteventcount</option>
+								<option>geteventdetails</option>
+								<option>geteventlocation</option>
+								<option>geteventpeople</option>
+								<option>getfriends</option>
+								<option>getgroupfriends</option>
+								<option>getmedialike</option>
+								<option>getsession</option>
+								<option>getsocialcredentials</option>
+								<option>getuserdetails</option>
+								<option>getusergroups</option>
+								<option>likemedia</option>
+								<option>listallmedia</option>
+								<option>listcomments</option>
+								<option>listgroup</option>
+								<option>listmemreasfriends</option>
+								<option>listnotification</option>
+								<option>listphotos</option>
+								<option>login</option>
+								<option>logout</option>
+								<option>mediainappropriate</option>
+								<option>memreas_tvm</option>
+								<option>registerdevice</option>
+								<option>registercanonicaldevice</option>
+								<option>registration</option>
+								<option>removeeventfriend</option>
+								<option>removeeventmedia</option>
+								<option>removefriendgroup</option>
+								<option>removefriends</option>
+								<option>removegroup</option>
+								<option>saveuserdetails</option>
+								<option>signedurl</option>
+								<option>snsProcessMediaPublish</option>
+								<option>updatemedia</option>
+								<option>updatenotification</option>
+								<option>updatepassword</option>
+								<option>uploadadvertisement</option>
+								<option>uploadmedia</option>
+								<option>viewallfriends</option>
+								<option>viewevents</option>
+								<option>viewmediadetails</option>
+								<option value="getplans">Stripe - Getplans</option>
+								<option value="getplansstatic">Stripe - GetPlansStatic</option>
+								<option value="getorderhistory">Stripe - GetOrderHistory</option>
+								<option value="getorder">Stripe - GetOrder</option>
+								<option value="getaccountdetail">Stripe - GetAccountDetail</option>
+								<option value="refund">Stripe - Refund</option>
+								<option value="listpayees">Stripe - ListPayees</option>
+								<option value="makepayout">Stripe - MakePayout</option>
 						</select>
-
+					
 					</tr>
 					<!-- Not working....
                         <tr>
@@ -304,40 +758,40 @@ echo "user_id ----> " . $user_id;
                         </tr>
                         -->
 					<input type="hidden" id="input_format" value="xml">
-                                        <input type="text" id="sid" value="">
+					<input type="text" id="sid" value="">
 
 					<tr>
 						<td>select url
-
+						
 						<td><select id="codebase">
 								<option>new_code</option>
 								<option>original_code</option>
 						</select>
-
+					
 					</tr>
 					<tr>
 						<td>Input (modify below as needed):
-
+					
 					</tr>
 					<tr>
 						<td colspan="2"><textarea id="action_input" name="action_input"
 								rows="10" cols="120"></textarea>
-
+					
 					</tr>
 
 					<tr>
 						<td><input id="btnOK" type="button" name="btnOK" value="submit">
-
+					
 					</tr>
 
 					<tr>
-						<td><a id ="link_output" href="#" target='_new'>Output:</a>
-
+						<td><a id="link_output" href="#" target='_new'>Output:</a>
+					
 					</tr>
 					<tr>
 						<td colspan="2"><textarea id="action_output" name="action_output"
 								rows="10" cols="120">Result will be shown here.</textarea>
-
+					
 					</tr>
 
 				</table>

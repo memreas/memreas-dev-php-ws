@@ -60,6 +60,7 @@ use Application\memreas\LogOut;
 use Application\memreas\ClearAllNotification;
 use Application\memreas\GetSession;
 use Application\memreas\RegisterDevice;
+use Application\memreas\RegisterCanonicalDevice;
 use Application\memreas\ListComments;
 use Application\memreas\Memreas;
 use Application\memreas\MemreasTables;
@@ -996,6 +997,9 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 			} else if ($actionname == "registerdevice") {
 				$register_device = new RegisterDevice ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $register_device->exec ();
+			} else if ($actionname == "registercanonicaldevice") {
+				$register_canonical_device = new RegisterCanonicalDevice ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $register_canonical_device->exec ();
 			} else if ($actionname == "listcomments") {
 				
 				/*

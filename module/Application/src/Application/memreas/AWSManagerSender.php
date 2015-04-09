@@ -75,8 +75,8 @@ class AWSManagerSender {
 						'QueueUrl'          => MemreasConstants::QUEUEURL,
 						'MessageBody'       => $json,
 				));
-error_log('Just published to MemreasConstants::QUEUEURL'.MemreasConstants::QUEUEURL.PHP_EOL);
-error_log('json--->'.$json.PHP_EOL);
+//error_log('Just published to MemreasConstants::QUEUEURL'.MemreasConstants::QUEUEURL.PHP_EOL);
+//error_log('json--->'.$json.PHP_EOL);
 			} else {
 				/* - publish to topic here */
 				$result = $this->sns->publish ( array (
@@ -162,7 +162,7 @@ error_log('json--->'.$json.PHP_EOL);
 				),
 				'ReturnPath' => $from 
 		) );
-error_log("email result ---> ".$result.PHP_EOL);		
+//error_log("email result ---> ".$result.PHP_EOL);		
 	}
 
 	public function __get($name) {

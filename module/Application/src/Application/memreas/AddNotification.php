@@ -60,6 +60,9 @@ class AddNotification {
 		if ($network_name == 'email') {
 			// do nothing
 		} else if ($tblNotification->notification_type == Notification::ADD_FRIEND_TO_EVENT && $network_name !== 'memreas') {
+			/*
+			 * TODO - short code not working...
+			 */
 			$uuid = explode ( '-', $this->notification_id );
 			$short_code = $this->getSortCode ( $uuid [0] );
 			$tblNotification->short_code = $this->getSortCode ( $uuid [0] );
