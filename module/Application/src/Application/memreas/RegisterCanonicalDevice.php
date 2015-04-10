@@ -56,7 +56,6 @@ class RegisterCanonicalDevice {
 			$xml_output .= "</registercanonicaldeviceresponse>";
 			$xml_output .= "</xml>";
 		} catch ( \Exception $e ) {
-error_log("Inside Exception...".PHP_EOL);
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";
 			$xml_output .= "<registercanonicaldeviceresponse>";
@@ -67,15 +66,10 @@ error_log("Inside Exception...".PHP_EOL);
 			/*
 			 * Send email to admin if canonical update fails...
 			 */
-error_log("Inside Exception about to send fail email...".PHP_EOL);
-
 			Email::$item['type'] = Email::ADMIN_ERROR_OCCURRED;
 			Email::$item['email'] =MemreasConstants::ADMIN_EMAIL;
 			Email::$item['class'] ='RegisterCanonicalDevice';
 			Email::$item['message'] =$e->getMessage ();
-error_log("Inside Exception email data email ---> ". Email::$item['email'] .PHP_EOL);
-error_log("Inside Exception email data email ---> ". Email::$item['class'] .PHP_EOL);
-error_log("Inside Exception email data email ---> ". Email::$item['message'] .PHP_EOL);
 			Email::collect();
 			Email::sendmail($this->service_locator);
 				

@@ -42,6 +42,12 @@ class Device {
 	
 	/**
 	 *
+	 * @var string @ORM\Column(name="device_type", type="integer", nullable=false)
+	 */
+	private $last_used;
+	
+	/**
+	 *
 	 * @var string @ORM\Column(name="create_time", type="string", length=255, nullable=false)
 	 */
 	private $create_time;
