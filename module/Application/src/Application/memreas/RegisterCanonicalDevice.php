@@ -24,9 +24,9 @@ class RegisterCanonicalDevice {
 			$device_id = trim ( $data->registercanonicaldevice->device_id );
 			$canonical_device_token = trim ( $data->registercanonicaldevice->canonical_device_token );
 			$device_type = trim ( $data->registercanonicaldevice->device_type );
-			error_log ( 'registercanonicaldevice.exec()->device_id' . $device_id . PHP_EOL );
-			error_log ( 'registercanonicaldevice.exec()->canonical_device_token' . $canonical_device_token . PHP_EOL );
-			error_log ( 'registercanonicaldevice.exec()->device_type' . $device_type . PHP_EOL );
+			//error_log ( 'registercanonicaldevice.exec()->device_id' . $device_id . PHP_EOL );
+			//error_log ( 'registercanonicaldevice.exec()->canonical_device_token' . $canonical_device_token . PHP_EOL );
+			//error_log ( 'registercanonicaldevice.exec()->device_type' . $device_type . PHP_EOL );
 			
 			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -43,7 +43,7 @@ class RegisterCanonicalDevice {
 							where ( 'd.device_id = ?1 AND d.device_type = ?2' )->
 							setParameter ( 1, $device_id )->setParameter ( 2, $device_type )->getQuery ();
 				$p = $q->execute ();
-				error_log ( 'registercanonicaldevice.exec()->executed updated' . PHP_EOL );
+				//error_log ( 'registercanonicaldevice.exec()->executed updated' . PHP_EOL );
 				
 				$status = 'success';
 				$message = "device token saved";

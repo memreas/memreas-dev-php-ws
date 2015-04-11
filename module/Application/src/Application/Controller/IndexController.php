@@ -41,7 +41,6 @@ use Application\memreas\EditEvent;
 use Application\memreas\AddEvent;
 use Application\memreas\ViewEvents;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\AWSMemreasCache;
 use Application\memreas\AWSMemreasRedisCache;
 use Application\memreas\MemreasRedisSaveHandler;
 use Application\memreas\AddFriendtoevent;
@@ -107,7 +106,7 @@ use Application\memreas\StripeWS\MakePayout;
 
 class IndexController extends AbstractActionController {
 	protected $xml_in;
-	protected $url = "http://ws/";
+	protected $url;
 	protected $user_id;
 	protected $storage;
 	protected $authservice;
@@ -116,8 +115,11 @@ class IndexController extends AbstractActionController {
 	protected $mediaTable;
 	protected $eventmediaTable;
 	protected $friendmediaTable;
-	protected $elasticache;
+	protected $redis;
 	protected $aws;
+	protected $sid;	
+	protected $ipAddress;
+	
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -151,20 +153,19 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-//error_log("inside indexAction...".PHP_EOL);
-//Checking headers for cookie info
-//$headers = apache_request_headers();
-
-//foreach ($headers as $header => $value) {
-//	error_log("WS header: $header :: value: $value".PHP_EOL);
-//}
-//End Checking headers for cookie info
-
+		// error_log("inside indexAction...".PHP_EOL);
+		// Checking headers for cookie info
+		// $headers = apache_request_headers();
+		
+		// foreach ($headers as $header => $value) {
+		// error_log("WS header: $header :: value: $value".PHP_EOL);
+		// }
+		// End Checking headers for cookie info
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
-//error_log("inside indexAction callback ...".$callback.PHP_EOL);
+		// error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
 		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
@@ -179,8 +180,9 @@ class IndexController extends AbstractActionController {
 			$message_data ['xml'] = '';
 		}
 		
-//error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
-		$actionname = $this->security ( $actionname );
+		error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+		$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
+		error_log ( "Inside indexAction---> actionname after security ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
 			$cache_me = false;
@@ -191,8 +193,8 @@ class IndexController extends AbstractActionController {
 			// Capture the echo from the includes in case we need to convert back to json
 			ob_start ();
 			
-//if (isset($_POST ['xml']) && !empty($_POST ['xml'])) { error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
-
+			// if (isset($_POST ['xml']) && !empty($_POST ['xml'])) { error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
+			
 			$memreas_tables = new MemreasTables ( $this->getServiceLocator () );
 			
 			if ($actionname == 'notlogin') {
@@ -204,46 +206,53 @@ class IndexController extends AbstractActionController {
 				 */
 			} else if ($actionname == "login") {
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $login->exec ();
+				$result = $login->exec ($this->ipAddress);
 				// error_log("login result ---> $result".PHP_EOL);
 				//
 				$session = new Container ( 'user' );
 				$user_id = $session->offsetGet ( 'user_id' );
 				$username = $session->offsetGet ( 'username' );
-				$sid = $session->offsetGet ( 'sid' );
+				$this->sid = $session->offsetGet ( 'sid' );
+				$this->ipAddress = $session->offsetGet ( 'ipAddress' );
 				$user = $session->offsetGet ( 'user' );
-				// error_log("login set variables".PHP_EOL);
-				
+error_log('login session variables $user_id'.$user_id.PHP_EOL);				
+error_log('login session variables $$username'.$username.PHP_EOL);
+error_log('login session variables this->sid'.$this->sid.PHP_EOL);
+error_log('login session variables this->ipAddress'.$this->ipAddress.PHP_EOL);
+error_log('login session variables $user'.$user.PHP_EOL);
+
 				/*
 				 * Cache approach - warm @person if not set here
 				 */
-				if ($this->elasticache->hasSet ( '@person' )) {
-					
-					// $time_start = microtime(true);
-					// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-					$matches = $this->elasticache->findSet('@person', "ch-1tuser-");
-					// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-					// error_log("matches json -----> ".json_encode($matches).PHP_EOL);
-					
-					// $time_end = microtime(true);
-					// $time = $time_end - $time_start;
-					// error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
-					
-					/*
-					 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login will force cache to warm)
-					 */
-					$mc [$username] = array (
-							'user_id' => $user_id,
-							'profile_photo' => '' 
-					);
-					// error_log ("set array" . PHP_EOL);
-					$this->elasticache->addSet ( "@person_meta_hash", $username, json_encode ( $mc [$username] ) );
-					// error_log ("addSet meta hash" . PHP_EOL);
-					$this->elasticache->addSet ( "@person_uid_hash", $username, $user_id );
-					// error_log ("addSet uid hash" . PHP_EOL);
-					$this->elasticache->addSet ( "@person", $username );
-					// error_log ("addSet person" . PHP_EOL);
-					// error_log ("$username added - @person_hash set now holds --> ". $this->elasticache->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
+				if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+					if ($this->redis->hasSet ( '@person' )) {
+						
+						// $time_start = microtime(true);
+						// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+						$matches = $this->redis->findSet ( '@person', "ch-1tuser-" );
+						// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+						// error_log("matches json -----> ".json_encode($matches).PHP_EOL);
+						
+						// $time_end = microtime(true);
+						// $time = $time_end - $time_start;
+						// error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
+						
+						/*
+						 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login will force cache to warm)
+						 */
+						$mc [$username] = array (
+								'user_id' => $user_id,
+								'profile_photo' => '' 
+						);
+						// error_log ("set array" . PHP_EOL);
+						$this->redis->addSet ( "@person_meta_hash", $username, json_encode ( $mc [$username] ) );
+						// error_log ("addSet meta hash" . PHP_EOL);
+						$this->redis->addSet ( "@person_uid_hash", $username, $user_id );
+						// error_log ("addSet uid hash" . PHP_EOL);
+						$this->redis->addSet ( "@person", $username );
+						// error_log ("addSet person" . PHP_EOL);
+						// error_log ("$username added - @person_hash set now holds --> ". $this->redis->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
+					}
 				}
 			} else if ($actionname == "registration") {
 				$registration = new Registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -261,7 +270,7 @@ class IndexController extends AbstractActionController {
 				// $data = simplexml_load_string($_POST ['xml']);
 				// if (isset($data->addcomment->event_id)) {
 				// //Invalidate existing cache
-				// $this->elasticache->invalidateCache("listcomments_" . $data->addcomment->event_id);
+				// $this->redis->invalidateCache("listcomments_" . $data->addcomment->event_id);
 				// }
 			} else if ($actionname == "verifyemailaddress") {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -288,7 +297,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - read operation - pass for now
 				 */
 			} else if ($actionname == "addmediaevent") {
-//error_log("inside indexAction addmediaevent ...".$callback.PHP_EOL);
+				// error_log("inside indexAction addmediaevent ...".$callback.PHP_EOL);
 				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
@@ -297,7 +306,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - Write Operation - Invalidate existing cache here
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				$this->elasticache->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
+				$this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
@@ -305,7 +314,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - write operation - pass for now
 				 */
 				
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				if (! $result || empty ( $result )) {
 					$likemedia = new LikeMedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
 					$result = $likemedia->exec ();
@@ -318,7 +327,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - Write Operation - Invalidate existing cache here
 				 */
-				$this->elasticache->invalidateMedia ( $data->mediainappropriate->user_id, $data->mediainappropriate->event_id );
+				$this->redis->invalidateMedia ( $data->mediainappropriate->user_id, $data->mediainappropriate->event_id );
 			} else if ($actionname == "countlistallmedia") {
 				
 				/*
@@ -326,7 +335,7 @@ class IndexController extends AbstractActionController {
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->countlistallmedia->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$countlistallmedia = new CountListallmedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -339,7 +348,7 @@ class IndexController extends AbstractActionController {
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listgroup->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result) {
 					$listgroup = new ListGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -355,15 +364,15 @@ class IndexController extends AbstractActionController {
 				 */
 				
 				// $session = new Container("user");
-				// $this->elasticache->invalidateCache("listallmedia_" . $session->user_id);
-				// $this->elasticache->invalidateCache("viewevents_" . $session->user_id);
+				// $this->redis->invalidateCache("listallmedia_" . $session->user_id);
+				// $this->redis->invalidateCache("viewevents_" . $session->user_id);
 			} else if ($actionname == "listphotos") {
 				/*
 				 * Cache approach - read operation - cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listphotos->userid );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result) {
 					$listphotos = new ListPhotos ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -388,7 +397,7 @@ class IndexController extends AbstractActionController {
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->viewallfriends->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$viewallfriends = new ViewAllfriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -405,7 +414,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listgroup
 				 */
-				$this->elasticache->invalidateGroups ( $uid );
+				$this->redis->invalidateGroups ( $uid );
 			} else if ($actionname == "listallmedia") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache... if event_id then return that cache else user_id
@@ -417,7 +426,7 @@ class IndexController extends AbstractActionController {
 					$cache_id = $data->listallmedia->user_id;
 				}
 				
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				if (! $result || empty ( $result )) {
 					$listallmedia = new ListAllmedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
 					$result = $listallmedia->exec ();
@@ -433,7 +442,7 @@ class IndexController extends AbstractActionController {
 				} else {
 					$cache_id = trim ( $data->countviewevent->user_id );
 				}
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$countviewevent = new CountViewevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -449,7 +458,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate events
 				 */
-				$this->elasticache->invalidateEvents ( $event_id );
+				$this->redis->invalidateEvents ( $event_id );
 			} else if ($actionname == "addevent") {
 				$addevent = new AddEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addevent->exec ();
@@ -458,7 +467,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - hold for now
 				 */
-				$this->elasticache->invalidateEvents ( $data->addevent->user_id );
+				$this->redis->invalidateEvents ( $data->addevent->user_id );
 			} else if ($actionname == "viewevents") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -471,7 +480,7 @@ class IndexController extends AbstractActionController {
 				} else if (! empty ( $data->viewevent->is_my_event ) && $data->viewevent->is_my_event) {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
 				}
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -480,15 +489,15 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $addfriendtoevent->exec();
+				$result = $addfriendtoevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriendtoevent->user_id );
 				
 				/*
 				 * Cache approach - write operation - hold for now
 				 */
-				$this->elasticache->invalidateEvents ( $uid );
-				$this->elasticache->invalidateGroups ( $uid );
+				$this->redis->invalidateEvents ( $uid );
+				$this->redis->invalidateGroups ( $uid );
 			} else if ($actionname == "viewmediadetails") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache... if event_id then return then event_id_media_id else cache media_id
@@ -500,7 +509,7 @@ class IndexController extends AbstractActionController {
 					$cache_id = trim ( $data->viewmediadetails->media_id );
 				}
 				
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$viewmediadetails = new ViewMediadetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -531,7 +540,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->elasticache->invalidateNotifications ( $uid );
+				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $changepassword->exec ();
@@ -544,7 +553,7 @@ class IndexController extends AbstractActionController {
 				$user_id = $data->listnotification->user_id;
 				$cache_id = ! empty ( $data ) ? trim ( $data->listnotification->user_id ) : null;
 				try {
-					$result = ! empty ( $cache_id ) ? $this->elasticache->getCache ( $actionname . '_' . $cache_id ) : false;
+					$result = ! empty ( $cache_id ) ? $this->redis->getCache ( $actionname . '_' . $cache_id ) : false;
 				} catch ( \Exception $e ) {
 					$result = false;
 				}
@@ -563,7 +572,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->elasticache->invalidateNotifications ( $uid );
+				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "findtag") {
 				
 				/*
@@ -603,25 +612,25 @@ class IndexController extends AbstractActionController {
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$user_ids = array ();
-						if (MemreasConstants::ELASTICACHE_SERVER_USE) {
-error_log ( "redis @ fetch..." . PHP_EOL );
+						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+							error_log ( "redis @ fetch..." . PHP_EOL );
 							// Redis - this codes fetches usernames by the search term then gets the hashes
-							$usernames = $this->elasticache->findSet ( '@person', $search );
-							$person_meta_hash = $this->elasticache->cache->hmget ( "@person_meta_hash", $usernames );
-							$person_uid_hash = $this->elasticache->cache->hmget ( '@person_uid_hash', $usernames );
-							if (in_array($user_id, $person_uid_hash)) {
-								$username = $person_uid_hash["$user_id"];
-								//now remove current user
-								unset($person_meta_hash[$username[$user_id]]);
-								unset($person_uid_hash[$user_id]);
-								$index = array_search($username, $usernames); 
-								unset($usernames[$index]);
+							$usernames = $this->redis->findSet ( '@person', $search );
+							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
+							$person_uid_hash = $this->redis->cache->hmget ( '@person_uid_hash', $usernames );
+							if (in_array ( $user_id, $person_uid_hash )) {
+								$username = $person_uid_hash ["$user_id"];
+								// now remove current user
+								unset ( $person_meta_hash [$username [$user_id]] );
+								unset ( $person_uid_hash [$user_id] );
+								$index = array_search ( $username, $usernames );
+								unset ( $usernames [$index] );
 							}
-							$user_ids = array_keys($person_uid_hash);
-							$search_result = array_values($person_meta_hash);
-							$rc = count($search_result);
+							$user_ids = array_keys ( $person_uid_hash );
+							$search_result = array_values ( $person_meta_hash );
+							$rc = count ( $search_result );
 						} else {
-error_log ( "@ fetch get regindex..." . PHP_EOL );
+							error_log ( "@ fetch get regindex..." . PHP_EOL );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -632,21 +641,21 @@ error_log ( "@ fetch get regindex..." . PHP_EOL );
 								$meta_arr = $usermeta;
 								$uid = $meta_arr ['user_id'];
 								// Remove existing user
-error_log ("username" . $username. " --- uid-->". $uid . PHP_EOL );
+								error_log ( "username" . $username . " --- uid-->" . $uid . PHP_EOL );
 								if ($uid == $user_id)
 									continue;
-								/*
-								 * TODO: 6-NOV-2014 Paging isn't working correctly?  Removing for now...
+									/*
+								 * TODO: 6-NOV-2014 Paging isn't working correctly? Removing for now...
 								 */
-								//if ($rc >= $from && $rc < ($from + $limit)) {
-error_log ("meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->". $search . PHP_EOL );
-								if (stripos($meta_arr ['username'],$search) !== false) {
-										$meta_arr ['username'] = '@' . $meta_arr ['username'];
-										$search_result [] = $meta_arr;
-										$user_ids [] = $uid;
-error_log ( "user_ids-->". json_encode($user_ids) . PHP_EOL );
-									}
-								//}
+									// if ($rc >= $from && $rc < ($from + $limit)) {
+								error_log ( "meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" . $search . PHP_EOL );
+								if (stripos ( $meta_arr ['username'], $search ) !== false) {
+									$meta_arr ['username'] = '@' . $meta_arr ['username'];
+									$search_result [] = $meta_arr;
+									$user_ids [] = $uid;
+									error_log ( "user_ids-->" . json_encode ( $user_ids ) . PHP_EOL );
+								}
+								// }
 								$rc += 1;
 							}
 							// error_log("query user_ids------> " . json_encode($user_ids) . PHP_EOL);
@@ -656,23 +665,23 @@ error_log ( "user_ids-->". json_encode($user_ids) . PHP_EOL );
 						 * TODO: need to document filter rules
 						 */
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
-						 	
-						//This query fetches user's friends
+						
+						// This query fetches user's friends
 						$qb = $em->createQueryBuilder ();
 						$qb->select ( 'f.friend_id,uf.user_approve' );
 						$qb->from ( 'Application\Entity\Friend', 'f' );
 						$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' );
 						$qb->where ( "f.network='memreas'" );
-						$qb->andwhere("uf.user_approve = '1'");
-						$qb->andwhere( "uf.user_id = '$user_id'" );
-						$qb->andwhere( 'uf.friend_id IN (:f)' );
-						$qb->setParameter( 'f', $user_ids );
-//error_log("qb->getQuery()->getSql()------> " . $qb->getDQL() . PHP_EOL);
-error_log("qb->getQuery()->getSql()------> " .$qb->getQuery()->getSql() . PHP_EOL);
-
+						$qb->andwhere ( "uf.user_approve = '1'" );
+						$qb->andwhere ( "uf.user_id = '$user_id'" );
+						$qb->andwhere ( 'uf.friend_id IN (:f)' );
+						$qb->setParameter ( 'f', $user_ids );
+						// error_log("qb->getQuery()->getSql()------> " . $qb->getDQL() . PHP_EOL);
+						error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
+						
 						$UserFriends = $qb->getQuery ()->getResult ();
 						
-						//this code checks if friend request already sent...
+						// this code checks if friend request already sent...
 						$chkUserFriend = array ();
 						foreach ( $UserFriends as $ufRow ) {
 							$chkUserFriend [$ufRow ['friend_id']] = $ufRow ['user_approve'];
@@ -695,11 +704,11 @@ error_log("qb->getQuery()->getSql()------> " .$qb->getQuery()->getSql() . PHP_EO
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
-error_log("result------> " . json_encode($result) . PHP_EOL);
+						error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						
 						break;
-						
+					
 					/*
 					 * !event search
 					 */
@@ -708,13 +717,13 @@ error_log("result------> " . json_encode($result) . PHP_EOL);
 						/*
 						 * Fetch Event Repository
 						 */
-						$mc = $this->elasticache->getCache ( '!event' );
+						$mc = $this->redis->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
-error_log("findtag empty elasticache -> createEventCache..." . PHP_EOL);
-								
+							error_log ( "findtag empty redis -> createEventCache..." . PHP_EOL );
+							
 							$mc = $eventRep->createEventCache ();
-							$this->elasticache->setCache ( "!event", $mc );
+							$this->redis->setCache ( "!event", $mc );
 						}
 						$search_result = array ();
 						$event_ids = array ();
@@ -726,9 +735,9 @@ error_log("findtag empty elasticache -> createEventCache..." . PHP_EOL);
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
 									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-error_log("event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL);
-error_log("event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL);
-
+									error_log ( "event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL );
+									error_log ( "event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL );
+									
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
 								}
@@ -738,18 +747,18 @@ error_log("event_creator ['profile_photo']------> " . $event_creator ['profile_p
 						// filter record !event should show public events and events you've been invited to
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
 						// $user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
-
-						//Fetch friends
+						
+						// Fetch friends
 						$qb = $em->createQueryBuilder ();
 						$qb->select ( 'ef' );
 						$qb->from ( 'Application\Entity\EventFriend', 'ef' );
 						$qb->andWhere ( 'ef.event_id IN (:e)' )->andWhere ( 'ef.friend_id =:f' );
-                        //$qb->andWhere('ef.user_approve = 1');
-                        $qb->setParameter( 'f', $user_id );
-                        $qb->setParameter( 'e', $event_ids );
+						// $qb->andWhere('ef.user_approve = 1');
+						$qb->setParameter ( 'f', $user_id );
+						$qb->setParameter ( 'e', $event_ids );
 						$EventFriends = $qb->getQuery ()->getArrayResult ();
 						
-						//Check if event request sent
+						// Check if event request sent
 						$chkEventFriend = array ();
 						foreach ( $EventFriends as $efRow ) {
 							$chkEventFriend [$efRow ['event_id']] = $efRow ['user_approve'];
@@ -772,7 +781,7 @@ error_log("event_creator ['profile_photo']------> " . $event_creator ['profile_p
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
-error_log("result------> " . json_encode($result) . PHP_EOL);
+						error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						break;
 					
@@ -784,40 +793,40 @@ error_log("result------> " . json_encode($result) . PHP_EOL);
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$search_result = array ();
-						if (MemreasConstants::ELASTICACHE_SERVER_USE) {
-error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
+						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+							error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
 							// Redis - ...
-error_log ( "Inside findTag # for tag $search" . PHP_EOL );
-							$tags_public = $this->elasticache->findSet ( '#hashtag', $search );
-							$tags_uid = $this->elasticache->findSet ( '#hashtag_'.$user_id, $search );
-							$tags_unique = array_unique(array_merge($tags_public,$tags_uid));
-error_log ( "Inside findTag # tags_unique--->".json_encode($tags_unique).PHP_EOL );
-							$hashtag_public_eid_hash = $this->elasticache->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
-error_log ( "Inside findTag # hashtag_public_eid_hash--->".json_encode($hashtag_public_eid_hash).PHP_EOL );
-							$hashtag_friends_hash = $this->elasticache->cache->hmget ( '#hashtag_friends_hash_'.$user_id, $tags_unique );
-error_log ( "Inside findTag # hashtag_friends_hash--->".json_encode($hashtag_friends_hash).PHP_EOL );
-								
+							error_log ( "Inside findTag # for tag $search" . PHP_EOL );
+							$tags_public = $this->redis->findSet ( '#hashtag', $search );
+							$tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $search );
+							$tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
+							error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
+							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
+							error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
+							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
+							error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
+							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
-							// $usernames = $this->elasticache->findSet( '@person', $search );
-							// $person_meta_hash = $this->elasticache->cache->hmget("@person_meta_hash", $usernames);
-							// $person_uid_hash = $this->elasticache->cache->hmget( '@person_uid_hash', $usernames );
+							// $usernames = $this->redis->findSet( '@person', $search );
+							// $person_meta_hash = $this->redis->cache->hmget("@person_meta_hash", $usernames);
+							// $person_uid_hash = $this->redis->cache->hmget( '@person_uid_hash', $usernames );
 							// $user_ids = $usernames;
 						} else {
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-error_log ( "createDiscoverCache------>$tag".PHP_EOL );
+							error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
 							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						}
 						
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-error_log ( "tag------>$tag".PHP_EOL );
-error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
+							error_log ( "tag------>$tag" . PHP_EOL );
+							error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
-								//if ($rc >= $from && $rc < ($from + $limit)) {
-									$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
-									$cache_entry ['update_time'] = Utility::toDateTime ( $cache_entry ['update_time'] );
-									$search_result [$tag] = $cache_entry;
-								//}
+								// if ($rc >= $from && $rc < ($from + $limit)) {
+								$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
+								$cache_entry ['update_time'] = Utility::toDateTime ( $cache_entry ['update_time'] );
+								$search_result [$tag] = $cache_entry;
+								// }
 								$rc += 1;
 							}
 						}
@@ -847,16 +856,16 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				}
 			} else if ($actionname == "findevent") {
 				/*
-				 * TODO: This is covered by findtag?? 
+				 * TODO: This is covered by findtag??
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$tag = (trim ( $data->findevent->tag ));
 				$search = substr ( $tag, 1 );
 				$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-				$mc = $this->elasticache->getCache ( '!event' );
+				$mc = $this->redis->getCache ( '!event' );
 				if (! $mc || empty ( $mc )) {
 					$mc = $eventRep->createEventCache ();
-					$this->elasticache->setCache ( "!event", $mc );
+					$this->redis->setCache ( "!event", $mc );
 				}
 				
 				$search_result = array ();
@@ -901,10 +910,10 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				$tag = (trim ( $data->getDiscover->tag ));
 				$search = $tag;
 				$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-				$mc = $this->elasticache->getCache ( '#tag' );
+				$mc = $this->redis->getCache ( '#tag' );
 				if (! $mc || empty ( $mc )) {
 					$mc = $eventRep->createDiscoverCache ( $tag );
-					$this->elasticache->setCache ( "#tag", $mc );
+					$this->redis->setCache ( "#tag", $mc );
 				}
 				
 				$search_result = array ();
@@ -980,14 +989,14 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->elasticache->invalidateNotifications ( $uid );
+				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "getsession") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listnotification->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$getsession = new GetSession ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1012,7 +1021,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 					$cache_id = trim ( $data->listcomments->media_id );
 				}
 				
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$listcomments = new ListComments ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1028,7 +1037,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				$client->verifyEmailAddress ( array (
 						'EmailAddress' => $_GET ['email'] 
 				) );
-				//echo 'Please Cheack email validate you email to receive emails';
+				// echo 'Please Cheack email validate you email to receive emails';
 			} else if ($actionname == "geteventlocation") {
 				
 				/*
@@ -1036,7 +1045,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventlocation->event_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetEventLocation = new GetEventLocation ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1049,7 +1058,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventcount->event_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetEventLocation = new GetEventCount ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1062,7 +1071,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getuserdetails->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetUserDetails = new GetUserDetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1080,14 +1089,14 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->elasticache->invalidateUser ( $data->saveuserdetails->user_id );
+				$this->redis->invalidateUser ( $data->saveuserdetails->user_id );
 			} else if ($actionname == "getusergroups") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getusergroups->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetUserGroups = new GetUserGroups ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1103,7 +1112,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				$network = trim ( $data->getgroupfriends->network );
 				$cache_id = $group_id;
 				
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetGroupFriends = new GetGroupFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1122,7 +1131,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "removefriendgroup") {
 				$RemoveFriendGroup = new RemoveFriendGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $RemoveFriendGroup->exec ();
@@ -1131,14 +1140,14 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "geteventpeople") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventpeople->event_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetEventPeople = new GetEventPeople ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1155,14 +1164,14 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				$session = new Container ( "user" );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
-				$this->elasticache->invalidateMedia ( $session->offsetGet ( 'user_id' ), $event_id );
+				$this->redis->invalidateMedia ( $session->offsetGet ( 'user_id' ), $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getmedialike->media_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetMediaLike = new GetMediaLike ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1181,7 +1190,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listmemreasfriends->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$ListMemreasFriends = new ListMemreasFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1205,7 +1214,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * TODO: Cache approach - write operation - need to invalidate invalidateMedia
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateMedia ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateMedia ( $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "feedback") {
 				/*
 				 * Cache Approach - N/a
@@ -1218,7 +1227,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventdetails->event_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetEventDetails = new GetEventDetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1233,7 +1242,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * Cache approach - write operation - invalidateMedia
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateMedia ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateMedia ( $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "removeeventfriend") {
 				/*
 				 * TODO: Invalidation needed
@@ -1246,7 +1255,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * Cache approach - write operation - invalidateMedia
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateEventFriends ( $data->removeeventfriend->event_id, $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateEventFriends ( $data->removeeventfriend->event_id, $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "removefriends") {
 				
 				$RemoveFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1256,7 +1265,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * Cache approach - write operation - invalidateFriends
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateFriends ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateFriends ( $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "getfriends") {
 				
 				/*
@@ -1264,7 +1273,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getfriends->user_id );
-				$result = $this->elasticache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
 					$GetFriends = new GetFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1303,7 +1312,7 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
 				$session = new Container ( "user" );
-				$this->elasticache->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
 			} else if ($actionname == "checkevent") {
 				/*
 				 * TODO: Query inside needs to cached
@@ -1356,23 +1365,21 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 			/*
 			 * TODO - Cache here due to ob_get_clean
 			 */
-			if ($cache_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
-				$this->elasticache->setCache ( $actionname . '_' . $cache_id, $output );
+			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
 			}
 			
 			/*
 			 * TODO - Invalidate cache in if statements (id is all that is needed)
 			 */
 			
-			// if ($invalidate_me && MemreasConstants::ELASTICACHE_SERVER_USE) {
+			// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (!MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 			// error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' . $uid.PHP_EOL);
-			// $this->elasticache->invalidateCache($invalidate_action . '_' . $cache_id);
+			// $this->redis->invalidateCache($invalidate_action . '_' . $cache_id);
 			// }
 		}
 		
-		
-		
-		 if (! empty ( $callback )) {
+		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
 			
 			$json_arr = array (
@@ -1381,24 +1388,23 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 			$json = json_encode ( $json_arr );
 			
 			header ( "Content-type: plain/text" );
-			//header('Content-Type: application/json');
+			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-		}else if (isset ( $_GET ['view'] ) && empty ( $actionname )) {
+		} else if (isset ( $_GET ['view'] ) && empty ( $actionname )) {
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view folder
 			return $view;
 		} else {
 			// json output
 			echo $output;
-//error_log("output ----> $output".PHP_EOL);
+			// error_log("output ----> $output".PHP_EOL);
 		}
 		
 		/*
 		 * Cache Warming section...
 		 */
-		if (($actionname != 'listnotification') &&
-		MemreasConstants::ELASTICACHE_REDIS_USE) {
+		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 			error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			
 			// Return the status code here so this process continues and the user receives response
@@ -1412,24 +1418,31 @@ error_log ( "cache_entry------>".json_encode($cache_entry).PHP_EOL );
 				// Do nothing...
 			}
 			
-			//Debugging
-			$result = $this->elasticache->cache->executeRaw(array('DEL', '@person'));
-			$result = $this->elasticache->cache->executeRaw(array('SET', 'warming', '0'));
-			//End Debugging
-			if (! $this->elasticache->hasSet ( '@person' )) {
-error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			// Debugging
+			$result = $this->redis->cache->executeRaw ( array (
+					'DEL',
+					'@person' 
+			) );
+			$result = $this->redis->cache->executeRaw ( array (
+					'SET',
+					'warming',
+					'0' 
+			) );
+			// End Debugging
+			if (! $this->redis->hasSet ( '@person' )) {
+				error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// Now continue processing and warm the cache for @person
 				$registration = new Registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$this->elasticache->warmPersonSet ();
+				$this->redis->warmPersonSet ();
 			}
 			
-			if (! $this->elasticache->hasSet ( '#hashtag' )) {
-error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			if (! $this->redis->hasSet ( '#hashtag' )) {
+				error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// warm the cache for #hashtag
 				$session = new Container ( 'user' );
 				$user_id = $session->offsetGet ( 'user_id' );
-error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
-				$this->elasticache->warmHashTagSet ( $user_id );
+				error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+				$this->redis->warmHashTagSet ( $user_id );
 			}
 		}
 		// Need to exit here to avoid ZF2 framework view.
@@ -1576,103 +1589,16 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 		
 		return $this->storage;
 	}
-	public function security($actionname) {
-		
+	public function requiresSecureAction($actionname) {
 		/*
-		 * TODO: This function isn't working properly. I added in session_id($sid) per docs but the session variables aren't retained
+		 * Check action to see if session is needed...
 		 */
-		if ((MemreasConstants::ELASTICACHE_SERVER_USE) && (MemreasConstants::ELASTICACHE_REDIS_USE)) {
-			try {
-				$this->elasticache = new AWSMemreasRedisCache ( $this->getServiceLocator () );
-			} catch ( \Exception $ex ) {
-				echo "base exception ---> " . print_r ( $ex, true ) . PHP_EOL;
-			}
-		} else if (MemreasConstants::ELASTICACHE_SERVER_USE) {
-			$this->elasticache = new AWSMemreasCache ();
-		} else {
-			$this->elasticache = new AWSMemreasCache ();
-		}
-		
-		/*
-		 * Fetch the user's ip address
-		 */
-		$ipaddress = $this->getServiceLocator ()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
-		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
-			$ipaddress = $_SERVER ['HTTP_CLIENT_IP'];
-		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
-			$ipaddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
-		} else {
-			$ipaddress = $_SERVER ['REMOTE_ADDR'];
-		}
-		// error_log('ip is '.$ipaddress);
-		
-		/*
-		 * Set the session save handle
-		 */
-		try {
-			if (MemreasConstants::ELASTICACHE_SERVER_USE) {
-				
-				/*
-				 * Set Redis for session caching
-				 */
-				$config = new SessionConfig ();
-				$saveHandler = new MemreasRedisSaveHandler ( $this->elasticache );
-				$sessionManager = new SessionManager ();
-				$sessionManager->setSaveHandler ( $saveHandler );
-				Container::setDefaultManager ( $sessionManager );
-			} else {
-				
-				$gwOpts = new DbTableGatewayOptions ();
-				$gwOpts->setDataColumn ( 'data' );
-				$gwOpts->setIdColumn ( 'session_id' );
-				$gwOpts->setLifetimeColumn ( 'lifetime' );
-				$gwOpts->setModifiedColumn ( 'end_date' );
-				$gwOpts->setNameColumn ( 'name' );
-				$gwOpts->ipaddress = $ipaddress;
-				$dbAdapter = $this->getServiceLocator ()->get ( MemreasConstants::MEMREASDB );
-				$saveHandler = new \Application\Model\DbTableGateway ( new TableGateway ( 'user_session', $dbAdapter ), $gwOpts );
-				$sessionManager = new SessionManager ();
-				$sessionManager->setSaveHandler ( $saveHandler );
-				Container::setDefaultManager ( $sessionManager );
-			}
-			$sid = '';
-			if (! empty ( $_REQUEST ['sid'] )) {
-				$sid = $_REQUEST ['sid'];
-			} elseif (isset ( $_POST ['xml'] )) {
-				$data = simplexml_load_string ( $_POST ['xml'] );
-				$sid = trim ( $data->sid );
-			}
-			try {
-				if (! empty ( $sid )) {
-					// if initialized, clear, set sid, start...
-					$sessionManager->getStorage ()->clear ( 'user' );
-					$sessionManager->setId ( $sid );
-					$sessionManager->start ();
-				}
-			} catch ( \Exception $e ) {
-				echo 'Caught exception: ', $e->getMessage (), "\n";
-			}
-			$user_session = new Container ( 'user' );
-			if (! isset ( $user_session->init )) {
-				$user_session->init = 1;
-				$user_session->sid = $sid;
-			}
-		} catch ( \Exception $e ) {
-			// echo 'Caught exception: ', $e->getMessage(), "\n";
-			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
-		}
-//error_log ( 'SID: ' . $user_session->sid . PHP_EOL );
 		$public = array (
 				'login',
 				'registration',
 				'forgotpassword',
 				'checkusername',
 				'verifyemailaddress',
-				'showlog',
-				'clearlog',
-				'checkevent',
-				'feedback',
-				'listallmedia',
 				// For stripe
 				'getplans',
 				'getplansstatic',
@@ -1682,38 +1608,70 @@ error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u'
 				'refund',
 				'listpayees',
 				'makepayout',
-				'getdiskusage' ,
-				'deletephoto'
+				'getdiskusage' 
 		);
-		$_SESSION ['user'] ['ip'] = $ipaddress;
-		$_SESSION ['user'] ['HTTP_USER_AGENT']="";
-		if (isset($_SERVER['HTTP_USER_AGENT']) && !empty($_SERVER['HTTP_USER_AGENT'])) {
-			$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+		if (in_array ( $actionname, $public )) {
+			error_log ( 'Inside else in_array actionname ->' . $actionname . PHP_EOL );
+			return false;
 		}
-		// 		if (in_array ( $actionname, $public ) || empty ( $actionname )) {
-		// 			error_log ( 'Inside else in_array actionname ->'.$actionname.PHP_EOL );
-		// 			return $actionname;
-		// 		} else {
-		// 			error_log ( 'Inside else not in_array actionname ->'.$actionname.PHP_EOL );
-		// 			/*
-		// 			 * $session = new Container("user"); if (!$session->offsetExists('user_id')) { return 'notlogin'; } return $actionname;
-		// 			 */
-		// 			$sid = session_id ();
-		// 			error_log ( 'SID IS ->'.$sid.PHP_EOL );
-		// 			if (! $sid) {
-		// 				error_log ( 'SID IS NOT SET !!!!!'.PHP_EOL );
-		// 				return 'notlogin';
-		// 			}
-		//		}
-		if ( isset($_COOKIE["PHPSESSID"]) && !empty($_COOKIE["PHPSESSID"]) ) {
-			//error_log ( 'COOKIE is set....'.$_COOKIE["PHPSESSID"].PHP_EOL );
-		} else {
-			//error_log ( 'COOKIE is NOT set....'.PHP_EOL );
-			if (!$user_session->sid)
-				$sid = session_id ();
+		return true;
+	}
+	public function fetchSession($actionname, $requiresExistingSession) {
+		/*
+		 * Setup Redis and the session save handle
+		 */
+		try {
+			$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
+			$sessionManager = new SessionManager ();
+			$config = new SessionConfig ();
+			$saveHandler = new MemreasRedisSaveHandler ( $this->redis );
+			$sessionManager->setSaveHandler ( $saveHandler );
+			Container::setDefaultManager ( $sessionManager );
+			/*
+			 * Check sid against logged in sid
+			 */
+			$this->sid = '';
+			if (isset ( $_POST ['xml'] )) {
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				$this->sid = trim ( $data->sid );
+			}
+			
+			if (! empty ( $this->sid ) || $requiresExistingSession) {
+				error_log ( "Inside security - inbound sid--->" . $this->sid . PHP_EOL );
+				$isExistingSid = $this->redis->getCache ( $this->sid );
+				error_log ( '$isExistingSid--->' . print_r ( $isExistingSid, true ) . PHP_EOL );
+				$_SESSION ['user'] ['ip'] = $this->fetchUserIPAddress();
+				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+				if (isset ( $_SERVER ['HTTP_USER_AGENT'] ) && ! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+				}
+			}
+		} catch ( \Exception $e ) {
+			// echo 'Caught exception: ', $e->getMessage(), "\n";
+			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
+		}
+		if (! $this->sid && $requiresExistingSession) {
+			error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
+			return 'notlogin';
 		}
 		
 		return $actionname;
+	}
+	public function fetchUserIPAddress() {
+		/*
+		 * Fetch the user's ip address
+		 */
+		$this->ipAddress = $this->getServiceLocator ()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
+			$this->ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
+		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
+			$this->ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$this->ipAddress = $_SERVER ['REMOTE_ADDR'];
+		}
+		error_log ( 'ip is ' . $this->ipAddress );
+		
+		return $this->ipAddress;
 	}
 }
 // end class IndexController

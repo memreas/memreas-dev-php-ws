@@ -19,13 +19,13 @@ class MemreasConstants {
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
-	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "54.204.57.197"; 
-	const ELASTICACHE_SERVER_PORT = "6379";
-	const ELASTICACHE_SERVER_USE = false;
-	const ELASTICACHE_REDIS_USE = false;
-	const ELASTICACHE_CACHE_TTL = 3600; //1 hour
-		
+	// Redis section
+	const REDIS_SERVER_ENDPOINT = "54.204.57.197"; //ubuntu standalone for redis 2.8.9 version
+	const REDIS_SERVER_USE = true;
+	const REDIS_SERVER_SESSION_ONLY = true;
+	const REDIS_SERVER_PORT = "6379";
+	const REDIS_CACHE_TTL = 3600; //1 hour
+				
 	//memreasdevsec related
 	const S3BUCKET = "memreasdevsec";
     const S3_APPKEY = 'AKIAJMXGGG4BNFS42LZA';

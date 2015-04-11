@@ -11,7 +11,7 @@ class AWSMemreasRedisCache {
 	private $aws = "";
 	public $cache = "";
 	private $client = "";
-    private $isCacheEnable = MemreasConstants::ELASTICACHE_SERVER_USE;
+    private $isCacheEnable = MemreasConstants::REDIS_SERVER_USE;
     private $dbAdapter;
     private $url_signer;
     
@@ -26,7 +26,7 @@ class AWSMemreasRedisCache {
     	try{
 			$this->cache = new \Predis\Client([
 					'scheme' => 'tcp',
-					'host'   => MemreasConstants::ELASTICACHE_SERVER_ENDPOINT,
+					'host'   => MemreasConstants::REDIS_SERVER_ENDPOINT,
 					'port'   => 6379,
 					]);
 			
@@ -37,7 +37,7 @@ class AWSMemreasRedisCache {
 		//error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . PHP_EOL);
 	}
 	
-	public function setCache($key, $value, $ttl = MemreasConstants::ELASTICACHE_CACHE_TTL) {
+	public function setCache($key, $value, $ttl = MemreasConstants::REDIS_CACHE_TTL) {
 		if(!$this->isCacheEnable){
 			return false;
 		}
@@ -115,7 +115,7 @@ error_log("cache warming @warming_hashtag started...".date( 'Y-m-d H:i:s.u' ).PH
 			$warming = $this->cache->set('warming_hashtag', '0');
 //error_log("cache warming @warming_hashtag finished...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 			
-			//$this->elasticache->setCache("!event", $mc);
+			//$this->redis->setCache("!event", $mc);
 		}
 	}
 	

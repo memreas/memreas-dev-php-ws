@@ -12,13 +12,13 @@ class MemreasConstants {
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;//has 1 or 0 value
 	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
 	
-	// ElastiCache section
-	const ELASTICACHE_SERVER_ENDPOINT = "memreasprdcache.142tbh.cfg.use1.cache.amazonaws.com";
-	const ELASTICACHE_SERVER_PORT = "11211";
-	const ELASTICACHE_SERVER_USE = true;
-	const ELASTICACHE_REDIS_USE = false;
-	const ELASTICACHE_CACHE_TTL = 600; //10 minutes
-	
+	// Redis section
+	const REDIS_SERVER_ENDPOINT = "54.204.57.197"; //ubuntu standalone for redis 2.8.9 version
+	const REDIS_SERVER_USE = true;
+	const REDIS_SERVER_SESSION_ONLY = true;
+	const REDIS_SERVER_PORT = "6379";
+	const REDIS_CACHE_TTL = 3600; //1 hour
+			
 	//memreasprod urls
 	const WEB_URL = "https://memreasprod-fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";

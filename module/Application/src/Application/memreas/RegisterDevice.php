@@ -32,9 +32,9 @@ class RegisterDevice {
 		error_log ( "device_id--->" . $device_id . PHP_EOL );
 		error_log ( "device_type--->" . $device_type . PHP_EOL );
 		
-error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+//error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
 		$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
+//error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
 		$device_found_result = $checkdevice_query->getResult ();
 		
 		if (empty ( $device_found_result )) {

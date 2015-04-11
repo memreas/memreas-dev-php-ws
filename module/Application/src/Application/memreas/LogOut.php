@@ -20,6 +20,9 @@ class LogOut {
 		$auth = $this->service_locator->get ( 'AuthService' );
 		$auth->clearIdentity ();
 		
+		$session = new Container ( 'user' );
+		$session->getManager()->destroy();
+		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";

@@ -26,7 +26,7 @@ class Login {
 		}
 		return $result;
 	}
-	public function exec() {
+	public function exec($ipAddress='') {
 		try {
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
@@ -61,13 +61,9 @@ class Login {
 					$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
 				}
 				$statement = $this->dbAdapter->createQuery ( $sql );
-				
-error_log ( "statement----->" . $statement->getSql() . PHP_EOL );
 				$row = $statement->getResult ();
 				
 				if (! empty ( $row )) {
-					
-
 					/*
 					 * Set the session for the user data...
 					 */
@@ -115,13 +111,11 @@ error_log ( "statement----->" . $statement->getSql() . PHP_EOL );
 		echo $xml_output;
 		error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}
-	public function setSession($user) {
+	public function setSession($user, $ipAddress='') {
 		$user->password = '';
 		$user->disable_account = '';
 		$user->create_date = '';
 		$user->update_time = '';
-		
-		// $this->service_locator->get ( 'Zend\Session\SessionManager' )->regenerateId ();
 		
 		error_log ( "Inside setSession got new Container..." );
 		$session = new Container ( 'user' );
@@ -129,17 +123,8 @@ error_log ( "statement----->" . $statement->getSql() . PHP_EOL );
 		$session->offsetSet ( 'username', $user->username );
 		$session->offsetSet ( 'sid', session_id () );
 		$session->offsetSet ( 'user', json_encode ( $user ) );
+		$session->offsetSet ( 'ipAddress', json_encode ( $ipAddresss ) );
 		error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet ( 'sid' ) . PHP_EOL );
-		
-		/*
-		 * TODO: Session storage isn't working properly if I set session id after but works here.
-		 */
-		// error_log ( "Inside setSession3..." . PHP_EOL );
-		// $_SESSION ['user'] ['user_id'] = $user->user_id;
-		// $_SESSION ['user'] ['username'] = $user->username;
-		// $_SESSION ['user'] ['user'] = json_encode ( $user );
-		// $_SESSION ['user'] ['sid'] = session_id();
-		// error_log ( "Inside setSession set user data - just set session id ---> " . $_SESSION ['user'] ['sid'] . PHP_EOL );
 	}
 }
 ?>

@@ -81,9 +81,9 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
      */
     public function read($id)
     {
-          $id = 'SID-'.$id;
-          $r = $this->getCacheStorage()->getCache($id);
-        return $r;
+    		$r = $this->getCacheStorage()->getCache($id);
+error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
+    		return $r;
     }
 
     /**
@@ -95,14 +95,8 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
      */
     public function write($id, $data)
     {
-        if(!empty($_SESSION['user']['user_id'])){
-        $id = 'SID-'.$id;
-//error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
+error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
         return $this->getCacheStorage()->setCache($id, $data);
-    } 
-        
-         
-        return true;
     }
 
     /**
@@ -113,8 +107,7 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
      */
     public function destroy($id)
     {
-error_log('Session->d'.$id );
-         $id = 'SID-'.$id;
+error_log('Session->'.$id );
         return $this->getCacheStorage()->invalidateCache($id);
     }
 

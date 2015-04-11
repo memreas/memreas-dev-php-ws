@@ -37,10 +37,6 @@ return array (
 						'Zend\Db\Adapter\AdapterAbstractServiceFactory' 
 				) 
 		),
-		'notification' => array (
-				'gcm_key' => 'AIzaSyC-NTSCQBJuBAuvwjlDH5SRm2IaixuW5gM' 
-		)
-		,
 		'doctrine' => array (
 				'connection' => array (
 						'orm_default' => array (
