@@ -22,26 +22,20 @@ class RegisterDevice {
 		 * Check if device is inserted and has registration id for type...
 		 * If the device exists use the regId else return empty reg id and let device obtain reg id and call register device...
 		 */
-		$q_checkdevice = "SELECT device" . 
-		//
-		" from Application\Entity\Device device" . 
-		//
-		" WHERE device.user_id=?1" . 
-		//
-		// " AND device.device_id=?2" .
-		" AND device.device_type=?2";
+		$q_checkdevice = "SELECT device
+				from Application\Entity\Device device
+				WHERE device.user_id='$user_id'
+				AND device.device_type='$device_type'";
 		
 		error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
 		error_log ( "user_id--->" . $user_id . PHP_EOL );
 		error_log ( "device_id--->" . $device_id . PHP_EOL );
 		error_log ( "device_type--->" . $device_type . PHP_EOL );
 		
+error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
 		$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-		$checkdevice_query->setParameter ( 1, $user_id );
-		// $checkdevice_query->setParameter ( 2, $device_id );
-		$checkdevice_query->setParameter ( 2, $device_type );
+error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
 		$device_found_result = $checkdevice_query->getResult ();
-		error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
 		
 		if (empty ( $device_found_result )) {
 			error_log ( "checkdevice_query empty" . PHP_EOL );
@@ -115,7 +109,7 @@ class RegisterDevice {
 				 * Check if user has other devices of same type
 				 */
 				$user_device_type_sql = "SELECT count(d) FROM Application\Entity\Device d
-												where  d.user = '$user_id'
+												where  d.user_id = '$user_id'
 												and d.device_type = '$device_type'";
 				$user_device_type_query = $this->dbAdapter->createQuery ( $user_device_type_sql );
 				$devicetype_count = $user_device_type_query->getSingleScalarResult();
@@ -156,10 +150,9 @@ error_log ( 'registerdevice.exec()->executed insert' . PHP_EOL );
 					$deviceexists_update_result = $deviceexists_update_query->getResult();
 error_log ( 'registerdevice.exec()->executed update' . PHP_EOL );
 				}
-				
-				$status = 'success';
-				$message = "device token saved";
 			}
+			$status = 'success';
+			$message = "device token saved";
 			$xml_output .= "<status>$status</status>";
 			$xml_output .= "<message>$message</message>";
 			$xml_output .= "</registerdeviceresponse>";
