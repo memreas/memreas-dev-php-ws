@@ -260,7 +260,7 @@ error_log("hasSet result set $set ------> " . json_encode($result) . PHP_EOL);
 			return false;
 		}
 
-		$result = $this->cache->delete ( $key );
+		$result = $this->cache->del ( $key );
 		if ($result) {
 			//error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
 		} else {

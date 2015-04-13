@@ -19,7 +19,6 @@ class Login {
 	protected $fesid;
 	protected $clientIPAddress;
 	public $isWeb;
-	
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
@@ -34,23 +33,23 @@ class Login {
 		}
 		return $result;
 	}
-	public function exec($ipAddress='') {
+	public function exec($sessHandler, $ipAddress = '') {
 		try {
-//error_log ( 'login exec $ipAddress--->' . $ipAddress . PHP_EOL );
-				
+			// error_log ( 'login exec $ipAddress--->' . $ipAddress . PHP_EOL );
+			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-//error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
+			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
 			$flagusername = 0;
 			$flagpass = 0;
 			$this->username = trim ( $data->login->username );
-			$this->device_id = (!empty($data->login->device_id)) ? trim ( $data->login->device_id ) : '';
-			$this->device_type = (!empty($data->login->device_type)) ? trim ( $data->login->device_type ) : '';
-			$this->fesid = (!empty($data->fesid)) ? trim ( $data->fesid ) : '';
-			$this->isWeb = (!empty($data->fesid)) ? true : false;
-error_log ( "this->isWeb" . $this->isWeb . PHP_EOL );
+			$this->device_id = (! empty ( $data->login->device_id )) ? trim ( $data->login->device_id ) : '';
+			$this->device_type = (! empty ( $data->login->device_type )) ? trim ( $data->login->device_type ) : '';
+			$this->fesid = (! empty ( $data->fesid )) ? trim ( $data->fesid ) : '';
+			$this->isWeb = (! empty ( $data->fesid )) ? true : false;
+			// error_log ( "this->isWeb" . $this->isWeb . PHP_EOL );
 			$this->clientIPAddress = $ipAddress;
-
+			
 			$time = time ();
 			if (empty ( $this->username )) {
 				$flagusername = 1;
@@ -81,14 +80,14 @@ error_log ( "this->isWeb" . $this->isWeb . PHP_EOL );
 					/*
 					 * Set the session for the user data...
 					 */
-					$this->setSession ( $row[0] );
+					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->fesid,  $this->clientIPAddress);
 					
 					/*
 					 * Check if the device is registered and update as needed
 					 */
-					$device_token='';
-					if (!empty($this->device_type)) {
-						$device_token = $this->registerDevice->checkDevice($row [0]->user_id, $this->device_id, $this->device_type);
+					$device_token = '';
+					if (! empty ( $this->device_type )) {
+						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type );
 					}
 					
 					/*
@@ -127,27 +126,6 @@ error_log ( "this->isWeb" . $this->isWeb . PHP_EOL );
 		
 		echo $xml_output;
 		error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
-	}
-	public function setFELookup($redis) {
-		error_log('Inside setFELookup'.PHP_EOL);
-		$fesidArr = array();
-		$fesidArr['user_id'] = $_SESSION[ 'user_id' ];
-		$fesidArr['sid'] = $_SESSION[  'sid' ];
-		$fesidArr['device_id'] = $_SESSION[  'device_id' ];
-		$fesidArr['device_type'] = $_SESSION[  'device_type' ];
-		$fesidArr['ipAddress'] = $_SESSION[  'ipAddress' ];
-		$redis->setCache($_SESSION[ 'fesid' ], json_encode($fesidArr) );
-	}
-	public function setSession($user) {
-		session_start();
-		$_SESSION[ 'user_id' ] = $user->user_id;
-		$_SESSION[ 'username' ] = $user->username;
-		$_SESSION[ 'sid' ] = session_id ();
-		$_SESSION[ 'email_address' ] = $user->email_address;
-		$_SESSION[ 'device_id' ] = $this->device_id;
-		$_SESSION[ 'device_type' ] = $this->device_type;
-		$_SESSION[ 'fesid' ] = $this->fesid;
-		$_SESSION[ 'ipAddress' ] = $this->clientIPAddress;
 	}
 }
 ?>

@@ -119,6 +119,14 @@ class IndexController extends AbstractActionController {
 	protected $aws;
 	protected $sid;
 	protected $ipAddress;
+	protected $sessHandler;
+	
+	public function setupSaveHandler() {
+		$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
+		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis );
+		session_set_save_handler ( $this->sessHandler );
+	}
+	
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -177,7 +185,25 @@ class IndexController extends AbstractActionController {
 			$actionname = isset ( $_REQUEST ['action'] ) ? $_REQUEST ['action'] : '';
 			$message_data ['xml'] = '';
 		}
+
+		/**
+		 * For testing only...
+		 */
+		if ($actionname == "ws_tester" && MemreasConstants::ALLOW_DUPLICATE_EMAIL_FOR_TESTING) {
+			error_log ( "path--->" . $path );
+			$view = new ViewModel ();
+			$view->setTemplate ( $path ); // path to phtml file under view folder
+			return $view;
+		}
 		
+		/**
+		 * Setup save handler
+		 */
+		$this->setupSaveHandler();
+		
+		/**
+		 * Check session
+		 */
 		error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		error_log ( "Inside indexAction---> actionname after security ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
@@ -205,26 +231,16 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "login") {
 				error_log ( 'login action this->ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $login->exec ( $this->fetchUserIPAddress () );
+				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
 				
 				/*
 				 * If web store fesid lookup
 				 */
 				if ($login->isWeb) {
 					error_log ( 'isWeb is true calling setFELookup...' . PHP_EOL );
-					
-					$login->setFELookup ( new AWSMemreasRedisCache ( $this->getServiceLocator () ) );
+					$this->sessHandler->setFELookup ();
 				}
 				$this->ipAddress = $_SESSION ['ipAddress'];
-				
-				error_log ( 'login session variables user_id-->' . $_SESSION ['user_id'] . PHP_EOL );
-				error_log ( 'login session variables username-->' . $_SESSION ['username'] . PHP_EOL );
-				error_log ( 'login session variables sid-->' . $_SESSION ['sid'] . PHP_EOL );
-				error_log ( 'login session variables email_address-->' . $_SESSION ['email_address'] . PHP_EOL );
-				error_log ( 'login session variables device_id-->' . $_SESSION ['device_id'] . PHP_EOL );
-				error_log ( 'login session variables device_type-->' . $_SESSION ['device_type'] . PHP_EOL );
-				error_log ( 'login session variables fesid-->' . $_SESSION ['fesid'] . PHP_EOL );
-				error_log ( 'login session variables ipAddress-->' . $_SESSION ['ipAddress'] . PHP_EOL );
 				
 				/*
 				 * Cache approach - warm @person if not set here
@@ -983,7 +999,7 @@ class IndexController extends AbstractActionController {
 				 */
 				error_log ( 'IndexController -> logout...' . PHP_EOL );
 				$logout = new LogOut ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $logout->exec ();
+				$result = $logout->exec ( $this->sessHandler );
 			} else if ($actionname == "clearallnotification") {
 				/*
 				 * TODO: Cache Approach: write operation do later
@@ -1137,7 +1153,7 @@ class IndexController extends AbstractActionController {
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriendgroup") {
 				$RemoveFriendGroup = new RemoveFriendGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $RemoveFriendGroup->exec ();
@@ -1146,7 +1162,7 @@ class IndexController extends AbstractActionController {
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "geteventpeople") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1170,7 +1186,7 @@ class IndexController extends AbstractActionController {
 				$session = new Container ( "user" );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
-				$this->redis->invalidateMedia ( $session->offsetGet ( 'user_id' ), $event_id );
+				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1220,7 +1236,7 @@ class IndexController extends AbstractActionController {
 				 * TODO: Cache approach - write operation - need to invalidate invalidateMedia
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateMedia ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "feedback") {
 				/*
 				 * Cache Approach - N/a
@@ -1248,7 +1264,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - write operation - invalidateMedia
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateMedia ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removeeventfriend") {
 				/*
 				 * TODO: Invalidation needed
@@ -1261,7 +1277,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - write operation - invalidateMedia
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateEventFriends ( $data->removeeventfriend->event_id, $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateEventFriends ( $data->removeeventfriend->event_id, $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriends") {
 				
 				$RemoveFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1271,7 +1287,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - write operation - invalidateFriends
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateFriends ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
 			} else if ($actionname == "getfriends") {
 				
 				/*
@@ -1318,7 +1334,7 @@ class IndexController extends AbstractActionController {
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
 				$session = new Container ( "user" );
-				$this->redis->invalidateGroups ( $session->offsetGet ( 'user_id' ) );
+				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "checkevent") {
 				/*
 				 * TODO: Query inside needs to cached
@@ -1397,10 +1413,6 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-		} else if (isset ( $_GET ['view'] ) && empty ( $actionname )) {
-			$view = new ViewModel ();
-			$view->setTemplate ( $path ); // path to phtml file under view folder
-			return $view;
 		} else {
 			// json output
 			echo $output;
@@ -1446,7 +1458,7 @@ class IndexController extends AbstractActionController {
 				error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// warm the cache for #hashtag
 				$session = new Container ( 'user' );
-				$user_id = $session->offsetGet ( 'user_id' );
+				$user_id = $_SESSION ['user_id'];
 				error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				$this->redis->warmHashTagSet ( $user_id );
 			}
@@ -1454,147 +1466,6 @@ class IndexController extends AbstractActionController {
 		// Need to exit here to avoid ZF2 framework view.
 		exit ();
 	} // end indexcontroller...
-	public function loginAction() {
-		// Fetch the post data
-		$request = $this->getRequest ();
-		$postData = $request->getPost ()->toArray ();
-		$username = $postData ['username'];
-		$password = $postData ['password'];
-		
-		// Original Web Service Call...
-		// Setup the URL and action
-		$action = 'login';
-		$xml = "<xml><login><username>$username</username><password>$password</password></login></xml>";
-		$redirect = 'gallery';
-		
-		// Guzzle the LoginWeb Service
-		$result = $this->fetchXML ( $action, $xml );
-		$data = simplexml_load_string ( $result );
-		
-		// ZF2 Authenticate
-		if ($data->loginresponse->status == 'success') {
-			$this->setSession ( $username );
-			// Redirect here
-			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => $redirect 
-			) );
-		} else {
-			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => "index" 
-			) );
-		}
-	}
-	public function logoutAction() {
-		$this->getSessionStorage ()->forgetMe ();
-		$this->getAuthService ()->clearIdentity ();
-		$session = new Container ( 'user' );
-		$session->getManager ()->destroy ();
-		
-		$view = new ViewModel ();
-		$view->setTemplate ( 'application/index/index.phtml' ); // path to phtml file under view folder
-		return $view;
-	}
-	public function setSession($username) {
-		// Fetch the user's data and store it in the session...
-		$user = $this->getUserTable ()->getUserByUsername ( $username );
-		unset ( $user->password );
-		unset ( $user->disable_account );
-		unset ( $user->create_date );
-		unset ( $user->update_time );
-		$session = new Container ( 'user' );
-		$session->offsetSet ( 'user_id', $user->user_id );
-		$session->offsetSet ( 'username', $username );
-		$session->offsetSet ( 'sid', session_id () );
-		$session->offsetSet ( 'user', json_encode ( $user ) );
-	}
-	public function registrationAction() {
-		// Fetch the post data
-		$postData = $this->getRequest ()->getPost ()->toArray ();
-		$email = $postData ['email'];
-		$username = $postData ['username'];
-		$password = $postData ['password'];
-		
-		// Setup the URL and action
-		$action = 'registration';
-		$xml = "<xml><registration><email>$email</email><username>$username</username><password>$password</password></registration></xml>";
-		$redirect = 'event';
-		
-		// Guzzle the Registration Web Service
-		$result = $this->fetchXML ( $action, $xml );
-		$data = simplexml_load_string ( $result );
-		
-		// ZF2 Authenticate
-		if ($data->registrationresponse->status == 'success') {
-			$this->setSession ( $username );
-			
-			// If there's a profile pic upload it...
-			if (isset ( $_FILES ['file'] )) {
-				$file = $_FILES ['file'];
-				$fileName = $file ['name'];
-				$filetype = $file ['type'];
-				$filetmp_name = $file ['tmp_name'];
-				$filesize = $file ['size'];
-				
-				// echo "filename ----> $fileName<BR>";
-				// echo "filetype ----> $filetype<BR>";
-				// echo "filetmp_name ----> $filetmp_name<BR>";
-				// echo "filesize ----> $filesize<BR>";
-				
-				$url = MemreasConstants::ORIGINAL_URL;
-				$guzzle = new Client ();
-				$session = new Container ( 'user' );
-				$request = $guzzle->post ( $url )->addPostFields ( array (
-						'user_id' => $session->offsetGet ( 'user_id' ),
-						'filename' => $fileName,
-						'event_id' => "",
-						'device_id' => "",
-						'is_profile_pic' => 1,
-						'is_server_image' => 0 
-				) )->addPostFiles ( array (
-						'f' => $filetmp_name 
-				) );
-			}
-			$response = $request->send ();
-			$data = $response->getBody ( true );
-			$xml = simplexml_load_string ( $result );
-			
-			// ZF2 Authenticate
-			error_log ( "addmediaevent result -----> " . $data );
-			if ($xml->addmediaeventresponse->status == 'success') {
-				// Do nothing even if it fails...
-			}
-			
-			// Redirect here
-			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => $redirect 
-			) );
-		} else {
-			return $this->redirect ()->toRoute ( 'index', array (
-					'action' => "index" 
-			) );
-		}
-	}
-	public function getUserTable() {
-		if (! $this->userTable) {
-			$sm = $this->getServiceLocator ();
-			$this->userTable = $sm->get ( 'Application\Model\UserTable' );
-		}
-		return $this->userTable;
-	}
-	public function getAuthService() {
-		if (! $this->authservice) {
-			$this->authservice = $this->getServiceLocator ()->get ( 'AuthService' );
-		}
-		
-		return $this->authservice;
-	}
-	public function getSessionStorage() {
-		if (! $this->storage) {
-			$this->storage = $this->getServiceLocator ()->get ( 'application\Model\MyAuthStorage' );
-		}
-		
-		return $this->storage;
-	}
 	public function requiresSecureAction($actionname) {
 		/*
 		 * Check action to see if session is needed...
@@ -1605,6 +1476,7 @@ class IndexController extends AbstractActionController {
 				'forgotpassword',
 				'checkusername',
 				'verifyemailaddress',
+				'ws_tester',
 				// For stripe
 				'getplans',
 				'getplansstatic',
@@ -1628,16 +1500,6 @@ class IndexController extends AbstractActionController {
 		 */
 		$sid_success = 0;
 		try {
-			$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
-			// $sessionManager = new SessionManager ();
-			// $config = new SessionConfig ();
-			// $saveHandler = new MemreasRedisSaveHandler ( $this->redis );
-			// $sessionManager->setSaveHandler ( $saveHandler );
-			// $sessionManager->getSessionStorage()->setMetadata()
-			// Container::setDefaultManager ( $sessionManager );
-			$sessHandler = new AWSMemreasRedisSessionHandler ();
-			session_set_save_handler ( $sessHandler );
-			
 			/*
 			 * Check sid against logged in sid
 			 */
@@ -1646,58 +1508,36 @@ class IndexController extends AbstractActionController {
 				
 				if (! empty ( $data->sid )) {
 					/*
-					 * SetId for the session and start...
+					 * SetId for the mobile devices session and start...
 					 */
-					session_id ( $data->sid );
-					session_start ();
+					$this->sessHandler->startSessionWithSID ( $data->sid );
+					// error_log('session_id ()->'.session_id ().PHP_EOL);
+					// error_log('$data->sid->'.$data->sid.PHP_EOL);
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-					
-					// $session = new Container ( 'user' );
-					// error_log ( 'rSession login session variables user_id-->' . $session->offsetGet ( 'user_id' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables username-->' . $session->offsetGet ( 'username' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables sid-->' . $session->offsetGet ( 'sid' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables email_address-->' . $session->offsetGet ( 'email_address' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables device_id-->' . $session->offsetGet ( 'device_id' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables device_type-->' . $session->offsetGet ( 'device_type' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables fesid-->' . $session->offsetGet ( 'fesid' ) . PHP_EOL );
-					// error_log ( 'rSession login session variables ipAddress-->' . $session->offsetGet ( 'ipAddress' ) . PHP_EOL );
 				} else if (! empty ( $data->fesid )) {
-					$rFESession = $this->redis->getCache ( $data->fesid );
-					error_log ( '$rSession for fesid lookup ----->' . $rFESession . PHP_EOL );
-					$rFESessionArr = json_decode ( $rFESession, true );
-					error_log ( '$rFESessionArr for fesid lookup ----->' . print_r ( $rFESessionArr, true ) . PHP_EOL );
-					// $sessionManager->writeClose ();
-					// $sessionManager->destroy ();
-					// $sessionManager->setId ( $rFESessionArr ['sid'] );
-					// $sessionManager->start ( true );
-					// $session = new Container ( 'user' );
-					// error_log ( '$rFESession login session variables user_id-->' . $session->offsetGet ( 'user_id' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables username-->' . $session->offsetGet ( 'username' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables sid-->' . $session->offsetGet ( 'sid' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables email_address-->' . $session->offsetGet ( 'email_address' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables device_id-->' . $session->offsetGet ( 'device_id' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables device_type-->' . $session->offsetGet ( 'device_type' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables fesid-->' . $session->offsetGet ( 'fesid' ) . PHP_EOL );
-					// error_log ( '$rFESession login session variables ipAddress-->' . $session->offsetGet ( 'ipAddress' ) . PHP_EOL );
-					session_id ( $rFESessionArr ['sid'] );
-					session_start ();
-					if (session_id () == $rFESessionArr ['sid']) {
+					/*
+					 * SetId for the web browser session and start...
+					 */
+					$this->sessHandler->startSessionWithFESID ( $data->fesid );
+					// error_log('$_SESSION [ fesid ]->'.$_SESSION [ 'fesid' ].PHP_EOL);
+					// error_log('$data->fesid->'.$data->fesid.PHP_EOL);
+					if ($_SESSION ['fesid'] == $data->fesid) {
 						$sid_success = 1;
 					}
 				}
 				
 				$currentIPAddress = $this->fetchUserIPAddress ();
-				if ($currentIPAddress != $_SESSION['ipAddress']) {
-					error_log("ERROR::User IP Address has changed!!");
+				if ($currentIPAddress != $_SESSION ['ipAddress']) {
+					error_log ( "ERROR::User IP Address has changed!!" );
 				}
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
 					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 				}
 				
-				if (!$sid_success) {
+				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
 					return 'notlogin';
 				}
@@ -1727,3 +1567,145 @@ class IndexController extends AbstractActionController {
 	}
 }
 // end class IndexController
+
+// public function loginAction() {
+// 	// Fetch the post data
+// 	$request = $this->getRequest ();
+// 	$postData = $request->getPost ()->toArray ();
+// 	$username = $postData ['username'];
+// 	$password = $postData ['password'];
+
+// 	// Original Web Service Call...
+// 	// Setup the URL and action
+// 	$action = 'login';
+// 	$xml = "<xml><login><username>$username</username><password>$password</password></login></xml>";
+// 	$redirect = 'gallery';
+
+// 	// Guzzle the LoginWeb Service
+// 	$result = $this->fetchXML ( $action, $xml );
+// 	$data = simplexml_load_string ( $result );
+
+// 	// ZF2 Authenticate
+// 	if ($data->loginresponse->status == 'success') {
+// 		$this->setSession ( $username );
+// 		// Redirect here
+// 		return $this->redirect ()->toRoute ( 'index', array (
+// 				'action' => $redirect
+// 		) );
+// 	} else {
+// 		return $this->redirect ()->toRoute ( 'index', array (
+// 				'action' => "index"
+// 		) );
+// 	}
+// }
+// public function logoutAction() {
+// 	$this->getSessionStorage ()->forgetMe ();
+// 	$this->getAuthService ()->clearIdentity ();
+// 	$session = new Container ( 'user' );
+// 	$session->getManager ()->destroy ();
+
+// 	$view = new ViewModel ();
+// 	$view->setTemplate ( 'application/index/index.phtml' ); // path to phtml file under view folder
+// 	return $view;
+// }
+// public function setSession($username) {
+// 	// Fetch the user's data and store it in the session...
+// 	$user = $this->getUserTable ()->getUserByUsername ( $username );
+// 	unset ( $user->password );
+// 	unset ( $user->disable_account );
+// 	unset ( $user->create_date );
+// 	unset ( $user->update_time );
+// 	$session = new Container ( 'user' );
+// 	$session->offsetSet ( 'user_id', $user->user_id );
+// 	$session->offsetSet ( 'username', $username );
+// 	$session->offsetSet ( 'sid', session_id () );
+// 	$session->offsetSet ( 'user', json_encode ( $user ) );
+// }
+// public function registrationAction() {
+// 	// Fetch the post data
+// 	$postData = $this->getRequest ()->getPost ()->toArray ();
+// 	$email = $postData ['email'];
+// 	$username = $postData ['username'];
+// 	$password = $postData ['password'];
+
+// 	// Setup the URL and action
+// 	$action = 'registration';
+// 	$xml = "<xml><registration><email>$email</email><username>$username</username><password>$password</password></registration></xml>";
+// 	$redirect = 'event';
+
+// 	// Guzzle the Registration Web Service
+// 	$result = $this->fetchXML ( $action, $xml );
+// 	$data = simplexml_load_string ( $result );
+
+// 	// ZF2 Authenticate
+// 	if ($data->registrationresponse->status == 'success') {
+// 		$this->setSession ( $username );
+			
+// 		// If there's a profile pic upload it...
+// 		if (isset ( $_FILES ['file'] )) {
+// 			$file = $_FILES ['file'];
+// 			$fileName = $file ['name'];
+// 			$filetype = $file ['type'];
+// 			$filetmp_name = $file ['tmp_name'];
+// 			$filesize = $file ['size'];
+
+// 			// echo "filename ----> $fileName<BR>";
+// 			// echo "filetype ----> $filetype<BR>";
+// 			// echo "filetmp_name ----> $filetmp_name<BR>";
+// 			// echo "filesize ----> $filesize<BR>";
+
+// 			$url = MemreasConstants::ORIGINAL_URL;
+// 			$guzzle = new Client ();
+// 			$session = new Container ( 'user' );
+// 				$request = $guzzle->post ( $url )->addPostFields ( array (
+// 						'user_id' => $_SESSION ['user_id'],
+// 								'filename' => $fileName,
+// 								'event_id' => "",
+// 								'device_id' => "",
+// 								'is_profile_pic' => 1,
+// 								'is_server_image' => 0
+// 						) )->addPostFiles ( array (
+// 								'f' => $filetmp_name
+// 						) );
+// 		}
+// 		$response = $request->send ();
+// 		$data = $response->getBody ( true );
+// 		$xml = simplexml_load_string ( $result );
+			
+// 		// ZF2 Authenticate
+// 		error_log ( "addmediaevent result -----> " . $data );
+// 		if ($xml->addmediaeventresponse->status == 'success') {
+// 			// Do nothing even if it fails...
+// 		}
+			
+// 		// Redirect here
+// 		return $this->redirect ()->toRoute ( 'index', array (
+// 				'action' => $redirect
+// 		) );
+// 	} else {
+// 		return $this->redirect ()->toRoute ( 'index', array (
+// 				'action' => "index"
+// 		) );
+// 	}
+// }
+// public function getUserTable() {
+// 	if (! $this->userTable) {
+// 		$sm = $this->getServiceLocator ();
+// 		$this->userTable = $sm->get ( 'Application\Model\UserTable' );
+// 	}
+// 	return $this->userTable;
+// }
+// public function getAuthService() {
+// 	if (! $this->authservice) {
+// 		$this->authservice = $this->getServiceLocator ()->get ( 'AuthService' );
+// 	}
+
+// 	return $this->authservice;
+// }
+// public function getSessionStorage() {
+// 	if (! $this->storage) {
+// 		$this->storage = $this->getServiceLocator ()->get ( 'application\Model\MyAuthStorage' );
+// 	}
+
+// 	return $this->storage;
+// }
