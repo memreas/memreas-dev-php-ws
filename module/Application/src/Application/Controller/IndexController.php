@@ -42,7 +42,7 @@ use Application\memreas\AddEvent;
 use Application\memreas\ViewEvents;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AWSMemreasRedisCache;
-use Application\memreas\MemreasRedisSaveHandler;
+use Application\memreas\AWSMemreasRedisSessionHandler;
 use Application\memreas\AddFriendtoevent;
 use Application\memreas\ViewMediadetails;
 use Application\memreas\snsProcessMediaPublish;
@@ -117,9 +117,8 @@ class IndexController extends AbstractActionController {
 	protected $friendmediaTable;
 	protected $redis;
 	protected $aws;
-	protected $sid;	
+	protected $sid;
 	protected $ipAddress;
-	
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -153,12 +152,11 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-		// error_log("inside indexAction...".PHP_EOL);
+		error_log ( "inside indexAction..." . PHP_EOL );
 		// Checking headers for cookie info
-		// $headers = apache_request_headers();
-		
-		// foreach ($headers as $header => $value) {
-		// error_log("WS header: $header :: value: $value".PHP_EOL);
+		// $headers = apache_request_headers ();
+		// foreach ( $headers as $header => $value ) {
+		// error_log ( "WS header: $header :: value: $value" . PHP_EOL );
 		// }
 		// End Checking headers for cookie info
 		$path = "application/index/ws_tester.phtml";
@@ -205,22 +203,29 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
+				error_log ( 'login action this->ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $login->exec ($this->ipAddress);
-				// error_log("login result ---> $result".PHP_EOL);
-				//
-				$session = new Container ( 'user' );
-				$user_id = $session->offsetGet ( 'user_id' );
-				$username = $session->offsetGet ( 'username' );
-				$this->sid = $session->offsetGet ( 'sid' );
-				$this->ipAddress = $session->offsetGet ( 'ipAddress' );
-				$user = $session->offsetGet ( 'user' );
-error_log('login session variables $user_id'.$user_id.PHP_EOL);				
-error_log('login session variables $$username'.$username.PHP_EOL);
-error_log('login session variables this->sid'.$this->sid.PHP_EOL);
-error_log('login session variables this->ipAddress'.$this->ipAddress.PHP_EOL);
-error_log('login session variables $user'.$user.PHP_EOL);
-
+				$result = $login->exec ( $this->fetchUserIPAddress () );
+				
+				/*
+				 * If web store fesid lookup
+				 */
+				if ($login->isWeb) {
+					error_log ( 'isWeb is true calling setFELookup...' . PHP_EOL );
+					
+					$login->setFELookup ( new AWSMemreasRedisCache ( $this->getServiceLocator () ) );
+				}
+				$this->ipAddress = $_SESSION ['ipAddress'];
+				
+				error_log ( 'login session variables user_id-->' . $_SESSION ['user_id'] . PHP_EOL );
+				error_log ( 'login session variables username-->' . $_SESSION ['username'] . PHP_EOL );
+				error_log ( 'login session variables sid-->' . $_SESSION ['sid'] . PHP_EOL );
+				error_log ( 'login session variables email_address-->' . $_SESSION ['email_address'] . PHP_EOL );
+				error_log ( 'login session variables device_id-->' . $_SESSION ['device_id'] . PHP_EOL );
+				error_log ( 'login session variables device_type-->' . $_SESSION ['device_type'] . PHP_EOL );
+				error_log ( 'login session variables fesid-->' . $_SESSION ['fesid'] . PHP_EOL );
+				error_log ( 'login session variables ipAddress-->' . $_SESSION ['ipAddress'] . PHP_EOL );
+				
 				/*
 				 * Cache approach - warm @person if not set here
 				 */
@@ -976,6 +981,7 @@ error_log('login session variables $user'.$user.PHP_EOL);
 				/*
 				 * Cache Approach: N/a
 				 */
+				error_log ( 'IndexController -> logout...' . PHP_EOL );
 				$logout = new LogOut ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $logout->exec ();
 			} else if ($actionname == "clearallnotification") {
@@ -1620,39 +1626,85 @@ error_log('login session variables $user'.$user.PHP_EOL);
 		/*
 		 * Setup Redis and the session save handle
 		 */
+		$sid_success = 0;
 		try {
 			$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
-			$sessionManager = new SessionManager ();
-			$config = new SessionConfig ();
-			$saveHandler = new MemreasRedisSaveHandler ( $this->redis );
-			$sessionManager->setSaveHandler ( $saveHandler );
-			Container::setDefaultManager ( $sessionManager );
+			// $sessionManager = new SessionManager ();
+			// $config = new SessionConfig ();
+			// $saveHandler = new MemreasRedisSaveHandler ( $this->redis );
+			// $sessionManager->setSaveHandler ( $saveHandler );
+			// $sessionManager->getSessionStorage()->setMetadata()
+			// Container::setDefaultManager ( $sessionManager );
+			$sessHandler = new AWSMemreasRedisSessionHandler ();
+			session_set_save_handler ( $sessHandler );
+			
 			/*
 			 * Check sid against logged in sid
 			 */
-			$this->sid = '';
-			if (isset ( $_POST ['xml'] )) {
+			if ($requiresExistingSession) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				$this->sid = trim ( $data->sid );
-			}
-			
-			if (! empty ( $this->sid ) || $requiresExistingSession) {
-				error_log ( "Inside security - inbound sid--->" . $this->sid . PHP_EOL );
-				$isExistingSid = $this->redis->getCache ( $this->sid );
-				error_log ( '$isExistingSid--->' . print_r ( $isExistingSid, true ) . PHP_EOL );
-				$_SESSION ['user'] ['ip'] = $this->fetchUserIPAddress();
+				
+				if (! empty ( $data->sid )) {
+					/*
+					 * SetId for the session and start...
+					 */
+					session_id ( $data->sid );
+					session_start ();
+					if (session_id () == $data->sid) {
+						$sid_success = 1;
+					}
+					
+					// $session = new Container ( 'user' );
+					// error_log ( 'rSession login session variables user_id-->' . $session->offsetGet ( 'user_id' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables username-->' . $session->offsetGet ( 'username' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables sid-->' . $session->offsetGet ( 'sid' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables email_address-->' . $session->offsetGet ( 'email_address' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables device_id-->' . $session->offsetGet ( 'device_id' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables device_type-->' . $session->offsetGet ( 'device_type' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables fesid-->' . $session->offsetGet ( 'fesid' ) . PHP_EOL );
+					// error_log ( 'rSession login session variables ipAddress-->' . $session->offsetGet ( 'ipAddress' ) . PHP_EOL );
+				} else if (! empty ( $data->fesid )) {
+					$rFESession = $this->redis->getCache ( $data->fesid );
+					error_log ( '$rSession for fesid lookup ----->' . $rFESession . PHP_EOL );
+					$rFESessionArr = json_decode ( $rFESession, true );
+					error_log ( '$rFESessionArr for fesid lookup ----->' . print_r ( $rFESessionArr, true ) . PHP_EOL );
+					// $sessionManager->writeClose ();
+					// $sessionManager->destroy ();
+					// $sessionManager->setId ( $rFESessionArr ['sid'] );
+					// $sessionManager->start ( true );
+					// $session = new Container ( 'user' );
+					// error_log ( '$rFESession login session variables user_id-->' . $session->offsetGet ( 'user_id' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables username-->' . $session->offsetGet ( 'username' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables sid-->' . $session->offsetGet ( 'sid' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables email_address-->' . $session->offsetGet ( 'email_address' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables device_id-->' . $session->offsetGet ( 'device_id' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables device_type-->' . $session->offsetGet ( 'device_type' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables fesid-->' . $session->offsetGet ( 'fesid' ) . PHP_EOL );
+					// error_log ( '$rFESession login session variables ipAddress-->' . $session->offsetGet ( 'ipAddress' ) . PHP_EOL );
+					session_id ( $rFESessionArr ['sid'] );
+					session_start ();
+					if (session_id () == $rFESessionArr ['sid']) {
+						$sid_success = 1;
+					}
+				}
+				
+				$currentIPAddress = $this->fetchUserIPAddress ();
+				if ($currentIPAddress != $_SESSION['ipAddress']) {
+					error_log("ERROR::User IP Address has changed!!");
+				}
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-				if (isset ( $_SERVER ['HTTP_USER_AGENT'] ) && ! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
 					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 				}
-			}
+				
+				if (!$sid_success) {
+					error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
+					return 'notlogin';
+				}
+			} // end if ($requiresExistingSession)
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
-		}
-		if (! $this->sid && $requiresExistingSession) {
-			error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
-			return 'notlogin';
 		}
 		
 		return $actionname;

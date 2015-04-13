@@ -17,10 +17,13 @@ class LogOut {
 		// $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
 	}
 	public function exec() {
+error_log('IndexController -> logout->exec()...'.PHP_EOL);				
 		$auth = $this->service_locator->get ( 'AuthService' );
 		$auth->clearIdentity ();
 		
 		$session = new Container ( 'user' );
+error_log('Inside LogOut exec() about to destroy sid--->'.$session->sid.PHP_EOL);		
+		$session->getManager()->getSaveHandler()->destroy($session->sid);
 		$session->getManager()->destroy();
 		
 		header ( "Content-type: text/xml" );

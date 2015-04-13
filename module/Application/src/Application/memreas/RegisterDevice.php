@@ -27,14 +27,14 @@ class RegisterDevice {
 				WHERE device.user_id='$user_id'
 				AND device.device_type='$device_type'";
 		
-		error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
-		error_log ( "user_id--->" . $user_id . PHP_EOL );
-		error_log ( "device_id--->" . $device_id . PHP_EOL );
-		error_log ( "device_type--->" . $device_type . PHP_EOL );
+		// error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+		// error_log ( "user_id--->" . $user_id . PHP_EOL );
+		// error_log ( "device_id--->" . $device_id . PHP_EOL );
+		// error_log ( "device_type--->" . $device_type . PHP_EOL );
 		
-//error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+		// error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
 		$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-//error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
+		// error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
 		$device_found_result = $checkdevice_query->getResult ();
 		
 		if (empty ( $device_found_result )) {
@@ -104,7 +104,7 @@ class RegisterDevice {
 												and d.device_type = '$device_type'";
 				$device_query = $this->dbAdapter->createQuery ( $device_sql );
 				$device_exists = $device_query->getOneOrNullResult ();
-
+				
 				/*
 				 * Check if user has other devices of same type
 				 */
@@ -112,7 +112,7 @@ class RegisterDevice {
 												where  d.user_id = '$user_id'
 												and d.device_type = '$device_type'";
 				$user_device_type_query = $this->dbAdapter->createQuery ( $user_device_type_sql );
-				$devicetype_count = $user_device_type_query->getSingleScalarResult();
+				$devicetype_count = $user_device_type_query->getSingleScalarResult ();
 				
 				if ($devicetype_count > 0) {
 					$devicetype_lastused_update_sql = "UPDATE Application\Entity\Device d
@@ -120,7 +120,7 @@ class RegisterDevice {
 							WHERE d.user_id = '$user_id'
 							AND d.device_type = '$device_type'";
 					$devicetype_lastused_update_query = $this->dbAdapter->createQuery ( $devicetype_lastused_update_sql );
-					$devicetype_lastused_update_result = $devicetype_lastused_update_query->getResult();
+					$devicetype_lastused_update_result = $devicetype_lastused_update_query->getResult ();
 				}
 				
 				if (! $device_exists) {
@@ -135,8 +135,8 @@ class RegisterDevice {
 					$tblDevice->update_time = $time;
 					$this->dbAdapter->persist ( $tblDevice );
 					$this->dbAdapter->flush ();
-error_log ( 'registerdevice.exec()->executed insert' . PHP_EOL );
-					} else {
+					error_log ( 'registerdevice.exec()->executed insert' . PHP_EOL );
+				} else {
 					error_log ( 'registerdevice.exec()->inside update' . PHP_EOL );
 					// device exists so update data based on last login/registration...
 					$deviceexists_update_sql = "UPDATE Application\Entity\Device d
@@ -147,8 +147,8 @@ error_log ( 'registerdevice.exec()->executed insert' . PHP_EOL );
 					WHERE d.device_id = '$device_id'
 					AND d.device_type = '$device_type'";
 					$deviceexists_update_query = $this->dbAdapter->createQuery ( $deviceexists_update_sql );
-					$deviceexists_update_result = $deviceexists_update_query->getResult();
-error_log ( 'registerdevice.exec()->executed update' . PHP_EOL );
+					$deviceexists_update_result = $deviceexists_update_query->getResult ();
+					error_log ( 'registerdevice.exec()->executed update' . PHP_EOL );
 				}
 			}
 			$status = 'success';

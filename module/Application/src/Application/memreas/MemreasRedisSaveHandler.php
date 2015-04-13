@@ -17,6 +17,9 @@ use Zend\Session\SaveHandler\SaveHandlerInterface;
  */
 class MemreasRedisSaveHandler implements SaveHandlerInterface
 {
+	
+
+	
     /**
      * Session Save Path
      *
@@ -37,14 +40,19 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
      */
     protected $cacheStorage;
 
-    /**
+	/**
+	 * Redis Client
+	 */
+	protected $cacheStorage; 
+	
+	/**
      * Constructor
      *
      * @param  CacheStorage $cacheStorage
      */
     public function __construct($cacheStorage)
     {
-        $this->setCacheStorage($cacheStorage);
+        $this->setCacheStorage($this->cacheStorage);
     }
 
     /**
@@ -82,7 +90,7 @@ class MemreasRedisSaveHandler implements SaveHandlerInterface
     public function read($id)
     {
     		$r = $this->getCacheStorage()->getCache($id);
-error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
+//error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
     		return $r;
     }
 
@@ -95,7 +103,7 @@ error_log(' read cache id  '.$id .'  -> '.print_r($r,true));
      */
     public function write($id, $data)
     {
-error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
+//error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
         return $this->getCacheStorage()->setCache($id, $data);
     }
 
@@ -107,7 +115,7 @@ error_log(' write cache id  '.$id .'  -> '.print_r($data,true));
      */
     public function destroy($id)
     {
-error_log('Session->'.$id );
+//error_log('Session->'.$id );
         return $this->getCacheStorage()->invalidateCache($id);
     }
 

@@ -12,6 +12,14 @@ class Login {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $registerDevice;
+	protected $username;
+	protected $password;
+	protected $device_id;
+	protected $device_type;
+	protected $fesid;
+	protected $clientIPAddress;
+	public $isWeb;
+	
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
@@ -28,22 +36,28 @@ class Login {
 	}
 	public function exec($ipAddress='') {
 		try {
+//error_log ( 'login exec $ipAddress--->' . $ipAddress . PHP_EOL );
+				
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
+//error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
 			$flagusername = 0;
 			$flagpass = 0;
-			$username = trim ( $data->login->username );
-			$device_id = trim ( $data->login->device_id );
-			$device_type = trim ( $data->login->device_type );
-			
+			$this->username = trim ( $data->login->username );
+			$this->device_id = (!empty($data->login->device_id)) ? trim ( $data->login->device_id ) : '';
+			$this->device_type = (!empty($data->login->device_type)) ? trim ( $data->login->device_type ) : '';
+			$this->fesid = (!empty($data->fesid)) ? trim ( $data->fesid ) : '';
+			$this->isWeb = (!empty($data->fesid)) ? true : false;
+error_log ( "this->isWeb" . $this->isWeb . PHP_EOL );
+			$this->clientIPAddress = $ipAddress;
+
 			$time = time ();
-			if (empty ( $username )) {
+			if (empty ( $this->username )) {
 				$flagusername = 1;
 			}
-			$password = $data->login->password;
-			if (! empty ( $password )) {
-				$password = md5 ( $password );
+			$this->password = $data->login->password;
+			if (! empty ( $this->password )) {
+				$this->password = md5 ( $this->password );
 			} else {
 				$flagpass = 1;
 			}
@@ -52,13 +66,13 @@ class Login {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";
 			$xml_output .= "<loginresponse>";
-			if (isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
-				$username = strtolower ( $username );
-				$checkvalidemail = $this->is_valid_email ( $username );
+			if (isset ( $this->username ) && ! empty ( $this->username ) && isset ( $this->password ) && ! empty ( $this->password )) {
+				$this->username = strtolower ( $this->username );
+				$checkvalidemail = $this->is_valid_email ( $this->username );
 				if ($checkvalidemail == TRUE) {
-					$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
+					$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account = 0";
 				} else {
-					$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . $password . "'  and u.disable_account = 0";
+					$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account = 0";
 				}
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$row = $statement->getResult ();
@@ -67,12 +81,15 @@ class Login {
 					/*
 					 * Set the session for the user data...
 					 */
-					$this->setSession ( $row [0] );
+					$this->setSession ( $row[0] );
 					
 					/*
 					 * Check if the device is registered and update as needed
 					 */
-					$device_token = $this->registerDevice->checkDevice($row [0]->user_id, $device_id, $device_type);
+					$device_token='';
+					if (!empty($this->device_type)) {
+						$device_token = $this->registerDevice->checkDevice($row [0]->user_id, $this->device_id, $this->device_type);
+					}
 					
 					/*
 					 * 30-SEP-2014 code to check if email is verified
@@ -94,7 +111,7 @@ class Login {
 					$xml_output .= "<status>failure</status><message>Your Username and/or Password does not match our records.Please try again.</message>";
 				}
 			} else {
-				$xml_output .= "<status>failure</status><message>Please checked that you have given all the data required for login.</message>";
+				$xml_output .= "<status>failure</status><message>Please checked that you have provided all the data required for login.</message>";
 			}
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
@@ -111,20 +128,26 @@ class Login {
 		echo $xml_output;
 		error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}
-	public function setSession($user, $ipAddress='') {
-		$user->password = '';
-		$user->disable_account = '';
-		$user->create_date = '';
-		$user->update_time = '';
-		
-		error_log ( "Inside setSession got new Container..." );
-		$session = new Container ( 'user' );
-		$session->offsetSet ( 'user_id', $user->user_id );
-		$session->offsetSet ( 'username', $user->username );
-		$session->offsetSet ( 'sid', session_id () );
-		$session->offsetSet ( 'user', json_encode ( $user ) );
-		$session->offsetSet ( 'ipAddress', json_encode ( $ipAddresss ) );
-		error_log ( "Inside setSession set user data - just set session id ---> " . $session->offsetGet ( 'sid' ) . PHP_EOL );
+	public function setFELookup($redis) {
+		error_log('Inside setFELookup'.PHP_EOL);
+		$fesidArr = array();
+		$fesidArr['user_id'] = $_SESSION[ 'user_id' ];
+		$fesidArr['sid'] = $_SESSION[  'sid' ];
+		$fesidArr['device_id'] = $_SESSION[  'device_id' ];
+		$fesidArr['device_type'] = $_SESSION[  'device_type' ];
+		$fesidArr['ipAddress'] = $_SESSION[  'ipAddress' ];
+		$redis->setCache($_SESSION[ 'fesid' ], json_encode($fesidArr) );
+	}
+	public function setSession($user) {
+		session_start();
+		$_SESSION[ 'user_id' ] = $user->user_id;
+		$_SESSION[ 'username' ] = $user->username;
+		$_SESSION[ 'sid' ] = session_id ();
+		$_SESSION[ 'email_address' ] = $user->email_address;
+		$_SESSION[ 'device_id' ] = $this->device_id;
+		$_SESSION[ 'device_type' ] = $this->device_type;
+		$_SESSION[ 'fesid' ] = $this->fesid;
+		$_SESSION[ 'ipAddress' ] = $this->clientIPAddress;
 	}
 }
 ?>

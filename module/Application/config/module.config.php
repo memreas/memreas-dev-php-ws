@@ -13,9 +13,8 @@ return array (
 		'session' => array (
 				// 'remember_me_seconds' => 2419200, // 672 hours??
 				// 'remember_me_seconds' => 5, // 30 seconds
-				'use_cookies' => true,
-				'cookie_httponly' => true,
-				'cookie_lifetime' => 0  //30 seconds
+				'use_cookies' => false,
+				'cookie_httponly' => false
     	),
 		'router' => array (
 				'routes' => array (
@@ -38,19 +37,6 @@ return array (
 										),
 										'defaults' => array (
 												'controller' => 'Application\Controller\Index',
-												'action' => 'index' 
-										) 
-								) 
-						),
-						'elastic' => array (
-								'type' => 'Literal',
-								'options' => array (
-										'route' => '/elastic',
-										'constraints' => array (
-												'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
-										),
-										'defaults' => array (
-												'controller' => 'Application\Controller\Elastic',
 												'action' => 'index' 
 										) 
 								) 
@@ -105,10 +91,10 @@ return array (
 		'controllers' => array (
 				'invokables' => array (
 						'Application\Controller\Index'       => 'Application\Controller\IndexController',
-						'Application\Admin\Controller\Index' => 'Application\Admin\Controller\IndexController',
-						'Application\Admin\Controller\User'  => 'Application\Admin\Controller\UserController',
-						'Application\Admin\Controller\Event' => 'Application\Admin\Controller\EventController',
-						'Application\Controller\Elastic'     => 'Application\Controller\ElasticController',
+// 						'Application\Admin\Controller\Index' => 'Application\Admin\Controller\IndexController',
+// 						'Application\Admin\Controller\User'  => 'Application\Admin\Controller\UserController',
+// 						'Application\Admin\Controller\Event' => 'Application\Admin\Controller\EventController',
+// 						'Application\Controller\Elastic'     => 'Application\Controller\ElasticController',
 						)
 				 
 		),
