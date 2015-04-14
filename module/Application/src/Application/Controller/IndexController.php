@@ -123,8 +123,9 @@ class IndexController extends AbstractActionController {
 	
 	public function setupSaveHandler() {
 		$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
-		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis );
+		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->getServiceLocator () );
 		session_set_save_handler ( $this->sessHandler );
+		
 	}
 	
 	public function xml2array($xmlstring) {
