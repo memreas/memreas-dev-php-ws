@@ -1,12 +1,10 @@
 <?php
 //$env = getenv('APP_ENV') ?: 'production';
-
 //if ($env == 'development') {
 	
 	
 	//$modules[] = 'ZendDeveloperTools';
 //}
-
 return array (
 		// This should be an array of module namespaces used in the application.
 		'modules' => array (
@@ -33,7 +31,6 @@ return array (
 						'config/autoload/{,*.}{global,local}.php' 
 				) 
 		) 
-
 		/*
 		// Whether or not to enable a configuration cache.
 		// If enabled, the merged configuration will be cached and used in

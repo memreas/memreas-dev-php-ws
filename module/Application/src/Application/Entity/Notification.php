@@ -11,18 +11,18 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="notifications")
  */
 class Notification {
-	const ADD_FRIEND = '1';
-	const ADD_FRIEND_TO_EVENT = '2';
-	const ADD_COMMENT = '3';
-	const ADD_MEDIA = '4';
-	const ADD_EVENT = '5';
-	const ADD_FRIEND_RESPONSE = '6';
-	const ADD_FRIEND_TO_EVENT_RESPONSE = '7';
-	const ADMIN_ERROR = '8';
-	
-	const EMAIL = '0';
-	const MEMREAS = '1';
-	const NONMEMREAS = '2';
+	const ADD_FRIEND = 'ADD_FRIEND'; //1
+	const ADD_FRIEND_TO_EVENT = 'ADD_FRIEND_TO_EVENT'; //2
+	const ADD_COMMENT = 'ADD_COMMENT'; //3
+	const ADD_MEDIA = 'ADD_MEDIA'; //4
+	const ADD_EVENT = 'ADD_EVENT'; //5
+	const ADD_FRIEND_RESPONSE = 'ADD_FRIEND_RESPONSE'; //6
+	const ADD_FRIEND_TO_EVENT_RESPONSE = 'ADD_FRIEND_TO_EVENT_RESPONSE'; //7
+	const ERROR = 'ERROR'; //8
+	const EMAIL = 'EMAIL'; //0
+	const MEMREAS = 'MEMREAS'; //1
+	const NONMEMREAS = 'NONMEMREAS'; //2
+	const SMS = 'SMS'; //2
 	
 	/**
 	 *
@@ -41,43 +41,39 @@ class Notification {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="notification_type", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="notification_type", type="string", length=20, nullable=false)
 	 */
 	private $notification_type;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="meta", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="meta", type="text", nullable=false)
 	 */
 	private $meta;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="links", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="status", type="string", length=20, nullable=false)
 	 */
-	private $links;
+	private $status;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="status", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="response_status", type="string", length=20, nullable=false)
 	 */
-	private $status = 0;
+	private $response_status;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="is_read", type="string", length=1, nullable=false)
+	 * @var string @ORM\Column(name="is_read", type="integer", nullable=false)
 	 */
 	private $is_read = 0;
+	
 	/**
 	 *
-	 * @var string @ORM\Column(name="short_code", type="string", length=10, nullable=false)
+	 * @var string @ORM\Column(name="notification_methods", type="string", length=20, nullable=false)
 	 */
-	private $short_code ;
-	/**
-	 *
-	 * @var string @ORM\Column(name="notification_method", type="string", length=10, nullable=false)
-	 */
-	private $notification_method = 0;
+	private $notification_methods;
 	
 	/**
 	 *

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Global Configuration Override
  *
@@ -12,57 +11,29 @@
  * file.
  */
 return array (
-		'db' => array (
-				'adapters' => array (
-						'memreasintdb' => array (
-								'driver' => 'Pdo',
-								'driver_options' => array (
-										PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'' 
-								) 
-						),
-						'memreasbackenddb' => array (
-								'driver' => 'Pdo',
-								'driver_options' => array (
-										PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'' 
-								) 
-						) 
-				) 
-		),
+// 		'db' => array (
+// 				'adapters' => array (
+// 						'memreasintdb' => array (
+// 								'driver' => 'Pdo',
+// 								'driver_options' => array (
+// 										PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'' 
+// 								) 
+// 						),
+// 						'memreasbackenddb' => array (
+// 								'driver' => 'Pdo',
+// 								'driver_options' => array (
+// 										PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'' 
+// 								) 
+// 						) 
+// 				) 
+// 		),
 		'service_manager' => array (
 				// 'factories' => array(
 				// 'Zend\Db\Adapter\Adapter'
 				// => 'Zend\Db\Adapter\AdapterServiceFactory',
 				// ),
-				'abstract_factories' => array (
-						'Zend\Db\Adapter\AdapterAbstractServiceFactory' 
-				) 
-		),
-		'doctrine' => array (
-				'connection' => array (
-						'orm_default' => array (
-								'doctrine_type_mappings' => array (
-										'enum' => 'string',
-										'bit' => 'string' 
-								),
-								// integration db
-								'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
-								'params' => array (
-										'host' => 'memreasdevdb.co0fw2snbu92.us-east-1.rds.amazonaws.com',
-										'port' => '3306',
-										'dbname' => 'memreasintdb',
-										'user' => 'memreasdbuser',
-										'password' => 'memreas2013',
-/*
-				//localhost db
-                'params' => array(
-                    'host' => 'localhost',
-                    'port' => '3306',
-                    'dbname' => 'memreasintdb',
-                    'user'     => 'root',
-					'password' => 'john1016',
-*/
-                ) 
-						) 
-				) 
+// 				'abstract_factories' => array (
+// 						'Zend\Db\Adapter\AdapterAbstractServiceFactory' 
+// 				) 
 		) 
 );

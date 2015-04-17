@@ -173,8 +173,6 @@ error_log ( "Inside Add Comment _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL 
 							Email::$item ['email'] = $friendUser ['email_address'];
 							Email::$item ['message'] = $comment;
 							Email::collect ();
-						} else {
-							$this->notification->addFriend ( $ef ['friend_id'] );
 						}
 						$this->AddNotification->exec ( $cdata );
 					}

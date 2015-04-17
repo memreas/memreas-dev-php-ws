@@ -350,11 +350,6 @@ error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
 						Email::$item ['username'] = $userOBj->username;
 						
 						Email::collect ();
-					} else {
-						$ndata ['addNotification'] ['meta'] = $nmessage;
-						error_log ( "message ---> $nmessage" . PHP_EOL );
-						// add non memreas
-						$this->notification->addFriend ( $friend_id );
 					}
 					// end if (count($r) > 0) else
 				} else if (empty ( $event_id ) && ! empty ( $sendMessage )) {
@@ -385,11 +380,6 @@ error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
 						Email::$item ['email'] = $friendUser ['email_address'];
 						Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
 						Email::collect ();
-					} else {
-						$ndata ['addNotification'] ['meta'] = $nmessage;
-						error_log ( "message ---> $nmessage" . PHP_EOL );
-						// add non memreas
-						$this->notification->addFriend ( $friend_id );
 					}
 				} // endif (!empty($event_id) && $error == 0)
 					  // add notification in db.

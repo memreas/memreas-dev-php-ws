@@ -5,7 +5,6 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\MUUID;
-use Application\Entity\Notification;
 use Application\memreas\Email;
 
 class AddNotification {
@@ -15,7 +14,6 @@ class AddNotification {
 	protected $dbAdapter;
 	protected $notification_id;
 	protected $aws_manager;
-	public $sendShortCode = false;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
@@ -23,91 +21,61 @@ class AddNotification {
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->aws_manager = new AWSManagerSender ( $service_locator );
 		$this->viewRender = $service_locator->get ( 'ViewRenderer' );
-		
-		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec($frmweb = '') {
-		if (empty ( $frmweb )) {
-			$data = simplexml_load_string ( $_POST ['xml'] );
-			error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
-		} else {
-			$data = json_decode ( json_encode ( $frmweb ) );
-			error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb ) . PHP_EOL );
-		}
-		
-		$user_id = (trim ( $data->addNotification->user_id ));
-		
-		$meta = $data->addNotification->meta;
-		$event_id = $data->addNotification->event_id;
-		$event_name = $data->addNotification->event_name;
-		
-		$status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
-		$notification_type = $data->addNotification->notification_type;
-		$links = $data->addNotification->links;
-		$network_name = $data->addNotification->network_name;
-		$time = time ();
-		// save notification in table
-		$this->notification_id = $notification_id = MUUID::fetchUUID ();
-		$tblNotification = new \Application\Entity\Notification ();
-		$tblNotification->notification_id = $notification_id;
-		$tblNotification->user_id = $user_id;
-		$tblNotification->notification_type = $notification_type;
-		$tblNotification->meta = $meta;
-		$tblNotification->links = $links;
-		
-		$tblNotification->notification_method = Notification::EMAIL;
-		
-		if ($network_name == 'email') {
-			// do nothing
-		} else if ($tblNotification->notification_type == Notification::ADD_FRIEND_TO_EVENT && $network_name !== 'memreas') {
-			/*
-			 * TODO - short code not working...
-			 */
-			$uuid = explode ( '-', $this->notification_id );
-			$short_code = $this->getSortCode ( $uuid [0] );
-			$tblNotification->short_code = $this->getSortCode ( $uuid [0] );
-			$tblNotification->notification_method = Notification::NONMEMREAS;
-			$tblNotification->meta .= ' code ' . $tblNotification->short_code;
-			Email::$item ['short_code'] = $short_code;
-			$this->composeNonMemarsMail ( $data );
-		} else if ($network_name == 'memreas') {
-			$tblNotification->notification_method = Notification::MEMREAS;
-		}
-		
-		$tblNotification->create_time = $time;
-		$tblNotification->update_time = $time;
-		$this->dbAdapter->persist ( $tblNotification );
-		
 		try {
+			// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
+			if (empty ( $frmweb )) {
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
+			} else {
+				$data = json_decode ( json_encode ( $frmweb ) );
+				error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb, JSON_PRETTY_PRINT ) . PHP_EOL );
+			}
+			
+			// save notification in table
+			$this->notification_id = $notification_id = MUUID::fetchUUID ();
+			$tblNotification = new \Application\Entity\Notification ();
+			$tblNotification->notification_id = $notification_id;
+			$tblNotification->user_id = $data->addNotification->receiver;
+			$tblNotification->notification_type = $data->addNotification->notification_type;
+			$tblNotification->meta = json_encode ( $data->addNotification->meta );
+			$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;
+			$tblNotification->status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
+			$tblNotification->response_status = empty ( $data->addNotification->response_status ) ? 0 : $data->addNotification->response_status;
+			$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
+			$tblNotification->create_time = time();
+			$tblNotification->update_time = time();
+			$this->dbAdapter->persist ( $tblNotification );
 			$this->dbAdapter->flush ();
-			$status = "success";
-			$message = "";
-		} catch ( \Exception $exc ) {
-			$message = "";
-			$status = "fail";
-		}
-		
-		if (empty ( $frmweb )) {
+			
+			if (empty ( $frmweb )) {
+				header ( "Content-type: text/xml" );
+				$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+				$xml_output .= "<xml>";
+				$xml_output .= "<addnotification>";
+				$xml_output .= "<status>$status</status>";
+				$xml_output .= "<message>" . $message . "</message>";
+				$xml_output .= "<notification_id>$this->notification_id</notification_id>";
+				$xml_output .= "</addnotification>";
+				$xml_output .= "</xml>";
+				echo $xml_output;
+			}
+		} catch ( \Exception $e ) {
+			$status = 'failure';
+			$message .= 'addnotification error ->' . $e->getMessage ();
 			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";
 			$xml_output .= "<addnotification>";
 			$xml_output .= "<status>$status</status>";
 			$xml_output .= "<message>" . $message . "</message>";
-			$xml_output .= "<notification_id>$notification_id</notification_id>";
 			$xml_output .= "</addnotification>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
-			error_log ( "Exit Add Notification xml_output ---> " . $xml_output . PHP_EOL );
 		}
-	}
-	function getSortCode($str) {
-		$raw = '';
-		for($i = 0; $i < strlen ( $str ); $i += 2) {
-			$raw .= chr ( hexdec ( substr ( $str, $i, 2 ) ) );
-		}
-		return rtrim ( base64_encode ( $raw ), '=' );
-	}
+		error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
+	} // end exec()
 }
 
 ?>

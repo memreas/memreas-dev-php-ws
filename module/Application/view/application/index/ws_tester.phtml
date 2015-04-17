@@ -48,7 +48,15 @@ echo "user_id ----> " . $user_id;
 					            '<audio_media_id>audio_id</audio_media_id >'+
 					            '</addcomment>'+
 					            '</xml>';	
-            var addevent ='<xml>'+
+
+			var addfriend = '<xml>'+
+					            '<addfriend>'+
+					            '<user_id>1</user_id>'+
+					            '<friend_id>1</friend_id>'+
+					            '</addfriend>'+
+					            '</xml>';	
+
+			var addevent = '<xml>'+
 					            '<addevent>'+
 					            '<user_id>1</user_id>'+
 					            '<event_name>Event 1</event_name>'+
@@ -561,6 +569,7 @@ echo "user_id ----> " . $user_id;
                 $("#input_action").change(function() {
                     if ($("#input_action").val() == "addcomments") { xml = addcomments; }	
                     else if ($("#input_action").val() == "addevent") { xml = addevent; }	
+                    else if ($("#input_action").val() == "addfriend") { xml = addfriend; }	
                     else if ($("#input_action").val() == "addexistmediatoevent") { xml = addexistmediatoevent; }	
                     else if ($("#input_action").val() == "addfriendtoevent") { xml = addfriendtoevent; }	
                     else if ($("#input_action").val() == "addfriendtogroup") { xml = addfriendtogroup; }	
@@ -676,6 +685,7 @@ echo "user_id ----> " . $user_id;
 								<option>addcomments</option>
 								<option>addevent</option>
 								<option>addexistmediatoevent</option>
+								<option>addfriend</option>
 								<option>addfriendtoevent</option>
 								<option>addfriendtogroup</option>
 								<option>addmediaevent</option>

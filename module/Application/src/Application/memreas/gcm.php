@@ -28,14 +28,14 @@ class gcm {
 						"message" => $message,
 						'type' => $type,
 						'event_id' => $event_id,
-						'media_id' => $media_id ,
-						'user_id' => $user_id						
+						'media_id' => $media_id,
+						'user_id' => $user_id 
 				) 
 		);
-error_log("gcm fields ---> ".json_encode($fields).PHP_EOL);		
+		// error_log("gcm fields ---> ".json_encode($fields).PHP_EOL);
 		$headers = array (
 				// memreas key
-				'Authorization: key='.MemreasConstants::GCM_SERVER_KEY,				
+				'Authorization: key=' . MemreasConstants::GCM_SERVER_KEY,
 				'Content-Type: application/json' 
 		);
 		
@@ -56,7 +56,7 @@ error_log("gcm fields ---> ".json_encode($fields).PHP_EOL);
 		
 		// Close connection
 		curl_close ( $ch );
-error_log("result ---> ".$result.PHP_EOL);
+		error_log ( "result ---> " . $result . PHP_EOL );
 		
 		return $result;
 	}

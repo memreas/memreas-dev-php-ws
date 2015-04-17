@@ -39,6 +39,7 @@ use Application\memreas\ListAllmedia;
 use Application\memreas\CountViewevent;
 use Application\memreas\EditEvent;
 use Application\memreas\AddEvent;
+use Application\memreas\AddFriend;
 use Application\memreas\ViewEvents;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AWSMemreasRedisCache;
@@ -120,14 +121,11 @@ class IndexController extends AbstractActionController {
 	protected $sid;
 	protected $ipAddress;
 	protected $sessHandler;
-	
 	public function setupSaveHandler() {
 		$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->getServiceLocator () );
 		session_set_save_handler ( $this->sessHandler );
-		
 	}
-	
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -161,7 +159,7 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-		error_log ( "inside indexAction..." . PHP_EOL );
+		error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 		// Checking headers for cookie info
 		// $headers = apache_request_headers ();
 		// foreach ( $headers as $header => $value ) {
@@ -186,21 +184,11 @@ class IndexController extends AbstractActionController {
 			$actionname = isset ( $_REQUEST ['action'] ) ? $_REQUEST ['action'] : '';
 			$message_data ['xml'] = '';
 		}
-
-		/**
-		 * For testing only...
-		 */
-		if ($actionname == "ws_tester" && MemreasConstants::ALLOW_DUPLICATE_EMAIL_FOR_TESTING) {
-			error_log ( "path--->" . $path );
-			$view = new ViewModel ();
-			$view->setTemplate ( $path ); // path to phtml file under view folder
-			return $view;
-		}
 		
 		/**
 		 * Setup save handler
 		 */
-		$this->setupSaveHandler();
+		$this->setupSaveHandler ();
 		
 		/**
 		 * Check session
@@ -208,6 +196,16 @@ class IndexController extends AbstractActionController {
 		error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		error_log ( "Inside indexAction---> actionname after security ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+		
+		/**
+		 * For testing only...
+		 */
+		if (($actionname == "ws_tester") || ! empty ( $_REQUEST ['XDEBUG_SESSION_START'] )) {
+			error_log ( "path--->" . $path );
+			$view = new ViewModel ();
+			$view->setTemplate ( $path ); // path to phtml file under view folder
+			return $view;
+		}
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
 			$cache_me = false;
@@ -328,7 +326,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - Write Operation - Invalidate existing cache here
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				$this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
+				// $this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
@@ -349,7 +347,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - Write Operation - Invalidate existing cache here
 				 */
-				$this->redis->invalidateMedia ( $data->mediainappropriate->user_id, $data->mediainappropriate->event_id );
+				// $this->redis->invalidateMedia ( $data->mediainappropriate->user_id, $data->mediainappropriate->event_id );
 			} else if ($actionname == "countlistallmedia") {
 				
 				/*
@@ -436,7 +434,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listgroup
 				 */
-				$this->redis->invalidateGroups ( $uid );
+				// $this->redis->invalidateGroups ( $uid );
 			} else if ($actionname == "listallmedia") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache... if event_id then return that cache else user_id
@@ -480,7 +478,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate events
 				 */
-				$this->redis->invalidateEvents ( $event_id );
+				// $this->redis->invalidateEvents ( $event_id );
 			} else if ($actionname == "addevent") {
 				$addevent = new AddEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addevent->exec ();
@@ -489,7 +487,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - hold for now
 				 */
-				$this->redis->invalidateEvents ( $data->addevent->user_id );
+				// $this->redis->invalidateEvents ( $data->addevent->user_id );
 			} else if ($actionname == "viewevents") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -509,6 +507,19 @@ class IndexController extends AbstractActionController {
 					$result = $viewevents->exec ();
 					$cache_me = true;
 				}
+			} else if ($actionname == "addfriend") {
+				error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				$addfriend = new AddFriend ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $addfriend->exec ();
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				$uid = trim ( $data->addfriend->user_id );
+				$fid = trim ( $data->addfriend->friend_id );
+				error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				/*
+				 * Cache approach - write operation - hold for now
+				 */
+				// $this->redis->invalidateEvents ( $uid );
+				// $this->redis->invalidateGroups ( $uid );
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addfriendtoevent->exec ();
@@ -518,8 +529,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - hold for now
 				 */
-				$this->redis->invalidateEvents ( $uid );
-				$this->redis->invalidateGroups ( $uid );
+				// $this->redis->invalidateEvents ( $uid );
+				// $this->redis->invalidateGroups ( $uid );
 			} else if ($actionname == "viewmediadetails") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache... if event_id then return then event_id_media_id else cache media_id
@@ -562,7 +573,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->redis->invalidateNotifications ( $uid );
+				// $this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $changepassword->exec ();
@@ -594,7 +605,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->redis->invalidateNotifications ( $uid );
+				// $this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "findtag") {
 				
 				/*
@@ -1012,7 +1023,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->redis->invalidateNotifications ( $uid );
+				// $this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "getsession") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1112,7 +1123,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidate listnotification
 				 */
-				$this->redis->invalidateUser ( $data->saveuserdetails->user_id );
+				// $this->redis->invalidateUser ( $data->saveuserdetails->user_id );
 			} else if ($actionname == "getusergroups") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1153,8 +1164,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriendgroup") {
 				$RemoveFriendGroup = new RemoveFriendGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $RemoveFriendGroup->exec ();
@@ -1162,8 +1173,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "geteventpeople") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1184,10 +1195,10 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - need to invalidate invalidateEvents
 				 */
-				$session = new Container ( "user" );
+				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach: Check cache first if not there then fetch and cache...
@@ -1236,8 +1247,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * TODO: Cache approach - write operation - need to invalidate invalidateMedia
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "feedback") {
 				/*
 				 * Cache Approach - N/a
@@ -1264,8 +1275,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidateMedia
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removeeventfriend") {
 				/*
 				 * TODO: Invalidation needed
@@ -1277,8 +1288,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidateMedia
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateEventFriends ( $data->removeeventfriend->event_id, $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateEventFriends ( $data->removeeventfriend->event_id, $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriends") {
 				
 				$RemoveFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1287,8 +1298,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - write operation - invalidateFriends
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateFriends ( $_SESSION ['user_id'] );
 			} else if ($actionname == "getfriends") {
 				
 				/*
@@ -1334,8 +1345,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * TODO: Cache approach - write operation - need to invalidate listgroup but dont have user_id
 				 */
-				$session = new Container ( "user" );
-				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
+				
+				// $this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "checkevent") {
 				/*
 				 * TODO: Query inside needs to cached
@@ -1529,20 +1540,23 @@ class IndexController extends AbstractActionController {
 					}
 				}
 				
-				$currentIPAddress = $this->fetchUserIPAddress ();
-				if ($currentIPAddress != $_SESSION ['ipAddress']) {
-					error_log ( "ERROR::User IP Address has changed!!" );
-				}
-				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
-				}
-				
 				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
 					return 'notlogin';
 				}
 			} // end if ($requiresExistingSession)
+			
+			/**
+			 * Fetch user ip
+			 */
+			$currentIPAddress = $this->fetchUserIPAddress ();
+			if ($currentIPAddress != $_SESSION ['ipAddress']) {
+				error_log ( "ERROR::User IP Address has changed!!" );
+			}
+			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+				$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			}
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );

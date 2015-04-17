@@ -7,119 +7,100 @@ use Application\Model\MemreasConstants;
 use Application\memreas\MUUID;
 
 class AddFriend {
-
-    protected $message_data;
-    protected $memreas_tables;
-    protected $service_locator;
-    protected $dbAdapter;
-    protected $AddNotification;
-    protected $AddTag;
-    protected $notification;
-
-    public function __construct($message_data, $memreas_tables, $service_locator) {
-        $this->message_data = $message_data;
-        $this->memreas_tables = $memreas_tables;
-        $this->service_locator = $service_locator;
-        $this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
-        if (! $this->notification) {
-	        	$this->notification = new Notification ( $service_locator );
-        }
-        
-    }
-
-    public function exec() {
-       
-        $data = simplexml_load_string($_POST['xml']);
-		$message = ' ';
-		$user_id =addslashes(trim($data->addevent->user_id));
-		$event_name = addslashes(trim($data->addevent->event_name));
-		$event_location = addslashes(trim($data->addevent->event_location));
-
-		$event_date = addslashes(trim($data->addevent->event_date));
-		$event_from = strtotime(trim($data->addevent->event_from));
-		$event_to = strtotime(trim($data->addevent->event_to));
-
-		$event_date_timestamp= time();
-		$is_friend_can_share = trim($data->addevent->is_friend_can_add_friend);
-		$is_friend_can_post_media = trim($data->addevent->is_friend_can_post_media);
-		$event_self_destruct = strtotime(trim($data->addevent->event_self_destruct));
-		$is_public = trim($data->addevent->is_public);
-
-		$event_id='';
-		$time = time();
-		if (!isset($user_id) || empty($user_id)) {
-		    $message .= 'user id is empty';
-		    $status = 'Failure';
-		}else if (!isset($event_name) || empty($event_name)) {
-		    $message .= 'event name is empty';
-		    $status = 'Failure';
-		} else {
-             $uuid = MUUID::fetchUUID();
-             $tblEvent= new \Application\Entity\Event();
-
-             $tblEvent->name=$event_name;
-                $tblEvent->location=$event_location;
-                $tblEvent->user_id=$user_id;
-                $tblEvent->type='audio';
-                $tblEvent->event_id=$uuid;
-                $tblEvent->date=$event_date;
-                $tblEvent->friends_can_post=$is_friend_can_post_media;
-                $tblEvent->friends_can_share=$is_friend_can_share;
-                $tblEvent->public=$is_public;
-                $tblEvent->viewable_from=$event_from;
-                $tblEvent->viewable_to=$event_to;
-                $tblEvent->self_destruct=$event_self_destruct;
-                $tblEvent->create_time=$event_date_timestamp;
-                $tblEvent->update_time=$event_date_timestamp;
-                $this->dbAdapter->persist($tblEvent);
-                $this->dbAdapter->flush();
-                
-  
-				//TODO send Notification
-		        $event_id = $uuid;
-		        $message .= 'Event successfully added';
-		        $status = 'Success';
-		  
-		        $data = array(
-		        			'addNotification' => 
-		        				array (
-		                                'user_id' => $user_id,
-		                                'meta' => "New Event: $event_name",
-		                                'notification_type' => \Application\Entity\Notification::ADD_EVENT,
-		                                'links' => json_encode(
-		                                		array(
-		                                    		'event_id' => $event_id,
-		                                    		'from_id' => $user_id,
-												)
-		        				),
-						));
-				$this->AddNotification->exec($data);
-				$this->notification->add($user_id);
-				if (!empty($data['addNotification']['meta'])) {
-                    $this->notification->setMessage($data['addNotification']['meta']);
-                    $this->notification->type = \Application\Entity\Notification::ADD_EVENT;
-                    $this->notification->event_id = $event_id;
-                    $this->notification->send();
-                }
-
+	protected $message_data;
+	protected $memreas_tables;
+	protected $service_locator;
+	protected $dbAdapter;
+	protected $AddNotification;
+	protected $AddTag;
+	protected $notification;
+	
+	public function __construct($message_data, $memreas_tables, $service_locator) {
+		$this->message_data = $message_data;
+		$this->memreas_tables = $memreas_tables;
+		$this->service_locator = $service_locator;
+		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+			if (! $this->AddNotification) {
+			$this->AddNotification = new AddNotification ( $message_data, $memreas_tables, $service_locator );
 		}
+		if (! $this->notification) {
+			$this->notification = new Notification ( $service_locator );
+		}
+	}
+	
+	public function exec() {
+		try {
+//error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
+//error_log('xml--->'.$_POST ['xml'] . PHP_EOL);
 
-		if(empty($status)) {
-		        $message.=mysql_error();
-		        $status = 'Failure';
-		} 
-		ob_clean();
-		header("Content-type: text/xml");
+			$data = simplexml_load_string ( $_POST ['xml'] );
+			$message = ' ';
+			$user_id = trim ( $data->addfriend->user_id );
+			$friend_id = trim ( $data->addfriend->friend_id );
+			$time = time ();
+			if (empty ( $user_id )) {
+				$message .= 'user id is empty';
+				$status = 'Failure';
+			} else if (empty ( $friend_id )) {
+				$message .= 'user id is empty';
+				$status = 'Failure';
+			} else {
+				/**
+				 * Store user_friend table for request...
+				 */
+				$tblUserFriend = new \Application\Entity\UserFriend ();
+				$tblUserFriend->user_id = $user_id;
+				$tblUserFriend->friend_id = $friend_id;
+				$this->dbAdapter->persist ( $tblUserFriend );
+				$this->dbAdapter->flush ();
+				
+				/**
+				 *  Fetch user info...
+				 */
+				$user = $this->dbAdapter->find ( 'Application\Entity\Friend', $user_id );
+				
+				
+				/**
+				 * Build array and send notifications...
+				 */
+				$data = array ();
+				$data ['addNotification'] ['sender'] = $user_id;
+				$data ['addNotification'] ['receiver'] = $friend_id;
+				$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_FRIEND;
+				$data ['addNotification'] ['notification_methods'] []= 'email';
+				$data ['addNotification'] ['notification_methods'] []= 'push_notification';
+				$meta = array();
+				$meta['sent']['sender_user_id'] = $user_id;
+				$meta['sent']['receiver_user_id'] = $friend_id;
+				//$meta['sent']['message'] = 'add friend request from @'.$_SESSION['username'];
+				$meta['sent']['message'] = 'add friend request from @'.$user->username;
+				$data ['addNotification'] ['meta'] = $meta;
+				$this->AddNotification->exec ( $data );
+				$this->notification->add ( $friend_id );
+				if (! empty ( $data ['addNotification'] ['meta'] )) {
+					$this->notification->type = $data ['addNotification'] ['notification_type'] ;
+					$this->notification->setMessage ( $this->notification->type, $meta['sent']['message'] );
+					$this->notification->send ();
+				}
+			}
+			$status = 'success';
+			$message = 'add friend request sent';
+		} catch ( \Exception $e ) {
+			$status = 'failure';
+			$message .= 'friend request not sent ->' . $e->getMessage ();
+		}
+		
+		ob_clean ();
+		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
-		$xml_output.= "<addeventresponse>";
-		$xml_output.= "<status>".$status."</status>";
-		$xml_output.= "<message>".$message."</message>";
-		$xml_output.= "<event_id>".$event_id."</event_id>";
-		$xml_output.= "</addeventresponse>";
-		$xml_output.= "</xml>";
+		$xml_output .= "<addfriendresponse>";
+		$xml_output .= "<status>" . $status . "</status>";
+		$xml_output .= "<message>" . $message . "</message>";
+		$xml_output .= "</addfriendresponse>";
+		$xml_output .= "</xml>";
 		echo $xml_output;
-    }
+	}
 }
 
 ?>

@@ -5,8 +5,7 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants as MC;
 use Application\memreas\UUID;
- 
- use \Exception;
+use \Exception;
 
 class UpdateNotification {
 	protected $message_data;
@@ -16,14 +15,11 @@ class UpdateNotification {
 	protected $notification;
 	public $user_id;
 	protected $AddNotification;
-
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-//error_log ( "Inside UpdateNotification __construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 		if (! $this->AddNotification) {
 			$this->AddNotification = new AddNotification ( $message_data, $memreas_tables, $service_locator );
 		}
@@ -34,10 +30,10 @@ class UpdateNotification {
 	public function exec($frmweb = '') {
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
-//error_log("UpdateNotification::_POST ['xml']--->".$_POST ['xml'].PHP_EOL);
+			error_log ( "UpdateNotification::_POST ['xml']--->" . $_POST ['xml'] . PHP_EOL );
 		} else {
 			$data = json_decode ( json_encode ( $frmweb ) );
-//error_log("UpdateNotification::frmweb--->".$frmweb.PHP_EOL);
+			error_log ( "UpdateNotification::frmweb--->" . $frmweb . PHP_EOL );
 		}
 		$message = '';
 		$time = time ();
@@ -49,142 +45,142 @@ class UpdateNotification {
 				$this->user_id = $user_id = (trim ( $notification->user_id ));
 				$notification_id = (trim ( $notification->notification_id ));
 				$notification_message = '';
-				if(!empty($notification->message)){
-						$notification_message =  trim ( $notification->message );
+				if (! empty ( $notification->message )) {
+					$notification_message = trim ( $notification->message );
 				}
-				
-				$status = trim ( $notification->status );
+error_log('$notification'.json_encode($notification, JSON_PRETTY_PRINT).PHP_EOL);				
+				$notification_status = trim ( $notification->status );
 				// save notification in table
 				$tblNotification = $this->dbAdapter->find ( "\Application\Entity\Notification", $notification_id );
 				if (! $tblNotification) {
 					$status = "failure";
 					$message = "Notification not found";
 				} else {
-					$tblNotification->status = $status;
+					$tblNotification->status = $notification_status;
 					$tblNotification->is_read = 1;
 					$tblNotification->update_time = $time;
 					
-					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT ){
-						//error_log("UpdateNotification::ADD_FRIEND_TO_EVENT".PHP_EOL);						
-						$friend_id=$tblNotification->user_id;
-						$json_data = json_decode($tblNotification->links,true);
-
-						$user_id   =  $json_data['from_id'];
-						$UserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
-                         					->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id)); 
-                        $EventFriend = $this->dbAdapter->getRepository( "\Application\Entity\EventFriend")
-                         					->findOneBy(array('event_id' => $json_data['event_id'] ,'friend_id' => $friend_id)); 					               				
-                        $eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data['event_id'] );
-                         if($UserFriend){
-							//error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if userfriend...status is $status".PHP_EOL);						
-                         	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
-                        	//accepted
-                        	if($status == 1){
-                        		$UserFriend->user_approve = 1;            
-                        		$this->dbAdapter->persist ( $UserFriend );
-                        		$EventFriend->user_approve = 1;
-                        		$this->dbAdapter->persist ( $EventFriend );
-                        		$nmessage = $userOBj->username . ' Accepted ' . $eventOBj->name .' ' . $notification_message;
-                        		/*
-                        		 * If the receiver accepts thes add the sender as a friend of the receiver  
-                        		 */
-                        		$this->addFriendRevRec($user_id,$friend_id);
-								//error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if status==1 ... just set event_friend".PHP_EOL);						
-                        	}
-                        	//ignored
-                        	if($status == 2){
-                        	 	$nmessage = $userOBj->username . ' Ignored ' . $eventOBj->name .' ' . $notification_message;
-                        	}
-                        	//rejected
-                        	if($status == 3){
-                        		$nmessage = $userOBj->username . ' Rejected ' . $eventOBj->name . ' ' . $notification_message ;
-                        	}
-                         	//add ntoification 
-                        	$json_data['from_id'] = $this->user_id;
-                        	
-							// save nofication intable
- 							$ndata = array (
-								'addNotification' => array (
-									'network_name' => 'memreas',
-										'user_id' => $user_id,
-										'meta' => $nmessage,
-										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT_RESPONSE,
-										'links' => json_encode($json_data), 
-										)
-								
-							);
-
-							if($status != 2 ){
-								// send push message add user id
-		 						$this->notification->add ( $user_id );
-	 							//add notification in  db.
-								$this->AddNotification->exec ( $ndata );
-							}
- 								
-                         }//user friend updated
-                         					
-					}
+					if ($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT) {
+						// error_log("UpdateNotification::ADD_FRIEND_TO_EVENT".PHP_EOL);
+						$friend_id = $tblNotification->user_id;
+						$json_data = json_decode ( $tblNotification->links, true );
 						
-					if($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND ){
-						//error_log("UpdateNotification::ADD_FRIEND".PHP_EOL);						
-						$friend_id=$tblNotification->user_id;
-						$json_data = json_decode($tblNotification->links,true);
-
-						$user_id   =  $json_data['from_id'];
-						$UserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
-                         				   ->findOneBy(array('user_id' => $user_id,'friend_id' => $friend_id));                				
-                        
-                        if($UserFriend){
-                        	$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
-                        	//accepted
-                        	if($status == 1){
-                        		$UserFriend->user_approve=1;
-	                        	//save in user friend_friend
-                        		$this->dbAdapter->persist ( $UserFriend );
-                        		$nmessage = $userOBj->username . ' Accepted Friend Request' .' ' . $notification_message;
-                        		
+						$user_id = $json_data ['from_id'];
+						$UserFriend = $this->dbAdapter->getRepository ( "\Application\Entity\UserFriend" )->findOneBy ( array (
+								'user_id' => $user_id,
+								'friend_id' => $friend_id 
+						) );
+						$EventFriend = $this->dbAdapter->getRepository ( "\Application\Entity\EventFriend" )->findOneBy ( array (
+								'event_id' => $json_data ['event_id'],
+								'friend_id' => $friend_id 
+						) );
+						$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data ['event_id'] );
+						if ($UserFriend) {
+							// error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if userfriend...status is $status".PHP_EOL);
+							$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
+							// accepted
+							if ($notification_status == 1) {
+								$UserFriend->user_approve = 1;
+								$this->dbAdapter->persist ( $UserFriend );
+								$EventFriend->user_approve = 1;
+								$this->dbAdapter->persist ( $EventFriend );
+								$nmessage = $userOBj->username . ' Accepted ' . $eventOBj->name . ' ' . $notification_message;
 								/*
-                        		 * If the receiver accepts thes add the sender as a friend of the receiver  
-                        		 */
-                        		 $this->addFriendRevRec($user_id,$friend_id);
-                        		
-                        		
-                        	}
-                        	 //ignored
-                        	if($status == 2){
-                        	 	$nmessage = $userOBj->username . ' Ignored Friend Request' .' ' . $notification_message;
-                        	}
-                        	//rejected
-                        	if($status == 3){
-                        		$nmessage = $userOBj->username . ' Rejected Friend Request' .' ' . $notification_message ;
-                        	}
-                         	//add ntoification 
-                        	
-                        	
+								 * If the receiver accepts thes add the sender as a friend of the receiver
+								 */
+								$this->addFriendRevRec ( $user_id, $friend_id );
+								// error_log("UpdateNotification::ADD_FRIEND_TO_EVENT->Inside if status==1 ... just set event_friend".PHP_EOL);
+							}
+							// decline
+							if ($notification_status == 2) {
+								$nmessage = $userOBj->username . ' declined ' . $eventOBj->name . ' ' . $notification_message;
+							}
+							// ignored
+							if ($notification_status == 3) {
+								$nmessage = $userOBj->username . ' ignored ' . $eventOBj->name . ' ' . $notification_message;
+							}
+							// add ntoification
+							$json_data ['from_id'] = $this->user_id;
+							
 							// save nofication intable
-                                                        	$json_data['from_id'] = $this->user_id;
-
- 							$ndata = array (
-								'addNotification' => array (
-									'network_name' => 'memreas',
-										'user_id' => $user_id,
-										'meta' => $nmessage,
-										'notification_type' => \Application\Entity\Notification::ADD_FRIEND_RESPONSE,
-										'links' => json_encode($json_data),
-										)
-							);
- 								
-							if($status != 2 ){
+							$ndata = array (
+									'addNotification' => array (
+											'network_name' => 'memreas',
+											'user_id' => $user_id,
+											'meta' => $nmessage,
+											'notification_type' => \Application\Entity\Notification::ADD_FRIEND_TO_EVENT_RESPONSE,
+											'links' => json_encode ( $json_data ) 
+									) 
+							)
+							;
+							
+							if ($notification_status != 3) {
 								// send push message add user id
-		 						$this->notification->add ( $user_id );
-	 							//add notification in  db.
+								$this->notification->add ( $user_id );
+								// add notification in db.
 								$this->AddNotification->exec ( $ndata );
 							}
-                         }//user friend updated
-                         					
+						} // user friend updated
+					}
+					
+					if ($tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND) {
+						// error_log("UpdateNotification::ADD_FRIEND".PHP_EOL);
+						$friend_id = $tblNotification->user_id;
+						$json_data = json_decode ( $tblNotification->links, true );
+						
+						$user_id = $json_data ['from_id'];
+						$UserFriend = $this->dbAdapter->getRepository ( "\Application\Entity\UserFriend" )->findOneBy ( array (
+								'user_id' => $user_id,
+								'friend_id' => $friend_id 
+						) );
+						
+						if ($UserFriend) {
+							$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $friend_id );
+							// accepted
+							if ($notification_status == 1) {
+								$UserFriend->user_approve = 1;
+								// save in user friend_friend
+								$this->dbAdapter->persist ( $UserFriend );
+								$nmessage = $userOBj->username . ' Accepted Friend Request' . ' ' . $notification_message;
+								
+								/*
+								 * If the receiver accepts thes add the sender as a friend of the receiver
+								 */
+								$this->addFriendRevRec ( $user_id, $friend_id );
+							}
+							// ignored
+							if ($notification_status == 2) {
+								$nmessage = $userOBj->username . ' Ignored Friend Request' . ' ' . $notification_message;
+							}
+							// rejected
+							if ($notification_status == 3) {
+								$nmessage = $userOBj->username . ' Rejected Friend Request' . ' ' . $notification_message;
+							}
+							// add ntoification
+							
+							// save nofication intable
+							$json_data ['from_id'] = $this->user_id;
+							
+							$ndata = array (
+									'addNotification' => array (
+											'network_name' => 'memreas',
+											'user_id' => $user_id,
+											'meta' => $nmessage,
+											'notification_type' => \Application\Entity\Notification::ADD_FRIEND_RESPONSE,
+											'links' => json_encode ( $json_data ) 
+									) 
+							);
+							
+							if ($notification_status != 3) {
+								// send push message add user id
+								$this->notification->add ( $user_id );
+								// add notification in db.
+								$this->AddNotification->exec ( $ndata );
+							}
+						} // user friend updated
 					}
 					$this->dbAdapter->flush ();
-					//$this->notification->send();
+					// $this->notification->send();
 					$status = "success";
 					$message = "Notification Updated";
 					/*
@@ -205,63 +201,55 @@ class UpdateNotification {
 			$xml_output .= "</updatenotification>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
+error_log('UpdateNotification ----> '.$xml_output.PHP_EOL);			
 		}
 	}
-
-
-public function addFriendRevRec($user_id,$friend_id)
-{
+	public function addFriendRevRec($user_id, $friend_id) {
 		
-
-	/*
-	 * If the receiver accepts thes add the sender as a friend of the receiver  
-	 */
-
-	$time = time ();
-	$inUserFriend = $this->dbAdapter->getRepository( "\Application\Entity\UserFriend")
-		         		->findOneBy(array('user_id' => $friend_id,'friend_id' => $user_id));
-	
-	$inFriend = $this->dbAdapter->find ( 'Application\Entity\Friend', $user_id );
-
-	if(!$inFriend){
-		$profile_pic = $this->dbAdapter->getRepository('Application\Entity\Media')->findOneBy(array(
-		'user_id' => $user_id,
-		'is_profile_pic' => '1'
-		));
-		$profile_pic_url =MC::ORIGINAL_URL. '/memreas/img/profile-pic.jpg';
-		if($profile_pic){
-			$metadata = $profile_pic->metadata;
-		    $profile_image = json_decode($metadata, true);
-		    $profile_pic_url = $profile_image ['S3_files'] ['path'];
+		/*
+		 * If the receiver accepts then add the sender as a friend of the receiver
+		 */
+		$time = time ();
+		$inUserFriend = $this->dbAdapter->getRepository ( "\Application\Entity\UserFriend" )->findOneBy ( array (
+				'user_id' => $friend_id,
+				'friend_id' => $user_id 
+		) );
+		
+		$inFriend = $this->dbAdapter->find ( 'Application\Entity\Friend', $user_id );
+		
+		if (! $inFriend) {
+			$profile_pic = $this->dbAdapter->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
+					'user_id' => $user_id,
+					'is_profile_pic' => '1' 
+			) );
+			$profile_pic_url = MC::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+			if ($profile_pic) {
+				$metadata = $profile_pic->metadata;
+				$profile_image = json_decode ( $metadata, true );
+				$profile_pic_url = $profile_image ['S3_files'] ['path'];
+			}
 			
+			$userFOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
+			
+			$tblFriend = new \Application\Entity\Friend ();
+			$tblFriend->friend_id = $user_id;
+			$tblFriend->network = 'memreas';
+			$tblFriend->social_username = empty ( $userFOBj ) ? '' : $userFOBj->username;
+			$tblFriend->url_image = $profile_pic_url;
+			$tblFriend->create_date = $time;
+			$tblFriend->update_date = $time;
+			
+			$this->dbAdapter->persist ( $tblFriend );
 		}
-
-    	$userFOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
-
-		$tblFriend = new \Application\Entity\Friend();
-		$tblFriend->friend_id = $user_id;
-		$tblFriend->network = 'memreas';
-		$tblFriend->social_username = empty($userFOBj)?'':$userFOBj->username;
-		$tblFriend->url_image = $profile_pic_url;
-		$tblFriend->create_date = $time;
-		$tblFriend->update_date = $time;
-
-		$this->dbAdapter->persist($tblFriend);
-			 
+		
+		if (! $inUserFriend) {
+			$tblUserFriend = new \Application\Entity\UserFriend ();
+			$tblUserFriend->friend_id = $user_id;
+			$tblUserFriend->user_id = $friend_id;
+			$tblUserFriend->user_approve = 1;
+			$this->dbAdapter->persist ( $tblUserFriend );
+		}
 	}
-
-	
-		if(!$inUserFriend){
-		$tblUserFriend = new \Application\Entity\UserFriend ();
-		$tblUserFriend->friend_id = $user_id;
-		$tblUserFriend->user_id = $friend_id;
-		$tblUserFriend->user_approve = 1;
-		$this->dbAdapter->persist($tblUserFriend);
-    		 
-		}                       		
-}
-
-
 }
 
 ?>

@@ -28,15 +28,14 @@ class AddMediaEvent {
 		if (! $this->notification) {
 			$this->notification = new Notification ( $service_locator );
 		}
-        $this->url_signer = new MemreasSignedURL();
-
+		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
 		$is_audio = false;
 		try {
 			$media_id = '';
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
-error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
+				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (isset ( $data->addmediaevent->user_id )) {
 					$user_id = addslashes ( trim ( $data->addmediaevent->user_id ) );
@@ -60,7 +59,7 @@ error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$content_type = addslashes ( trim ( $data->addmediaevent->content_type ) );
 				$s3url = addslashes ( trim ( $data->addmediaevent->s3url ) );
 				$s3file_name = addslashes ( trim ( $data->addmediaevent->s3file_name ) );
-				$s3file_basename_prefix = pathinfo( basename($s3file_name) )[ 'filename' ];
+				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) )['filename'];
 				$location = json_decode ( $data->addmediaevent->location );
 				$email = isset ( $data->addmediaevent->email ) ? addslashes ( trim ( $data->addmediaevent->email ) ) : '';
 			} else {
@@ -82,28 +81,28 @@ error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$is_server_image = isset ( $_POST ['is_server_image'] ) ? $_POST ['is_server_image'] : 0;
 				$content_type = isset ( $_POST ['content_type'] ) ? $_POST ['content_type'] : '';
 				$s3file_name = isset ( $_POST ['s3file_name'] ) ? $_POST ['s3file_name'] : '';
-				$s3file_basename_prefix = pathinfo( basename($s3file_name) )[ 'filename' ];
+				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) )['filename'];
 				$email = isset ( $_POST ['email'] ) ? $_POST ['email'] : '';
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
-
-error_log ( "event_id ---> " . $event_id . PHP_EOL );
-error_log ( "media_id ---> " . $media_id . PHP_EOL );
-error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
-error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
-error_log ( "content_type ---> " . $content_type . PHP_EOL );
-error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
-error_log ( "s3url ---> " . $s3url . PHP_EOL );
-error_log ( "email ---> " . $email . PHP_EOL );
-//error_log ( "location ---> " . $location . PHP_EOL );  // object json..
+				
+				error_log ( "event_id ---> " . $event_id . PHP_EOL );
+				error_log ( "media_id ---> " . $media_id . PHP_EOL );
+				error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
+				error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
+				error_log ( "content_type ---> " . $content_type . PHP_EOL );
+				error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
+				error_log ( "s3url ---> " . $s3url . PHP_EOL );
+				error_log ( "email ---> " . $email . PHP_EOL );
+				// error_log ( "location ---> " . $location . PHP_EOL ); // object json..
 			}
 			$time = time ();
-
+			
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media table
 			// ////////////////////////////////////////////////////////////////////
 			if ($is_server_image == 1) {
-error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
+				error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				if (! isset ( $media_id ) || empty ( $media_id )) {
 					throw new \Exception ( 'Error : media_id is empty' );
 				}
@@ -118,7 +117,7 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				// ///////////////////////////////////////////////
 				// insert into media and event media
 				// ///////////////////////////////////////////////
-//				error_log ( "AddMediaEvent exec is_server_image == 1 else " . PHP_EOL );
+				// error_log ( "AddMediaEvent exec is_server_image == 1 else " . PHP_EOL );
 				$is_video = 0;
 				$is_audio = 0;
 				$s3path = $user_id . '/';
@@ -127,11 +126,11 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				// create metadata based on content type
 				// ///////////////////////////////////////
 				$file_type = explode ( '/', $content_type );
-
+				
 				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
 					$s3path = $user_id . '/';
 					$json_array = array ();
-					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
+					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
@@ -141,12 +140,12 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_id'] = $device_id;
 					$json_array ['S3_files'] ['local_filenames'] ['device'] ['device_type'] = $device_type;
 					$json_array ['S3_files'] ['file_type'] = $file_type [0];
- 					$json_array ['S3_files'] ['content_type'] = $content_type;
+					$json_array ['S3_files'] ['content_type'] = $content_type;
 					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
 				} else if (strcasecmp ( 'video', $file_type [0] ) == 0) {
 					$is_video = 1;
 					$s3path = $user_id . '/';
-					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
+					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 					$json_array = array ();
 					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
@@ -163,7 +162,7 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				} else if (strcasecmp ( 'audio', $file_type [0] ) == 0) {
 					$is_audio = 1;
 					$s3path = $user_id . '/';
-					$s3file = (isset ( $_POST ['s3file_name'] ) || isset($s3file_name)) ? $s3path.$s3file_name : $s3url;
+					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 					$json_array = array ();
 					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
@@ -179,7 +178,7 @@ error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 					$json_array ['S3_files'] ['type'] ['audio'] ['format'] = $file_type [1];
 				}
 				$json_str = json_encode ( $json_array );
-error_log ( "json_str ---> " .$json_str );
+				error_log ( "json_str ---> " . $json_str );
 				
 				// ///////////////////////////////////////
 				// check media type and update tables...
@@ -195,32 +194,27 @@ error_log ( "json_str ---> " .$json_str );
 				$tblMedia->update_date = $now;
 				$this->dbAdapter->persist ( $tblMedia );
 				$this->dbAdapter->flush ();
-//				error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
-
-                if ($is_profile_pic) {
-                    //Remove previous profile images
-                    $remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
-                    $remove_result = $this->dbAdapter->createQuery($remove_old_profile);
-                    $remove_result->getResult();
-
-                    // if profile pic then update media
-                    $update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
-                    $statement = $this->dbAdapter->createQuery ( $update_media );
-                    $rs_is_profil = $statement->getResult ();
-
-                    //Update friend table profile image if this user is memreas network
-                    $user_detail = $this->dbAdapter->createQueryBuilder ()
-                                            ->select ( 'u' )
-                                            ->from ( 'Application\Entity\User', 'u' )
-                                            ->where ( "u.user_id=?1" )
-                                            ->setParameter(1, $user_id)
-                                            ->getQuery ()->getResult ();
-
-                    $full_path = $s3file;
-                    $update_friend_photo = "Update Application\Entity\Friend f SET f.url_image = '{$full_path}' WHERE f.social_username = '{$user_detail[0]->username}' AND f.network = 'memreas'";
-                    $this->dbAdapter->createQuery($update_friend_photo)->getResult();
-                }
-
+				// error_log ( "AddMediaEvent exec - just inserted Media " . PHP_EOL );
+				
+				if ($is_profile_pic) {
+					// Remove previous profile images
+					$remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
+					$remove_result = $this->dbAdapter->createQuery ( $remove_old_profile );
+					$remove_result->getResult ();
+					
+					// if profile pic then update media
+					$update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
+					$statement = $this->dbAdapter->createQuery ( $update_media );
+					$rs_is_profil = $statement->getResult ();
+					
+					// Update friend table profile image if this user is memreas network
+					$user_detail = $this->dbAdapter->createQueryBuilder ()->select ( 'u' )->from ( 'Application\Entity\User', 'u' )->where ( "u.user_id=?1" )->setParameter ( 1, $user_id )->getQuery ()->getResult ();
+					
+					$full_path = $s3file;
+					$update_friend_photo = "Update Application\Entity\Friend f SET f.url_image = '{$full_path}' WHERE f.social_username = '{$user_detail[0]->username}' AND f.network = 'memreas'";
+					$this->dbAdapter->createQuery ( $update_friend_photo )->getResult ();
+				}
+				
 				if (isset ( $event_id ) && ! empty ( $event_id )) {
 					$tblEventMedia = new \Application\Entity\EventMedia ();
 					$tblEventMedia->media_id = $media_id;
@@ -238,62 +232,60 @@ error_log ( "json_str ---> " .$json_str );
 					$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
 					$qb->setParameter ( 1, $event_id );
 					$qb->setParameter ( 2, $user_id );
-
+					
 					$efusers = $qb->getQuery ()->getResult ();
 					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
-					$eventRepo=$this->dbAdapter->getRepository('Application\Entity\Event');
-
-					$eventOBj=$eventRepo->findOneBy(array(
-                            'event_id' => $event_id
-                                ));
+					$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
+					
+					$eventOBj = $eventRepo->findOneBy ( array (
+							'event_id' => $event_id 
+					) );
 					$nmessage = $userOBj->username . ' Added Media to  ' . $eventOBj->name . ' event';
 					$ndata ['addNotification'] ['meta'] = $nmessage;
 					
-					//add event owner in notifcation list
-                    if($eventOBj->user_id != $user_id){
-                    	 $efusers[] = array(
- 										'network' => 'memreas',
-										'friend_id' =>	$eventOBj->user_id
-                    	 			) ;
-                    }
+					// add event owner in notifcation list
+					if ($eventOBj->user_id != $user_id) {
+						$efusers [] = array (
+								'network' => 'memreas',
+								'friend_id' => $eventOBj->user_id 
+						);
+					}
 					foreach ( $efusers as $ef ) {
 						$friendId = $ef ['friend_id'];
 						$ndata = array (
-									'addNotification' => array (
-											'network_name' => $ef ['network'],
-											'user_id' => $friendId,
-											'meta' => $nmessage,
-											'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
-											'links' => json_encode ( array (
-													'event_id' => $event_id,
-													'from_id' => $user_id,
-													'friend_id' => $friendId
-											) )
-									)
-							);
+								'addNotification' => array (
+										'network_name' => $ef ['network'],
+										'user_id' => $friendId,
+										'meta' => $nmessage,
+										'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
+										'links' => json_encode ( array (
+												'event_id' => $event_id,
+												'from_id' => $user_id,
+												'friend_id' => $friendId 
+										) ) 
+								) 
+						);
 						if ($ef ['network'] == 'memreas') {
 							$this->notification->add ( $friendId );
-							$friendUser = $eventRepo->getUser($friend_id,'row');
-	                        Email::$item['name'] =$friendUser['username'];
-     	                    Email::$item['email'] =$friendUser['email_address'];
-                        	Email::$item['message'] =$ndata ['addNotification'] ['meta'];
-                        	Email::collect();
-						} else {
-							$this->notification->addFriend ( $ef ['friend_id'] );
+							$friendUser = $eventRepo->getUser ( $friend_id, 'row' );
+							Email::$item ['name'] = $friendUser ['username'];
+							Email::$item ['email'] = $friendUser ['email_address'];
+							Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
+							Email::collect ();
 						}
-						//save in db
+						// save in db
 						$this->AddNotification->exec ( $ndata );
 					}
-
+					
 					if (! empty ( $ndata ['addNotification'] ['meta'] )) {
 						$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
 						$this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
 						$this->notification->event_id = $event_id;
 						$this->notification->send ();
-						Email::sendmail($this->service_locator);
+						Email::sendmail ( $this->service_locator );
 					}
 				}
-
+				
 				if (! $is_server_image) {
 					$message_data = array (
 							'user_id' => $user_id,
@@ -304,12 +296,12 @@ error_log ( "json_str ---> " .$json_str );
 							's3file_basename_prefix' => $s3file_basename_prefix,
 							'is_video' => $is_video,
 							'is_audio' => $is_audio,
-							'email' => $email
+							'email' => $email 
 					);
-
+					
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$response = $aws_manager->snsProcessMediaPublish ( $message_data );
-
+					
 					if ($response == 1) {
 						$status = 'Success';
 						$message = "Media Successfully add";
@@ -335,7 +327,7 @@ error_log ( "json_str ---> " .$json_str );
 		$xml_output .= "</xml>";
 		ob_clean ();
 		echo $xml_output;
-error_log ( "output::" . $xml_output . PHP_EOL );
+		error_log ( "output::" . $xml_output . PHP_EOL );
 	}
 }
 
