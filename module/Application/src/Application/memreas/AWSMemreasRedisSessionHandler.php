@@ -56,14 +56,16 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
+error_log('_SESSION vars after sid start...'.print_r($_SESSION, true).PHP_EOL);		
 	}
-	public function startSessionWithFESID($fesid) {
-		$rFESession = $this->mRedis->getCache ( $fesid );
+	public function startSessionWithFECookie($fecookie) {
+		$rFESession = $this->mRedis->getCache ( 'fecookie::'.$fecookie );
 		$rFESessionArr = json_decode ( $rFESession, true );
 		session_id ( $rFESessionArr ['sid'] );
 		session_start ();
+error_log('_SESSION vars after fecookie start...'.print_r($_SESSION, true).PHP_EOL);		
 	}
-	public function setSession($user, $device_id, $device_type, $fesid, $clientIPAddress) {
+	public function setSession($user, $device_id = '', $device_type = '', $fecookie = '', $clientIPAddress = '') {
 		error_log ( 'Inside setSession' . PHP_EOL );
 		session_start ();
 		$_SESSION ['user_id'] = $user->user_id;
@@ -72,27 +74,49 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['email_address'] = $user->email_address;
 		$_SESSION ['device_id'] = $device_id;
 		$_SESSION ['device_type'] = $device_type;
-		$_SESSION ['fesid'] = $fesid;
+		$_SESSION ['fecookie'] = $fecookie;
 		$_SESSION ['ipAddress'] = $clientIPAddress;
-error_log('ipAddress ---->'.$_SESSION ['ipAddress'].PHP_EOL);			
+		//error_log ( 'setSession(...) _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
+		$this->setUserNameLookup();
 		$this->storeSession ( true );
+		if (!empty ($fecookie)) {
+			$this->setFELookup();
+		}
 	}
+	
+	public function setUserNameLookup() {
+		error_log ( 'Inside setUserNameLookup' . PHP_EOL );
+		$userNameArr = array ();
+		$userNameArr ['user_id'] = $_SESSION ['user_id'];
+		$userNameArr ['username'] = $_SESSION ['username'];
+		$userNameArr ['sid'] = $_SESSION ['sid'];
+		$userNameArr ['device_id'] = $_SESSION ['device_id'];
+		$userNameArr ['device_type'] = $_SESSION ['device_type'];
+		$userNameArr ['ipAddress'] = $_SESSION ['ipAddress'];
+		$this->mRedis->setCache ( 'uid::'.$_SESSION ['user_id'], json_encode ( $userNameArr ) );
+	}
+	
 	public function setFELookup() {
 		error_log ( 'Inside setFELookup' . PHP_EOL );
-		$fesidArr = array ();
-		$fesidArr ['user_id'] = $_SESSION ['user_id'];
-		$fesidArr ['sid'] = $_SESSION ['sid'];
-		$fesidArr ['device_id'] = $_SESSION ['device_id'];
-		$fesidArr ['device_type'] = $_SESSION ['device_type'];
-		$fesidArr ['ipAddress'] = $_SESSION ['ipAddress'];
-		$this->mRedis->setCache ( $_SESSION ['fesid'], json_encode ( $fesidArr ) );
+		$fecookieArr = array ();
+		$fecookieArr ['user_id'] = $_SESSION ['user_id'];
+		$fecookieArr ['username'] = $_SESSION ['username'];
+		$fecookieArr ['sid'] = $_SESSION ['sid'];
+		$fecookieArr ['device_id'] = $_SESSION ['device_id'];
+		$fecookieArr ['device_type'] = $_SESSION ['device_type'];
+		$fecookieArr ['ipAddress'] = $_SESSION ['ipAddress'];
+		//error_log ( 'setFELookup() _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
+		$this->mRedis->setCache ( 'fecookie::'.$_SESSION ['fecookie'], json_encode ( $fecookieArr ) );
 	}
 	public function closeSessionWithSID() {
-		$this->destroy ( session_id () );
+		$this->mRedis->invalidateCache ( 'uid::'.$_SESSION ['user_id'] );
+		session_destroy ();
 	}
-	public function closeSessionWithFESID() {
+	
+	public function closeSessionWithFECookie() {
 		// $this->destroy(session_id());
-		$this->mRedis->invalidateCache ( $_SESSION ['fesid'] );
+		$this->mRedis->invalidateCache ( 'fecookie::'.$_SESSION ['fecookie'] );
+		$this->mRedis->invalidateCache ( 'uid::'.$_SESSION ['user_id'] );
 		session_destroy ();
 	}
 	public function storeSession($start) {
@@ -101,12 +125,11 @@ error_log('ipAddress ---->'.$_SESSION ['ipAddress'].PHP_EOL);
 			/**
 			 * Start Session
 			 */
-			;
 			$meta = array ();
 			$meta ['username'] = $_SESSION ['username'];
 			$meta ['device_type'] = $_SESSION ['device_type'];
-			$meta ['fesid'] = $_SESSION ['fesid'];
-			$tblUserSession = new \Application\Entity\UserSession();
+			$meta ['fecookie'] = $_SESSION ['fecookie'];
+			$tblUserSession = new \Application\Entity\UserSession ();
 			$tblUserSession->session_id = session_id ();
 			$tblUserSession->user_id = $_SESSION ['user_id'];
 			$tblUserSession->ipaddress = $_SESSION ['ipAddress'];
@@ -124,7 +147,7 @@ error_log('ipAddress ---->'.$_SESSION ['ipAddress'].PHP_EOL);
 				SET u.end_time = '$now' 
 				WHERE u.session_id ='" . session_id () . "' 
 				and u.user_id = '" . $_SESSION ['user_id'] . "'";
-error_log('logout update sql ---->'.$q_update.PHP_EOL);			
+			error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
 			$statement = $this->dbAdapter->createQuery ( $q_update );
 			$r = $statement->getResult ();
 		}

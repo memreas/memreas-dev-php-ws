@@ -119,7 +119,6 @@ class IndexController extends AbstractActionController {
 	protected $redis;
 	protected $aws;
 	protected $sid;
-	protected $ipAddress;
 	protected $sessHandler;
 	public function setupSaveHandler() {
 		$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
@@ -228,19 +227,10 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
-				error_log ( 'login action this->ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
+				error_log ( 'login action ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
-				
-				/*
-				 * If web store fesid lookup
-				 */
-				if ($login->isWeb) {
-					error_log ( 'isWeb is true calling setFELookup...' . PHP_EOL );
-					$this->sessHandler->setFELookup ();
-				}
-				$this->ipAddress = $_SESSION ['ipAddress'];
-				
+								
 				/*
 				 * Cache approach - warm @person if not set here
 				 */
@@ -1431,7 +1421,12 @@ class IndexController extends AbstractActionController {
 			// error_log("output ----> $output".PHP_EOL);
 		}
 		
-		/*
+		/**
+		 * close session for ajax
+		 */
+		session_write_close();
+		
+		/**
 		 * Cache Warming section...
 		 */
 		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
@@ -1528,14 +1523,14 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-				} else if (! empty ( $data->fesid )) {
+				} else if (! empty ( $data->fecookie )) {
 					/*
 					 * SetId for the web browser session and start...
 					 */
-					$this->sessHandler->startSessionWithFESID ( $data->fesid );
-					// error_log('$_SESSION [ fesid ]->'.$_SESSION [ 'fesid' ].PHP_EOL);
-					// error_log('$data->fesid->'.$data->fesid.PHP_EOL);
-					if ($_SESSION ['fesid'] == $data->fesid) {
+					$this->sessHandler->startSessionWithFECookie ( $data->fecookie );
+					// error_log('$_SESSION [ fecookie ]->'.$_SESSION [ 'fecookie' ].PHP_EOL);
+					// error_log('$data->fecookie->'.$data->fecookie.PHP_EOL);
+					if ($_SESSION ['fecookie'] == $data->fecookie) {
 						$sid_success = 1;
 					}
 				}
@@ -1550,8 +1545,10 @@ class IndexController extends AbstractActionController {
 			 * Fetch user ip
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
-			if ($currentIPAddress != $_SESSION ['ipAddress']) {
-				error_log ( "ERROR::User IP Address has changed!!" );
+			if ( !empty($_SESSION ['ipAddress']) && ($currentIPAddress != $_SESSION ['ipAddress']) ) {
+				error_log ( "ERROR::User IP Address has changed - logging user out!" .PHP_EOL);
+				//error_log ( "_SESSION vars after sid_success--->".print_r($_SESSION, true) .PHP_EOL);
+				return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
@@ -1568,159 +1565,18 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Fetch the user's ip address
 		 */
-		$this->ipAddress = $this->getServiceLocator ()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+		$ipAddress = $this->getServiceLocator ()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
 		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
-			$this->ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
+			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
 		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
-			$this->ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
+			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
-			$this->ipAddress = $_SERVER ['REMOTE_ADDR'];
+			$ipAddress = $_SERVER ['REMOTE_ADDR'];
 		}
-		error_log ( 'ip is ' . $this->ipAddress );
+		error_log ( 'ip is ' . $ipAddress );
 		
-		return $this->ipAddress;
+		return $ipAddress;
 	}
 }
 // end class IndexController
 
-// public function loginAction() {
-// 	// Fetch the post data
-// 	$request = $this->getRequest ();
-// 	$postData = $request->getPost ()->toArray ();
-// 	$username = $postData ['username'];
-// 	$password = $postData ['password'];
-
-// 	// Original Web Service Call...
-// 	// Setup the URL and action
-// 	$action = 'login';
-// 	$xml = "<xml><login><username>$username</username><password>$password</password></login></xml>";
-// 	$redirect = 'gallery';
-
-// 	// Guzzle the LoginWeb Service
-// 	$result = $this->fetchXML ( $action, $xml );
-// 	$data = simplexml_load_string ( $result );
-
-// 	// ZF2 Authenticate
-// 	if ($data->loginresponse->status == 'success') {
-// 		$this->setSession ( $username );
-// 		// Redirect here
-// 		return $this->redirect ()->toRoute ( 'index', array (
-// 				'action' => $redirect
-// 		) );
-// 	} else {
-// 		return $this->redirect ()->toRoute ( 'index', array (
-// 				'action' => "index"
-// 		) );
-// 	}
-// }
-// public function logoutAction() {
-// 	$this->getSessionStorage ()->forgetMe ();
-// 	$this->getAuthService ()->clearIdentity ();
-// 	$session = new Container ( 'user' );
-// 	$session->getManager ()->destroy ();
-
-// 	$view = new ViewModel ();
-// 	$view->setTemplate ( 'application/index/index.phtml' ); // path to phtml file under view folder
-// 	return $view;
-// }
-// public function setSession($username) {
-// 	// Fetch the user's data and store it in the session...
-// 	$user = $this->getUserTable ()->getUserByUsername ( $username );
-// 	unset ( $user->password );
-// 	unset ( $user->disable_account );
-// 	unset ( $user->create_date );
-// 	unset ( $user->update_time );
-// 	$session = new Container ( 'user' );
-// 	$session->offsetSet ( 'user_id', $user->user_id );
-// 	$session->offsetSet ( 'username', $username );
-// 	$session->offsetSet ( 'sid', session_id () );
-// 	$session->offsetSet ( 'user', json_encode ( $user ) );
-// }
-// public function registrationAction() {
-// 	// Fetch the post data
-// 	$postData = $this->getRequest ()->getPost ()->toArray ();
-// 	$email = $postData ['email'];
-// 	$username = $postData ['username'];
-// 	$password = $postData ['password'];
-
-// 	// Setup the URL and action
-// 	$action = 'registration';
-// 	$xml = "<xml><registration><email>$email</email><username>$username</username><password>$password</password></registration></xml>";
-// 	$redirect = 'event';
-
-// 	// Guzzle the Registration Web Service
-// 	$result = $this->fetchXML ( $action, $xml );
-// 	$data = simplexml_load_string ( $result );
-
-// 	// ZF2 Authenticate
-// 	if ($data->registrationresponse->status == 'success') {
-// 		$this->setSession ( $username );
-			
-// 		// If there's a profile pic upload it...
-// 		if (isset ( $_FILES ['file'] )) {
-// 			$file = $_FILES ['file'];
-// 			$fileName = $file ['name'];
-// 			$filetype = $file ['type'];
-// 			$filetmp_name = $file ['tmp_name'];
-// 			$filesize = $file ['size'];
-
-// 			// echo "filename ----> $fileName<BR>";
-// 			// echo "filetype ----> $filetype<BR>";
-// 			// echo "filetmp_name ----> $filetmp_name<BR>";
-// 			// echo "filesize ----> $filesize<BR>";
-
-// 			$url = MemreasConstants::ORIGINAL_URL;
-// 			$guzzle = new Client ();
-// 			$session = new Container ( 'user' );
-// 				$request = $guzzle->post ( $url )->addPostFields ( array (
-// 						'user_id' => $_SESSION ['user_id'],
-// 								'filename' => $fileName,
-// 								'event_id' => "",
-// 								'device_id' => "",
-// 								'is_profile_pic' => 1,
-// 								'is_server_image' => 0
-// 						) )->addPostFiles ( array (
-// 								'f' => $filetmp_name
-// 						) );
-// 		}
-// 		$response = $request->send ();
-// 		$data = $response->getBody ( true );
-// 		$xml = simplexml_load_string ( $result );
-			
-// 		// ZF2 Authenticate
-// 		error_log ( "addmediaevent result -----> " . $data );
-// 		if ($xml->addmediaeventresponse->status == 'success') {
-// 			// Do nothing even if it fails...
-// 		}
-			
-// 		// Redirect here
-// 		return $this->redirect ()->toRoute ( 'index', array (
-// 				'action' => $redirect
-// 		) );
-// 	} else {
-// 		return $this->redirect ()->toRoute ( 'index', array (
-// 				'action' => "index"
-// 		) );
-// 	}
-// }
-// public function getUserTable() {
-// 	if (! $this->userTable) {
-// 		$sm = $this->getServiceLocator ();
-// 		$this->userTable = $sm->get ( 'Application\Model\UserTable' );
-// 	}
-// 	return $this->userTable;
-// }
-// public function getAuthService() {
-// 	if (! $this->authservice) {
-// 		$this->authservice = $this->getServiceLocator ()->get ( 'AuthService' );
-// 	}
-
-// 	return $this->authservice;
-// }
-// public function getSessionStorage() {
-// 	if (! $this->storage) {
-// 		$this->storage = $this->getServiceLocator ()->get ( 'application\Model\MyAuthStorage' );
-// 	}
-
-// 	return $this->storage;
-// }
