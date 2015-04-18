@@ -37,7 +37,8 @@ class AddNotification {
 			$this->notification_id = $notification_id = MUUID::fetchUUID ();
 			$tblNotification = new \Application\Entity\Notification ();
 			$tblNotification->notification_id = $notification_id;
-			$tblNotification->user_id = $data->addNotification->receiver;
+			$tblNotification->sender_uid = $data->addNotification->sender_uid;
+			$tblNotification->receiver_uid = $data->addNotification->receiver_uid;
 			$tblNotification->notification_type = $data->addNotification->notification_type;
 			$tblNotification->meta = json_encode ( $data->addNotification->meta );
 			$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;

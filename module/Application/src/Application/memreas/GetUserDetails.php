@@ -38,7 +38,6 @@ class GetUserDetails {
 			} else {
 				$data = json_decode ( json_encode ( $frmweb ) );
 			}
-error_log('$data--->'.print_r($data,true).PHP_EOL);			
 			$user_id = trim ( $data->getuserdetails->user_id );
 			
 			$qb = $this->dbAdapter->createQueryBuilder ();
@@ -48,11 +47,9 @@ error_log('$data--->'.print_r($data,true).PHP_EOL);
 			$qb->setParameter ( 1, $user_id );
 			$result_user = $qb->getQuery ()->getResult ();
 			if (empty ( $result_user )) {
-error_log ('empty result ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				$status = "Failure";
 				$message = "No data available to this user";
 			} else {
-error_log ('not empty result ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				$status = 'Success';
 				$output .= '<user_id>' . $result_user [0]->user_id . '</user_id>';
 				$output .= '<username>' . $result_user [0]->username . '</username>';
@@ -64,19 +61,16 @@ error_log ('not empty result ...'. 'file--->' . __FILE__ . ' method -->' . __MET
 				else
 					$output .= '<alternate_email></alternate_email>';
 				
-error_log ('past alternate email??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (isset ( $metadata ['gender'] ))
 					$output .= '<gender>' . $metadata ['gender'] . '</gender>';
 				else
 					$output .= '<gender></gender>';
 				
-error_log ('past gender??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (isset ( $metadata ['dob'] ))
 					$output .= '<dob>' . $metadata ['dob'] . '</dob>';
 				else
 					$output .= '<dob></dob>';
 					
-error_log ('past dob??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				// For plan
 				if (isset ( $metadata ['subscription'] )) {
 					$subscription = $metadata ['subscription'];
@@ -84,7 +78,6 @@ error_log ('past dob??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__
 				} else
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 					
-error_log ('past subscription??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				// For account type
 				$guzzle = new Client ();
 				$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
@@ -92,12 +85,9 @@ error_log ('past subscription??? ...'. 'file--->' . __FILE__ . ' method -->' . _
 						'username' => $result_user [0]->username 
 				) );
 				
-error_log ('past guzzle pay url??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				$response = $request->send ();
 				$data = json_decode ( $response->getBody ( true ), true );
-error_log ('stripe json--->'.$response->getBody ( true ). 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if ($data ['status'] == 'Success') {
-error_log ('stripe status success??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 					$types = $data ['types'];
 					$output .= '<account_type>';
 					foreach ( $types as $key => $type ) {
@@ -109,14 +99,12 @@ error_log ('stripe status success??? ...'. 'file--->' . __FILE__ . ' method -->'
 					$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
 					$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
 				} else
-error_log ('stripe free account??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 					$output .= '<account_type>Free user</account_type>';
 					
 					// Get user profile
 				$profile_query = $this->dbAdapter->createQueryBuilder ();
 				$profile_query->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$result_user[0]->user_id}' AND m.is_profile_pic = 1" );
 				$profile = $profile_query->getQuery ()->getResult ();
-error_log ('getting profile pic??? ...'. 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (empty ( $profile ))
 					$output .= '<profile></profile>';
 				else {
@@ -132,7 +120,6 @@ error_log ('getting profile pic??? ...'. 'file--->' . __FILE__ . ' method -->' .
 			}
 			
 			if ($frmweb) {
-error_log ('frmweb output--->'.$output. '  file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				return $output;
 			}
 			header ( "Content-type: text/xml" );

@@ -65,6 +65,13 @@ error_log('_SESSION vars after sid start...'.print_r($_SESSION, true).PHP_EOL);
 		session_start ();
 error_log('_SESSION vars after fecookie start...'.print_r($_SESSION, true).PHP_EOL);		
 	}
+	public function startSessionWithUID($uid) {
+		$rUIDSession = $this->mRedis->getCache ( 'uid::'.$uid );
+		$rUIDSessionArr = json_decode ( $rUIDSession, true );
+		session_id ( $rUIDSessionArr ['sid'] );
+		session_start ();
+error_log('_SESSION vars after uid start...'.print_r($_SESSION, true).PHP_EOL);		
+	}
 	public function setSession($user, $device_id = '', $device_type = '', $fecookie = '', $clientIPAddress = '') {
 		error_log ( 'Inside setSession' . PHP_EOL );
 		session_start ();

@@ -33,12 +33,15 @@ class Notification {
 	private $notification_id;
 	
 	/**
-	 *
-	 * @var string @ORM\Column(name="user_id", type="string", length=255, nullable=false)
-	 *      @ORM\GeneratedValue(strategy="NONE")
+	 * @var string @ORM\Column(name="sender_uid", type="string", length=45, nullable=false)
 	 */
-	private $user_id;
+	private $sender_uid;
 	
+	/**
+	 * @var string @ORM\Column(name="receiver_uid", type="string", length=45, nullable=false)
+	 */
+	private $receiver_uid;
+		
 	/**
 	 *
 	 * @var string @ORM\Column(name="notification_type", type="string", length=20, nullable=false)

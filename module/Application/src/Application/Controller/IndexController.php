@@ -158,7 +158,7 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-		error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+		// error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 		// Checking headers for cookie info
 		// $headers = apache_request_headers ();
 		// foreach ( $headers as $header => $value ) {
@@ -230,7 +230,7 @@ class IndexController extends AbstractActionController {
 				error_log ( 'login action ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
-								
+				
 				/*
 				 * Cache approach - warm @person if not set here
 				 */
@@ -1424,7 +1424,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * close session for ajax
 		 */
-		session_write_close();
+		session_write_close ();
 		
 		/**
 		 * Cache Warming section...
@@ -1512,14 +1512,14 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($requiresExistingSession) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				
+				error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
 					 */
 					$this->sessHandler->startSessionWithSID ( $data->sid );
 					// error_log('session_id ()->'.session_id ().PHP_EOL);
-					// error_log('$data->sid->'.$data->sid.PHP_EOL);
+					error_log ( '$data->sid->' . $data->sid . PHP_EOL );
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
@@ -1529,10 +1529,17 @@ class IndexController extends AbstractActionController {
 					 */
 					$this->sessHandler->startSessionWithFECookie ( $data->fecookie );
 					// error_log('$_SESSION [ fecookie ]->'.$_SESSION [ 'fecookie' ].PHP_EOL);
-					// error_log('$data->fecookie->'.$data->fecookie.PHP_EOL);
+					error_log ( '$data->fecookie->' . $data->fecookie . PHP_EOL );
 					if ($_SESSION ['fecookie'] == $data->fecookie) {
 						$sid_success = 1;
 					}
+				} else if (! empty ( $data->uid )) {
+					/*
+					 * SetId for the web browser session and start... (TESTING...)
+					 */
+					$this->sessHandler->startSessionWithUID ( $data->uid );
+					error_log ( '$data->uid->' . $data->uid . PHP_EOL );
+					return $actionname;
 				}
 				
 				if (! $sid_success) {
@@ -1545,9 +1552,9 @@ class IndexController extends AbstractActionController {
 			 * Fetch user ip
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
-			if ( !empty($_SESSION ['ipAddress']) && ($currentIPAddress != $_SESSION ['ipAddress']) ) {
-				error_log ( "ERROR::User IP Address has changed - logging user out!" .PHP_EOL);
-				//error_log ( "_SESSION vars after sid_success--->".print_r($_SESSION, true) .PHP_EOL);
+			if (!empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+				error_log ( "ERROR::User IP Address has changed - logging user out!" . PHP_EOL );
+				// error_log ( "_SESSION vars after sid_success--->".print_r($_SESSION, true) .PHP_EOL);
 				return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";

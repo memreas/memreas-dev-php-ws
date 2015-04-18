@@ -64,8 +64,8 @@ class AddFriend {
 				 * Build array and send notifications...
 				 */
 				$data = array ();
-				$data ['addNotification'] ['sender'] = $user_id;
-				$data ['addNotification'] ['receiver'] = $friend_id;
+				$data ['addNotification'] ['sender_uid'] = $user_id;
+				$data ['addNotification'] ['receiver_uid'] = $friend_id;
 				$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_FRIEND;
 				$data ['addNotification'] ['notification_methods'] []= 'email';
 				$data ['addNotification'] ['notification_methods'] []= 'push_notification';
