@@ -199,7 +199,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * For testing only...
 		 */
-		if (($actionname == "ws_tester") || ! empty ( $_REQUEST ['XDEBUG_SESSION_START'] )) {
+		if ($actionname == "ws_tester") {
 			error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view folder
@@ -239,7 +239,7 @@ class IndexController extends AbstractActionController {
 						
 						// $time_start = microtime(true);
 						// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-						$matches = $this->redis->findSet ( '@person', "ch-1tuser-" );
+						// $matches = $this->redis->findSet ( '@person', "ch-1tuser-" );
 						// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 						// error_log("matches json -----> ".json_encode($matches).PHP_EOL);
 						
@@ -1519,26 +1519,25 @@ class IndexController extends AbstractActionController {
 					 */
 					$this->sessHandler->startSessionWithSID ( $data->sid );
 					// error_log('session_id ()->'.session_id ().PHP_EOL);
-					error_log ( '$data->sid->' . $data->sid . PHP_EOL );
+					// error_log ( '$data->sid->' . $data->sid . PHP_EOL );
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-				} else if (! empty ( $data->fecookie )) {
+				} else if (! empty ( $data->memreascookie )) {
 					/*
 					 * SetId for the web browser session and start...
 					 */
-					$this->sessHandler->startSessionWithFECookie ( $data->fecookie );
-					// error_log('$_SESSION [ fecookie ]->'.$_SESSION [ 'fecookie' ].PHP_EOL);
-					error_log ( '$data->fecookie->' . $data->fecookie . PHP_EOL );
-					if ($_SESSION ['fecookie'] == $data->fecookie) {
+					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
+					//error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
+					//error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
+					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
-				} else if (! empty ( $data->uid )) {
+				} else if (!empty( $data->uid ) || !empty($data->username) ) {
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
-					$this->sessHandler->startSessionWithUID ( $data->uid );
-					error_log ( '$data->uid->' . $data->uid . PHP_EOL );
+					$this->sessHandler->startSessionWithUID ( $data->uid,  $data->username);
 					return $actionname;
 				}
 				

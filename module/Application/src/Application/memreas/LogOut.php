@@ -19,8 +19,8 @@ class LogOut {
 	public function exec($sessHandler) {
 		error_log ( 'IndexController -> logout->exec()...' . PHP_EOL );
 		try {
-			if (!empty ( $_SESSION ['fecookie'] )) {
-				$sessHandler->closeSessionWithFECookie();
+			if (!empty ( $_SESSION ['memreascookie'] )) {
+				$sessHandler->closeSessionWithMemreasCookie();
 			} else {
 				$sessHandler->closeSessionWithSID();
 			}

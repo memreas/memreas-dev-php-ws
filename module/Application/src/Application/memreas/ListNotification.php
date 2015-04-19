@@ -64,16 +64,16 @@ class ListNotification {
 			$array = array_flip ( $array );
 
 			
-error_log('xml ---->'.$_POST ['xml'].PHP_EOL);			
+//error_log('xml ---->'.$_POST ['xml'].PHP_EOL);			
 			$error_flag = 0;
 			$message = '';
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			$userid = trim ( $data->listnotification->user_id );
+			$receiver_uid = trim ( $data->listnotification->receiver_uid );
 			header ( "Content-type: text/xml" );
 			$this->xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$this->xml_output .= "<xml>";
 			$this->xml_output .= "<listnotificationresponse>";
-			if (! empty ( $userid )) {
+			if (! empty ( $receiver_uid )) {
 				
 				/**
 				 * Fetch list of notifications
@@ -81,7 +81,7 @@ error_log('xml ---->'.$_POST ['xml'].PHP_EOL);
 				$query_user_notification = "
 					SELECT m 
 					FROM Application\Entity\Notification m   
-					where m.user_id ='$userid' 
+					where m.receiver_uid ='$receiver_uid' 
 					AND m.is_read = '0' 
 					ORDER BY m.update_time DESC";
 				$statement = $this->dbAdapter->createQuery ( $query_user_notification );

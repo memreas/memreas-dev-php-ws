@@ -16,7 +16,7 @@ class Login {
 	protected $password;
 	protected $device_id;
 	protected $device_type;
-	protected $fecookie;
+	protected $memreascookie;
 	protected $clientIPAddress;
 	public $isWeb;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
@@ -45,8 +45,8 @@ class Login {
 			$this->username = trim ( $data->login->username );
 			$this->device_id = (! empty ( $data->login->device_id )) ? trim ( $data->login->device_id ) : '';
 			$this->device_type = (! empty ( $data->login->device_type )) ? trim ( $data->login->device_type ) : '';
-			$this->fecookie = (! empty ( $data->fecookie )) ? trim ( $data->fecookie ) : '';
-			$this->isWeb = (! empty ( $data->fecookie )) ? true : false;
+			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
+			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			// error_log ( "this->isWeb" . $this->isWeb . PHP_EOL );
 			$this->clientIPAddress = $ipAddress;
 			
@@ -80,7 +80,7 @@ class Login {
 					/*
 					 * Set the session for the user data...
 					 */
-					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->fecookie,  $this->clientIPAddress);
+					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie,  $this->clientIPAddress);
 					
 					/*
 					 * Check if the device is registered and update as needed

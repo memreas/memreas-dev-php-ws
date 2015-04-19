@@ -99,12 +99,11 @@ body {
 		<div class="content">
 
 			<p>
-				Dear <b><?php echo $friend_name?></b>,<br /> <b><?php echo $user_name; ?> wants to add you as a friend</b>.
-				You can accept, decline or ignore this request @ <a
-					href="<?php echo MemreasConstants::WEB_URL?>"><?php echo MemreasConstants::WEB_URL?></a>
+				Dear <b><?php echo $user_name?></b>,<br /> <b><?php echo $friend_name; ?> has <?php echo $status; ?> your request</b>.
 			</p>
-
-
+			<p>
+				<?php echo $message?>.
+			</p>
 			<p>
 				Best Regards,<br /> <img
 					src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"

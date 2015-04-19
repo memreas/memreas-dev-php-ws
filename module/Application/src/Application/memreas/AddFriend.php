@@ -66,6 +66,7 @@ class AddFriend {
 				$data = array ();
 				$data ['addNotification'] ['sender_uid'] = $user_id;
 				$data ['addNotification'] ['receiver_uid'] = $friend_id;
+				$data ['addNotification'] ['status'] = 0; //used on front end for button class??
 				$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_FRIEND;
 				$data ['addNotification'] ['notification_methods'] []= 'email';
 				$data ['addNotification'] ['notification_methods'] []= 'push_notification';
@@ -78,6 +79,14 @@ class AddFriend {
 				$this->AddNotification->exec ( $data );
 				$this->notification->add ( $friend_id );
 				if (! empty ( $data ['addNotification'] ['meta'] )) {
+					
+					//Email
+					error_log('AddFriend $receiver_uid--->'.$data ['addNotification'] ['receiver_uid'].PHP_EOL);
+					error_log('AddFriend $sender_uid--->'.$data ['addNotification'] ['sender_uid'].PHP_EOL);
+					error_log('AddFriend $type--->'.Email::FRIEND_REQUEST.PHP_EOL);
+					Email::sendEmailNotification($this->service_locator, $this->dbAdapter, $data ['addNotification'] ['receiver_uid'], $data ['addNotification'] ['sender_uid'], Email::FRIEND_REQUEST, '');
+					
+					//Push Notification
 					$this->notification->type = $data ['addNotification'] ['notification_type'] ;
 					$this->notification->setMessage ( $this->notification->type, $meta['sent']['message'] );
 					$this->notification->send ();

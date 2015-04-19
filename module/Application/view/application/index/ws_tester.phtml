@@ -23,7 +23,7 @@ echo "user_id ----> " . $user_id;
 <script type="text/javascript">
             var base_url = $("#index_action").attr("action");
             var login = '<xml>'+
-					            '<login>'+
+            					'<login>'+
 					            '<username>kamlesh1</username>'+
 					            '<password>123456</password>'+
 					            '<device_type>ANDROID</device_type>'+
@@ -40,8 +40,10 @@ echo "user_id ----> " . $user_id;
 					            '<invited_by></invited_by>'+
 					            '</registration>'+
 					            '</xml>';
-            var addcomments = '<xml> <addcomment>'+
-					            '<event_id>1</event_id>'+
+            var addcomments = '<xml>' +
+            					'<username>jmeah2</username>'+ 
+            					'<addcomment>'+
+            					'<event_id>1</event_id>'+
 					            '<media_id>1</media_id>'+
 					            '<user_id></user_id>'+
 					            '<comments>comments</comments>'+
@@ -50,6 +52,7 @@ echo "user_id ----> " . $user_id;
 					            '</xml>';	
 
 			var addfriend = '<xml>'+
+								'<username>jmeah2</username>'+
 					            '<addfriend>'+
 					            '<user_id>1</user_id>'+
 					            '<friend_id>1</friend_id>'+
@@ -57,6 +60,7 @@ echo "user_id ----> " . $user_id;
 					            '</xml>';	
 
 			var addevent = '<xml>'+
+								'<username>jmeah2</username>'+
 					            '<addevent>'+
 					            '<user_id>1</user_id>'+
 					            '<event_name>Event 1</event_name>'+
@@ -71,6 +75,7 @@ echo "user_id ----> " . $user_id;
 					            '</addevent>'+
 					            '</xml>';	
             var addexistmediatoevent = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<addexistmediatoevent>'+
 					            '<event_id>1</event_id>'+
 					            '<media_ids>'+
@@ -80,6 +85,7 @@ echo "user_id ----> " . $user_id;
 					            '</addexistmediatoevent>'+
 					            '</xml>';	
             var addfriendtoevent ='<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<addfriendtoevent>'+
 					            '<user_id>1</user_id>'+
 					            '<event_id>0</event_id>'+
@@ -109,6 +115,7 @@ echo "user_id ----> " . $user_id;
 					            '</addfriendtoevent>'+
 					            '</xml>';	
             var addfriendtogroup = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<addfriendtogroup>'+
 					            '<group_id>1</group_id>'+
 					            '<network>facebook</network>'+
@@ -125,6 +132,7 @@ echo "user_id ----> " . $user_id;
 					            '</addfriendtogroup>'+
 					            '</xml>';	
             var addmediaevent = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<addmediaevent>'+
 					            '<s3url>0.jpg</s3url>'+
 					            '<is_server_image>0</is_server_image>'+
@@ -139,12 +147,14 @@ echo "user_id ----> " . $user_id;
 					            '</addmediaevent>'+
 					            '</xml>';	
             var addNotification = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<addNotification>'+
 					            '<user_id>1</user_id>'+
 					            '<event_id>2</event_id>'+
 					            '</addNotification>'+
 					            '</xml>';
             var changepassword = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<changepassword>'+
 					            '<username></username>'+
 					            '<password></password>'+
@@ -154,29 +164,35 @@ echo "user_id ----> " . $user_id;
 					            '</changepassword>'+
 					            '</xml>';
             var checkexistmedia = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<checkexistmedia>'+
 					            '<user_id>1</user_id>'+
 					            '<filename>file name</filename>'+
 					            '</checkexistmedia>'+
 					            '</xml>';	
             var chkuname = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<checkusername>'+
 					            '<username>nihar</username>'+
 					            '</checkusername>'+
 					            '</xml>';	
             var clearallnotification = '<xml>'+
+            					'<username>jmeah2</username>'+
 					            '<clearallnotification>'+
 					            '<user_id>1</user_id>'+
 					            '</clearallnotification>'+
 					            '</xml>';	
-            var countlistallmedia = '<xml> <countlistallmedia>'+
+            var countlistallmedia = '<xml>'+
+            					'<username>jmeah2</username>'+
+            					' <countlistallmedia>'+
 					            '<limit>15</limit>'+
 					            '<event_id>1</event_id>'+
 					            '<user_id>1</user_id>'+
 					            '<device_id>123456</device_id>'+
 					            '</countlistallmedia>'+
 					            '</xml>';	
-            var countviewevent = '<xml>'+
+            var countviewevent = '<xml>'+ 
+            					'<username>jmeah2</username>'+
 					            '<countviewevent>'+
 					            '<user_id>1</user_id>'+
 					            '<is_my_event>1</is_my_event>'+
@@ -185,7 +201,8 @@ echo "user_id ----> " . $user_id;
 					            '<limit>2</limit>'+
 					            '</countviewevent>'+
 					            '</xml>';	
-            var creategroup = '<xml>'+
+            var creategroup = '<xml>'+ 
+            					'<username>jmeah2</username>'+
 					            '<creategroup>'+
 					            '<group_name>nihar</group_name>'+
 					            '<user_id>1</user_id>'+
@@ -198,19 +215,20 @@ echo "user_id ----> " . $user_id;
 					            '</friends>'+
 					            '</creategroup>'+
 					            '</xml>';	
-            var deletephoto = '<xml>'+
+            var deletephoto = '<xml>'+ 
+            					'<username>jmeah2</username>'+
 					            '<deletephoto>'+
 					            '<mediaid>5</mediaid>'+
 					            '</deletephoto>'+
 					            '</xml>';	
-            var download='<xml>'+
+            var download='<xml>'+ '<username>jmeah2</username>'+
 					            '<download>'+
 					            '<user_id>631da088-f43c-11e2-8fd6-12313909a953</user_id>'+
 					            '<media_id>0198ae20-033c-11e3-95ba-12313909e68b</media_id>'+
 					            '<device_id>123456</device_id>'+
 					            '</download>'+
 					            '</xml>';	
-            var editevent ='<xml>'+
+            var editevent ='<xml>'+ '<username>jmeah2</username>'+
 					            '<editevent>'+
 					            '<user_id>1</user_id>'+
 					            '<event_id>1</event_id>'+
@@ -224,7 +242,7 @@ echo "user_id ----> " . $user_id;
 					            '<event_self_destruct>02/03/2013</event_self_destruct>'+
 					            '</editevent>'+
 					            '</xml>';	
-            var feedback = '<xml>'+
+            var feedback = '<xml>'+ '<username>jmeah2</username>'+
 					            '<feedback>'+
 					            '<user_id>1</user_id>'+
 					            '<name>kamlesh</name>'+
@@ -232,69 +250,82 @@ echo "user_id ----> " . $user_id;
 					            '<message></message>'+
 					            '</feedback>'+
 					            '</xml>';	
-            var findtag = '<xml>'+
+            var findtag = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<findtag>'+
 					            '<tag></tag>'+
 					            '<user_id></user_id>'+
 					            '</findtag>'+
 					            '</xml>';	
-            var forgotpassword = '<xml>'+
+            var forgotpassword = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<forgotpassword>'+
 					            '<email>hussain.arif@sufalamtech.com</email>'+
 					            '</forgotpassword>'+
 					            '</xml>';	
-            var geteventcount = '<xml>'+
+            var geteventcount = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<geteventcount>'+
 					            '<event_id>1</event_id>'+
 					            '</geteventcount>'+
 					            '</xml>';	
-            var geteventdetails = '<xml>'+
+            var geteventdetails = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<geteventdetails>'+
 					            '<event_id>1</event_id>'+
 					            '</geteventdetails>'+
 					            '</xml>';	
-            var geteventlocation = '<xml>'+
+            var geteventlocation = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<geteventlocation>'+
 					            '<event_id>1</event_id>'+
 					            '</geteventlocation>'+
 					            '</xml>';	
-            var geteventpeople = '<xml>'+
+            var geteventpeople = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<geteventpeople>'+
 					            '<event_id>1</event_id>'+
 					            '</geteventpeople>'+
 					            '</xml>';	
-            var getgroupfriends = '<xml>'+
+            var getgroupfriends = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getgroupfriends>'+
 					            '<group_id>1</group_id>'+
 					            '<network>facebook</network>'+
 					            '</getgroupfriends>'+
 					            '</xml>';	
-            var getmedialike = '<xml>'+
+            var getmedialike = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getmedialike>'+
 					            '<media_id>1</media_id>'+
 					            '</getmedialike>'+
 					            '</xml>';	
-            var getsession = '<xml>'+
+            var getsession = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getsession>'+
 					            '<sid>1</sid>'+
 					            '</getsession>'+
 					            '</xml>';	
-            var getsocialcredentials = '<xml>'+
+            var getsocialcredentials = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getsocialcredentials>'+
 					            '<network>facebook</network>'+
 					            '</getsocialcredentials>'+
 					            '</xml>';	
-            var getuserdetails = '<xml>'+
+            var getuserdetails = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getuserdetails>'+
 					            '<user_id>1</user_id>'+
 					            '</getuserdetails>'+
 					            '</xml>';	
-            var getusergroups = '<xml>'+
+            var getusergroups = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getusergroups>'+
 					            '<user_id>1</user_id>'+
 					            '</getusergroups>'+
 					            '</xml>';	
-            var likemedia = '<xml>'+
+            var likemedia = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<likemedia>'+
 					            '<event_id>1</event_id>'+
 					            '<media_id>1</media_id>'+
@@ -302,7 +333,8 @@ echo "user_id ----> " . $user_id;
 					            '<is_like>1</is_like>'+
 					            '</likemedia>'+
 					            '</xml>';	
-            var listallmedia = '<xml>'+
+            var listallmedia = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listallmedia>'+
 					            '<event_id>1</event_id>'+
 					            '<user_id>1</user_id>'+
@@ -312,7 +344,8 @@ echo "user_id ----> " . $user_id;
 					            '<page>1</page>'+
 					            '</listallmedia>'+
 					            '</xml>';	
-            var listcomments = '<xml>'+
+            var listcomments = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listcomments>'+
 					            '<event_id>1</event_id>'+
 					            '<media_id></media_id>'+
@@ -320,57 +353,67 @@ echo "user_id ----> " . $user_id;
 					            '<page>1</page>'+
 					            '</listcomments>'+
 					            '</xml>';	
-            var listgroup = '<xml>'+
+            var listgroup = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listgroup>'+
 					            '<user_id>1</user_id>'+
 					            '</listgroup>'+
 					            '</xml>';	
-            var listmemreasfriends = '<xml>'+
+            var listmemreasfriends = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listmemreasfriends>'+
 					            '<user_id>1</user_id>'+
 					            '</listmemreasfriends>'+
 					            '</xml>';	
-            var listnotification = '<xml>'+
+            var listnotification = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listnotification>'+
 					            '<user_id>a59184c0-755b-11e3-85d4-22000a8a1935</user_id>'+
 					            '</listnotification>'+
 					            '</xml>';	
-            var listphotos = '<xml>'+
+            var listphotos = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listphotos>'+
 					            '<userid>2</userid>'+
 					            '<deviceid>43</deviceid>'+
 					            '</listphotos>'+
 					            '</xml>';	
-            var logout = '<xml>'+
+            var logout = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<logout>'+
 					            '<user_id>1</user_id>'+
 					            '</logout>'+
 					            '</xml>';	
-            var mediainappropriate = '<xml>'+
+            var mediainappropriate = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<mediainappropriate>'+
 					            '<media_id>1</media_id>'+
 					            '<is_appropriate>0</is_appropriate>'+
 					            '</mediainappropriate>'+
 					            '</xml>';	
-            var memreas_tvm= '<xml>'+
+            var memreas_tvm= '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<memreas_tvm>'+
 					            '</memreas_tvm>'+
 					            '</xml>';	
-            var registerdevice = '<xml>'+
+            var registerdevice = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<registerdevice>'+
 					            '<username>sanjaydfdf</username>'+
 					            '<devicetype>1</devicetype>'+
 					            '<devicetoken>ttttsanjay</devicetoken>'+
 					            '</registerdevice>'+
 					            '</xml>';	
-            var registercanonicaldevice = '<xml>'+
+            var registercanonicaldevice = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<registercanonicaldevice>'+
 					            '<device_id>e1a2d1e41c7395c</device_id>' +
 					            '<device_type>ANDROID|APPLE</device_type>'+
 					            '<canonical_device_token>APA91bFh0lmN41MaiT6xi7FPtIEbpzBbNY_f9iurCNVD3uSYYNLRSZvp_42bE1aZxDbct6tp0fwB1IgfuJgHwr8XqPDJd6FEyLs2Kr3vQekB74D4XSDHZH7Er3l_DONXiN2VLMG4l-kcMHRd-xlUCKz7jn-u8w8QXg</canonical_device_token>'+
 					            '</registercanonicaldevice>'+
 					            '</xml>';	
-            var removeeventfriend = '<xml>'+
+            var removeeventfriend = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<removeeventfriend>'+
 					            '<event_id>1</event_id>'+
 					            '<friend_ids>'+
@@ -378,7 +421,8 @@ echo "user_id ----> " . $user_id;
 					            '</friend_ids>'+
 					            '</removeeventfriend>'+
 					            '</xml>';	
-            var removeeventmedia = '<xml>'+
+            var removeeventmedia = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<removeeventmedia>'+
 					            '<event_id>1</event_id>'+
 					            '<media_ids>'+
@@ -386,7 +430,8 @@ echo "user_id ----> " . $user_id;
 					            '</media_ids>'+
 					            '</removeeventmedia>'+
 					            '</xml>';	
-            var removefriendgroup = '<xml>'+
+            var removefriendgroup = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<removefriendgroup>'+
 					            '<group_id>1</group_id>'+
 					            '<friends>'+
@@ -399,7 +444,8 @@ echo "user_id ----> " . $user_id;
 					            '</friends>'+
 					            '</removefriendgroup>'+
 					            '</xml>';	
-            var removefriends = '<xml>'+
+            var removefriends = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<removefriends>'+
 					            '<user_id>1</user_id>'+
 					            '<friend_ids>'+
@@ -407,7 +453,8 @@ echo "user_id ----> " . $user_id;
 					            '</friend_ids>'+
 					            '</removefriends>'+
 					            '</xml>';	
-            var saveuserdetails = '<xml>'+
+            var saveuserdetails = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<saveuserdetails>'+
 					            '<user_id>1</user_id>'+
 					            '<email>email</email>'+
@@ -417,12 +464,14 @@ echo "user_id ----> " . $user_id;
 					            '<profile_picture>https://d3sisat5gdssl6.cloudfront.net/314a89b7-67eb-4111-9539-7ede5cd60465/image/abc.bmp</profile_picture>'+
 					            '</saveuserdetails>'+
 					            '</xml>';
-            var signedurl = '<xml>'+
+            var signedurl = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<signedurl>'+
 					            '<path>http://d1ckv7o9k6o3x9.cloudfront.net/0.jpg</path>'+
 					            '</signedurl>'+
 					            '</xml>';	
-            var updatemedia = '<xml>'+
+            var updatemedia = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<updatemedia>'+
 					            '<media>'+
 					            '<media_id>1</media_id>'+
@@ -434,7 +483,8 @@ echo "user_id ----> " . $user_id;
 					            '</media>'+
 					            '</updatemedia>'+
 					            '</xml>';	
-            var updatenotification = '<xml>'+
+            var updatenotification = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<updatenotification>'+
 					            '<notification>'+
 					            '<notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id>'+
@@ -451,12 +501,14 @@ echo "user_id ----> " . $user_id;
 					            '</notification>'+
 					            '</updatenotification>'+
 					            '</xml>';	
-            var viewallfriends = '<xml>'+
+            var viewallfriends = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<viewallfriends>'+
 					            '<user_id>2</user_id>'+
 					            '</viewallfriends>'+
 					            '</xml>';	
-            var viewevents ='<xml>'+
+            var viewevents ='<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<viewevent>'+
 					            '<user_id>1</user_id>'+
 					            '<is_my_event>1</is_my_event>'+
@@ -466,24 +518,28 @@ echo "user_id ----> " . $user_id;
 					            '<limit>2</limit>'+
 					            '</viewevent>'+
 					            '</xml>';	
-            var viewmediadetails= '<xml>'+
+            var viewmediadetails= '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<viewmediadetails>'+
 					            '<event_id>'+
 					            '</event_id>'+
 					            '<media_id>1ca81e7e-e9e4-11e2-8fd6-12313909a953</media_id>'+
 					            '</viewmediadetails>'+
 					            '</xml>';	
-            var getfriends = '<xml>'+
+            var getfriends = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getfriends>'+
 					            '<user_id>1</user_id>'+
 					            '</getfriends>'+
 					            '</xml>';
-            var getplans = '<xml>'+
+            var getplans = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getplans>'+
 					            '<user_id>1</user_id>'+
 					            '</getplans>'+
 					            '</xml>';
-            var getorderhistory = '<xml>'+
+            var getorderhistory = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getorderhistory>'+
 					            '<user_id>1</user_id>'+
 					            '<search_username>'+
@@ -492,27 +548,32 @@ echo "user_id ----> " . $user_id;
 					            '<limit>10</limit>'+
 					            '</getorderhistory>'+
 					            '</xml>';
-            var getorder = '<xml>'+
+            var getorder = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getorder>'+
 					            '<transaction_id>1</transaction_id>'+
 					            '</getorder>'+
 					            '</xml>';
-            var removegroup = '<xml>'+
+            var removegroup = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<removegroup>'+
 					            '<group_id>1</group_id>'+
 					            '</removegroup>'+
 					            '</xml>';
-            var checkevent = '<xml>'+
+            var checkevent = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<checkevent>'+
 					            '<event_id>1</event_id>'+
 					            '</checkevent>'+
 					            '</xml>';
-            var getplansstatic = '<xml>'+
+            var getplansstatic = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getplansstatic>'+
 					            '<static>0</static>'+
 					            '</getplansstatic>'+
 					            '</xml>';
-            var updatepassword = '<xml>'+
+            var updatepassword = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<updatepassword>'+
 					            '<user_id>0</user_id>'+
 					            '<old>old password</old>'+
@@ -520,24 +581,28 @@ echo "user_id ----> " . $user_id;
 					            '<retype>Retype new password</retype>'+
 					            '</updatepassword>'+
 					            '</xml>';
-            var getaccountdetail = '<xml>'+
+            var getaccountdetail = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getaccountdetail>'+
 					            '<user_id>0</user_id>'+
 					            '</getaccountdetail>'+
 					            '</xml>';
-             var getdiskusage = '<xml>'+
+             var getdiskusage = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<getdiskusage>'+
 					            '<user_id>1</user_id>'+
 					            '</getdiskusage>'+
 					            '</xml>';
-            var refund = '<xml>'+
+            var refund = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<refund>'+
 					            '<user_id>0</user_id>'+
 					            '<amount>5</amount>'+
 					            '<reason>Refund balance</reason>'+
 					            '</refund>'+
 					            '</xml>';
-            var listpayees = '<xml>'+
+            var listpayees = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<listpayees>'+
 					            '<username>'+
 					            '</username>'+
@@ -545,7 +610,8 @@ echo "user_id ----> " . $user_id;
 					            '<limit>10</limit>'+
 					            '</listpayees>'+
 					            '</xml>';
-            var makepayout = '<xml>'+
+            var makepayout = '<xml>'+ 
+					         '<username>jmeah2</username>'+
 					            '<makepayout>'+
 					            '<account_id>1</account_id>'+
 					            '<amount>10</amount>'+
