@@ -397,7 +397,8 @@ error_log("Inside for loop --->".$row['username'].PHP_EOL);
 			$json_array = json_decode ( $row ['metadata'], true );
 			
 			if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
-				$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+				//$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+				$url1 = $this->url_signer->signArrayOfUrls ('static/profile-pic.jpg');
 			} else {
 				$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 			}

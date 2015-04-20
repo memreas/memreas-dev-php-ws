@@ -1,7 +1,5 @@
 <?php
-error_log ( "Inside memreas-me-friends.phtml" );
-error_log ( "getcwd ----> " . getcwd () );
-error_log ( "DIR ----> " . dirname ( __DIR__ ) );
+use Application\Model\MemreasConstants;
 ?>
 <!doctype html>
 <html>
@@ -533,7 +531,7 @@ $(document).bgStretcher({
 		<!-- Begin : Footer -->
 		<!-- End : Footer -->
 	</div>
-	<footer>&copy; 2013 memreas, llc. All rights reserved.</footer>
+	<footer><?php echo MemreasConstants::COPYRIGHT?></footer>
 	<!-- End : Container -->
 
 

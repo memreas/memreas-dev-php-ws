@@ -125,11 +125,8 @@ class UpdateNotification {
 			if (! $UserFriend) {
 				throw new \Exception ( 'UserFriend not found' );
 			} else {
-				error_log ( 'Inside if ($UserFriend)' . ' ::::file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $this->sender_uid );
 				// accepted
-				error_log ( 'Inside if ($UserFriend)' . ' ::::file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
-				
 				if (($this->notification_status == 1) || (strtolower ( $this->notification_status ) == 'accept')) {
 					error_log ( 'Inside if ($UserFriend->user_approve = 1;)' . ' ::::file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 					$this->notification_status = 'accept';
@@ -142,7 +139,6 @@ class UpdateNotification {
 					/*
 					 * If the receiver accepts thes add the sender as a friend of the receiver
 					 */
-					error_log ( 'exec next $this->addFriendRevRec ( $this->receiver_uid, $this->sender_uid )' . ' ::::file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 					$this->addFriendRevRec ( $this->receiver_uid, $this->sender_uid );
 				}
 				// declined

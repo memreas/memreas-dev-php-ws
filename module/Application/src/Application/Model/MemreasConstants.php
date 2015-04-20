@@ -63,4 +63,6 @@ class MemreasConstants {
 	const ADMIN_EMAIL ='admin@memreas.com';
 
 	const GCM_SERVER_KEY='AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE';
+	const COPYRIGHT='&copy;2015 memreas, llc. all rights reserved.';
+	
 }

@@ -64,4 +64,6 @@ class MemreasConstants {
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 0;//has 1 or 0 value
 	
 	const GCM_SERVER_KEY='AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE';
+	const COPYRIGHT='&copy;2015 memreas, llc. all rights reserved.';
+	
 }

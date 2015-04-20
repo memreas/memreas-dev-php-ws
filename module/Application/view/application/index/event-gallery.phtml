@@ -1,6 +1,7 @@
 <?php
 use Guzzle\Http\Client;
 use Zend\Session\Container;
+use Application\Model\MemreasConstants;
 
 $domain = "http://d1ckv7o9k6o3x9.cloudfront.net/";
 
@@ -13,7 +14,7 @@ if (isset ( $this->xml )) {
 <html>
 <head>
 <meta charset="utf-8">
-<title>Memreas</title>
+<title>memreas</title>
 
 <!--Custom css-->
 <link href="/memreas/css/style.css" rel="stylesheet"
@@ -236,7 +237,7 @@ $(document).bgStretcher({
 		<!-- End : Content -->
 	</div>
 	<!-- Begin : Footer -->
-	<footer>&copy; 2013 memreas, llc. All rights reserved.</footer>
+	<footer><?php echo MemreasConstants::COPYRIGHT?></footer>
 	<!-- End : Footer -->
 	<!-- End : Container -->
 

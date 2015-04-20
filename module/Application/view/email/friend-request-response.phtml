@@ -101,6 +101,7 @@ body {
 			<p>
 				Dear <b><?php echo $user_name?></b>,<br /> <b><?php echo $friend_name; ?> has <?php echo $status; ?> your request</b>.
 			</p>
+			<br>
 			<p>
 				<?php echo $message?>.
 			</p>
@@ -112,7 +113,7 @@ body {
 
 		</div>
 		<div class="footer" style="background: #45484d;">
-			<p>&copy;2015 memreas, llc. all rights reserved.</p>
+			<p><?php echo MemreasConstants::COPYRIGHT?></p>
 		</div>
 	</div>
 </body>

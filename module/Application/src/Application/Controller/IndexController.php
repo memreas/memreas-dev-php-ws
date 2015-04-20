@@ -234,7 +234,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - warm @person if not set here
 				 */
-				if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				// if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				if (MemreasConstants::REDIS_SERVER_USE) {
 					if ($this->redis->hasSet ( '@person' )) {
 						
 						// $time_start = microtime(true);
@@ -635,13 +636,15 @@ class IndexController extends AbstractActionController {
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$user_ids = array ();
-						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+						//if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+						if (MemreasConstants::REDIS_SERVER_USE) {
 							error_log ( "redis @ fetch..." . PHP_EOL );
 							// Redis - this codes fetches usernames by the search term then gets the hashes
 							$usernames = $this->redis->findSet ( '@person', $search );
 							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
 							$person_uid_hash = $this->redis->cache->hmget ( '@person_uid_hash', $usernames );
-							if (in_array ( $user_id, $person_uid_hash )) {
+error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);							
+							if (in_array ( $_SESSION['user_id'], $person_uid_hash )) {
 								$username = $person_uid_hash ["$user_id"];
 								// now remove current user
 								unset ( $person_meta_hash [$username [$user_id]] );
@@ -650,7 +653,11 @@ class IndexController extends AbstractActionController {
 								unset ( $usernames [$index] );
 							}
 							$user_ids = array_keys ( $person_uid_hash );
-							$search_result = array_values ( $person_meta_hash );
+							$search_array_values = array_values ( $person_meta_hash );
+							$search_result = array();
+							foreach($search_array_values as $entry){
+								$search_result[] = json_decode($entry);
+							}							
 							$rc = count ( $search_result );
 						} else {
 							error_log ( "@ fetch get regindex..." . PHP_EOL );
@@ -699,7 +706,6 @@ class IndexController extends AbstractActionController {
 						$qb->andwhere ( "uf.user_id = '$user_id'" );
 						$qb->andwhere ( 'uf.friend_id IN (:f)' );
 						$qb->setParameter ( 'f', $user_ids );
-						// error_log("qb->getQuery()->getSql()------> " . $qb->getDQL() . PHP_EOL);
 						error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
 						
 						$UserFriends = $qb->getQuery ()->getResult ();
@@ -1429,7 +1435,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Cache Warming section...
 		 */
-		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE)) {
 			error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			
 			// Return the status code here so this process continues and the user receives response
@@ -1444,22 +1450,30 @@ class IndexController extends AbstractActionController {
 			}
 			
 			// Debugging
-			$result = $this->redis->cache->executeRaw ( array (
-					'DEL',
-					'@person' 
-			) );
-			$result = $this->redis->cache->executeRaw ( array (
-					'SET',
-					'warming',
-					'0' 
-			) );
+			// $result = $this->redis->cache->executeRaw ( array (
+			// 'DEL',
+			// '@person'
+			// ) );
+			// error_log ( "Inside Redis warmer deleted @person @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			// $result = $this->redis->cache->executeRaw ( array (
+			// 'SET',
+			// 'warming',
+			// '0'
+			// ) );
+			//error_log ( "Inside Redis warmer set warming flag to 0 @person @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			// End Debugging
-			if (! $this->redis->hasSet ( '@person' )) {
+			$result = $this->redis->hasSet ( '@person' );
+			error_log ( "result--->*$result*" . PHP_EOL );
+			if (!$result) {
+				error_log ( "Inside Redis warmer @person DOES NOT EXIST??.." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// Now continue processing and warm the cache for @person
-				$registration = new Registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				// $registration = new Registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$this->redis->warmPersonSet ();
 			}
+		}
+		
+		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 			
 			if (! $this->redis->hasSet ( '#hashtag' )) {
 				error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
@@ -1528,16 +1542,16 @@ class IndexController extends AbstractActionController {
 					 * SetId for the web browser session and start...
 					 */
 					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
-					//error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
-					//error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
+					// error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
+					// error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
-				} else if (!empty( $data->uid ) || !empty($data->username) ) {
+				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
-					$this->sessHandler->startSessionWithUID ( $data->uid,  $data->username);
+					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
 					return $actionname;
 				}
 				
@@ -1551,7 +1565,7 @@ class IndexController extends AbstractActionController {
 			 * Fetch user ip
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
-			if (!empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
 				error_log ( "ERROR::User IP Address has changed - logging user out!" . PHP_EOL );
 				// error_log ( "_SESSION vars after sid_success--->".print_r($_SESSION, true) .PHP_EOL);
 				return 'notlogin';
