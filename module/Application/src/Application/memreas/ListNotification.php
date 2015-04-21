@@ -62,9 +62,8 @@ class ListNotification {
 			$array = $oClass->getConstants ();
 			unset ( $array ['EMAIL'], $array ['MEMREAS'], $array ['NONMEMREAS'] );
 			$array = array_flip ( $array );
-
 			
-//error_log('xml ---->'.$_POST ['xml'].PHP_EOL);			
+			// error_log('xml ---->'.$_POST ['xml'].PHP_EOL);
 			$error_flag = 0;
 			$message = '';
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -118,7 +117,11 @@ class ListNotification {
 						$this->xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
 						$this->xml_output .= "<meta><![CDATA[{$row['meta']}]]></meta>";
 						$this->xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
-						$this->xml_output .= "<message>" . $meta ['sent'] ['message'] . "</message>";
+						if (($row ['notification_type'] == '1') || ($row ['notification_type'] == 'ADD_FRIEND')) {
+							$this->xml_output .= "<message>" . $meta ['sent'] ['message'] . "</message>";
+						} else if (($row ['notification_type'] == '1') || ($row ['notification_type'] == 'ADD_FRIEND_RESPONSE')) {
+							$this->xml_output .= "<message>" . $meta ['received'] ['message'] . "</message>";
+						}
 						$this->xml_output .= "<notification_status>{$row['status']}</notification_status>";
 						$this->xml_output .= "<notification_updated>{$row['update_time']}</notification_updated>";
 						$this->xml_output .= '<updated_about>' . Utility::formatDateDiff ( $row ['update_time'] ) . '</updated_about>';
