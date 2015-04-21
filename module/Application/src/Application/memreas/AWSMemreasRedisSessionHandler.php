@@ -72,13 +72,13 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 			$rUIDSession = $this->mRedis->getCache ( 'username::' . $uname );
 		}
 		if ($rUIDSession) {
-			error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
+			//error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
 			$rUIDSessionArr = json_decode ( $rUIDSession, true );
 			session_id ( $rUIDSessionArr ['sid'] );
 			session_start();
 			//error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
 		} else {
-			error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
+			//error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
 			if (!empty($uid)) {
 				$sql = "SELECT u  FROM Application\Entity\User as u  where u.user_id = '$uid'";
 			} else {
@@ -105,12 +105,12 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		
 		$meta='';
 		if ($profile) {
-			$meta = $profile->meta;
+			$meta = $profile->metadata;
 		}
 		return $meta;
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
-		error_log ( 'Inside setSession' . PHP_EOL );
+		//error_log ( 'Inside setSession' . PHP_EOL );
 		session_start ();
 		if (empty(session_id ())) {
 			session_regenerate_id();
@@ -132,7 +132,7 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		}
 	}
 	public function setUIDLookup() {
-		error_log ( 'Inside setUserNameLookup' . PHP_EOL );
+		//error_log ( 'Inside setUserNameLookup' . PHP_EOL );
 		$userNameArr = array ();
 		$userNameArr ['user_id'] = $_SESSION ['user_id'];
 		$userNameArr ['username'] = $_SESSION ['username'];
@@ -146,7 +146,7 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 	}
 	
 	public function setMemreasCookieLookup() {
-		error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
+		//error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
 		$memreascookieArr = array ();
 		$memreascookieArr ['user_id'] = $_SESSION ['user_id'];
 		$memreascookieArr ['username'] = $_SESSION ['username'];
@@ -195,7 +195,7 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 				SET u.end_time = '$now' 
 				WHERE u.session_id ='" . session_id () . "' 
 				and u.user_id = '" . $_SESSION ['user_id'] . "'";
-			error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
+			//error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
 			$statement = $this->dbAdapter->createQuery ( $q_update );
 			$r = $statement->getResult ();
 		}

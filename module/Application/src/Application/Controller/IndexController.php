@@ -192,15 +192,15 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+		//error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
-		error_log ( "Inside indexAction---> actionname after security ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+		//error_log ( "Inside indexAction---> actionname after security ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		
 		/**
 		 * For testing only...
 		 */
 		if ($actionname == "ws_tester") {
-			error_log ( "path--->" . $path );
+			//error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view folder
 			return $view;
@@ -227,7 +227,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
-				error_log ( 'login action ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
+				//error_log ( 'login action ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
 				
@@ -238,30 +238,17 @@ class IndexController extends AbstractActionController {
 				if (MemreasConstants::REDIS_SERVER_USE) {
 					if ($this->redis->hasSet ( '@person' )) {
 						
-						// $time_start = microtime(true);
-						// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-						// $matches = $this->redis->findSet ( '@person', "ch-1tuser-" );
-						// error_log("cache warming @person ended... @ ".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
-						// error_log("matches json -----> ".json_encode($matches).PHP_EOL);
-						
-						// $time_end = microtime(true);
-						// $time = $time_end - $time_start;
-						// error_log("findset ended... @ ".$time_end." duration->".$time.PHP_EOL);
-						
 						/*
 						 * TODO: Add the user only if s/he doesn't exist in the hash (i.e. 1st login will force cache to warm)
 						 */
-						$mc [$username] = array (
-								'user_id' => $user_id,
-								'profile_photo' => '' 
-						);
-						// error_log ("set array" . PHP_EOL);
-						$this->redis->addSet ( "@person_meta_hash", $username, json_encode ( $mc [$username] ) );
-						// error_log ("addSet meta hash" . PHP_EOL);
-						$this->redis->addSet ( "@person_uid_hash", $username, $user_id );
-						// error_log ("addSet uid hash" . PHP_EOL);
-						$this->redis->addSet ( "@person", $username );
-						// error_log ("addSet person" . PHP_EOL);
+						// $mc [$_SESSION['username']] = array (
+						// 'user_id' => $_SESSION['user_id'],
+						// 'email_address' => $_SESSION ['email_address'] ,
+						// 'profile_photo' => $_SESSION ['profile_pic_meta'],
+						// );
+						// $this->redis->addSet ( "@person_meta_hash", $username, json_encode ( $mc [$username] ) );
+						// $this->redis->addSet ( "@person_uid_hash", $username, $user_id );
+						// $this->redis->addSet ( "@person", $username );
 						// error_log ("$username added - @person_hash set now holds --> ". $this->redis->hasSet('@person') . " users@ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL);
 					}
 				}
@@ -499,13 +486,13 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "addfriend") {
-				error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				//error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				$addfriend = new AddFriend ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addfriend->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriend->user_id );
 				$fid = trim ( $data->addfriend->friend_id );
-				error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				//error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				/*
 				 * Cache approach - write operation - hold for now
 				 */
@@ -636,31 +623,28 @@ class IndexController extends AbstractActionController {
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$user_ids = array ();
-						//if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+						// if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 						if (MemreasConstants::REDIS_SERVER_USE) {
-							error_log ( "redis @ fetch..." . PHP_EOL );
 							// Redis - this codes fetches usernames by the search term then gets the hashes
 							$usernames = $this->redis->findSet ( '@person', $search );
+							// remove self and update indices
+							$index = array_search ( $_SESSION ['username'], $usernames );
+							unset ( $usernames [$index] );
+							$usernames = array_values ( $usernames );
 							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
-							$person_uid_hash = $this->redis->cache->hmget ( '@person_uid_hash', $usernames );
-error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);							
-							if (in_array ( $_SESSION['user_id'], $person_uid_hash )) {
-								$username = $person_uid_hash ["$user_id"];
-								// now remove current user
-								unset ( $person_meta_hash [$username [$user_id]] );
-								unset ( $person_uid_hash [$user_id] );
-								$index = array_search ( $username, $usernames );
-								unset ( $usernames [$index] );
-							}
-							$user_ids = array_keys ( $person_uid_hash );
+							
+							// formatting for response...
+							$user_ids = array ();
 							$search_array_values = array_values ( $person_meta_hash );
-							$search_result = array();
-							foreach($search_array_values as $entry){
-								$search_result[] = json_decode($entry);
-							}							
+							$search_result = array ();
+							foreach ( $search_array_values as $entry ) {
+								$entry_arr = json_decode ( $entry, true );
+								$user_ids [] = $entry_arr ['user_id'];
+								$search_result [] = $entry_arr;
+							}
 							$rc = count ( $search_result );
 						} else {
-							error_log ( "@ fetch get regindex..." . PHP_EOL );
+							//error_log ( "@ fetch get regindex..." . PHP_EOL );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -671,28 +655,27 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 								$meta_arr = $usermeta;
 								$uid = $meta_arr ['user_id'];
 								// Remove existing user
-								error_log ( "username" . $username . " --- uid-->" . $uid . PHP_EOL );
+								//error_log ( "username" . $username . " --- uid-->" . $uid . PHP_EOL );
 								if ($uid == $user_id)
 									continue;
-									/*
+								
+								/**
 								 * TODO: 6-NOV-2014 Paging isn't working correctly? Removing for now...
 								 */
 									// if ($rc >= $from && $rc < ($from + $limit)) {
-								error_log ( "meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" . $search . PHP_EOL );
+								//error_log ( "meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" . $search . PHP_EOL );
 								if (stripos ( $meta_arr ['username'], $search ) !== false) {
 									$meta_arr ['username'] = '@' . $meta_arr ['username'];
 									$search_result [] = $meta_arr;
 									$user_ids [] = $uid;
-									error_log ( "user_ids-->" . json_encode ( $user_ids ) . PHP_EOL );
+									//error_log ( "user_ids-->" . json_encode ( $user_ids ) . PHP_EOL );
 								}
 								// }
 								$rc += 1;
 							}
-							// error_log("query user_ids------> " . json_encode($user_ids) . PHP_EOL);
-							// error_log("query search_result count------> " . count($search_result) . PHP_EOL);
 						}
-						/*
-						 * TODO: need to document filter rules
+						/**
+						 * This section filter friend requests sent...
 						 */
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
 						
@@ -706,34 +689,32 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 						$qb->andwhere ( "uf.user_id = '$user_id'" );
 						$qb->andwhere ( 'uf.friend_id IN (:f)' );
 						$qb->setParameter ( 'f', $user_ids );
-						error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
+						//error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
 						
 						$UserFriends = $qb->getQuery ()->getResult ();
-						
-						// this code checks if friend request already sent...
-						$chkUserFriend = array ();
-						foreach ( $UserFriends as $ufRow ) {
-							$chkUserFriend [$ufRow ['friend_id']] = $ufRow ['user_approve'];
-						}
-						
-						foreach ( $search_result as $k => &$srRow ) {
-							if (isset ( $chkUserFriend [$user_ids [$k]] )) {
-								$srRow ['friend_request_sent'] = $chkUserFriend [$user_ids [$k]];
-								continue;
+						if ($UserFriends) {
+							// this code checks if friend request already sent...
+							$chkUserFriend = array ();
+							foreach ( $UserFriends as $ufRow ) {
+								$chkUserFriend [$ufRow ['friend_id']] = $ufRow ['user_approve'];
+							}
+							
+							foreach ( $search_result as $k => &$srRow ) {
+								if (isset ( $chkUserFriend [$user_ids [$k]] )) {
+									$srRow ['friend_request_sent'] = $chkUserFriend [$user_ids [$k]];
+									continue;
+								}
 							}
 						}
 						
-						// error_log("Past mc person_meta_hash.....".json_encode($person_meta_hash). PHP_EOL);
 						// $result['totalPage'] =ceil($rc / $limit);
 						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
 						// hide pagination
 						
-						// echo '<pre>';print_r($result);
-						
 						echo json_encode ( $result );
-						error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
+						//error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						
 						break;
@@ -749,7 +730,7 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 						$mc = $this->redis->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
-							error_log ( "findtag empty redis -> createEventCache..." . PHP_EOL );
+							//error_log ( "findtag empty redis -> createEventCache..." . PHP_EOL );
 							
 							$mc = $eventRep->createEventCache ();
 							$this->redis->setCache ( "!event", $mc );
@@ -764,8 +745,8 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
 									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-									error_log ( "event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL );
-									error_log ( "event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL );
+									//error_log ( "event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL );
+									//error_log ( "event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL );
 									
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
@@ -810,7 +791,7 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
-						error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
+						//error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						break;
 					
@@ -823,17 +804,17 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
                     	 */
 						$search_result = array ();
 						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-							error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
+							//error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
 							// Redis - ...
-							error_log ( "Inside findTag # for tag $search" . PHP_EOL );
+							//error_log ( "Inside findTag # for tag $search" . PHP_EOL );
 							$tags_public = $this->redis->findSet ( '#hashtag', $search );
 							$tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $search );
 							$tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
-							error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
+							//error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
 							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
-							error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
+							//error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
 							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
-							error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
+							//error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
 							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
@@ -843,13 +824,13 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 							// $user_ids = $usernames;
 						} else {
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
+							//error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
 							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						}
 						
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-							error_log ( "tag------>$tag" . PHP_EOL );
-							error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
+							//error_log ( "tag------>$tag" . PHP_EOL );
+							//error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
 								// if ($rc >= $from && $rc < ($from + $limit)) {
 								$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
@@ -865,16 +846,10 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 						$result ['page'] = $page;
 						$result ['totalPage'] = ceil ( $rc / $limit );
 						
-						// $result = preg_grep("/$search/", $mc);
-						// echo '<pre>';print_r($result);
-						
 						echo json_encode ( $result );
 						$result = '';
 						break;
 					default :
-						// $findtag = new FindTag($message_data, $memreas_tables, $this->getServiceLocator());
-						// $result = $findtag->exec();
-						// $result = preg_grep("/$search/", $mc);
 						$result ['count'] = 0;
 						$result ['search'] = array ();
 						$result ['totalPage'] = 0;
@@ -1435,7 +1410,7 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 		/**
 		 * Cache Warming section...
 		 */
-		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE)) {
+		if (MemreasConstants::REDIS_SERVER_USE) {
 			error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			
 			// Return the status code here so this process continues and the user receives response
@@ -1460,11 +1435,11 @@ error_log('$person_uid_hash--->'.print_r($person_uid_hash, true).PHP_EOL);
 			// 'warming',
 			// '0'
 			// ) );
-			//error_log ( "Inside Redis warmer set warming flag to 0 @person @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			// error_log ( "Inside Redis warmer set warming flag to 0 @person @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			// End Debugging
 			$result = $this->redis->hasSet ( '@person' );
 			error_log ( "result--->*$result*" . PHP_EOL );
-			if (!$result) {
+			if (! $result) {
 				error_log ( "Inside Redis warmer @person DOES NOT EXIST??.." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// Now continue processing and warm the cache for @person

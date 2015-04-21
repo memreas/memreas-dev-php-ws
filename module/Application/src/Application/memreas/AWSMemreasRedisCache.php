@@ -144,15 +144,12 @@ class AWSMemreasRedisCache {
 			$userIndexArr = $qb->getQuery ()->getResult ();
 			$person_meta_hash = array ();
 			$person_uid_hash = array ();
-			
 			foreach ( $userIndexArr as $row ) {
 				$json_array = json_decode ( $row ['metadata'], true );
-				
-				error_log ( "Inside warming person userindexarr username--->" . $row ['username'] . " user_id--->" . $row ['user_id'] . PHP_EOL );
-				if (empty ( $json_array ['S3_files'] ['79x80'] )) {
+				if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
 					$url1 = $this->url_signer->signArrayOfUrls ( 'static/profile-pic.jpg' );
 				} else {
-					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['79x80'] );
+					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 				}
 				
 				$person_json = json_encode ( array (
@@ -161,34 +158,28 @@ class AWSMemreasRedisCache {
 						'email_address' => $row ['email_address'],
 						'profile_photo' => $url1 
 				) );
-				
 				/*
 				 * TODO: need to send this in one shot
 				 */
 				$person_meta_hash [$row ['username']] = $person_json;
 				$person_uid_hash [$row ['user_id']] = $row ['username'];
-				$result = $this->cache->zadd ( '@person', 0, $row ['username'] );
-				error_log ( "Inside warming zadd result " . $result . " username--->" . $row ['username'] . " user_id--->" . $row ['user_id'] . PHP_EOL );
+				$usernames[$row ['username']]	 = 0;
+				// $result = $this->cache->zadd ( '@person', 0, $row ['username'] );
+				// error_log ( "Inside warming zadd result " . $result . " username--->" . $row ['username'] . " user_id--->" . $row ['user_id'] . PHP_EOL );
 			}
+			//$result = $this->cache->zadd ( '@person', 0, $usernames );
+			$result = $this->cache->zadd ( '@person', $usernames );
+			error_log ( 'zadd array $result--->' . print_r ( $result, true ) . PHP_EOL );
 			$reply = $this->cache->hmset ( '@person_meta_hash', $person_meta_hash );
 			$reply = $this->cache->hmset ( '@person_uid_hash', $person_uid_hash );
-			error_log ( "person_uid_hash----->" . json_encode ( $person_uid_hash ) . PHP_EOL );
+			
 			// Finished warming so reset flag
 			$warming = $this->cache->set ( 'warming', '0' );
-			error_log ( "cache warming @person ended... @ " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
-		} else {
-			error_log ( "Outside warming..." . PHP_EOL );
 		}
 	}
 	public function findSet($set, $match) {
 		error_log ( "Inside findSet.... set $set match $match" . PHP_EOL );
 		// Scan the hash and return 0 or the sub-array
-		$arr = array (
-				'ZRANGEBYLEX',
-				$set,
-				"[" . $match,
-				"(" . $match . "z" 
-		);
 		$result = $this->cache->executeRaw ( array (
 				'ZRANGEBYLEX',
 				$set,
@@ -199,9 +190,8 @@ class AWSMemreasRedisCache {
 			$matches = $result;
 		} else {
 			$matches = 0;
-			// error_log("error matches------> " . json_encode($matches) . PHP_EOL);
 		}
-		error_log ( "matches------> " . json_encode ( $matches ) . PHP_EOL );
+		// error_log ( "matches------> " . json_encode ( $matches ) . PHP_EOL );
 		return $matches;
 	}
 	public function addSet($set, $key, $val = null) {
@@ -210,9 +200,6 @@ class AWSMemreasRedisCache {
 				$set,
 				$key 
 		) )) {
-			
-			// error_log("addSet $set:count------->".$this->cache->executeRaw(array('ZCARD', $set, $key)).PHP_EOL);
-			// error_log("addSet $set:$key".PHP_EOL);
 			return $this->cache->zadd ( "$set", "$key" );
 		} else if (! is_null ( $val )) {
 			// error_log("addSet $set:$key:$val".PHP_EOL);
@@ -235,8 +222,7 @@ class AWSMemreasRedisCache {
 					$set 
 			) );
 		}
-		error_log ( "hasSet result set $set ------> " . json_encode ( $result ) . PHP_EOL );
-		
+		// error_log ( "hasSet result set $set ------> " . json_encode ( $result ) . PHP_EOL );
 		// Debugging
 		// if ($set = "@person") {
 		// return 0;
@@ -276,24 +262,25 @@ class AWSMemreasRedisCache {
 		}
 		
 		$result = $this->cache->del ( $key );
-		if ($result) {
-			// error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
-		} else {
-			error_log ( 'COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL );
-		}
+		// if ($result) {
+		// // error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+		// } else {
+		// error_log ( 'COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL );
+		// }
 	}
 	public function invalidateCacheMulti($keys) {
 		if (! $this->isCacheEnable) {
 			return false;
 		}
 		
-		$result = $this->cache->deleteMulti ( $keys );
-		if ($result) {
-			// error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
-		} else {
-			error_log ( 'COULD NOT DELETE THES KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
-		}
-		return $result;
+		return $this->cache->deleteMulti ( $keys );
+		//$result = $this->cache->deleteMulti ( $keys );
+		// if ($result) {
+		// // error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
+		// } else {
+		// error_log ( 'COULD NOT DELETE THES KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
+		// }
+		//return $result;
 	}
 	
 	/*
