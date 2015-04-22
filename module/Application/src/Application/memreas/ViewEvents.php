@@ -55,15 +55,12 @@ class ViewEvents {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
 			
-			$query_event = "select e
-                from Application\Entity\Event e
-                where e.user_id='" . $user_id . "'
-                ORDER BY e.create_time DESC";
-			$statement = $this->dbAdapter->createQuery ( $query_event );
-			// $statement->setMaxResults ( $limit );
-			// $statement->setFirstResult ( $from );
-			$result_event = $statement->getResult ();
+
 			
+			/**
+			 * MyEvents Query 
+			 */
+			$result_event = $this->fetchMyEvents ($user_id);
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -88,28 +85,24 @@ class ViewEvents {
 						$friends_can_post = $row->friends_can_post == 0 ? 0 : 1;
 						$xml_output .= "<friend_can_post>" . $friends_can_post . "</friend_can_post>";
 						$friends_can_share = $row->friends_can_share == 0 ? 0 : 1;
-						
 						$xml_output .= "<friend_can_share>" . $friends_can_share . "</friend_can_share>";
-						// get like count
-						$likeCountSql = $this->dbAdapter->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
-						$likeCountSql->setParameter ( 1, $row->event_id );
-						$likeCount = $likeCountSql->getSingleScalarResult ();
+
+						/**
+						 * get like count
+						 */
+						$likeCount = $this->fetchMyEventsLikeCount($row->event_id);
 						$xml_output .= "<like_count>" . $likeCount . "</like_count>";
-						// get comment count for event
-						$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND (c.type= 'text' or c.type ='audio')" );
-						$commCountSql->setParameter ( 1, $row->event_id );
-						$commCount = $commCountSql->getSingleScalarResult ();
+
+						/**
+						 * get comment count for event
+						 */
+						$commCount = $this->fetchMyEventsCommentsCount($row->event_id);
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
 						
-						/*
+						/**
 						 * Fetch event friends...
 						 */
-						$q_event_friend = "select friend.friend_id, friend.social_username, friend.url_image" . " from Application\Entity\Friend friend," . " Application\Entity\EventFriend event_friend" . " where event_friend.friend_id = friend.friend_id" . " and event_friend.user_approve=1" . " and event_friend.event_id = ?1 " . " order by friend.create_date desc";
-						
-						$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
-						$friend_query->setParameter ( 1, $row->event_id );
-						
-						$friends = $friend_query->getResult ();
+						$friends = $this->fetchMyEventsFriends ($row->event_id);
 						
 						$xml_output .= "<event_friends>";
 						foreach ( $friends as $friend ) {
@@ -137,36 +130,18 @@ class ViewEvents {
 						}
 						$xml_output .= "</event_friends>";
 						
-						/*
+						/**
 						 * get comments
 						 */
-						$cdata = array (
-								'listcomments' => array (
-										'event_id' => $row->event_id,
-										'limit' => 50,
-										'page' => 1 
-								) 
-						);
-						$xml_output .= $this->comments->exec ( $cdata );
+						$xml_output .= $this->fetchEventComments($row->event_id);
 						
-						/*
-						 * get media
+						/**
+						 * get event media
 						 */
-						$qb = $this->dbAdapter->createQueryBuilder ();
-						$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata' );
-						$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
-						$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
-						$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
-						$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
-						$qb->orderBy ( 'media.create_date', 'DESC' );
-						$qb->setParameter ( 1, $user_id );
-						$qb->setParameter ( 2, $row->event_id );
-						$query_event_media_result = $qb->getQuery ()->getResult ();
+						$query_event_media_result = $this->fetchMyEventsMedia ($user_id, $row->event_id);
 						
 						if (count ( $query_event_media_result ) > 0) {
-							
 							foreach ( $query_event_media_result as $row1 ) {
-								
 								$url = "";
 								$s3file_basename_prefix = "";
 								$url_web = "";
@@ -239,18 +214,8 @@ class ViewEvents {
 								}
 							}
 						} else {
-							// $xml_output .= "<event_media>";
-							// $xml_output .= "<event_media_id></event_media_id>";
-							// $xml_output .= "<event_media_name></event_media_name>";
-							// $xml_output .= "<event_media_type></event_media_type>";
-							// $xml_output .= "<event_media_url></event_media_url>";
-							// $xml_output .= "<event_media_video_thum></event_media_video_thum>";
-							// $xml_output .= "<event_media_79x80></event_media_79x80>";
-							// $xml_output .= "<event_media_98x78></event_media_98x78>";
-							// $xml_output .= "<event_media_448x306></event_media_448x306>";
-							// $xml_output .= "</event_media>";
+							// don't send back xml tags if empty...
 						}
-						
 						$xml_output .= "</event>";
 					} // end for loop my events
 					$xml_output .= "</events>";
@@ -270,9 +235,10 @@ class ViewEvents {
 			$xml_output .= "<xml><viewevents>";
 			// get friend ids
 			
-			$q_friendsevent = "SELECT event.user_id," . " event.event_id," . " event.name," . " event.friends_can_share," . " event.friends_can_post," . " event.metadata" . " from Application\Entity\EventFriend event_friend," . " Application\Entity\Event event" . " WHERE event.event_id=event_friend.event_id" . " AND event_friend.user_approve=1" . " AND event_friend.friend_id='" . $user_id . "' ORDER BY event.create_time DESC ";
-			$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
-			$result_friendevent = $statement->getArrayResult ();
+			/**
+			 * FriendsEvents Query 
+			 */
+			$result_friendevent = $this->fetchFriendsEvents($user_id);
 			if (empty ( $result_friendevent )) {
 				$error_flag = 2;
 				$message = "No Record Found";
@@ -323,9 +289,6 @@ class ViewEvents {
 					$xml_output .= "<event_creator_user_id>" . $k . "</event_creator_user_id>";
 					$xml_output .= "<events>";
 					foreach ( $row_events as $key => $row_friendsevent ) {
-						// echo '<pre>';print_r($row_friendsevent);exit;
-						// foreach ( $value as $row_friendsevent ) {
-						// print_r($row_friendsevent);
 						$url = '';
 						
 						$xml_output .= "<event>";
@@ -335,14 +298,10 @@ class ViewEvents {
 						$xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
 						$xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
 						
-						/*
+						/**
 						 * Fetch event friends...
 						 */
-						$q_event_friend = "select friend.friend_id, friend.social_username, friend.url_image" . " from Application\Entity\Friend friend," . " Application\Entity\EventFriend event_friend" . " where event_friend.friend_id = friend.friend_id" . " and event_friend.user_approve=1" . " and event_friend.event_id = ?1 " . " order by friend.create_date desc";
-						
-						$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
-						$friend_query->setParameter ( 1, $row_friendsevent ['event_id'] );
-						$friends = $friend_query->getResult ();
+						$friends = $this->fetchFriendEventFriends ($row_friendsevent ['event_id']);
 						
 						$xml_output .= "<event_friends>";
 						foreach ( $friends as $friend ) {
@@ -370,32 +329,15 @@ class ViewEvents {
 						}
 						$xml_output .= "</event_friends>";
 						
-						/*
-						 * Event Comments
+						/**
+						 * get comments
 						 */
-						// get comments
-						$cdata = array (
-								'listcomments' => array (
-										'event_id' => $row_friendsevent ['event_id'],
-										'limit' => 50,
-										'page' => 1 
-								) 
-						);
-						$xml_output .= $this->comments->exec ( $cdata );
+						$xml_output .= $this->fetchEventComments($row_friendsevent ['event_id']);
 						
-						/*
+						/**
 						 * Event Media
 						 */
-						$qb = $this->dbAdapter->createQueryBuilder ();
-						$qb->select ( 'event_media.event_id', 'media.media_id', 'media.metadata' );
-						$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
-						$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
-						$qb->where ( 'event_media.event_id = ?1 ' );
-						
-						$qb->orderBy ( 'media.create_date', 'DESC' );
-						$qb->setParameter ( 1, $row_friendsevent ['event_id'] );
-						
-						$query_event_media_result = $qb->getQuery ()->getResult ();
+						$query_event_media_result = $this->fetchFriendEventMedia ($row_friendsevent ['event_id']);
 						
 						if (count ( $query_event_media_result ) > 0) {
 							foreach ( $query_event_media_result as $row ) {
@@ -466,16 +408,7 @@ class ViewEvents {
 								} // end if (isset ( $row ['metadata'] ))
 							}
 						} else {
-							// $xml_output .= "<event_media>";
-							// $xml_output .= "<event_media_id></event_media_id>";
-							// $xml_output .= "<event_media_name></event_media_name>";
-							// $xml_output .= "<event_media_type></event_media_type>";
-							// $xml_output .= "<event_media_url><![CDATA[]]></event_media_url>";
-							// $xml_output .= "<event_media_video_thum></event_media_video_thum>";
-							// $xml_output .= "<event_media_79x80></event_media_79x80>";
-							// $xml_output .= "<event_media_98x78></event_media_98x78>";
-							// $xml_output .= "<event_media_448x306></event_media_448x306>";
-							// $xml_output .= "</event_media>";
+							// don't send tags if empty
 						}
 						$xml_output .= "</event>";
 					}
@@ -774,8 +707,108 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
-		// error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
+		error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
 		echo $xml_output;
+	} //end exec()
+
+	/**
+	 * My Events functions...
+	 */
+	private function fetchMyEvents ($user_id){
+		$query_event = "select e
+			from Application\Entity\Event e
+			where e.user_id='" . $user_id . "'
+			ORDER BY e.create_time DESC";
+		$statement = $this->dbAdapter->createQuery ( $query_event );
+		return $statement->getResult ();
 	}
-}
+	
+	private function fetchMyEventsLikeCount($event_id) {
+		$likeCountSql = $this->dbAdapter->createQuery ( 'SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like= 1' );
+		$likeCountSql->setParameter ( 1, $event_id );
+		return $likeCountSql->getSingleScalarResult ();
+	}
+
+	private function fetchMyEventsCommentsCount($event_id) {
+
+		$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND (c.type= 'text' or c.type ='audio')" );
+		$commCountSql->setParameter ( 1, $event_id );
+		return $commCountSql->getSingleScalarResult ();
+	}
+
+	private function fetchMyEventsFriends ($event_id) {
+		$q_event_friend = "select friend.friend_id, friend.social_username, friend.url_image" . " from Application\Entity\Friend friend," . " Application\Entity\EventFriend event_friend" . " where event_friend.friend_id = friend.friend_id" . " and event_friend.user_approve=1" . " and event_friend.event_id = ?1 " . " order by friend.create_date desc";
+		$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
+		$friend_query->setParameter ( 1, $event_id );
+		return $friend_query->getResult ();
+	}
+
+	private function fetchMyEventsMedia ($user_id, $event_id) {
+		$qb = $this->dbAdapter->createQueryBuilder ();
+		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata' );
+		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
+		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
+		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
+		$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
+		$qb->orderBy ( 'media.create_date', 'DESC' );
+		$qb->setParameter ( 1, $user_id );
+		$qb->setParameter ( 2, $event_id );
+		return $qb->getQuery ()->getResult ();
+	}
+	
+	private function fetchEventComments($event_id) {
+		$cdata = array (
+				'listcomments' => array (
+						'event_id' => $event_id,
+						'limit' => 50,
+						'page' => 1 
+				) 
+		);
+		return $this->comments->exec ( $cdata );
+	}	
+
+	private function fetchFriendsEvents($user_id) {
+		$q_friendsevent = "SELECT event.user_id,
+			 event.event_id,
+			 event.name,
+			 event.friends_can_share,
+			 event.friends_can_post,
+			 event.metadata
+			 from Application\Entity\EventFriend event_friend,
+			 Application\Entity\Event event
+			 WHERE event.event_id=event_friend.event_id
+			 AND event_friend.user_approve=1
+			 AND event_friend.friend_id='$user_id'
+			 ORDER BY event.create_time DESC ";
+		$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
+		return $statement->getArrayResult ();
+	}	
+
+	private function fetchFriendEventFriends ($event_id) {
+		$q_event_friend = "select friend.friend_id, 
+		friend.social_username, 
+		friend.url_image
+		from Application\Entity\Friend friend,
+		Application\Entity\EventFriend event_friend
+		where event_friend.friend_id = friend.friend_id
+		and event_friend.user_approve=1
+		and event_friend.event_id = ?1 
+		order by friend.create_date desc";
+		$friend_query = $this->dbAdapter->createQuery ( $q_event_friend );
+		$friend_query->setParameter ( 1, $event_id );
+		return $friend_query->getResult ();
+	}
+	
+	private function fetchFriendEventMedia ($event_id) {
+		$qb = $this->dbAdapter->createQueryBuilder ();
+		$qb->select ( 'event_media.event_id', 'media.media_id', 'media.metadata' );
+		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
+		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
+		$qb->where ( 'event_media.event_id = ?1 ' );
+		$qb->orderBy ( 'media.create_date', 'DESC' );
+		$qb->setParameter ( 1, $event_id );
+		$query_event_media_result = $qb->getQuery ()->getResult ();
+	}	
+	
+} //end class ViewEvents
 ?>

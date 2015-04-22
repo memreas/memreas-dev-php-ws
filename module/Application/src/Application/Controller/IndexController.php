@@ -1411,34 +1411,21 @@ class IndexController extends AbstractActionController {
 		 * Cache Warming section...
 		 */
 		if (MemreasConstants::REDIS_SERVER_USE) {
-			error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			//error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			
 			// Return the status code here so this process continues and the user receives response
 			try {
-				http_response_code ( 200 );
-				header ( 'Connection: close' );
-				header ( 'Content-Length: ' . ob_get_length () );
+				//http_response_code ( 200 );
+				//header ( 'Connection: close' );
+				//header ( 'Content-Length: ' . ob_get_length () );
 				ob_end_flush (); // Strange behaviour, will not work
 				flush (); // Unless both are called !
 			} catch ( Exception $e ) {
 				// Do nothing...
 			}
 			
-			// Debugging
-			// $result = $this->redis->cache->executeRaw ( array (
-			// 'DEL',
-			// '@person'
-			// ) );
-			// error_log ( "Inside Redis warmer deleted @person @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
-			// $result = $this->redis->cache->executeRaw ( array (
-			// 'SET',
-			// 'warming',
-			// '0'
-			// ) );
-			// error_log ( "Inside Redis warmer set warming flag to 0 @person @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
-			// End Debugging
 			$result = $this->redis->hasSet ( '@person' );
-			error_log ( "result--->*$result*" . PHP_EOL );
+			//error_log ( "result--->*$result*" . PHP_EOL );
 			if (! $result) {
 				error_log ( "Inside Redis warmer @person DOES NOT EXIST??.." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
@@ -1485,7 +1472,7 @@ class IndexController extends AbstractActionController {
 				'getdiskusage' 
 		);
 		if (in_array ( $actionname, $public )) {
-			error_log ( 'Inside else in_array actionname ->' . $actionname . PHP_EOL );
+			//error_log ( 'Inside else in_array actionname ->' . $actionname . PHP_EOL );
 			return false;
 		}
 		return true;
@@ -1501,7 +1488,7 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($requiresExistingSession) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				//error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...

@@ -28,7 +28,6 @@ class GetUserDetails {
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->url_signer = new MemreasSignedURL ();
 	}
-	
 	public function exec($frmweb = false, $output = '') {
 		try {
 			$error_flag = 0;
@@ -71,14 +70,14 @@ class GetUserDetails {
 				else
 					$output .= '<dob></dob>';
 					
-				// For plan
+					// For plan
 				if (isset ( $metadata ['subscription'] )) {
 					$subscription = $metadata ['subscription'];
 					$output .= '<subscription><plan>' . $subscription ['plan'] . '</plan><plan_name>' . $subscription ['name'] . '</plan_name></subscription>';
 				} else
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 					
-				// For account type
+					// For account type
 				$guzzle = new Client ();
 				$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
 						'action' => 'checkusertype',
@@ -98,30 +97,17 @@ class GetUserDetails {
 					$output .= '</account_type>';
 					$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
 					$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
-				} else
+				} else {
 					$output .= '<account_type>Free user</account_type>';
-					
-					// Get user profile
-				$profile_query = $this->dbAdapter->createQueryBuilder ();
-				$profile_query->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$result_user[0]->user_id}' AND m.is_profile_pic = 1" );
-				$profile = $profile_query->getQuery ()->getResult ();
-				if (empty ( $profile ))
-					$output .= '<profile></profile>';
-				else {
-					$profile_image = json_decode ( $profile [0]->metadata, true );
-					if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] )) {
-						$profile_image = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] [0] );
-					} else {
-						$profile_image = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-					}
-					
-					$output .= '<profile><![CDATA[' . $profile_image . ']]></profile>';
 				}
+				$profile_image = $_SESSION ['profile_pic'];
+				
+				$output .= '<profile><![CDATA[' . $profile_image . ']]></profile>';
 			}
-			
-			if ($frmweb) {
-				return $output;
-			}
+error_log ( 'About to Mlog...' . PHP_EOL );
+//$log= new Mlog();
+//$log->addone('$profile_image', $profile_image);
+//$log->addone('$output', $output);
 			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";

@@ -67,17 +67,16 @@ class MemreasSignedURL {
 	 * sends back simple json encoded array
 	 */
 	public function signArrayOfUrls($obj) {
-		if (!isset ( $obj ) || empty ( $obj )) {
-			return "";
-		}
-		if (is_array ( $obj )) {
+		if (!empty($obj) && is_array( $obj )) {
 			foreach ( $obj as $url ) {
 				if (isset ( $url ) && ! empty ( $url )) {
 					$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url );
 				}
 			}
-		} else {
+		} else if (!empty($obj)) {
 			$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj ); // this should be string not array
+		} else {
+			$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . 'static/profile-pic.jpg' ); // default
 		}
 		
 		$json_arr = json_encode ( $arr ) ;

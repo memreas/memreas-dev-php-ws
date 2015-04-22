@@ -5,11 +5,12 @@ namespace Application\memreas;
 use Application\Model\MemreasConstants;
 
 class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
-	public $ttl = 1800; // 30 minutes default
-	protected $db;
-	protected $prefix;
-	protected $mRedis;
-	protected $dbAdapter;
+	private $ttl = 1800; // 30 minutes default
+	private $db;
+	private $prefix;
+	private $mRedis;
+	private $dbAdapter;
+	private $url_signer;
 	
 	// public function __construct($prefix = 'PHPSESSID:') {
 	public function __construct($redis, $service_locator) {
@@ -22,6 +23,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->prefix = '';
 		$this->mRedis = $redis;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected
@@ -56,30 +58,30 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
-		//error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie) {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 		session_id ( $rMemreasCookieSessionArr ['sid'] );
 		session_start ();
-error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		//error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithUID($uid, $uname) {
-		if (!empty($uid)) {
+		if (! empty ( $uid )) {
 			$rUIDSession = $this->mRedis->getCache ( 'uid::' . $uid );
-		} else if (!empty($uname)) {
+		} else if (! empty ( $uname )) {
 			$rUIDSession = $this->mRedis->getCache ( 'username::' . $uname );
 		}
 		if ($rUIDSession) {
-			//error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
+			// error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
 			$rUIDSessionArr = json_decode ( $rUIDSession, true );
 			session_id ( $rUIDSessionArr ['sid'] );
-			session_start();
-			//error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
+			session_start ();
+			// error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
 		} else {
-			//error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
-			if (!empty($uid)) {
+			// error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
+			if (! empty ( $uid )) {
 				$sql = "SELECT u  FROM Application\Entity\User as u  where u.user_id = '$uid'";
 			} else {
 				$sql = "SELECT u  FROM Application\Entity\User as u  where u.username = '$uname'";
@@ -93,7 +95,7 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 				$this->setSession ( $row [0], '', 'web', '', '127.0.0.1' );
 			}
 		}
-		//error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function fetchProfilePicMeta($uid) {
 		/*
@@ -103,17 +105,17 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		$statement = $this->dbAdapter->createQuery ( $sql );
 		$profile = $statement->getResult ();
 		
-		$meta='';
+		$meta = '';
 		if ($profile) {
-			$meta = $profile->metadata;
+			$meta = $profile [0]->metadata;
 		}
 		return $meta;
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
-		//error_log ( 'Inside setSession' . PHP_EOL );
+		// error_log ( 'Inside setSession' . PHP_EOL );
 		session_start ();
-		if (empty(session_id ())) {
-			session_regenerate_id();
+		if (empty ( session_id () )) {
+			session_regenerate_id ();
 		}
 		$_SESSION ['user_id'] = $user->user_id;
 		$_SESSION ['username'] = $user->username;
@@ -123,8 +125,13 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		$_SESSION ['device_type'] = $device_type;
 		$_SESSION ['memreascookie'] = $memreascookie;
 		$_SESSION ['ipAddress'] = $clientIPAddress;
-		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta($user->user_id);
-		//error_log ( 'setSession(...) _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
+		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
+		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
+		// error_log(print_r($json_pic_meta, true));
+		error_log ( print_r ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'], true ) );
+		$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
+		
+		// error_log ( 'setSession(...) _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
 		$this->setUIDLookup ();
 		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {
@@ -132,7 +139,7 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		}
 	}
 	public function setUIDLookup() {
-		//error_log ( 'Inside setUserNameLookup' . PHP_EOL );
+		// error_log ( 'Inside setUserNameLookup' . PHP_EOL );
 		$userNameArr = array ();
 		$userNameArr ['user_id'] = $_SESSION ['user_id'];
 		$userNameArr ['username'] = $_SESSION ['username'];
@@ -141,12 +148,12 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		$userNameArr ['device_type'] = $_SESSION ['device_type'];
 		$userNameArr ['ipAddress'] = $_SESSION ['ipAddress'];
 		$userNameArr ['profile_pic_meta'] = $_SESSION ['profile_pic_meta'];
+		$userNameArr ['profile_pic'] = $_SESSION ['profile_pic'];
 		$this->mRedis->setCache ( 'uid::' . $_SESSION ['user_id'], json_encode ( $userNameArr ) );
 		$this->mRedis->setCache ( 'username::' . $_SESSION ['username'], json_encode ( $userNameArr ) );
 	}
-	
 	public function setMemreasCookieLookup() {
-		//error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
+		// error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
 		$memreascookieArr = array ();
 		$memreascookieArr ['user_id'] = $_SESSION ['user_id'];
 		$memreascookieArr ['username'] = $_SESSION ['username'];
@@ -154,6 +161,8 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 		$memreascookieArr ['device_id'] = $_SESSION ['device_id'];
 		$memreascookieArr ['device_type'] = $_SESSION ['device_type'];
 		$memreascookieArr ['ipAddress'] = $_SESSION ['ipAddress'];
+		$memreascookieArr ['profile_pic_meta'] = $_SESSION ['profile_pic_meta'];
+		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
 		// error_log ( 'setMemreasCookieLookup() _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
 		$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
 	}
@@ -195,7 +204,7 @@ error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, 
 				SET u.end_time = '$now' 
 				WHERE u.session_id ='" . session_id () . "' 
 				and u.user_id = '" . $_SESSION ['user_id'] . "'";
-			//error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
+			// error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
 			$statement = $this->dbAdapter->createQuery ( $q_update );
 			$r = $statement->getResult ();
 		}
