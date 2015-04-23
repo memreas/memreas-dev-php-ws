@@ -117,7 +117,7 @@ class Login {
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
 		} catch ( \Exception $e ) {
-			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+			$xml_output = '<?xml version="1.0"  encoding="utf-8" ?>';
 			$xml_output .= "<xml>";
 			$xml_output .= "<loginresponse>";
 			$xml_output .= "<status>failure</status>";

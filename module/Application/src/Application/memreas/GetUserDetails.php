@@ -104,10 +104,8 @@ class GetUserDetails {
 				
 				$output .= '<profile><![CDATA[' . $profile_image . ']]></profile>';
 			}
-error_log ( 'About to Mlog...' . PHP_EOL );
-//$log= new Mlog();
-//$log->addone('$profile_image', $profile_image);
-//$log->addone('$output', $output);
+Mlog::addone('$profile_image', $profile_image);
+Mlog::addone('$output', $output);
 			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";

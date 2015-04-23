@@ -20,7 +20,7 @@ class ListAllmedia {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
-//error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
+		// error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = ' ';
 		$containt = ' ';
@@ -85,22 +85,22 @@ class ListAllmedia {
 			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 			
 			$qb->where ( 'u.user_id=?1 AND m.is_profile_pic = 1 ' );
-
+			
 			$qb->setParameter ( 1, $result [0] ['user_id'] );
 			$oUserProfile = $qb->getQuery ()->getResult ();
-			$eventRepo = $this->dbAdapter->getRepository('Application\Entity\Event');
-			$path = $eventRepo->getProfileUrl($oUserProfile[0]['metadata']);
+			$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
+			$path = $eventRepo->getProfileUrl ( $oUserProfile [0] ['metadata'] );
 			// If profie pic set it
 			$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
-				
- 			$url1 = '';
+			
+			$url1 = '';
 			$xml_output .= "<username>" . $oUserProfile [0] ['username'] . "</username>";
 			$xml_output .= "<page>$page</page>";
 			$xml_output .= "<status>Success</status>";
 			$xml_output .= "<user_id>" . $result [0] ['user_id'] . "</user_id>";
 			$xml_output .= "<event_id>" . $event_id . "</event_id>";
 			$xml_output .= "<message>Media List</message>";
-				
+			
 			$checkHasMedia = false;
 			foreach ( $result as $row ) {
 				$json_array = json_decode ( $row ['metadata'], true );
@@ -136,8 +136,8 @@ class ListAllmedia {
 						$type = "Type not Mentioned";
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : $json_array ['S3_files'] ['path'];
 					$media_name = basename ( $json_array ['S3_files'] ['path'] );
-					//Prefix added for matching and sync...
-					$media_name_prefix = pathinfo( $media_name )[ 'filename' ];
+					// Prefix added for matching and sync...
+					$media_name_prefix = pathinfo ( $media_name )['filename'];
 					if (isset ( $json_array ['local_filenames'] ['device'] )) {
 						$device = ( array ) $json_array ['local_filenames'] ['device'];
 					} else {
@@ -150,23 +150,23 @@ class ListAllmedia {
 					// output xml
 					$xml_output .= "<media>";
 					$xml_output .= "<media_id>" . $row ['media_id'] . "</media_id>";
-
+					
 					$format = 'Y-m-d H:i:s';
-					$date = \DateTime::createFromFormat($format, $row ['create_date']);
-					$xml_output .= "<media_date>" . $date->getTimestamp() . "</media_date>";
-						
-					//main
+					$date = \DateTime::createFromFormat ( $format, $row ['create_date'] );
+					$xml_output .= "<media_date>" . $date->getTimestamp () . "</media_date>";
+					
+					// main
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
-					//web
+					// web
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['web'] ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['web'] ) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 					
-					//1080p
+					// 1080p
 					$path = isset ( $json_array ['S3_files'] ['1080p'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['1080p'] ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
-
-					//download
+					
+					// download
 					$path = isset ( $json_array ['S3_files'] ['download'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['download'] ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['download'] ) ? "<media_url_download><![CDATA[" . $path . "]]></media_url_download>" : '';
 					
@@ -175,12 +175,12 @@ class ListAllmedia {
 						 * $path = isset($json_array ['S3_files'] ['web']) && !empty($json_array ['S3_files'] ['web']) ? $json_array ['S3_files'] ['web'] : ""; $path = $this->url_signer->signArrayOfUrls($path); $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 						 */
 						if (isset ( $json_array ['S3_files'] ['1080p'] ) && ! empty ( $json_array ['S3_files'] ['1080p'] )) {
-							//progressive download
-							$path = $json_array ['S3_files'] ['1080p'] ;
+							// progressive download
+							$path = $json_array ['S3_files'] ['1080p'];
 							$path = $this->url_signer->signArrayOfUrls ( $path );
 							$xml_output .= "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>";
-
-							//rtmp
+							
+							// rtmp
 							$path = $this->url_signer->signArrayOfUrls ( $path );
 							$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
 						}
@@ -253,7 +253,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-//error_log("ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL);
+		//error_log ( "ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL );
 	}
 }
 

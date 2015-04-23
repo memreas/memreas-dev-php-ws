@@ -89,10 +89,6 @@ class RegisterDevice {
 			// error_log ( 'registerdevice.exec()->device_token' . $device_token . PHP_EOL );
 			// error_log ( 'registerdevice.exec()->device_type' . $device_type . PHP_EOL );
 			
-			header ( "Content-type: text/xml" );
-			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-			$xml_output .= "<xml>";
-			$xml_output .= "<registerdeviceresponse>";
 			$time = time ();
 			if (! empty ( $user_id ) && ! empty ( $device_token ) && ! empty ( $device_type )) {
 				
@@ -164,22 +160,31 @@ class RegisterDevice {
 			}
 			$status = 'success';
 			$message = "device token saved";
-			$xml_output .= "<status>$status</status>";
-			$xml_output .= "<message>$message</message>";
-			$xml_output .= "</registerdeviceresponse>";
-			$xml_output .= "</xml>";
+			if (!$isInternalJSON) {
+				header ( "Content-type: text/xml" );
+				$xml_output = '<?xml version="1.0"  encoding="utf-8" ?>';
+				$xml_output .= "<xml>";
+				$xml_output .= "<registerdeviceresponse>";
+				$xml_output .= "<status>$status</status>";
+				$xml_output .= "<message>$message</message>";
+				$xml_output .= "</registerdeviceresponse>";
+				$xml_output .= "</xml>";
+				echo $xml_output;
+				error_log ( "RegisterDevice ---> xml_output ----> " . $xml_output . PHP_EOL );
+			}
 		} catch ( \Exception $e ) {
-			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-			$xml_output .= "<xml>";
-			$xml_output .= "<registerdeviceresponse>";
-			$xml_output .= "<status>failure</status>";
-			$xml_output .= "<message>" . $e->getMessage () . "</message>";
-			$xml_output .= "</registerdeviceresponse>";
-			$xml_output .= "</xml>";
+			if (!$isInternalJSON) {
+				$xml_output = '<?xml version="1.0"  encoding="utf-8" ?>';
+				$xml_output .= "<xml>";
+				$xml_output .= "<registerdeviceresponse>";
+				$xml_output .= "<status>failure</status>";
+				$xml_output .= "<message>" . $e->getMessage () . "</message>";
+				$xml_output .= "</registerdeviceresponse>";
+				$xml_output .= "</xml>";
+				echo $xml_output;
+				error_log ( "RegisterDevice ---> xml_output ----> " . $xml_output . PHP_EOL );
+			}
 		}
-		
-		echo $xml_output;
-		error_log ( "getsession ---> xml_output ----> " . $xml_output . PHP_EOL );
 	}
 }
 ?>

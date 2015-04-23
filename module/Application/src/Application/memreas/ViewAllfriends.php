@@ -42,9 +42,7 @@ class ViewAllfriends {
 			$qb->from ( 'Application\Entity\Friend', 'f' );
 			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" )->andwhere ( "uf.user_id = :userid" )->setParameter ( 'userid', $user_id );
 			$qb->orderBy ( 'f.social_username', 'ASC' );
-			
 			// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
-			
 			$result = $qb->getQuery ()->getResult ();
 			
 			if (! $result) {

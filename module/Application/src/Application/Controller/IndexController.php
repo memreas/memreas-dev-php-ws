@@ -91,7 +91,6 @@ use Application\memreas\CheckEvent;
 use Application\memreas\VerifyEmailAddress;
 use Application\memreas\UpdatePassword;
 use Application\Storage\DBStorage;
-use Zend\Db\TableGateway\TableGateway;
 use Application\Model\DbTableGatewayOptions;
 use Application\memreas\GetDiskUsage;
 use Application\memreas\StripeWS\ListPayees;
@@ -183,7 +182,6 @@ class IndexController extends AbstractActionController {
 			$actionname = isset ( $_REQUEST ['action'] ) ? $_REQUEST ['action'] : '';
 			$message_data ['xml'] = '';
 		}
-		
 		/**
 		 * Setup save handler
 		 */
@@ -192,15 +190,13 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		//error_log ( "Inside indexAction---> actionname ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
-		//error_log ( "Inside indexAction---> actionname after security ---> $actionname " . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		
 		/**
 		 * For testing only...
 		 */
 		if ($actionname == "ws_tester") {
-			//error_log ( "path--->" . $path );
+			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view folder
 			return $view;
@@ -227,7 +223,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
-				//error_log ( 'login action ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
+				// error_log ( 'login action ipAddress' . $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
 				
@@ -486,13 +482,13 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "addfriend") {
-				//error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				// error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				$addfriend = new AddFriend ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addfriend->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriend->user_id );
 				$fid = trim ( $data->addfriend->friend_id );
-				//error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				// error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				/*
 				 * Cache approach - write operation - hold for now
 				 */
@@ -644,7 +640,7 @@ class IndexController extends AbstractActionController {
 							}
 							$rc = count ( $search_result );
 						} else {
-							//error_log ( "@ fetch get regindex..." . PHP_EOL );
+							// error_log ( "@ fetch get regindex..." . PHP_EOL );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -655,7 +651,7 @@ class IndexController extends AbstractActionController {
 								$meta_arr = $usermeta;
 								$uid = $meta_arr ['user_id'];
 								// Remove existing user
-								//error_log ( "username" . $username . " --- uid-->" . $uid . PHP_EOL );
+								// error_log ( "username" . $username . " --- uid-->" . $uid . PHP_EOL );
 								if ($uid == $user_id)
 									continue;
 								
@@ -663,12 +659,12 @@ class IndexController extends AbstractActionController {
 								 * TODO: 6-NOV-2014 Paging isn't working correctly? Removing for now...
 								 */
 									// if ($rc >= $from && $rc < ($from + $limit)) {
-								//error_log ( "meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" . $search . PHP_EOL );
+									// error_log ( "meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" . $search . PHP_EOL );
 								if (stripos ( $meta_arr ['username'], $search ) !== false) {
 									$meta_arr ['username'] = '@' . $meta_arr ['username'];
 									$search_result [] = $meta_arr;
 									$user_ids [] = $uid;
-									//error_log ( "user_ids-->" . json_encode ( $user_ids ) . PHP_EOL );
+									// error_log ( "user_ids-->" . json_encode ( $user_ids ) . PHP_EOL );
 								}
 								// }
 								$rc += 1;
@@ -689,7 +685,7 @@ class IndexController extends AbstractActionController {
 						$qb->andwhere ( "uf.user_id = '$user_id'" );
 						$qb->andwhere ( 'uf.friend_id IN (:f)' );
 						$qb->setParameter ( 'f', $user_ids );
-						//error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
+						// error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
 						
 						$UserFriends = $qb->getQuery ()->getResult ();
 						if ($UserFriends) {
@@ -714,7 +710,7 @@ class IndexController extends AbstractActionController {
 						// hide pagination
 						
 						echo json_encode ( $result );
-						//error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
+						// error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						
 						break;
@@ -730,7 +726,7 @@ class IndexController extends AbstractActionController {
 						$mc = $this->redis->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
-							//error_log ( "findtag empty redis -> createEventCache..." . PHP_EOL );
+							// error_log ( "findtag empty redis -> createEventCache..." . PHP_EOL );
 							
 							$mc = $eventRep->createEventCache ();
 							$this->redis->setCache ( "!event", $mc );
@@ -745,8 +741,8 @@ class IndexController extends AbstractActionController {
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
 									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-									//error_log ( "event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL );
-									//error_log ( "event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL );
+									// error_log ( "event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL );
+									// error_log ( "event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL );
 									
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
@@ -791,7 +787,7 @@ class IndexController extends AbstractActionController {
 						// echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
-						//error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
+						// error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						break;
 					
@@ -804,17 +800,17 @@ class IndexController extends AbstractActionController {
                     	 */
 						$search_result = array ();
 						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-							//error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
+							// error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
 							// Redis - ...
-							//error_log ( "Inside findTag # for tag $search" . PHP_EOL );
+							// error_log ( "Inside findTag # for tag $search" . PHP_EOL );
 							$tags_public = $this->redis->findSet ( '#hashtag', $search );
 							$tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $search );
 							$tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
-							//error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
+							// error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
 							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
-							//error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
+							// error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
 							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
-							//error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
+							// error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
 							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
@@ -824,13 +820,13 @@ class IndexController extends AbstractActionController {
 							// $user_ids = $usernames;
 						} else {
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							//error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
+							// error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
 							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						}
 						
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-							//error_log ( "tag------>$tag" . PHP_EOL );
-							//error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
+							// error_log ( "tag------>$tag" . PHP_EOL );
+							// error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
 								// if ($rc >= $from && $rc < ($from + $limit)) {
 								$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
@@ -980,7 +976,6 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache Approach: N/a
 				 */
-				error_log ( 'IndexController -> logout...' . PHP_EOL );
 				$logout = new LogOut ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $logout->exec ( $this->sessHandler );
 			} else if ($actionname == "clearallnotification") {
@@ -1411,13 +1406,13 @@ class IndexController extends AbstractActionController {
 		 * Cache Warming section...
 		 */
 		if (MemreasConstants::REDIS_SERVER_USE) {
-			//error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			// error_log ( "Inside Redis warmer @..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			
 			// Return the status code here so this process continues and the user receives response
 			try {
-				//http_response_code ( 200 );
-				//header ( 'Connection: close' );
-				//header ( 'Content-Length: ' . ob_get_length () );
+				// http_response_code ( 200 );
+				// header ( 'Connection: close' );
+				// header ( 'Content-Length: ' . ob_get_length () );
 				ob_end_flush (); // Strange behaviour, will not work
 				flush (); // Unless both are called !
 			} catch ( Exception $e ) {
@@ -1425,10 +1420,10 @@ class IndexController extends AbstractActionController {
 			}
 			
 			$result = $this->redis->hasSet ( '@person' );
-			//error_log ( "result--->*$result*" . PHP_EOL );
+			// error_log ( "result--->*$result*" . PHP_EOL );
 			if (! $result) {
-				error_log ( "Inside Redis warmer @person DOES NOT EXIST??.." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
-				error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+				//error_log ( "Inside Redis warmer @person DOES NOT EXIST??.." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+				//error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// Now continue processing and warm the cache for @person
 				// $registration = new Registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$this->redis->warmPersonSet ();
@@ -1438,11 +1433,11 @@ class IndexController extends AbstractActionController {
 		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 			
 			if (! $this->redis->hasSet ( '#hashtag' )) {
-				error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+				//error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				// warm the cache for #hashtag
 				$session = new Container ( 'user' );
 				$user_id = $_SESSION ['user_id'];
-				error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+				//error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 				$this->redis->warmHashTagSet ( $user_id );
 			}
 		}
@@ -1472,7 +1467,7 @@ class IndexController extends AbstractActionController {
 				'getdiskusage' 
 		);
 		if (in_array ( $actionname, $public )) {
-			//error_log ( 'Inside else in_array actionname ->' . $actionname . PHP_EOL );
+			// error_log ( 'Inside else in_array actionname ->' . $actionname . PHP_EOL );
 			return false;
 		}
 		return true;
@@ -1487,34 +1482,43 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
+				if ( !empty( $_GET ['uname'] ) && !empty( $_GET ['action'] == 'ws_tester' ) ) {
+					/*
+					 * SetId for the web browser session and start... (TESTING...)
+					 */
+					$this->sessHandler->startSessionWithUID ( '', $_GET ['uname'] );
+					$sid_success = 1;
+					return $actionname;
+				}
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				//error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
 					 */
 					$this->sessHandler->startSessionWithSID ( $data->sid );
-					// error_log('session_id ()->'.session_id ().PHP_EOL);
-					// error_log ( '$data->sid->' . $data->sid . PHP_EOL );
+					error_log('session_id ()->'.session_id ().PHP_EOL);
+					error_log ( '$data->sid->' . $data->sid . PHP_EOL );
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-				} else if (! empty ( $data->memreascookie )) {
-					/*
-					 * SetId for the web browser session and start...
-					 */
-					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
-					// error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
-					// error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
-					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
-						$sid_success = 1;
-					}
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
+					// error_log('Inside else if (! empty ( $data->uid ) || ! empty ( $data->username ))'.PHP_EOL);
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
 					return $actionname;
+				} else if (! empty ( $data->memreascookie )) {
+					/*
+					 * SetId for the web browser session and start...
+					 */
+					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
+					error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
+					error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
+					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
+						$sid_success = 1;
+					}
 				}
 				
 				if (! $sid_success) {
@@ -1555,7 +1559,7 @@ class IndexController extends AbstractActionController {
 		} else {
 			$ipAddress = $_SERVER ['REMOTE_ADDR'];
 		}
-		error_log ( 'ip is ' . $ipAddress );
+		//error_log ( 'ip is ' . $ipAddress );
 		
 		return $ipAddress;
 	}

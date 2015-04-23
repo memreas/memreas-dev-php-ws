@@ -6,7 +6,7 @@ use Application\Model\MemreasConstants;
 
 class Mlog {
 	
-	private $log;
+	public static $log;
 	
 	/**
 	 * funtion adds to array for name, value, and outputs
@@ -22,8 +22,8 @@ class Mlog {
 	 *        	j - json_encode($obj)
 	 *        	a - separator (--->)
 	 */
-	public function addone($objname, $obj, $opt = '\n') {
-		self::add($objname.$obj, $opt);
+	public static function addone($objname, $obj, $opt = '\n') {
+		self::add($objname.'---->'.$obj, $opt);
 		self::out();
 	}
 	
@@ -39,7 +39,7 @@ class Mlog {
 	 *        	j - json_encode($obj)
 	 *        	a - separator (--->)
 	 */
-	public function add($obj, $opt = '\n') {
+	public static function add($obj, $opt = '\n') {
 		self::$log [] = array (
 				'obj' => $obj,
 				'opt' => $opt 
@@ -52,7 +52,7 @@ class Mlog {
 	 * @param unknown $arr
 	 *        	- array to be output
 	 */
-	public function out() {
+	public static function out() {
 		foreach ( self::$log as $item ) {
 			$obj = $item ['obj'];
 			$opt = $item ['opt'];
@@ -68,7 +68,6 @@ class Mlog {
 				error_log ( $obj . PHP_EOL );
 			}
 		}// end for
-		//clear self::$log
-		self::$log = null;
+		self::$log = array();
 	}
 }
