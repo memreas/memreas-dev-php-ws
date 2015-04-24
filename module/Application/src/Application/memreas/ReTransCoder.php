@@ -2,7 +2,6 @@
 
 namespace Application\memreas;
 
-use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AddNotification;
@@ -33,7 +32,7 @@ class ReTransCoder {
 			 * '</sml>
 			 */
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			$media_id = $data->media_id;
+			$media_id = $data->retranscoder->media_id;
 			if (! empty ( $media_id )) {
 				$media = $this->dbAdapter->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
 						'media_id' => $media_id 
@@ -53,25 +52,27 @@ class ReTransCoder {
 					 * ' is_audio' => $is_audio
 					 * );
 					 */
-
 					$meta = json_decode($media->metadata, true);
+Mlog::addone('$meta',$meta);
 					$message_data = array (
-						'user_id' => $media_id->user_id,
-						'media_id' => $media_id,
+						'user_id' => $media->user_id,
+						'media_id' => $media->media_id,
 						'content_type' => $meta['S3_files']['content_type'],
-						's3path' => $meta['S3_files']['path'],
+						's3path' => $media->user_id.'/',
 						's3file_name' => $meta['S3_files']['s3file_name'],
 						's3file_basename_prefix' => $meta['S3_files']['s3file_basename_prefix'],
 						'is_video' => empty($meta['S3_files']['is_video'])?0:1,
 						'is_audio' => empty($meta['S3_files']['$is_audio'])?0:1 
 					);
 					
+Mlog::addone('$message_data',$message_data);
 					/**
 					 * Now send the message...
 					 */
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$response = $aws_manager->snsProcessMediaPublish ( $message_data );
-					
+Mlog::addone('$response',$response);
+						
 					if ($response == 1) {
 						$status = 'Success';
 						$message = "Media Successfully add";
