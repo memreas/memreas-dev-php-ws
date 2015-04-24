@@ -231,17 +231,17 @@ class EventRepository extends EntityRepository {
 		error_log ( "Leaving Redis warmer createDiscoverCache...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		return $Index;
 	}
-	function chkEventFriendRule($eventId, $friendId) {
-		$status = 'no';
-		$qb = $this->_em->createQueryBuilder ();
-		$qb->select ( 'uf.friend_id' );
-		$qb->from ( 'Application\Entity\EventFriend', 'ef' );
-		$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.user_id = ef.friend_id' );
-		$qb->andWhere ( 'uf.friend_id=?2 AND ef.event_id=?1' );
-		$qb->setParameter ( 1, $eventId );
-		$qb->setParameter ( 2, $friendId );
+	function checkFriendLevelRule($eventId, $eventOwnerId, $userId, $friendId) {		
+		$allowAddFriends = 1;
+		/**
+		 * Fetch event owner by event_id
+		 */
+		if ($eventOwnerId != $userId) {
+			//user is a friend (level 2) so friend_id is level 3
+			$allowAddFriends = 0;
+		}
 		
-		return $qb->getQuery ()->getResult ();
+		return $allowAddFriends;
 	}
 	function getUser($user_id, $allRow = '') {
 		// check in catch

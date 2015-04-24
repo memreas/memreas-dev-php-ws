@@ -63,7 +63,7 @@ class ListNotification {
 			unset ( $array ['EMAIL'], $array ['MEMREAS'], $array ['NONMEMREAS'] );
 			$array = array_flip ( $array );
 			
-			// error_log('xml ---->'.$_POST ['xml'].PHP_EOL);
+			Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', $_POST ['xml'] );
 			$error_flag = 0;
 			$message = '';
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -117,9 +117,9 @@ class ListNotification {
 						$this->xml_output .= "<notification_id>{$row['notification_id']}</notification_id>";
 						$this->xml_output .= "<meta><![CDATA[{$row['meta']}]]></meta>";
 						$this->xml_output .= "<notification_type>{$row['notification_type']}</notification_type>";
-						if (($row ['notification_type'] == '1') || ($row ['notification_type'] == 'ADD_FRIEND')) {
+						if (($row ['notification_type'] == '1') || ($row ['notification_type'] == \Application\Entity\Notification::ADD_FRIEND) || ($row ['notification_type'] == '2') || ($row ['notification_type'] == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT)) {
 							$this->xml_output .= "<message>" . $meta ['sent'] ['message'] . "</message>";
-						} else if (($row ['notification_type'] == '1') || ($row ['notification_type'] == 'ADD_FRIEND_RESPONSE')) {
+						} else if (($row ['notification_type'] == '1') || ($row ['notification_type'] == 'ADD_FRIEND_RESPONSE') || ($row ['notification_type'] == '7') || ($row ['notification_type'] == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT_RESPONSE)) {
 							$this->xml_output .= "<message>" . $meta ['received'] ['message'] . "</message>";
 						}
 						$this->xml_output .= "<notification_status>{$row['status']}</notification_status>";
@@ -133,7 +133,9 @@ class ListNotification {
 							/**
 							 * Handle ADD_FRIEND_TO_EVENT
 							 */
-							$this->handleAddFriendToEvent ( $meta ['event_id'] );
+							Mlog::addone ( __FILE__, 'Handle ADD_FRIEND_TO_EVENT' );
+							Mlog::add ( $meta, 'j', 1 );
+							$this->handleAddFriendToEvent ( $eventRepository, $meta ['sent'] ['event_id'] );
 						} else if ($row ['notification_type'] == Notification::ADD_COMMENT) {
 							/**
 							 * Handle ADD_COMMENT
@@ -180,7 +182,7 @@ class ListNotification {
 	/**
 	 * Handle ADD_FRIEND_TO_EVENT
 	 */
-	public function handleAddFriendToEvent($event_id) {
+	public function handleAddFriendToEvent($eventRepository, $event_id) {
 		$eventMedia = $eventRepository->getEventMedia ( $event_id, 1 );
 		// echo'<pre>';print_r($eventMedia);
 		$eventMediaUrl = '';

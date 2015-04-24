@@ -60,6 +60,7 @@ use Application\memreas\LogOut;
 use Application\memreas\ClearAllNotification;
 use Application\memreas\GetSession;
 use Application\memreas\RegisterDevice;
+use Application\memreas\ReTransCoder;
 use Application\memreas\RegisterCanonicalDevice;
 use Application\memreas\ListComments;
 use Application\memreas\Memreas;
@@ -551,6 +552,9 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $changepassword->exec ();
+			} else if ($actionname == "retranscoder") {
+				$retranscoder = new ReTransCoder ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $retranscoder->exec ();
 			} else if ($actionname == "listnotification") {
 				
 				/*
@@ -1482,14 +1486,14 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				if ( !empty( $_GET ['uname'] ) && !empty( $_GET ['action'] == 'ws_tester' ) ) {
-					/*
-					 * SetId for the web browser session and start... (TESTING...)
-					 */
-					$this->sessHandler->startSessionWithUID ( '', $_GET ['uname'] );
-					$sid_success = 1;
-					return $actionname;
-				}
+// 				if ( !empty( $_GET ['uname'] ) && !empty( $_GET ['action'] == 'ws_tester' ) ) {
+// 					/*
+// 					 * SetId for the web browser session and start... (TESTING...)
+// 					 */
+// 					$this->sessHandler->startSessionWithUID ( '', $_GET ['uname'] );
+// 					$sid_success = 1;
+// 					return $actionname;
+// 				}
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {

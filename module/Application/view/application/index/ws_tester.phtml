@@ -452,7 +452,16 @@ echo "user_id ----> " . $user_id;
 					            '<friend_id>1</friend_id>'+
 					            '</friend_ids>'+
 					            '</removefriends>'+
-					            '</xml>';	
+					            '</xml>';
+
+			var retranscoder = '<xml>'+ 
+							'<username>jmeah2</username>'+
+						    	'<retranscoder>'+
+						        '<media_id>...</media_id>'+
+						        '</retranscoder>'+
+						        '</xml>';	
+					            
+					            	
             var saveuserdetails = '<xml>'+ 
 					         '<username>jmeah2</username>'+
 					            '<saveuserdetails>'+
@@ -681,6 +690,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "removefriends") { xml = removefriends; }	
                     else if ($("#input_action").val() == "removeeventmedia") { xml = removeeventmedia; }	
                     else if ($("#input_action").val() == "removefriendgroup") { xml = removefriendgroup; }	
+                    else if ($("#input_action").val() == "retranscoder") { xml = retranscoder; }	
                     else if ($("#input_action").val() == "saveuserdetails") { xml = saveuserdetails; }	
                     else if ($("#input_action").val() == "signedurl") { xml = signedurl; }	
                     else if ($("#input_action").val() == "snsProcessMediaPublish") { xml = snsProcessMediaPublish; }	
@@ -801,6 +811,7 @@ echo "user_id ----> " . $user_id;
 								<option>removefriendgroup</option>
 								<option>removefriends</option>
 								<option>removegroup</option>
+								<option>retranscoder</option>
 								<option>saveuserdetails</option>
 								<option>signedurl</option>
 								<option>snsProcessMediaPublish</option>

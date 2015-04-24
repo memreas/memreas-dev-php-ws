@@ -32,6 +32,12 @@ class EventFriend {
 	 */
 	protected $user_approve=0;
 	
+	/**
+	 *
+	 * @var string @ORM\Column(name="friend_level", type="integer", nullable=false)
+	 */
+	protected $friend_level=1;  //if 0 friend can't add friends...
+	
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

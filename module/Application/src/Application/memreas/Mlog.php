@@ -23,6 +23,12 @@ class Mlog {
 	 *        	a - separator (--->)
 	 */
 	public static function addone($objname, $obj, $opt = '\n') {
+		if (empty($obj)) {
+			$obj = 'object is empty';
+		} else if (is_array($obj)) {
+			$obj = json_encode($obj);
+		}
+		
 		self::add($objname.'---->'.$obj, $opt);
 		self::out();
 	}
@@ -39,11 +45,14 @@ class Mlog {
 	 *        	j - json_encode($obj)
 	 *        	a - separator (--->)
 	 */
-	public static function add($obj, $opt = '\n') {
+	public static function add($obj, $opt = '\n', $out=0) {
 		self::$log [] = array (
 				'obj' => $obj,
 				'opt' => $opt 
 		);
+		if($out) {
+			self::out();
+		}
 	}
 	
 	/**

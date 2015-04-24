@@ -366,7 +366,7 @@ class ViewEvents {
 							$likeCount = $this->fetchPublicEventLikeCount ( $public_event_row ['event_id'] );
 							$xml_output .= "<event_like_total>" . $likeCount . "</event_like_total>";
 							// get comment count for event
-							$this->fetchPublicEventCommentCount ( $public_event_row ['event_id'] );
+							$commCount = $this->fetchPublicEventCommentCount ( $public_event_row ['event_id'] );
 							$xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
 							
 							/**
@@ -519,7 +519,7 @@ class ViewEvents {
 		where media.user_id=?1
 		and media.is_profile_pic=1";
 		$profile_query = $this->dbAdapter->createQuery ( $q_public_profile );
-		$profile_query->setParameter ( 1, $public_event_row ['user_id'] );
+		$profile_query->setParameter ( 1, $user_id );
 		return $profile_query->getResult ();
 	}
 	private function fetchPublicEventLikeCount($event_id) {
@@ -628,7 +628,7 @@ class ViewEvents {
 		} else {
 			// don't send back xml tags if empty...
 		}
-		return xml;
+		return $xml;
 	} // generateMyEventMediaXML($query_event_media_result)
 	private function generateFriendEventMediaXML($query_event_media_result) {
 		$xml = '';
@@ -703,7 +703,7 @@ class ViewEvents {
 		} else {
 			// don't send tags if empty
 		}
-		return xml;
+		return $xml;
 	} // end generateFriendEventMediaXML($query_event_media_result)
 	private function generatePublicEventMediaXML($result_event_media_public) {
 		$xml = '';
@@ -796,7 +796,7 @@ class ViewEvents {
 		} else {
 			// don't send empty tags
 		}
-		return xml;
+		return $xml;
 	} // end generatePublicEventMediaXML($result_event_media_public)
 	private function generateEventFriendsXML($friends) {
 		$xml = '';
@@ -826,7 +826,7 @@ class ViewEvents {
 		}
 		$xml .= "</event_friends>";
 		
-		return xml;
+		return $xml;
 	} // end generateMyEventFriendsXML ($friends)
 	private function fetchEventFriends($event_id) {
 		$q_event_friend = "select friend.friend_id, 
