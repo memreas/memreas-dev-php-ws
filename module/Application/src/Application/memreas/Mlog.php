@@ -28,7 +28,7 @@ class Mlog {
 		} else if (is_array($obj)) {
 			$obj = json_encode($obj);
 		}
-		
+
 		self::add($objname.'---->'.$obj, $opt);
 		self::out();
 	}

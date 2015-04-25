@@ -83,6 +83,10 @@ body {
 .content p a {
 	color: #3364d4;
 }
+
+.tab {
+	margin-left: 40px;
+}
 </style>
 </head>
 
@@ -97,9 +101,11 @@ body {
 				width="288" height="72" />
 		</div>
 		<div class="content">
-			<h2>Dear <?=$username?>,</h2>
+			<h2>Dear <?=receiver_name?>,</h2>
+			<br>
+			
 			<p>Welcome to memreas!</p>
-			<p>
+			<p class="tab">
 				Thanks for joining! Please click the following link to verify your <a
 					href="<?php echo $email_verification_url?>">email address</a><br />
 			</p>

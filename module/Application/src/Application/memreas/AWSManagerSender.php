@@ -57,26 +57,25 @@ class AWSManagerSender {
 		
 		// Set the topicArn
 		$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
-		
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;
-		$message_data['memreastranscoder'] = MemreasConstants::MEMREAS_TRANSCODER;
+		$message_data ['memreastranscoder'] = MemreasConstants::MEMREAS_TRANSCODER;
 		$json = json_encode ( $message_data );
 		error_log ( "INPUT JSON ----> " . $json );
 		
 		try {
-
+			
 			if (MemreasConstants::MEMREAS_TRANSCODER) {
 				/*
 				 * Publish to worker tier here
 				 */
-				$result = $this->sqs->sendMessage(array(
-						'QueueUrl'          => MemreasConstants::QUEUEURL,
-						'MessageBody'       => $json,
-				));
-//error_log('Just published to MemreasConstants::QUEUEURL'.MemreasConstants::QUEUEURL.PHP_EOL);
-//error_log('json--->'.$json.PHP_EOL);
+				$result = $this->sqs->sendMessage ( array (
+						'QueueUrl' => MemreasConstants::QUEUEURL,
+						'MessageBody' => $json 
+				) );
+				Mlog::addone ( 'Just published to MemreasConstants::QUEUEURL', MemreasConstants::QUEUEURL );
+				Mlog::addone ( 'json' . $json );
 			} else {
 				/* - publish to topic here */
 				$result = $this->sns->publish ( array (
@@ -86,7 +85,7 @@ class AWSManagerSender {
 				) );
 			}
 		} catch ( \Exception $e ) {
-			error_log ( "Caught exception: -------> " . print_r ( $e->getMessage (), true ) . PHP_EOL );
+			error_log ( "Caught exception: -------> " . $e->getMessage () . PHP_EOL );
 			throw $e;
 		}
 		
@@ -102,15 +101,9 @@ class AWSManagerSender {
 		$s3_data ['s3file_name'] = $file_name;
 		$s3_data ['s3file'] = $s3_data ['s3path'] . $file_name;
 		$file = $dirPath . $file_name;
-
+		
 		$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-		$uploader = UploadBuilder::newInstance ()->setClient 
-							( $this->s3 )->setSource 
-							( $body )->setBucket 
-							( $this->bucket )->setMinPartSize 
-							( 10 * Size::MB )->setOption 
-							( 'ContentType', $content_type )->setKey 
-							( $s3_data ['s3file'] )->build ();
+		$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $this->bucket )->setMinPartSize ( 10 * Size::MB )->setOption ( 'ContentType', $content_type )->setKey ( $s3_data ['s3file'] )->build ();
 		
 		// Modified - Perform the upload to S3. Abort the upload if something goes wrong
 		try {
@@ -140,9 +133,10 @@ class AWSManagerSender {
 						// Subject is required
 						'Subject' => array (
 								// Data is required
-								'Data' => $subject,
-								//'Charset' => 'iso-8859-1' 
-						),
+								'Data' => $subject 
+						)
+						// 'Charset' => 'iso-8859-1'
+						,
 						// Body is required
 						'Body' => array (
 								'Text' => array (
@@ -162,9 +156,8 @@ class AWSManagerSender {
 				),
 				'ReturnPath' => $from 
 		) );
-//error_log("email result ---> ".$result.PHP_EOL);		
+		// error_log("email result ---> ".$result.PHP_EOL);
 	}
-
 	public function __get($name) {
 		return $this->$name;
 	}

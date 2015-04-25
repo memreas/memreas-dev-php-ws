@@ -83,6 +83,8 @@ body {
 .content p a {
 	color: #3364d4;
 }
+
+.tab { margin-left: 40px; }
 </style>
 </head>
 
@@ -99,9 +101,15 @@ body {
 		<div class="content">
 
 			<p>
-				Dear <b><?php echo $friend_name?></b>,<br /> <b><?php echo $user_name; ?> wants to add you as a friend</b>.
+				Dear <b><?php echo $friend_name?></b>,
+			</p>
+			<p class="tab">
+				<b><?php echo $user_name;?> wants to add you as a friend</b>.
+			</p>
+			<br>
+			<p class="tab">	
 				You can accept, decline or ignore this request @ <a
-					href="<?php echo MemreasConstants::WEB_URL?>"><?php echo MemreasConstants::WEB_URL?></a>
+					href="<?php echo MemreasConstants::WEB_URL?>">memreas<?php echo MemreasConstants::WEB_URL?></a>
 			</p>
 
 

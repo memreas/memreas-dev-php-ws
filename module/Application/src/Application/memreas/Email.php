@@ -11,6 +11,7 @@ use \Exception;
 class Email {
 	const  USER_REGISTRATION = 'user-registration';
 	const  EVENT_INVITE = 'event-invite';
+	const  EVENT_INVITE_RESPONSE = 'event-invite-response';
 	const  FRIEND_REQUEST = 'friend-request';
 	const  FRIEND_REQUEST_RESPONSE = 'friend-request-response';
 	const  USER_CHANGEPASSWORD = 'user-changepassword';
@@ -76,13 +77,14 @@ error_log('$ReplyTo->username'.$ReplyTo->username.PHP_EOL);
 error_log('$ReplyTo->username'.$ReplyTo->email_address.PHP_EOL);
 
 		self::$item ['type'] = $type;
-		self::$item ['friend_name'] = $Sender->username;
-		self::$item ['user_name'] = $ReplyTo->username;
+		self::$item ['sender_name'] = $Sender->username;
+		self::$item ['receiver_name'] = $ReplyTo->username;
 		self::$item ['email'] = $ReplyTo->email_address;
 		self::$item ['status'] = $status;
 		self::$item ['message'] = $comment;
 		self::collect ();
 		Email::sendmail ( $sm );
+		return true;
 	}
 	
 	public static function getSubject($item) {
@@ -95,6 +97,10 @@ error_log('$ReplyTo->username'.$ReplyTo->email_address.PHP_EOL);
 				'event-invite' => array (
 						'subject' => "memreas invite",
 						'template' => 'email/event-invite' 
+				),
+				'event-invite-response' => array (
+						'subject' => "memreas invite response",
+						'template' => 'email/event-invite-response' 
 				),
 				'friend-request' => array (
 						'subject' => "friend request",

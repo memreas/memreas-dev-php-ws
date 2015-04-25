@@ -83,6 +83,10 @@ body {
 .content p a {
 	color: #3364d4;
 }
+
+.tab {
+	margin-left: 40px;
+}
 </style>
 </head>
 
@@ -98,17 +102,24 @@ body {
 		</div>
 		<div class="content">
 			<!-- <h2><?php echo $subject?>,</h2> -->
-
 			<p>
-<?php echo $message?> To accept <a href="<?php echo MemreasConstants::WEB_URL?>">click
-					here</a>.
+				To <b><?php echo $receiver_name?></b>,
 			</p>
-			<p>
-				Best Regards,<br /> <img
-					src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
-					width="103" height="20" />
+			<p class="tab">
+				<b><?php echo $sender_name;?> wants to add you as a friend</b>.
 			</p>
-
+			<br>
+				<p class="tab">
+					You can accept, decline or ignore this request @ <a
+						href="<?php echo MemreasConstants::WEB_URL?>">memreas</a>
+				</p>
+				<p>
+					Best Regards, <br> <img
+						src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
+						width="103" height="20" />
+				
+				</p>
+		
 		</div>
 		<div class="footer" style="background: #45484d;">
 			<p><?php echo MemreasConstants::COPYRIGHT?></p>

@@ -83,6 +83,10 @@ body {
 .content p a {
 	color: #3364d4;
 }
+
+.tab {
+	margin-left: 40px;
+}
 </style>
 </head>
 
@@ -99,30 +103,19 @@ body {
 		</div>
 		<div class="content">
 			<p>
-				Hi <b><?php echo $username?></b>,
+				Hi <b><?php echo $receiver_name?></b>,
 			</p>
-			<p>We have received notice that the material you uploaded was
-				"offensive in nature" / copyright infringement. As a precaution we
-				have taken down the media. Any additional details are below:</p>
+			<p>We have received notice that the material you uploaded was deemed
+				inappropriate in nature. As a precaution we have hidden the media
+				from viewing. Additional details are below:</p>
 
 			<p>
-				copyright infringement:<br />
-    Reporter name: <?php echo $report_username ?><br />
-    related content: <?php echo $description ?><br />
-    email address: <?php echo $report_email ?></p>
-
-			<p>As this is notice of copyright infringement you to re-submit your
-				media you will need to contact the owner named above and provide
-				resolution.</p>
-
-			Regards, memreas team
-
 			<p>
-				<img
-					src="<?php echo MemreasConstants::ORIGINAL_URL ?>memreas/img/footer_ref.png"
-					width="103" height="20" />
+				Best Regards, <br> <img
+						src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
+						width="103" height="20" />
+				
 			</p>
-
 		</div>
 		<div class="footer" style="background: #45484d;">
 			<p><?php echo MemreasConstants::COPYRIGHT?></p>

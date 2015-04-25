@@ -77,6 +77,7 @@ class AddNotification {
 			echo $xml_output;
 		}
 		error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
+		return true;
 	} // end exec()
 }
 

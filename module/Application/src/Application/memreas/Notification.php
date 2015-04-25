@@ -37,6 +37,7 @@ class Notification {
 	public function add($receiver) {
 		error_log ( "Notification add receiver-->" . $receiver . PHP_EOL );
 		$this->receiverIds [] = $receiver;
+		return true;
 	}
 	public function send() {
 //error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
@@ -81,6 +82,7 @@ error_log('$qb--->'.$qb.PHP_EOL);
 		} catch ( \Exception $exc ) {
 			error_log ( 'exp-notifcation class' . $exc->getMessage () );
 		}
+		return true;
 	}
 // 	public function setMessage($notification_type, $data = '') {
 // 		switch ($notification_type) {

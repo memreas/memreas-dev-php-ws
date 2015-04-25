@@ -83,6 +83,10 @@ body {
 .content p a {
 	color: #3364d4;
 }
+
+.tab {
+	margin-left: 40px;
+}
 </style>
 </head>
 
@@ -98,12 +102,15 @@ body {
 		</div>
 		<div class="content">
 
+			<!-- <h2><?php echo $subject?>,</h2> -->
 			<p>
-				Dear <b><?php echo $user_name?></b>,<br /> <b><?php echo $friend_name; ?> has <?php echo $status; ?> your request</b>.
+				To <b><?php echo $receiver_name?></b>,
 			</p>
-			<br>
-			<p>
-				<?php echo $message?>.
+			<p class="tab">
+				<b><?php echo $sender_name; ?> has <?php echo $status; ?> your request.</b>
+			</p>
+			<p class="tab">
+				<br><?php echo $message?>.
 			</p>
 			<p>
 				Best Regards,<br /> <img

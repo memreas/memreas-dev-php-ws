@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\EntityRepository;
 use Application\Model\MemreasConstants;
 use Application\memreas\MemreasSignedURL;
+use Application\memreas\Mlog;
 
 class EventRepository extends EntityRepository {
 	public function __construct($em, \Doctrine\ORM\Mapping\ClassMetadata $class) {
@@ -88,6 +89,7 @@ class EventRepository extends EntityRepository {
 		$qb->where ( 'event_media.event_id=?1' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $event_id );
+		
 		if ($limit)
 			$qb->setMaxResults ( $limit );
 		return $qb->getQuery ()->getResult ();
@@ -104,11 +106,14 @@ class EventRepository extends EntityRepository {
 	}
 	
 	public function getEventMediaUrl($metadata = '', $size = '') {
+Mlog::addone(__CLASS__.'::'.__METHOD__.'::$metadata',$metadata);		
 		$json_array = json_decode ( $metadata, true );
 		$url="";
+Mlog::addone(__CLASS__.'::'.__METHOD__.'::$json_array[S3_files][thumbnails][79x80]',$json_array ['S3_files'] ['thumbnails'] ['79x80']);		
 		if (($json_array ['S3_files'] ['file_type'] != 'audio') && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
 			$url= $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 		}
+Mlog::addone(__CLASS__.'::'.__METHOD__.'::$url',$url);		
 		return json_decode($url); 
 	}
 	public function createEventCache() {
