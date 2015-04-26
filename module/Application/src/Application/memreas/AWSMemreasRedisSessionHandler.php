@@ -65,7 +65,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 		session_id ( $rMemreasCookieSessionArr ['sid'] );
 		session_start ();
-		error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithUID($uid, $uname) {
 		if (! empty ( $uid )) {
@@ -95,7 +95,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				$this->setSession ( $row [0], '', 'web', '', '127.0.0.1' );
 			}
 		}
-		error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function fetchProfilePicMeta($uid) {
 		/*
@@ -112,7 +112,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		return $meta;
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
-error_log ( 'Inside setSession' . PHP_EOL );
+		error_log ( 'Inside setSession' . PHP_EOL );
 		session_start ();
 		if (empty ( session_id () )) {
 			session_regenerate_id ();
@@ -131,7 +131,7 @@ error_log ( 'Inside setSession' . PHP_EOL );
 		error_log ( print_r ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'], true ) );
 		$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
 		
-error_log ( 'setSession(...) _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
+		error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
 		$this->setUIDLookup ();
 		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {

@@ -33,7 +33,6 @@ jQuery.fetchWS = function (base_url) {
 	  	//var resp = JSON.stringify(json, null, '\t');
 	  	//var resp = jQuery.parseXML(json);
 		var resp = json;
-	  	alert("hi");
 	  	var html_str = "";
 	  	var html_button = "";
 	  	$("#action_output").val(resp.data);

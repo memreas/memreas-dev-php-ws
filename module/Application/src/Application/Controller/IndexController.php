@@ -48,6 +48,7 @@ use Application\memreas\AddFriendtoevent;
 use Application\memreas\ViewMediadetails;
 use Application\memreas\snsProcessMediaPublish;
 use Application\memreas\Memreastvm;
+use Application\memreas\Mlog;
 use Application\memreas\MemreasSignedURL;
 use Application\memreas\UploadMedia;
 use Application\memreas\UploadAdvertisement;
@@ -204,6 +205,7 @@ class IndexController extends AbstractActionController {
 		}
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
+Mlog::addone('$actionname',$actionname);			
 			$cache_me = false;
 			$cache_id = null;
 			$invalidate = false;
@@ -1518,8 +1520,8 @@ class IndexController extends AbstractActionController {
 					 * SetId for the web browser session and start...
 					 */
 					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
-					error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
-					error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
+					//error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie' ].PHP_EOL);
+					//error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
