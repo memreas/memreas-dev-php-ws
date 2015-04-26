@@ -127,7 +127,7 @@ class AddMediaEvent {
 				// ///////////////////////////////////////
 				$file_type = explode ( '/', $content_type );
 				
-				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
+				if (strcasecmp ( $file_type [0], 'image' ) == 0) {					
 					$s3path = $user_id . '/';
 					$json_array = array ();
 					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
@@ -221,70 +221,83 @@ class AddMediaEvent {
 					$tblEventMedia->event_id = $event_id;
 					$this->dbAdapter->persist ( $tblEventMedia );
 					$this->dbAdapter->flush ();
-					/*
-					 * @todo send to all particiepent
+					
+					/**
+					 * Notifications - only for images and video
 					 */
-					$query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
-					$qb = $this->dbAdapter->createQueryBuilder ();
-					$qb->select ( 'f.network,f.friend_id' );
-					$qb->from ( 'Application\Entity\EventFriend', 'ef' );
-					$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
-					$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
-					$qb->setParameter ( 1, $event_id );
-					$qb->setParameter ( 2, $user_id );
-					
-					$efusers = $qb->getQuery ()->getResult ();
-					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
-					$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
-					
-					$eventOBj = $eventRepo->findOneBy ( array (
-							'event_id' => $event_id 
-					) );
-					$nmessage = $userOBj->username . ' Added Media to  ' . $eventOBj->name . ' event';
-					$ndata ['addNotification'] ['meta'] = $nmessage;
-					
-					// add event owner in notifcation list
-					if ($eventOBj->user_id != $user_id) {
-						$efusers [] = array (
-								'network' => 'memreas',
-								'friend_id' => $eventOBj->user_id 
-						);
-					}
-					foreach ( $efusers as $ef ) {
-						$friendId = $ef ['friend_id'];
-						$ndata = array (
-								'addNotification' => array (
-										'network_name' => $ef ['network'],
-										'user_id' => $friendId,
-										'meta' => $nmessage,
-										'notification_type' => \Application\Entity\Notification::ADD_MEDIA,
-										'links' => json_encode ( array (
-												'event_id' => $event_id,
-												'from_id' => $user_id,
-												'friend_id' => $friendId 
-										) ) 
-								) 
-						);
-						if ($ef ['network'] == 'memreas') {
+					if (!is_audio) {
+						$query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
+						$qb = $this->dbAdapter->createQueryBuilder ();
+						$qb->select ( 'f.network,f.friend_id' );
+						$qb->from ( 'Application\Entity\EventFriend', 'ef' );
+						$qb->join ( 'Application\Entity\Friend', 'f', 'WITH', 'ef.friend_id = f.friend_id AND ef.user_approve=1' );
+						$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
+						$qb->setParameter ( 1, $event_id );
+						$qb->setParameter ( 2, $user_id );
+						
+						$efusers = $qb->getQuery ()->getResult ();
+						$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
+						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
+						
+						$eventOBj = $eventRepo->findOneBy ( array (
+								'event_id' => $event_id 
+						) );
+						$nmessage = $userOBj->username . ' Added Media to  ' . $eventOBj->name . ' event';
+						$ndata ['addNotification'] ['meta'] = $nmessage;
+						
+						// add event owner in notifcation list
+						if ($eventOBj->user_id != $user_id) {
+							$efusers [] = array (
+									'network' => 'memreas',
+									'friend_id' => $eventOBj->user_id 
+							);
+						}
+						foreach ( $efusers as $ef ) {
+							$friendId = $ef ['friend_id'];
+							/**
+							 * Build array and send notifications...
+							 */
+							
+							$data = array ();
+							$data ['addNotification'] ['sender_uid'] = $user_id;
+							$data ['addNotification'] ['receiver_uid'] = $friendId;
+							$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_MEDIA;
+							$data ['addNotification'] ['notification_methods'] [] = 'email';
+							$data ['addNotification'] ['notification_methods'] [] = 'push_notification';
+							$meta ['sent'] ['event_id'] = $event_id;
+							$meta ['sent'] ['event_name'] = $eventOBj->name;
+							$meta ['sent'] ['from_id'] = $user_id;
+							$meta ['sent'] ['from_username'] = $userOBj->username;
+							$meta ['sent'] ['comment_id'] = $uuid;
+							$meta ['sent'] ['media_id'] = $media_id;
+							$meta ['sent'] ['comment'] = $nmessage;
+							$data ['addNotification'] ['meta'] = json_encode ( $meta );
+							Mlog::add ( __CLASS__ . __METHOD__ . '::$data.addNotification...' );
+							Mlog::add ( $data, 'j', 1 );
+							
+							// add notification in db.
+							$result = $this->AddNotification->exec ( $data );
+							
 							$this->notification->add ( $friendId );
-							$friendUser = $eventRepo->getUser ( $friend_id, 'row' );
+							$friendUser = $eventRepo->getUser ( $friendId, 'row' );
 							Email::$item ['name'] = $friendUser ['username'];
 							Email::$item ['email'] = $friendUser ['email_address'];
 							Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
 							Email::collect ();
+							
+							// save in db
+							$this->AddNotification->exec ( $ndata );
 						}
-						// save in db
-						$this->AddNotification->exec ( $ndata );
-					}
-					
-					if (! empty ( $ndata ['addNotification'] ['meta'] )) {
-						$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
-						$this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
-						$this->notification->event_id = $event_id;
-						$this->notification->send ();
-						Email::sendmail ( $this->service_locator );
-					}
-				}
+						
+						if (! empty ( $ndata ['addNotification'] ['meta'] )) {
+							$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
+							$this->notification->type = \Application\Entity\Notification::ADD_MEDIA;
+							$this->notification->event_id = $event_id;
+							$this->notification->send ();
+							Email::sendmail ( $this->service_locator );
+						}
+					} // end if (!is_audio)
+				} //end if (isset ( $event_id ) && ! empty ( $event_id )) 
 				
 				if (! $is_server_image) {
 					$message_data = array (

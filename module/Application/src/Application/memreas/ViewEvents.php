@@ -392,7 +392,7 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
-error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
+		//error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
 		echo $xml_output;
 	} // end exec()
 	
@@ -487,7 +487,7 @@ error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
 		$qb->where ( 'event_media.event_id = ?1 ' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $event_id );
-		$query_event_media_result = $qb->getQuery ()->getResult ();
+		return $qb->getQuery ()->getResult ();
 	}
 	
 	/**

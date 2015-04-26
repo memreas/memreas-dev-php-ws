@@ -37,9 +37,6 @@ class AWSManagerSender {
 		// Fetch the S3 class
 		$this->s3 = $this->aws->get ( 's3' );
 		
-		// Fetch the AWS Elastic Transcoder class
-		$this->awsTranscode = $this->aws->get ( 'ElasticTranscoder' );
-		
 		// Set the bucket
 		$this->bucket = MemreasConstants::S3BUCKET;
 		
@@ -51,9 +48,6 @@ class AWSManagerSender {
 		
 		// Fetch the SES class
 		$this->ses = $this->aws->get ( 'ses' );
-		
-		// Fetch the
-		$this->elasticache = $this->aws->get ( 'ElastiCache' );
 		
 		// Set the topicArn
 		$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
@@ -75,7 +69,7 @@ class AWSManagerSender {
 						'MessageBody' => $json 
 				) );
 				Mlog::addone ( 'Just published to MemreasConstants::QUEUEURL', MemreasConstants::QUEUEURL );
-				Mlog::addone ( 'json' . $json );
+				Mlog::addone ( 'json' , $json );
 			} else {
 				/* - publish to topic here */
 				$result = $this->sns->publish ( array (
