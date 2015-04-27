@@ -25,8 +25,8 @@ class ListAllmedia {
 		$message = ' ';
 		$containt = ' ';
 		$user_id = trim ( $data->listallmedia->user_id );
-		if (! empty ( $_SESSION ['user'] ['user_id'] )) {
-			$user_id = $_SESSION ['user'] ['user_id'];
+		if (! empty ( $_SESSION ['user_id'] )) {
+			$user_id = $_SESSION ['user_id'];
 		}
 		
 		$event_id = trim ( $data->listallmedia->event_id );
@@ -79,15 +79,12 @@ class ListAllmedia {
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'u.username', 'm.metadata' );
 			$qb->from ( 'Application\Entity\User', 'u' );
-			
-			// Changed by JMeah 31-AUG-2014 - not all users will have profile pics...
-			// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-			
 			$qb->where ( 'u.user_id=?1 AND m.is_profile_pic = 1 ' );
 			
 			$qb->setParameter ( 1, $result [0] ['user_id'] );
 			$oUserProfile = $qb->getQuery ()->getResult ();
+Mlog::addone('$oUserProfile',$oUserProfile);			
 			$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 			$path = $eventRepo->getProfileUrl ( $oUserProfile [0] ['metadata'] );
 			// If profie pic set it
@@ -157,6 +154,10 @@ class ListAllmedia {
 					
 					// main
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
+					
+					// hls
+					$path = isset ( $json_array ['S3_files'] ['hls'] ) ? $this->url_signer->signHlsUrl ( $json_array ['S3_files'] ['hls'] ) : '';
+					$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					
 					// web
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['web'] ) : '';
@@ -253,7 +254,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		//error_log ( "ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL );
+		// error_log ( "ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL );
 	}
 }
 

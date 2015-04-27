@@ -35,7 +35,7 @@ class Registration {
 	public function is_valid_email($email) {
 		$result = TRUE;
 		if (! preg_match ( '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/', $email )) {
-error_log("is_valid_email failed for $email".PHP_EOL);		
+			error_log ( "is_valid_email failed for $email" . PHP_EOL );
 			$result = FALSE;
 		}
 		return $result;
@@ -70,16 +70,14 @@ error_log("is_valid_email failed for $email".PHP_EOL);
 				$invited_by = null;
 			}
 		}
-
-error_log("username--->".$username.PHP_EOL);		
-error_log("email--->".$email.PHP_EOL);		
-error_log("password--->".$password.PHP_EOL);		
-error_log("device_id--->".$device_id.PHP_EOL);		
-error_log("device_type--->".$device_type.PHP_EOL);		
-error_log("invited_by--->".$invited_by.PHP_EOL);		
-error_log("event_id--->".$event_id.PHP_EOL);		
 		
-		
+		error_log ( "username--->" . $username . PHP_EOL );
+		error_log ( "email--->" . $email . PHP_EOL );
+		error_log ( "password--->" . $password . PHP_EOL );
+		error_log ( "device_id--->" . $device_id . PHP_EOL );
+		error_log ( "device_type--->" . $device_type . PHP_EOL );
+		error_log ( "invited_by--->" . $invited_by . PHP_EOL );
+		error_log ( "event_id--->" . $event_id . PHP_EOL );
 		
 		// $this->FunctionName($invited_by);exit;
 		try {
@@ -168,56 +166,56 @@ error_log("event_id--->".$event_id.PHP_EOL);
 						// $this->createUserCache();
 						
 						// invite by code
-						$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
-						$statement = $this->dbAdapter->createQuery ( $q_notification );
-						$statement->setParameter ( 'short_code', $invited_by );
-						$statement->setParameter ( 'notification_type', 2 );
-						$row_notification = $statement->getOneOrNullResult ();
-						if (! empty ( $row_notification ))
-							$ndata = json_decode ( $row_notification->links );
-						else
-							$ndata = null;
-						if (! empty ( $ndata->from_id ) && ! empty ( $ndata->event_id )) {
-							
-							$xml_input = '<xml><addfriendtoevent>
-									<user_id>' . $ndata->from_id . '</user_id>
-									<event_id>' . $ndata->event_id . '</event_id>
-									<friends>
-											<friend>
-											<network_name>memreas</network_name>
-											<friend_name>' . $username . '</friend_name>
-											<profile_pic_url><![CDATA[' . $url . ']]>' . '</profile_pic_url>
-											</friend>
-									</friends>
-									</addfriendtoevent></xml>';
-							
-							// add frient to event
-							$this->addfriendtoevent->exec ( $xml_input );
-						}
+						// $q_notification = "SELECT n FROM Application\Entity\Notification n where n.short_code=:short_code AND n.notification_type = :notification_type";
+						// $statement = $this->dbAdapter->createQuery ( $q_notification );
+						// $statement->setParameter ( 'short_code', $invited_by );
+						// $statement->setParameter ( 'notification_type', 2 );
+						// $row_notification = $statement->getOneOrNullResult ();
+						// if (! empty ( $row_notification ))
+						// $ndata = json_decode ( $row_notification->links );
+						// else
+						// $ndata = null;
+						// if (! empty ( $ndata->from_id ) && ! empty ( $ndata->event_id )) {
 						
-						// Check if user has been assigned an event
-						if ($assign_event) {
-							$query = $this->dbAdapter->createQueryBuilder ();
-							$query->select ( 'e' )->from ( '\Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $assign_event );
-							$result = $query->getQuery ()->getResult ();
-							
-							$memreas_tables = new MemreasTables ( $this->service_locator );
-							$message_data = '<xml><addfriendtoevent>
-                                                    <user_id>' . $result [0]->user_id . '</user_id>
-                                                    <event_id>' . $assign_event . '</event_id>
-                                                    <emails><email></email></emails>
-                                                    <friends>
-                                                        <friend>
-                                                            <network_name>memreas</network_name>
-                                                            <friend_name>' . $username . '</friend_name>
-                                                            <friend_id>' . $user_id . '</friend_id>
-                                                            <profile_pic_url></profile_pic_url>
-                                                        </friend>
-                                                    </friends></addfriendtoevent></xml>';
-							
-							$MemreasEvent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->service_locator );
-							$MemreasEvent->exec ( $message_data );
-						}
+						// $xml_input = '<xml><addfriendtoevent>
+						// <user_id>' . $ndata->from_id . '</user_id>
+						// <event_id>' . $ndata->event_id . '</event_id>
+						// <friends>
+						// <friend>
+						// <network_name>memreas</network_name>
+						// <friend_name>' . $username . '</friend_name>
+						// <profile_pic_url><![CDATA[' . $url . ']]>' . '</profile_pic_url>
+						// </friend>
+						// </friends>
+						// </addfriendtoevent></xml>';
+						
+						// // add frient to event
+						// $this->addfriendtoevent->exec ( $xml_input );
+						// }
+						
+						// // Check if user has been assigned an event
+						// if ($assign_event) {
+						// $query = $this->dbAdapter->createQueryBuilder ();
+						// $query->select ( 'e' )->from ( '\Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $assign_event );
+						// $result = $query->getQuery ()->getResult ();
+						
+						// $memreas_tables = new MemreasTables ( $this->service_locator );
+						// $message_data = '<xml><addfriendtoevent>
+						// <user_id>' . $result [0]->user_id . '</user_id>
+						// <event_id>' . $assign_event . '</event_id>
+						// <emails><email></email></emails>
+						// <friends>
+						// <friend>
+						// <network_name>memreas</network_name>
+						// <friend_name>' . $username . '</friend_name>
+						// <friend_id>' . $user_id . '</friend_id>
+						// <profile_pic_url></profile_pic_url>
+						// </friend>
+						// </friends></addfriendtoevent></xml>';
+						
+						// $MemreasEvent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->service_locator );
+						// $MemreasEvent->exec ( $message_data );
+						// }
 						
 						// upload profile image
 						if (isset ( $_FILES ['f'] ) && ! empty ( $_FILES ['f'] ['name'] )) {
@@ -252,7 +250,7 @@ error_log("event_id--->".$event_id.PHP_EOL);
 									"local_filenames" => array (
 											"device" => array (
 													"device_id" => $device_id,
-													"device_type" => $device_type
+													"device_type" => $device_type 
 											) 
 									),
 									"type" => array (
@@ -279,7 +277,7 @@ error_log("event_id--->".$event_id.PHP_EOL);
 							$q_update = "UPDATE Application\Entity\User u  SET u.profile_photo = '1' WHERE u.user_id ='$user_id'";
 							$statement = $this->dbAdapter->createQuery ( $q_update );
 							$r = $statement->getResult ();
-
+							
 							// Now publish the message so any photo is thumbnailed.
 							$message_data = array (
 									'user_id' => $user_id,
@@ -374,17 +372,16 @@ error_log("event_id--->".$event_id.PHP_EOL);
 		$filename = $s3_data ['s3path'] . $s3_data ['s3file_name'];
 		$this->profile_photo = ! empty ( $filename ) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
 		// return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
-	} //end exec() 
-	
+	} // end exec()
 	function createUserCache() {
-error_log("Inside function createUserCache()".PHP_EOL); 
+		error_log ( "Inside function createUserCache()" . PHP_EOL );
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-		//$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-//error_log("qb --->".$qb.PHP_EOL);
-error_log("SQL Query --->".$qb->getQuery()->getSql().PHP_EOL);		
+		// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+		// error_log("qb --->".$qb.PHP_EOL);
+		error_log ( "SQL Query --->" . $qb->getQuery ()->getSql () . PHP_EOL );
 		
 		// create index for catch;
 		$userIndexArr = $qb->getQuery ()->getResult ();
@@ -393,12 +390,12 @@ error_log("SQL Query --->".$qb->getQuery()->getSql().PHP_EOL);
 		// $userIndexSql->setMaxResults(30);
 		// $userIndexArr = $qb->getResult();
 		foreach ( $userIndexArr as $row ) {
-error_log("Inside for loop --->".$row['username'].PHP_EOL);
+			error_log ( "Inside for loop --->" . $row ['username'] . PHP_EOL );
 			$json_array = json_decode ( $row ['metadata'], true );
 			
 			if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
-				//$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-				$url1 = $this->url_signer->signArrayOfUrls ('static/profile-pic.jpg');
+				// $url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+				$url1 = $this->url_signer->signArrayOfUrls ( 'static/profile-pic.jpg' );
 			} else {
 				$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 			}
