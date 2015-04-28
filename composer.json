@@ -16,7 +16,7 @@
         "ext-json": "*",
         "aws/aws-sdk-php": "2.*",
 		"sybio/image-workshop": "2.0.0",
-		"rhumsaa/uuid": "2.5.0",
+		"ramsey/uuid": "2.8.0",
 		"doctrine/doctrine-orm-module": "0.8.0",
 		"predis/predis": "1.*",
 		"guzzlehttp/guzzle": "5.0.1",
