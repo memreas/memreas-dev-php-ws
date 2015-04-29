@@ -40,7 +40,7 @@ php_value error_log php_errors.log
 # [see footnote 3] # php_value error_reporting 999999999
 php_value error_reporting -1
 #php_value log_errors_max_len 0
-#php_value date.timezone "America/New_York"
+php_value date.timezone "America/New_York"
 
 <Files php_errors.log>
  Order allow,deny

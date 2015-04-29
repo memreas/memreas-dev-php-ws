@@ -184,6 +184,7 @@ class IndexController extends AbstractActionController {
 			$actionname = isset ( $_REQUEST ['action'] ) ? $_REQUEST ['action'] : '';
 			$message_data ['xml'] = '';
 		}
+Mlog::addone(__CLASS__.__METHOD__,$_POST ['xml']);			
 		/**
 		 * Setup save handler
 		 */
@@ -1397,10 +1398,11 @@ Mlog::addone('$actionname',$actionname);
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
+			error_log("callback output ----> $output".PHP_EOL);
 		} else {
 			// json output
 			echo $output;
-			// error_log("output ----> $output".PHP_EOL);
+			error_log("output ----> $output".PHP_EOL);
 		}
 		
 		/**

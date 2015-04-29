@@ -76,19 +76,8 @@ class ListAllmedia {
 			$error_flag = 2;
 			$message = "No Record found for this Event";
 		} else {
-			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'u.username', 'm.metadata' );
-			$qb->from ( 'Application\Entity\User', 'u' );
-			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-			$qb->where ( 'u.user_id=?1 AND m.is_profile_pic = 1 ' );
-			
-			$qb->setParameter ( 1, $result [0] ['user_id'] );
-			$oUserProfile = $qb->getQuery ()->getResult ();
-Mlog::addone('$oUserProfile',$oUserProfile);			
-			$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
-			$path = $eventRepo->getProfileUrl ( $oUserProfile [0] ['metadata'] );
 			// If profie pic set it
-			$xml_output .= "<profile_pic><![CDATA[" . $path . "]]></profile_pic>";
+			$xml_output .= "<profile_pic><![CDATA[" . $_SESSION ['profile_pic'] . "]]></profile_pic>";
 			
 			$url1 = '';
 			$xml_output .= "<username>" . $oUserProfile [0] ['username'] . "</username>";
