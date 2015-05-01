@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Device {
 	const ANDROID = 'ANDROID';
-	const APPLE = 'APPLE';
+	const IOS = 'IOS';
 	
 	/**
 	 *

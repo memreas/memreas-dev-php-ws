@@ -20,6 +20,7 @@ class ChangePassword {
 	}
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
+		$sid = trim ( $data->sid );
 		$token = trim ( $data->changepassword->token );
 		$new = trim ( $data->changepassword->new );
 		$retype = trim ( $data->changepassword->retype );
@@ -53,7 +54,7 @@ class ChangePassword {
 				$status = 'failure';
 				$message = 'Incorrect Activation code.';
 			}
-		} else if (! empty ( $username ) && ! empty ( $password )) {
+		} else if (! empty ( $username ) && ! empty ( $password ) && ! empty ( $sid )) {
 			$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $username . "' and u.password = '" . md5 ( $password ) . "' and u.role = 2 and u.disable_account = 0";
 			$statement = $this->dbAdapter->createQuery ( $sql );
 			$result = $statement->getOneOrNullResult ();
@@ -75,13 +76,12 @@ class ChangePassword {
 			$viewVar = array (
 					'email' => $to,
 					'username' => $result->username,
-					'passwrd' => $new 
 			);
 			$viewModel = new ViewModel ( $viewVar );
-			$viewModel->setTemplate ( 'email/register' );
+			$viewModel->setTemplate ( 'email/changedpassword' );
 			$viewRender = $this->service_locator->get ( 'ViewRenderer' );
 			$html = $viewRender->render ( $viewModel );
-			$subject = 'password changed succesfully ';
+			$subject = 'memreas - forgot password';
 			$aws_manager = new AWSManagerSender ( $this->service_locator );
 			try {
 				$aws_manager->sendSeSMail ( $to, $subject, $html );

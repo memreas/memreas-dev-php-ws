@@ -180,8 +180,12 @@ class IndexController extends AbstractActionController {
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
 			$_POST ['xml'] = $message_data ['xml'];
+Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST [json]',$_REQUEST ['action']);			
+Mlog::addone(__CLASS__.__METHOD__.'$actionname',$actionname);			
 		} else {
-			$actionname = isset ( $_REQUEST ['action'] ) ? $_REQUEST ['action'] : '';
+			$actionname = isset ( $_GET ["action"] ) ? $_GET ["action"] : '';
+Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST',$_REQUEST);			
+Mlog::addone(__CLASS__.__METHOD__.'$_GET ["action"]',$_GET ["action"]);			
 			$message_data ['xml'] = '';
 		}
 Mlog::addone(__CLASS__.__METHOD__,$_POST ['xml']);			
@@ -193,6 +197,7 @@ Mlog::addone(__CLASS__.__METHOD__,$_POST ['xml']);
 		/**
 		 * Check session
 		 */
+Mlog::addone(__CLASS__.__METHOD__.'$this->requiresSecureAction ( $actionname )',$this->requiresSecureAction ( $actionname ));			
 		$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		
 		/**
@@ -1398,11 +1403,10 @@ Mlog::addone('$actionname',$actionname);
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			error_log("callback output ----> $output".PHP_EOL);
+			error_log("callback output ----> *$output*".PHP_EOL);
 		} else {
-			// json output
-			echo $output;
-			error_log("output ----> $output".PHP_EOL);
+			echo trim($output);
+			error_log("output ----> *$output*".PHP_EOL);
 		}
 		
 		/**
@@ -1461,6 +1465,7 @@ Mlog::addone('$actionname',$actionname);
 				'registration',
 				'forgotpassword',
 				'checkusername',
+				'changepassword',
 				'verifyemailaddress',
 				'ws_tester',
 				// For stripe
@@ -1474,8 +1479,9 @@ Mlog::addone('$actionname',$actionname);
 				'makepayout',
 				'getdiskusage' 
 		);
+Mlog::addone(__CLASS__.__METHOD__.'requiresSecureAction($actionname)',$actionname);
 		if (in_array ( $actionname, $public )) {
-			// error_log ( 'Inside else in_array actionname ->' . $actionname . PHP_EOL );
+Mlog::addone('Inside else in_array actionname ->',$actionname);
 			return false;
 		}
 		return true;
@@ -1490,14 +1496,6 @@ Mlog::addone('$actionname',$actionname);
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-// 				if ( !empty( $_GET ['uname'] ) && !empty( $_GET ['action'] == 'ws_tester' ) ) {
-// 					/*
-// 					 * SetId for the web browser session and start... (TESTING...)
-// 					 */
-// 					$this->sessHandler->startSessionWithUID ( '', $_GET ['uname'] );
-// 					$sid_success = 1;
-// 					return $actionname;
-// 				}
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' :::: file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {

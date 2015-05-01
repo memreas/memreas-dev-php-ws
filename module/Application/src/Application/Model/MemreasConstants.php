@@ -11,7 +11,8 @@ class MemreasConstants {
 	const SEND_EMAIL = true;
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;//has 1 or 0 value
 	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
-		
+	const FORGOT_PASSWORD_CODE_LENGTH = 6;
+	
 	//memreasdev urls
 	const WEB_URL = "https://fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasdev-wsj.memreas.com/";

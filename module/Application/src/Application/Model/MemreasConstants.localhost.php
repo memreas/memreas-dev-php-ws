@@ -11,7 +11,8 @@ class MemreasConstants {
 	const SEND_EMAIL = true;
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;//has 1 or 0 value
 	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
-		
+	const FORGOT_PASSWORD_CODE_LENGTH = 6;
+	
 	//localhost urls
 	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
 	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
