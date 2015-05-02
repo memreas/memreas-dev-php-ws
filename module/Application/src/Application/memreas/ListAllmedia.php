@@ -171,12 +171,14 @@ class ListAllmedia {
 							$xml_output .= "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>";
 							
 							// rtmp
+							$path = $json_array ['S3_files'] ['1080p'];
 							$path = $this->url_signer->signArrayOfUrls ( $path );
 							$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
 						}
 						
 						if (isset ( $json_array ['S3_files'] ['hls'] ) && ! empty ( $json_array ['S3_files'] ['hls'] )) {
-							$path = $this->url_signer->signArrayOfUrls ( $path );
+							$path = $json_array ['S3_files'] ['hls'];
+							$path = $this->url_signer->signHlsUrl ( $path );
 							$xml_output .= "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>";
 						}
 					}
