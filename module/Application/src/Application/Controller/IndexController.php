@@ -161,10 +161,10 @@ class IndexController extends AbstractActionController {
 	public function indexAction() {
 		// error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 		// Checking headers for cookie info
-		// $headers = apache_request_headers ();
-		// foreach ( $headers as $header => $value ) {
-		// error_log ( "WS header: $header :: value: $value" . PHP_EOL );
-		// }
+		 $headers = apache_request_headers ();
+		 foreach ( $headers as $header => $value ) {
+			 error_log ( "WS header: $header :: value: $value" . PHP_EOL );
+		 }
 		// End Checking headers for cookie info
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
@@ -183,9 +183,8 @@ class IndexController extends AbstractActionController {
 Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST [json]',$_REQUEST ['action']);			
 Mlog::addone(__CLASS__.__METHOD__.'$actionname',$actionname);			
 		} else {
-			$actionname = isset ( $_GET ["action"] ) ? $_GET ["action"] : '';
-Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST',$_REQUEST);			
-Mlog::addone(__CLASS__.__METHOD__.'$_GET ["action"]',$_GET ["action"]);			
+			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
+Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST ["action"]',$_REQUEST ["action"]);			
 			$message_data ['xml'] = '';
 		}
 Mlog::addone(__CLASS__.__METHOD__,$_POST ['xml']);			

@@ -58,7 +58,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
-		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie) {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
@@ -128,7 +128,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
 		// error_log(print_r($json_pic_meta, true));
-		error_log ( print_r ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'], true ) );
 		$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
 		
 		error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
@@ -177,6 +176,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		session_destroy ();
 	}
 	public function storeSession($start) {
+		try {
 		$now = date ( "Y-m-d H:i:s" );
 		if ($start) {
 			/**
@@ -200,13 +200,22 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			/**
 			 * End Session
 			 */
-			$q_update = "UPDATE Application\Entity\UserSession u  
-				SET u.end_time = '$now' 
-				WHERE u.session_id ='" . session_id () . "' 
-				and u.user_id = '" . $_SESSION ['user_id'] . "'";
-			// error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
-			$statement = $this->dbAdapter->createQuery ( $q_update );
-			$r = $statement->getResult ();
+			$result = $this->endSession();
 		}
+		} catch (\Exception $e) {
+			/**
+			 * End Session
+			 */
+			$result = $this->endSession();
+		}
+	}
+	public function endSession() {
+		$q_update = "UPDATE Application\Entity\UserSession u
+		SET u.end_time = '$now'
+		WHERE u.session_id ='" . session_id () . "'
+		and u.user_id = '" . $_SESSION ['user_id'] . "'";
+				// error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
+		$statement = $this->dbAdapter->createQuery ( $q_update );
+		return $statement->getResult ();
 	}
 }
