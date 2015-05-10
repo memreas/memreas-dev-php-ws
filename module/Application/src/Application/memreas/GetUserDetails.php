@@ -71,22 +71,30 @@ class GetUserDetails {
 					$output .= '<dob></dob>';
 					
 					// For plan
-				if (isset ( $metadata ['subscription'] )) {
+				if (! empty ( $metadata ['subscription'] )) {
+					Mlog::addone ( 'if (!empty( $metadata [subscription] )', $metadata ['subscription'] );
 					$subscription = $metadata ['subscription'];
 					$output .= '<subscription><plan>' . $subscription ['plan'] . '</plan><plan_name>' . $subscription ['name'] . '</plan_name></subscription>';
-				} else
+				} else {
+					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 					
 					// For account type
-				$guzzle = new Client ();
-				$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-						'action' => 'checkusertype',
-						'username' => $result_user [0]->username 
-				) );
-				
-				$response = $request->send ();
-				$data = json_decode ( $response->getBody ( true ), true );
-				if ($data ['status'] == 'Success') {
+					try {
+						
+						$guzzle = new Client ();
+						$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
+								'action' => 'checkusertype',
+								'username' => $result_user [0]->username 
+						) );
+						
+						$response = $request->send ();
+						$data = json_decode ( $response->getBody ( true ), true );
+					} catch ( \Exception $e ) {
+						Mlog::addone ( "Exception calling pay server::", $e->getMessage () );
+					}
+				}
+				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
 					$types = $data ['types'];
 					$output .= '<account_type>';
 					foreach ( $types as $key => $type ) {
@@ -104,8 +112,6 @@ class GetUserDetails {
 				
 				$output .= '<profile><![CDATA[' . $profile_image . ']]></profile>';
 			}
-			// Mlog::addone('$profile_image', $profile_image);
-			// Mlog::addone('$output', $output);
 			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";

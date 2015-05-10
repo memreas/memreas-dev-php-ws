@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "hash": "2759d6b1c9a48efe41e0ecfee838d64a",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "2.8.2",
+            "version": "2.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "4237e97388d2906d2aa88f727736968fc2df9cb6"
+                "reference": "85c5224582acf507afad232da20a7ef0b2ec0073"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4237e97388d2906d2aa88f727736968fc2df9cb6",
-                "reference": "4237e97388d2906d2aa88f727736968fc2df9cb6",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/85c5224582acf507afad232da20a7ef0b2ec0073",
+                "reference": "85c5224582acf507afad232da20a7ef0b2ec0073",
                 "shasum": ""
             },
             "require": {
@@ -71,7 +71,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-04-23 20:14:25"
+            "time": "2015-05-07 21:02:23"
         },
         {
             "name": "doctrine/annotations",
@@ -1254,20 +1254,23 @@
         },
         {
             "name": "swearjar/swearjar",
-            "version": "v0.1.1",
+            "version": "v0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/raymondjavaxx/swearjar-php.git",
-                "reference": "644a6ec1b04de9b78aced7008e3b4d46596eb358"
+                "reference": "68e443ecdce50724430445703887fae484898458"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/raymondjavaxx/swearjar-php/zipball/644a6ec1b04de9b78aced7008e3b4d46596eb358",
-                "reference": "644a6ec1b04de9b78aced7008e3b4d46596eb358",
+                "url": "https://api.github.com/repos/raymondjavaxx/swearjar-php/zipball/68e443ecdce50724430445703887fae484898458",
+                "reference": "68e443ecdce50724430445703887fae484898458",
                 "shasum": ""
             },
             "require": {
-                "symfony/yaml": "2.0.*"
+                "symfony/yaml": "^2.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.4"
             },
             "type": "library",
             "autoload": {
@@ -1287,7 +1290,13 @@
             ],
             "description": "Profanity detection lib",
             "homepage": "http://github.com/raymondjavaxx/swearjar-php",
-            "time": "2012-10-10 04:16:40"
+            "keywords": [
+                "censor",
+                "curse",
+                "profanity",
+                "swear"
+            ],
+            "time": "2015-05-01 03:33:58"
         },
         {
             "name": "sybio/image-workshop",
@@ -1457,26 +1466,34 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.0.25",
+            "version": "v2.6.6",
             "target-dir": "Symfony/Component/Yaml",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "c508a879829976e30f05e16b96a7ed024ee82ce1"
+                "reference": "174f009ed36379a801109955fc5a71a49fe62dd4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/c508a879829976e30f05e16b96a7ed024ee82ce1",
-                "reference": "c508a879829976e30f05e16b96a7ed024ee82ce1",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/174f009ed36379a801109955fc5a71a49fe62dd4",
+                "reference": "174f009ed36379a801109955fc5a71a49fe62dd4",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2"
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "~2.7"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.6-dev"
+                }
+            },
             "autoload": {
                 "psr-0": {
-                    "Symfony\\Component\\Yaml": ""
+                    "Symfony\\Component\\Yaml\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -1485,32 +1502,30 @@
             ],
             "authors": [
                 {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
-                },
-                {
                     "name": "Symfony Community",
                     "homepage": "http://symfony.com/contributors"
+                },
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
                 }
             ],
             "description": "Symfony Yaml Component",
             "homepage": "http://symfony.com",
-            "time": "2013-01-18 09:52:07"
+            "time": "2015-03-30 15:54:10"
         },
         {
             "name": "zendframework/zendframework",
-            "version": "2.4.0",
+            "version": "2.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zf2.git",
-                "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef"
+                "reference": "3b3b6f3374525344097024e9a05bcf24e46e3011"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zf2/zipball/628b809fcadcd326f2074a9815e5b1fce57077ef",
-                "reference": "628b809fcadcd326f2074a9815e5b1fce57077ef",
+                "url": "https://api.github.com/repos/zendframework/zf2/zipball/3b3b6f3374525344097024e9a05bcf24e46e3011",
+                "reference": "3b3b6f3374525344097024e9a05bcf24e46e3011",
                 "shasum": ""
             },
             "require": {
@@ -1576,7 +1591,7 @@
                 "ircmaxell/random-lib": "~1.1",
                 "mikey179/vfsstream": "~1.2",
                 "phpunit/phpcov": "~2.0",
-                "phpunit/phpunit": "~4.0",
+                "phpunit/phpunit": "~4.6",
                 "satooshi/php-coveralls": "dev-master"
             },
             "suggest": {
@@ -1595,8 +1610,8 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.3-dev",
-                    "dev-develop": "2.4-dev"
+                    "dev-master": "2.4-dev",
+                    "dev-develop": "2.5-dev"
                 }
             },
             "autoload": {
@@ -1614,7 +1629,7 @@
                 "framework",
                 "zf2"
             ],
-            "time": "2015-03-31 15:39:14"
+            "time": "2015-05-07 17:08:57"
         },
         {
             "name": "zendframework/zendxml",
