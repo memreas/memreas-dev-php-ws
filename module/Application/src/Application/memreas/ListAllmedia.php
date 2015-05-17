@@ -39,7 +39,7 @@ class ListAllmedia {
 			$page = 1;
 		}
 		if (! isset ( $data->listallmedia->limit ) || empty ( $data->listallmedia->limit ) || $data->listallmedia->limit == 0)
-			$limit = 10;
+			$limit = 50;
 		else
 			$limit = trim ( $data->listallmedia->limit );
 		
@@ -80,7 +80,7 @@ class ListAllmedia {
 			$xml_output .= "<profile_pic><![CDATA[" . $_SESSION ['profile_pic'] . "]]></profile_pic>";
 			
 			$url1 = '';
-			$xml_output .= "<username>" . $oUserProfile [0] ['username'] . "</username>";
+			$xml_output .= "<username>" . $_SESSION ['username'] . "</username>";
 			$xml_output .= "<page>$page</page>";
 			$xml_output .= "<status>Success</status>";
 			$xml_output .= "<user_id>" . $result [0] ['user_id'] . "</user_id>";

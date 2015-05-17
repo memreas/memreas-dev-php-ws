@@ -80,6 +80,10 @@ class GetUserDetails {
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 					
 					// For account type
+					/**
+					 * TODO: Debug Account Type...
+					 */
+					/*
 					try {
 						
 						$guzzle = new Client ();
@@ -93,6 +97,7 @@ class GetUserDetails {
 					} catch ( \Exception $e ) {
 						Mlog::addone ( "Exception calling pay server::", $e->getMessage () );
 					}
+					*/
 				}
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
 					$types = $data ['types'];
