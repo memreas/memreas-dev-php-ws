@@ -35,9 +35,19 @@ class Media {
 	
 	/**
 	 *
-	 * @var integer @ORM\Column(name="sync_status", type="integer", nullable=false)
+	 * @var string @ORM\Column(name="sync_status", type="integer", nullable=false)
 	 */
-	private $sync_status = '0';
+	private $sync_status = 0;
+	
+	/**
+	 *
+	 * @var integer @ORM\Column(name="transcode_status", type="string", length=45, nullable=false)
+	 */
+	private $transcode_status = 'pending';
+	//pending
+	//in_progress
+	//success
+	//failed
 	
 	/**
 	 *

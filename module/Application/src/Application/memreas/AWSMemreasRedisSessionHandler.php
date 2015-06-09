@@ -210,6 +210,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		}
 	}
 	public function endSession() {
+		$now = date ( "Y-m-d H:i:s" );
 		$q_update = "UPDATE Application\Entity\UserSession u
 		SET u.end_time = '$now'
 		WHERE u.session_id ='" . session_id () . "'

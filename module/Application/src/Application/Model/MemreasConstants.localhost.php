@@ -17,6 +17,7 @@ class MemreasConstants {
 	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
 	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
 	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
+	const MEMREAS_TRANSCODE_URL = "http://memreas-dev-php-backend.localhost/";
 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 

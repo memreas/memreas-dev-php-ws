@@ -11,15 +11,20 @@
     "homepage": "http://www.memreas.com/",
     "require": {
         "php": ">=5.4",
-        "zendframework/zendframework": "2.*",
+        "zendframework/zendframework": "2.5.1",
         "ext-curl": "*",
         "ext-json": "*",
-        "aws/aws-sdk-php": "2.*",
-		"sybio/image-workshop": "2.0.0",
+        "aws/aws-sdk-php": "2.8.9",
+		"sybio/image-workshop": "2.0.8",
 		"ramsey/uuid": "2.8.0",
 		"doctrine/doctrine-orm-module": "0.8.0",
 		"predis/predis": "1.*",
-		"guzzlehttp/guzzle": "5.0.1",
 		"swearjar/swearjar": "*"
-    }
+    },
+    "config": {
+		"github-oauth": {
+		  "github.com": "674d012ccb6dad72d37948e137bd659d91477360"
+		}
+	}
+
 }

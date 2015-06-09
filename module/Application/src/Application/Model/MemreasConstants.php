@@ -17,8 +17,9 @@ class MemreasConstants {
 	const WEB_URL = "https://fe.memreas.com/";
 	const ORIGINAL_URL = "https://memreasdev-wsj.memreas.com/";
 	const MEDIA_URL = "https://memreasdev-wsj.memreas.com/?action=addmediaevent";
+	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com/";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
-	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com";
 	
 	// Redis section
 	const REDIS_SERVER_ENDPOINT = "54.204.57.197"; //ubuntu standalone for redis 2.8.9 version

@@ -159,7 +159,7 @@ class IndexController extends AbstractActionController {
 		return $data = $response->getBody ( true );
 	}
 	public function indexAction() {
-		// error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+Mlog::addone(__CLASS__.__METHOD__,'...');			
 		// Checking headers for cookie info
 		 $headers = apache_request_headers ();
 		 foreach ( $headers as $header => $value ) {
@@ -1478,11 +1478,11 @@ Mlog::addone('$actionname',$actionname);
 				'makepayout',
 				'getdiskusage' 
 		);
-Mlog::addone(__CLASS__.__METHOD__.'requiresSecureAction($actionname)',$actionname);
 		if (in_array ( $actionname, $public )) {
 Mlog::addone('Inside else in_array actionname ->',$actionname);
 			return false;
 		}
+Mlog::addone(__CLASS__.__METHOD__.'requiresSecureAction($actionname)',$actionname);
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession) {

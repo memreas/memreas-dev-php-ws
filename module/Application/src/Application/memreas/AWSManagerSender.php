@@ -18,11 +18,8 @@ class AWSManagerSender {
 	private $s3 = null;
 	private $bucket = null;
 	private $sqs = null;
-	private $sns = null;
 	private $ses = null;
-	private $topicArn = null;
-	private $elasticache = null;
-	private $awsTranscode = null;
+	private $url = null;
 	private $service_locator = null;
 	private $dbAdapter = null;
 	public function __construct($service_locator) {
@@ -40,17 +37,28 @@ class AWSManagerSender {
 		// Set the bucket
 		$this->bucket = MemreasConstants::S3BUCKET;
 		
-		// Fetch the SNS class
-		$this->sns = $this->aws->get ( 'sns' );
-		
 		// Fetch the SQS class
 		$this->sqs = $this->aws->get ( 'sqs' );
 		
 		// Fetch the SES class
 		$this->ses = $this->aws->get ( 'ses' );
 		
-		// Set the topicArn
-		$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
+		// Set the backend url
+		$this->url = MemreasConstants::MEMREAS_TRANSCODE_URL;
+	}
+	public function fetchXML($action, $json) {
+		$guzzle = new Client ();
+		
+Mlog::addone ( '$this->url', $this->url );
+Mlog::addone ( '$action', $action );
+Mlog::addone ( '$json', $json );
+		$request = $guzzle->post ( $this->url, null, array (
+				'action' => $action,
+				'json' => $json 
+		) );
+		$response = $request->send ();
+Mlog::addone ( '$response', $response );
+		return $data = $response->getBody ( true );
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;
@@ -60,7 +68,15 @@ class AWSManagerSender {
 		
 		try {
 			
-			if (MemreasConstants::MEMREAS_TRANSCODER) {
+			if ((MemreasConstants::MEMREAS_TRANSCODER) && (MemreasConstants::MEMREAS_TRANSCODE_URL)) {
+				/*
+				 * Publish to web server here
+				 */
+				Mlog::addone ( 'Publishing to MemreasConstants::MEMREAS_TRANSCODE_URL', MemreasConstants::MEMREAS_TRANSCODE_URL );
+				Mlog::addone ( 'json', $json );
+				$result = $this->fetchXML ( 'transcode', $json );
+				Mlog::addone ( '$result', $result );
+			} else if (MemreasConstants::MEMREAS_TRANSCODER) {
 				/*
 				 * Publish to worker tier here
 				 */
@@ -69,14 +85,7 @@ class AWSManagerSender {
 						'MessageBody' => $json 
 				) );
 				Mlog::addone ( 'Just published to MemreasConstants::QUEUEURL', MemreasConstants::QUEUEURL );
-				Mlog::addone ( 'json' , $json );
-			} else {
-				/* - publish to topic here */
-				$result = $this->sns->publish ( array (
-						'TopicArn' => $this->topicArn,
-						'Message' => $json,
-						'Subject' => 'snsProcessMediaPublish' 
-				) );
+				Mlog::addone ( 'json', $json );
 			}
 		} catch ( \Exception $e ) {
 			error_log ( "Caught exception: -------> " . $e->getMessage () . PHP_EOL );
@@ -128,9 +137,8 @@ class AWSManagerSender {
 						'Subject' => array (
 								// Data is required
 								'Data' => $subject 
-						)
+						),
 						// 'Charset' => 'iso-8859-1'
-						,
 						// Body is required
 						'Body' => array (
 								'Text' => array (

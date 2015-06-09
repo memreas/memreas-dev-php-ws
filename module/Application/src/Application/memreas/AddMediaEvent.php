@@ -315,7 +315,7 @@ class AddMediaEvent {
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
 					$response = $aws_manager->snsProcessMediaPublish ( $message_data );
 					
-					if ($response == 1) {
+					if ($response) {
 						$status = 'Success';
 						$message = "Media Successfully add";
 					} else

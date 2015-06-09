@@ -73,9 +73,9 @@ class ReTransCoder {
 					$response = $aws_manager->snsProcessMediaPublish ( $message_data );
 					Mlog::addone ( '$response', $response );
 					
-					if ($response == 1) {
+					if ($response) {
 						$status = 'Success';
-						$message = "Media Successfully add";
+						$message = "Media successfully added for retranscode";
 					} else {
 						throw new \Exception ( 'Error In snsProcessMediaPublish' );
 					}
