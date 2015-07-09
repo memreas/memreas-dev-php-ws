@@ -336,6 +336,7 @@ class AddMediaEvent {
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "<media_id>$media_id</media_id>";
+		$xml_output .= "<s3file_name>$s3file_name</s3file_name>";
 		$xml_output .= "</addmediaeventresponse>";
 		$xml_output .= "</xml>";
 		ob_clean ();

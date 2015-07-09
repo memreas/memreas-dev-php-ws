@@ -180,14 +180,10 @@ Mlog::addone(__CLASS__.__METHOD__,'...');
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
 			$_POST ['xml'] = $message_data ['xml'];
-Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST [json]',$_REQUEST ['action']);			
-Mlog::addone(__CLASS__.__METHOD__.'$actionname',$actionname);			
 		} else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
-Mlog::addone(__CLASS__.__METHOD__.'$_REQUEST ["action"]',$_REQUEST ["action"]);			
 			$message_data ['xml'] = '';
 		}
-Mlog::addone(__CLASS__.__METHOD__,$_POST ['xml']);			
 		/**
 		 * Setup save handler
 		 */

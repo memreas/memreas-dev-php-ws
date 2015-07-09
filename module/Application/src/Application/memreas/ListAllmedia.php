@@ -20,7 +20,7 @@ class ListAllmedia {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
-		// error_log("ListAllmedia.exec xml ---> " . $_POST['xml'] . PHP_EOL);
+		Mlog::addone(__CLASS__ . __METHOD__ . '::xml', $_POST['xml']);
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = ' ';
 		$containt = ' ';
@@ -169,34 +169,11 @@ class ListAllmedia {
 					$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080ps3path><![CDATA[" . $path . "]]></media_url_1080ps3path>" : '';
 
 					// transcode status
-					$transcode_status = isset ( $json_array ['S3_files'] ['transcode_status'] ) ? $json_array ['S3_files'] ['transcode_status'] : '';
-					$xml_output .= isset ( $json_array ['S3_files'] ['transcode_status'] ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status>0</media_transcode_status>";
+					//$transcode_status = isset ( $json_array ['S3_files'] ['transcode_status'] ) ? $json_array ['S3_files'] ['transcode_status'] : '';
+					//$xml_output .= isset ( $json_array ['S3_files'] ['transcode_status'] ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status>0</media_transcode_status>";
+					$transcode_status = $row['transcode_status'];
+					$xml_output .= isset ( $transcode_status ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status></media_transcode_status>";
 						
-					/*
-					 * if ($type == "video") {
-					 * //
-					 * // $path = isset($json_array ['S3_files'] ['web']) && !empty($json_array ['S3_files'] ['web']) ? $json_array ['S3_files'] ['web'] : ""; $path = $this->url_signer->signArrayOfUrls($path); $xml_output .= isset($json_array ['S3_files'] ['web']) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
-					 * //
-					 * if (isset ( $json_array ['S3_files'] ['1080p'] ) && ! empty ( $json_array ['S3_files'] ['1080p'] )) {
-					 * // progressive download
-					 * $path = $json_array ['S3_files'] ['1080p'];
-					 * $path = $this->url_signer->signArrayOfUrls ( $path );
-					 * $xml_output .= "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>";
-					 *
-					 * // rtmp
-					 * $path = $json_array ['S3_files'] ['1080p'];
-					 * $path = $this->url_signer->signArrayOfUrls ( $path );
-					 * $xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p_rtmp><![CDATA[" . $path . "]]></media_url_1080p_rtmp>" : '';
-					 * }
-					 *
-					 * if (isset ( $json_array ['S3_files'] ['hls'] ) && ! empty ( $json_array ['S3_files'] ['hls'] )) {
-					 * $path = $json_array ['S3_files'] ['hls'];
-					 * $path = $this->url_signer->signHlsUrl ( $path );
-					 * $xml_output .= "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>";
-					 * }
-					 * }
-					 */
-					
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					if (isset ( $data->listallmedia->metadata )) {
 						$xml_output .= "<metadata><![CDATA[" . $row ['metadata'] . "]]></metadata>";
@@ -208,7 +185,7 @@ class ListAllmedia {
 					$xml_output .= "</event_media_video_thum>";
 					
 					/*
-					 * 5-SEP-2014 JM Change to allow for multiple thumbnails in response sends back simple json encoded array
+					 * Allow for multiple thumbnails in response sends back simple json encoded array
 					 */
 					$xml_output .= "<media_url_79x80><![CDATA[";
 					$xml_output .= $this->url_signer->signArrayOfUrls ( $url79x80 );
@@ -236,17 +213,17 @@ class ListAllmedia {
 			// If has profile image but has no more media
 			if (! $checkHasMedia) {
 				$xml_output = str_replace ( array (
-						'<status>Success</status>',
-						'<message>Media List</message>' 
+						'<status>success</status>',
+						'<message>media list</message>' 
 				), array (
-						'<status>Failure</status>',
+						'<status>failure</status>',
 						'<message>No Record found for this Event</message>' 
 				), $xml_output );
 			}
 		}
 		
 		if ($error_flag) {
-			$xml_output .= "<status>Failure</status>";
+			$xml_output .= "<status>failure</status>";
 			$xml_output .= "<user_id></user_id>";
 			$xml_output .= "<event_id>" . $event_id . "</event_id>";
 			$xml_output .= "<message>$message</message>";
@@ -259,7 +236,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		// error_log ( "ListAllmedia.exec xml_output ---> " . $xml_output . PHP_EOL );
+		Mlog::addone('$xml_output', $xml_output);
 	}
 }
 
