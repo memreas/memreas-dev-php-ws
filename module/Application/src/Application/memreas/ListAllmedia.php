@@ -118,20 +118,21 @@ class ListAllmedia {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
 						$type = "audio";
 						continue;
-					} else
+					} else {
 						$type = "Type not Mentioned";
+					}
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : $json_array ['S3_files'] ['path'];
 					$media_name = basename ( $json_array ['S3_files'] ['path'] );
 					// Prefix added for matching and sync...
 					$media_name_prefix = pathinfo ( $media_name )['filename'];
-					if (isset ( $json_array ['local_filenames'] ['device'] )) {
-						$device = ( array ) $json_array ['local_filenames'] ['device'];
-					} else {
-						$device = array ();
-					}
-					if (in_array ( $user_id . '_' . $device_id, $device )) {
-						$is_download = 1;
-					}
+					
+					//set device_id and type
+					$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
+					$device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
+						
+					//if (in_array ( $user_id . '_' . $device_id, $device )) {
+					//	$is_download = 1;
+					//}
 					
 					// output xml
 					$xml_output .= "<media>";
@@ -141,6 +142,10 @@ class ListAllmedia {
 					$date = \DateTime::createFromFormat ( $format, $row ['create_date'] );
 					$xml_output .= "<media_date>" . $date->getTimestamp () . "</media_date>";
 					
+					
+					$xml_output .= "<device_id>" . $device_id . "</device_id>";
+					$xml_output .= "<device_type>" . $device_type . "</device_type>";
+											
 					// main
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					

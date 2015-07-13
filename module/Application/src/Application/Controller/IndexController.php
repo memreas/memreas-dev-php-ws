@@ -24,6 +24,7 @@ use Application\memreas\Login;
 use Application\memreas\Registration;
 use Application\memreas\AddComment;
 use Application\memreas\AddMediaEvent;
+use Application\memreas\GenerateMediaId;
 use Application\memreas\ChkUname;
 use Application\memreas\LikeMedia;
 use Application\memreas\MediaInappropriate;
@@ -294,6 +295,9 @@ Mlog::addone('$actionname',$actionname);
 				/*
 				 * Cache approach - read operation - pass for now
 				 */
+			} else if ($actionname == "generatemediaid") {
+			    $generatemediaid = new GenerateMediaId ( $message_data, $memreas_tables, $this->getServiceLocator () );
+			    $result = $generatemediaid->exec ();
 			} else if ($actionname == "addmediaevent") {
 				// error_log("inside indexAction addmediaevent ...".$callback.PHP_EOL);
 				
