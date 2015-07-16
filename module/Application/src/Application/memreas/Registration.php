@@ -347,6 +347,7 @@ class Registration {
 			$xml_output .= "<message>$message</message>";
 			$xml_output .= "<userid>" . $user_id . "</userid>";
 			$xml_output .= "<email_verification_url><![CDATA[" . $meta_arr ['user'] ['email_verification_url'] . "]]></email_verification_url>";
+			$xml_output .= "<sid>".session_id()."</sid>";
 			$xml_output .= "</registrationresponse>";
 			$xml_output .= "</xml>";
 		} catch ( \Exception $exc ) {
@@ -373,6 +374,7 @@ class Registration {
 		$this->profile_photo = ! empty ( $filename ) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
 		// return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
 	} // end exec()
+	
 	function createUserCache() {
 		error_log ( "Inside function createUserCache()" . PHP_EOL );
 		$qb = $this->dbAdapter->createQueryBuilder ();
