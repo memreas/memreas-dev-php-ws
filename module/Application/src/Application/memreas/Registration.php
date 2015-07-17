@@ -23,11 +23,13 @@ class Registration {
 	public $user_id;
 	public $profile_photo;
 	protected $registerDevice;
-	public function __construct($message_data, $memreas_tables, $service_locator) {
+	protected $sessHandler;
+	public function __construct($sessHandler, $message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->sessHandler = $sessHandler;
 		$this->addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $service_locator );
 		$this->registerDevice = new RegisterDevice ( $message_data, $memreas_tables, $service_locator );
 		$this->url_signer = new MemreasSignedURL ();
@@ -324,15 +326,14 @@ class Registration {
 						$subject = 'Welcome to memreas';
 						if (empty ( $aws_manager ))
 							$aws_manager = new AWSManagerSender ( $this->service_locator );
-							/*
-						 * 9-OCT-2014 debugging perf tester
-						 */
 						if (MemreasConstants::SEND_EMAIL) {
 							$aws_manager->sendSeSMail ( $to, $subject, $html ); // Active this line when app go live
 						}
 						$this->status = $status = 'Success';
 						$message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
 						
+						
+						$this->sessHandler->startSessionWithUID($user_id, $username);
 						error_log ( "Finished..." . PHP_EOL );
 					}
 				}
@@ -347,9 +348,10 @@ class Registration {
 			$xml_output .= "<message>$message</message>";
 			$xml_output .= "<userid>" . $user_id . "</userid>";
 			$xml_output .= "<email_verification_url><![CDATA[" . $meta_arr ['user'] ['email_verification_url'] . "]]></email_verification_url>";
-			$xml_output .= "<sid>".session_id()."</sid>";
+			$xml_output .= "<sid>" . session_id ( ) . "</sid>";
 			$xml_output .= "</registrationresponse>";
 			$xml_output .= "</xml>";
+			Mlog::addone('$xml_output',$xml_output);
 		} catch ( \Exception $exc ) {
 			$status = 'failure';
 			$message = $exc->getMessage ();
