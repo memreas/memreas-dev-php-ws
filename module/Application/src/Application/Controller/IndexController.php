@@ -49,9 +49,9 @@ use Application\memreas\AddFriendtoevent;
 use Application\memreas\ViewMediadetails;
 use Application\memreas\snsProcessMediaPublish;
 use Application\memreas\Memreastvm;
+use Application\memreas\FetchPreSignedUploadURL;
 use Application\memreas\Mlog;
 use Application\memreas\MemreasSignedURL;
-use Application\memreas\UploadMedia;
 use Application\memreas\UploadAdvertisement;
 use Application\memreas\AddNotification;
 use Application\memreas\ChangePassword;
@@ -149,15 +149,21 @@ class IndexController extends AbstractActionController {
 		return $xml->asXML ();
 	}
 	public function fetchXML($action, $xml) {
-		$guzzle = new Client ();
+		$guzzle = new \GuzzleHttp\Client ();
+		$response = $guzzle->post ( $this->url, [ 
+				'form_params' => [ 
+						'action' => $action,
+						'cache_me' => true,
+						'xml' => $xml 
+				] 
+		] );
 		
-		$request = $guzzle->post ( $this->url, null, array (
-				'action' => $action,
-				'cache_me' => true,
-				'xml' => $xml 
-		) );
-		$response = $request->send ();
-		return $data = $response->getBody ( true );
+		// $res = $client->get('https://api.github.com/user', ['auth' => ['user', 'pass']]);
+		// echo $res->getStatusCode();
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . 'fetchXML::$response::', $response->getBody () );
+		
+		return $response->getBody ();
 	}
 	public function indexAction() {
 		Mlog::addone ( __CLASS__ . __METHOD__, '...' );
@@ -167,6 +173,7 @@ class IndexController extends AbstractActionController {
 			error_log ( "WS header: $header :: value: $value" . PHP_EOL );
 		}
 		// End Checking headers for cookie info
+		Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST', $_POST );
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -185,7 +192,6 @@ class IndexController extends AbstractActionController {
 		} else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		}
 		Mlog::addone ( __CLASS__ . __METHOD__ . '$actionname', $actionname );
 		/**
@@ -199,8 +205,8 @@ class IndexController extends AbstractActionController {
 		Mlog::addone ( __CLASS__ . __METHOD__ . 'before $this->requiresSecureAction ( $actionname )', $actionname );
 		
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic))  {
-			//do nothing - profile pic upload for registration
+		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
+			// do nothing - profile pic upload for registration
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		}
@@ -769,21 +775,6 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "memreas_tvm") {
 				$memreastvm = new Memreastvm ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $memreastvm->exec ();
-			} else if ($actionname == "uploadmedia") {
-				/*
-				 * TODO:
-				 * See
-				 * if
-				 * this
-				 * is
-				 * used
-				 * -
-				 * if
-				 * not
-				 * remove
-				 */
-				$uploadmedia = new UploadMedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $uploadmedia->exec ();
 			} else if ($actionname == "uploadadvertisement") {
 				$uploadadvertisement = new UploadAdvertisement ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $uploadadvertisement->exec ();
@@ -792,21 +783,12 @@ class IndexController extends AbstractActionController {
 				$result = $addNotification->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addNotification->user_id );
-				
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidate
-				 * listnotification
-				 */
-				// $this->redis->invalidateNotifications
-				// (
-				// $uid
-				// );
+				//
+				// Cache approach
+				// - write operation
+				// - invalidate listnotification
+				//
+				// $this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $changepassword->exec ();
@@ -815,20 +797,10 @@ class IndexController extends AbstractActionController {
 				$result = $retranscoder->exec ();
 			} else if ($actionname == "listnotification") {
 				
-				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
-				 */
+				//
+				// Cache Approach:
+				// Check cache first if not there then fetch and cache...
+				//
 				$data = ! empty ( $_POST ['xml'] ) ? simplexml_load_string ( $_POST ['xml'] ) : null;
 				$user_id = $data->listnotification->user_id;
 				$cache_id = ! empty ( $data ) ? trim ( $data->listnotification->user_id ) : null;
@@ -849,26 +821,17 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = $updatenotification->user_id;
 				
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidate
-				 * listnotification
-				 */
-				// $this->redis->invalidateNotifications
-				// (
-				// $uid
-				// );
+				//
+				// Cache approach
+				// - write operation
+				// - invalidate listnotification
+				//
+				// $this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "findtag") {
 				
-				/*
-				 * fetch
-				 * parameters
-				 */
+				//
+				// fetch parameters
+				//
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$tag = (trim ( $data->findtag->tag ));
 				$user_id = (trim ( $data->findtag->user_id ));
@@ -876,12 +839,9 @@ class IndexController extends AbstractActionController {
 				$a = $tag [0];
 				$search = substr ( $tag, 1 );
 				
-				/*
-				 * set
-				 * paging
-				 * and
-				 * limits
-				 */
+				//
+				// set paging and limits
+				//
 				$page = trim ( $data->findtag->page );
 				if (empty ( $page )) {
 					$page = 1;
@@ -907,41 +867,20 @@ class IndexController extends AbstractActionController {
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$user_ids = array ();
-						// if
-						// ((MemreasConstants::REDIS_SERVER_USE)
-						// &&
-						// (!
-						// MemreasConstants::REDIS_SERVER_SESSION_ONLY))
+						// if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY))
 						// {
 						if (MemreasConstants::REDIS_SERVER_USE) {
 							// Redis
-							// -
-							// this
-							// codes
-							// fetches
-							// usernames
-							// by
-							// the
-							// search
-							// term
-							// then
-							// gets
-							// the
-							// hashes
+							// - this code fetches usernames by the
+							// search term then gets the hashes
 							$usernames = $this->redis->findSet ( '@person', $search );
-							// remove
-							// self
-							// and
-							// update
-							// indices
+							// remove self and update indices
 							$index = array_search ( $_SESSION ['username'], $usernames );
 							unset ( $usernames [$index] );
 							$usernames = array_values ( $usernames );
 							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
 							
-							// formatting
-							// for
-							// response...
+							// formatting for response...
 							$user_ids = array ();
 							$search_array_values = array_values ( $person_meta_hash );
 							$search_result = array ();
@@ -952,129 +891,44 @@ class IndexController extends AbstractActionController {
 							}
 							$rc = count ( $search_result );
 						} else {
-							// error_log
-							// (
-							// "@
-							// fetch
-							// get
-							// regindex..."
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "@ fetch get regindex..." . PHP_EOL );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
-							// Remove
-							// current
-							// user
-							// All
-							// entries
-							// in
-							// this
-							// hash
-							// match
-							// the
-							// search
-							// key
+							// Remove current user All entries in this
+							// hash match the search key
 							foreach ( $person_meta_hash as $username => $usermeta ) {
 								// $meta_arr
 								// =
 								// json_decode($usermeta,true);
 								$meta_arr = $usermeta;
 								$uid = $meta_arr ['user_id'];
-								// Remove
-								// existing
-								// user
-								// error_log
-								// (
-								// "username"
-								// .
-								// $username
-								// .
-								// "
-								// ---
-								// uid-->"
-								// .
-								// $uid
-								// .
-								// PHP_EOL
-								// );
+								// Remove existing user
+								// error_log ( "username" . $username . " --- uid-->" . $uid . PHP_EOL );
 								if ($uid == $user_id)
 									continue;
-								
-								/**
-								 * TODO:
-								 * 6-NOV-2014
-								 * Paging
-								 * isn't
-								 * working
-								 * correctly?
-								 * Removing
-								 * for
-								 * now...
-								 */
-									// if
-									// ($rc
-									// >=
-									// $from
-									// &&
-									// $rc
-									// <
-									// ($from
-									// +
-									// $limit))
-									// {
-									// error_log
-									// (
-									// "meta_arr
-									// ['username']--->"
-									// .
-									// $meta_arr
-									// ['username']
-									// .
-									// "
-									// ---
-									// search-->"
-									// .
-									// $search
-									// .
-									// PHP_EOL
-									// );
+									
+									//
+									// TODO: Fix Paging
+									//
+									// if ($rc >= $from && $rc < ($from + $limit)) {
+									// error_log ( "meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" . $search . PHP_EOL );
 								if (stripos ( $meta_arr ['username'], $search ) !== false) {
 									$meta_arr ['username'] = '@' . $meta_arr ['username'];
 									$search_result [] = $meta_arr;
 									$user_ids [] = $uid;
-									// error_log
-									// (
-									// "user_ids-->"
-									// .
-									// json_encode
-									// (
-									// $user_ids
-									// )
-									// .
-									// PHP_EOL
-									// );
+									// error_log ( "user_ids-->" . json_encode ( $user_ids ) . PHP_EOL );
 								}
 								// }
 								$rc += 1;
 							}
 						}
-						/**
-						 * This
-						 * section
-						 * filter
-						 * friend
-						 * requests
-						 * sent...
-						 */
-						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
 						
-						// This
-						// query
-						// fetches
-						// user's
-						// friends
+						//
+						// This section filter friend requests sent...
+						//
+						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
+						// This query fetches user's friends
 						$qb = $em->createQueryBuilder ();
 						$qb->select ( 'f.friend_id,uf.user_approve' );
 						$qb->from ( 'Application\Entity\Friend', 'f' );
@@ -1084,28 +938,11 @@ class IndexController extends AbstractActionController {
 						$qb->andwhere ( "uf.user_id = '$user_id'" );
 						$qb->andwhere ( 'uf.friend_id IN (:f)' );
 						$qb->setParameter ( 'f', $user_ids );
-						// error_log
-						// (
-						// "qb->getQuery()->getSql()------>
-						// "
-						// .
-						// $qb->getQuery
-						// ()->getSql
-						// ()
-						// .
-						// PHP_EOL
-						// );
+						// error_log ( "qb->getQuery()->getSql()------> " . $qb->getQuery ()->getSql () . PHP_EOL );
 						
 						$UserFriends = $qb->getQuery ()->getResult ();
 						if ($UserFriends) {
-							// this
-							// code
-							// checks
-							// if
-							// friend
-							// request
-							// already
-							// sent...
+							// this code checks if friend request already sent...
 							$chkUserFriend = array ();
 							foreach ( $UserFriends as $ufRow ) {
 								$chkUserFriend [$ufRow ['friend_id']] = $ufRow ['user_approve'];
@@ -1119,29 +956,14 @@ class IndexController extends AbstractActionController {
 							}
 						}
 						
-						// $result['totalPage']
-						// =ceil($rc
-						// /
-						// $limit);
+						// $result['totalPage'] =ceil($rc / $limit);
 						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
-						// hide
-						// pagination
+						// hide pagination
 						
 						echo json_encode ( $result );
-						// error_log
-						// (
-						// "result------>
-						// "
-						// .
-						// json_encode
-						// (
-						// $result
-						// )
-						// .
-						// PHP_EOL
-						// );
+						// error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						
 						break;
@@ -1158,16 +980,7 @@ class IndexController extends AbstractActionController {
 						$mc = $this->redis->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
-							// error_log
-							// (
-							// "findtag
-							// empty
-							// redis
-							// ->
-							// createEventCache..."
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "findtag empty redis -> createEventCache..." . PHP_EOL );
 							
 							$mc = $eventRep->createEventCache ();
 							$this->redis->setCache ( "!event", $mc );
@@ -1182,28 +995,8 @@ class IndexController extends AbstractActionController {
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
 									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-									// error_log
-									// (
-									// "event_creator
-									// ['username']------>
-									// "
-									// .
-									// $event_creator
-									// ['username']
-									// .
-									// PHP_EOL
-									// );
-									// error_log
-									// (
-									// "event_creator
-									// ['profile_photo']------>
-									// "
-									// .
-									// $event_creator
-									// ['profile_photo']
-									// .
-									// PHP_EOL
-									// );
+									// error_log ( "event_creator ['username']------> " . $event_creator ['username'] . PHP_EOL );
+									// error_log ( "event_creator ['profile_photo']------> " . $event_creator ['profile_photo'] . PHP_EOL );
 									
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
@@ -1211,42 +1004,22 @@ class IndexController extends AbstractActionController {
 								$rc += 1;
 							}
 						}
-						// filter
-						// record
-						// !event
-						// should
-						// show
-						// public
-						// events
-						// and
-						// events
-						// you've
-						// been
-						// invited
-						// to
+						// filter record !event should show public events and
+						// events you've been invited to
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
-						// $user_id
-						// =
-						// empty($_POST['user_id'])?0:$_POST['user_id'];
+						// $user_id = empty($_POST['user_id'])?0:$_POST['user_id'];
 						
-						// Fetch
-						// friends
+						// Fetch friends
 						$qb = $em->createQueryBuilder ();
 						$qb->select ( 'ef' );
 						$qb->from ( 'Application\Entity\EventFriend', 'ef' );
 						$qb->andWhere ( 'ef.event_id IN (:e)' )->andWhere ( 'ef.friend_id =:f' );
-						// $qb->andWhere('ef.user_approve
-						// =
-						// 1');
+						// $qb->andWhere('ef.user_approve = 1');
 						$qb->setParameter ( 'f', $user_id );
 						$qb->setParameter ( 'e', $event_ids );
 						$EventFriends = $qb->getQuery ()->getArrayResult ();
 						
-						// Check
-						// if
-						// event
-						// request
-						// sent
+						// Check if event request sent
 						$chkEventFriend = array ();
 						foreach ( $EventFriends as $efRow ) {
 							$chkEventFriend [$efRow ['event_id']] = $efRow ['user_approve'];
@@ -1265,26 +1038,10 @@ class IndexController extends AbstractActionController {
 						$result ['page'] = $page;
 						$result ['totalPage'] = ceil ( $rc / $limit );
 						
-						// $result
-						// =
-						// preg_grep("/$search/",
-						// $mc);
-						// echo
-						// '<pre>';print_r($result);
+						// $result = preg_grep("/$search/", $mc); echo '<pre>';print_r($result);
 						
 						echo json_encode ( $result );
-						// error_log
-						// (
-						// "result------>
-						// "
-						// .
-						// json_encode
-						// (
-						// $result
-						// )
-						// .
-						// PHP_EOL
-						// );
+						// error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						break;
 					
@@ -1299,127 +1056,34 @@ class IndexController extends AbstractActionController {
                     	 */
 						$search_result = array ();
 						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-							// error_log
-							// (
-							// "redis
-							// hashtag
-							// fetch
-							// TODO..."
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
 							// Redis
-							// -
-							// ...
-							// error_log
-							// (
-							// "Inside
-							// findTag
-							// #
-							// for
-							// tag
-							// $search"
-							// .
-							// PHP_EOL
-							// );
+							// - ...
+							// error_log ( "Inside findTag # for tag $search" . PHP_EOL );
 							$tags_public = $this->redis->findSet ( '#hashtag', $search );
 							$tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $search );
 							$tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
-							// error_log
-							// (
-							// "Inside
-							// findTag
-							// #
-							// tags_unique--->"
-							// .
-							// json_encode
-							// (
-							// $tags_unique
-							// )
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
 							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
-							// error_log
-							// (
-							// "Inside
-							// findTag
-							// #
-							// hashtag_public_eid_hash--->"
-							// .
-							// json_encode
-							// (
-							// $hashtag_public_eid_hash
-							// )
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
 							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
-							// error_log
-							// (
-							// "Inside
-							// findTag
-							// #
-							// hashtag_friends_hash--->"
-							// .
-							// json_encode
-							// (
-							// $hashtag_friends_hash
-							// )
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
 							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
-							// $usernames
-							// =
-							// $this->redis->findSet(
-							// '@person',
-							// $search
-							// );
-							// $person_meta_hash
-							// =
-							// $this->redis->cache->hmget("@person_meta_hash",
-							// $usernames);
-							// $person_uid_hash
-							// =
-							// $this->redis->cache->hmget(
-							// '@person_uid_hash',
-							// $usernames
-							// );
-							// $user_ids
-							// =
-							// $usernames;
+							// $usernames = $this->redis->findSet( '@person', $search );
+							// $person_meta_hash = $this->redis->cache->hmget("@person_meta_hash", $usernames);
+							// $person_uid_hash = $this->redis->cache->hmget( '@person_uid_hash', $usernames );
+							// $user_ids = $usernames;
 						} else {
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							// error_log
-							// (
-							// "createDiscoverCache------>$tag"
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
 							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						}
 						
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-							// error_log
-							// (
-							// "tag------>$tag"
-							// .
-							// PHP_EOL
-							// );
-							// error_log
-							// (
-							// "cache_entry------>"
-							// .
-							// json_encode
-							// (
-							// $cache_entry
-							// )
-							// .
-							// PHP_EOL
-							// );
+							// error_log ( "tag------>$tag" . PHP_EOL );
+							// error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
 								// if
 								// ($rc
@@ -1552,15 +1216,9 @@ class IndexController extends AbstractActionController {
 						
 						if ($rc >= $from && $rc < ($from + $limit)) {
 							$er ['name'] = $er ['name'];
-							// $er['comment_count']
-							// =
-							// $eventRep->getLikeCount($eid);
-							// $er['like_count']
-							// =
-							// $eventRep->getLikeCount($eid);
-							// $er['friends']
-							// =
-							// $eventRep->getEventFriends($eid);
+							// $er['comment_count'] = $eventRep->getLikeCount($eid);
+							// $er['like_count'] = $eventRep->getLikeCount($eid);
+							// $er['friends'] = $eventRep->getEventFriends($eid);
 							$search_result [] = $er;
 						}
 						
@@ -2455,7 +2113,7 @@ class IndexController extends AbstractActionController {
 				'registration',
 				'forgotpassword',
 				'checkusername',
-				//'chkuname',
+				// 'chkuname',
 				'changepassword',
 				'verifyemailaddress',
 				'ws_tester',
@@ -2533,9 +2191,9 @@ class IndexController extends AbstractActionController {
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
 			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-				Mlog::addone ("$_SESSION [ipAddress]", $_SESSION ['ipAddress']);
-				Mlog::addone ("$currentIPAddress", $currentIPAddress);
-				Mlog::addone ( "ERROR::User IP Address has changed - logging user out!");
+				Mlog::addone ( "$_SESSION [ipAddress]", $_SESSION ['ipAddress'] );
+				Mlog::addone ( "$currentIPAddress", $currentIPAddress );
+				Mlog::addone ( "ERROR::User IP Address has changed - logging user out!" );
 				// Mlog::addone ( "_SESSION vars after sid_success",$_SESSION,);
 				return 'notlogin';
 			}
@@ -2543,7 +2201,6 @@ class IndexController extends AbstractActionController {
 			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 			}
-			
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );

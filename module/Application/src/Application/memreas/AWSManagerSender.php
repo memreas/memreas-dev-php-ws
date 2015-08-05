@@ -1,12 +1,6 @@
 <?php
 namespace Application\memreas;
-use Guzzle\Http\Client;
-use Guzzle\Http\EntityBody;
-use Aws\Common\Aws;
-use Aws\Common\Enum\Size;
-use Aws\Common\Exception\MultipartUploadException;
-use Aws\S3\Model\MultipartUpload\UploadBuilder;
-use Aws\ElasticTranscoder\ElasticTranscoderClient;
+use GuzzleHttp\Client;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 error_reporting(E_ALL & ~ E_NOTICE);
@@ -35,45 +29,38 @@ class AWSManagerSender
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get(
                 'doctrine.entitymanager.orm_default');
-        $this->aws = Aws::factory(
-                array(
-                        'key' => MemreasConstants::S3_APPKEY,
-                        'secret' => MemreasConstants::S3_APPSEC,
-                        'region' => 'us-east-1'
-                ));
+
+        //Fetch aws handle
+        $this->aws = MemreasConstants::fetchAWS();
         
         // Fetch the S3 class
-        $this->s3 = $this->aws->get('s3');
+        $this->s3 = $this->aws->createS3();
+        
+        // Fetch the Ses class
+        $this->ses = $this->aws->createSqs();
+        
+        // Fetch the Ses class
+        $this->ses = $this->aws->createSes();
+        
         
         // Set the bucket
         $this->bucket = MemreasConstants::S3BUCKET;
-        
-        // Fetch the SQS class
-        $this->sqs = $this->aws->get('sqs');
-        
-        // Fetch the SES class
-        $this->ses = $this->aws->get('ses');
         
         // Set the backend url
         $this->url = MemreasConstants::MEMREAS_TRANSCODE_URL;
     }
 
-    public function fetchXML ($action, $json)
-    {
-        $guzzle = new Client();
-        
-        Mlog::addone('$this->url', $this->url);
-        Mlog::addone('$action', $action);
-        Mlog::addone('$json', $json);
-        $request = $guzzle->post($this->url, null, 
-                array(
-                        'action' => $action,
+	public function fetchXML($action, $json) {
+		$guzzle = new \GuzzleHttp\Client ();
+		$response = $guzzle->post ( $this->url, [ 
+				'form_params' => [ 
+						'action' => $action,
                         'json' => $json
-                ));
-        $response = $request->send();
-        Mlog::addone('$response', $response);
-        return $data = $response->getBody(true);
-    }
+				] 
+		] );
+		
+		return $response->getBody ();
+	}
 
     public function snsProcessMediaPublish ($message_data)
     {

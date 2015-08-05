@@ -255,6 +255,13 @@ echo "user_id ----> " . $user_id;
 					            '<message></message>'+
 					            '</feedback>'+
 					            '</xml>';	
+			var fetchpresigneduploadurl = '<xml>'+ '<username>jmeah2</username>'+
+					            '<fetchpresigneduploadurl>'+
+					            '<credentials_only>1</credentials_only>'+
+					            '<filename></filename>'+
+					            '</fetchpresigneduploadurl>'+
+					            '</xml>';	
+					            
             var findtag = '<xml>'+ 
 					         '<username>jmeah2</username>'+
 					            '<findtag>'+
@@ -665,7 +672,8 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "deletephoto") { xml = deletephoto; }	
                     else if ($("#input_action").val() == "download") { xml = download; }	
                     else if ($("#input_action").val() == "editevent") { xml = editevent; }	
-                    else if ($("#input_action").val() == "feedback") { xml = feedback; }	
+                    else if ($("#input_action").val() == "feedback") { xml = feedback; }
+                    else if ($("#input_action").val() == "fetchpresigneduploadurl") { xml = fetchpresigneduploadurl; }
                     else if ($("#input_action").val() == "findtag") { xml = findtag; }	
                     else if ($("#input_action").val() == "forgotpassword") { xml = forgotpassword; }	
                     else if ($("#input_action").val() == "generatemediaid") { xml = generatemediaid; }	
@@ -784,6 +792,7 @@ echo "user_id ----> " . $user_id;
 								<option>download</option>
 								<option>editevent</option>
 								<option>feedback</option>
+								<option>fetchpresigneduploadurl</option>
 								<option>findtag</option>
 								<option>forgotpassword</option>
 								<option>generatemediaid</option>
