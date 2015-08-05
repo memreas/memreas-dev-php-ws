@@ -1,8 +1,33 @@
 <?php
+// memreas llc
+// Select portions of software below utilize code found @ https://github.com/eddturtle/direct-upload-s3-signaturev4
+// as such including license for software utilized.  License is bounded to this file only.
+
+// The MIT License (MIT)
+
+// Copyright (c) 2015 Edd Turtle
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 
 namespace Application\memreas;
 
-use Aws;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
@@ -16,6 +41,7 @@ class Memreastvm {
 	protected $s3;
 	protected $sts;
 	protected $iam;
+	protected $encryption;
 	public function __construct() {
 		/**
 		 * Initialize aws
@@ -55,13 +81,7 @@ class Memreastvm {
 				$header = "Content-type: text/xml";
 			}
 			
-			// Create a credentials object using temporary credentials retrieved from STS
-			// $sessionToken = $this->sts->getSessionToken ( array (
-			// 'DurationSeconds' => 3600
-			// ) );
-			
 			// create singature data
-			// $signature_data = $this->getSignature ( $sessionToken ['Credentials'] ['AccessKeyId'], $sessionToken ['Credentials'] ['SecretAccessKey'], $sessionToken ['Credentials'] ['Expiration'] );
 			$signature_data = $this->getSignature ( MemreasConstants::S3_APPKEY, MemreasConstants::S3_APPSEC, MemreasConstants::S3_REGION );
 			
 			// provide media_id
@@ -109,7 +129,7 @@ class Memreastvm {
 				$requestType 
 		];
 		$credentials = implode ( '/', $scope );
-		
+		$encryption = 'AES256';
 		$policy = [ 
 				'expiration' => gmdate ( 'Y-m-d\TG:i:s\Z', strtotime ( '+6 hours' ) ),
 				'conditions' => [ 

@@ -158,11 +158,6 @@ class IndexController extends AbstractActionController {
 				] 
 		] );
 		
-		// $res = $client->get('https://api.github.com/user', ['auth' => ['user', 'pass']]);
-		// echo $res->getStatusCode();
-		
-		Mlog::addone ( __CLASS__ . __METHOD__ . 'fetchXML::$response::', $response->getBody () );
-		
 		return $response->getBody ();
 	}
 	public function indexAction() {
