@@ -163,6 +163,9 @@ class Memreastvm {
 						],
 						[ 
 								'x-amz-expires' => $expires 
+						], 
+						[ 
+								'x-amz-server-side-encryption' => $encryption 
 						] 
 				] 
 		];
