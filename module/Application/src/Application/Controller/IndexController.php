@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
@@ -24,6 +17,7 @@ use Application\memreas\Login;
 use Application\memreas\Registration;
 use Application\memreas\AddComment;
 use Application\memreas\AddMediaEvent;
+use Application\memreas\FetchCopyRight;
 use Application\memreas\GenerateMediaId;
 use Application\memreas\ChkUname;
 use Application\memreas\LikeMedia;
@@ -322,6 +316,9 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - read operation - pass
 				 * for now
 				 */
+			} else if ($actionname == "fetchcopyright") {
+				$fetchcopyright = new FetchCopyRight ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $fetchcopyright->exec ();
 			} else if ($actionname == "generatemediaid") {
 				$generatemediaid = new GenerateMediaId ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $generatemediaid->exec ();
