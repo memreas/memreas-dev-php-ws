@@ -146,10 +146,10 @@ echo "user_id ----> " . $user_id;
 					            '<location>{"latitude": "my_latitude","longitude": "my_longitude"}</location>'+
 					            '</addmediaevent>'+
 					            '</xml>';	
-			var fetchcopyright = '<xml>'+
+			var fetchcopyrightbatch = '<xml>'+
             					'<username>jmeah7</username>'+
-					            '<fetchcopyright>'+
-					            '</fetchcopyright>'+
+					            '<fetchcopyrightbatch>'+
+					            '</fetchcopyrightbatch>'+
 					            '</xml>';		
 			var generatemediaid = '<xml>'+
             					'<username>jmeah7</username>'+
@@ -678,7 +678,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "download") { xml = download; }	
                     else if ($("#input_action").val() == "editevent") { xml = editevent; }	
                     else if ($("#input_action").val() == "feedback") { xml = feedback; }
-                    else if ($("#input_action").val() == "fetchcopyright") { xml = fetchcopyright; }
+                    else if ($("#input_action").val() == "fetchcopyrightbatch") { xml = fetchcopyrightbatch; }
                     else if ($("#input_action").val() == "fetchpresigneduploadurl") { xml = fetchpresigneduploadurl; }
                     else if ($("#input_action").val() == "findtag") { xml = findtag; }	
                     else if ($("#input_action").val() == "forgotpassword") { xml = forgotpassword; }
@@ -798,7 +798,7 @@ echo "user_id ----> " . $user_id;
 								<option>download</option>
 								<option>editevent</option>
 								<option>feedback</option>
-								<option>fetchcopyright</option>
+								<option>fetchcopyrightbatch</option>
 								<option>fetchpresigneduploadurl</option>
 								<option>findtag</option>
 								<option>forgotpassword</option>

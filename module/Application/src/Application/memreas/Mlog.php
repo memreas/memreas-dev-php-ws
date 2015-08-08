@@ -27,9 +27,11 @@ class Mlog {
 			$obj = 'object is empty';
 		} else if (is_array($obj)) {
 			$obj = json_encode($obj);
+		} else if (is_object($obj)) {
+		    $obj = print_r($obj, true);
 		}
 
-		self::add($objname.'---->'.$obj, $opt);
+		self::add($objname.'::'.$obj, $opt);
 		self::out();
 	}
 	

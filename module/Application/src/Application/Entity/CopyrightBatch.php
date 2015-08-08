@@ -5,24 +5,18 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A Copyright.
+ * A CopyrightBatch.
  *
  * @ORM\Entity
- * @ORM\Table(name="copyright")
+ * @ORM\Table(name="copyright_batch")
  */
-class Copyright {
+class CopyrightBatch {
 	
 	/**
 	 * @var string
 	 *
 	 * @ORM\Id
-	 * @ORM\Column(type="string",name="copyright_id");
-	 */
-	protected $copyright_id;
-	
-	/**
-	 * 
-	 * @var string @ORM\Column(name="copyright_batch_id", type="string", length=255, nullable=false)
+	 * @ORM\Column(type="string",name="copyright_batch_id");
 	 */
 	protected $copyright_batch_id;
 	
@@ -33,23 +27,17 @@ class Copyright {
 	protected $user_id;
 	
 	/**
-	 *
-	 * @var string @ORM\Column(name="media_id", type="string", length=255, nullable=false)
-	 */
-	protected $media_id;
-	
-	/**
-	 *
-	 * @var boolean @ORM\Column(name="validated", type="boolean", nullable=false)
-	 */
-	protected $validated = 0;
-	
-	/**
      *
      * @var string @ORM\Column(name="metadata", type="text", nullable=false)
      */
     private $metadata;
 
+	/**
+	 *
+	 * @var boolean @ORM\Column(name="remaining", type="integer", nullable=false)
+	 */
+	protected $remaining;
+	
     /**
 	 *
 	 * @var string @ORM\Column(name="create_date", type="string", length=255, nullable=false)
