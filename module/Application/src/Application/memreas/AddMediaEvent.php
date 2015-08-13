@@ -34,6 +34,7 @@ class AddMediaEvent {
 		$is_audio = false;
 		try {
 			$media_id = '';
+			Mlog::addone ( '$_POST [xml]', $_POST ['xml'] );
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -60,8 +61,8 @@ class AddMediaEvent {
 				$s3url = addslashes ( trim ( $data->addmediaevent->s3url ) );
 				$s3file_name = addslashes ( trim ( $data->addmediaevent->s3file_name ) );
 				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) )['filename'];
-				$location = json_decode ( $data->addmediaevent->location );
-				$email = isset ( $data->addmediaevent->email ) ? addslashes ( trim ( $data->addmediaevent->email ) ) : '';
+				$location = ( string ) $data->addmediaevent->location;
+				$copyright = isset ( $data->addmediaevent->copyright ) ? ( string ) $data->addmediaevent->copyright : '';
 			} else {
 				// Old code uses POST
 				// Fetch user_id
@@ -82,20 +83,9 @@ class AddMediaEvent {
 				$content_type = isset ( $_POST ['content_type'] ) ? $_POST ['content_type'] : '';
 				$s3file_name = isset ( $_POST ['s3file_name'] ) ? $_POST ['s3file_name'] : '';
 				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) )['filename'];
-				$email = isset ( $_POST ['email'] ) ? $_POST ['email'] : '';
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
-				
-				error_log ( "event_id ---> " . $event_id . PHP_EOL );
-				error_log ( "media_id ---> " . $media_id . PHP_EOL );
-				error_log ( "is_profile_pic ---> " . $is_profile_pic . PHP_EOL );
-				error_log ( "is_server_image ---> " . $is_server_image . PHP_EOL );
-				error_log ( "content_type ---> " . $content_type . PHP_EOL );
-				error_log ( "s3file_name ---> " . $s3file_name . PHP_EOL );
-				error_log ( "s3url ---> " . $s3url . PHP_EOL );
-				error_log ( "email ---> " . $email . PHP_EOL );
-				// error_log ( "location ---> " . $location . PHP_EOL ); //
-				// object json..
+				$copyright = isset ( $_POST ['copyright'] ) ? $_POST ['copyright'] : '';
 			}
 			$time = time ();
 			
@@ -103,7 +93,7 @@ class AddMediaEvent {
 			// dont upload file if server image just insert into event_media
 			// table
 			// ////////////////////////////////////////////////////////////////////
-			if ($is_server_image) {
+			if ($is_server_image === 1) {
 				error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
 				if (! isset ( $media_id ) || empty ( $media_id )) {
 					throw new \Exception ( 'Error : media_id is empty' );
@@ -116,6 +106,12 @@ class AddMediaEvent {
 				$status = 'Success';
 				$message = "Media Successfully add";
 			} else {
+				//
+				// New Media - insert media
+				//
+				Mlog::addone ( 'insert::', 'new media' );
+				Mlog::addone ( '$copyright', $copyright );
+				
 				// ///////////////////////////////////////////////
 				// insert into media and event media
 				// ///////////////////////////////////////////////
@@ -134,58 +130,32 @@ class AddMediaEvent {
 				// ///////////////////////////////////////
 				$file_type = explode ( '/', $content_type );
 				
-				if (strcasecmp ( $file_type [0], 'image' ) == 0) {
-					$json_array = array ();
-					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
-					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
-					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
-					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
-					$json_array ['S3_files'] ['path'] = $s3file;
-					$json_array ['S3_files'] ['full'] = $s3file;
-					$json_array ['S3_files'] ['location'] = $location;
-					$json_array ['S3_files'] ['device'] ['device_id'] = $device_id;
-					$json_array ['S3_files'] ['device'] ['device_type'] = $device_type;
-					$json_array ['S3_files'] ['file_type'] = $file_type [0];
-					$json_array ['S3_files'] ['content_type'] = $content_type;
-					$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
-				} else if (strcasecmp ( 'video', $file_type [0] ) == 0) {
-					$is_video = 1;
-					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
-					$json_array = array ();
-					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
-					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
-					$json_array ['S3_files'] ['path'] = $s3file;
-					$json_array ['S3_files'] ['full'] = $s3file;
-					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
-					$json_array ['S3_files'] ['location'] = $location;
-					$json_array ['S3_files'] ['device'] ['device_id'] = $device_id;
-					$json_array ['S3_files'] ['device'] ['device_type'] = $device_type;
-					$json_array ['S3_files'] ['file_type'] = $file_type [0];
-					$json_array ['S3_files'] ['content_type'] = $content_type;
-					$json_array ['S3_files'] ['is_video'] = $is_video;
-					$json_array ['S3_files'] ['type'] ['video'] ['format'] = $file_type [1];
+				$json_array = array ();
+				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
+				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
+				$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
+				$json_array ['S3_files'] ['copyright'] = json_decode ( $copyright );
+				$json_array ['S3_files'] ['bucket'] = S3BUCKET;
+				$json_array ['S3_files'] ['path'] = $s3file;
+				$json_array ['S3_files'] ['full'] = $s3file;
+				$json_array ['S3_files'] ['bucket'] = S3BUCKET;
+				$json_array ['S3_files'] ['location'] = json_decode ( ( string ) $location );
+				$json_array ['S3_files'] ['device'] ['device_id'] = $device_id;
+				$json_array ['S3_files'] ['device'] ['device_type'] = $device_type;
+				$json_array ['S3_files'] ['file_type'] = $file_type [0];
+				$json_array ['S3_files'] ['content_type'] = $content_type;
+				$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
+				if (strcasecmp ( 'video', $file_type [0] ) == 0) {
+					$json_array ['S3_files'] ['is_video'] = 1;
 				} else if (strcasecmp ( 'audio', $file_type [0] ) == 0) {
 					$is_audio = 1;
-					$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
-					$json_array = array ();
-					$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
-					$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
-					$json_array ['S3_files'] ['path'] = $s3file;
-					$json_array ['S3_files'] ['bucket'] = S3BUCKET;
-					$json_array ['S3_files'] ['full'] = $s3file;
-					$json_array ['S3_files'] ['location'] = $location;
-					$json_array ['S3_files'] ['device'] ['device_id'] = $device_id;
-					$json_array ['S3_files'] ['device'] ['device_type'] = $device_type;
-					$json_array ['S3_files'] ['file_type'] = $file_type [0];
-					$json_array ['S3_files'] ['content_type'] = $content_type;
-					$json_array ['S3_files'] ['is_audio'] = $is_audio;
-					$json_array ['S3_files'] ['type'] ['audio'] ['format'] = $file_type [1];
+					$json_array ['S3_files'] ['is_audio'] = 1;
 				}
 				$json_str = json_encode ( $json_array );
 				error_log ( "json_str ---> " . $json_str );
 				
 				// ///////////////////////////////////////
-				// check media type and update tables...
+				// check media type and insert tables...
 				// ///////////////////////////////////////
 				// insert into media table
 				$now = date ( 'Y-m-d H:i:s' );
@@ -197,10 +167,91 @@ class AddMediaEvent {
 				$tblMedia->create_date = $now;
 				$tblMedia->update_date = $now;
 				$this->dbAdapter->persist ( $tblMedia );
-				$this->dbAdapter->flush ();
-				// error_log ( "AddMediaEvent exec - just inserted Media " .
-				// PHP_EOL );
 				
+				/**
+				 * Update copyright batch data and copyright table.
+				 */
+				if (! empty ( $copyright )) {
+					Mlog::addone ( '!empty($copyright)', '' );
+					// check if copyright is available
+					// and fetch from copyright_batch table to update
+					// and insert copyright table
+					//
+					error_log ( '$copyright print_r--->' . print_r ( $copyright, true ) . EOL );
+					$copyright_array = json_decode ( $copyright, true );
+					Mlog::addone ( '$copyright_array', $copyright_array );
+					$copyright_batch_id = $copyright_array ['copyright_batch_id'];
+					Mlog::addone ( '$copyright_batch_id', $copyright_batch_id );
+					$query_event = "select c
+			     		from Application\Entity\CopyrightBatch c
+			     		where c.copyright_batch_id='$copyright_batch_id'";
+					$statement = $this->dbAdapter->createQuery ( $query_event );
+					$result = $statement->getResult ( (\Doctrine\ORM\Query::HYDRATE_ARRAY) );
+					if ($result) {
+						Mlog::addone ( 'found copyright_batch', '' );
+						//
+						// update used and add md5 and sha file checksums
+						//
+						$copyright_batch_json = $result [0] ['metadata'];
+						$copyright_batch_array = json_decode ( $copyright_batch_json, true );
+						Mlog::addone ( '$copyright_in_batch_json', $copyright_in_batch_json );
+						for($i = 0; $i < count ( $copyright_batch_array ); ++ $i) {
+							$copyright_in_batch_array = $copyright_batch_array [$i];
+							if ($copyright_batch_id == $copyright_in_batch_array ['copyright_batch_id']) {
+								//
+								// Update batch entry
+								//
+								Mlog::addone ( 'match -----> $copyright_in_batch_json', $copyright_in_batch_json );
+								Mlog::addone ( 'match -----> $copyright', $copyright );
+								$copyright_in_batch_array ['used'] = 1;
+								$copyright_in_batch_array ['fileCheckSumMD5'] = $copyright ['fileCheckSumMD5'];
+								$copyright_in_batch_array ['fileCheckSumSHA'] = $copyright ['fileCheckSumSHA'];
+								break;
+							}
+						}
+						
+						//
+						// Re-encode to json
+						//
+						$copyright_batch_json = json_encode ( $copyright_batch_array );
+						Mlog::addone ( 'updated $copyright_batch_json', $copyright_batch_json );
+						
+						//
+						// Update copyright_batch table
+						//
+						$update_query = "UPDATE Application\Entity\CopyrightBatch c set metadata ='$copyright_batch_json'
+											where c.copyright_batch_id ='$copyright_batch_id'";
+						$statement = $this->dbAdapter->createQuery ( $update_query );
+						$result = $statement->getResult ();
+						
+						if ($result) {
+							Mlog::addone ( 'updated $copyright_batch table', '' );
+							
+							//
+							// Insert copyright table
+							//
+							
+							$now = date ( 'Y-m-d H:i:s' );
+							$tblCopyright->$copyright_id = $copyright ['copyright_id'];
+							$tblCopyright->$copyright_batch_id = $copyright ['copyright_batch_id'];
+							$tblCopyright->$user_id = $_SESSION ['user_id'];
+							$tblCopyright->$media_id = $copyright ['media_id'];
+							$tblCopyright->$validated = 1;
+							$tblCopyright->$metadata = json_encode ( $copyright );
+							$tblCopyright->$create_date = $now;
+							$tblCopyright->$update_time = $now;
+							$this->dbAdapter->persist ( $tblCopyright );
+							Mlog::addone ( 'updated $copyright_batch table', '' );
+						}
+					}
+				}
+				//
+				// Now flush to db to update media, copyright_batch, and copyright
+				//
+				$this->dbAdapter->flush ();
+				Mlog::addone ( 'flushed to db to update media, copyright_batch, and copyright', '' );
+				
+				Mlog::addone ( '$is_profile_pic', $is_profile_pic );
 				if ($is_profile_pic) {
 					// Remove previous profile images
 					$remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
@@ -263,7 +314,6 @@ class AddMediaEvent {
 							/**
 							 * Build array and send notifications...
 							 */
-							
 							$data = array ();
 							$data ['addNotification'] ['sender_uid'] = $user_id;
 							$data ['addNotification'] ['receiver_uid'] = $friendId;
@@ -343,12 +393,12 @@ class AddMediaEvent {
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "<media_id>$media_id</media_id>";
-        $xml_output .= "</addmediaeventresponse>";
-        $xml_output .= "</xml>";
-        ob_clean();
-        echo $xml_output;
-        error_log("output::" . $xml_output . PHP_EOL);
-    }
+		$xml_output .= "</addmediaeventresponse>";
+		$xml_output .= "</xml>";
+		ob_clean ();
+		echo $xml_output;
+		error_log ( "output::" . $xml_output . PHP_EOL );
+	}
 }
 
 ?>

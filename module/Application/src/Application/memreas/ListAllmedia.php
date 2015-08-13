@@ -20,7 +20,7 @@ class ListAllmedia {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
-		Mlog::addone(__CLASS__ . __METHOD__ . '::xml', $_POST['xml']);
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::xml', $_POST ['xml'] );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = ' ';
 		$containt = ' ';
@@ -126,13 +126,13 @@ class ListAllmedia {
 					// Prefix added for matching and sync...
 					$media_name_prefix = pathinfo ( $media_name )['filename'];
 					
-					//set device_id and type
+					// set device_id and type
 					$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
 					$device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
-						
-					//if (in_array ( $user_id . '_' . $device_id, $device )) {
-					//	$is_download = 1;
-					//}
+					
+					// if (in_array ( $user_id . '_' . $device_id, $device )) {
+					// $is_download = 1;
+					// }
 					
 					// output xml
 					$xml_output .= "<media>";
@@ -142,10 +142,9 @@ class ListAllmedia {
 					$date = \DateTime::createFromFormat ( $format, $row ['create_date'] );
 					$xml_output .= "<media_date>" . $date->getTimestamp () . "</media_date>";
 					
-					
 					$xml_output .= "<device_id>" . $device_id . "</device_id>";
 					$xml_output .= "<device_type>" . $device_type . "</device_type>";
-											
+					
 					// main
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
@@ -172,13 +171,13 @@ class ListAllmedia {
 					// download 1080p path
 					$path = isset ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080ps3path><![CDATA[" . $path . "]]></media_url_1080ps3path>" : '';
-
+					
 					// transcode status
-					//$transcode_status = isset ( $json_array ['S3_files'] ['transcode_status'] ) ? $json_array ['S3_files'] ['transcode_status'] : '';
-					//$xml_output .= isset ( $json_array ['S3_files'] ['transcode_status'] ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status>0</media_transcode_status>";
-					$transcode_status = $row['transcode_status'];
+					// $transcode_status = isset ( $json_array ['S3_files'] ['transcode_status'] ) ? $json_array ['S3_files'] ['transcode_status'] : '';
+					// $xml_output .= isset ( $json_array ['S3_files'] ['transcode_status'] ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status>0</media_transcode_status>";
+					$transcode_status = $row ['transcode_status'];
 					$xml_output .= isset ( $transcode_status ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status></media_transcode_status>";
-						
+					
 					$xml_output .= "<is_downloaded>$is_download</is_downloaded>";
 					if (isset ( $data->listallmedia->metadata )) {
 						$xml_output .= "<metadata><![CDATA[" . $row ['metadata'] . "]]></metadata>";
@@ -241,7 +240,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		Mlog::addone('$xml_output', $xml_output);
+		// Mlog::addone('$xml_output', $xml_output);
 	}
 }
 

@@ -35,11 +35,9 @@ class FetchCopyRightBatch {
 			$statement = $this->dbAdapter->createQuery ( $query_event );
 			$result = $statement->getResult ( (\Doctrine\ORM\Query::HYDRATE_ARRAY) );
 			if (! empty ( $result )) {
-				Mlog::addone ( '!empty($result)', $result );
 				$copyright_batch_send_json = $result [0] ['metadata'];
 				$status = 'success';
 			} else {
-				Mlog::addone ( 'else', '...' );
 				$copyright_batch = [ ];
 				$copyright_batch_send = [ ];
 				$id_count = 25;
@@ -51,8 +49,8 @@ class FetchCopyRightBatch {
 					$copyright_id_sha1 = sha1 ( $copyright_id );
 					
 					// For db
-					$copyright_batch [$i] ['media_id'] = $media_id;
 					$copyright_batch [$i] ['copyright_id'] = $copyright_id;
+					$copyright_batch [$i] ['media_id'] = $media_id;
 					$copyright_batch [$i] ['copyright_id_md5'] = $copyright_id_md5;
 					$copyright_batch [$i] ['copyright_id_sha1'] = $copyright_id_sha1;
 					$copyright_batch [$i] ['used'] = '0';
@@ -93,7 +91,7 @@ class FetchCopyRightBatch {
 		$xml_output .= "</fetchcopyrightbatchresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		// error_log ( "fetchcopyrightbatchresponse ---> " . $xml_output . PHP_EOL );
+		error_log ( "fetchcopyrightbatchresponse ---> " . $xml_output . PHP_EOL );
 	}
 }
 ?>
