@@ -68,7 +68,11 @@ class MemreasConstants {
 	public static function fetchAWS() {
 		$sharedConfig = [ 
 				'region' => 'us-east-1',
-				'version' => 'latest' 
+				'version' => 'latest',
+				'credentials' => [ 
+						'key' => self::S3_APPKEY,
+						'secret' => self::S3_APPSEC 
+				] 
 		];
 		
 		return new \Aws\Sdk ( $sharedConfig );
