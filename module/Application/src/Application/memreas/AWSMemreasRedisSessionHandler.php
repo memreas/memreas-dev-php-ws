@@ -65,7 +65,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 		session_id ( $rMemreasCookieSessionArr ['sid'] );
 		session_start ();
-		// error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithUID($uid, $uname) {
 		if (! empty ( $uid )) {
@@ -95,7 +95,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				$this->setSession ( $row [0], '', 'web', '', '127.0.0.1' );
 			}
 		}
-		// error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function fetchProfilePicMeta($uid) {
 		/*
@@ -177,36 +177,36 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function storeSession($start) {
 		try {
-		$now = date ( "Y-m-d H:i:s" );
-		if ($start) {
-			/**
-			 * Start Session
-			 */
-			$meta = array ();
-			$meta ['username'] = $_SESSION ['username'];
-			$meta ['device_type'] = $_SESSION ['device_type'];
-			$meta ['memreascookie'] = $_SESSION ['memreascookie'];
-			$tblUserSession = new \Application\Entity\UserSession ();
-			$tblUserSession->session_id = session_id ();
-			$tblUserSession->user_id = $_SESSION ['user_id'];
-			$tblUserSession->ipaddress = $_SESSION ['ipAddress'];
-			$tblUserSession->device_id = $_SESSION ['device_id'];
-			$tblUserSession->meta = json_encode ( $meta );
-			$tblUserSession->start_time = $now;
-			
-			$this->dbAdapter->persist ( $tblUserSession );
-			$this->dbAdapter->flush ();
-		} else {
+			$now = date ( "Y-m-d H:i:s" );
+			if ($start) {
+				/**
+				 * Start Session
+				 */
+				$meta = array ();
+				$meta ['username'] = $_SESSION ['username'];
+				$meta ['device_type'] = $_SESSION ['device_type'];
+				$meta ['memreascookie'] = $_SESSION ['memreascookie'];
+				$tblUserSession = new \Application\Entity\UserSession ();
+				$tblUserSession->session_id = session_id ();
+				$tblUserSession->user_id = $_SESSION ['user_id'];
+				$tblUserSession->ipaddress = $_SESSION ['ipAddress'];
+				$tblUserSession->device_id = $_SESSION ['device_id'];
+				$tblUserSession->meta = json_encode ( $meta );
+				$tblUserSession->start_time = $now;
+				
+				$this->dbAdapter->persist ( $tblUserSession );
+				$this->dbAdapter->flush ();
+			} else {
+				/**
+				 * End Session
+				 */
+				$result = $this->endSession ();
+			}
+		} catch ( \Exception $e ) {
 			/**
 			 * End Session
 			 */
-			$result = $this->endSession();
-		}
-		} catch (\Exception $e) {
-			/**
-			 * End Session
-			 */
-			$result = $this->endSession();
+			$result = $this->endSession ();
 		}
 	}
 	public function endSession() {
@@ -215,7 +215,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		SET u.end_time = '$now'
 		WHERE u.session_id ='" . session_id () . "'
 		and u.user_id = '" . $_SESSION ['user_id'] . "'";
-				// error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
+		// error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
 		$statement = $this->dbAdapter->createQuery ( $q_update );
 		return $statement->getResult ();
 	}

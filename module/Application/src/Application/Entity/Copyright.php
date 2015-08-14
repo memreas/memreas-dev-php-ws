@@ -41,7 +41,7 @@ class Copyright {
 	 *
 	 * @var boolean @ORM\Column(name="validated", type="boolean", nullable=false)
 	 */
-	protected $validated = 0;
+	protected $validated = false;
 	
 	/**
 	 *

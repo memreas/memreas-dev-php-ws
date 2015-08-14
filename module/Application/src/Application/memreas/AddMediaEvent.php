@@ -152,12 +152,10 @@ class AddMediaEvent {
 					$json_array ['S3_files'] ['is_audio'] = 1;
 				}
 				$json_str = json_encode ( $json_array );
-				error_log ( "json_str ---> " . $json_str );
 				
 				// ///////////////////////////////////////
 				// check media type and insert tables...
 				// ///////////////////////////////////////
-				// insert into media table
 				$now = date ( 'Y-m-d H:i:s' );
 				$tblMedia = new \Application\Entity\Media ();
 				$tblMedia->media_id = $media_id;
@@ -172,77 +170,43 @@ class AddMediaEvent {
 				 * Update copyright batch data and copyright table.
 				 */
 				if (! empty ( $copyright )) {
-					Mlog::addone ( '!empty($copyright)', '' );
+					Mlog::addone ( '!empty($copyright)', $copyright );
 					// check if copyright is available
 					// and fetch from copyright_batch table to update
 					// and insert copyright table
-					//
-					error_log ( '$copyright print_r--->' . print_r ( $copyright, true ) . EOL );
+					
 					$copyright_array = json_decode ( $copyright, true );
-					Mlog::addone ( '$copyright_array', $copyright_array );
 					$copyright_batch_id = $copyright_array ['copyright_batch_id'];
-					Mlog::addone ( '$copyright_batch_id', $copyright_batch_id );
-					$query_event = "select c
-			     		from Application\Entity\CopyrightBatch c
-			     		where c.copyright_batch_id='$copyright_batch_id'";
-					$statement = $this->dbAdapter->createQuery ( $query_event );
-					$result = $statement->getResult ( (\Doctrine\ORM\Query::HYDRATE_ARRAY) );
-					if ($result) {
-						Mlog::addone ( 'found copyright_batch', '' );
+					$copyright_batch = $this->dbAdapter->find ( 'Application\Entity\CopyrightBatch', $copyright_batch_id );
+					if ($copyright_batch) {
 						//
 						// update used and add md5 and sha file checksums
 						//
-						$copyright_batch_json = $result [0] ['metadata'];
-						$copyright_batch_array = json_decode ( $copyright_batch_json, true );
-						Mlog::addone ( '$copyright_in_batch_json', $copyright_in_batch_json );
-						for($i = 0; $i < count ( $copyright_batch_array ); ++ $i) {
-							$copyright_in_batch_array = $copyright_batch_array [$i];
-							if ($copyright_batch_id == $copyright_in_batch_array ['copyright_batch_id']) {
-								//
-								// Update batch entry
-								//
-								Mlog::addone ( 'match -----> $copyright_in_batch_json', $copyright_in_batch_json );
-								Mlog::addone ( 'match -----> $copyright', $copyright );
-								$copyright_in_batch_array ['used'] = 1;
-								$copyright_in_batch_array ['fileCheckSumMD5'] = $copyright ['fileCheckSumMD5'];
-								$copyright_in_batch_array ['fileCheckSumSHA'] = $copyright ['fileCheckSumSHA'];
-								break;
-							}
-						}
-						
-						//
-						// Re-encode to json
-						//
-						$copyright_batch_json = json_encode ( $copyright_batch_array );
-						Mlog::addone ( 'updated $copyright_batch_json', $copyright_batch_json );
+						// $copyright_batch_json = $result [0] ['metadata'];
+						$remaining = $copyright_batch->__get ( 'remaining' );
+						$remaining -= 1;
 						
 						//
 						// Update copyright_batch table
 						//
-						$update_query = "UPDATE Application\Entity\CopyrightBatch c set metadata ='$copyright_batch_json'
-											where c.copyright_batch_id ='$copyright_batch_id'";
-						$statement = $this->dbAdapter->createQuery ( $update_query );
-						$result = $statement->getResult ();
+						$copyright_batch->__set ( 'metadata', $copyright );
+						$copyright_batch->__set ( 'remaining', $remaining );
+						$this->dbAdapter->persist ( $copyright_batch );
 						
-						if ($result) {
-							Mlog::addone ( 'updated $copyright_batch table', '' );
-							
-							//
-							// Insert copyright table
-							//
-							
-							$now = date ( 'Y-m-d H:i:s' );
-							$tblCopyright->$copyright_id = $copyright ['copyright_id'];
-							$tblCopyright->$copyright_batch_id = $copyright ['copyright_batch_id'];
-							$tblCopyright->$user_id = $_SESSION ['user_id'];
-							$tblCopyright->$media_id = $copyright ['media_id'];
-							$tblCopyright->$validated = 1;
-							$tblCopyright->$metadata = json_encode ( $copyright );
-							$tblCopyright->$create_date = $now;
-							$tblCopyright->$update_time = $now;
-							$this->dbAdapter->persist ( $tblCopyright );
-							Mlog::addone ( 'updated $copyright_batch table', '' );
-						}
+						//
+						// Insert copyright table
+						//
+						$now = date ( 'Y-m-d H:i:s' );
+						$tblCopyright = new \Application\Entity\Copyright ();
+						$tblCopyright->copyright_id = $copyright_array ['copyright_id'];
+						$tblCopyright->copyright_batch_id = $copyright_array ['copyright_batch_id'];
+						$tblCopyright->user_id = $user_id;
+						$tblCopyright->media_id = $copyright_array ['media_id'];
+						$tblCopyright->validated = true;
+						$tblCopyright->metadata = $copyright;
+						$tblCopyright->create_date = $now;
+						$tblCopyright->update_time = $now;
+						$this->dbAdapter->persist ( $tblCopyright );
 					}
 				}
 				//
@@ -252,7 +216,7 @@ class AddMediaEvent {
 				Mlog::addone ( 'flushed to db to update media, copyright_batch, and copyright', '' );
 				
 				Mlog::addone ( '$is_profile_pic', $is_profile_pic );
-				if ($is_profile_pic) {
+				if ($is_profile_pic === 1) {
 					// Remove previous profile images
 					$remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
 					$remove_result = $this->dbAdapter->createQuery ( $remove_old_profile );
@@ -355,7 +319,7 @@ class AddMediaEvent {
 					} // end if (!is_audio)
 				} // end if (isset ( $event_id ) && ! empty ( $event_id ))
 				
-				if (! $is_server_image) {
+				if ($is_server_image === 1) {
 					$message_data = array (
 							'user_id' => $user_id,
 							'media_id' => $media_id,

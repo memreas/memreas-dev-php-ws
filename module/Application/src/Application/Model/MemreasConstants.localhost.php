@@ -39,6 +39,7 @@ class MemreasConstants {
 	const SIGNURLS = true;
 	
 	// Same across...
+	const copyright_batch_create_count = 25;
 	const URL = "/index";
 	const MEMREAS_TRANSCODER = true;
 	const MEMREASDB = 'memreasintdb';
