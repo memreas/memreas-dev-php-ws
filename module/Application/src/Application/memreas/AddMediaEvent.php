@@ -182,14 +182,25 @@ class AddMediaEvent {
 						//
 						// update used and add md5 and sha file checksums
 						//
-						// $copyright_batch_json = $result [0] ['metadata'];
+						$copyright_batch_json = $result [0] ['metadata'];
+						$copyright_batch_array = json_decode($copyright_batch_json, true);
+						for($i=0; $i<count($copyright_batch_array); $i++) {
+							if ($copyright_array['copyright_id'] == $copyright_batch_array[$i]['copyright_id']) {
+								//
+								//update the entry
+								//
+								$copyright_batch_array[$i]['used'] = 1;
+								$copyright_batch_array[$i]['fileCheckSumMD5'] = $copyright_array['fileCheckSumMD5'];
+								$copyright_batch_array[$i]['fileCheckSumSHA'] = $copyright_array['fileCheckSumSHA'];
+							}
+						} 
 						$remaining = $copyright_batch->__get ( 'remaining' );
 						$remaining -= 1;
 						
 						//
 						// Update copyright_batch table
 						//
-						$copyright_batch->__set ( 'metadata', $copyright );
+						$copyright_batch->__set ( 'metadata', json_encode($copyright_batch_array) );
 						$copyright_batch->__set ( 'remaining', $remaining );
 						$this->dbAdapter->persist ( $copyright_batch );
 						
