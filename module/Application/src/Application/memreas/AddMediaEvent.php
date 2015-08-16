@@ -170,7 +170,7 @@ class AddMediaEvent {
 				 * Update copyright batch data and copyright table.
 				 */
 				if (! empty ( $copyright )) {
-					Mlog::addone ( '!empty($copyright)', $copyright );
+					Mlog::addone ( '!empty($copyright)', '*'.$copyright.'*' );
 					// check if copyright is available
 					// and fetch from copyright_batch table to update
 					// and insert copyright table
@@ -331,7 +331,7 @@ class AddMediaEvent {
 					} // end if (!is_audio)
 				} // end if (isset ( $event_id ) && ! empty ( $event_id ))
 				
-				if ($is_server_image === 1) {
+				if (empty($is_server_image)) {
 					$message_data = array (
 							'user_id' => $user_id,
 							'media_id' => $media_id,
