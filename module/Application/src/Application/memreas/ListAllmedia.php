@@ -104,6 +104,7 @@ class ListAllmedia {
 					
 					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						$type = "image";
+						$path = (isset ( $json_array ['S3_files'] ['path'] ) && ! empty ( $json_array ['S3_files'] ['path'] )) ? $json_array ['S3_files'] ['path'] : "";
 						$url79x80 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : "";
 						$url98x78 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) ? $json_array ['S3_files'] ['thumbnails'] ['98x78'] : "";
 						$url448x306 = (isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : "";
@@ -124,15 +125,11 @@ class ListAllmedia {
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : $json_array ['S3_files'] ['path'];
 					$media_name = basename ( $json_array ['S3_files'] ['path'] );
 					// Prefix added for matching and sync...
-					$media_name_prefix = pathinfo ( $media_name )['filename'];
+					$media_name_prefix = pathinfo ( $media_name ) ['filename'];
 					
 					// set device_id and type
 					$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
 					$device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
-					
-					// if (in_array ( $user_id . '_' . $device_id, $device )) {
-					// $is_download = 1;
-					// }
 					
 					// output xml
 					$xml_output .= "<media>";
@@ -164,6 +161,9 @@ class ListAllmedia {
 					$path = isset ( $json_array ['S3_files'] ['download'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['download'] ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['download'] ) ? "<media_url_download><![CDATA[" . $path . "]]></media_url_download>" : '';
 					
+					// path for image
+					$xml_output .= "<main_media_path><![CDATA[" . $json_array ['S3_files'] ['path'] . "]]></main_media_path>";
+					
 					// download web path
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['web'] ) ? "<media_url_webs3path><![CDATA[" . $path . "]]></media_url_webs3path>" : '';
@@ -173,8 +173,6 @@ class ListAllmedia {
 					$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080ps3path><![CDATA[" . $path . "]]></media_url_1080ps3path>" : '';
 					
 					// transcode status
-					// $transcode_status = isset ( $json_array ['S3_files'] ['transcode_status'] ) ? $json_array ['S3_files'] ['transcode_status'] : '';
-					// $xml_output .= isset ( $json_array ['S3_files'] ['transcode_status'] ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status>0</media_transcode_status>";
 					$transcode_status = $row ['transcode_status'];
 					$xml_output .= isset ( $transcode_status ) ? "<media_transcode_status>$transcode_status</media_transcode_status>" : "<media_transcode_status></media_transcode_status>";
 					

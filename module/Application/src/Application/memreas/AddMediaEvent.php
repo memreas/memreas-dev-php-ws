@@ -60,7 +60,7 @@ class AddMediaEvent {
 				$content_type = addslashes ( trim ( $data->addmediaevent->content_type ) );
 				$s3url = addslashes ( trim ( $data->addmediaevent->s3url ) );
 				$s3file_name = addslashes ( trim ( $data->addmediaevent->s3file_name ) );
-				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) )['filename'];
+				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) ) ['filename'];
 				$location = ( string ) $data->addmediaevent->location;
 				$copyright = isset ( $data->addmediaevent->copyright ) ? ( string ) $data->addmediaevent->copyright : '';
 			} else {
@@ -82,7 +82,7 @@ class AddMediaEvent {
 				$is_server_image = isset ( $_POST ['is_server_image'] ) ? $_POST ['is_server_image'] : 0;
 				$content_type = isset ( $_POST ['content_type'] ) ? $_POST ['content_type'] : '';
 				$s3file_name = isset ( $_POST ['s3file_name'] ) ? $_POST ['s3file_name'] : '';
-				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) )['filename'];
+				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) ) ['filename'];
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
 				$copyright = isset ( $_POST ['copyright'] ) ? $_POST ['copyright'] : '';
@@ -170,7 +170,7 @@ class AddMediaEvent {
 				 * Update copyright batch data and copyright table.
 				 */
 				if (! empty ( $copyright )) {
-					Mlog::addone ( '!empty($copyright)', '*'.$copyright.'*' );
+					Mlog::addone ( '!empty($copyright)', '*' . $copyright . '*' );
 					// check if copyright is available
 					// and fetch from copyright_batch table to update
 					// and insert copyright table
@@ -182,26 +182,26 @@ class AddMediaEvent {
 						//
 						// update used and add md5 and sha file checksums
 						//
-						$copyright_batch_json = $copyright_batch->__get('metadata');
-						$copyright_batch_array = json_decode($copyright_batch_json, true);
-						for($i=0; $i<count($copyright_batch_array); $i++) {
-							if ($copyright_array['copyright_id'] == $copyright_batch_array[$i]['copyright_id']) {
+						$copyright_batch_json = $copyright_batch->__get ( 'metadata' );
+						$copyright_batch_array = json_decode ( $copyright_batch_json, true );
+						for($i = 0; $i < count ( $copyright_batch_array ); $i ++) {
+							if ($copyright_array ['copyright_id'] == $copyright_batch_array [$i] ['copyright_id']) {
 								//
-								//update the entry
+								// update the entry
 								//
-								$copyright_batch_array[$i]['used'] = 1;
-								$copyright_batch_array[$i]['fileCheckSumMD5'] = $copyright_array['fileCheckSumMD5'];
-								$copyright_batch_array[$i]['fileCheckSumSHA'] = $copyright_array['fileCheckSumSHA'];
+								$copyright_batch_array [$i] ['used'] = 1;
+								$copyright_batch_array [$i] ['fileCheckSumMD5'] = $copyright_array ['fileCheckSumMD5'];
+								$copyright_batch_array [$i] ['fileCheckSumSHA'] = $copyright_array ['fileCheckSumSHA'];
 							}
-						} 
+						}
 						$remaining = $copyright_batch->__get ( 'remaining' );
 						$remaining -= 1;
 						
 						//
 						// Update copyright_batch table
 						//
-						Mlog::addone(' json_encode($copyright_batch_array) :: ',  json_encode($copyright_batch_array) );
-						$copyright_batch->__set ( 'metadata',json_encode($copyright_batch_array) );
+						Mlog::addone ( ' json_encode($copyright_batch_array) :: ', json_encode ( $copyright_batch_array ) );
+						$copyright_batch->__set ( 'metadata', json_encode ( $copyright_batch_array ) );
 						$copyright_batch->__set ( 'remaining', $remaining );
 						$this->dbAdapter->persist ( $copyright_batch );
 						
@@ -331,7 +331,7 @@ class AddMediaEvent {
 					} // end if (!is_audio)
 				} // end if (isset ( $event_id ) && ! empty ( $event_id ))
 				
-				if (empty($is_server_image)) {
+				if (empty ( $is_server_image )) {
 					$message_data = array (
 							'user_id' => $user_id,
 							'media_id' => $media_id,
@@ -362,7 +362,7 @@ class AddMediaEvent {
 			$status = 'Failure';
 			$message = $exc->getMessage ();
 		}
-		header ( "Content-type: text/xml" );
+		// header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<addmediaeventresponse>";

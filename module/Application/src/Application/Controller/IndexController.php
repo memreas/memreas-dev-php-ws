@@ -208,7 +208,7 @@ class IndexController extends AbstractActionController {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view
-			                           // folder
+			                              // folder
 			return $view;
 		}
 		
@@ -2371,11 +2371,11 @@ class IndexController extends AbstractActionController {
 			);
 			$json = json_encode ( $json_arr );
 			
-			header ( "Content-type: plain/text" );
+			// header ( "Content-type: plain/text" );
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			// error_log("callback output ----> *$output*" . PHP_EOL);
+			error_log ( "callback output ----> *$output*" . PHP_EOL );
 		} else {
 			echo trim ( $output );
 			// error_log("output ----> *$output*" . PHP_EOL);
