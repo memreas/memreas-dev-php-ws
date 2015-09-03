@@ -129,6 +129,11 @@ class AddMediaEvent {
 				// create metadata based on content type
 				// ///////////////////////////////////////
 				$file_type = explode ( '/', $content_type );
+				if ($file_type == "video") {
+					$is_video = 1;
+				} else if ($file_type == "audio") {
+					$is_audio = 1;
+				}
 				
 				$json_array = array ();
 				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
