@@ -63,9 +63,11 @@ class ReTransCoder {
 							's3file_name' => $meta ['S3_files'] ['s3file_name'],
 							's3file_basename_prefix' => $meta ['S3_files'] ['s3file_basename_prefix'],
 							'is_video' => empty ( $meta ['S3_files'] ['is_video'] ) ? 0 : 1,
-							'is_audio' => empty ( $meta ['S3_files'] ['$is_audio'] ) ? 0 : 1 
+							'is_audio' => empty ( $meta ['S3_files'] ['is_audio'] ) ? 0 : 1 
 					);
 					Mlog::addone ( '$message_data', $message_data );
+					Mlog::addone ( '$meta [S3_files] [is_video] ', $meta ['S3_files'] ['is_video'] );
+					die ();
 				} else {
 					throw new \Exception ( "can't find media by media id" );
 				}

@@ -162,6 +162,7 @@ class ListAllmedia {
 					$xml_output .= isset ( $json_array ['S3_files'] ['download'] ) ? "<media_url_download><![CDATA[" . $path . "]]></media_url_download>" : '';
 					
 					// path for image
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$json_array [S3_files] [path]', $json_array ['S3_files'] ['path'] );
 					$xml_output .= "<main_media_path><![CDATA[" . $json_array ['S3_files'] ['path'] . "]]></main_media_path>";
 					
 					// download web path
@@ -238,7 +239,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		// Mlog::addone('$xml_output', $xml_output);
+		Mlog::addone ( '$xml_output', $xml_output );
 	}
 }
 

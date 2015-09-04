@@ -128,13 +128,6 @@ class AddMediaEvent {
 				// ///////////////////////////////////////
 				// create metadata based on content type
 				// ///////////////////////////////////////
-				$file_type = explode ( '/', $content_type );
-				if ($file_type == "video") {
-					$is_video = 1;
-				} else if ($file_type == "audio") {
-					$is_audio = 1;
-				}
-				
 				$json_array = array ();
 				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
@@ -149,13 +142,15 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['device'] ['device_type'] = $device_type;
 				$json_array ['S3_files'] ['file_type'] = $file_type [0];
 				$json_array ['S3_files'] ['content_type'] = $content_type;
-				$json_array ['S3_files'] ['type'] ['image'] ['format'] = $file_type [1];
-				if (strcasecmp ( 'video', $file_type [0] ) == 0) {
+				$file_type = explode ( '/', $content_type );
+				if (strtolower ( $file_type [0] ) == "video") {
+					$is_video = 1;
 					$json_array ['S3_files'] ['is_video'] = 1;
-				} else if (strcasecmp ( 'audio', $file_type [0] ) == 0) {
+				} else if (strtolower ( $file_type [0] ) == "audio") {
 					$is_audio = 1;
 					$json_array ['S3_files'] ['is_audio'] = 1;
 				}
+				$json_array ['S3_files'] ['type'] [strtolower ( $file_type [0] )] ['format'] = $file_type [1];
 				$json_str = json_encode ( $json_array );
 				
 				// ///////////////////////////////////////
