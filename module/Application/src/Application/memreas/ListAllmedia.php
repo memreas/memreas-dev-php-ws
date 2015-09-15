@@ -178,6 +178,8 @@ class ListAllmedia
                             } else {
                                 $type = "Type not Mentioned";
                             }
+                    $content_type = isset(
+                            $json_array['S3_files']['content_type']) ? $json_array['S3_files']['content_type'] : "";
                     $url = isset($json_array['S3_files']['web']) ? $json_array['S3_files']['web'] : $json_array['S3_files']['path'];
                     $media_name = basename($json_array['S3_files']['path']);
                     // Prefix added for matching and sync...
@@ -203,6 +205,8 @@ class ListAllmedia
                     $xml_output .= "<device_id>" . $device_id . "</device_id>";
                     $xml_output .= "<device_type>" . $device_type .
                              "</device_type>";
+                    $xml_output .= "<content_type>" . $content_type .
+                             "</content_type>";
                     
                     // main
                     $xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls(
