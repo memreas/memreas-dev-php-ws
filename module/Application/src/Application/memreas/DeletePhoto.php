@@ -17,6 +17,10 @@ class DeletePhoto
 
     protected $dbAdapter;
 
+    protected $aws;
+
+    protected $s3;
+
     public function __construct ($message_data, $memreas_tables, 
             $service_locator)
     {
@@ -25,8 +29,10 @@ class DeletePhoto
         $this->service_locator = $service_locator;
         $this->dbAdapter = $service_locator->get(
                 'doctrine.entitymanager.orm_default');
-        // $this->dbAdapter =
-        // $service_locator->get(MemreasConstants::MEMREASDB);
+        // Fetch aws handle
+        $this->aws = MemreasConstants::fetchAWS();
+        // Fetch the S3 class
+        $this->s3 = $this->aws->createS3();
     }
 
     public function exec ()
@@ -53,15 +59,21 @@ class DeletePhoto
                 $media_event = "SELECT em FROM Application\Entity\EventMedia em WHERE em.media_id = '$mediaid'";
                 $statement = $this->dbAdapter->createQuery($media_event);
                 $result = $statement->getResult();
-                if (count($result) > 0)
+                if (count($result) > 0) {
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . LINE__ .
+                                     'fail::count($result)::', count($result));
                     $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
-                else {
-                    error_log(
-                            "metadata--->" . $resseldata[0]->metadata . PHP_EOL);
+                } else {
+                    Mlog::addone(__CLASS__ . __METHOD__ . LINE__ . 'metadata::', 
+                            $resseldata[0]->metadata);
                     $json_array = json_decode($resseldata[0]->metadata, true);
                     if (isset($json_array['S3_files']['type']['image'])) {
                         $imagename = basename($json_array['S3_files']['path']);
                     }
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . LINE__ . '$imagename::', 
+                            $imagename);
                     /*
                      * JM: 28-NOV-2014 below commented - won't work given above
                      * if...
@@ -81,18 +93,27 @@ class DeletePhoto
                      */
                     $file_type = $json_array['S3_files']['file_type'];
                     $files_to_delete = array();
-                    
                     if ($file_type == 'image') {
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ . LINE__ . '$file_type::', 
+                                $file_type);
                         $files_to_delete[] = $json_array['S3_files']['path'];
                         $files_to_delete[] = $json_array['S3_files']['download'];
                     } else 
                         if ($file_type == 'video') {
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ . LINE__ .
+                                             '$file_type::', $file_type);
                             $files_to_delete[] = $json_array['S3_files']['path'];
                             $files_to_delete[] = $json_array['S3_files']['download'];
                             $files_to_delete[] = $json_array['S3_files']['web'];
                             $files_to_delete[] = $json_array['S3_files']['1080p'];
                             $files_to_delete[] = $json_array['S3_files']['hls'];
                         }
+                    
+                    //
+                    // thumbs apply to both images and videos
+                    //
                     $thumbs = array(
                             '79x80',
                             '448x306',
@@ -103,18 +124,25 @@ class DeletePhoto
                     foreach ($thumbs as $thumb) {
                         if (is_array(
                                 $json_array['S3_files']['thumbnails'][$thumb])) {
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ . LINE__ .
+                                             '$json_array[S3_files][thumbnails][$thumb]::', 
+                                            'is_array');
                             foreach ($json_array['S3_files']['thumbnails'][$thumb] as $th) {
                                 $files_to_delete[] = $th;
                             }
                         } else {
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ . LINE__ .
+                                             '$json_array[S3_files][thumbnails][$thumb]::', 
+                                            '!is_array');
                             $files_to_delete[] = $json_array['S3_files']['thumbnails'][$thumb];
                         }
                     }
-                    $S3Client = S3Client::factory(
-                            array(
-                                    'key' => MemreasConstants::S3_APPKEY,
-                                    'secret' => MemreasConstants::S3_APPSEC
-                            ));
+                    
+                    //
+                    // Start delete...
+                    //
                     foreach ($files_to_delete as $file) {
                         
                         //
@@ -125,7 +153,7 @@ class DeletePhoto
                                     __CLASS__ . __METHOD__ . LINE__ .
                                              'deleting::', $file);
                             try {
-                                $S3Client->deleteObject(
+                                $this->s3->deleteObject(
                                         array(
                                                 'Bucket' => MemreasConstants::S3HLSBUCKET,
                                                 'Key' => $file
@@ -157,7 +185,7 @@ class DeletePhoto
                                     Mlog::addone(
                                             __CLASS__ . __METHOD__ . LINE__ .
                                                      'deleting::', $file);
-                                    $S3Client->deleteObject(
+                                    $this->s3->deleteObject(
                                             array(
                                                     'Bucket' => MemreasConstants::S3HLSBUCKET,
                                                     'Key' => $file
@@ -183,7 +211,7 @@ class DeletePhoto
                                         __CLASS__ . __METHOD__ . LINE__ .
                                                  'deleting::', $file);
                                 try {
-                                    $S3Client->deleteObject(
+                                    $this->s3->deleteObject(
                                             array(
                                                     'Bucket' => MemreasConstants::S3BUCKET,
                                                     'Key' => $file
