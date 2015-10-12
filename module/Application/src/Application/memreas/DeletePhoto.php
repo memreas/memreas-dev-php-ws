@@ -65,15 +65,67 @@ class DeletePhoto
                                      'fail::count($result)::', count($result));
                     $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
                 } else {
-                    Mlog::addone(__CLASS__ . __METHOD__ . LINE__ . 'metadata::', 
-                            $resseldata[0]->metadata);
-                    $json_array = json_decode($resseldata[0]->metadata, true);
-                    if (isset($json_array['S3_files']['type']['image'])) {
-                        $imagename = basename($json_array['S3_files']['path']);
-                    }
+                    // Mlog::addone(__CLASS__ . __METHOD__ . LINE__ .
+                    // 'metadata::',
+                    // $resseldata[0]->metadata);
+                    // $json_array = json_decode($resseldata[0]->metadata,
+                    // true);
+                    // if (isset($json_array['S3_files']['type']['image'])) {
+                    // $imagename = basename($json_array['S3_files']['path']);
+                    // }
+                    
+                    //
+                    // memreasdevsec
+                    //
+                    $prefix = $resseldata[0]->user_id . '/' . $mediaid;
                     Mlog::addone(
-                            __CLASS__ . __METHOD__ . LINE__ . '$imagename::', 
-                            $imagename);
+                            __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', 
+                            $prefix);
+                    try {
+                        
+                        $iterator = $this->s3->getIterator('ListObjects', 
+                                array(
+                                        'Bucket' => MemreasConstants::S3BUCKET,
+                                        'Prefix' => $prefix
+                                ));
+                        
+                        foreach ($iterator as $object) {
+                            $this->s3->deleteObject(
+                                    array(
+                                            'Bucket' => MemreasConstants::S3BUCKET,
+                                            'Key' => $object['Key']
+                                    ));
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ . __LINE__ .
+                                             'MemreasConstants::S3BUCKET::$object[Key]::deleted::', 
+                                            $object['Key']);
+                        }
+                        
+                        $iterator = $this->s3->getIterator('ListObjects', 
+                                array(
+                                        'Bucket' => MemreasConstants::S3HLSBUCKET,
+                                        'Prefix' => $prefix
+                                ));
+                        
+                        foreach ($iterator as $object) {
+                            $this->s3->deleteObject(
+                                    array(
+                                            'Bucket' => MemreasConstants::S3HLSBUCKET,
+                                            'Key' => $object['Key']
+                                    ));
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ . __LINE__ .
+                                             'MemreasConstants::S3HLSBUCKET::$object[Key]::deleted::', 
+                                            $object['Key']);
+                        }
+                    } catch (\Exception $e) {
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ . LINE__ .
+                                         'Caught exception::', $e->getMessage());
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ . LINE__ .
+                                         'Error deleting $prefix::', $prefix);
+                    }
                     /*
                      * JM: 28-NOV-2014 below commented - won't work given above
                      * if...
@@ -84,150 +136,6 @@ class DeletePhoto
                     // $event_statement = $this->dbAdapter->createQuery (
                     // $query_event );
                     // $event_result = $event_statement->getResult ();
-                    
-                    /*
-                     * Remove media resource on S3 AMZ - transcoded files should
-                     * be removed also
-                     * Specify your file element in Json metadata, they will be
-                     * deleted all
-                     */
-                    $file_type = $json_array['S3_files']['file_type'];
-                    $files_to_delete = array();
-                    if ($file_type == 'image') {
-                        Mlog::addone(
-                                __CLASS__ . __METHOD__ . LINE__ . '$file_type::', 
-                                $file_type);
-                        $files_to_delete[] = $json_array['S3_files']['path'];
-                        $files_to_delete[] = $json_array['S3_files']['download'];
-                    } else 
-                        if ($file_type == 'video') {
-                            Mlog::addone(
-                                    __CLASS__ . __METHOD__ . LINE__ .
-                                             '$file_type::', $file_type);
-                            $files_to_delete[] = $json_array['S3_files']['path'];
-                            $files_to_delete[] = $json_array['S3_files']['download'];
-                            $files_to_delete[] = $json_array['S3_files']['web'];
-                            $files_to_delete[] = $json_array['S3_files']['1080p'];
-                            $files_to_delete[] = $json_array['S3_files']['hls'];
-                        }
-                    
-                    //
-                    // thumbs apply to both images and videos
-                    //
-                    $thumbs = array(
-                            '79x80',
-                            '448x306',
-                            '384x216',
-                            '98x78',
-                            '1280x720'
-                    );
-                    foreach ($thumbs as $thumb) {
-                        if (is_array(
-                                $json_array['S3_files']['thumbnails'][$thumb])) {
-                            Mlog::addone(
-                                    __CLASS__ . __METHOD__ . LINE__ .
-                                             '$json_array[S3_files][thumbnails][$thumb]::', 
-                                            'is_array');
-                            foreach ($json_array['S3_files']['thumbnails'][$thumb] as $th) {
-                                $files_to_delete[] = $th;
-                            }
-                        } else {
-                            Mlog::addone(
-                                    __CLASS__ . __METHOD__ . LINE__ .
-                                             '$json_array[S3_files][thumbnails][$thumb]::', 
-                                            '!is_array');
-                            $files_to_delete[] = $json_array['S3_files']['thumbnails'][$thumb];
-                        }
-                    }
-                    
-                    //
-                    // Start delete...
-                    //
-                    foreach ($files_to_delete as $file) {
-                        
-                        //
-                        // Delete HLS (h264 encoding)
-                        //
-                        if (! empty($file) && (strripos($file, "m3u8"))) {
-                            Mlog::addone(
-                                    __CLASS__ . __METHOD__ . LINE__ .
-                                             'deleting::', $file);
-                            try {
-                                $this->s3->deleteObject(
-                                        array(
-                                                'Bucket' => MemreasConstants::S3HLSBUCKET,
-                                                'Key' => $file
-                                        ));
-                            } catch (\Exception $e) {
-                                Mlog::addone(
-                                        __CLASS__ . __METHOD__ . LINE__ .
-                                                 'Caught exception::', 
-                                                $e->getMessage());
-                                Mlog::addone(
-                                        __CLASS__ . __METHOD__ . LINE__ .
-                                                 'Error deleting file::', $file);
-                            }
-                            //
-                            // Need to delete *.ts files
-                            //
-                            $path_parts = pathinfo($file);
-                            
-                            echo $path_parts['dirname'], "\n";
-                            $ts_files_to_delete = $client->listObjects(
-                                    array(
-                                            // Bucket is required
-                                            'Bucket' => MemreasConstants::S3HLSBUCKET,
-                                            'Prefix' => $path_parts['dirname']
-                                    ));
-                            foreach ($ts_files_to_delete as $file) {
-                                try {
-                                    
-                                    Mlog::addone(
-                                            __CLASS__ . __METHOD__ . LINE__ .
-                                                     'deleting::', $file);
-                                    $this->s3->deleteObject(
-                                            array(
-                                                    'Bucket' => MemreasConstants::S3HLSBUCKET,
-                                                    'Key' => $file
-                                            ));
-                                } catch (\Exception $e) {
-                                    Mlog::addone(
-                                            __CLASS__ . __METHOD__ . LINE__ .
-                                                     'Caught exception::', 
-                                                    $e->getMessage());
-                                    Mlog::addone(
-                                            __CLASS__ . __METHOD__ . LINE__ .
-                                                     'Error deleting file::', 
-                                                    $file);
-                                }
-                            }
-                        } else 
-                            //
-                            // Delete web (h264 encoding) and 1080p (h265
-                            // encoding)
-                            //
-                            if (! empty($file)) {
-                                Mlog::addone(
-                                        __CLASS__ . __METHOD__ . LINE__ .
-                                                 'deleting::', $file);
-                                try {
-                                    $this->s3->deleteObject(
-                                            array(
-                                                    'Bucket' => MemreasConstants::S3BUCKET,
-                                                    'Key' => $file
-                                            ));
-                                } catch (\Exception $e) {
-                                    Mlog::addone(
-                                            __CLASS__ . __METHOD__ . LINE__ .
-                                                     'Caught exception::', 
-                                                    $e->getMessage());
-                                    Mlog::addone(
-                                            __CLASS__ . __METHOD__ . LINE__ .
-                                                     'Error deleting file::', 
-                                                    $file);
-                                }
-                            }
-                    }
                     
                     try {
                         $delete_media = "DELETE FROM Application\Entity\Media m WHERE m.media_id='{$mediaid}'";
@@ -248,6 +156,8 @@ class DeletePhoto
                     if ($delete_media_result) {
                         $xml_output .= "<status>success</status>";
                         $xml_output .= "<message>Media removed successfully</message>";
+                        Mlog::addone(__CLASS__ . __METHOD__ . LINE__, 
+                                '::db entry deleted!');
                     } else {
                         $xml_output .= "<status>failure</status><message>An error occurred</message>";
                     }

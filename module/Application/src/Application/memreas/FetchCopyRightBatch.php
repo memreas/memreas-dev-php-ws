@@ -32,8 +32,7 @@ class FetchCopyRightBatch
             //
             $query_event = "select c
 			     from Application\Entity\CopyrightBatch c
-			     where c.user_id = '" .
-                     $_SESSION['user_id'] . "'
+			     where c.user_id = '" . $_SESSION['user_id'] . "'
 			     and c.remaining > 0
 			     ORDER BY c.create_date DESC";
             $statement = $this->dbAdapter->createQuery($query_event);
@@ -106,6 +105,8 @@ class FetchCopyRightBatch
         $this->dbAdapter->flush();
         $remaining = $id_count;
         
+        Mlog::addone(__CLASS__ . __METHOD__ . '$copyright_batch_json--->', 
+                $copyright_batch_json);
         return $copyright_batch_json;
     }
 }
