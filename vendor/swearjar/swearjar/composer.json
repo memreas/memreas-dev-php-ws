@@ -1,0 +1,23 @@
+{
+	"name": "swearjar/swearjar",
+	"type": "library",
+	"description": "Profanity detection lib",
+	"keywords":["profanity", "censor", "swear", "curse"],
+	"homepage":"http://github.com/raymondjavaxx/swearjar-php",
+	"license":"MIT",
+	"authors":[
+		{
+			"name": "Ramon Torres",
+			"email": "raymondjavaxx@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-0": {"swearjar": "libraries/"}
+	},
+	"require": {
+		"symfony/yaml": "^2.0"
+	},
+	"require-dev": {
+	  "phpunit/phpunit": "~4.4"
+	}
+}

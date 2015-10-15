@@ -1,0 +1,6 @@
+Swearjar PHP
+===
+
+PHP port of [Swearjar](https://github.com/joshbuddy/swearjar).
+
+[![Build Status](https://secure.travis-ci.org/raymondjavaxx/swearjar-php.png)](http://travis-ci.org/raymondjavaxx/swearjar-php)
