@@ -171,7 +171,6 @@ class AddMediaEvent
                 $json_array['S3_files']['file_type'] = $file_type[0];
                 $json_array['S3_files']['content_type'] = $content_type;
                 $file_type = explode('/', $content_type);
-                Mlog::addone('FILETYPE*************************************');
                 Mlog::addone('$file_type', $file_type);
                 Mlog::addone('$file_type[0]', $file_type[0]);
                 Mlog::addone('$file_type[1]', $file_type[1]);
