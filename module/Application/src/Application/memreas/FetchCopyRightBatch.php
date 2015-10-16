@@ -38,12 +38,7 @@ class FetchCopyRightBatch {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remaining::', $remaining );
 				if ($remaining < MemreasConstants::copyright_batch_minimum) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::$this->createNewBatch($remaining)' );
-					if ($remaining > 0) {
-						$copyright_batch = json_decode ( $copyright_batch_json, true );
-						$this->createNewBatch ( MemreasConstants::copyright_batch_create_count, $copyright_batch );
-					} else {
-						$this->createNewBatch ( MemreasConstants::copyright_batch_create_count );
-					}
+					$this->createNewBatch ( MemreasConstants::copyright_batch_create_count );
 				}
 				$status = 'success';
 			} else {
@@ -69,25 +64,28 @@ class FetchCopyRightBatch {
 		echo $xml_output;
 		error_log ( "fetchcopyrightbatchresponse ---> " . $xml_output . PHP_EOL );
 	}
-	public function createNewBatch($count, $existing_copyright_batch = null) {
+	public function createNewBatch($count) {
 		$copyright_batch = [ ];
 		$id_count = $count;
 		$copyright_batch_id = MUUID::fetchUUID ();
-		for($i = $start; $i < $id_count; $i ++) {
+		for($i = 0; $i < $id_count; $i ++) {
 			$media_id = MUUID::fetchUUID ();
 			$copyright_id = MUUID::fetchUUID ();
 			$copyright_id_md5 = md5 ( $copyright_id );
 			$copyright_id_sha1 = sha1 ( $copyright_id );
 			$copyright_id_sha256 = hash ( 'sha256', $copyright_id );
 			
-			// for db
-			$copyright_batch [$i] ['copyright_batch_id'] = $copyright_batch_id;
-			$copyright_batch [$i] ['copyright_id'] = $copyright_id;
-			$copyright_batch [$i] ['media_id'] = $media_id;
-			$copyright_batch [$i] ['copyright_id_md5'] = $copyright_id_md5;
-			$copyright_batch [$i] ['copyright_id_sha1'] = $copyright_id_sha1;
-			$copyright_batch [$i] ['copyright_id_sha256'] = $copyright_id_sha256;
-			$copyright_batch [$i] ['used'] = 0;
+			// array entry
+			$copyright = [ ];
+			$copyright ['copyright_batch_id'] = $copyright_batch_id;
+			$copyright ['copyright_id'] = $copyright_id;
+			$copyright ['media_id'] = $media_id;
+			$copyright ['copyright_id_md5'] = $copyright_id_md5;
+			$copyright ['copyright_id_sha1'] = $copyright_id_sha1;
+			$copyright ['copyright_id_sha256'] = $copyright_id_sha256;
+			$copyright ['used'] = 0;
+			
+			$copyright_batch [] = $copyright;
 		}
 		$copyright_batch_json = json_encode ( $copyright_batch );
 		
@@ -102,12 +100,6 @@ class FetchCopyRightBatch {
 		$this->dbAdapter->persist ( $tblCopyrightBatch );
 		$this->dbAdapter->flush ();
 		$remaining = $id_count;
-		
-		// re-use existing unused copyrights...
-		if ($existing_copyright_batch != null) {
-			$copyright_batch = array_merge ( $existing_copyright_batch, $copyright_batch );
-			$copyright_batch_json = json_encode ( $copyright_batch );
-		}
 		
 		// Mlog::addone(__CLASS__ . __METHOD__ . '$copyright_batch_json--->',
 		// $copyright_batch_json);
