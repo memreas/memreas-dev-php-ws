@@ -101,8 +101,7 @@ class FetchCopyRightBatch {
 		$this->dbAdapter->flush ();
 		$remaining = $id_count;
 		
-		// Mlog::addone(__CLASS__ . __METHOD__ . '$copyright_batch_json--->',
-		// $copyright_batch_json);
+		Mlog::addone ( __CLASS__ . __METHOD__ . '$copyright_batch_json--->', $copyright_batch_json );
 		return $copyright_batch_json;
 	}
 }

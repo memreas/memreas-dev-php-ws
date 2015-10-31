@@ -208,7 +208,7 @@ class IndexController extends AbstractActionController {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view
-			                           // folder
+			                              // folder
 			return $view;
 		}
 		
