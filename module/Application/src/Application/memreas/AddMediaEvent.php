@@ -195,8 +195,15 @@ class AddMediaEvent {
 								// update the entry
 								//
 								$copyright_batch_array [$i] ['used'] = 1;
-								$copyright_batch_array [$i] ['fileCheckSumMD5'] = $copyright_array ['fileCheckSumMD5'];
-								$copyright_batch_array [$i] ['fileCheckSumSHA'] = $copyright_array ['fileCheckSumSHA'];
+								if (isset ( $copyright_batch_array [$i] ['fileCheckSumMD5'] )) {
+									$copyright_batch_array [$i] ['fileCheckSumMD5'] = $copyright_array ['fileCheckSumMD5'];
+								}
+								if (isset ( $copyright_batch_array [$i] ['fileCheckSumMD5'] )) {
+									$copyright_batch_array [$i] ['fileCheckSumSHA1'] = $copyright_array ['fileCheckSumSHA1'];
+								}
+								if (isset ( $copyright_batch_array [$i] ['fileCheckSumMD5'] )) {
+									$copyright_batch_array [$i] ['fileCheckSumSHA256'] = $copyright_array ['fileCheckSumSHA256'];
+								}
 							}
 						}
 						$remaining = $copyright_batch->__get ( 'remaining' );
@@ -347,7 +354,8 @@ class AddMediaEvent {
 							's3file_basename_prefix' => $s3file_basename_prefix,
 							'is_video' => $is_video,
 							'is_audio' => $is_audio,
-							'email' => $email 
+							'copyright' => $copyright,
+							'applyCopyrightOnServer' => $applyCopyrightOnServer 
 					);
 					Mlog::addone ( 's3path', $s3path );
 					
