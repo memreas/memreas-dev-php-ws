@@ -63,7 +63,7 @@ class AddMediaEvent {
 				$s3file_basename_prefix = pathinfo ( basename ( $s3file_name ) ) ['filename'];
 				$location = ( string ) $data->addmediaevent->location;
 				$copyright = isset ( $data->addmediaevent->copyright ) ? ( string ) $data->addmediaevent->copyright : '';
-				$applyCopyrightOnServer = isset ( $data->addmediaevent->applyCopyrightOnServer ) ? addslashes ( trim ( $data->addmediaevent->applyCopyrightOnServer ) ) : 0;
+				// $applyCopyrightOnServer = isset ( $data->addmediaevent->applyCopyrightOnServer ) ? addslashes ( trim ( $data->addmediaevent->applyCopyrightOnServer ) ) : 0;
 			} else {
 				// Old code uses POST
 				// Fetch user_id
@@ -87,7 +87,7 @@ class AddMediaEvent {
 				$s3url = isset ( $_POST ['s3url'] ) ? $_POST ['s3url'] : '';
 				$location = isset ( $_POST ['location'] ) ? $_POST ['location'] : '';
 				$copyright = isset ( $_POST ['copyright'] ) ? $_POST ['copyright'] : '';
-				$applyCopyrightOnServer = isset ( $_POST ['applyCopyrightOnServer'] ) ? $_POST ['applyCopyrightOnServer'] : 0;
+				// $applyCopyrightOnServer = isset ( $_POST ['applyCopyrightOnServer'] ) ? $_POST ['applyCopyrightOnServer'] : 0;
 			}
 			$time = time ();
 			
@@ -135,7 +135,7 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 				$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 				$json_array ['S3_files'] ['copyright'] = json_decode ( $copyright );
-				$json_array ['S3_files'] ['applyCopyrightOnServer'] = $applyCopyrightOnServer;
+				// $json_array ['S3_files'] ['applyCopyrightOnServer'] = $applyCopyrightOnServer;
 				$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 				$json_array ['S3_files'] ['path'] = $s3file;
 				$json_array ['S3_files'] ['full'] = $s3file;
@@ -346,18 +346,18 @@ class AddMediaEvent {
 				} // end if (isset ( $event_id ) && ! empty ( $event_id ))
 				
 				if (empty ( $is_server_image )) {
-					$message_data = array (
-							'user_id' => $user_id,
-							'media_id' => $media_id,
-							'content_type' => $content_type,
-							's3path' => $s3path,
-							's3file_name' => $s3file_name,
-							's3file_basename_prefix' => $s3file_basename_prefix,
-							'is_video' => $is_video,
-							'is_audio' => $is_audio,
-							'copyright' => $copyright,
-							'applyCopyrightOnServer' => $applyCopyrightOnServer 
-					);
+					$message_data = array ();
+					$message_data ['user_id'] = $user_id;
+					$message_data ['media_id'] = $media_id;
+					$message_data ['content_type'] = $content_type;
+					$message_data ['s3path'] = $s3path;
+					$message_data ['s3file_name'] = $s3file_name;
+					$message_data ['s3file_basename_prefix'] = $s3file_basename_prefix;
+					$message_data ['is_video'] = $is_video;
+					$message_data ['is_audio'] = $is_audio;
+					if (! empty ( $copyright )) {
+						$message_data ['copyright'] = $copyright;
+					}
 					Mlog::addone ( 's3path', $s3path );
 					
 					$aws_manager = new AWSManagerSender ( $this->service_locator );
