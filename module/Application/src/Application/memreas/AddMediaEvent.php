@@ -135,6 +135,7 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 				$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 				$json_array ['S3_files'] ['copyright'] = json_decode ( $copyright );
+				$json_array ['S3_files'] ['applyCopyrightOnServer'] = $applyCopyrightOnServer;
 				$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 				$json_array ['S3_files'] ['path'] = $s3file;
 				$json_array ['S3_files'] ['full'] = $s3file;
