@@ -66,7 +66,7 @@ class ReTransCoder {
 					$message_data ['is_audio'] = empty ( $meta ['S3_files'] ['is_audio'] ) ? 0 : 1;
 					Mlog::addone ( '$meta [S3_files] [copyright]', $meta ['S3_files'] ['copyright'] );
 					if (! empty ( $meta ['S3_files'] ['copyright'] )) {
-						$message_data ['applyCopyrightOnServer'] = empty ( $meta ['S3_files'] ['copyright'] ['applyCopyrightOnServer'] ) ? 0 : 1;
+						// $message_data ['applyCopyrightOnServer'] = empty ( $meta ['S3_files'] ['copyright'] ['applyCopyrightOnServer'] ) ? 0 : 1;
 						$message_data ['copyright'] = $meta ['S3_files'] ['copyright'];
 					}
 					/*
