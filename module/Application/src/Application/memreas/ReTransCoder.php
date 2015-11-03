@@ -69,19 +69,6 @@ class ReTransCoder {
 						// $message_data ['applyCopyrightOnServer'] = empty ( $meta ['S3_files'] ['copyright'] ['applyCopyrightOnServer'] ) ? 0 : 1;
 						$message_data ['copyright'] = $meta ['S3_files'] ['copyright'];
 					}
-					/*
-					 * $message_data = array (
-					 * 'user_id' => $media->user_id,
-					 * 'media_id' => $media->media_id,
-					 * 'content_type' => $meta ['S3_files'] ['content_type'],
-					 * 's3path' => $media->user_id . '/' . $media->media_id . '/',
-					 * 's3file_name' => $meta ['S3_files'] ['s3file_name'],
-					 * 's3file_basename_prefix' => $meta ['S3_files'] ['s3file_basename_prefix'],
-					 * 'is_video' => empty ( $meta ['S3_files'] ['is_video'] ) ? 0 : 1,
-					 * 'is_audio' => empty ( $meta ['S3_files'] ['is_audio'] ) ? 0 : 1,
-					 * 'applyCopyrightOnServer' => empty ( $meta ['S3_files'] ['applyCopyrightOnServer'] ) ? 0 : 1
-					 * );
-					 */
 					Mlog::addone ( '$message_data', $message_data );
 					Mlog::addone ( '$meta [S3_files] [is_video] ', $meta ['S3_files'] ['is_video'] );
 				} else {
