@@ -24,7 +24,6 @@ class ViewEvents {
 	}
 	public function exec() {
 		Mlog::addone ( __CLASS__ . __METHOD__ . '::inbound xml-->', $_POST ['xml'] );
-		ini_set ( 'max_execution_time', 120 );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
 		$is_my_event = trim ( $data->viewevent->is_my_event );
@@ -150,8 +149,11 @@ class ViewEvents {
 			$result_friendevent = $this->fetchFriendsEvents ( $user_id );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::$result_friendevent::', $result_friendevent );
 			if (empty ( $result_friendevent )) {
-				$error_flag = 2;
-				$message = "No Record Found";
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
+				$xml_output .= "<status>Success</status>";
+				$xml_output .= "<message>My Friends Events List</message>";
+				$xml_output .= "<page>0</page>";
+				$xml_output .= "<friends/>";
 			} else {
 				Mlog::addone ( __CLASS__ . __METHOD__ . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
 				$xml_output .= "<status>Success</status>";
@@ -281,11 +283,13 @@ class ViewEvents {
 			$result_pub = $this->fetchPublicEvents ();
 			
 			if (count ( $result_pub ) == 0) {
-				error_log ( "fail - no records found..." . PHP_EOL );
-				$xml_output .= "<status>Failure</status>";
-				$xml_output .= "<message>No record found</message>";
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
+				$xml_output .= "<status>Success</status>";
+				$xml_output .= "<message>Public Event List</message>";
+				$xml_output .= "<page>0</page>";
+				$xml_output .= "<events/>";
 			} else {
-				error_log ( "succes - records found..." . count ( $result_pub ) . PHP_EOL );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "success - records found..." . count ( $result_pub ) );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>Public Event List</message>";
 				$xml_output .= "<page>$page</page>";
@@ -294,7 +298,7 @@ class ViewEvents {
 				foreach ( $result_pub as $public_event_row ) {
 					
 					if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
-						error_log ( "Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC..." . PHP_EOL );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
 						$event_json_array = json_decode ( $public_event_row ['metadata'], true );
 						// skip this event hving
 						if (! empty ( $event_json_array ['price'] ))
@@ -360,43 +364,45 @@ class ViewEvents {
 								$xml_output .= "<profile_pic_448x306 />";
 								$xml_output .= "<profile_pic_98x78 />";
 							}
-							
-							/**
-							 * Fetch event friends...
-							 */
-							$friends = $this->fetchEventFriends ( $public_event_row ['event_id'] );
-							
-							/**
-							 * Generate event friends xml .
-							 */
-							$xml_output .= $this->generateEventFriendsXML ( $friends );
-							
-							/**
-							 * Fetch comment like and count totals...
-							 */
-							// get like count
-							$likeCount = $this->fetchEventLikeCount ( $public_event_row ['event_id'] );
-							$xml_output .= "<event_like_total>" . $likeCount . "</event_like_total>";
-							// get comment count for event
-							$commCount = $this->fetchEventCommentCount ( $public_event_row ['event_id'] );
-							$xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
-							
-							/**
-							 * get comments
-							 */
-							$xml_output .= $this->fetchEventComments ( $public_event_row ['event_id'] );
-							
-							/*
-							 * Fetch event photo thumbs...
-							 */
-							$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
-							
-							/**
-							 * generatePublicEventMediaXML
-							 */
-							$xml_output .= $this->generatePublicEventMediaXML ( $result_event_media_public );
-						}
-					}
+						} // if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] ))
+					} // end if ($profile)
+					
+					/**
+					 * Fetch event friends...
+					 */
+					$friends = $this->fetchEventFriends ( $public_event_row ['event_id'] );
+					
+					/**
+					 * Generate event friends xml .
+					 */
+					$xml_output .= $this->generateEventFriendsXML ( $friends );
+					
+					/**
+					 * Fetch comment like and count totals...
+					 */
+					// get like count
+					$likeCount = $this->fetchEventLikeCount ( $public_event_row ['event_id'] );
+					$xml_output .= "<event_like_total>" . $likeCount . "</event_like_total>";
+					// get comment count for event
+					$commCount = $this->fetchEventCommentCount ( $public_event_row ['event_id'] );
+					$xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
+					
+					/**
+					 * get comments
+					 */
+					$xml_output .= $this->fetchEventComments ( $public_event_row ['event_id'] );
+					
+					/*
+					 * Fetch event photo thumbs...
+					 */
+					$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
+					
+					/**
+					 * generatePublicEventMediaXML
+					 */
+					$xml_output .= $this->generatePublicEventMediaXML ( $result_event_media_public );
+					// }
+					// }
 					$xml_output .= " </event>";
 				} // end for loop public events
 				$xml_output .= "</events>";
@@ -417,9 +423,11 @@ class ViewEvents {
 			where e.user_id='" . $user_id . "'
 			ORDER BY e.create_time DESC";
 		$statement = $this->dbAdapter->createQuery ( $query_event );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
 		return $statement->getResult ();
 	}
 	private function fetchMyEventsMedia($user_id, $event_id) {
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );

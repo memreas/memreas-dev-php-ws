@@ -95,8 +95,8 @@ class AddMediaEvent {
 			// dont upload file if server image just insert into event_media
 			// table
 			// ////////////////////////////////////////////////////////////////////
-			if ($is_server_image === 1) {
-				error_log ( "AddMediaEvent exec is_server_image == 1 " . PHP_EOL );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::AddMediaEvent exec is_server_image::', $is_server_image );
+			if ($is_server_image == 1) {
 				if (! isset ( $media_id ) || empty ( $media_id )) {
 					throw new \Exception ( 'Error : media_id is empty' );
 				}

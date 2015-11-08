@@ -59,7 +59,7 @@ class ListAllmedia {
 			$result = $statement->getArrayResult ();
 		} else {
 			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'media.user_id', 'media.media_id', 'media.metadata', 'media.create_date' );
+			$qb->select ( 'media.user_id', 'media.media_id', 'media.transcode_status', 'media.metadata', 'media.create_date' );
 			$qb->from ( 'Application\Entity\Media', 'media' );
 			$qb->join ( 'Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id' );
 			$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id' );
