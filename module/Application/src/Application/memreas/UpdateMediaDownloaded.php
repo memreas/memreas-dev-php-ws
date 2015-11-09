@@ -18,12 +18,10 @@ use \Exception;
 // <xml>
 // <updatemediadownloaded>
 // <media>
-// <media_id><media_id>
-// <device>
-// <device_type><device_type>
+// <media_id></media_id>
 // <device_id></device_id>
+// <device_type></device_type>
 // <device_local_identifier></device_local_identifier>
-// </device>
 // </media>
 // <updatemediadownloaded>
 // <xml>
@@ -41,6 +39,7 @@ class UpdateMediaDownloaded {
 	
 	//
 	// exec - purpose is to updated identification info for downloaded media
+	// - mainly for ios and android
 	//
 	public function exec($frmweb = false, $output = '') {
 		$error_flag = 0;
@@ -54,12 +53,25 @@ class UpdateMediaDownloaded {
 		
 		if ($data->updatemediadownloaded->media->count ()) {
 			foreach ( $data->updatemediadownloaded->media as $media ) {
-				$media_id = trim ( $media->media_id );
 				
+				//
+				// Set inbound vars - see sample xml
+				//
+				$media_id = trim ( $media->media_id );
+				$device_type = trim ( $media->device_type );
+				$device_id = trim ( $media->device_id );
+				$device_local_identifier = trim ( $media->device_local_identifier );
+				
+				//
+				// Fetch the db entry
+				//
 				$query = $this->dbAdapter->createQueryBuilder ();
 				$query->select ( "m" )->from ( "\Application\Entity\Media", "m" )->where ( "m.media_id = '{$media_id}'" );
 				$media = $query->getQuery ()->getResult ();
 				
+				//
+				// Update
+				//
 				if (empty ( $media )) {
 					$message = 'media does not exist';
 					$status = 'failure';
@@ -67,19 +79,62 @@ class UpdateMediaDownloaded {
 					$metadata = $media [0]->metadata;
 					$metadata = json_decode ( $metadata, true );
 					
-					// check for device
-					$devices = $metadata ["S3_files"] ["device"];
+					//
+					// Correct existing meta if using device not devices
+					//
+					if (isset ( $metadata ["S3_files"] ["device"] )) {
+						$temp = $metadata ["S3_files"] ["device"];
+						unset ( $metadata ["S3_files"] ["device"] );
+						$metadata ["S3_files"] ["devices"] ["device"] = $temp;
+					}
 					
-					$media = $media [0];
+					//
+					// Check for devices
+					//
+					if (isset ( $metadata ["S3_files"] ["devices"] )) {
+						$devices = $metadata ["S3_files"] ["devices"];
+						$found = false;
+						foreach ( $devices as $device ) {
+							// if wrong type continue
+							if (($device ['device_id'] == $device_id) && ($device ['device_type'] == $device_type)) {
+								//
+								// Found the device entry
+								//
+								$device ['device_local_identifier'] = $device_local_identifier;
+								$found = true;
+							} else {
+								continue;
+							}
+							// if wrong type continue
+							if ($device ['device_id'] != $device_id) {
+								continue;
+							}
+						}
+					}
+					
+					//
+					// if not found then add a new device
+					//
+					if (! $found) {
+						$devices ['device'] ['device_id'] = $device_id;
+						$devices ['device'] ['device_type'] = $device_type;
+						$devices ['device'] ['device_local_identifier'] = $device_local_identifier;
+						$devices ['device'] ['origin'] = 0;
+					}
+					$metadata ["S3_files"] ["devices"] = $devices;
+					
 					$media->metadata = $metadata;
 					$this->dbAdapter->persist ( $media );
 					$this->dbAdapter->flush ();
 					
-					$message = 'Media updated';
-					$status = 'Success';
+					$message = 'updated metadata for media downloaded';
+					$status = 'success';
 				}
 			}
 			$output .= '<media_id>' . $media_id . '</media_id>';
+			$output .= '<device_id>' . $device_id . '</device_id>';
+			$output .= '<device_type>' . $device_type . '</device_type>';
+			$output .= '<device_local_identifier>' . $device_local_identifier . '</device_local_identifier>';
 		}
 		
 		header ( "Content-type: text/xml" );

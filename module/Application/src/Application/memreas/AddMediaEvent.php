@@ -144,6 +144,7 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_id'] = $device_id;
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_type'] = $device_type;
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_local_identifier'] = $s3file_name; // initial upload
+				$json_array ['S3_files'] ['devices'] ['device'] ['origin'] = 1;
 				$json_array ['S3_files'] ['file_type'] = $file_type [0];
 				$json_array ['S3_files'] ['content_type'] = $content_type;
 				$file_type = explode ( '/', $content_type );
