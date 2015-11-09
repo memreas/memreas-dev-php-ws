@@ -27,6 +27,12 @@ class EventMedia {
 	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
 	private $event_id;
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="metadata", type="text", nullable=true)
+	 */
+	private $metadata;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

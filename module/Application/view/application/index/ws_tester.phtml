@@ -146,6 +146,18 @@ echo "user_id ----> " . $user_id;
 					            '<location>{"latitude": "my_latitude","longitude": "my_longitude"}</location>'+
 					            '</addmediaevent>'+
 					            '</xml>';	
+		  	var mediadevicetracker = '<xml>'+
+					         '<mediadevicetracker>'+
+					         '<media>'+
+					         '<media_id></media_id>'+
+					         '<user_id></user_id>'+
+					         '<device_id></device_id>'+
+					         '<device_type></device_type>'+
+					         '<device_local_identifier></device_local_identifier>'+
+					         '</media>'+
+					         '<updatemediadownloaded>'+
+					         '<xml>';
+					            
 			var fetchcopyrightbatch = '<xml>'+
             					'<username>jmeah7</username>'+
 					            '<fetchcopyrightbatch>'+
@@ -704,6 +716,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "logout") { xml = logout; }	
                     else if ($("#input_action").val() == "mediainappropriate") { xml = mediainappropriate; }	
                     else if ($("#input_action").val() == "memreas_tvm") { xml = memreas_tvm; }	
+                    else if ($("#input_action").val() == "mediadevicetracker") { xml = mediadevicetracker; }	
                     else if ($("#input_action").val() == "registerdevice") { xml = registerdevice; }
                     else if ($("#input_action").val() == "registercanonicaldevice") { xml = registercanonicaldevice; }
                     else if ($("#input_action").val() == "removeeventfriend") { xml = removeeventfriend; }	
@@ -826,6 +839,7 @@ echo "user_id ----> " . $user_id;
 								<option>logout</option>
 								<option>mediainappropriate</option>
 								<option>memreas_tvm</option>
+								<option>mediadevicetracker</option>
 								<option>registerdevice</option>
 								<option>registercanonicaldevice</option>
 								<option>registration</option>
