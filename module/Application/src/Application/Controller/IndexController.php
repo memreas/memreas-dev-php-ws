@@ -76,6 +76,7 @@ use Application\memreas\CheckExistMedia;
 use Application\memreas\ListMemreasFriends;
 use Application\memreas\GetSocialCredentials;
 use Application\memreas\UpdateMedia;
+use Application\memreas\UpdateMediaDownloaded;
 use Application\memreas\FeedBack;
 use Application\memreas\GetEventDetails;
 use Application\memreas\RemoveEventMedia;
@@ -2059,25 +2060,33 @@ class IndexController extends AbstractActionController {
 				$result = $GetSocialCredentials->exec ();
 			} else if ($actionname == "updatemedia") {
 				/*
-				 * TODO:
-				 * Invalidation
-				 * needed.
+				 * TODO: Invalidation needed.
 				 */
 				$UpdateMedia = new UpdateMedia ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $UpdateMedia->exec ();
 				
 				/*
-				 * TODO:
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * need
-				 * to
-				 * invalidate
-				 * invalidateMedia
+				 * TODO: Cache approach
+				 * - write operation
+				 * - need to invalidate invalidateMedia
+				 */
+				
+				// $this->redis->invalidateMedia
+				// (
+				// $_SESSION
+				// ['user_id']
+				// );
+			} else if ($actionname == "updatemediadownloaded") {
+				/*
+				 * TODO: Invalidation needed.
+				 */
+				$UpdateMediaDownloaded = new UpdateMediaDownloaded ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $UpdateMediaDownloaded->exec ();
+				
+				/*
+				 * TODO: Cache approach
+				 * - write operation
+				 * - need to invalidate invalidateMedia
 				 */
 				
 				// $this->redis->invalidateMedia
