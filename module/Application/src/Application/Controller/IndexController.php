@@ -76,7 +76,7 @@ use Application\memreas\CheckExistMedia;
 use Application\memreas\ListMemreasFriends;
 use Application\memreas\GetSocialCredentials;
 use Application\memreas\UpdateMedia;
-use Application\memreas\UpdateMediaDownloaded;
+use Application\memreas\MediaDeviceTracker;
 use Application\memreas\FeedBack;
 use Application\memreas\GetEventDetails;
 use Application\memreas\RemoveEventMedia;
@@ -2076,12 +2076,12 @@ class IndexController extends AbstractActionController {
 				// $_SESSION
 				// ['user_id']
 				// );
-			} else if ($actionname == "updatemediadownloaded") {
+			} else if ($actionname == "mediadevicetracker") {
 				/*
 				 * TODO: Invalidation needed.
 				 */
-				$UpdateMediaDownloaded = new UpdateMediaDownloaded ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $UpdateMediaDownloaded->exec ();
+				$MediaDeviceTracker = new MediaDeviceTracker ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $MediaDeviceTracker->exec ();
 				
 				/*
 				 * TODO: Cache approach
