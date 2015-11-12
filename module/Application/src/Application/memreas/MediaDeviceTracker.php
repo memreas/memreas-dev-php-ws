@@ -133,11 +133,11 @@ class MediaDeviceTracker
         // end if ($media_on_devices)
         
         if ($found) {
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to update::', '');
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to update::', '***');
             $media_on_devices[0]['metadata'] = json_encode($devices);
             $this->dbAdapter->persist($media_on_devices);
             $this->dbAdapter->flush();
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '');
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***');
             
             // Set status
             $message = 'updated metadata for media_device';
@@ -148,35 +148,21 @@ class MediaDeviceTracker
             //
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::!found $device about to insert::', '****');
             $meta = array();
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $meta['devices']['device']['media_id'] = $media_id;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $meta['devices']['device']['device_id'] = $device_id;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $meta['devices']['device']['device_type'] = $device_type;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $meta['devices']['device']['device_local_identifier'] = $device_local_identifier;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::$meta::', json_encode($meta));
             
             $now = date('Y-m-d H:i:s');
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $tblMediaDevice = new \Application\Entity\MediaDevice();
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $tblMediaDevice->media_id = $media_id;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $tblMediaDevice->user_id = $user_id;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $tblMediaDevice->metadata = json_encode($meta);
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $tblMediaDevice->create_date = $now;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $tblMediaDevice->update_date = $now;
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $this->dbAdapter->persist($tblMediaDevice);
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             $this->dbAdapter->flush();
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '*', '*');
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::!found $device about to inserted!::', '***');
             
             // Set status
@@ -202,6 +188,7 @@ class MediaDeviceTracker
         $xml_output .= "</mediadevicetrackerresponse>";
         $xml_output .= "</xml>";
         echo $xml_output;
+        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::$xml_output::', $xml_output);
     }
 }
 
