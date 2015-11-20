@@ -109,7 +109,6 @@ class MediaDeviceTracker
         Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query);
         $statement = $this->dbAdapter->createQuery($query);
         $media_on_devices = $statement->getArrayResult();
-        
         //
         // parse results...
         //
@@ -132,16 +131,22 @@ class MediaDeviceTracker
         }
         // end if ($media_on_devices)
         
+        $now = date('Y-m-d H:i:s');
         if ($found) {
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to update::', '***');
-            $media_on_devices[0]['metadata'] = json_encode($devices);
-            $this->dbAdapter->persist($media_on_devices);
-            $this->dbAdapter->flush();
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***');
-            
-            // Set status
-            $message = 'updated metadata for media_device';
-            $status = 'success';
+            try {
+                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to update::', '***');
+                $json = json_encode($devices);
+                $updateMediaDeviceQuery = "UPDATE Application\Entity\MediaDevice md " . " SET md.metadata = '{$json}'" . " , md.update_date ='{$now}'" . " WHERE md.media_id='{$media_id}' " . " AND md.user_id='{$user_id}'";
+                $statement = $this->dbAdapter->createQuery($updateMediaDeviceQuery);
+                $result = $statement->getResult();
+                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***');
+                
+                // Set status
+                $message = 'updated metadata for media_device';
+                $status = 'success';
+            } catch (\Exception $e) {
+                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::$e->getMessage()::', $e->getMessage());
+            }
         } else {
             //
             // Insert
@@ -154,7 +159,6 @@ class MediaDeviceTracker
             $meta['devices']['device']['device_local_identifier'] = $device_local_identifier;
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::$meta::', json_encode($meta));
             
-            $now = date('Y-m-d H:i:s');
             $tblMediaDevice = new \Application\Entity\MediaDevice();
             $tblMediaDevice->media_id = $media_id;
             $tblMediaDevice->user_id = $user_id;

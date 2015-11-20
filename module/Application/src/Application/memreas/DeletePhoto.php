@@ -59,7 +59,7 @@ class DeletePhoto
                 $statement = $this->dbAdapter->createQuery($media_event);
                 $result = $statement->getResult();
                 if (count($result) > 0) {
-                    Mlog::addone(__CLASS__ . __METHOD__ . LINE__ . 'fail::count($result)::', count($result));
+                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'fail::count($result)::', count($result));
                     $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
                 } else {
                     // Mlog::addone(__CLASS__ . __METHOD__ . LINE__ .
@@ -124,13 +124,14 @@ class DeletePhoto
                         $media_statement = $this->dbAdapter->createQuery($delete_media);
                         $delete_media_result = $media_statement->getResult();
                         // Media Device
-                        $user_id = $_SESSION['user']['user_id'];
+                        Mlog::addone("_SESSION", $_SESSION);
+                        $user_id = $_SESSION['user_id'];
                         $delete_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
                         $media_statement = $this->dbAdapter->createQuery($delete_media);
                         $delete_media_result = $media_statement->getResult();
                     } catch (\Exception $e) {
-                        Mlog::addone(__CLASS__ . __METHOD__ . LINE__ . 'Caught exception::', $e->getMessage());
-                        Mlog::addone(__CLASS__ . __METHOD__ . LINE__ . 'Error deleting from db::', $delete_media);
+                        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'Caught exception::', $e->getMessage());
+                        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'Error deleting from db::', $delete_media);
                     }
                     
                     // if (count ( $result ) > 0) {
