@@ -96,6 +96,12 @@ class ListAllmedia
             $xml_output .= "<event_id>" . $event_id . "</event_id>";
             $xml_output .= "<message>Media List</message>";
             
+            /**
+             * Add section for user device media - used in for loop
+             */
+            $MediaDeviceTracker = new MediaDeviceTracker($this->message_data, $this->memreas_tables, $this->service_locator);
+            $mediaDevicesForUserAsArray = $MediaDeviceTracker->fetchMediaDeviceMediaByUserId($user_id);
+            
             $checkHasMedia = false;
             foreach ($result as $row) {
                 $json_array = json_decode($row['metadata'], true);
@@ -220,10 +226,34 @@ class ListAllmedia
                     $xml_output .= "<type>$type</type>";
                     $xml_output .= "<media_name><![CDATA[" . $media_name . "]]></media_name>";
                     $xml_output .= "<media_name_prefix><![CDATA[" . $media_name_prefix . "]]></media_name_prefix>";
+                    
+                    //
+                    // Check media for devices
+                    //
+                    $found = false;
+                    foreach ($mediaDevicesForUserAsArray as $mediaDevice) {
+                        if ($mediaDevice['media_id'] == $row['media_id']) {
+                            Mlog::addone("FOUND MEDIA DEVICES ENTRY row[media_id]::", $row['media_id']);
+                            Mlog::addone("FOUND MEDIA DEVICES ENTRY mediaDevice[media_id]::", $mediaDevice['media_id']);
+                            $found = true;
+                            $xmlMediaDevice = "<user_media_device><![CDATA[" . json_encode($mediaDevice['metadata']) . "]]></user_media_device>";
+                        } else {
+                            // media wasn't downloaded to a device for this user.
+                        }
+                    }
+                    if ($found) {
+                        $xml_output .= $xmlMediaDevice;
+                    } else {
+                        $xml_output .= "<user_media_device/>";
+                    }
+                    
+                    //
+                    // Close media entry
+                    //
                     $xml_output .= "</media>";
-                }
-            }
-            
+                } // end if !profile_pic
+            } // end for
+              
             // If has profile image but has no more media
             if (! $checkHasMedia) {
                 $xml_output = str_replace(array(
@@ -244,25 +274,13 @@ class ListAllmedia
         }
         $xml_output .= "</medias>";
         
-        /**
-         * Add section for user device media
-         */
-        /**
-         * Update copyright batch data and copyright table.
-         */
-        $MediaDeviceTracker = new MediaDeviceTracker($this->message_data, $this->memreas_tables, $this->service_locator);
-        $mediaDevicesForUserAsJson = $MediaDeviceTracker->fetchMediaDeviceMedia($user_id);
-        if (isset($mediaDevicesForUserAsJson) && ! empty($mediaDevicesForUserAsJson)) {
-            $xml_output .= "<user_media_device><![CDATA[" . $mediaDevicesForUserAsJson . "]]></user_media_device>";
-        }
-        
         //
         // Close xml
         //
         $xml_output .= "</listallmediaresponse>";
         $xml_output .= "</xml>";
         echo $xml_output;
-        // Mlog::addone ( '$xml_output', $xml_output );
+        // Mlog::addone('$xml_output', $xml_output);
     }
 }
 

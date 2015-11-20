@@ -48,7 +48,7 @@ class MediaDeviceTracker
      *
      * @param user_id $user_id            
      */
-    public function fetchMediaDeviceMedia($user_id)
+    public function fetchMediaDeviceMediaByUserId($user_id)
     {
         $query = "SELECT m
         from \Application\Entity\MediaDevice m
@@ -58,7 +58,7 @@ class MediaDeviceTracker
         $mediaDevicesForUser = $statement->getArrayResult();
         Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode($mediaDevicesForUser));
         
-        return json_encode($mediaDevicesForUser);
+        return $mediaDevicesForUser;
     }
     
     //
