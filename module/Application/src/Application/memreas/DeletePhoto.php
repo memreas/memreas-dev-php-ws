@@ -141,6 +141,7 @@ class DeletePhoto
                         Mlog::addone(__CLASS__ . __METHOD__ . LINE__, '::db entry deleted!');
                     } else {
                         $xml_output .= "<status>failure</status><message>An error occurred</message>";
+                        Mlog::addone(__CLASS__ . __METHOD__ . LINE__, '::db entry delete failed');
                     }
                 }
             } else

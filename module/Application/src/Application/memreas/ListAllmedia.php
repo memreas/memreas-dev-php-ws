@@ -236,7 +236,7 @@ class ListAllmedia
                             Mlog::addone("FOUND MEDIA DEVICES ENTRY row[media_id]::", $row['media_id']);
                             Mlog::addone("FOUND MEDIA DEVICES ENTRY mediaDevice[media_id]::", $mediaDevice['media_id']);
                             $found = true;
-                            $xmlMediaDevice = "<user_media_device><![CDATA[" . json_encode($mediaDevice['metadata']) . "]]></user_media_device>";
+                            $xmlMediaDevice = "<user_media_device><![CDATA[" . $mediaDevice['metadata'] . "]]></user_media_device>";
                         } else {
                             // media wasn't downloaded to a device for this user.
                         }

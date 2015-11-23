@@ -184,13 +184,13 @@ class ListNotification {
 	 */
 	public function handleAddFriendToEvent($eventRepository, $event_id) {
 		$eventMedia = $eventRepository->getEventMedia ( $event_id, 1 );
-Mlog::addone(__CLASS__.'::'.__METHOD__.'::$eventMedia', $eventMedia);
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia', $eventMedia );
 		
 		// echo'<pre>';print_r($eventMedia);
 		$eventMediaUrl = '';
 		if (isset ( $eventMedia [0] )) {
 			$eventMediaUrl = $eventRepository->getEventMediaUrl ( $eventMedia [0] ['metadata'], 'thumb' );
-Mlog::addone(__CLASS__.'::'.__METHOD__.'::$eventMedia[0][metadata]', $eventMedia[0]['metadata']);
+			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
 			$this->xml_output .= "<event_media_url><![CDATA[" . json_encode ( $eventMediaUrl ) . "]]></event_media_url>";
 		}
 	}

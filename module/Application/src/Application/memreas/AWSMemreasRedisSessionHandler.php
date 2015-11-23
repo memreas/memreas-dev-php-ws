@@ -63,8 +63,10 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithMemreasCookie($memreascookie) {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
-		session_id ( $rMemreasCookieSessionArr ['sid'] );
-		session_start ();
+		if (! session_id ()) {
+			session_id ( $rMemreasCookieSessionArr ['sid'] );
+			session_start ();
+		}
 		error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithUID($uid, $uname) {
@@ -76,8 +78,10 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		if ($rUIDSession) {
 			// error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
 			$rUIDSessionArr = json_decode ( $rUIDSession, true );
-			session_id ( $rUIDSessionArr ['sid'] );
-			session_start ();
+			if (! session_id ()) {
+				session_id ( $rUIDSessionArr ['sid'] );
+				session_start ();
+			}
 			error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
 		} else {
 			// error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );

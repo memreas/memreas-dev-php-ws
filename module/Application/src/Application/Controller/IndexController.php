@@ -1664,27 +1664,10 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "listcomments") {
 				
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
-				 * if
-				 * event_id
-				 * then
-				 * return
-				 * then
-				 * event_id_media_id
-				 * else
-				 * cache
-				 * media_id
+				 * Cache Approach:
+				 * Check cache first if not there then fetch and cache...
+				 * if event_id then return then event_id_media_id
+				 * else cache media_id
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (! empty ( $data->listcomments->event_id ) && ! empty ( $data->listcomments->media_id )) {
@@ -1702,40 +1685,18 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "verifyemail") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
+				 * Cache Approach: N/a
 				 */
 				$aws_manager = new AWSManagerSender ( $this->service_locator );
 				$client = $aws_manager->ses ();
 				$client->verifyEmailAddress ( array (
 						'EmailAddress' => $_GET ['email'] 
 				) );
-				// echo
-				// 'Please
-				// Cheack
-				// email
-				// validate
-				// you
-				// email
-				// to
-				// receive
-				// emails';
 			} else if ($actionname == "geteventlocation") {
 				
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach: Check cache first if not there
+				 * then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventlocation->event_id );
@@ -1748,18 +1709,8 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "geteventcount") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach: Check cache first if not there
+				 * then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventcount->event_id );
@@ -1772,18 +1723,8 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "getuserdetails") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach: Check cache first if not there
+				 * then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getuserdetails->user_id );
@@ -1805,33 +1746,15 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				
 				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidate
-				 * listnotification
+				 * Cache approach
+				 * - write operation
+				 * - invalidate listnotification
 				 */
-				// $this->redis->invalidateUser
-				// (
-				// $data->saveuserdetails->user_id
-				// );
+				$this->redis->invalidateUser ( $data->saveuserdetails->user_id );
 			} else if ($actionname == "getusergroups") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach: Check cache first if not there
+				 * then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getusergroups->user_id );
@@ -1844,26 +1767,8 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "getgroupfriends") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
-				 * if
-				 * group_id
-				 * then
-				 * return
-				 * then
-				 * network_group_id
-				 * else
-				 * network
+				 * Cache Approach: Check cache first if not there
+				 * then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$group_id = trim ( $data->getgroupfriends->group_id );
@@ -1879,78 +1784,33 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "addfriendtogroup") {
 				/*
-				 * TODO:
-				 * Invalidation
-				 * needed
+				 * TODO: Invalidation needed
 				 */
 				$AddFriendToGroup = new AddFriendToGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $AddFriendToGroup->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				
 				/*
-				 * TODO:
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * need
-				 * to
-				 * invalidate
-				 * listgroup
-				 * but
-				 * dont
-				 * have
-				 * user_id
+				 * TODO: Cache approach
+				 * - write operation
 				 */
-				
-				// $this->redis->invalidateGroups
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriendgroup") {
 				$RemoveFriendGroup = new RemoveFriendGroup ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $RemoveFriendGroup->exec ();
 				
 				/*
-				 * TODO:
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * need
-				 * to
-				 * invalidate
-				 * listgroup
-				 * but
-				 * dont
-				 * have
-				 * user_id
+				 * TODO: Cache approach
+				 * - write operation
+				 * - need to invalidate listgroup but dont have user_id
 				 */
 				
-				// $this->redis->invalidateGroups
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "geteventpeople") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach:
+				 * Check cache first if not there then
+				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventpeople->event_id );
@@ -1966,40 +1826,19 @@ class IndexController extends AbstractActionController {
 				$result = $AddExistMediaToEvent->exec ();
 				
 				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * need
-				 * to
-				 * invalidate
-				 * invalidateEvents
+				 * Cache approach
+				 * - write operation
+				 * - need to invalidate invalidateEvents
 				 */
 				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
-				// $this->redis->invalidateMedia
-				// (
-				// $_SESSION
-				// ['user_id'],
-				// $event_id
-				// );
+				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach:
+				 * Check cache first if not there then
+				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getmedialike->media_id );
@@ -2022,18 +1861,9 @@ class IndexController extends AbstractActionController {
 				$result = $CheckExistMedia->exec ();
 			} else if ($actionname == "listmemreasfriends") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach:
+				 * Check cache first if not there then
+				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listmemreasfriends->user_id );
@@ -2047,14 +1877,9 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "getsocialcredentials") {
 				/*
 				 * TODO:
-				 * Cache
-				 * Approach:
-				 * Not
-				 * necessary
-				 * -
-				 * no
-				 * sql
-				 * query
+				 * Cache Approach:
+				 * Not necessary
+				 * - no sql query
 				 */
 				$GetSocialCredentials = new GetSocialCredentials ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $GetSocialCredentials->exec ();
@@ -2071,52 +1896,33 @@ class IndexController extends AbstractActionController {
 				 * - need to invalidate invalidateMedia
 				 */
 				
-				// $this->redis->invalidateMedia
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "mediadevicetracker") {
 				/*
 				 * TODO: Invalidation needed.
 				 */
 				$MediaDeviceTracker = new MediaDeviceTracker ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MediaDeviceTracker->exec ();
-				
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				/*
 				 * TODO: Cache approach
 				 * - write operation
 				 * - need to invalidate invalidateMedia
 				 */
 				
-				// $this->redis->invalidateMedia
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "feedback") {
 				/*
-				 * Cache
-				 * Approach
-				 * -
-				 * N/a
+				 * Cache Approach
+				 * - N/a
 				 */
 				$FeedBack = new FeedBack ( $this->getServiceLocator () );
 				$result = $FeedBack->exec ();
 			} else if ($actionname == "geteventdetails") {
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach:
+				 * Check cache first if not there then
+				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->geteventdetails->event_id );
@@ -2132,81 +1938,46 @@ class IndexController extends AbstractActionController {
 				$result = $RemoveEventMedia->exec ();
 				
 				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidateMedia
+				 * Cache approach
+				 * - write operation
+				 * - invalidateMedia
 				 */
 				
-				// $this->redis->invalidateMedia
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				// TODO: invalidate event details media
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removeeventfriend") {
 				/*
-				 * TODO:
-				 * Invalidation
-				 * needed
+				 * TODO: Invalidation needed
 				 */
 				$RemoveEventFriend = new RemoveEventFriend ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $RemoveEventFriend->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				
 				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidateMedia
+				 * Cache approach
+				 * - write operation
+				 * - invalidate event details friends
 				 */
 				
-				// $this->redis->invalidateEventFriends
-				// (
-				// $data->removeeventfriend->event_id,
-				// $_SESSION
-				// ['user_id']
-				// );
+				$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriends") {
 				
 				$RemoveFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $RemoveFriends->exec ();
 				
 				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidateFriends
+				 * Cache approach
+				 * - write operation
+				 * - invalidateFriends
 				 */
 				
-				// $this->redis->invalidateFriends
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
 			} else if ($actionname == "getfriends") {
 				
 				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				 * Cache Approach:
+				 * Check cache first if not there then
+				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->getfriends->user_id );
@@ -2219,41 +1990,29 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "getplans") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 * for
-				 * now
+				 * Cache Approach:
+				 * N/a for now
 				 */
 				$GetPlans = new GetPlans ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $GetPlans->exec ();
 			} else if ($actionname == "getplansstatic") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 * for
-				 * now
+				 * Cache Approach:
+				 * N/a for now
 				 */
 				$GetPlansStatic = new GetPlansStatic ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $GetPlansStatic->exec ();
 			} else if ($actionname == "getorderhistory") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 * for
-				 * now
+				 * Cache Approach:
+				 * N/a for now
 				 */
 				$GetOrderHistory = new GetOrderHistory ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $GetOrderHistory->exec ();
 			} else if ($actionname == "getorder") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 * for
-				 * now
+				 * Cache Approach:
+				 * N/a for now
 				 */
 				$GetOrder = new GetOrder ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $GetOrder->exec ();
@@ -2263,79 +2022,46 @@ class IndexController extends AbstractActionController {
 				
 				/*
 				 * TODO:
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * need
-				 * to
-				 * invalidate
-				 * listgroup
-				 * but
-				 * dont
-				 * have
-				 * user_id
+				 * Cache approach
+				 * - write operation
 				 */
 				
-				// $this->redis->invalidateGroups
-				// (
-				// $_SESSION
-				// ['user_id']
-				// );
+				$this->redis->invalidateGroups ( $_SESSION ['user_id'] );
 			} else if ($actionname == "checkevent") {
 				/*
-				 * TODO:
-				 * Query
-				 * inside
-				 * needs
-				 * to
-				 * cached
+				 * TODO: Query inside needs to be cached
 				 */
 				$CheckEvent = new CheckEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $CheckEvent->exec ();
 			} else if ($actionname == "updatepassword") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
+				 * Cache Approach:N/a
 				 */
 				$UpdatePassword = new UpdatePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $UpdatePassword->exec ();
 			} else if ($actionname == "getaccountdetail") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 * for
-				 * now
+				 * Cache Approach:
+				 * N/a for now
 				 */
 				$GetAccountDetail = new GetAccountDetail ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $GetAccountDetail->exec ();
 			} else if ($actionname == "getdiskusage") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 * for
-				 * now
+				 * Cache Approach:
+				 * N/a for now
 				 */
 				$getdiskusage = new GetDiskUsage ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $getdiskusage->exec ();
 			} else if ($actionname == "refund") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
+				 * Cache Approach: N/a
 				 */
 				$Refund = new Refund ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $Refund->exec ();
 			} else if ($actionname == "listpayees") {
 				/*
-				 * Cache
-				 * Approach:
-				 * N/a
+				 * Cache Approach:N/a
 				 */
 				$ListPayees = new ListPayees ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $ListPayees->exec ();
@@ -2348,6 +2074,7 @@ class IndexController extends AbstractActionController {
 			 * Successfully retrieved from cache so echo
 			 */
 			if ($cache_me == false && ! empty ( $result )) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				echo $result;
 			}
 			$output = ob_get_clean ();
@@ -2357,18 +2084,17 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id . '::' . $output );
 			}
 			
 			/*
 			 * TODO - Invalidate cache in if statements (id is all that is needed)
 			 */
 			
-			// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) &&
-			// (!MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-			// error_log("Invalidate Cache_id ----> ".$invalidate_action . '_' .
-			// $uid.PHP_EOL);
-			// $this->redis->invalidateCache($invalidate_action . '_' . $cache_id);
-			// }
+			if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				$this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
+			}
 		}
 		
 		if (! empty ( $callback )) {
@@ -2385,7 +2111,7 @@ class IndexController extends AbstractActionController {
 			echo $callback . "(" . $json . ")";
 			error_log ( "callback output ----> *$output*" . PHP_EOL );
 		} else {
-			echo trim ( $output );
+			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
 		}
 		
@@ -2531,10 +2257,10 @@ class IndexController extends AbstractActionController {
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
 			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-				// Mlog::addone("$_SESSION [ipAddress]", $_SESSION['ipAddress']);
-				// Mlog::addone("$currentIPAddress", $currentIPAddress);
-				// Mlog::addone("ERROR::User IP Address has changed - logging user out!");
-				// Mlog::addone ( "_SESSION vars after sid_success",$_SESSION,);
+				Mlog::addone ( "$_SESSION [ipAddress]", $_SESSION ['ipAddress'] );
+				Mlog::addone ( "$currentIPAddress", $currentIPAddress );
+				Mlog::addone ( "ERROR::User IP Address has changed - logging user out!" );
+				Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
 				return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
