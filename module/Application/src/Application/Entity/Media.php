@@ -3,7 +3,6 @@
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Application\Entity\Event;
 
 /**
  * Media
@@ -29,6 +28,12 @@ class Media {
 	
 	/**
 	 *
+	 * @var string @ORM\Column(name="copyright_id", type="string", length=255, nullable=false)
+	 */
+	private $copyright_id = '0';
+	
+	/**
+	 *
 	 * @var boolean @ORM\Column(name="is_profile_pic", type="boolean", nullable=false)
 	 */
 	private $is_profile_pic = '0';
@@ -44,10 +49,10 @@ class Media {
 	 * @var integer @ORM\Column(name="transcode_status", type="string", length=45, nullable=false)
 	 */
 	private $transcode_status = 'pending';
-	//pending
-	//in_progress
-	//success
-	//failed
+	// pending
+	// in_progress
+	// success
+	// failed
 	
 	/**
 	 *
