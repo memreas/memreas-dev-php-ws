@@ -6,6 +6,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Aws\S3\S3Client;
+use Aws\S3\BatchDelete;
 use Application\Entity\EventMedia;
 
 class DeletePhoto {
@@ -54,79 +55,71 @@ class DeletePhoto {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'fail::count($result)::', count ( $result ) );
 					$xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
 				} else {
-					// Mlog::addone(__CLASS__ . __METHOD__ . LINE__ .
-					// 'metadata::',
-					// $resseldata[0]->metadata);
-					// $json_array = json_decode($resseldata[0]->metadata,
-					// true);
-					// if (isset($json_array['S3_files']['type']['image'])) {
-					// $imagename = basename($json_array['S3_files']['path']);
-					// }
-					
 					//
 					// Batch Delete - memreasdevsec
 					//
-					$prefix = $resseldata [0]->user_id . '/' . $mediaid . '/';
+					$prefix = $resseldata [0]->user_id . '/' . $mediaid;
 					$listObjectsParams = [ 
 							'Bucket' => MemreasConstants::S3BUCKET,
 							'Prefix' => $prefix 
 					];
-					$delete = Aws\S3\BatchDelete::fromListObjects ( $s3, $listObjectsParams );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'memreasdevsec Prefix => $prefix::', $prefix );
+					$delete = BatchDelete::fromListObjects ( $this->s3, $listObjectsParams );
 					// Asynchronously delete $promise = $delete->promise();
 					// Force synchronous completion $delete->delete();
 					$delete->delete ();
 					
 					//
-					// Batch Delete - memreasdevhls
+					// Batch Delete - memreasdevhls - not working - 30-NOV-2015
 					//
-					$prefix = $resseldata [0]->user_id . '/' . $mediaid . '/';
-					$listObjectsParams = [ 
-							'Bucket' => MemreasConstants::S3HLSBUCKET,
-							'Prefix' => $prefix 
-					];
-					$delete = Aws\S3\BatchDelete::fromListObjects ( $s3, $listObjectsParams );
-					// Asynchronously delete $promise = $delete->promise();
-					// Force synchronous completion $delete->delete();
-					$delete->delete ();
+					// $prefix = $resseldata [0]->user_id . '/' . $mediaid;
+					// $listObjectsParams = [
+					// 'Bucket' => MemreasConstants::S3HLSBUCKET,
+					// 'Prefix' => $prefix
+					// ];
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'memreasdevhls Prefix => $prefix::', $prefix );
+					// $delete = BatchDelete::fromListObjects ( $this->s3, $listObjectsParams );
+					// // Asynchronously delete $promise = $delete->promise();
+					// // Force synchronous completion $delete->delete();
+					// $delete->delete ();
 					
-					/*
-					 * //
-					 * // memreasdevsec
-					 * //
-					 * $prefix = $resseldata [0]->user_id . '/' . $mediaid;
-					 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', $prefix );
-					 * try {
-					 *
-					 * $iterator = $this->s3->getIterator ( 'ListObjects', array (
-					 * 'Bucket' => MemreasConstants::S3BUCKET,
-					 * 'Prefix' => $prefix
-					 * ) );
-					 *
-					 * foreach ( $iterator as $object ) {
-					 * $this->s3->deleteObject ( array (
-					 * 'Bucket' => MemreasConstants::S3BUCKET,
-					 * 'Key' => $object ['Key']
-					 * ) );
-					 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::S3BUCKET::$object[Key]::deleted::', $object ['Key'] );
-					 * }
-					 *
-					 * $iterator = $this->s3->getIterator ( 'ListObjects', array (
-					 * 'Bucket' => MemreasConstants::S3HLSBUCKET,
-					 * 'Prefix' => $prefix
-					 * ) );
-					 *
-					 * foreach ( $iterator as $object ) {
-					 * $this->s3->deleteObject ( array (
-					 * 'Bucket' => MemreasConstants::S3HLSBUCKET,
-					 * 'Key' => $object ['Key']
-					 * ) );
-					 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::S3HLSBUCKET::$object[Key]::deleted::', $object ['Key'] );
-					 * }
-					 * } catch ( \Exception $e ) {
-					 * Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . 'Caught exception::', $e->getMessage () );
-					 * Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . 'Error deleting $prefix::', $prefix );
-					 * }
-					 */
+					//
+					// memreasdevsec
+					//
+					$prefix = $resseldata [0]->user_id . '/' . $mediaid;
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', $prefix );
+					try {
+						
+						$iterator = $this->s3->getIterator ( 'ListObjects', array (
+								'Bucket' => MemreasConstants::S3BUCKET,
+								'Prefix' => $prefix 
+						) );
+						
+						foreach ( $iterator as $object ) {
+							$this->s3->deleteObject ( array (
+									'Bucket' => MemreasConstants::S3BUCKET,
+									'Key' => $object ['Key'] 
+							) );
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::S3BUCKET::$object[Key]::deleted::', $object ['Key'] );
+						}
+						
+						$iterator = $this->s3->getIterator ( 'ListObjects', array (
+								'Bucket' => MemreasConstants::S3HLSBUCKET,
+								'Prefix' => $prefix 
+						) );
+						
+						foreach ( $iterator as $object ) {
+							$this->s3->deleteObject ( array (
+									'Bucket' => MemreasConstants::S3HLSBUCKET,
+									'Key' => $object ['Key'] 
+							) );
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::S3HLSBUCKET::$object[Key]::deleted::', $object ['Key'] );
+						}
+					} catch ( \Exception $e ) {
+						Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . 'Caught exception::', $e->getMessage () );
+						Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . 'Error deleting $prefix::', $prefix );
+					}
+					
 					/*
 					 * JM: 28-NOV-2014 below commented - won't work given above
 					 * if...
@@ -139,14 +132,17 @@ class DeletePhoto {
 					// $event_result = $event_statement->getResult ();
 					
 					try {
-						// Media
+						// media
 						$delete_media = "DELETE FROM Application\Entity\Media m WHERE m.media_id='{$mediaid}'";
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $delete_media::', $delete_media );
 						$media_statement = $this->dbAdapter->createQuery ( $delete_media );
 						$delete_media_result = $media_statement->getResult ();
 						// Media Device
-						Mlog::addone ( "_SESSION", $_SESSION );
+						// Mlog::addone ( "_SESSION", $_SESSION );
 						$user_id = $_SESSION ['user_id'];
+						// media_device
 						$delete_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $delete_media_device::', $delete_media_device );
 						$media_statement = $this->dbAdapter->createQuery ( $delete_media );
 						$delete_media_result = $media_statement->getResult ();
 					} catch ( \Exception $e ) {
@@ -161,14 +157,16 @@ class DeletePhoto {
 						if (! empty ( $copyright_id )) {
 							$now = date ( 'Y-m-d H:i:s' );
 							$seldata = "select c from Application\Entity\Copyright c where c.copyright_id='{$copyright_id}'";
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $seldata::', $seldata );
 							$statement = $this->dbAdapter->createQuery ( $seldata );
 							$resseldata = $statement->getResult ();
 							$metadata = json_cecode ( $resseldata [0]->metadata, true );
 							$metadata ['media_deleted_date'] = $now;
 							
-							// if profile pic then update media
+							// update copyright to note media was deleted with date.
 							$json_metadata = json_encode ( $metadata );
 							$update_copyright = "UPDATE Application\Entity\Copyright c SET c.metadata = $json_metadata WHERE c.copyright_id='{$copyright_id}'";
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_copyright::', $update_copyright );
 							$statement = $this->dbAdapter->createQuery ( $update_copyright );
 							$result_update_copyright = $statement->getResult ();
 						}
@@ -180,7 +178,7 @@ class DeletePhoto {
 					if (count ( $delete_media_result ) > 0) {
 						$xml_output .= "<status>success</status>";
 						$xml_output .= "<message>Media removed successfully</message>";
-						Mlog::addone ( __CLASS__ . __METHOD__ . LINE__, '::db entry deleted!' );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::db entry deleted!' );
 					} else {
 						$xml_output .= "<status>failure</status><message>An error occurred</message>";
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::db entry delete failed' );
