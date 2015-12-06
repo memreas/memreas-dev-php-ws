@@ -1896,7 +1896,7 @@ class IndexController extends AbstractActionController {
 				 * - need to invalidate invalidateMedia
 				 */
 				
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "mediadevicetracker") {
 				/*
 				 * TODO: Invalidation needed.
