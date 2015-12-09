@@ -93,7 +93,7 @@ class UpdateMedia {
 		$xml_output .= "</updatemediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . '$xml_output::', $xml_output );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$xml_output::', $xml_output );
 	}
 }
 
