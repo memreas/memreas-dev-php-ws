@@ -18,24 +18,20 @@ class MemreasSignedURL {
 	protected $s3;
 	protected $cloud_front;
 	public function __construct() {
-		// $this->private_key_filename = getcwd () . '/key/pk-APKAJC22BYF2JGZTOC6A.pem';
-		// $this->key_pair_id = 'VOCBNKDCW72JC2ZCP3FCJEYRGPS2HCVQ';
-		// to run constrcutor once
-		$this->private_key_filename = getcwd () . '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
-		$this->key_pair_id = 'APKAISSKGZE3DR5HQCHA';
-		$this->expires = time () + 36000; // 10 hour from now
+		$this->private_key_filename = getcwd () . MemreasConstants::CLOUDFRONT_KEY_FILE;
+		$this->key_pair_id = MemreasConstants::CLOUDFRONT_KEY_PAIR_ID;
+		$this->expires = time () + MemreasConstants::CLOUDFRONT_EXPIRY_TIME;
 		$this->signature_encoded = null;
 		$this->policy_encoded = null;
-
-		//Fetch aws handle
-		$this->aws = MemreasConstants::fetchAWS();
+		
+		// Fetch aws handle
+		$this->aws = MemreasConstants::fetchAWS ();
 		
 		// Fetch the S3 class
-		$this->s3 = $this->aws->createS3();
+		$this->s3 = $this->aws->createS3 ();
 		
 		// Fetch the CloudFront class
-		$this->cloud_front = $this->aws->createCloudFront();
-
+		$this->cloud_front = $this->aws->createCloudFront ();
 	}
 	public function fetchSignedURL($path) {
 		// error_log("Inside fetchSignedURL path before signing... ".$path.PHP_EOL);
@@ -75,11 +71,11 @@ class MemreasSignedURL {
 	}
 	public function signHlsUrl($obj) {
 		if (! empty ( $obj )) {
-			$arr[] = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $obj;
+			$arr [] = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $obj;
 		} else {
-			$arr[] = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $obj;
+			$arr [] = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $obj;
 		}
-		return json_encode($arr);
+		return json_encode ( $arr );
 	}
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );

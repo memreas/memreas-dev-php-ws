@@ -11,8 +11,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $mRedis;
 	private $dbAdapter;
 	private $url_signer;
-	
-	// public function __construct($prefix = 'PHPSESSID:') {
 	public function __construct($redis, $service_locator) {
 		$this->db = new \Predis\Client ( [ 
 				'scheme' => 'tcp',
@@ -116,11 +114,25 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		return $meta;
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
-		error_log ( 'Inside setSession' . PHP_EOL );
 		session_start ();
+		error_log ( 'Inside setSession' . PHP_EOL );
 		if (empty ( session_id () )) {
 			session_regenerate_id ();
 		}
+		//
+		// fetch signed cookie
+		//
+		if (! isset ( $_COOKIE ['CloudFront-Signature'] )) {
+			$setSignedCookie = new MemreasSignedCookie ();
+			$setSignedCookie->exec ( $clientIPAddress );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "SET HLS SESSION COOKIES..." );
+			error_log ( "cookies-->" . print_r ( $_COOKIE, true ) . PHP_EOL );
+		} else {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "DID NOT SET HLS SESSION COOKIES" );
+			error_log ( "cookies-->" . print_r ( $_COOKIE, true ) . PHP_EOL );
+		}
+		
+		// Set Session vars
 		$_SESSION ['user_id'] = $user->user_id;
 		$_SESSION ['username'] = $user->username;
 		$_SESSION ['sid'] = session_id ();

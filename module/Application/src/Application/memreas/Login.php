@@ -5,6 +5,7 @@ namespace Application\memreas;
 use Zend\Session\SessionManager;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
+use Application\memreas\MemreasSignedCookie;
 
 class Login {
 	protected $message_data;
@@ -48,14 +49,14 @@ class Login {
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
-$cm=__CLASS__.__METHOD__;			
-Mlog::addone($cm.'::$this->username',$this->username);
-Mlog::addone($cm.'::$this->device_id',$this->device_id);
-Mlog::addone($cm.'::$this->device_type',$this->device_type);
-Mlog::addone($cm.'::$this->memreascookie',$this->memreascookie);
-Mlog::addone($cm.'::$this->isWeb',$this->isWeb);
-Mlog::addone($cm.'::$this->clientIPAddress',$this->clientIPAddress);
-
+			$cm = __CLASS__ . __METHOD__;
+			Mlog::addone ( $cm . '::$this->username', $this->username );
+			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
+			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
+			Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
+			Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
+			Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
+			
 			$time = time ();
 			if (empty ( $this->username )) {
 				$flagusername = 1;
@@ -67,7 +68,6 @@ Mlog::addone($cm.'::$this->clientIPAddress',$this->clientIPAddress);
 				$flagpass = 1;
 			}
 			
-			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";
 			$xml_output .= "<loginresponse>";
@@ -86,7 +86,7 @@ Mlog::addone($cm.'::$this->clientIPAddress',$this->clientIPAddress);
 					/*
 					 * Set the session for the user data...
 					 */
-					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie,  $this->clientIPAddress);
+					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie, $this->clientIPAddress );
 					
 					/*
 					 * Check if the device is registered and update as needed
@@ -103,6 +103,9 @@ Mlog::addone($cm.'::$this->clientIPAddress',$this->clientIPAddress);
 					$verified_email = isset ( $user_metadata ['user'] ['email_verified'] ) ? $user_metadata ['user'] ['email_verified'] : "0";
 					
 					if ($verified_email) {
+						//
+						// success -> xml output
+						//
 						$user_id = trim ( $row [0]->user_id );
 						$username = $row [0]->username;
 						$xml_output .= "<status>success</status>";
@@ -111,6 +114,9 @@ Mlog::addone($cm.'::$this->clientIPAddress',$this->clientIPAddress);
 						$xml_output .= "<username>" . $username . "</username>";
 						$xml_output .= "<sid>" . session_id () . "</sid>";
 						$xml_output .= "<device_token><![CDATA[" . $device_token . "]]></device_token>";
+						$xml_output .= "<CloudFrontPolicy><![CDATA[" . $_SESSION ["CloudFront-Policy"] . "]]></CloudFrontPolicy>";
+						$xml_output .= "<CloudFrontSignature><![CDATA[" . $_SESSION ["CloudFront-Signature"] . "]]></CloudFrontSignature>";
+						$xml_output .= "<CloudFrontKeyPairId><![CDATA[" . $_SESSION ["CloudFront-Key-Pair-Id"] . "]]></CloudFrontKeyPairId>";
 					} else {
 						$xml_output .= "<status>failure</status><message>Please verify your email address then try again.</message>";
 					}
@@ -132,6 +138,7 @@ Mlog::addone($cm.'::$this->clientIPAddress',$this->clientIPAddress);
 			$xml_output .= "</xml>";
 		}
 		
+		header ( "Content-type: text/xml" );
 		echo $xml_output;
 		error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}

@@ -40,9 +40,14 @@ class MemreasConstants {
 	const S3_REGION = 'us-east-1';
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
 	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
-	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2b3944zpv2o6x.cloudfront.net/';
 	const SIGNURLS = true;
 	
+	// const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2b3944zpv2o6x.cloudfront.net/';
+	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d35oo0o186bbvt.cloudfront.net/';
+	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
+	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
+	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
+	                                      
 	// Same across...
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
