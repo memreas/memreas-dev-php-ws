@@ -21,6 +21,7 @@ class ListAllmedia {
 	}
 	public function exec() {
 		Mlog::addone ( __CLASS__ . __METHOD__ . '::xml', $_POST ['xml'] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::$_COOKIE as json::', json_encode ( $_COOKIE ) );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = ' ';
 		$containt = ' ';

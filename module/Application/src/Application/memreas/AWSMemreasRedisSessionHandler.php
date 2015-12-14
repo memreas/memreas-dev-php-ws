@@ -11,6 +11,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $mRedis;
 	private $dbAdapter;
 	private $url_signer;
+	public $xmlCookieData;
 	public function __construct($redis, $service_locator) {
 		$this->db = new \Predis\Client ( [ 
 				'scheme' => 'tcp',
@@ -119,18 +120,11 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		if (empty ( session_id () )) {
 			session_regenerate_id ();
 		}
+		
 		//
-		// fetch signed cookie
+		// Check Headers sent
 		//
-		if (! isset ( $_COOKIE ['CloudFront-Signature'] )) {
-			$setSignedCookie = new MemreasSignedCookie ();
-			$setSignedCookie->exec ( $clientIPAddress );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "SET HLS SESSION COOKIES..." );
-			error_log ( "cookies-->" . print_r ( $_COOKIE, true ) . PHP_EOL );
-		} else {
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "DID NOT SET HLS SESSION COOKIES" );
-			error_log ( "cookies-->" . print_r ( $_COOKIE, true ) . PHP_EOL );
-		}
+		error_log ( __CLASS__ . __METHOD__ . __LINE__ . "headers_list()" . print_r ( headers_list (), true ) . PHP_EOL );
 		
 		// Set Session vars
 		$_SESSION ['user_id'] = $user->user_id;
@@ -143,10 +137,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		// error_log(print_r($json_pic_meta, true));
 		$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
 		
-		error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
 		$this->setUIDLookup ();
 		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {

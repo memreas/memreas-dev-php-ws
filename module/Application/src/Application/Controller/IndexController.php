@@ -164,6 +164,11 @@ class IndexController extends AbstractActionController {
 		// }
 		// End Checking headers for cookie info
 		// Mlog::addone(__CLASS__ . __METHOD__ . '$_POST', $_POST);
+		
+		// Capture the echo from the includes in case we need to convert
+		// back to json
+		ob_start ();
+		
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -219,10 +224,6 @@ class IndexController extends AbstractActionController {
 			$cache_id = null;
 			$invalidate = false;
 			$invalidate_me = false;
-			
-			// Capture the echo from the includes in case we need to convert
-			// back to json
-			ob_start ();
 			
 			// if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
 			// error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }

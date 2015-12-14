@@ -10,12 +10,12 @@ namespace Application;
  * @license http://framework.zend.com/license/new-bsd New BSD License
  */
 return array (
-		'session' => array (
-				// 'remember_me_seconds' => 2419200, // 672 hours??
-				// 'remember_me_seconds' => 5, // 30 seconds
-				'use_cookies' => false,
-				'cookie_httponly' => false 
-		),
+		// 'session' => array (
+		// // 'remember_me_seconds' => 2419200, // 672 hours??
+		// // 'remember_me_seconds' => 5, // 30 seconds
+		// 'use_cookies' => false,
+		// 'cookie_httponly' => false
+		// ),
 		'router' => array (
 				'routes' => array (
 						'home' => array (
@@ -91,13 +91,13 @@ return array (
 		'controllers' => array (
 				'invokables' => array (
 						'Application\Controller\Index' => 'Application\Controller\IndexController' 
-				)
-				// 'Application\Admin\Controller\Index' => 'Application\Admin\Controller\IndexController',
-				// 'Application\Admin\Controller\User' => 'Application\Admin\Controller\UserController',
-				// 'Application\Admin\Controller\Event' => 'Application\Admin\Controller\EventController',
-				// 'Application\Controller\Elastic' => 'Application\Controller\ElasticController',
-				 
+				) 
 		)
+		// 'Application\Admin\Controller\Index' => 'Application\Admin\Controller\IndexController',
+		// 'Application\Admin\Controller\User' => 'Application\Admin\Controller\UserController',
+		// 'Application\Admin\Controller\Event' => 'Application\Admin\Controller\EventController',
+		// 'Application\Controller\Elastic' => 'Application\Controller\ElasticController',
+		
 		,
 		'view_manager' => array (
 				'display_not_found_reason' => true,
@@ -116,18 +116,20 @@ return array (
 				) 
 		),
 		// Doctrine config
-		'doctrine' => array(
-				'driver' => array(
-						'Application_driver' => array(
+		'doctrine' => array (
+				'driver' => array (
+						'Application_driver' => array (
 								'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
 								'cache' => 'array',
-								'paths' => array(__DIR__ . '/../src/Application/Entity')
+								'paths' => array (
+										__DIR__ . '/../src/Application/Entity' 
+								) 
 						),
-						'orm_default' => array(
-								'drivers' => array(
-										'Application\Entity' => 'Application_driver'
-								),
-						)
-				),
-		),
+						'orm_default' => array (
+								'drivers' => array (
+										'Application\Entity' => 'Application_driver' 
+								) 
+						) 
+				) 
+		) 
 );

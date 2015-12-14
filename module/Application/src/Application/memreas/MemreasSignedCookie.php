@@ -36,50 +36,38 @@ class MemreasSignedCookie {
 	public function exec($ipAddress) {
 		// $data = simplexml_load_string ( $_POST ['xml'] );
 		$time = time ();
-		$cloudFrontHost = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST;
+		$cloudFrontHost = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . '*';
+		// $domain = 'memreas.com';
 		$domain = 'memreas.com';
-		$customPolicy = '{
-   							"Statement":[
-      							{
-         							"Resource":"' . $cloudFrontHost . '",
-         							"Condition":{
-            								"DateLessThan":{
-               								"AWS:EpochTime":' . $this->expires . '
-            								},
-         								"IpAddress":{"AWS:SourceIp":"' . $ipAddress . '"}
-         							}
-      							}
-   							]
-						}';
-		$encodedCustomPolicy = MemreasSignedCookie::url_safe_base64_encode ( $customPolicy );
+		$customPolicy = '{"Statement":[{"Resource":"' . $cloudFrontHost . '","Condition":{"DateLessThan":{"AWS:EpochTime":' . $this->expires . '}}}]}';
+		$encodedCustomPolicy = $this->url_safe_base64_encode ( $customPolicy );
+		$customPolicySignature = $this->rsa_sha1_sign ( $customPolicy, $this->private_key_filename );
+		$customPolicySignature = $this->url_safe_base64_encode ( $customPolicySignature );
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$customPolicy', $customPolicy );
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$encodedCustomPolicy', $encodedCustomPolicy );
-		$customPolicySignature = MemreasSignedCookie::getSignedPolicy ( $this->private_key_filename, $customPolicy );
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$customPolicySignature', $customPolicySignature );
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->key_pair_id', $this->key_pair_id );
 		
-		// MemreasSignedCookie::setCookie ( "CloudFront-Policy", $encodedCustomPolicy, $domain );
-		// MemreasSignedCookie::setCookie ( "CloudFront-Signature", $customPolicySignature, $domain );
-		// MemreasSignedCookie::setCookie ( "CloudFront-Key-Pair-Id", $this->key_pair_id, $domain );
+		setrawcookie ( "CloudFront-Policy", $encodedCustomPolicy, 0, "/*", $domain, 1, 1 );
+		setrawcookie ( "CloudFront-Signature", $customPolicySignature, 0, "/*", $domain, 1, 1 );
+		setrawcookie ( "CloudFront-Key-Pair-Id", $this->key_pair_id, 0, "/*", $domain, 1, 1 );
 		
-		setrawcookie ( "CloudFront-Policy", $encodedCustomPolicy, 0, "/", $domain, 1, 1 );
-		setrawcookie ( "CloudFront-Signature", $customPolicySignature, 0, "/", $domain, 1, 1 );
-		setrawcookie ( "CloudFront-Key-Pair-Id", $this->key_pair_id, 0, "/", $domain, 1, 1 );
-		$_SESSION ["CloudFront-Policy"] = $encodedCustomPolicy;
-		$_SESSION ["CloudFront-Signature"] = $customPolicySignature;
-		$_SESSION ["CloudFront-Key-Pair-Id"] = $this->key_pair_id;
+		$xmlCookieData = array ();
+		$xmlCookieData ["CloudFront-Policy"] = $encodedCustomPolicy;
+		$xmlCookieData ["CloudFront-Signature"] = $customPolicySignature;
+		$xmlCookieData ["CloudFront-Key-Pair-Id"] = $this->key_pair_id;
 		
-		// error_log ( __CLASS__ . __METHOD__ . __LINE__ . "Cookies->" . print_r ( $_COOKIE, true ) . PHP_EOL );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "CloudFront-Policy->", $_COOKIE ['CloudFront-Policy'] );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "CloudFront-Signature->", $_COOKIE ['CloudFront-Signature'] );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "CloudFront-Key-Pair-Id->", $_COOKIE ['CloudFront-Key-Pair-Id'] );
+		return $xmlCookieData;
 	}
-	public static function rsa_sha1_sign($policy, $private_key_filename) {
+	function rsa_sha1_sign($policy, $private_key_filename) {
 		$signature = "";
 		openssl_sign ( $policy, $signature, file_get_contents ( $private_key_filename ) );
 		return $signature;
 	}
-	public static function url_safe_base64_encode($value) {
+	function url_safe_base64_encode($value) {
 		$encoded = base64_encode ( $value );
+		// replace unsafe characters +, = and / with the safe characters -, _ and ~
 		return str_replace ( array (
 				'+',
 				'=',
@@ -89,16 +77,6 @@ class MemreasSignedCookie {
 				'_',
 				'~' 
 		), $encoded );
-	}
-	public static function getSignedPolicy($private_key_filename, $policy) {
-		$signature = MemreasSignedCookie::rsa_sha1_sign ( $policy, $private_key_filename );
-		$encoded_signature = MemreasSignedCookie::url_safe_base64_encode ( $signature );
-		return $encoded_signature;
-	}
-	public static function setCookie($name, $val, $domain) {
-		// using our own implementation because
-		// using php setcookie means the values are URL encoded and then AWS CF fails
-		header ( "Set-Cookie: $name=$val; path=/; domain=$domain; secure; httpOnly", false );
 	}
 }
 
