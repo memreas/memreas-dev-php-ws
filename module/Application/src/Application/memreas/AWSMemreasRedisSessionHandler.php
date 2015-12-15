@@ -57,7 +57,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
-		error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie) {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
@@ -66,7 +66,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 		}
-		error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithUID($uid, $uname) {
 		if (! empty ( $uid )) {
@@ -81,7 +81,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				session_id ( $rUIDSessionArr ['sid'] );
 				session_start ();
 			}
-			error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
+			// error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
 		} else {
 			// error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
 			if (! empty ( $uid )) {
@@ -98,7 +98,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				$this->setSession ( $row [0], '', 'web', '', '127.0.0.1' );
 			}
 		}
-		error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		// error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function fetchProfilePicMeta($uid) {
 		/*
@@ -124,7 +124,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		//
 		// Check Headers sent
 		//
-		error_log ( __CLASS__ . __METHOD__ . __LINE__ . "headers_list()" . print_r ( headers_list (), true ) . PHP_EOL );
+		// error_log ( __CLASS__ . __METHOD__ . __LINE__ . "headers_list()" . print_r ( headers_list (), true ) . PHP_EOL );
 		
 		// Set Session vars
 		$_SESSION ['user_id'] = $user->user_id;

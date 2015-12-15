@@ -45,10 +45,10 @@ class MediaDeviceTracker {
 		$query = "SELECT m
         from \Application\Entity\MediaDevice m
         WHERE m.user_id = '$user_id'";
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 		$statement = $this->dbAdapter->createQuery ( $query );
 		$mediaDevicesForUser = $statement->getArrayResult ();
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode ( $mediaDevicesForUser ) );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode ( $mediaDevicesForUser ) );
 		
 		return $mediaDevicesForUser;
 	}
@@ -58,7 +58,7 @@ class MediaDeviceTracker {
 	// - mainly for ios and android
 	//
 	public function exec($data = null) {
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::enter MediaDeviceTracker->exec()' );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::enter MediaDeviceTracker->exec()' );
 		$error_flag = 0;
 		$status = $message = 'failure';
 		if (empty ( $data )) {
@@ -66,7 +66,7 @@ class MediaDeviceTracker {
 			//
 			// Set inbound vars - see sample xml
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::enter MediaDeviceTracker->exec()-> setting inbound vars' );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::enter MediaDeviceTracker->exec()-> setting inbound vars' );
 			$media_id = trim ( $data->mediadevicetracker->media_id );
 			$user_id = trim ( $data->mediadevicetracker->user_id );
 			$device_type = trim ( $data->mediadevicetracker->device_type );
@@ -81,13 +81,13 @@ class MediaDeviceTracker {
 			$device_local_identifier = $data ['device_local_identifier'];
 			$task_identifier = $data ['task_identifier'];
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$_POST [xml]::', $_POST ['xml'] );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id::', $media_id );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$user_id::', $user_id );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type::', $device_type );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id::', $device_id );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_local_identifier::', $device_local_identifier );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$task_identifier::', $task_identifier );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$_POST [xml]::', $_POST ['xml'] );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id::', $media_id );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$user_id::', $user_id );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type::', $device_type );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id::', $device_id );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_local_identifier::', $device_local_identifier );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$task_identifier::', $task_identifier );
 		
 		//
 		// Fetch the db entry
@@ -96,7 +96,7 @@ class MediaDeviceTracker {
         from \Application\Entity\MediaDevice m
         WHERE m.media_id = '$media_id'
         AND m.user_id = '$user_id'";
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 		$statement = $this->dbAdapter->createQuery ( $query );
 		$media_on_devices = $statement->getArrayResult ();
 		
@@ -109,18 +109,18 @@ class MediaDeviceTracker {
 		$now = date ( 'Y-m-d H:i:s' );
 		if ($media_on_devices) {
 			$metadata = $media_on_devices [0] ['metadata'];
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $metadata::', $metadata );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $metadata::', $metadata );
 			$devices = json_decode ( $metadata, true );
 			//
 			// Check if media was downloaded to device
 			//
 			foreach ( $devices as $device ) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device[device][device_id]::', $device ['device_id'] );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device[device][device_id]::', $device ['device_id'] );
 				if ($device ['device_id'] == $device_id) {
 					$found = true;
 					$device ['device_type'] = $device_type;
 					$device ['device_local_identifier'] = $device_local_identifier;
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::setting $device_local_identifier::', $device_local_identifier );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::setting $device_local_identifier::', $device_local_identifier );
 				}
 			}
 			if ($found) {
@@ -128,12 +128,12 @@ class MediaDeviceTracker {
 				// Update existing...
 				//
 				try {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device about to update::', '***' );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device about to update::', '***' );
 					$json = json_encode ( $devices );
 					$updateMediaDeviceQuery = "UPDATE Application\Entity\MediaDevice md " . " SET md.metadata = '{$json}'" . " , md.update_date ='{$now}'" . " WHERE md.media_id='{$media_id}' " . " AND md.user_id='{$user_id}'";
 					$statement = $this->dbAdapter->createQuery ( $updateMediaDeviceQuery );
 					$result = $statement->getResult ();
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***' );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***' );
 					
 					// Set status
 					$message = 'updated metadata for media_device';
@@ -156,7 +156,7 @@ class MediaDeviceTracker {
 				$updateMediaDeviceQuery = "UPDATE Application\Entity\MediaDevice md " . " SET md.metadata = '{$json}'" . " , md.update_date ='{$now}'" . " WHERE md.media_id='{$media_id}' " . " AND md.user_id='{$user_id}'";
 				$statement = $this->dbAdapter->createQuery ( $updateMediaDeviceQuery );
 				$result = $statement->getResult ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***' );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::found $device about to updated!::', '***' );
 				
 				// Set status
 				$message = 'updated metadata for media_device';
@@ -166,7 +166,7 @@ class MediaDeviceTracker {
 			//
 			// Insert no entry in db for this user
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::!found $device about to insert::', '****' );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::!found $device about to insert::', '****' );
 			$meta = array ();
 			$meta ['media_id'] = $media_id;
 			$meta ['device_id'] = $device_id;
@@ -174,7 +174,7 @@ class MediaDeviceTracker {
 			$meta ['device_local_identifier'] = $device_local_identifier;
 			$devices = array ();
 			$devices [] = $meta;
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$devices::', json_encode ( $devices ) );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$devices::', json_encode ( $devices ) );
 			
 			$tblMediaDevice = new \Application\Entity\MediaDevice ();
 			$tblMediaDevice->media_id = $media_id;
@@ -184,7 +184,7 @@ class MediaDeviceTracker {
 			$tblMediaDevice->update_date = $now;
 			$this->dbAdapter->persist ( $tblMediaDevice );
 			$this->dbAdapter->flush ();
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::!found $device about to inserted!::', '***' );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::!found $device about to inserted!::', '***' );
 			
 			// Set status
 			$message = 'inserted metadata for media_device';
@@ -209,7 +209,7 @@ class MediaDeviceTracker {
 		$xml_output .= "</mediadevicetrackerresponse>";
 		$xml_output .= "</xml>";
 		echo trim ( $xml_output );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$xml_output::', '*' . $xml_output . '*' );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$xml_output::', '*' . $xml_output . '*' );
 	}
 }
 

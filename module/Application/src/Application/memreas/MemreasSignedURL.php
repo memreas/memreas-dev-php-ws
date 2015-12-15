@@ -34,12 +34,10 @@ class MemreasSignedURL {
 		$this->cloud_front = $this->aws->createCloudFront ();
 	}
 	public function fetchSignedURL($path) {
-		// error_log("Inside fetchSignedURL path before signing... ".$path.PHP_EOL);
 		if ((MemreasConstants::SIGNURLS) && ! empty ( $path ) && ! is_array ( $path )) {
 			$this->expires = time () + MemreasConstants::EXPIRES;
 			
 			$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
-			// error_log("Inside fetchSignedURL path after signing... ".$signed_url.PHP_EOL);
 			
 			return $signed_url;
 		} else {
@@ -76,6 +74,128 @@ class MemreasSignedURL {
 			$arr [] = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $obj;
 		}
 		return json_encode ( $arr );
+	}
+	public function createAndSignCustomHLS($media_id, $path) {
+		//
+		// TODO::Delete existing - not optimal but will work for now...
+		//
+		$path_parts = pathinfo ( $path );
+		$s3path = $path_parts ['dirname'];
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$s3path--->', $s3path );
+		// echo $path_parts['dirname'], "\n";
+		// echo $path_parts['basename'], "\n";
+		// echo $path_parts['extension'], "\n";
+		// echo $path_parts['filename'], "\n";
+		$singedM3u8FilePrefix = "signedM3u8_";
+		$s3prefix = $s3path . "/" . $singedM3u8FilePrefix;
+		$iterator = $this->s3->getIterator ( 'ListObjects', array (
+				'Bucket' => MemreasConstants::S3BUCKET,
+				'Prefix' => $s3prefix 
+		) );
+		
+		foreach ( $iterator as $object ) {
+			//
+			// Check key if it's still valid
+			//
+			$split_url = explode ( $s3prefix, $object ['Key'] );
+			$split_url = explode ( "_", $split_url [1] );
+			$timeOfExpiry = $split_url [0];
+			
+			//
+			// if it is return it
+			//
+			if ($timeOfExpiry < time ()) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Found key returning-->', $object ['Key'] );
+				return $object ['Key'];
+			}
+			
+			//
+			// else delete and recreate the entry
+			//
+			$this->s3->deleteObject ( array (
+					'Bucket' => MemreasConstants::S3BUCKET,
+					'Key' => $object ['Key'] 
+			) );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::S3BUCKET::$object[Key]::deleted::', $object ['Key'] );
+		}
+		
+		//
+		// If not fetch the file and store it locally
+		//
+		$media_dir = getcwd () . '/data/' . $media_id . '/';
+		$path_url = explode ( "/", $path );
+		foreach ( $path_url as $part ) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$path_url[]--->', $part );
+		}
+		$fileName = $path_url [count ( $path_url ) - 1];
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$fileName--->', $fileName );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_dir--->', $media_dir );
+		mkdir ( $media_dir );
+		$localM3u8Path = $media_dir . $fileName;
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localM3u8Path--->', $localM3u8Path );
+		$result = $this->s3->getObject ( [ 
+				'Bucket' => MemreasConstants::S3BUCKET,
+				'Key' => $path,
+				'SaveAs' => $localM3u8Path 
+		] );
+		
+		if ($result) {
+			//
+			// fetch a signed url for the new file name
+			//
+			$this->expires = time () + MemreasConstants::EXPIRES;
+			$signedFileName = $singedM3u8FilePrefix . $this->expires . "_" . $fileName;
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$signedFileName--->', $signedFileName );
+			$signedS3M3u8Path = $s3path . '/' . $signedFileName;
+			$signedS3M3u8Path = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $signedS3M3u8Path );
+			$queryString = '?' . parse_url ( $signedS3M3u8Path, PHP_URL_QUERY );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::before $signedS3M3u8Path--->', $signedS3M3u8Path );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::after $signedS3M3u8Path--->', $signedS3M3u8Path );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$signedS3M3u8Path query--->', $queryString );
+			
+			//
+			// Read the original and write the file
+			//
+			$handle = fopen ( $localM3u8Path, 'r' );
+			$data = fread ( $handle, filesize ( $localM3u8Path ) );
+			$signedData = str_replace ( ".ts\n", ".ts" . $queryString . "\n", $data );
+			$localSignedM3u8Path = $media_dir . $signedFileName;
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::m3u8 file data :: result--->\n", $data );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$signedResult query--->\n', $signedData );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localSignedM3u8Path query--->', $localSignedM3u8Path );
+			$handle = fopen ( $localSignedM3u8Path, 'w' );
+			fwrite ( $handle, $signedData );
+			fclose ( $handle );
+			
+			//
+			// Store back to S3
+			//
+			$result = 0;
+			$s3SignedM3u8Path = $s3path . '/' . $signedFileName;
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::upload $s3SignedM3u8Path--->', "$s3SignedM3u8Path" );
+			$result = $this->s3->putObject ( [ 
+					'Bucket' => MemreasConstants::S3BUCKET,
+					'Key' => $s3SignedM3u8Path,
+					'SourceFile' => $localSignedM3u8Path,
+					'ContentType' => "application/x-mpegurl",
+					'ServerSideEncryption' => 'AES256',
+					'StorageClass' => 'REDUCED_REDUNDANCY' 
+			] );
+			
+			// if ($result) {
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::upload result--->', "uploaded signedM3u8" );
+			// }
+		}
+		
+		//
+		// Delete the directory and file after
+		//
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localSignedM3u8Path--->', $localSignedM3u8Path );
+		unlink ( $localM3u8Path );
+		unlink ( $localSignedM3u8Path );
+		rmdir ( $media_dir );
+		
+		return $signedS3M3u8Path;
 	}
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
