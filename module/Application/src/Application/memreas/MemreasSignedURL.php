@@ -122,16 +122,24 @@ class MemreasSignedURL {
 		//
 		// If not fetch the file and store it locally
 		//
-		$media_dir = getcwd () . '/data/' . $media_id . '/';
+		// $temp = tmpfile();
+		// fwrite($temp, "writing to tempfile");
+		// fseek($temp, 0);
+		// echo fread($temp, 1024);
+		// fclose($temp); // this removes the file
+		
+		// $media_dir = getcwd () . '/data/' . $media_id . '/';
 		$path_url = explode ( "/", $path );
-		foreach ( $path_url as $part ) {
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$path_url[]--->', $part );
-		}
+		// foreach ( $path_url as $part ) {
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$path_url[]--->', $part );
+		// }
 		$fileName = $path_url [count ( $path_url ) - 1];
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$fileName--->', $fileName );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_dir--->', $media_dir );
-		mkdir ( $media_dir );
-		$localM3u8Path = $media_dir . $fileName;
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$fileName--->', $fileName );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_dir--->', $media_dir );
+		// mkdir ( $media_dir );
+		
+		// $localM3u8Path = $media_dir . $fileName;
+		$localM3u8Path = tmpfile ();
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localM3u8Path--->', $localM3u8Path );
 		$result = $this->s3->getObject ( [ 
 				'Bucket' => MemreasConstants::S3BUCKET,
@@ -159,13 +167,14 @@ class MemreasSignedURL {
 			$handle = fopen ( $localM3u8Path, 'r' );
 			$data = fread ( $handle, filesize ( $localM3u8Path ) );
 			$signedData = str_replace ( ".ts\n", ".ts" . $queryString . "\n", $data );
-			$localSignedM3u8Path = $media_dir . $signedFileName;
+			// $localSignedM3u8Path = $media_dir . $signedFileName;
+			$localSignedM3u8Path = tmpfile ();
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::m3u8 file data :: result--->\n", $data );
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$signedResult query--->\n', $signedData );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localSignedM3u8Path query--->', $localSignedM3u8Path );
-			$handle = fopen ( $localSignedM3u8Path, 'w' );
-			fwrite ( $handle, $signedData );
-			fclose ( $handle );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localSignedM3u8Path query--->', $localSignedM3u8Path );
+			// $handle = fopen ( $localSignedM3u8Path, 'w' );
+			fwrite ( $localSignedM3u8Path, $signedData );
+			// fclose ( $handle );
 			
 			//
 			// Store back to S3
@@ -191,9 +200,9 @@ class MemreasSignedURL {
 		// Delete the directory and file after
 		//
 		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localSignedM3u8Path--->', $localSignedM3u8Path );
-		unlink ( $localM3u8Path );
-		unlink ( $localSignedM3u8Path );
-		rmdir ( $media_dir );
+		// unlink ( $localM3u8Path );
+		// unlink ( $localSignedM3u8Path );
+		// rmdir ( $media_dir );
 		
 		return $signedS3M3u8Path;
 	}
