@@ -4,6 +4,7 @@ namespace Application\memreas;
 
 use Aws\S3;
 use Aws\CloudFront;
+use Aws\S3\Exception\S3Exception;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
@@ -122,31 +123,19 @@ class MemreasSignedURL {
 		//
 		// If not fetch the file and store it locally
 		//
-		// $temp = tmpfile();
-		// fwrite($temp, "writing to tempfile");
-		// fseek($temp, 0);
-		// echo fread($temp, 1024);
-		// fclose($temp); // this removes the file
-		
-		// $media_dir = getcwd () . '/data/' . $media_id . '/';
 		$path_url = explode ( "/", $path );
-		// foreach ( $path_url as $part ) {
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$path_url[]--->', $part );
-		// }
 		$fileName = $path_url [count ( $path_url ) - 1];
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$fileName--->', $fileName );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_dir--->', $media_dir );
-		// mkdir ( $media_dir );
-		
-		// $localM3u8Path = $media_dir . $fileName;
 		$localM3u8Path = tmpfile ();
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localM3u8Path--->', $localM3u8Path );
-		$result = $this->s3->getObject ( [ 
-				'Bucket' => MemreasConstants::S3BUCKET,
-				'Key' => $path 
-		] );
-		// 'SaveAs' => $localM3u8Path
-		
+		$result = 0;
+		try {
+			$result = $this->s3->getObject ( [ 
+					'Bucket' => MemreasConstants::S3BUCKET,
+					'Key' => $path 
+			] );
+		} catch ( S3Exception $s3e ) {
+			return 0;
+		}
 		if ($result) {
 			
 			//
@@ -173,14 +162,18 @@ class MemreasSignedURL {
 			$result = 0;
 			$s3SignedM3u8Path = $s3path . '/' . $signedFileName;
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::about to upload $s3SignedM3u8Path--->', "$s3SignedM3u8Path" );
-			$result = $this->s3->putObject ( [ 
-					'Bucket' => MemreasConstants::S3BUCKET,
-					'Key' => $s3SignedM3u8Path,
-					'Body' => $signedData,
-					'ContentType' => "application/x-mpegurl",
-					'ServerSideEncryption' => 'AES256',
-					'StorageClass' => 'REDUCED_REDUNDANCY' 
-			] );
+			try {
+				$result = $this->s3->putObject ( [ 
+						'Bucket' => MemreasConstants::S3BUCKET,
+						'Key' => $s3SignedM3u8Path,
+						'Body' => $signedData,
+						'ContentType' => "application/x-mpegurl",
+						'ServerSideEncryption' => 'AES256',
+						'StorageClass' => 'REDUCED_REDUNDANCY' 
+				] );
+			} catch ( S3Exception $s3e ) {
+				return 0;
+			}
 			
 			if ($result) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::uploaded $s3SignedM3u8Path--->', "$s3SignedM3u8Path" );
@@ -205,7 +198,6 @@ class MemreasSignedURL {
 		if (isset ( $path ) && ! empty ( $path )) {
 			$signedurl = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
 			$xml_output .= "<status>success</status>";
-			// $xml_output .= "<signedurl>$signedurl</signedurl>";
 			$xml_output .= "<key_pair_id>$this->key_pair_id</key_pair_id>";
 			$xml_output .= "<signature_encoded>$this->signature_encoded</signature_encoded>";
 			$xml_output .= "<policy_encoded>$this->policy_encoded</policy_encoded>";
