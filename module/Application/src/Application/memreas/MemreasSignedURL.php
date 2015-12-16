@@ -82,11 +82,6 @@ class MemreasSignedURL {
 		//
 		$path_parts = pathinfo ( $path );
 		$s3path = $path_parts ['dirname'];
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$s3path--->', $s3path );
-		// echo $path_parts['dirname'], "\n";
-		// echo $path_parts['basename'], "\n";
-		// echo $path_parts['extension'], "\n";
-		// echo $path_parts['filename'], "\n";
 		$singedM3u8FilePrefix = "signedM3u8_";
 		$s3prefix = $s3path . "/" . $singedM3u8FilePrefix;
 		$iterator = $this->s3->getIterator ( 'ListObjects', array (
@@ -126,7 +121,6 @@ class MemreasSignedURL {
 		$path_url = explode ( "/", $path );
 		$fileName = $path_url [count ( $path_url ) - 1];
 		$localM3u8Path = tmpfile ();
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$localM3u8Path--->', $localM3u8Path );
 		$result = 0;
 		try {
 			$result = $this->s3->getObject ( [ 
@@ -143,7 +137,6 @@ class MemreasSignedURL {
 			//
 			$this->expires = time () + MemreasConstants::EXPIRES;
 			$signedFileName = $singedM3u8FilePrefix . $this->expires . "_" . $fileName;
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$signedFileName--->', $signedFileName );
 			$signedS3M3u8Path = $s3path . '/' . $signedFileName;
 			$signedS3M3u8Path = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $signedS3M3u8Path );
 			$queryString = '?' . parse_url ( $signedS3M3u8Path, PHP_URL_QUERY );
@@ -154,14 +147,12 @@ class MemreasSignedURL {
 			$data = $result->get ( 'Body' );
 			$signedData = str_replace ( ".ts\n", ".ts" . $queryString . "\n", $data );
 			$localSignedM3u8Path = tmpfile ();
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$signedData--->\n', $signedData );
 			
 			//
 			// Store back to S3
 			//
 			$result = 0;
 			$s3SignedM3u8Path = $s3path . '/' . $signedFileName;
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::about to upload $s3SignedM3u8Path--->', "$s3SignedM3u8Path" );
 			try {
 				$result = $this->s3->putObject ( [ 
 						'Bucket' => MemreasConstants::S3BUCKET,

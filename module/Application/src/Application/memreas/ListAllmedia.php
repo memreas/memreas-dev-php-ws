@@ -159,9 +159,7 @@ class ListAllmedia {
 					$path = isset ( $json_array ['S3_files'] ['hls'] ) ? $this->url_signer->signHlsUrl ( $json_array ['S3_files'] ['hls'] ) : '';
 					// $xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					// create new m3u8
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Calling--->', 'this->url_signer->createAndSignCustomHLS ( $row [media_id], $json_array [S3_files] [hls] )' );
 					$new_m3u8_signed = $this->url_signer->createAndSignCustomHLS ( $row ['media_id'], $json_array ['S3_files'] ['hls'] );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Returning from--->', 'this->url_signer->createAndSignCustomHLS ( $row [media_id], $json_array [S3_files] [hls] )' );
 					$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $new_m3u8_signed . "]]></media_url_hls>" : '';
 					
 					// web
@@ -273,7 +271,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		Mlog::addone ( '$xml_output', $xml_output );
+		// Mlog::addone ( '$xml_output', $xml_output );
 	}
 }
 
