@@ -51,17 +51,17 @@ class MemreasSignedURL {
 	 * JM Change to allow for multiple thumbnails in response
 	 * sends back simple json encoded array
 	 */
-	public function signArrayOfUrls($obj) {
+	public function signArrayOfUrls($obj, $host=MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST) {
 		if (! empty ( $obj ) && is_array ( $obj )) {
 			foreach ( $obj as $url ) {
 				if (isset ( $url ) && ! empty ( $url )) {
-					$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $url );
+					$arr [] = $this->fetchSignedURL ( $host . $url );
 				}
 			}
 		} else if (! empty ( $obj )) {
-			$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $obj ); // this should be string not array
+			$arr [] = $this->fetchSignedURL ( $host . $obj ); // this should be string not array
 		} else {
-			$arr [] = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . 'static/profile-pic.jpg' ); // default
+			$arr [] = $this->fetchSignedURL ( $host . 'static/profile-pic.jpg' ); // default
 		}
 		
 		$json_arr = json_encode ( $arr );
@@ -269,19 +269,22 @@ else {
 	function get_canned_policy_stream_name($video_path, $private_key_filename, $key_pair_id, $expires) {
 		// this policy is well known by CloudFront, but you still need to sign it, since it contains your parameters
 		$canned_policy = '{"Statement":[{"Resource":"' . $video_path . '","Condition":{"DateLessThan":{"AWS:EpochTime":' . $expires . '}}}]}';
+		
 		// the policy contains characters that cannot be part of a URL, so we base64 encode it
 		$encoded_policy = $this->url_safe_base64_encode ( $canned_policy );
 		$this->policy_encoded = $encoded_policy;
+		
 		// sign the original policy, not the encoded version
 		$signature = $this->rsa_sha1_sign ( $canned_policy, $private_key_filename );
+		
 		// make the signature safe to be included in a url
 		$encoded_signature = $this->url_safe_base64_encode ( $signature );
 		$this->signature_encoded = $encoded_signature;
 		
 		// combine the above into a stream name
 		$stream_name = $this->create_stream_name ( $video_path, null, $encoded_signature, $key_pair_id, $expires );
-		// url-encode the query string characters to work around a flash player bug
 		
+		// url-encode the query string characters to work around a flash player bug
 		// Commented this line there was no need to encode the query params for JW Player
 		// return encode_query_params($stream_name);
 		

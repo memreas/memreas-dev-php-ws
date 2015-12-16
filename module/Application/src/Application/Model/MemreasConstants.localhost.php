@@ -41,7 +41,7 @@ class MemreasConstants {
 	const SIGNURLS = true;
 	
 	// const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2b3944zpv2o6x.cloudfront.net/';
-	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d35oo0o186bbvt.cloudfront.net/';
+	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
 	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours

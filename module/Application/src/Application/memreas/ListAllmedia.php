@@ -160,7 +160,7 @@ class ListAllmedia {
 					// $xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					// create new m3u8
 					// $new_m3u8_signed = $this->url_signer->createAndSignCustomHLS ( $row ['media_id'], $json_array ['S3_files'] ['hls'] );
-					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['hls'] ) : '';
+					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['hls'], MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					
 					// web
