@@ -188,7 +188,7 @@ class IndexController extends AbstractActionController {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . '$actionname', $actionname );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . '$actionname', $actionname );
 		/**
 		 * Setup save handler
 		 */
@@ -197,15 +197,12 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		Mlog::addone ( __CLASS__ . __METHOD__ . 'before $this->requiresSecureAction ( $actionname )', $actionname );
-		
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . 'after $this->requiresSecureAction ( $actionname )', $actionname );
 		
 		/**
 		 * For testing only...
@@ -219,7 +216,6 @@ class IndexController extends AbstractActionController {
 		}
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
-			Mlog::addone ( '$actionname', $actionname );
 			$cache_me = false;
 			$cache_id = null;
 			$invalidate = false;
