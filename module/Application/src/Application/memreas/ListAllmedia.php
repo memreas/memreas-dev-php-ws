@@ -156,11 +156,12 @@ class ListAllmedia {
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
 					
 					// hls
-					$path = isset ( $json_array ['S3_files'] ['hls'] ) ? $this->url_signer->signHlsUrl ( $json_array ['S3_files'] ['hls'] ) : '';
+					// $path = isset ( $json_array ['S3_files'] ['hls'] ) ? $this->url_signer->signHlsUrl ( $json_array ['S3_files'] ['hls'] ) : '';
 					// $xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					// create new m3u8
-					$new_m3u8_signed = $this->url_signer->createAndSignCustomHLS ( $row ['media_id'], $json_array ['S3_files'] ['hls'] );
-					$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $new_m3u8_signed . "]]></media_url_hls>" : '';
+					// $new_m3u8_signed = $this->url_signer->createAndSignCustomHLS ( $row ['media_id'], $json_array ['S3_files'] ['hls'] );
+					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['hls'] ) : '';
+					$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					
 					// web
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['web'] ) : '';

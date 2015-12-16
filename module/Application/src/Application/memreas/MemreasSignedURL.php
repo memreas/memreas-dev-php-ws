@@ -76,6 +76,10 @@ class MemreasSignedURL {
 		}
 		return json_encode ( $arr );
 	}
+	
+	//
+	// Nice try but function doesn't work...
+	//
 	public function createAndSignCustomHLS($media_id, $path) {
 		//
 		// TODO::Delete existing - not optimal but will work for now...
