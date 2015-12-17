@@ -104,20 +104,6 @@ class Login {
 					
 					if ($verified_email) {
 						//
-						// fetch signed cookie
-						//
-						// $xmlCookieData = null;
-						// if (! isset ( $_COOKIE ['CloudFront-Signature'] )) {
-						// $setSignedCookie = new MemreasSignedCookie ();
-						// $xmlCookieData = $setSignedCookie->exec ( $this->clientIPAddress );
-						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "SET HLS SESSION COOKIES..." );
-						// error_log ( "cookies-->" . print_r ( $_COOKIE, true ) . PHP_EOL );
-						// } else {
-						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "DID NOT SET HLS SESSION COOKIES" );
-						// error_log ( "cookies-->" . print_r ( $_COOKIE, true ) . PHP_EOL );
-						// }
-						
-						//
 						// success -> xml output
 						//
 						$user_id = trim ( $row [0]->user_id );
@@ -128,11 +114,6 @@ class Login {
 						$xml_output .= "<username>" . $username . "</username>";
 						$xml_output .= "<sid>" . session_id () . "</sid>";
 						$xml_output .= "<device_token><![CDATA[" . $device_token . "]]></device_token>";
-						// if (! empty ( $xmlCookieData )) {
-						// $xml_output .= "<CloudFrontPolicy><![CDATA[" . $xmlCookieData ["CloudFront-Policy"] . "]]></CloudFrontPolicy>";
-						// $xml_output .= "<CloudFrontSignature><![CDATA[" . $xmlCookieData ["CloudFront-Signature"] . "]]></CloudFrontSignature>";
-						// $xml_output .= "<CloudFrontKeyPairId><![CDATA[" . $xmlCookieData ["CloudFront-Key-Pair-Id"] . "]]></CloudFrontKeyPairId>";
-						// }
 					} else {
 						$xml_output .= "<status>failure</status><message>Please verify your email address then try again.</message>";
 					}
