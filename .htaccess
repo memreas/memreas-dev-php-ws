@@ -1,8 +1,4 @@
 SetEnv "APP_ENV" "development"
-<IfModule mod_headers.c>
-	Header add Access-Control-Allow-Origin "*"
-</IfModule>
-
 <IfModule mod_php5.c>
 
 #Limits for file uploads
