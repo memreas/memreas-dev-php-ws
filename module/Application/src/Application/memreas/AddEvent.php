@@ -217,7 +217,7 @@ class AddEvent {
 			$xml_output .= "</addeventresponse>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
-error_log ( "AddEventoutput::" . $xml_output . PHP_EOL );
+			error_log ( "AddEventoutput::" . $xml_output . PHP_EOL );
 		} catch ( Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}

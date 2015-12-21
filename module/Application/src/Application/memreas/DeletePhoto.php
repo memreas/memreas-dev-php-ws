@@ -86,7 +86,8 @@ class DeletePhoto {
 					//
 					// memreasdevsec
 					//
-					$prefix = $resseldata [0]->user_id . '/' . $mediaid;
+					$user_id = $resseldata [0]->user_id;
+					$prefix = $user_id . '/' . $mediaid;
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', $prefix );
 					try {
 						
@@ -138,9 +139,6 @@ class DeletePhoto {
 						$media_statement = $this->dbAdapter->createQuery ( $delete_media );
 						$delete_media_result = $media_statement->getResult ();
 						// Media Device
-						// Mlog::addone ( "_SESSION", $_SESSION );
-						$user_id = $_SESSION ['user_id'];
-						// media_device
 						$delete_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $delete_media_device::', $delete_media_device );
 						$media_statement = $this->dbAdapter->createQuery ( $delete_media );
