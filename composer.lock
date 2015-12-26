@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0e5120cd0eb01b5a7ed3d7adcca189f8",
-    "content-hash": "06ae7130a9078a471a8b2f3786c81e46",
+    "hash": "e4d3ac93b3d25c4e4450baa5b01ffc0f",
+    "content-hash": "b44e99d05e0afd7fd7a02036b43e9a20",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.2.3",
+            "version": "3.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "eb255de0b6b693a69649cdc835386da55a8e163a"
+                "reference": "d21c2aa132bbcd55325a50435bdd1e141c7f79e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/eb255de0b6b693a69649cdc835386da55a8e163a",
-                "reference": "eb255de0b6b693a69649cdc835386da55a8e163a",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d21c2aa132bbcd55325a50435bdd1e141c7f79e5",
+                "reference": "d21c2aa132bbcd55325a50435bdd1e141c7f79e5",
                 "shasum": ""
             },
             "require": {
@@ -78,7 +78,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-07-30 20:47:44"
+            "time": "2015-08-12 19:44:09"
         },
         {
             "name": "doctrine/annotations",
