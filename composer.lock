@@ -4,41 +4,46 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e4d3ac93b3d25c4e4450baa5b01ffc0f",
-    "content-hash": "b44e99d05e0afd7fd7a02036b43e9a20",
+    "hash": "81ce04dcb6e793e1833acb5b5f3aae91",
+    "content-hash": "e2890bc8810a92ad4f428af4b1e7869e",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.2.6",
+            "version": "3.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "d21c2aa132bbcd55325a50435bdd1e141c7f79e5"
+                "reference": "6d7c51c5eccf5a71f9f001884cccc55a671ff506"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d21c2aa132bbcd55325a50435bdd1e141c7f79e5",
-                "reference": "d21c2aa132bbcd55325a50435bdd1e141c7f79e5",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/6d7c51c5eccf5a71f9f001884cccc55a671ff506",
+                "reference": "6d7c51c5eccf5a71f9f001884cccc55a671ff506",
                 "shasum": ""
             },
             "require": {
-                "guzzlehttp/guzzle": ">=5.3|~6.0.1|~6.1",
+                "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1",
                 "guzzlehttp/promises": "~1.0",
                 "guzzlehttp/psr7": "~1.0",
                 "mtdowling/jmespath.php": "~2.2",
                 "php": ">=5.5"
             },
             "require-dev": {
+                "andrewsville/php-token-reflection": "^1.4",
+                "aws/aws-php-sns-message-validator": "~1.0",
                 "behat/behat": "~3.0",
+                "doctrine/cache": "~1.4",
                 "ext-dom": "*",
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "ext-pcre": "*",
                 "ext-simplexml": "*",
                 "ext-spl": "*",
+                "nette/neon": "^2.3",
                 "phpunit/phpunit": "~4.0"
             },
             "suggest": {
+                "doctrine/cache": "To use the DoctrineCacheAdapter",
                 "ext-curl": "To send requests using cURL",
                 "ext-openssl": "Allows working with CloudFront private distributions and verifying received SNS messages"
             },
@@ -78,7 +83,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2015-08-12 19:44:09"
+            "time": "2015-12-21 22:54:08"
         },
         {
             "name": "doctrine/annotations",
