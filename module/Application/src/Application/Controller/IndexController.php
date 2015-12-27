@@ -1581,6 +1581,7 @@ class IndexController extends AbstractActionController {
 				 * N/a
 				 */
 				echo '<pre>' . file_get_contents ( getcwd () . '/php_errors.log' );
+				ob_end_flush ();
 				exit ();
 			} else if ($actionname == "clearlog") {
 				/*
@@ -1591,6 +1592,7 @@ class IndexController extends AbstractActionController {
 				unlink ( getcwd () . '/php_errors.log' );
 				error_log ( "Log has been cleared!" );
 				echo '<pre>' . file_get_contents ( getcwd () . '/php_errors.log' );
+				ob_end_flush ();
 				exit ();
 			} else if ($actionname == "logout") {
 				/*
@@ -2189,7 +2191,9 @@ class IndexController extends AbstractActionController {
 				'refund',
 				'listpayees',
 				'makepayout',
-				'getdiskusage' 
+				'getdiskusage',
+				'clearlog',
+				'showlog' 
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
