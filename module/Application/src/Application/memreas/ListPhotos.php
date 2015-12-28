@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -16,9 +21,8 @@ class ListPhotos {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-                $this->url_signer = new MemreasSignedURL();
-
-
+		$this->url_signer = new MemreasSignedURL ();
+		
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
@@ -101,7 +105,7 @@ class ListPhotos {
 					
 					$xml_output .= "<image>";
 					$xml_output .= "<media_id>" . $metadata ['media_id'] . "</media_id>";
-					$xml_output .= "<name>" . $this->url_signer->signArrayOfUrls($metadata ['url'] ['path']) . "</name>";
+					$xml_output .= "<name>" . $this->url_signer->signArrayOfUrls ( $metadata ['url'] ['path'] ) . "</name>";
 					$download = 0;
 					// print_r();exit;
 					foreach ( $metadata ['download'] as $value ) {

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -54,14 +59,14 @@ class AddTag {
 			$meta_array = json_decode ( $tblTag->meta, true );
 			
 			$add_array = json_decode ( $meta, true );
- 			foreach ( $add_array ['comment'] as $c ) {
+			foreach ( $add_array ['comment'] as $c ) {
 				$meta_array ['comment'] [] = $c;
 			}
 			
-			foreach ( $add_array ['user'] as  $u ) {
+			foreach ( $add_array ['user'] as $u ) {
 				$meta_array ['user'] [] = $u;
 			}
-			foreach ( $add_array ['event'] as  $e ) {
+			foreach ( $add_array ['event'] as $e ) {
 				$meta_array ['event'] [] = $e;
 			}
 			

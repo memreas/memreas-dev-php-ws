@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -26,41 +31,40 @@ class FeedBack {
 		$stausMessage = $feedback_id = '';
 		$name = trim ( $data->feedback->name );
 		$user_id = trim ( $data->feedback->user_id );
-
+		
 		$email = trim ( $data->feedback->email );
 		$feedBackMessage = trim ( $data->feedback->message );
 		$time = time ();
 		$message = '';
-
-		if (empty($user_id) ) {
-    		$message = 'User Not Found';
-    		$status = 'Failure';
-		}else if (!$this->is_valid_email($email)) {
-    		$message .= 'Please enter valid email address. ';
-    		$status = 'Failure';
-		}else if(empty($feedBackMessage)){
+		
+		if (empty ( $user_id )) {
+			$message = 'User Not Found';
+			$status = 'Failure';
+		} else if (! $this->is_valid_email ( $email )) {
+			$message .= 'Please enter valid email address. ';
+			$status = 'Failure';
+		} else if (empty ( $feedBackMessage )) {
 			$message .= 'Message is empty ';
-    		$status = 'Failure';
+			$status = 'Failure';
 		} 
 
 		else {
-			// add  FeedBack
+			// add FeedBack
 			$feedback_id = MUUID::fetchUUID ();
-			$tblFeedBack = new \Application\Entity\FeedBack();
+			$tblFeedBack = new \Application\Entity\FeedBack ();
 			$tblFeedBack->feedback_id = $feedback_id;
 			$tblFeedBack->user_id = $user_id;
-
-
+			
 			$tblFeedBack->name = $name;
 			$tblFeedBack->email = $email;
 			$tblFeedBack->create_time = $time;
 			$tblFeedBack->message = $feedBackMessage;
-
-            $this->dbAdapter->persist ( $tblFeedBack );
+			
+			$this->dbAdapter->persist ( $tblFeedBack );
 			$this->dbAdapter->flush ();
 			$message .= 'Feedback saved ';
-    		$status = 'success';
- 		}
+			$status = 'success';
+		}
 		
 		if (empty ( $frmweb )) {
 			header ( "Content-type: text/xml" );
@@ -70,7 +74,7 @@ class FeedBack {
 			$xml_output .= "<status>$status</status>";
 			$xml_output .= "<message>" . $message . "</message>";
 			$xml_output .= "<feedback_id>$feedback_id</feedback_id>";
- 			
+			
 			$xml_output .= "</feedbackresult>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
@@ -82,8 +86,7 @@ class FeedBack {
 			$result = FALSE;
 		}
 		return $result;
-	} 
- 
+	}
 }
 
 ?>

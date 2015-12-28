@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Aws\S3;
@@ -51,7 +56,7 @@ class MemreasSignedURL {
 	 * JM Change to allow for multiple thumbnails in response
 	 * sends back simple json encoded array
 	 */
-	public function signArrayOfUrls($obj, $host=MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST) {
+	public function signArrayOfUrls($obj, $host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST) {
 		if (! empty ( $obj ) && is_array ( $obj )) {
 			foreach ( $obj as $url ) {
 				if (isset ( $url ) && ! empty ( $url )) {

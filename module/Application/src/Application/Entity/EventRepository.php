@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -104,17 +109,16 @@ class EventRepository extends EntityRepository {
 		}
 		return $url;
 	}
-	
 	public function getEventMediaUrl($metadata = '', $size = '') {
-Mlog::addone(__CLASS__.'::'.__METHOD__.'::$metadata',$metadata);		
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
 		$json_array = json_decode ( $metadata, true );
-		$url="";
-Mlog::addone(__CLASS__.'::'.__METHOD__.'::$json_array[S3_files][thumbnails][79x80]',$json_array ['S3_files'] ['thumbnails'] ['79x80']);		
+		$url = "";
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_array[S3_files][thumbnails][79x80]', $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 		if (($json_array ['S3_files'] ['file_type'] != 'audio') && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-			$url= $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 		}
-Mlog::addone(__CLASS__.'::'.__METHOD__.'::$url',$url);		
-		return json_decode($url); 
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url );
+		return json_decode ( $url );
 	}
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
@@ -216,12 +220,12 @@ Mlog::addone(__CLASS__.'::'.__METHOD__.'::$url',$url);
 						// Fetch event media
 						error_log ( "event id -->" . $event_id . PHP_EOL );
 						$event_media = $this->getEventMedia ( $event_id );
-						$i=0;
+						$i = 0;
 						foreach ( $event_media as $mediaRow ) {
 							$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
 							if (! empty ( $event_media_url )) {
 								$temp ['event_media_url'] ["$i"] = $event_media_url;
-								$i++;
+								$i ++;
 							}
 						}
 					}
@@ -236,13 +240,13 @@ Mlog::addone(__CLASS__.'::'.__METHOD__.'::$url',$url);
 		error_log ( "Leaving Redis warmer createDiscoverCache...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		return $Index;
 	}
-	function checkFriendLevelRule($eventId, $eventOwnerId, $userId, $friendId) {		
+	function checkFriendLevelRule($eventId, $eventOwnerId, $userId, $friendId) {
 		$allowAddFriends = 1;
 		/**
 		 * Fetch event owner by event_id
 		 */
 		if ($eventOwnerId != $userId) {
-			//user is a friend (level 2) so friend_id is level 3
+			// user is a friend (level 2) so friend_id is level 3
 			$allowAddFriends = 0;
 		}
 		

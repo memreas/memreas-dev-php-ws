@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -33,7 +38,7 @@ class FindTag {
 		$tag = (trim ( $data->findtag->tag ));
 		$time = time ();
 		
-		//  
+		//
 		$tblTag = $this->dbAdapter->find ( "\Application\Entity\Tag", $tag );
 		
 		if (! $tblTag) {
@@ -59,7 +64,7 @@ class FindTag {
 			
 			$xml_output .= "</tagresult>";
 			$xml_output .= "</xml>";
-error_log("FindTag xmloutput ---> ".$xml_output.PHP_EOL);
+			error_log ( "FindTag xmloutput ---> " . $xml_output . PHP_EOL );
 			echo $xml_output;
 		}
 	}

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Application\memreas\AWSManagerSender;
@@ -72,10 +77,10 @@ class ChangePassword {
 		}
 		
 		if (! empty ( $resofupd )) {
-			$to[] = $result->email_address;
+			$to [] = $result->email_address;
 			$viewVar = array (
 					'email' => $to,
-					'username' => $result->username,
+					'username' => $result->username 
 			);
 			$viewModel = new ViewModel ( $viewVar );
 			$viewModel->setTemplate ( 'email/changedpassword' );

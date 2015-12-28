@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Application\memreas\MUUID;
@@ -72,7 +77,7 @@ class AddComment {
 					
 					if (empty ( $audio_media_id )) {
 						$type = 'text';
-					} else if (empty ($comment)) {
+					} else if (empty ( $comment )) {
 						$type = 'audio';
 					} else {
 						$type = 'text|audio';
@@ -90,8 +95,8 @@ class AddComment {
 						$tblComment->update_time = $time;
 						$this->dbAdapter->persist ( $tblComment );
 						$this->dbAdapter->flush ();
-Mlog::add(__CLASS__.__METHOD__.'::Text Comment');						
-Mlog::add($tblComment,'p',1);						
+						Mlog::add ( __CLASS__ . __METHOD__ . '::Text Comment' );
+						Mlog::add ( $tblComment, 'p', 1 );
 						$status = 'success';
 						// error_log("Inserted Comment without audio_media_id ---> ".$audio_media_id.PHP_EOL);
 					}
@@ -104,15 +109,15 @@ Mlog::add($tblComment,'p',1);
 						$metaTag ['event'] [] = $event_id;
 						$metaTag ['media'] [] = $media_id;
 						$metaTag ['user'] [] = $user_id;
-Mlog::add(__CLASS__.__METHOD__.'::$metaTag...');
-Mlog::add($metaTag,'j',1);
-
+						Mlog::add ( __CLASS__ . __METHOD__ . '::$metaTag...' );
+						Mlog::add ( $metaTag, 'j', 1 );
+						
 						// add tags
 						$this->addTag->getEventname ( $comment, $metaTag );
-Mlog::addone(__CLASS__.__METHOD__,'::$this->addTag->getEventname ( $comment, $metaTag )');
+						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->addTag->getEventname ( $comment, $metaTag )' );
 						// $this->addTag->getUserName($comment,$metaTag);
 						$this->addTag->getKeyword ( $comment, $metaTag );
-Mlog::addone(__CLASS__.__METHOD__,'::$this->addTag->getKeyword ( $comment, $metaTag )');
+						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->addTag->getKeyword ( $comment, $metaTag )' );
 						
 						// send notification owner of the event and all who commented.
 						$qb = $this->dbAdapter->createQueryBuilder ();
@@ -122,7 +127,7 @@ Mlog::addone(__CLASS__.__METHOD__,'::$this->addTag->getKeyword ( $comment, $meta
 						$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
 						$qb->setParameter ( 1, $event_id );
 						$qb->setParameter ( 2, $user_id );
-Mlog::addone(__CLASS__.__METHOD__.'$qb',$qb);
+						Mlog::addone ( __CLASS__ . __METHOD__ . '$qb', $qb );
 						
 						// Check if comment is made by owner or not
 						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
@@ -146,20 +151,20 @@ Mlog::addone(__CLASS__.__METHOD__.'$qb',$qb);
 							$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_COMMENT;
 							$data ['addNotification'] ['notification_methods'] [] = 'email';
 							$data ['addNotification'] ['notification_methods'] [] = 'push_notification';
-							$meta ['sent']['event_id'] = $event_id;
-							$meta ['sent']['event_name'] = $eventOBj->name;
-							$meta ['sent']['from_id'] = $user_id;
-							$meta ['sent']['from_username'] = $userOBj->username;
-							$meta ['sent']['comment_id'] = $uuid;
-							$meta ['sent']['media_id'] = $media_id;
-							$meta ['sent']['comment'] = $nmessage;
-							$data ['addNotification'] ['meta'] = json_encode($meta);
-Mlog::add(__CLASS__.__METHOD__.'::$data.addNotification...');
-Mlog::add($data,'j',1);
-								
+							$meta ['sent'] ['event_id'] = $event_id;
+							$meta ['sent'] ['event_name'] = $eventOBj->name;
+							$meta ['sent'] ['from_id'] = $user_id;
+							$meta ['sent'] ['from_username'] = $userOBj->username;
+							$meta ['sent'] ['comment_id'] = $uuid;
+							$meta ['sent'] ['media_id'] = $media_id;
+							$meta ['sent'] ['comment'] = $nmessage;
+							$data ['addNotification'] ['meta'] = json_encode ( $meta );
+							Mlog::add ( __CLASS__ . __METHOD__ . '::$data.addNotification...' );
+							Mlog::add ( $data, 'j', 1 );
+							
 							// add notification in db.
 							$result = $this->AddNotification->exec ( $data );
-								
+							
 							if ($ef ['network'] == 'memreas') {
 								$this->notification->add ( $ef ['friend_id'] );
 								$friendUser = $eventRepo->getUser ( $ef ['friend_id'], 'row' );
@@ -172,7 +177,7 @@ Mlog::add($data,'j',1);
 								Email::$item ['message'] = $comment;
 								Email::collect ();
 							}
-						} //end for loop 
+						} // end for loop
 						
 						$this->notification->setMessage ( $comment );
 						$this->notification->type = \Application\Entity\Notification::ADD_COMMENT;

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -33,24 +38,23 @@ class FindEvent {
 		$tag = (trim ( $data->findevent->tag ));
 		$time = time ();
 		
-		//  
- 		$mc = $this->elasticache->getCache('!event');
-            	$search_result = array();
-                        foreach ($mc as $er){
-                            if(strpos($er['name'],$search)!==false){
-                                $er['name'] = '!'.$er['name'];
-                                $search_result[] = $er;
-                                
-                            }
-                        }
-                        
-                        $result['count']= count($search_result);
-                        $result['search']= $search_result;
-
-                        //$result =  preg_grep("/$search/", $mc);
-                        //echo '<pre>';print_r($result);
-                        
-                        echo json_encode($result);
+		//
+		$mc = $this->elasticache->getCache ( '!event' );
+		$search_result = array ();
+		foreach ( $mc as $er ) {
+			if (strpos ( $er ['name'], $search ) !== false) {
+				$er ['name'] = '!' . $er ['name'];
+				$search_result [] = $er;
+			}
+		}
+		
+		$result ['count'] = count ( $search_result );
+		$result ['search'] = $search_result;
+		
+		// $result = preg_grep("/$search/", $mc);
+		// echo '<pre>';print_r($result);
+		
+		echo json_encode ( $result );
 		
 		if (! $tblTag) {
 			$tag_id = '';

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 error_reporting ( E_ALL );
 ini_set ( 'display_errors', 'On' );
 require 'config.php';

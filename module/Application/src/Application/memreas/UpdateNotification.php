@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -119,8 +124,8 @@ class UpdateNotification {
 	public function handleAddFriendToEventResponse() {
 		try {
 			$json_data = json_decode ( $this->tblNotification->meta, true );
-Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
-Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data [sent] [event_id]', $json_data ['sent'] ['event_id'] );
+			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
+			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data [sent] [event_id]', $json_data ['sent'] ['event_id'] );
 			$EventFriend = $this->dbAdapter->getRepository ( "\Application\Entity\EventFriend" )->findOneBy ( array (
 					'event_id' => $json_data ['sent'] ['event_id'],
 					'friend_id' => $this->sender_uid 
@@ -149,10 +154,10 @@ Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data [sent] [event_id]',
 				$this->notification_status = 'ignore';
 			}
 			$nmessage = "$userOBj->username has $email_notification_status your invite to !$eventOBj->name";
-			if (!empty($this->notification_message)) {
+			if (! empty ( $this->notification_message )) {
 				$nmessage .= " with message: $this->notification_message";
 			}
-				
+			
 			$result = $this->handleNotification ( \Application\Entity\Notification::ADD_FRIEND_TO_EVENT_RESPONSE, Email::EVENT_INVITE_RESPONSE, $nmessage );
 		} catch ( \Exception $e ) {
 			throw new \Exception ( $e->getMessage () );
@@ -284,7 +289,7 @@ Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data [sent] [event_id]',
 		 * Update the existing notification table meta
 		 */
 		$meta = json_decode ( $this->tblNotification->meta, true );
-Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
 		$meta ['received'] ['message'] = $nmessage;
 		$this->tblNotification->meta = json_encode ( $meta );
 		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$meta', $meta );

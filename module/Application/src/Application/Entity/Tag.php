@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -18,7 +23,7 @@ class Tag {
 	/**
 	 *
 	 * @var string @ORM\Column(name="tag_id", type="string", length=255, nullable=false)
-	 *      
+	 *     
 	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
 	private $tag_id;

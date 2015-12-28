@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -37,9 +42,9 @@ class AddFriendtoevent {
 			$data = simplexml_load_string ( $frmweb );
 			error_log ( "Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL );
 		}
-Mlog::addone(basename(__FILE__).'inbound xml','...');
-Mlog::add($data,'p');
-Mlog::out();
+		Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', '...' );
+		Mlog::add ( $data, 'p' );
+		Mlog::out ();
 		// $owner = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
 		
 		$friend_array = $data->addfriendtoevent->friends->friend;
@@ -200,7 +205,7 @@ Mlog::out();
 								$profile_pic_url = $eventRepo->getProfileUrl ();
 							}
 							
-error_log("Fetched profile_pic_url ---> ".$profile_pic_url.PHP_EOL);
+							error_log ( "Fetched profile_pic_url ---> " . $profile_pic_url . PHP_EOL );
 						} catch ( \Exception $exc ) {
 							error_log ( "Enter AddFriendtoevent.exec() - failure to fetch profile pic" . PHP_EOL );
 						}

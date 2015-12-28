@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -59,7 +64,7 @@ class ListComments {
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
 		if (! empty ( $event_id )) {
-			//$qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio' or c.type='like')" );
+			// $qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio' or c.type='like')" );
 			$qb->where ( "c.event_id=?1" );
 			$qb->setParameter ( 1, $event_id );
 		}
@@ -117,7 +122,7 @@ class ListComments {
 				
 				$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
 				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0] ))
-					$url1 =$json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0];
+					$url1 = $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0];
 				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
 				$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
 				

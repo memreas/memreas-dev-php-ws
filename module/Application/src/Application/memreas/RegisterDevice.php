@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -160,7 +165,7 @@ class RegisterDevice {
 			}
 			$status = 'success';
 			$message = "device token saved";
-			if (!$isInternalJSON) {
+			if (! $isInternalJSON) {
 				header ( "Content-type: text/xml" );
 				$xml_output = '<?xml version="1.0"  encoding="utf-8" ?>';
 				$xml_output .= "<xml>";
@@ -173,7 +178,7 @@ class RegisterDevice {
 				error_log ( "RegisterDevice ---> xml_output ----> " . $xml_output . PHP_EOL );
 			}
 		} catch ( \Exception $e ) {
-			if (!$isInternalJSON) {
+			if (! $isInternalJSON) {
 				$xml_output = '<?xml version="1.0"  encoding="utf-8" ?>';
 				$xml_output .= "<xml>";
 				$xml_output .= "<registerdeviceresponse>";

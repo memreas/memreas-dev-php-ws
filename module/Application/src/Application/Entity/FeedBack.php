@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="feedback")
  */
 class FeedBack {
-	 
+	
 	/**
 	 *
 	 * @var string @ORM\Column(name="feedback_id", type="string", length=255, nullable=false)
@@ -46,7 +51,7 @@ class FeedBack {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="message", type="string",   nullable=false)
+	 * @var string @ORM\Column(name="message", type="string", nullable=false)
 	 */
 	private $message;
 	public function __set($name, $value) {

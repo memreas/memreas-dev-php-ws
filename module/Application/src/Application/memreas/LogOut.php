@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -19,10 +24,10 @@ class LogOut {
 	public function exec($sessHandler) {
 		error_log ( 'IndexController -> logout->exec()...' . PHP_EOL );
 		try {
-			if (!empty ( $_SESSION ['memreascookie'] )) {
-				$sessHandler->closeSessionWithMemreasCookie();
+			if (! empty ( $_SESSION ['memreascookie'] )) {
+				$sessHandler->closeSessionWithMemreasCookie ();
 			} else {
-				$sessHandler->closeSessionWithSID();
+				$sessHandler->closeSessionWithSID ();
 			}
 			
 			header ( "Content-type: text/xml" );

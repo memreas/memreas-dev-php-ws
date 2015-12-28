@@ -1,7 +1,12 @@
 <?php
-// memreas llc
+
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of memreas specific code, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 // Select portions of software below utilize code found @ https://github.com/eddturtle/direct-upload-s3-signaturev4
-// as such including license for software utilized.  License is bounded to this file only.
+// as such including license for software utilized. License is bounded to this file only.
 
 // The MIT License (MIT)
 
@@ -24,8 +29,6 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-
-
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -163,13 +166,12 @@ class Memreastvm {
 						],
 						[ 
 								'x-amz-expires' => $expires 
-						], 
+						],
 						[ 
 								'x-amz-server-side-encryption' => $encryption 
 						] 
 				] 
 		];
-
 		
 		$base64Policy = base64_encode ( json_encode ( $policy ) );
 		

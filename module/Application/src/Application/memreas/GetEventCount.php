@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -24,33 +29,29 @@ class GetEventCount {
 		$xml_output .= "<xml>";
 		$xml_output .= "<geteventcountresponse>";
 		$q1 = "select e.event_id, e.location from Application\Entity\Event e where e.event_id=:event_id";
-			$statement = $this->dbAdapter->createQuery ( $q1 );
-			$statement->setParameter ( 'event_id', $event_id );
-			$event = $statement->getOneOrNullResult();
-
+		$statement = $this->dbAdapter->createQuery ( $q1 );
+		$statement->setParameter ( 'event_id', $event_id );
+		$event = $statement->getOneOrNullResult ();
+		
 		// get like count
 		$likeCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND c.like=1" );
 		$likeCountSql->setParameter ( 1, $event_id );
 		$likeCount = $likeCountSql->getSingleScalarResult ();
-
+		
 		// get comment count for event
 		$commCountSql = $this->dbAdapter->createQuery ( "SELECT COUNT(c.comment_id) FROM Application\Entity\Comment c Where c.event_id=?1 AND  (c.type='text' or c.type='audio')" );
 		$commCountSql->setParameter ( 1, $event_id );
 		$commCount = $commCountSql->getSingleScalarResult ();
-
-
-		if (empty ( $event_id ) || empty($event)) {
+		
+		if (empty ( $event_id ) || empty ( $event )) {
 			$xml_output .= "<status>Failure</status>";
 			$xml_output .= "<message>No Record Found </message>";
-
+		} else {
+			$xml_output .= "<status>Success</status>";
+			$xml_output .= "<event_id>" . $event ['event_id'] . "</event_id>";
+			$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
+			$xml_output .= "<like_count>" . $likeCount . "</like_count>";
 		}
-		else{
-				$xml_output .= "<status>Success</status>";
-				$xml_output .= "<event_id>" . $event['event_id']. "</event_id>";
-				$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
-				$xml_output .= "<like_count>" . $likeCount . "</like_count>";
-
-			}
 		$xml_output .= "</geteventcountresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;

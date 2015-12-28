@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -14,10 +19,9 @@ class User {
 	protected $inputFilter;
 	
 	/**
-	 * @var string
 	 *
-	 * @ORM\Id
-	 * @ORM\Column(type="string",name="user_id");
+	 * @var string @ORM\Id
+	 *      @ORM\Column(type="string",name="user_id");
 	 */
 	protected $user_id;
 	
@@ -123,13 +127,12 @@ class User {
 	 * @var string @ORM\Column(name="invited_by", type="string", length=255, nullable=false)
 	 */
 	private $invited_by;
-
-    /**
-     *
-     * @var string @ORM\Column(name="metadata", type="text", nullable=true)
-     */
-    private $metadata;
-
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="metadata", type="text", nullable=true)
+	 */
+	private $metadata;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

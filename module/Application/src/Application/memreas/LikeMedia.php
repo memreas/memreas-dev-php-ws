@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -93,15 +98,11 @@ class LikeMedia {
 						/*
 						 * Check event_id for like
 						 */
-						$q = "select c from Application\Entity\Comment c" . 
-						" where c.event_id='$event_id'" . 
-						" and c.media_id='$media_id'" . 
-						" and c.type = 'like' " . 
-						" and c. user_id='$user_id'";
+						$q = "select c from Application\Entity\Comment c" . " where c.event_id='$event_id'" . " and c.media_id='$media_id'" . " and c.type = 'like' " . " and c. user_id='$user_id'";
 						$statement = $this->dbAdapter->createQuery ( $q );
-						//error_log("SQL--->".$statement->getSql().PHP_EOL);
+						// error_log("SQL--->".$statement->getSql().PHP_EOL);
 						$row = $statement->getResult ();
-						if ($setMediaLike && !empty ($row[0])) {
+						if ($setMediaLike && ! empty ( $row [0] )) {
 							$status = 'Failure';
 							$message = 'like already added...';
 						}

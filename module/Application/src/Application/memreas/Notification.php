@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Application\Model\MemreasConstants as MC;
@@ -40,7 +45,7 @@ class Notification {
 		return true;
 	}
 	public function send() {
-//error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
+		// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
 		try {
 			error_log ( "Notification::Inside send()" . PHP_EOL );
 			// mobile notification.
@@ -54,9 +59,9 @@ class Notification {
 				$qb->select ( 'd' );
 				$qb->from ( 'Application\Entity\Device', 'd' );
 				$qb->andWhere ( 'd.user_id IN (:x)' )->setParameter ( 'x', $this->receiverIds );
-				$qb->andWhere ( 'd.last_used = 1');
+				$qb->andWhere ( 'd.last_used = 1' );
 				$devices = $qb->getQuery ()->getArrayResult ();
-error_log('$qb--->'.$qb.PHP_EOL);				
+				error_log ( '$qb--->' . $qb . PHP_EOL );
 				
 				foreach ( $devices as $device ) {
 					error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
@@ -84,25 +89,25 @@ error_log('$qb--->'.$qb.PHP_EOL);
 		}
 		return true;
 	}
-// 	public function setMessage($notification_type, $data = '') {
-// 		switch ($notification_type) {
-// 			case \Application\Entity\Notification::ADD_FRIEND :
-// 				$this->message = "friend request from ".$data;
-// 				break;
-// 			case \Application\Entity\Notification::ADD_FRIEND_TO_EVENT :
-// 				$this->message = "add friend to ".$data;
-// 				break;
-// 			case \Application\Entity\Notification::ADD_MEDIA :
-// 				$this->message = "add media to ".$data;
-// 				break;
-// 			case \Application\Entity\Notification::ADD_COMMENT :
-// 				$this->message = "add comment to ".$data;
-// 				break;
-// 			case \Application\Entity\Notification::ADD_EVENT :
-// 				$this->message = "update ".$data;
-// 				break;
-// 		}
-// 	}
+	// public function setMessage($notification_type, $data = '') {
+	// switch ($notification_type) {
+	// case \Application\Entity\Notification::ADD_FRIEND :
+	// $this->message = "friend request from ".$data;
+	// break;
+	// case \Application\Entity\Notification::ADD_FRIEND_TO_EVENT :
+	// $this->message = "add friend to ".$data;
+	// break;
+	// case \Application\Entity\Notification::ADD_MEDIA :
+	// $this->message = "add media to ".$data;
+	// break;
+	// case \Application\Entity\Notification::ADD_COMMENT :
+	// $this->message = "add comment to ".$data;
+	// break;
+	// case \Application\Entity\Notification::ADD_EVENT :
+	// $this->message = "update ".$data;
+	// break;
+	// }
+	// }
 	public function setMessage($message) {
 		$this->message = $message;
 	}

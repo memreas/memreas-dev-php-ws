@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -234,7 +239,7 @@ class AddFriendtoevent {
 		if ($frmweb == '') {
 			echo $xml_output;
 		}
-Mlog::addone ( __FILE__."output", $xml_output );
+		Mlog::addone ( __FILE__ . "output", $xml_output );
 	} // end exec
 	
 	/**

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -46,8 +51,8 @@ class ForgotPassword {
 					$data = $result [0];
 					$username = $email;
 					$to [] = $email;
-					//$token = uniqid ();
-					$token = $this->generateRandStr(MemreasConstants::FORGOT_PASSWORD_CODE_LENGTH);
+					// $token = uniqid ();
+					$token = $this->generateRandStr ( MemreasConstants::FORGOT_PASSWORD_CODE_LENGTH );
 					
 					$updatequr = "UPDATE Application\Entity\User u  set u.forgot_token ='$token'
 									 where u.user_id='$data->user_id'";

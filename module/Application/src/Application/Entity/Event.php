@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -89,12 +94,12 @@ class Event {
 	 * @var string @ORM\Column(name="update_time", type="string", length=255, nullable=false)
 	 */
 	private $update_time;
-
-    /**
-     *
-     * @var string @ORM\Column(name="metadata", type="string", length=10000, nullable=false)
-     */
-    private $metadata;
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="metadata", type="string", length=10000, nullable=false)
+	 */
+	private $metadata;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

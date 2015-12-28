@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use \Exception;
@@ -15,7 +20,7 @@ class Utility {
 		self::$item = array ();
 	}
 	public static function toDateTime($unixTimestamp) {
-		//examples...
+		// examples...
 		// $today = date("F j, Y, g:i a"); // March 10, 2001, 5:16 pm
 		// $today = date("m.d.y"); // 03.10.01
 		// $today = date("j, n, Y"); // 10, 3, 2001
@@ -26,7 +31,7 @@ class Utility {
 		// $today = date('H:m:s \m \i\s\ \m\o\n\t\h'); // 17:03:18 m is month
 		// $today = date("H:i:s"); // 17:16:18
 		// $today = date("Y-m-d H:i:s"); // 2001-03-10 17:16:18 (the MySQL DATETIME format)
-		//return date ( "Y-M-d H:i:s", $unixTimestamp );
+		// return date ( "Y-M-d H:i:s", $unixTimestamp );
 		return date ( "Y-M-d", $unixTimestamp );
 	}
 	public static function formatDateDiff($start, $end = null) {

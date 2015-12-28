@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Application\Model\MemreasConstants;
@@ -162,11 +167,11 @@ class AWSMemreasRedisCache {
 				 */
 				$person_meta_hash [$row ['username']] = $person_json;
 				$person_uid_hash [$row ['user_id']] = $row ['username'];
-				$usernames[$row ['username']]	 = 0;
+				$usernames [$row ['username']] = 0;
 				// $result = $this->cache->zadd ( '@person', 0, $row ['username'] );
 				// error_log ( "Inside warming zadd result " . $result . " username--->" . $row ['username'] . " user_id--->" . $row ['user_id'] . PHP_EOL );
 			}
-			//$result = $this->cache->zadd ( '@person', 0, $usernames );
+			// $result = $this->cache->zadd ( '@person', 0, $usernames );
 			$result = $this->cache->zadd ( '@person', $usernames );
 			error_log ( 'zadd array $result--->' . print_r ( $result, true ) . PHP_EOL );
 			$reply = $this->cache->hmset ( '@person_meta_hash', $person_meta_hash );
@@ -273,13 +278,13 @@ class AWSMemreasRedisCache {
 		}
 		
 		return $this->cache->deleteMulti ( $keys );
-		//$result = $this->cache->deleteMulti ( $keys );
+		// $result = $this->cache->deleteMulti ( $keys );
 		// if ($result) {
 		// // error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
 		// } else {
 		// error_log ( 'COULD NOT DELETE THES KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
 		// }
-		//return $result;
+		// return $result;
 	}
 	
 	/*

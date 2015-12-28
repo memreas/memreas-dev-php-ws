@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -27,7 +32,6 @@ class GetSession {
 			
 			$xml_output .= "<username>" . $_SESSION ['user'] ['username'] . "</username>";
 			$xml_output .= "<userid>" . $_SESSION ['user'] ['user_id'] . "</userid>";
-			
 		}
 		$xml_output .= "</getsessionresponse>";
 		$xml_output .= "</xml>";

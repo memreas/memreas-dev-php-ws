@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\memreas;
 
 use Zend\Session\Container;
@@ -56,7 +61,7 @@ class ViewAllfriends {
 						$view_all_friend [$count] ['id'] = $row1->friend_id;
 						$view_all_friend [$count] ['network'] = $row1->network;
 						$view_all_friend [$count] ['social_username'] = $row1->social_username;
-						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ($row1->url_image );
+						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $row1->url_image );
 					}
 				} else {
 					$error_flag = 2;
@@ -73,9 +78,9 @@ class ViewAllfriends {
 				$xml_output .= "<network>" . $friend ['network'] . "</network>";
 				$xml_output .= "<social_username>" . $friend ['social_username'] . "</social_username>";
 				$xml_output .= "<url><![CDATA[" . $friend ['url_image'] . "]]></url>";
-				$xml_output .= "<url_79x80><![CDATA[" . empty ( $friend ['url_image_79x80'] ) ? '' : $this->url_signer->signArrayOfUrls ($friend ['url_image_79x80']) . "]]></url_79x80>";
-				$xml_output .= "<url_448x306><![CDATA[" . empty ( $friend ['url_image_448x306'] ) ? '' : $this->url_signer->signArrayOfUrls ($friend ['url_image_448x306']) . "]]></url_448x306>";
-				$xml_output .= "<url_98x78><![CDATA[" . empty ( $friend ['url_image_98x78'] ) ? '' : $this->url_signer->signArrayOfUrls ($friend ['url_image_98x78']) . "]]></url_98x78>";
+				$xml_output .= "<url_79x80><![CDATA[" . empty ( $friend ['url_image_79x80'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_79x80'] ) . "]]></url_79x80>";
+				$xml_output .= "<url_448x306><![CDATA[" . empty ( $friend ['url_image_448x306'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_448x306'] ) . "]]></url_448x306>";
+				$xml_output .= "<url_98x78><![CDATA[" . empty ( $friend ['url_image_98x78'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_98x78'] ) . "]]></url_98x78>";
 				$xml_output .= "</friend>";
 			}
 		}

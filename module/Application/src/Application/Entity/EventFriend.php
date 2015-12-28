@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ */
 namespace Application\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -30,14 +35,13 @@ class EventFriend {
 	 *
 	 * @var string @ORM\Column(name="user_approve", type="integer", nullable=false)
 	 */
-	protected $user_approve=0;
+	protected $user_approve = 0;
 	
 	/**
 	 *
 	 * @var string @ORM\Column(name="friend_level", type="integer", nullable=false)
 	 */
-	protected $friend_level=1;  //if 0 friend can't add friends...
-	
+	protected $friend_level = 1; // if 0 friend can't add friends...
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}
