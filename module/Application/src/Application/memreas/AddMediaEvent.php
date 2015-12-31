@@ -123,8 +123,8 @@ class AddMediaEvent {
 				// insert into media and event media
 				// ///////////////////////////////////////////////
 				if ($is_profile_pic) {
-					$media_id = MUUID::fetchUUID ();
-					$s3path = $user_id . '/';
+					//$media_id = MUUID::fetchUUID ();
+					$s3path = $user_id . '/' . $media_id . '/';
 				} else if (! empty ( $media_id )) {
 					$s3path = $user_id . '/' . $media_id . '/';
 				} else {
