@@ -143,6 +143,12 @@ class AddMediaEvent {
 					$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $s3path . $s3file_name );
 					
 					//
+					// Update user to set profile pic flag
+					//
+					$q = $this->dbAdapter->createQueryBuilder ()->update ( 'Application\Entity\User', 'u' )->set ( 'u.profile_pic', 1 )->where ( 'm.user_id = ?1' )->setParameter ( 1, $user_id )->getQuery ();
+					$p = $q->execute ();
+					
+					//
 					// Update media to set all rows to 0 for this user's profile pic
 					//
 					$q = $this->dbAdapter->createQueryBuilder ()->update ( 'Application\Entity\Media', 'm' )->set ( 'm.is_profile_pic', 0 )->where ( 'm.user_id = ?1' )->setParameter ( 1, $user_id )->getQuery ();
