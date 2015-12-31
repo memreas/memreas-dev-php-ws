@@ -21,6 +21,7 @@ class AddMediaEvent {
 	protected $service_locator;
 	protected $dbAdapter;
 	protected $AddNotification;
+	protected $url_signer;
 	protected $notification;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
@@ -123,13 +124,21 @@ class AddMediaEvent {
 				// insert into media and event media
 				// ///////////////////////////////////////////////
 				if ($is_profile_pic) {
-					//$media_id = MUUID::fetchUUID ();
-					$s3path = $user_id . '/' . $media_id . '/';
-				} else if (! empty ( $media_id )) {
-					$s3path = $user_id . '/' . $media_id . '/';
-				} else {
-					throw new \Exception ( 'Error : Media ID is empty' );
+					//
+					// refresh session profile pic
+					//
+					$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $s3path . $s3file_name );
+					
+					//
+					// Update media to set all rows to 0 for this user's profile pic
+					//
+					$q = $this->em->createQueryBuilder ()->update ( 'Application\Entity\Media', 'm' )->set ( 'm.is_profile_pic', 0 )->where ( 'm.user_id = ?1' )->setParameter ( 1, $user_id )->getQuery ();
+					$p = $q->execute ();
 				}
+				//
+				// media_id must be set
+				//
+				$s3path = $user_id . '/' . $media_id . '/';
 				$is_video = 0;
 				$is_audio = 0;
 				// ///////////////////////////////////////
