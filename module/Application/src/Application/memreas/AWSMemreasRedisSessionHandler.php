@@ -142,7 +142,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
+		$_SESSION ['profile_pic'] = (!isset($json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'])) ? $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] ) : $this->url_signer->signArrayOfUrls ( 'static/profile-pic.jpg' );;
 		
 		// error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
 		$this->setUIDLookup ();
