@@ -70,7 +70,7 @@ class MemreasSignedURL {
 		}
 		
 		$json_arr = json_encode ( $arr );
-		
+
 		return $json_arr;
 	}
 	public function signHlsUrl($obj) {
