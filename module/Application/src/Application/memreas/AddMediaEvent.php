@@ -96,6 +96,19 @@ class AddMediaEvent {
 				// $applyCopyrightOnServer = isset ( $_POST ['applyCopyrightOnServer'] ) ? $_POST ['applyCopyrightOnServer'] : 0;
 			}
 			$time = time ();
+
+			
+			Mlog::addone(__CLASS__.__METHOD__.'$event_id',$event_id );
+			Mlog::addone(__CLASS__.__METHOD__.'$media_id',$media_id );
+			Mlog::addone(__CLASS__.__METHOD__.'$$is_profile_pic',$is_profile_pic );
+			Mlog::addone(__CLASS__.__METHOD__.'$is_server_image',$is_server_image );
+			Mlog::addone(__CLASS__.__METHOD__.'$content_type',$content_type );
+			Mlog::addone(__CLASS__.__METHOD__.'$s3url',$s3url );
+			Mlog::addone(__CLASS__.__METHOD__.'$s3file_name',$s3file_name );
+			Mlog::addone(__CLASS__.__METHOD__.'$s3file_basename_prefix',$s3file_basename_prefix );
+			Mlog::addone(__CLASS__.__METHOD__.'$location',$location );
+			Mlog::addone(__CLASS__.__METHOD__.'$copyright',$copyright );
+				
 			
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media
