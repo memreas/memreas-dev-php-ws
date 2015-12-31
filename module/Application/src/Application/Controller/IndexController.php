@@ -205,6 +205,8 @@ class IndexController extends AbstractActionController {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
+		} else if (($actionname == 'memreastvm') && ($data->memreastvm->is_profile_pic)) {
+			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		}

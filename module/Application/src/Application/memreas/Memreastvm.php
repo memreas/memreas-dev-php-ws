@@ -62,6 +62,7 @@ class Memreastvm {
 	}
 	public function exec($type = "") {
 		try {
+			/* - covered in indexcontroller
 			if (empty ( $_SESSION ['user_id'] )) {
 				header ( 'Content-Type: application/json' );
 				$status = 'error';
@@ -73,6 +74,7 @@ class Memreastvm {
 				echo json_encode ( $arr );
 				return;
 			}
+			*/
 			/**
 			 * Fetch data return type
 			 */
