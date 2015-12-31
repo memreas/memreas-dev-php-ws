@@ -142,16 +142,22 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		Mlog::addone(__CLASS__.__METHOD__.'$_SESSION [profile_pic_meta]::', $_SESSION ['profile_pic_meta']);
-		Mlog::addone(__CLASS__.__METHOD__, 'setting $_SESSION[profile_pic]');
-		if (isset($json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'])) {
-			Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail ', $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80']);
-			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
+		// Mlog::addone(__CLASS__.__METHOD__.'$_SESSION [profile_pic_meta]::', $_SESSION ['profile_pic_meta']);
+		// Mlog::addone(__CLASS__.__METHOD__, 'setting $_SESSION[profile_pic]');
+		if ($_SESSION ['profile_pic_meta']) {
+			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
+				// Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail ', $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80']);
+				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
+			} else {
+				// Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail for ', 'null to get default...');
+				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( [ 
+						'S3_files' 
+				] ['full'] );
+			}
 		} else {
-			Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail for ', 'null to get default...');
 			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( null );
 		}
-		Mlog::addone(__CLASS__.__METHOD__.':: $_SESSION[profile_pic]', $_SESSION['profile_pic']);
+		// Mlog::addone(__CLASS__.__METHOD__.':: $_SESSION[profile_pic]', $_SESSION['profile_pic']);
 		
 		// error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
 		$this->setUIDLookup ();
