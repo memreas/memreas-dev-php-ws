@@ -203,6 +203,7 @@ class IndexController extends AbstractActionController {
 		 * Check session
 		 */
 		$data = simplexml_load_string ( $_POST ['xml'] );
+		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreastvm') && ($data->memreastvm->is_profile_pic)) {
