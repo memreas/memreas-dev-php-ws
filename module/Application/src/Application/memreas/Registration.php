@@ -59,6 +59,7 @@ class Registration {
 			$email = trim ( $data->registration->email );
 			$email = strtolower ( $email );
 			$password = trim ( $data->registration->password );
+			$this->profile_photo = isset($data->registration->profile_photo) ? $data->registration->profile_photo : 0;
 			$device_id = trim ( $data->registration->device_id );
 			$device_type = trim ( $data->registration->device_type );
 			$invited_by = trim ( $data->registration->invited_by );
