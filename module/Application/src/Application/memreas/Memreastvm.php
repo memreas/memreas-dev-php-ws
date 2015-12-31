@@ -3,7 +3,7 @@
 /**
  * Copyright (C) 2015 memreas llc. - All Rights Reserved
  * Unauthorized copying of memreas specific code, via any medium is strictly prohibited
- * Proprietary and confidential
+ * proprietary and confidential
  */
 // Select portions of software below utilize code found @ https://github.com/eddturtle/direct-upload-s3-signaturev4
 // as such including license for software utilized. License is bounded to this file only.

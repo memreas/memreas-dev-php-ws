@@ -98,7 +98,7 @@ class Registration {
 				} else {
 					
 					/*
-					 * TODO: Fix email check prior to go-beta...
+					 * email check working...
 					 */
 					
 					if (MemreasConstants::ALLOW_DUPLICATE_EMAIL_FOR_TESTING == 1) {
@@ -122,7 +122,7 @@ class Registration {
 					} else {
 						$status = 'Success';
 						/*
-						 * 22-SEP-2013 JM: added entry for email address verification
+						 * added entry for email address verification
 						 */
 						$email_verification_id = MUUID::fetchUUID ();
 						
@@ -243,7 +243,7 @@ class Registration {
 							if (! $move)
 								throw new \Exception ( 'Please Upload Image.' );
 								
-								// Upload to S3 here
+							// Upload to S3 here
 							$media_id = MUUID::fetchUUID ();
 							$aws_manager = new AWSManagerSender ( $this->service_locator );
 							$s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );

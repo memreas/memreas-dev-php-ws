@@ -68,7 +68,7 @@ class ListNotification {
 			unset ( $array ['EMAIL'], $array ['MEMREAS'], $array ['NONMEMREAS'] );
 			$array = array_flip ( $array );
 			
-			Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', $_POST ['xml'] );
+			//Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', $_POST ['xml'] );
 			$error_flag = 0;
 			$message = '';
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -138,8 +138,8 @@ class ListNotification {
 							/**
 							 * Handle ADD_FRIEND_TO_EVENT
 							 */
-							Mlog::addone ( __FILE__, 'Handle ADD_FRIEND_TO_EVENT' );
-							Mlog::add ( $meta, 'j', 1 );
+							//Mlog::addone ( __FILE__, 'Handle ADD_FRIEND_TO_EVENT' );
+							//Mlog::add ( $meta, 'j', 1 );
 							$this->handleAddFriendToEvent ( $eventRepository, $meta ['sent'] ['event_id'] );
 						} else if ($row ['notification_type'] == Notification::ADD_COMMENT) {
 							/**
@@ -181,7 +181,7 @@ class ListNotification {
 					</xml>";
 			echo $this->xml_output;
 		}
-		error_log ( '$this->xml_output--->' . $this->xml_output . PHP_EOL );
+		//error_log ( '$this->xml_output--->' . $this->xml_output . PHP_EOL );
 	} // end exec()
 	
 	/**
@@ -189,13 +189,13 @@ class ListNotification {
 	 */
 	public function handleAddFriendToEvent($eventRepository, $event_id) {
 		$eventMedia = $eventRepository->getEventMedia ( $event_id, 1 );
-		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia', $eventMedia );
+		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia', $eventMedia );
 		
 		// echo'<pre>';print_r($eventMedia);
 		$eventMediaUrl = '';
 		if (isset ( $eventMedia [0] )) {
 			$eventMediaUrl = $eventRepository->getEventMediaUrl ( $eventMedia [0] ['metadata'], 'thumb' );
-			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
+			//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
 			$this->xml_output .= "<event_media_url><![CDATA[" . json_encode ( $eventMediaUrl ) . "]]></event_media_url>";
 		}
 	}
