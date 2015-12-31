@@ -145,7 +145,7 @@ class AddMediaEvent {
 					//
 					// Update user to set profile pic flag
 					//
-					$q = $this->dbAdapter->createQueryBuilder ()->update ( 'Application\Entity\User', 'u' )->set ( 'u.profile_pic', 1 )->where ( 'm.user_id = ?1' )->setParameter ( 1, $user_id )->getQuery ();
+					$q = $this->dbAdapter->createQueryBuilder ()->update ( 'Application\Entity\User', 'u' )->set ( 'u.profile_pic', 1 )->where ( 'u.user_id = ?1' )->setParameter ( 1, $user_id )->getQuery ();
 					$p = $q->execute ();
 					
 					//
