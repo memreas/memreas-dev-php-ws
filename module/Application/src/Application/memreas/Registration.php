@@ -59,7 +59,16 @@ class Registration {
 			$email = trim ( $data->registration->email );
 			$email = strtolower ( $email );
 			$password = trim ( $data->registration->password );
-			$this->profile_photo = isset($data->registration->profile_photo) ? $data->registration->profile_photo : 0;
+			$this->profile_photo = 0;
+			if (isset($data->registration->profile_photo)) {
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__."::profile_photo value before -->", $this->profile_photo);
+				if (($data->registration->profile_photo == "true") || ($data->registration->profile_photo == 1)) {
+					$this->profile_photo = 1;
+				}
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__."::profile_photo value after -->", $this->profile_photo);
+				
+			}
+			$this->profile_photo = isset ( $data->registration->profile_photo ) ? $data->registration->profile_photo : 0;
 			$device_id = trim ( $data->registration->device_id );
 			$device_type = trim ( $data->registration->device_type );
 			$invited_by = trim ( $data->registration->invited_by );
@@ -244,7 +253,7 @@ class Registration {
 							if (! $move)
 								throw new \Exception ( 'Please Upload Image.' );
 								
-							// Upload to S3 here
+								// Upload to S3 here
 							$media_id = MUUID::fetchUUID ();
 							$aws_manager = new AWSManagerSender ( $this->service_locator );
 							$s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
