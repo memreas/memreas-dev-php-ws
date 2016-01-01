@@ -204,10 +204,11 @@ class IndexController extends AbstractActionController {
 		 */
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
+		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
+		Mlog::addone(__CLASS__.__METHOD__.'::$data->user_id', $data->user_id);
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
-		} else if (($actionname == 'memreastvm') && isset($data->user_id)) {
-			
+		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
