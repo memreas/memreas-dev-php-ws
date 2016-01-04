@@ -35,7 +35,10 @@ class AWSMemreasRedisCache {
 		} catch ( \Predis\Connection\ConnectionException $ex ) {
 			error_log ( "exception ---> " . print_r ( $ex, true ) . PHP_EOL );
 		}
-		// $this->cache->set('foo', 'bar');
+		$this->cache->set('foo', 'bar');
+		error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . " for host --->" . gethostname () . PHP_EOL);
+		$this->cache->del ( 'foo' );
+		
 		// error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . PHP_EOL);
 	}
 	public function setCache($key, $value, $ttl = MemreasConstants::REDIS_CACHE_TTL) {
