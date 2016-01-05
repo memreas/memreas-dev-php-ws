@@ -2086,7 +2086,7 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				echo $result;
 			}
-			$output = ob_get_clean ();
+			$output = trim(ob_get_clean ());
 			
 			/*
 			 * TODO - Cache here due to ob_get_clean

@@ -659,7 +659,7 @@ class ViewEvents {
 	/**
 	 * Public event functions
 	 */
-	private function fetchPublicEvents() {
+	private function fetchPublicEvents($date) {
 		$q_public = "select  event.event_id,
 			event.user_id,
 			event.name,
@@ -673,7 +673,11 @@ class ViewEvents {
 			from Application\Entity\Event event, Application\Entity\User user
 			where event.public=1
 			and event.user_id = user.user_id
-			ORDER BY event.update_time DESC ";
+                         and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
+                          and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
+                          and  (event.self_destruct >=" . $date . " or event.self_destruct='')
+                          ORDER BY event.create_time DESC";
+			 
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		return $statement->getArrayResult ();
 	}
