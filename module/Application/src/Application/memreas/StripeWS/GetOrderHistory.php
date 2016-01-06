@@ -56,8 +56,7 @@ class GetOrderHistory {
 				'data' => json_encode ( $request_data ) 
 		) );
 		
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+ 		$data = json_decode ( $response->getBody ( true ), true );
 		
 		$status = $data ['status'];
 		
