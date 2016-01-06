@@ -285,7 +285,7 @@ class ViewEvents {
 			/*
 			 * Fetch all public events filter in loop...
 			 */
-			$result_pub = $this->fetchPublicEvents ();
+			$result_pub = $this->fetchPublicEvents ($date);
 			
 			if (count ( $result_pub ) == 0) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
