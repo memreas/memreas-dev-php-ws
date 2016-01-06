@@ -38,15 +38,19 @@ class MakePayout {
 		
 		$guzzle = new Client ();
 		
-		$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'makepayout',
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [
+                    'form_params' =>[
+                        'action' => 'makepayout',
 				'account_id' => $account_id,
 				'amount' => $amount,
 				'description' => $description 
-		) );
+                    ]
+                ]
+				
+                );
 		
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+		 
+		$data = json_decode ( $response->getBody (), true );
 		
 		$status = $data ['status'];
 		$message = $data ['message'];

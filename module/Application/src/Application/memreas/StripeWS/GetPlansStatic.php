@@ -40,12 +40,16 @@ class GetPlansStatic {
 		$static = trim ( $data->getplansstatic->static );
 		$guzzle = new Client ();
 		
-		$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'listplansstatic',
-				'static' => $static 
-		) );
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [
+                    'form_params' =>[
+                        'action' => 'listplansstatic',
+                        'static' => $static 
+                    ]
+                ]
+				
+		 );
+		 
+		$data = json_decode ( $response->getBody (), true );
 		$status = $data ['status'];
 		
 		if ($status == 'Success') {

@@ -40,12 +40,16 @@ class GetPlans {
 		$user_id = trim ( $data->getplans->user_id );
 		$guzzle = new Client ();
 		
-		$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'listplans',
-				'user_id' => $user_id 
-		) );
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [
+                    'form_params' =>[
+                        'action' => 'listplans',
+			'user_id' => $user_id 
+                    ]
+                ]
+				
+		 );
+		 
+		$data = json_decode ( $response->getBody (), true );
 		$status = $data ['status'];
 		
 		if ($status == 'Success') {

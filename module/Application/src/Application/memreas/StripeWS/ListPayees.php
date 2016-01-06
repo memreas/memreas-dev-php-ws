@@ -38,15 +38,19 @@ class ListPayees {
 		
 		$guzzle = new Client ();
 		
-		$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'listpayees',
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [
+                    'form_params' =>[
+                        'action' => 'listpayees',
 				'username' => $username,
 				'page' => $page,
 				'limit' => $limit 
-		) );
+                    ]
+                ]
+				
+		 );
 		
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+		 
+		$data = json_decode ( $response->getBody (), true );
 		
 		if ($data ['status'] == 'Success' && $data ['Numrows'] > 0) {
 			$accounts = $data ['accounts'];

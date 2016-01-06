@@ -42,13 +42,19 @@ class GetAccountDetail {
 		
 		$guzzle = new Client ();
 		
-		$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'getaccountdetail',
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [ 
+				'form_params' =>  [
+                            'action' => 'getaccountdetail',
 				'user_id' => $user_id 
-		) );
+                        ]
+		]
+                        
+                                    
+				
+		 );
 		
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+		 
+		$data = json_decode ( $response->getBody (), true );
 		
 		$status = $data ['status'];
 		

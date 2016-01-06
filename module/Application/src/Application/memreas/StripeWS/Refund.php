@@ -44,15 +44,19 @@ class Refund {
 		
 		$guzzle = new Client ();
 		
-		$request = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'refund',
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null,[
+                    'form_params' =>[
+                        'action' => 'refund',
 				'user_id' => $user_id,
 				'amount' => $amount,
 				'reason' => $reason 
-		) );
+                    ]
+                ]
+				
+		);
 		
-		$response = $request->send ();
-		$data = json_decode ( $response->getBody ( true ), true );
+		 
+		$data = json_decode ( $response->getBody (), true );
 		$status = $data ['status'];
 		$message = $data ['message'];
 		
