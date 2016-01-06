@@ -51,12 +51,14 @@ class GetOrderHistory {
 				'limit' => $limit 
 		);
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, array (
-				'action' => 'getorderhistory',
-				'data' => json_encode ( $request_data ) 
-		) );
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [ 
+				'form_params' => [ 
+						'action' => 'getorderhistory',
+						'data' => json_encode ( $request_data )
+                                    ] 
+		]);
 		
- 		$data = json_decode ( $response->getBody ( true ), true );
+ 		$data = json_decode ( $response->getBody (), true );
 		
 		$status = $data ['status'];
 		
