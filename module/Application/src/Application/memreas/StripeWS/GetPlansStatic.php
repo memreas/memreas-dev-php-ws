@@ -10,7 +10,7 @@ namespace Application\memreas\StripeWS;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
-use Guzzle\Http\Client;
+ use GuzzleHttp\Client;
 
 class GetPlansStatic {
 	protected $message_data;
