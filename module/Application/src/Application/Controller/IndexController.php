@@ -106,6 +106,7 @@ use Application\memreas\StripeWS\GetOrder;
 use Application\memreas\StripeWS\GetAccountDetail;
 use Application\memreas\StripeWS\Refund;
 use Application\memreas\StripeWS\MakePayout;
+use Application\memreas\StripeWS\PaymentsProxy;
 
 class IndexController extends AbstractActionController {
 	protected $xml_in;
@@ -2081,8 +2082,8 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos($actionname, "payment_") !== false ) {
-				$MakePayout = new PaymentsProxy ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $MakePayout->exec ();
+				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
+				$result = $PaymentsProxy->exec ();
 			}
 			
 			/*
