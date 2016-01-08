@@ -277,7 +277,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		// Mlog::addone ( '$xml_output', $xml_output );
+		Mlog::addone ( '$xml_output', $xml_output );
 	}
 }
 

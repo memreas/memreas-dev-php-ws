@@ -9,7 +9,7 @@ nbproject
 .log
 composer.lock
 composer.phar
-
+php_errors.log
 
 
 # Elastic Beanstalk Files

@@ -2124,7 +2124,7 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			error_log ( "callback output ----> *$output*" . PHP_EOL );
+			//error_log ( "callback output ----> *$output*" . PHP_EOL );
 		} else {
 			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
