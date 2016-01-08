@@ -40,7 +40,7 @@ class PaymentsProxy {
 		}
 		 $guzzle = new Client ();
 		
-		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/', null,[
+		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/listPlan', null,[
                      'form_params' =>[
                         'json' =>  $this->message_data['xml']
                     ]
