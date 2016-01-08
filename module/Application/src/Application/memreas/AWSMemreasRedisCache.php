@@ -296,10 +296,10 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for media
 	 */
 	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
-		 error_log("Inside invalidateMedia".PHP_EOL);
-                 error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
-		 error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
-		 error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
+		 //error_log("Inside invalidateMedia".PHP_EOL);
+                 //error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
+		 //error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
+		 //error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
 		// write functions for media
 		// - add media event (key is event_id or user_id)
 		// - mediainappropriate (key is user id for invalidate)
