@@ -1842,7 +1842,10 @@ class IndexController extends AbstractActionController {
 				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
+                                /*
+                                 * disble for now not working 
+                                 */
+				//$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach:
@@ -2077,6 +2080,9 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
+			} else if (strpos($actionname, "payment_") !== false ) {
+				$MakePayout = new PaymentsProxy ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $MakePayout->exec ();
 			}
 			
 			/*
@@ -2203,7 +2209,8 @@ class IndexController extends AbstractActionController {
 				'makepayout',
 				'getdiskusage',
 				'clearlog',
-				'showlog' 
+				'showlog',
+                    'payment_addcard'
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );

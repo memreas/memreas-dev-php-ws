@@ -36,6 +36,7 @@ jQuery.fetchWS = function (base_url) {
 	  	var html_str = "";
 	  	var html_button = "";
 	  	$("#action_output").val(resp.data);
+                $("#action_output").text(resp.data);
 	  	if($("#input_action").val() == 'login'){
 	  		var obj = jQuery.parseJSON( resp );
 	  		xmlDoc = $.parseXML( obj.data ),

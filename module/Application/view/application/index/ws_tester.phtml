@@ -661,8 +661,9 @@ echo "user_id ----> " . $user_id;
 					            '<description>description of payout</description>'+
 					            '</makepayout>'+
 					            '</xml>';
+                                                                   
             
-
+            var payment_addcard = '{"action": "addCard", "type":"jsonp", "json": {"user_id":"29aa4b84-b1fe-4eb9-ae76-3f948689c551","first_name":"kamlesh","last_name":"pawar","credit_card_type":"visa","credit_card_number":"4242424242424242","expiration_month":"12","expiration_year":"2016","cvc":"12345","address_line_1":"add-1","address_line_2":"add-2","city":"cirt","state":"stat","zip_code":"404040"}}';
             $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
             });
@@ -752,6 +753,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "refund") { xml = refund; }
                     else if ($("#input_action").val() == "listpayees") { xml = listpayees; }
                     else if ($("#input_action").val() == "makepayout") { xml = makepayout; }
+                    else if ($("#input_action").val() == "payment_addcard") { xml = payment_addcard; }
 
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -873,6 +875,7 @@ echo "user_id ----> " . $user_id;
 								<option value="refund">Stripe - Refund</option>
 								<option value="listpayees">Stripe - ListPayees</option>
 								<option value="makepayout">Stripe - MakePayout</option>
+                                                                <option value="payment_addcard">Stripe - Add Card</option>
 						</select>
 					
 					</tr>
@@ -918,8 +921,8 @@ echo "user_id ----> " . $user_id;
 					
 					</tr>
 					<tr>
-						<td colspan="2"><textarea id="action_output" name="action_output"
-								rows="10" cols="120">Result will be shown here.</textarea>
+						<td colspan="2"><div id="action_output" name="action_output"
+								rows="10" cols="120">Result will be shown here.</div>
 					
 					</tr>
 
