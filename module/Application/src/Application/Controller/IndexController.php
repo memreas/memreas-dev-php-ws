@@ -1844,7 +1844,7 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
                                         
-				//$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
+				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach:

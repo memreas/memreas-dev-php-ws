@@ -248,6 +248,13 @@ class AWSMemreasRedisCache {
 				$set 
 		) );
 	}
+        public function remSetKeys($set) {
+            $set = join(' ', $set);
+		$this->cache->executeRaw ( array (
+				'DEL',
+				$set 
+		) );
+	}
 	public function getCache($key) {
 		if (! $this->isCacheEnable) {
 			// error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
@@ -324,7 +331,7 @@ class AWSMemreasRedisCache {
 			$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
 		}
 		// Mecached - deleteMulti...
-		$result = $this->invalidateCacheMulti ( $cache_keys );
+		$result = $this->remSetKeys ( $cache_keys );
 		if ($result) {
 			$now = date ( 'Y-m-d H:i:s.u' );
 			error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
