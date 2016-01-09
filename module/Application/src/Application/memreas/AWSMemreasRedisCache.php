@@ -248,6 +248,13 @@ class AWSMemreasRedisCache {
 				$set 
 		) );
 	}
+        public function remSetKeys($set) {
+            $set = join(' ', $set);
+		$this->cache->executeRaw ( array (
+				'DEL',
+				$set 
+		) );
+	}
 	public function getCache($key) {
 		if (! $this->isCacheEnable) {
 			// error_log("isCacheEnable ----> ".$this->isCacheEnable.PHP_EOL);
@@ -296,10 +303,10 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for media
 	 */
 	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
-		 error_log("Inside invalidateMedia".PHP_EOL);
-                 error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
-		 error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
-		 error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
+		 //error_log("Inside invalidateMedia".PHP_EOL);
+                 //error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
+		 //error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
+		 //error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
 		// write functions for media
 		// - add media event (key is event_id or user_id)
 		// - mediainappropriate (key is user id for invalidate)
@@ -324,7 +331,7 @@ class AWSMemreasRedisCache {
 			$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
 		}
 		// Mecached - deleteMulti...
-		$result = $this->invalidateCacheMulti ( $cache_keys );
+		$result = $this->remSet( $cache_keys );
 		if ($result) {
 			$now = date ( 'Y-m-d H:i:s.u' );
 			error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
