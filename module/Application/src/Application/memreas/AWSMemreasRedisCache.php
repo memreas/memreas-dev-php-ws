@@ -331,7 +331,7 @@ class AWSMemreasRedisCache {
 			$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
 		}
 		// Mecached - deleteMulti...
-		$result = $this->remSetKeys ( $cache_keys );
+		$result = $this->remSet( $cache_keys );
 		if ($result) {
 			$now = date ( 'Y-m-d H:i:s.u' );
 			error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
