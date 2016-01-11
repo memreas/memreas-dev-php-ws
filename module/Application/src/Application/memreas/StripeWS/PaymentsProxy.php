@@ -12,7 +12,7 @@ use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use GuzzleHttp\Client;
 use Application\memreas\Mlog;
-
+use Application\memreas\Utility;
 class PaymentsProxy {
 	protected $message_data;
 	protected $memreas_tables;
@@ -43,7 +43,7 @@ class PaymentsProxy {
 		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/listCards', null,[
                      'form_params' =>[
                          'callback' =>$_REQUEST['callback'],
-                        'json' =>  $this->message_data['xml']
+                        'json' => Utility::xml2Json($this->message_data['xml']),
                     ]
                 ]
 				

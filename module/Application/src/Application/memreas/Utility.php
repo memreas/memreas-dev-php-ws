@@ -84,6 +84,13 @@ class Utility {
 		// Prepend 'since ' or whatever you like
 		return $interval->format ( $format );
 	}
+      public static function xml2Json($xmlstring) {
+		$xml = simplexml_load_string ( $xmlstring );
+		$json = json_encode ( $xml );
+		 
+		
+		return $json;
+	}
 }
 
 ?>
