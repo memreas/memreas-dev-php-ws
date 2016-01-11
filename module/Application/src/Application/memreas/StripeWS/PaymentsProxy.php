@@ -50,7 +50,7 @@ class PaymentsProxy {
 				
 		);
 		
-		 
+		  Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , $response->getBody () );
 		$data = json_decode ( $response->getBody (), true );
 		 
 		echo $data;
