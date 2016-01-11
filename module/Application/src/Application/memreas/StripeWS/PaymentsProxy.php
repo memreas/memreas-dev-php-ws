@@ -42,6 +42,7 @@ class PaymentsProxy {
 		
 		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/listPlan', null,[
                      'form_params' =>[
+                         'callback' =>$_REQUEST['callback'],
                         'json' =>  $this->message_data['xml']
                     ]
                 ]
