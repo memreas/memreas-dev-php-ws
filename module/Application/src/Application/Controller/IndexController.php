@@ -2079,7 +2079,7 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
-			} else if (strpos($actionname, "payment_") !== false ) {
+			} else if (strpos($actionname, "stripe_") !== false ) {
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
 				$result = $PaymentsProxy->exec ();
 			}
