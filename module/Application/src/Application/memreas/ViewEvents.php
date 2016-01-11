@@ -504,7 +504,7 @@ class ViewEvents {
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
 					// 1080p video specific
 					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
-					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signHlsUrl ( $url_hls ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
+					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 					$xml .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
@@ -634,8 +634,8 @@ class ViewEvents {
 					// web - video specific
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
 					// 1080p video specific
-					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
-					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signHlsUrl ( $url_hls ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
+					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';					
+					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 					$xml .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
@@ -757,7 +757,7 @@ class ViewEvents {
 				$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
 				// 1080p video specific
 				$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
-				$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signHlsUrl ( $url_hls ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
+				$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 				$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
 				$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
 				$xml .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
