@@ -2209,7 +2209,8 @@ class IndexController extends AbstractActionController {
 				'getdiskusage',
 				'clearlog',
 				'showlog',
-                    'payment_addcard'
+                    'stripe_listCards',
+                    'payment_addCard'
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
