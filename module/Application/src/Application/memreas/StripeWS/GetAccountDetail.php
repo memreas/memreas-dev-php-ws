@@ -42,7 +42,7 @@ class GetAccountDetail {
 		
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [ 
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL,  [ 
 				'form_params' =>  [
                             'action' => 'getaccountdetail',
 				'user_id' => $user_id 

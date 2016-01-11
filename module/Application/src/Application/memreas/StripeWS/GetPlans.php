@@ -40,7 +40,7 @@ class GetPlans {
 		$user_id = trim ( $data->getplans->user_id );
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null, [
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [
                     'form_params' =>[
                         'action' => 'listplans',
 			'user_id' => $user_id 

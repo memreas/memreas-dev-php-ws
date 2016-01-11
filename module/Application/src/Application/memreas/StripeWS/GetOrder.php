@@ -45,7 +45,7 @@ class GetOrder {
 
         $guzzle = new Client ();
 
-        $response = $guzzle->post(MemreasConstants::MEMREAS_PAY_URL, null, [
+        $response = $guzzle->post(MemreasConstants::MEMREAS_PAY_URL,  [
                                                 'form_params' => [
                                                     'action' => 'getorder',
                                                     'transaction_id' => $transaction_id

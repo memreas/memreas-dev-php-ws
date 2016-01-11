@@ -44,7 +44,7 @@ class Refund {
 		
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, null,[
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [
                     'form_params' =>[
                         'action' => 'refund',
 				'user_id' => $user_id,
