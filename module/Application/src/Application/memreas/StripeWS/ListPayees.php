@@ -51,7 +51,21 @@ class ListPayees {
 		
 		 
 		$data = json_decode ( $response->getBody (), true );
+		error_log('-1-'.print_r($data,true));
+                $response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL,  [
+                    'form_params' =>[
+                        'action' => 'listpayees',
+				'username' => $username,
+				'page' => $page,
+				'limit' => $limit 
+                    ]
+                ]
+				
+		 );
 		
+		 
+		$data = json_decode ( $response->getBody (), true );
+		error_log('-2-'.print_r($data,true));
 		if ($data ['status'] == 'Success' && $data ['Numrows'] > 0) {
 			$accounts = $data ['accounts'];
 			$output .= '<accounts>';
