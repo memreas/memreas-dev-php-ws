@@ -39,11 +39,12 @@ class PaymentsProxy {
 			//$data = json_decode ( json_encode ( $frmweb ) );
 		}
 		 $guzzle = new Client ();
-		
+					$jsonArr = json_decode ( $this->message_data['xml'], true );
+
 		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/listCards', [
                      'form_params' =>[
                          'callback' =>$_REQUEST['callback'],
-                        'json' => Utility::xml2Json($this->message_data['xml']),
+                        'json' =>$this->message_data['xml'],
                     ]
                 ]
 				
