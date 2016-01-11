@@ -40,7 +40,7 @@ class PaymentsProxy {
 		}
 		 $guzzle = new Client ();
 		
-		$response = $guzzle->get ( 'https://memreasdev-pay.memreas.com/stripe/listCards', [
+		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/listCards', null,[
                      'form_params' =>[
                          'callback' =>$_REQUEST['callback'],
                         'json' => Utility::xml2Json($this->message_data['xml']),
