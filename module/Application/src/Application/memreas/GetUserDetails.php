@@ -55,7 +55,8 @@ class GetUserDetails {
 				$message = "No data available to this user";
 			} else {
 				$status = 'Success';
-				$output .= '<user_id>' . $result_user [0]->user_id . '</user_id>';
+				$user_id = $result_user [0]->user_id;
+				$output .= '<user_id>' . $user_id . '</user_id>';
 				$output .= '<username>' . $result_user [0]->username . '</username>';
 				$output .= '<email>' . $result_user [0]->email_address . '</email>';
 				$metadata = $result_user [0]->metadata;
@@ -85,12 +86,23 @@ class GetUserDetails {
 					// Fetch account details
 					//
 					$guzzle = new Client ();
+					
+					$response = $client->request('POST', 'http://httpbin.org/post', [
+							'form_params' => [
+									'action' => 'getaccountdetail',
+									'user_id' => $user_id 
+							]
+					]);
+
+
+					/*
 					$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [ 
 							'form_params' => [ 
 									'action' => 'getaccountdetail',
 									'user_id' => $result_user [0]->user_id 
 							] 
 					] );
+					*/
 					$stripe_response = $response->getBody ();
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$stripe_response->', $stripe_response );
 					
