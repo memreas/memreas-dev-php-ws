@@ -84,6 +84,7 @@ class GetUserDetails {
 					//
 					// Fetch account details
 					//
+					$guzzle = new Client ();
 					$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_INDEX, [
 							'form_params' => [
 									'action' => 'getaccountdetail',
