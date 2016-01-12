@@ -2081,7 +2081,7 @@ class IndexController extends AbstractActionController {
 				$result = $MakePayout->exec ();
 			} else if (strpos($actionname, "stripe_") !== false ) {
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
-				$result = $PaymentsProxy->exec ();
+				$result = $PaymentsProxy->exec ($actionname);
 			}
 			
 			/*

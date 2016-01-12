@@ -28,20 +28,25 @@ class PaymentsProxy {
 	/*
 	 *
 	 */
-	public function exec($frmweb = false, $output = '') {
-           Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , $this->message_data );
-		$error_flag = 0;
-		$message = '';
-		if (empty ( $frmweb )) {
-			//$data = simplexml_load_string ( $_POST ['xml'] );
-		} else {
-			
-			//$data = json_decode ( json_encode ( $frmweb ) );
-		}
-		 $guzzle = new Client ();
-					$jsonArr = json_decode ( $this->message_data['xml'], true );
-
-		$response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/listCards', [
+	public function exec($action) {
+            Mlog::addone(__CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data);
+            $error_flag = 0;
+            $message = '';
+            if ($action == 'stripe_listCards') {
+                $this->getStripeData('listCards');
+            } else if ($action == 'stripe_addCard') {
+                $this->getStripeData('storeCard');
+            } else if ($action == 'stripe_listCards') {
+                $this->getStripeData('listCards');
+            } else if ($action == 'stripe_listCards') {
+                $this->getStripeData('listCards');
+            }
+    }
+        public function getStripeData($action_method){
+            $guzzle = new Client ();
+		$jsonArr = json_decode ( $this->message_data['xml'], true );
+                 
+                $response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/'.$action_method, [
                      'form_params' =>[
                          'callback' =>$_REQUEST['callback'],
                         'json' =>$this->message_data['xml'],
@@ -50,11 +55,8 @@ class PaymentsProxy {
 				
 		);
 		
-		  Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , $response->getBody () );
-	 	 
-		echo  $response->getBody ();
-		//die ();
-	}
+ 	echo  $response->getBody ();
+        } 
 }
 
 ?>
