@@ -13,6 +13,7 @@ use Application\memreas\AWSManagerSender;
 use GuzzleHttp\Client;
 use Application\memreas\Mlog;
 use Application\memreas\Utility;
+
 class PaymentsProxy {
 	protected $message_data;
 	protected $memreas_tables;
@@ -22,41 +23,42 @@ class PaymentsProxy {
 		error_log ( "Inside__construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
- 		$this->parent = $parent;
- 	}
+		$this->parent = $parent;
+	}
 	
 	/*
 	 *
 	 */
 	public function exec($action) {
-            Mlog::addone(__CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data);
-            $error_flag = 0;
-            $message = '';
-            if ($action == 'stripe_listCards') {
-                $this->getStripeData('listCards');
-            } else if ($action == 'stripe_addCard') {
-                $this->getStripeData('storeCard');
-            } else if ($action == 'stripe_listCards') {
-                $this->getStripeData('listCards');
-            } else if ($action == 'stripe_listCards') {
-                $this->getStripeData('listCards');
-            }
-    }
-        public function getStripeData($action_method){
-            $guzzle = new Client ();
-		$jsonArr = json_decode ( $this->message_data['xml'], true );
-                 
-                $response = $guzzle->post ( 'https://memreasdev-pay.memreas.com/stripe/'.$action_method, [
-                     'form_params' =>[
-                         'callback' =>$_REQUEST['callback'],
-                        'json' =>$this->message_data['xml'],
-                    ]
-                ]
-				
-		);
+		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data );
+		$error_flag = 0;
+		$message = '';
+		if ($action == 'stripe_listCards') {
+			$this->getStripeData ( 'listCards' );
+		} else if ($action == 'stripe_addCard') {
+			$this->getStripeData ( 'storeCard' );
+		} else if ($action == 'stripe_listCards') {
+			$this->getStripeData ( 'listCards' );
+		} else if ($action == 'stripe_listCards') {
+			$this->getStripeData ( 'listCards' );
+		} else if ($action == 'stripe_getCustomerInfo') {
+			$this->getStripeData ( 'getCustomerInfo' );
+		}
+	}
+	public function getStripeData($action_method) {
+		$guzzle = new Client ();
+		$jsonArr = json_decode ( $this->message_data ['xml'], true );
 		
- 	echo  $response->getBody ();
-        } 
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+				'form_params' => [ 
+						'callback' => $_REQUEST ['callback'],
+						'json' => $this->message_data ['xml'] 
+				] 
+		] );
+		
+		echo $response->getBody ();
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::response body->',$response->getBody ());
+	}
 }
 
 ?>
