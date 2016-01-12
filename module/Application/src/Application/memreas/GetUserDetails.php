@@ -90,6 +90,7 @@ class GetUserDetails {
 					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL, [
 							'form_params' => [
 									'action' => 'getaccountdetail',
+									'sid' => $_SESSION['sid'],
 									'user_id' => $user_id 
 							]
 					]);
