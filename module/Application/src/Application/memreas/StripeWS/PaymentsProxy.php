@@ -30,6 +30,7 @@ class PaymentsProxy {
 	 */
 	public function exec($action) {
             Mlog::addone(__CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data);
+             Mlog::addone(__CLASS__ . __METHOD__ . '-' . __LINE__, $action);
             $error_flag = 0;
             $message = '';
             if ($action == 'stripe_listCards') {
