@@ -87,7 +87,7 @@ class GetUserDetails {
 					//
 					$guzzle = new Client ();
 					
-					$response = $client->request('POST', 'http://httpbin.org/post', [
+					$response = $guzzle->request('POST', 'http://httpbin.org/post', [
 							'form_params' => [
 									'action' => 'getaccountdetail',
 									'user_id' => $user_id 
