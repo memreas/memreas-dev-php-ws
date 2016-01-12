@@ -104,42 +104,32 @@ class GetUserDetails {
 							] 
 					] );
 					*/
-					$stripe_response = $response->getBody ();
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$stripe_response->', $stripe_response );
+					$data = json_decode($response->getBody());
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$response->getBody()->', $response->getBody() );
 					
-					/*
-					 * try {
-					 *
-					 * $guzzle = new Client ();
-					 * $request = $guzzle->post (
-					 * MemreasConstants::MEMREAS_PAY_URL, null, array (
-					 * 'action' => 'checkusertype',
-					 * 'username' => $result_user [0]->username
-					 * ) );
-					 *
-					 * $response = $request->send ();
-					 * $data = json_decode ( $response->getBody ( true ), true
-					 * );
-					 * } catch ( \Exception $e ) {
-					 * Mlog::addone ( "Exception calling pay server::",
-					 * $e->getMessage ()
-					 * }
-					 */
 				} else {
 					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 				}
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
-					$types = $data ['types'];
-					$output .= '<account_type>';
-					foreach ( $types as $key => $type ) {
-						if ($key > 0)
-							$output .= ",";
-						$output .= $type;
+					$accounts = $data['account'];
+					foreach($accounts as $account) {
+						$output .= '<account>';
+						$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
+						$output .= '<account_balance>' . $account['accountHeader']['account_balance'] . '</account_balance>';
+						$output .= '</account>';
 					}
-					$output .= '</account_type>';
-					$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
-					$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
+					//$types = $data ['types'];
+					//$output .= '<account_type>';
+					//foreach ( $types as $key => $type ) {
+					//	if ($key > 0)
+					//		$output .= ",";
+					//	$output .= $type;
+					//}
+					//$output .= '</account_type>';
+					//$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
+					//$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
 				} else {
 					$output .= '<account_type>Free user</account_type>';
 				}
