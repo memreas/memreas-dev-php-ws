@@ -2080,6 +2080,12 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos($actionname, "stripe_") !== false ) {
+				/* 
+				 * Kamlesh - what I wanted here is for the payments proxy to be a simple pass through
+				 *  so you action is stripe
+				 *  which brings you to this function then you have a second action stripe_action
+				 *  which is what you pass to Stripe
+				 */
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
 				$result = $PaymentsProxy->exec ($actionname);
 			}

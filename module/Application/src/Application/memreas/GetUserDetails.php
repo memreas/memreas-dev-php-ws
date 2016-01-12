@@ -86,7 +86,7 @@ class GetUserDetails {
 					// Fetch account details
 					//
 					$guzzle = new Client ();
-					
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
 					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL, [
 							'form_params' => [
 									'action' => 'getaccountdetail',

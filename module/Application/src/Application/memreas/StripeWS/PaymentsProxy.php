@@ -30,6 +30,16 @@ class PaymentsProxy {
 	 *
 	 */
 	public function exec($action) {
+		/*
+		 * Kamlesh - note my comment in Index Controller the $action here is the stripe_action (i.e.listCards)
+		 *  if you build with action=stripe and stripe_action='listCards' which is $action in this function you don't need
+		 *  the if switch 
+		 *  Your call would be $this->getStripeData($action);
+		 *  
+		 *  Note: you should add username, user_id, sid, memreascookie - whatever is available and validate user against rediscache
+		 *   in payments server - let's discuss
+		 */
+		
 		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data );
 		$error_flag = 0;
 		$message = '';
