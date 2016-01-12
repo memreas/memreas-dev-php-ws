@@ -87,7 +87,7 @@ class GetUserDetails {
 					//
 					$guzzle = new Client ();
 					
-					$response = $guzzle->request('POST', 'http://httpbin.org/post', [
+					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL, [
 							'form_params' => [
 									'action' => 'getaccountdetail',
 									'user_id' => $user_id 
