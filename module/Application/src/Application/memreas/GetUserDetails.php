@@ -85,17 +85,33 @@ class GetUserDetails {
 					// Fetch account details
 					//
 					$guzzle = new Client ();
-					$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_INDEX, [
-							'form_params' => [
+					$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [ 
+							'form_params' => [ 
 									'action' => 'getaccountdetail',
-									'user_id' => $result_user [0]->user_id
-							]
+									'user_id' => $result_user [0]->user_id 
+							] 
 					] );
 					$stripe_response = $response->getBody ();
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$stripe_response->',$stripe_response);
-						
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$stripe_response->', $stripe_response );
 					
-						
+					/*
+					 * try {
+					 *
+					 * $guzzle = new Client ();
+					 * $request = $guzzle->post (
+					 * MemreasConstants::MEMREAS_PAY_URL, null, array (
+					 * 'action' => 'checkusertype',
+					 * 'username' => $result_user [0]->username
+					 * ) );
+					 *
+					 * $response = $request->send ();
+					 * $data = json_decode ( $response->getBody ( true ), true
+					 * );
+					 * } catch ( \Exception $e ) {
+					 * Mlog::addone ( "Exception calling pay server::",
+					 * $e->getMessage ()
+					 * }
+					 */
 				} else {
 					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
