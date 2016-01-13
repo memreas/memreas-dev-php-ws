@@ -45,7 +45,7 @@ class PaymentsProxy {
 		$error_flag = 0;
 		$message = '';
                 //stripe_
-                $action_method = substr($action, 0, 6);
+                $action_method = substr($action,6 );
 		 $this->getStripeData($action_method);
 	}
 	public function getStripeData($action_method) {
