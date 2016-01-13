@@ -2215,8 +2215,8 @@ class IndexController extends AbstractActionController {
 				'getdiskusage',
 				'clearlog',
 				'showlog',
-                    'stripe_listCards',
-                    'stripe_addCard'
+                    //'stripe_listCards',
+                    //'stripe_addCard'
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
@@ -2236,9 +2236,7 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($requiresExistingSession) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
-				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
-				// __LINE__ . PHP_EOL );
+				Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $data );
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
