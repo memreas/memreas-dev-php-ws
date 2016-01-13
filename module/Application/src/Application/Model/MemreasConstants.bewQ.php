@@ -22,6 +22,8 @@ class MemreasConstants {
 	const MEDIA_URL = "https://memreasdev-wsj.memreas.com/?action=addmediaevent";
 	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com/";
+	const MEMREAS_PAY_URL_STRIPE = "https://memreasdev-pay.memreas.com/stripe/";
+	const MEMREAS_PAY_URL_INDEX = "https://memreasdev-pay.memreas.com/index/";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	
 	// Redis section

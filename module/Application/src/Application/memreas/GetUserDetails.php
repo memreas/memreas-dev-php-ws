@@ -55,7 +55,8 @@ class GetUserDetails {
 				$message = "No data available to this user";
 			} else {
 				$status = 'Success';
-				$output .= '<user_id>' . $result_user [0]->user_id . '</user_id>';
+				$user_id = $result_user [0]->user_id;
+				$output .= '<user_id>' . $user_id . '</user_id>';
 				$output .= '<username>' . $result_user [0]->username . '</username>';
 				$output .= '<email>' . $result_user [0]->email_address . '</email>';
 				$metadata = $result_user [0]->metadata;
@@ -80,44 +81,66 @@ class GetUserDetails {
 					Mlog::addone ( 'if (!empty( $metadata [subscription] )', $metadata ['subscription'] );
 					$subscription = $metadata ['subscription'];
 					$output .= '<subscription><plan>' . $subscription ['plan'] . '</plan><plan_name>' . $subscription ['name'] . '</plan_name></subscription>';
+					
+					//
+					// Fetch account details
+					//
+					$guzzle = new Client ();
+					//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
+					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL, [
+							'form_params' => [
+									'action' => 'getaccountdetail',
+									'sid' => $_SESSION['sid'],
+									'user_id' => $user_id 
+							]
+					]);
+
+					$data = json_decode($response->getBody(), true);
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$response->getBody()->', $response->getBody() );
+					
 				} else {
 					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
-					
-					// For account type
-				/**
-				 * TODO: Debug Account Type...
-				 */
-					/*
-					 * try {
-					 *
-					 * $guzzle = new Client ();
-					 * $request = $guzzle->post (
-					 * MemreasConstants::MEMREAS_PAY_URL, null, array (
-					 * 'action' => 'checkusertype',
-					 * 'username' => $result_user [0]->username
-					 * ) );
-					 *
-					 * $response = $request->send ();
-					 * $data = json_decode ( $response->getBody ( true ), true
-					 * );
-					 * } catch ( \Exception $e ) {
-					 * Mlog::addone ( "Exception calling pay server::",
-					 * $e->getMessage () );
-					 * }
-					 */
 				}
+				//error_log('$data -->'.print_r($data,true).PHP_EOL);
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
-					$types = $data ['types'];
-					$output .= '<account_type>';
-					foreach ( $types as $key => $type ) {
-						if ($key > 0)
-							$output .= ",";
-						$output .= $type;
+					$output .= '<accounts>';
+					//
+					// Handle buyer_account
+					//
+					$account = (!empty($data['buyer_account'])) ? $data['buyer_account'] : null;
+					if ($account) {
+						$output .= '<account>';
+						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
+						$output .= '<account_balance>' . $account['accountHeader']['account_balance'] . '</account_balance>';
+						$output .= '</account>';
+						
 					}
-					$output .= '</account_type>';
-					$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
-					$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
+					//
+					// Handle seller_account
+					//
+					$account = (!empty($data['seller_account'])) ? $data['seller_account'] : null;
+					if ($account) {
+						$output .= '<account>';
+						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
+						$output .= '<account_balance>' . $account['accountHeader']['balance'] . '</account_balance>';
+						$output .= '</account>';
+						
+					}
+					$output .= '</accounts>';
+						
+					//$types = $data ['types'];
+					//$output .= '<account_type>';
+					//foreach ( $types as $key => $type ) {
+					//	if ($key > 0)
+					//		$output .= ",";
+					//	$output .= $type;
+					//}
+					//$output .= '</account_type>';
+					//$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
+					//$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
 				} else {
 					$output .= '<account_type>Free user</account_type>';
 				}
