@@ -46,6 +46,7 @@ class PaymentsProxy {
 		$message = '';
                 //stripe_
                 $action_method = substr($action,6 );
+                Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__, $action_method );
 		 $this->getStripeData($action_method);
 	}
 	public function getStripeData($action_method) {
