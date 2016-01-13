@@ -104,14 +104,33 @@ class GetUserDetails {
 				}
 				error_log('$data -->'.print_r($data,true).PHP_EOL);
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
-					$accounts = $data['account'];
-					foreach($accounts as $account) {
+					$output .= '<accounts>';
+					//
+					// Handle buyer_account
+					//
+					$account = (!empty($data['buyer_account'])) ? $data['buyer_account'] : null;
+					if ($account) {
 						$output .= '<account>';
-						$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
 						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
 						$output .= '<account_balance>' . $account['accountHeader']['account_balance'] . '</account_balance>';
 						$output .= '</account>';
+						
 					}
+					//
+					// Handle seller_account
+					//
+					$account = (!empty($data['seller_account'])) ? $data['seller_account'] : null;
+					if ($account) {
+						$output .= '<account>';
+						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
+						$output .= '<account_balance>' . $account['accountHeader']['account_balance'] . '</account_balance>';
+						$output .= '</account>';
+						
+					}
+					$output .= '</accounts>';
+						
 					//$types = $data ['types'];
 					//$output .= '<account_type>';
 					//foreach ( $types as $key => $type ) {
