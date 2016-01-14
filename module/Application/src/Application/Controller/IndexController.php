@@ -128,18 +128,6 @@ class IndexController extends AbstractActionController {
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->getServiceLocator () );
 		session_set_save_handler ( $this->sessHandler );
 	}
-        public function inputToObject($string){
-             $in_data = trim($string);
-             if(empty($in_data)){
-                 return null;
-             }
-                        if($in_data[0] == '<'){ 
-                           $data =  simplexml_load_string($in_data);
-                            } else{
-                              $data =  json_decode ($in_data);
-                            }
-                            return $data;
-        }
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -186,7 +174,7 @@ class IndexController extends AbstractActionController {
 		// Capture the echo from the includes in case we need to convert
 		// back to json
 		ob_start ();
-                                        
+		
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -201,7 +189,7 @@ class IndexController extends AbstractActionController {
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
 			$_POST ['xml'] = $message_data ['xml'];
-			//Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		} else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
@@ -215,7 +203,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		$data = $this->inputToObject ( $message_data ['xml'] );
+		$data = simplexml_load_string ( $_POST ['xml'] );
 		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
 		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
 		Mlog::addone(__CLASS__.__METHOD__.'::$data->user_id', $data->user_id);
@@ -224,7 +212,7 @@ class IndexController extends AbstractActionController {
 		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) ,$data);
+			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
 		}
 		
 		/**
@@ -2227,8 +2215,8 @@ class IndexController extends AbstractActionController {
 				'getdiskusage',
 				'clearlog',
 				'showlog',
-                    //'stripe_listCards',
-                    //'stripe_addCard'
+                    'stripe_listCards',
+                    'stripe_addCard'
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
@@ -2237,7 +2225,7 @@ class IndexController extends AbstractActionController {
 		Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $actionname );
 		return true;
 	}
-	public function fetchSession($actionname, $requiresExistingSession, $data) {
+	public function fetchSession($actionname, $requiresExistingSession) {
 		/*
 		 * Setup Redis and the session save handle
 		 */
@@ -2247,8 +2235,10 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				//$data = simplexml_load_string ( $_POST ['xml'] );
-				Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $data );
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
+				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
+				// __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
