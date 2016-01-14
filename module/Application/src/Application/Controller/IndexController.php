@@ -128,6 +128,15 @@ class IndexController extends AbstractActionController {
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->getServiceLocator () );
 		session_set_save_handler ( $this->sessHandler );
 	}
+        public function inputToObject($string){
+             $in_data = trim($string);
+                        if($in_data[0] == '<'){ 
+                           $data =  simplexml_load_string($_POST ['xml']);
+                            } else{
+                              $data =  json_decode ($json);
+                            }
+                            return $data;
+        }
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -174,7 +183,7 @@ class IndexController extends AbstractActionController {
 		// Capture the echo from the includes in case we need to convert
 		// back to json
 		ob_start ();
-		
+                                        
 		$path = "application/index/ws_tester.phtml";
 		$output = '';
 		
@@ -203,7 +212,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		$data = simplexml_load_string ( $_POST ['xml'] );
+		$data = $this->inputToObject ( $_POST ['xml'] );
 		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
 		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
 		Mlog::addone(__CLASS__.__METHOD__.'::$data->user_id', $data->user_id);
@@ -212,7 +221,7 @@ class IndexController extends AbstractActionController {
 		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) );
+			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) ,$data);
 		}
 		
 		/**
@@ -2225,7 +2234,7 @@ class IndexController extends AbstractActionController {
 		Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $actionname );
 		return true;
 	}
-	public function fetchSession($actionname, $requiresExistingSession) {
+	public function fetchSession($actionname, $requiresExistingSession, $data) {
 		/*
 		 * Setup Redis and the session save handle
 		 */
@@ -2235,7 +2244,7 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				$data = simplexml_load_string ( $_POST ['xml'] );
+				//$data = simplexml_load_string ( $_POST ['xml'] );
 				Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $data );
 				if (! empty ( $data->sid )) {
 					/*
