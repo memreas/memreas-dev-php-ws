@@ -2215,8 +2215,18 @@ class IndexController extends AbstractActionController {
 				'getdiskusage',
 				'clearlog',
 				'showlog',
-                    'stripe_listCards',
-                    'stripe_addCard'
+                   'stripe_storeCard',
+                   'stripe_listCards',
+             'stripe_viewCard', 
+             'stripe_updateCard', 
+             'stripe_deleteCards',
+             'stripe_buyMedia' ,
+             'stripe_addValue', 
+             'stripe_getUserBalance', 
+             'stripe_getCustomerInfo', 
+             'stripe_addSeller' ,
+             'stripe_subscribe' ,
+             'stripe_checkOwnEvent' 
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );

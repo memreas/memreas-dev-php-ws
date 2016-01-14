@@ -663,8 +663,20 @@ echo "user_id ----> " . $user_id;
 					            '</xml>';
                                                                    
             
-            var stripe_addCard = '{"action": "addCard", "type":"jsonp", "json": {"user_id":"29aa4b84-b1fe-4eb9-ae76-3f948689c551","first_name":"kamlesh","last_name":"pwar","credit_card_type":"visa","credit_card_number":"4242424242424242","expiration_month":"11","expiration_year":"2017","cvc":"1234","address_line_1":"add-1","address_line_2":"add-2","city":"nagp","state":"mh","zip_code":"4404040"}}';
+            var stripe_storeCard = '{"action": "addCard", "type":"jsonp", "json": {"user_id":"29aa4b84-b1fe-4eb9-ae76-3f948689c551","first_name":"kamlesh","last_name":"pwar","credit_card_type":"visa","credit_card_number":"4242424242424242","expiration_month":"11","expiration_year":"2017","cvc":"1234","address_line_1":"add-1","address_line_2":"add-2","city":"nagp","state":"mh","zip_code":"4404040"}}';
             var stripe_listCards = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+            
+            var stripe_viewCard = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+            var stripe_updateCard = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+            var stripe_deleteCards = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+            var stripe_buyMedia = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+            var stripe_addValue = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}'; 
+            var stripe_getUserBalance = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+            var stripe_getCustomerInfo = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+             var stripe_addSeller = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+             var stripe_subscribe = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';  
+              var stripe_checkOwnEvent = '{"action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+                  
             
     
     $(document).ready(function() {
@@ -757,7 +769,19 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "listpayees") { xml = listpayees; }
                     else if ($("#input_action").val() == "makepayout") { xml = makepayout; }
                     else if ($("#input_action").val() == "stripe_addCard") { xml = stripe_addCard; }
+                    else if ($("#input_action").val() == "stripe_storeCard") { xml = stripe_storeCard; }
                     else if ($("#input_action").val() == "stripe_listCards") { xml = stripe_listCards; }
+                    else if ($("#input_action").val() == "stripe_viewCard") { xml = stripe_viewCard; }
+                    else if ($("#input_action").val() == "stripe_updateCard") { xml = stripe_updateCard; }
+                    else if ($("#input_action").val() == "stripe_deleteCards") { xml = stripe_deleteCards; }
+                    else if ($("#input_action").val() == "stripe_buyMedia") { xml = stripe_buyMedia; }
+                    else if ($("#input_action").val() == "stripe_addValue") { xml = stripe_addValue; }
+                    else if ($("#input_action").val() == "stripe_getUserBalance") { xml = stripe_getUserBalance; }
+                    else if ($("#input_action").val() == "stripe_getCustomerInfo") { xml = stripe_getCustomerInfo; }
+                    else if ($("#input_action").val() == "stripe_addSeller") { xml = stripe_addSeller; }
+                    else if ($("#input_action").val() == "stripe_subscribe") { xml = stripe_subscribe; }
+                    else if ($("#input_action").val() == "stripe_checkOwnEvent") { xml = stripe_checkOwnEvent; }
+                    
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
 
@@ -878,8 +902,19 @@ echo "user_id ----> " . $user_id;
 								<option value="refund">Stripe - Refund</option>
 								<option value="listpayees">Stripe - ListPayees</option>
 								<option value="makepayout">Stripe - MakePayout</option>
-                                                                <option value="stripe_addCard">Stripe - Add Card</option>
+                                                                <option value="stripe_storeCard">Stripe - Add Card</option>
                                                                 <option value="stripe_listCards">Stripe - list Card</option>
+                                                                <option value="stripe_viewCard';">Stripe - view Card</option>
+                                                                <option value="stripe_updateCard">Stripe - update Card</option>
+                                                                <option value="stripe_deleteCards">Stripe - delete Card</option>
+                                                                <option value="stripe_buyMedia">Stripe - buy Media</option>
+                                                                <option value="stripe_addValue">Stripe - Add value</option>
+                                                                <option value="stripe_getUserBalance">Stripe -User Balance</option>
+                                                                <option value="stripe_getCustomerInfo">Stripe - Customer Info</option>
+                                                                <option value="stripe_addSeller">Stripe - add Seller</option>
+                                                                <option value="stripe_subscribe">Stripe - subscribe</option>
+                                                                <option value="stripe_checkOwnEvent">Stripe - check Own Event</option>
+
 						</select>
 					
 					</tr>
