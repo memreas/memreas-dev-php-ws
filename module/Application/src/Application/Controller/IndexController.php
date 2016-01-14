@@ -212,7 +212,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		$data = $this->inputToObject ( $_POST ['xml'] );
+		$data = $this->inputToObject ( $message_data ['xml'] );
 		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
 		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
 		Mlog::addone(__CLASS__.__METHOD__.'::$data->user_id', $data->user_id);
