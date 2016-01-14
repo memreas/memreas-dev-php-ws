@@ -130,6 +130,9 @@ class IndexController extends AbstractActionController {
 	}
         public function inputToObject($string){
              $in_data = trim($string);
+             if(empty($in_data)){
+                 return null;
+             }
                         if($in_data[0] == '<'){ 
                            $data =  simplexml_load_string($in_data);
                             } else{
@@ -198,7 +201,7 @@ class IndexController extends AbstractActionController {
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
 			$_POST ['xml'] = $message_data ['xml'];
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		} else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
