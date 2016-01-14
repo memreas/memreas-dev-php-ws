@@ -131,9 +131,9 @@ class IndexController extends AbstractActionController {
         public function inputToObject($string){
              $in_data = trim($string);
                         if($in_data[0] == '<'){ 
-                           $data =  simplexml_load_string($_POST ['xml']);
+                           $data =  simplexml_load_string($in_data);
                             } else{
-                              $data =  json_decode ($_POST ['xml']);
+                              $data =  json_decode ($in_data);
                             }
                             return $data;
         }
