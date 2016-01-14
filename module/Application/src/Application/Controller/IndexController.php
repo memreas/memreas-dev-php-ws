@@ -133,7 +133,7 @@ class IndexController extends AbstractActionController {
                         if($in_data[0] == '<'){ 
                            $data =  simplexml_load_string($_POST ['xml']);
                             } else{
-                              $data =  json_decode ($json);
+                              $data =  json_decode ($_POST ['xml']);
                             }
                             return $data;
         }
