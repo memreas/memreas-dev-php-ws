@@ -128,18 +128,6 @@ class IndexController extends AbstractActionController {
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->getServiceLocator () );
 		session_set_save_handler ( $this->sessHandler );
 	}
-        public function inputToObject($string){
-             $in_data = trim($string);
-             if(empty($in_data)){
-                 return null;
-             }
-                        if($in_data[0] == '<'){ 
-                           $data =  simplexml_load_string($in_data);
-                            } else{
-                              $data =  json_decode ($in_data);
-                            }
-                            return $data;
-        }
 	public function xml2array($xmlstring) {
 		$xml = simplexml_load_string ( $xmlstring );
 		$json = json_encode ( $xml );
@@ -215,7 +203,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		$data = $this->inputToObject ( $message_data ['xml'] );
+		$data = simplexml_load_string ( $_POST ['xml'] );
 		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
 		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
 		Mlog::addone(__CLASS__.__METHOD__.'::$data', $data);
@@ -228,6 +216,7 @@ class IndexController extends AbstractActionController {
 		}
 		
 		/**
+                 * 
 		 * For testing only...
 		 */
 		if ($actionname == "ws_tester") {
@@ -2246,8 +2235,10 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				//$data = simplexml_load_string ( $_POST ['xml'] );
-				Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $data );
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
+				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
+				// __LINE__ . PHP_EOL );
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
