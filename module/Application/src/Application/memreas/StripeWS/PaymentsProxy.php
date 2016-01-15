@@ -57,15 +57,22 @@ class PaymentsProxy {
 		//
 		if (!empty ($this->message_data ['xml'])) {
 			$jsonArr = json_decode ( $this->message_data ['xml'], true );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::xml as JSON::', $jsonArr );
 		} else if (!empty ($this->message_data ['json'])) {
 			$jsonArr = json_decode ( $this->message_data ['json'], true );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::json as JSON::', $jsonArr );
 		}
 		
+		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method::', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method );
+		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::$_REQUEST [callback]::', $_REQUEST ['callback'] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::$_SESSION[sid]::', $_SESSION['sid'] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::$_REQUEST [callback]::', $_REQUEST ['callback'] );
 		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
 						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION['sid'],
-						'json' => $this->message_data ['xml'] 
+						//'json' => $this->message_data ['xml']
+						'json' => $this->message_data ['xml'];
 				] 
 		] );
 		
