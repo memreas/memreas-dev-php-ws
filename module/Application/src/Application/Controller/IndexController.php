@@ -181,6 +181,8 @@ class IndexController extends AbstractActionController {
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		// error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
+		Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
 			$json = $_REQUEST ['json'];
@@ -2080,7 +2082,7 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
-				
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$actionname', $actionname);
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this );
 				$result = $PaymentsProxy->exec ( $actionname );
 			}
