@@ -782,6 +782,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "stripe_subscribe") { xml = stripe_subscribe; }
                     else if ($("#input_action").val() == "stripe_checkOwnEvent") { xml = stripe_checkOwnEvent; }
                     
+                    
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
 

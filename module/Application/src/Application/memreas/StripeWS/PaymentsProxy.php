@@ -53,11 +53,10 @@ class PaymentsProxy {
 		$guzzle = new Client ();
 		$jsonArr = json_decode ( $this->message_data ['xml'], true );
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_STRIPE , [ 
+		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
 						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION['sid'],
-                                                'action' => $action_method,
 						'json' => $this->message_data ['xml'] 
 				] 
 		] );
