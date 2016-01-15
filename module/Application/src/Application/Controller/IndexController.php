@@ -181,29 +181,40 @@ class IndexController extends AbstractActionController {
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		// error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
-		//Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		//Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
-		error_log('$_REQUEST::'.print_r($_REQUEST, true).PHP_EOL);
-		if (isset ( $_REQUEST ['json'] ) || isset($_POST['json'])) {
+		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
+		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
+		if (isset ( $_REQUEST ['json'] ) || isset ( $_POST ['json'] )) {
 			// Fetch parms
 			$json = $_REQUEST ['json'];
 			$jsonArr = json_decode ( $json, true );
 			$actionname = $jsonArr ['action'];
-			$type = $jsonArr ['type'];
+			$type = (isset ( $jsonArr ['type'] )) ? $jsonArr ['type'] : '';
 			$message_data = $jsonArr ['json'];
-                        Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
-                        $_POST ['xml'] = $message_data ['xml'];
-                        if(isset($message_data['action'])){
-                            $data = json_decode ($message_data ['xml']);
-                        }else{
-                            
-                            $data =  simplexml_load_string ( $_POST ['xml'] );
-                        }
+			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
 			
-			// Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
-		}else {
-                    //assuming xml if not json
-                    $data= simplexml_load_string ( $_POST ['xml'] );
+			//
+			// Handle JSON
+			//
+			if (isset ( $message_data ['json'] )) {
+				$data = json_decode ( $message_data ['json'] );
+			} else if (isset ( $message_data ['xml'] )) {
+				//
+				// Handle XML
+				//
+				$_POST ['xml'] = $message_data ['xml'];
+				if (isset ( $message_data ['action'] )) {
+					$data = json_decode ( $message_data ['xml'] );
+				} else {
+					
+					$data = simplexml_load_string ( $_POST ['xml'] );
+				}
+			}
+			
+			error_log('$data--->'.print_r($data, true).PHP_EOL);
+		} else {
+			// assuming xml if not json
+			$data = simplexml_load_string ( $_POST ['xml'] );
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
 		}
@@ -216,10 +227,10 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-                 
+		
 		Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
 		Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
-		Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
+		Mlog::addone ( __METHOD__ . __LINE__ . '::$data', $data );
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
@@ -2093,7 +2104,7 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$actionname', $actionname);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this );
 				$result = $PaymentsProxy->exec ( $actionname );
 			}
@@ -2230,7 +2241,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
-		Mlog::addone (__METHOD__.__LINE__."session required" , $actionname );
+		Mlog::addone ( __METHOD__ . __LINE__ . "session required", $actionname );
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
@@ -2243,7 +2254,7 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				//$data = simplexml_load_string ( $_POST ['xml'] );
+				// $data = simplexml_load_string ( $_POST ['xml'] );
 				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
 				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
 				// __LINE__ . PHP_EOL );
@@ -2257,7 +2268,7 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-                                        Mlog::addone ( __METHOD__.__LINE__."from sid" , $actionname );
+					Mlog::addone ( __METHOD__ . __LINE__ . "from sid", $actionname );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					// error_log('Inside else if (! empty ( $data->uid ) || ! empty (
 					// $data->username ))'.PHP_EOL);
@@ -2265,7 +2276,7 @@ class IndexController extends AbstractActionController {
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
-                                         Mlog::addone (  __METHOD__.__LINE__."from startSessionWithUID" , $actionname );
+					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
 					/*
@@ -2278,7 +2289,7 @@ class IndexController extends AbstractActionController {
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
-                                        Mlog::addone ( __METHOD__.__LINE__."from startSessionWithMemreasCookie" , $actionname );
+					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				}
 				
 				if (! $sid_success) {
