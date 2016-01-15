@@ -184,13 +184,11 @@ class IndexController extends AbstractActionController {
 		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
 		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
 		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
-		if (isset ( $_REQUEST ['json'] ) || isset ( $_POST ['json'] )) {
+		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
-			$json = $_REQUEST ['json'];
-			$jsonArr = json_decode ( $json, true );
-			$actionname = $jsonArr ['action'];
-			$type = (isset ( $jsonArr ['type'] )) ? $jsonArr ['type'] : '';
-			$message_data = $jsonArr ['json'];
+			$actionname = $_REQUEST ['action'];
+			$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
+			$message_data ['json'] = json_deocde ( $_REQUEST ['json'] );
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
 			
 			//
@@ -198,20 +196,20 @@ class IndexController extends AbstractActionController {
 			//
 			if (isset ( $message_data ['json'] )) {
 				$data = $message_data;
-			} else if (isset ( $message_data ['xml'] )) {
+				// } else if (isset ( $message_data ['xml'] )) {
+				// //
+				// // Handle XML
+				// //
+				// $_POST ['xml'] = $message_data ['xml'];
+				// if (isset ( $message_data ['action'] )) {
+				// $data = json_decode ( $message_data ['xml'] );
+				// } else {
 				//
-				// Handle XML
-				//
-				$_POST ['xml'] = $message_data ['xml'];
-				if (isset ( $message_data ['action'] )) {
-					$data = json_decode ( $message_data ['xml'] );
-				} else {
-					
-					$data = simplexml_load_string ( $_POST ['xml'] );
-				}
+				// $data = simplexml_load_string ( $_POST ['xml'] );
+				// }
 			}
 			
-			error_log('$data--->'.print_r($data, true).PHP_EOL);
+			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		} else {
 			// assuming xml if not json
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -2262,10 +2260,10 @@ class IndexController extends AbstractActionController {
 				//
 				// Check if array if so then convert to object
 				//
-				if (is_array($data)) {
-					$data = (object) $data;
+				if (is_array ( $data )) {
+					$data = ( object ) $data;
 				}
-					
+				
 				//
 				// Check data to attributes...
 				//
