@@ -197,7 +197,7 @@ class IndexController extends AbstractActionController {
 			// Handle JSON
 			//
 			if (isset ( $message_data ['json'] )) {
-				$data = json_decode ( $message_data ['json'] );
+				$data = $message_data;
 			} else if (isset ( $message_data ['xml'] )) {
 				//
 				// Handle XML
@@ -2258,6 +2258,18 @@ class IndexController extends AbstractActionController {
 				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
 				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
 				// __LINE__ . PHP_EOL );
+				
+				//
+				// Check if array if so then convert to object
+				//
+				if (is_array($data)) {
+					$data = (object) $data;
+				}
+					
+				//
+				// Check data to attributes...
+				//
+				
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
