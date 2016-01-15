@@ -2079,15 +2079,10 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
-			} else if (strpos($actionname, "stripe_") !== false ) {
-				/* 
-				 * Kamlesh - what I wanted here is for the payments proxy to be a simple pass through
-				 *  so you action is stripe
-				 *  which brings you to this function then you have a second action stripe_action
-				 *  which is what you pass to Stripe
-				 */
+			} else if ($actionname == 'stripe') {
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
-				$result = $PaymentsProxy->exec ($actionname);
+                                $stripe_action = $_REQUEST['stripe_action'];
+				$result = $PaymentsProxy->exec ($stripe_action);
 			}
 			
 			/*
@@ -2097,6 +2092,9 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				echo $result;
 			}
+                        /*
+                         * Output 
+                         */
 			$output = trim(ob_get_clean ());
 			
 			/*
@@ -2215,18 +2213,7 @@ class IndexController extends AbstractActionController {
 				'getdiskusage',
 				'clearlog',
 				'showlog',
-                   'stripe_storeCard',
-                   'stripe_listCards',
-             'stripe_viewCard', 
-             'stripe_updateCard', 
-             'stripe_deleteCards',
-             'stripe_buyMedia' ,
-             'stripe_addValue', 
-             'stripe_getUserBalance', 
-             'stripe_getCustomerInfo', 
-             'stripe_addSeller' ,
-             'stripe_subscribe' ,
-             'stripe_checkOwnEvent' 
+                                'stripe'
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
