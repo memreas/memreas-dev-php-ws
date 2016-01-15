@@ -86,7 +86,7 @@ class GetUserDetails {
 					// Fetch account details
 					//
 					$guzzle = new Client ();
-					//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
 					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL, [
 							'form_params' => [
 									'action' => 'getaccountdetail',
@@ -96,8 +96,7 @@ class GetUserDetails {
 					]);
 
 					$data = json_decode($response->getBody(), true);
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$response->getBody()->', $response->getBody() );
-					
+					 
 				} else {
 					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
