@@ -2204,7 +2204,9 @@ class IndexController extends AbstractActionController {
 				'changepassword',
 				'verifyemailaddress',
 				'ws_tester',
-				// For stripe
+                                'clearlog',
+				'showlog',
+				/* For stripe
 				'getplans',
 				'getplansstatic',
 				'getorderhistory',
@@ -2213,10 +2215,9 @@ class IndexController extends AbstractActionController {
 				'refund',
 				'listpayees',
 				'makepayout',
-				'getdiskusage',
-				'clearlog',
-				'showlog',
-                                '/stripe_listCards'
+				'getdiskusage',*/
+				
+                                        
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
