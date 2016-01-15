@@ -67,14 +67,14 @@ class PaymentsProxy {
 		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::$_REQUEST [callback]::', $_REQUEST ['callback'] );
 		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::$_SESSION[sid]::', $_SESSION['sid'] );
 		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__.'::$_REQUEST [callback]::', $_REQUEST ['callback'] );
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
-				'form_params' => [ 
-						'callback' => $_REQUEST ['callback'],
+		$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE, [
+				'form_params' => [
+						'action' => $action_method,
 						'sid' => $_SESSION['sid'],
-						//'json' => $this->message_data ['xml']
-						'json' => json_encode($jsonArr)
-				] 
-		] );
+						'data' => json_encode($jsonArr)
+				]
+		]);
+		
 		
 		echo $response->getBody ();
 		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::response body->',$response->getBody ());

@@ -188,26 +188,26 @@ class IndexController extends AbstractActionController {
 			// Fetch parms
 			$actionname = $_REQUEST ['action'];
 			$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
-			$message_data ['json'] = json_decode ( $_REQUEST ['json'] );
+			$data = $message_data = json_decode ( $_REQUEST ['json'] );
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
 			
 			//
 			// Handle JSON
 			//
-			if (isset ( $message_data ['json'] )) {
-				$data = $message_data;
-				// } else if (isset ( $message_data ['xml'] )) {
-				// //
-				// // Handle XML
-				// //
-				// $_POST ['xml'] = $message_data ['xml'];
-				// if (isset ( $message_data ['action'] )) {
-				// $data = json_decode ( $message_data ['xml'] );
-				// } else {
-				//
-				// $data = simplexml_load_string ( $_POST ['xml'] );
-				// }
-			}
+			// if (isset ( $message_data ['json'] )) {
+			// $data = json_decode($message_data['json']);
+			// } else if (isset ( $message_data ['xml'] )) {
+			// //
+			// // Handle XML
+			// //
+			// $_POST ['xml'] = $message_data ['xml'];
+			// if (isset ( $message_data ['action'] )) {
+			// $data = json_decode ( $message_data ['xml'] );
+			// } else {
+			//
+			// $data = simplexml_load_string ( $_POST ['xml'] );
+			// }
+			// }
 			
 			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		} else {
@@ -2260,12 +2260,12 @@ class IndexController extends AbstractActionController {
 				//
 				// Check if array if so then convert to object
 				//
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::about to check is_array for $datat->', $data);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::about to check is_array for $datat->', $data );
 				if (is_array ( $data )) {
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::converting $data to object', $data);
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::converting $data to object', $data );
 					$data = ( object ) $data;
 				}
-				error_log('$data as object-->'.print_r($data,true).PHP_EOL);
+				error_log ( '$data as object-->' . print_r ( $data, true ) . PHP_EOL );
 				
 				//
 				// Check data to attributes...
