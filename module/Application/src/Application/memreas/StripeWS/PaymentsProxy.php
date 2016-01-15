@@ -59,8 +59,6 @@ class PaymentsProxy {
 		} else if (! empty ( $this->message_data ['json'] )) {
 			$jsonArr = json_decode ( $this->message_data ['json'], true );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::json as JSON::', $jsonArr );
-		} else {
-			$jsonArr = Array();
 		}
 		
 		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method::', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method );
