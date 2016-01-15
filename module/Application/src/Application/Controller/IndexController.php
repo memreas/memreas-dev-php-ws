@@ -204,9 +204,9 @@ class IndexController extends AbstractActionController {
 		 * Check session
 		 */
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
-		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
-		Mlog::addone(__CLASS__.__METHOD__.'::$data', $data);
+		Mlog::addone('WS-INDEX'. __LINE__ .'::INPUT $_POST [xml]', $_POST ['xml']);
+		Mlog::addone('WS-INDEX'. __LINE__ .'::$actionname', $actionname);
+		Mlog::addone('WS-INDEX'. __LINE__ .'::$data', $data);
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
@@ -2095,7 +2095,7 @@ class IndexController extends AbstractActionController {
 			 * Successfully retrieved from cache so echo
 			 */
 			if ($cache_me == false && ! empty ( $result )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
+				Mlog::addone ( 'WS-INDEX'. __LINE__ . ':OUTPUT', $result );
 				echo $result;
 			}
 			$output = trim(ob_get_clean ());
