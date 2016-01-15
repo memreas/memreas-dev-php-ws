@@ -2079,10 +2079,15 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
-			} else if ($actionname == 'stripe') {
+			} else if (strpos($actionname, "stripe_") !== false ) {
+				/* 
+				 * Kamlesh - what I wanted here is for the payments proxy to be a simple pass through
+				 *  so you action is stripe
+				 *  which brings you to this function then you have a second action stripe_action
+				 *  which is what you pass to Stripe
+				 */
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
-                                $stripe_action = $_REQUEST['stripe_action'];
-				$result = $PaymentsProxy->exec ($stripe_action);
+				$result = $PaymentsProxy->exec ($actionname);
 			}
 			
 			/*
@@ -2092,9 +2097,6 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				echo $result;
 			}
-                        /*
-                         * Output 
-                         */
 			$output = trim(ob_get_clean ());
 			
 			/*
