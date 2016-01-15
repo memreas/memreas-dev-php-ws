@@ -212,7 +212,7 @@ class IndexController extends AbstractActionController {
 		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			$actionname = $this->fetchSession ( $actionname, $this->requiresSecureAction ( $actionname ) ,$data);
+			$actionname = $this->fetchSession ( $actionname, true ,$data);
 		}
 		
 		/**
