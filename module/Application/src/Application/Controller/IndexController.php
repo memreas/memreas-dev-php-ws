@@ -199,6 +199,8 @@ class IndexController extends AbstractActionController {
 			
 			// Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		}else {
+                    
+                    $data= simplexml_load_string ( $_POST ['xml'] );
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
 		}
@@ -211,7 +213,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		//$data = simplexml_load_string ( $_POST ['xml'] );
+                                        
 		Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
 		Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
 		Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
