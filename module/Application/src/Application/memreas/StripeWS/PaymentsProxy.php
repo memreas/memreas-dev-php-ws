@@ -72,7 +72,7 @@ class PaymentsProxy {
 						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION['sid'],
 						//'json' => $this->message_data ['xml']
-						'json' => $this->message_data ['xml'];
+						'json' => json_encode($jsonArr)
 				] 
 		] );
 		
