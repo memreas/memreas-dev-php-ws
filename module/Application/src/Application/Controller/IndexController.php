@@ -189,7 +189,7 @@ class IndexController extends AbstractActionController {
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
 			$_POST ['xml'] = $message_data ['xml'];
-			//Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		} else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
@@ -204,19 +204,18 @@ class IndexController extends AbstractActionController {
 		 * Check session
 		 */
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		Mlog::addone(__METHOD__ . __LINE__ .'::INPUT $_POST [xml]', $_POST ['xml']);
-		Mlog::addone(__METHOD__ . __LINE__ .'::$actionname', $actionname);
-		//Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
+		Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
+		Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
+		Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
-		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
+		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			$actionname = $this->fetchSession ( $actionname, true ,$data);
+			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
 		
 		/**
-                 * 
 		 * For testing only...
 		 */
 		if ($actionname == "ws_tester") {
@@ -1844,7 +1843,7 @@ class IndexController extends AbstractActionController {
 				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
-                                        
+				
 				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
@@ -2080,15 +2079,15 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
-			} else if (strpos($actionname, "/stripe_") !== false ) {
-				/* 
+			} else if (strpos ( $actionname, "/stripe_" ) !== false) {
+				/*
 				 * Kamlesh - what I wanted here is for the payments proxy to be a simple pass through
-				 *  so you action is stripe
-				 *  which brings you to this function then you have a second action stripe_action
-				 *  which is what you pass to Stripe
+				 * so you action is stripe
+				 * which brings you to this function then you have a second action stripe_action
+				 * which is what you pass to Stripe
 				 */
-				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this);
-				$result = $PaymentsProxy->exec ($actionname);
+				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this );
+				$result = $PaymentsProxy->exec ( $actionname );
 			}
 			
 			/*
@@ -2098,7 +2097,7 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __METHOD__ . __LINE__ . ':OUTPUT', $result );
 				echo $result;
 			}
-			$output = trim(ob_get_clean ());
+			$output = trim ( ob_get_clean () );
 			
 			/*
 			 * TODO - Cache here due to ob_get_clean
@@ -2114,7 +2113,7 @@ class IndexController extends AbstractActionController {
 			
 			if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				$this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
-				Mlog::addone (__METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
 			}
 		}
 		
@@ -2130,7 +2129,7 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			//error_log ( "callback output ----> *$output*" . PHP_EOL );
+			// error_log ( "callback output ----> *$output*" . PHP_EOL );
 		} else {
 			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
@@ -2204,7 +2203,7 @@ class IndexController extends AbstractActionController {
 				'changepassword',
 				'verifyemailaddress',
 				'ws_tester',
-                                'clearlog',
+				'clearlog',
 				'showlog',
 				/* For stripe
 				'getplans',
