@@ -183,7 +183,7 @@ class IndexController extends AbstractActionController {
 		
 		Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
 		Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
-		if (isset ( $_REQUEST ['json'] )) {
+		if (isset ( $_REQUEST ['json'] ) || isset($_POST['json'])) {
 			// Fetch parms
 			$json = $_REQUEST ['json'];
 			$jsonArr = json_decode ( $json, true );
@@ -192,7 +192,7 @@ class IndexController extends AbstractActionController {
 			$message_data = $jsonArr ['json'];
 			$_POST ['xml'] = $message_data ['xml'];
 			// Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
-		} else {
+		}else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
 		}
