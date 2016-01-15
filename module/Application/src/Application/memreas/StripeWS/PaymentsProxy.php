@@ -51,7 +51,15 @@ class PaymentsProxy {
 	}
 	public function getStripeData($action_method) {
 		$guzzle = new Client ();
-		$jsonArr = json_decode ( $this->message_data ['xml'], true );
+		
+		//
+		// Check xml or json
+		//
+		if (!empty ($this->message_data ['xml'])) {
+			$jsonArr = json_decode ( $this->message_data ['xml'], true );
+		} else if (!empty ($this->message_data ['json'])) {
+			$jsonArr = json_decode ( $this->message_data ['json'], true );
+		}
 		
 		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
