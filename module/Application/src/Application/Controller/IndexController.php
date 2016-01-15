@@ -204,9 +204,9 @@ class IndexController extends AbstractActionController {
 		 * Check session
 		 */
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		Mlog::addone('WS-INDEX'. __LINE__ .'::INPUT $_POST [xml]', $_POST ['xml']);
-		Mlog::addone('WS-INDEX'. __LINE__ .'::$actionname', $actionname);
-		Mlog::addone('WS-INDEX'. __LINE__ .'::$data', $data);
+		Mlog::addone(__METHOD__ . __LINE__ .'::INPUT $_POST [xml]', $_POST ['xml']);
+		Mlog::addone(__METHOD__ . __LINE__ .'::$actionname', $actionname);
+		//Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
@@ -1915,7 +1915,7 @@ class IndexController extends AbstractActionController {
 				 */
 				$MediaDeviceTracker = new MediaDeviceTracker ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MediaDeviceTracker->exec ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
+				Mlog::addone ( __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				/*
 				 * TODO: Cache approach
 				 * - write operation
@@ -2095,7 +2095,7 @@ class IndexController extends AbstractActionController {
 			 * Successfully retrieved from cache so echo
 			 */
 			if ($cache_me == false && ! empty ( $result )) {
-				Mlog::addone ( 'WS-INDEX'. __LINE__ . ':OUTPUT', $result );
+				Mlog::addone ( __METHOD__ . __LINE__ . ':OUTPUT', $result );
 				echo $result;
 			}
 			$output = trim(ob_get_clean ());
@@ -2105,7 +2105,7 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id . '::' . $output );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id . '::' . $output );
 			}
 			
 			/*
@@ -2114,7 +2114,7 @@ class IndexController extends AbstractActionController {
 			
 			if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				$this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
+				Mlog::addone (__METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
 			}
 		}
 		
@@ -2222,7 +2222,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."session required" , $actionname );
+		Mlog::addone (__METHOD__.__LINE__."session required" , $actionname );
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
@@ -2249,7 +2249,7 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-                                        Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."from sid" , $actionname );
+                                        Mlog::addone ( __METHOD__.__LINE__."from sid" , $actionname );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					// error_log('Inside else if (! empty ( $data->uid ) || ! empty (
 					// $data->username ))'.PHP_EOL);
@@ -2257,7 +2257,7 @@ class IndexController extends AbstractActionController {
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
-                                         Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."from startSessionWithUID" , $actionname );
+                                         Mlog::addone (  __METHOD__.__LINE__."from startSessionWithUID" , $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
 					/*
@@ -2270,7 +2270,7 @@ class IndexController extends AbstractActionController {
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
-                                        Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."from startSessionWithMemreasCookie" , $actionname );
+                                        Mlog::addone ( __METHOD__.__LINE__."from startSessionWithMemreasCookie" , $actionname );
 				}
 				
 				if (! $sid_success) {
