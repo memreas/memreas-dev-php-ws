@@ -57,7 +57,7 @@ class PaymentsProxy {
 			$jsonArr = json_decode ( $this->message_data ['xml'], true );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::xml as JSON::', $jsonArr );
 		} else if (! empty ( $this->message_data ['json'] )) {
-			$jsonArr = json_decode($this->message_data);
+			$jsonArr = $this->message_data;
 			Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::json as JSON::', $jsonArr );
 		}
 		
@@ -70,7 +70,7 @@ class PaymentsProxy {
 				'form_params' => [ 
 						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION ['sid'],
-						'json' => json_encode ( $jsonArr ) 
+						'json' => $jsonArr 
 				] 
 		] );
 		
