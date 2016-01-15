@@ -218,7 +218,7 @@ class IndexController extends AbstractActionController {
 		$data = $this->inputToObject ( $message_data ['xml'] );
 		Mlog::addone(__CLASS__.__METHOD__.'::$_POST [xml]', $_POST ['xml']);
 		Mlog::addone(__CLASS__.__METHOD__.'::$actionname', $actionname);
-		Mlog::addone(__CLASS__.__METHOD__.'::$data->user_id', $data->user_id);
+		Mlog::addone(__CLASS__.__METHOD__.'::$data', $data);
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset($data->user_id)) {
@@ -2236,7 +2236,7 @@ class IndexController extends AbstractActionController {
 		Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $actionname );
 		return true;
 	}
-	public function fetchSession($actionname, $requiresExistingSession) {
+	public function fetchSession($actionname, $requiresExistingSession, $data) {
 		/*
 		 * Setup Redis and the session save handle
 		 */
