@@ -190,7 +190,13 @@ class IndexController extends AbstractActionController {
 			$actionname = $jsonArr ['action'];
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
-			$_POST ['xml'] = $message_data ['xml'];
+                        $_POST ['xml'] = $message_data ['xml'];
+                        if(isset($message_data['action'])){
+                            $data = json_decode ($message_data ['xml']);
+                        }else{
+                            $data =  simplexml_load_string ( $_POST ['xml'] );
+                        }
+			
 			// Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		}else {
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
@@ -205,7 +211,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		$data = simplexml_load_string ( $_POST ['xml'] );
+		//$data = simplexml_load_string ( $_POST ['xml'] );
 		Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
 		Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
 		Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
