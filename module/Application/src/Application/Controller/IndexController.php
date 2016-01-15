@@ -2079,7 +2079,7 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
-			} else if (strpos($actionname, "stripe_") !== false ) {
+			} else if (strpos($actionname, "/stripe_") !== false ) {
 				/* 
 				 * Kamlesh - what I wanted here is for the payments proxy to be a simple pass through
 				 *  so you action is stripe
@@ -2215,7 +2215,7 @@ class IndexController extends AbstractActionController {
 				'getdiskusage',
 				'clearlog',
 				'showlog',
-                                'stripe_listCards'
+                                '/stripe_listCards'
 		);
 		if (in_array ( $actionname, $public )) {
 			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
