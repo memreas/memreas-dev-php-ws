@@ -181,7 +181,7 @@ class ListNotification {
 					</xml>";
 			echo $this->xml_output;
 		}
-		error_log ( __CLASS__.__METHOD__.'::$this->xml_output--->' . $this->xml_output . PHP_EOL );
+		//error_log ( __CLASS__.__METHOD__.'::$this->xml_output--->' . $this->xml_output . PHP_EOL );
 	} // end exec()
 	
 	/**
