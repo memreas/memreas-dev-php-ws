@@ -191,9 +191,19 @@ class IndexController extends AbstractActionController {
 			$actionname = $jsonArr ['action'];
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
-			$_POST ['xml'] = $message_data ['xml'];
+                        Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
+                        $_POST ['xml'] = $message_data ['xml'];
+                        if(isset($message_data['action'])){
+                            $data = json_decode ($message_data ['xml']);
+                        }else{
+                            
+                            $data =  simplexml_load_string ( $_POST ['xml'] );
+                        }
+			
 			// Mlog::addone ( __CLASS__ . __METHOD__ . '$_POST[xml]', $_POST ['xml'] );
 		}else {
+                    //assuming xml if not json
+                    $data= simplexml_load_string ( $_POST ['xml'] );
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
 		}
@@ -206,7 +216,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		$data = simplexml_load_string ( $_POST ['xml'] );
+                 
 		Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
 		Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
 		Mlog::addone(__METHOD__ . __LINE__ .'::$data', $data);
