@@ -181,8 +181,9 @@ class IndexController extends AbstractActionController {
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		// error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
-		Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
+		//Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		//Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
+		error_log('$_REQUEST::'.print_r($_REQUEST, true).PHP_EOL);
 		if (isset ( $_REQUEST ['json'] ) || isset($_POST['json'])) {
 			// Fetch parms
 			$json = $_REQUEST ['json'];
