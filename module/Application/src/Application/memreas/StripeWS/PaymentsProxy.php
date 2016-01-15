@@ -68,6 +68,7 @@ class PaymentsProxy {
 		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
+						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION ['sid'],
 						'json' => json_encode ( $this->message_data ) 
 				] 
