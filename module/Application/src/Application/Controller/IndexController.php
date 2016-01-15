@@ -2219,10 +2219,10 @@ class IndexController extends AbstractActionController {
                                 '/stripe_listCards'
 		);
 		if (in_array ( $actionname, $public )) {
-			Mlog::addone ( 'Inside else in_array actionname ->', $actionname );
+			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . 'requiresSecureAction($actionname)', $actionname );
+		Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."session required" , $actionname );
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
@@ -2235,7 +2235,7 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				$data = simplexml_load_string ( $_POST ['xml'] );
+				//$data = simplexml_load_string ( $_POST ['xml'] );
 				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
 				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
 				// __LINE__ . PHP_EOL );
@@ -2249,6 +2249,7 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
+                                        Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."from sid" , $actionname );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					// error_log('Inside else if (! empty ( $data->uid ) || ! empty (
 					// $data->username ))'.PHP_EOL);
@@ -2256,6 +2257,7 @@ class IndexController extends AbstractActionController {
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
+                                         Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."from startSessionWithUID" , $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
 					/*
@@ -2268,6 +2270,7 @@ class IndexController extends AbstractActionController {
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
+                                        Mlog::addone ( __CLASS__ . __METHOD__.__LINE__."from startSessionWithMemreasCookie" , $actionname );
 				}
 				
 				if (! $sid_success) {
