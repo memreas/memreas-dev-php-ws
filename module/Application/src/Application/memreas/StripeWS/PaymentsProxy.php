@@ -71,7 +71,7 @@ class PaymentsProxy {
 				'form_params' => [ 
 						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION ['sid'],
-						'json' => $jsonArr 
+						'json' => json_encode($jsonArr) 
 				] 
 		] );
 		
