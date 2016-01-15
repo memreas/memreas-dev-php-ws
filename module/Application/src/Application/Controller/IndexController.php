@@ -188,7 +188,7 @@ class IndexController extends AbstractActionController {
 			// Fetch parms
 			$actionname = $_REQUEST ['action'];
 			$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
-			$data = $message_data = json_decode ( $_REQUEST ['json'] );
+			$data = $message_data = json_decode ( $_REQUEST ['json'], true );
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
 			
 			//
