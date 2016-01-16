@@ -51,7 +51,7 @@ class PaymentsProxy {
 			//Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::json as JSON::', $jsonArr );
 			error_log(__CLASS__.__METHOD__.__LINE__.'$this->message_data::'.print_r($this->message_data, true).PHP_EOL);
 		}
-		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_INDEX . $action_method, [ 
+		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
 						'sid' => $_SESSION ['sid'],
 						'json' => json_encode($jsonArr) 
