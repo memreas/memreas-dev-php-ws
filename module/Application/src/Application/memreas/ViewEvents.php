@@ -704,58 +704,13 @@ class ViewEvents {
             ORDER BY event.create_time DESC";
 				
 		$statement = $this->dbAdapter->createQuery ( $q_public );
-		$public_events_without_viewbale_or_ghost_array = $statement->getArrayResult ();
-				
+		$public_events_array = $statement->getArrayResult ();
+		
+		//foreach ($public_events_array as $event) {
+		//	
+		//}
 
-		//
-		// Fetch public events with viewable
-		//
-		$q_public = "select  event.event_id,
-			event.user_id,
-			event.name,
-			event.location,
-			event.date,
-			event.metadata,
-			event.viewable_from,
-			event.viewable_to,
-			event.create_time,
-			user.username,
-			user.profile_photo
-			from Application\Entity\Event event, Application\Entity\User user
-			where event.public=1
-			and event.user_id = user.user_id
-            and event.viewable_from <= '".$date."'
-            and event.viewable_to >= '".$date."'
-            ORDER BY event.create_time DESC";
-				
-		$statement = $this->dbAdapter->createQuery ( $q_public );
-		$public_events_viewable_array = $statement->getArrayResult ();
-		
-		//
-		// Fetch public events with viewable
-		//
-		$q_public = "select  event.event_id,
-			event.user_id,
-			event.name,
-			event.location,
-			event.date,
-			event.metadata,
-			event.viewable_from,
-			event.viewable_to,
-			event.create_time,
-			user.username,
-			user.profile_photo
-			from Application\Entity\Event event, Application\Entity\User user
-			where event.public=1
-			and event.user_id = user.user_id
-            and event.self_destruct >= '".$date."'
-            ORDER BY event.create_time DESC";
-		
-		$statement = $this->dbAdapter->createQuery ( $q_public );
-		$public_events_ghost_array = $statement->getArrayResult ();
-		
-		$public_events_array = array_merge($public_events_without_viewbale_or_ghost_array, $public_events_viewable_array, $public_events_ghost_array);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$$public_events_array-->', $public_events_array);
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$$public_events_array-->', $public_events_array, 'p');
 		return $public_events_array;
 	}
 	private function fetchOwnerProfilePic($user_id) {

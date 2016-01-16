@@ -1130,42 +1130,14 @@ class IndexController extends AbstractActionController {
 							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
 							error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
 							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
-							// error_log
-							// (
-							// "Inside
-							// findTag
-							// #
-							// hashtag_friends_hash--->"
-							// .
-							// json_encode
-							// (
-							// $hashtag_friends_hash
-							// )
-							// .
-							// PHP_EOL
-							// );
+							error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
 							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
-							// $usernames
-							// =
-							// $this->redis->findSet(
-							// '@person',
-							// $search
-							// );
-							// $person_meta_hash
-							// =
-							// $this->redis->cache->hmget("@person_meta_hash",
-							// $usernames);
-							// $person_uid_hash
-							// =
-							// $this->redis->cache->hmget(
-							// '@person_uid_hash',
-							// $usernames
-							// );
-							// $user_ids
-							// =
-							// $usernames;
+							$usernames = $this->redis->findSet( '@person', $search );
+							$person_meta_hash = $this->redis->cache->hmget("@person_meta_hash", $usernames);
+							$person_uid_hash = $this->redis->cache->hmget( '@person_uid_hash', $usernames );
+							$user_ids = $usernames;
 						} else {
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							// error_log
