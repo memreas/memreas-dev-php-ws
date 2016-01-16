@@ -94,8 +94,8 @@ class GetUserDetails {
 									'user_id' => $user_id 
 							]
 					]);
-
-					$data = json_decode($response->getBody(), true);
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$response->getBody()', $response->getBody());
+					echo $callback . "(" . $response->getBody() . ")";
 					 
 				} else {
 					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
