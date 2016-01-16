@@ -660,6 +660,7 @@ class ViewEvents {
 	 * Public event functions
 	 */
 	private function fetchPublicEvents($date) {
+		/*- query not working..
 		$q_public = "select  event.event_id,
 			event.user_id,
 			event.name,
@@ -677,11 +678,85 @@ class ViewEvents {
                           and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                           and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                           ORDER BY event.create_time DESC";
-		
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_public query-->', $q_public);
-			 
+        */                  
+
+		$public_events_array = Array();
+		//
+		// Fetch public events without viewable or ghost
+		//
+		$q_public = "select  event.event_id,
+			event.user_id,
+			event.name,
+			event.location,
+			event.date,
+			event.metadata,
+			event.viewable_from,
+			event.viewable_to,
+			event.create_time,
+			user.username,
+			user.profile_photo
+			from Application\Entity\Event event, Application\Entity\User user
+			where event.public=1
+			and event.user_id = user.user_id
+            and event.viewable_from = ''
+            and event.viewable_to = ''
+            and event.self_destruct = ''
+            ORDER BY event.create_time DESC";
+				
 		$statement = $this->dbAdapter->createQuery ( $q_public );
-		return $statement->getArrayResult ();
+		$public_events_without_viewbale_or_ghost_array = $statement->getArrayResult ();
+				
+
+		//
+		// Fetch public events with viewable
+		//
+		$q_public = "select  event.event_id,
+			event.user_id,
+			event.name,
+			event.location,
+			event.date,
+			event.metadata,
+			event.viewable_from,
+			event.viewable_to,
+			event.create_time,
+			user.username,
+			user.profile_photo
+			from Application\Entity\Event event, Application\Entity\User user
+			where event.public=1
+			and event.user_id = user.user_id
+            and event.viewable_from <= '".$date."'
+            and event.viewable_to >= '".$date."'
+            ORDER BY event.create_time DESC";
+				
+		$statement = $this->dbAdapter->createQuery ( $q_public );
+		$public_events_viewable_array = $statement->getArrayResult ();
+		
+		//
+		// Fetch public events with viewable
+		//
+		$q_public = "select  event.event_id,
+			event.user_id,
+			event.name,
+			event.location,
+			event.date,
+			event.metadata,
+			event.viewable_from,
+			event.viewable_to,
+			event.create_time,
+			user.username,
+			user.profile_photo
+			from Application\Entity\Event event, Application\Entity\User user
+			where event.public=1
+			and event.user_id = user.user_id
+            and event.self_destruct >= '".$date."'
+            ORDER BY event.create_time DESC";
+		
+		$statement = $this->dbAdapter->createQuery ( $q_public );
+		$public_events_ghost_array = $statement->getArrayResult ();
+		
+		$public_events_array = array_merge($public_events_without_viewbale_or_ghost_array, $public_events_viewable_array, $public_events_ghost_array);
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$$public_events_array-->', $public_events_array);
+		return $public_events_array;
 	}
 	private function fetchOwnerProfilePic($user_id) {
 		$q_public_profile = "select  media.media_id,
