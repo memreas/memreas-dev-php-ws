@@ -29,16 +29,6 @@ class PaymentsProxy {
 	 *
 	 */
 	public function exec($action) {
-		
-		/*
-		 * Kamlesh - note my comment in Index Controller the $action here is the stripe_action (i.e.listCards)
-		 * if you build with action=stripe and stripe_action='listCards' which is $action in this function you don't need
-		 * the if switch
-		 * Your call would be $this->getStripeData($action);
-		 *
-		 * Note: you should add username, user_id, sid, memreascookie - whatever is available and validate user against rediscache
-		 * in payments server - let's discuss
-		 */
 		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data );
 		$error_flag = 0;
 		$message = '';
@@ -61,12 +51,6 @@ class PaymentsProxy {
 			//Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::json as JSON::', $jsonArr );
 			error_log(__CLASS__.__METHOD__.__LINE__.'$this->message_data::'.print_r($this->message_data, true).PHP_EOL);
 		}
-		
-		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method::', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::$_REQUEST [callback]::', $_REQUEST ['callback'] );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::$_SESSION[sid]::', $_SESSION ['sid'] );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::$_REQUEST [callback]::', $_REQUEST ['callback'] );
-		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
 						'sid' => $_SESSION ['sid'],
@@ -76,7 +60,7 @@ class PaymentsProxy {
 		$data = json_decode($response->getBody(), true);
 		error_log('$data -->'.print_r($data,true).PHP_EOL);
 		
-		echo $_REQUEST ['callback'] . "(" . $data . ")";
+		echo $_REQUEST ['callback'] . "(" . json_encode($data) . ")";
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::response body->', $response->getBody () );
 		exit();
 	}

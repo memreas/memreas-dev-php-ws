@@ -112,7 +112,7 @@ class GetUserDetails {
 						$output .= '<account>';
 						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
 						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
-						$output .= '<account_balance>' . $account['accountHeader']['account_balance'] . '</account_balance>';
+						$output .= '<account_balance>' . $account['accountHeader']['balance'] . '</account_balance>';
 						$output .= '</account>';
 						
 					}
