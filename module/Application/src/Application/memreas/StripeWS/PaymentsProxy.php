@@ -73,7 +73,10 @@ class PaymentsProxy {
 						'json' => json_encode($jsonArr) 
 				] 
 		] );
-		echo $_REQUEST ['callback'] . "(" . $response->getBody() . ")";
+		$data = json_decode($response->getBody(), true);
+		error_log('$data -->'.print_r($data,true).PHP_EOL);
+		
+		echo $_REQUEST ['callback'] . "(" . $data . ")";
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::response body->', $response->getBody () );
 		exit();
 	}
