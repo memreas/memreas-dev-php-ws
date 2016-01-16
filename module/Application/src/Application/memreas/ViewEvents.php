@@ -542,7 +542,7 @@ class ViewEvents {
 			 Application\Entity\Event event
 			 WHERE event.event_id=event_friend.event_id
 			 AND event_friend.user_approve=1
-			 AND event_friend.friend_id='$user_id'
+			 AND event_friend.friend_id='".$user_id."'
 			 ORDER BY event.create_time DESC ";
 		$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 		return $statement->getArrayResult ();
@@ -677,6 +677,8 @@ class ViewEvents {
                           and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
                           and  (event.self_destruct >=" . $date . " or event.self_destruct='')
                           ORDER BY event.create_time DESC";
+		
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_public query-->', $q_public);
 			 
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		return $statement->getArrayResult ();
