@@ -73,9 +73,9 @@ class PaymentsProxy {
 						'json' => json_encode($jsonArr) 
 				] 
 		] );
-		
-		echo $response->getBody ();
+		echo $_REQUEST ['callback'] . "(" . $response->getBody() . ")";
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::response body->', $response->getBody () );
+		exit();
 	}
 }
 
