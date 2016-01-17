@@ -186,12 +186,20 @@ class IndexController extends AbstractActionController {
 		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
 		if (isset ( $_REQUEST ['json'] )) {
                     // Handle JSon
-        		$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
-			$data = $message_data = json_decode ( $_REQUEST ['json'], true );
-                        $actionname = $data['action'];
-                        if( isset($message_data['json']['xml'])){
-                            $_POST ['xml']=$message_data['json']['xml'];
+                    $json = $_REQUEST ['json'];
+			$jsonArr = json_decode ( $json, true );
+			$actionname = $jsonArr ['action'];
+			$type = $jsonArr ['type'];
+			$message_data = $jsonArr ['json'];
+			
+                                        
+                        if( isset($message_data['xml'])){
+                            $_POST ['xml'] = $message_data ['xml'];
+                            $data = simplexml_load_string ( $_POST ['xml'] );
+                        }else{
+                            error_log('kamammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
                         }
+                        $data =
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data['json']['xml'] );
 			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		} else {
