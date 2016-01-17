@@ -163,9 +163,11 @@ class IndexController extends AbstractActionController {
 	}
          public function inputToObject($string){
              $in_data = trim($string);
+             error_log("inputdata_ string :".$in_data);
              if(empty($in_data)){
                  return null;
              }
+             
                         if($in_data[0] == '<'){ 
                            $data =  simplexml_load_string($in_data);
                             } else{
@@ -1970,7 +1972,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
-		Mlog::addone ( __METHOD__ . __LINE__ . "session required", $actionname );
+		Mlog::addone ("session required ::->", $actionname );
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
