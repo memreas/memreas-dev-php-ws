@@ -697,7 +697,8 @@ class ViewEvents {
 			user.profile_photo
 			from Application\Entity\Event event, Application\Entity\User user
 			where event.public=1
-            ORDER BY event.create_time DESC";
+		 	and event.user_id = user.user_id
+			ORDER BY event.create_time DESC";
 		
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
