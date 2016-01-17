@@ -95,10 +95,10 @@ class GetUserDetails {
 							]
 					]);
 					$data = json_decode($response->getBody(), true);
-					error_log('$data -->'.print_r($data,true).PHP_EOL);
+					//error_log('$data -->'.print_r($data,true).PHP_EOL);
 								
 				} else {
-					Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
+					//Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 				}
 				//error_log('$data -->'.print_r($data,true).PHP_EOL);
@@ -130,16 +130,6 @@ class GetUserDetails {
 					}
 					$output .= '</accounts>';
 						
-					//$types = $data ['types'];
-					//$output .= '<account_type>';
-					//foreach ( $types as $key => $type ) {
-					//	if ($key > 0)
-					//		$output .= ",";
-					//	$output .= $type;
-					//}
-					//$output .= '</account_type>';
-					//$output .= "<buyer_balance>" . $data ['buyer_balance'] . "</buyer_balance>";
-					//$output .= "<seller_balance>" . $data ['seller_balance'] . "</seller_balance>";
 				} else {
 					$output .= '<account_type>Free user</account_type>';
 				}
@@ -172,7 +162,7 @@ class GetUserDetails {
 			$xml_output .= "</xml>";
 			echo $xml_output;
 		}
-		error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
+		//error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
 	} // end exec()
 }
 

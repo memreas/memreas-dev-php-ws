@@ -226,9 +226,9 @@ class IndexController extends AbstractActionController {
 		 * Check session
 		 */
 		
-		Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
-		Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
-		Mlog::addone ( __METHOD__ . __LINE__ . '::$data', $data );
+		//Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
+		//Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
+		//Mlog::addone ( __METHOD__ . __LINE__ . '::$data', $data );
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
@@ -1979,57 +1979,40 @@ class IndexController extends AbstractActionController {
 			 * Check sid against logged in sid
 			 */
 			if ($requiresExistingSession) {
-				// $data = simplexml_load_string ( $_POST ['xml'] );
-				// error_log ( '$requiresExistingSession xml --->' . $_POST ['xml'] . ' ::::
-				// file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' .
-				// __LINE__ . PHP_EOL );
-				
 				//
 				// Check if array if so then convert to object
 				//
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::about to check is_array for $datat->', $data );
 				if (is_array ( $data )) {
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::converting $data to object', $data );
 					$data = ( object ) $data;
 				}
-				error_log ( '$data as object-->' . print_r ( $data, true ) . PHP_EOL );
-				
 				//
 				// Check data to attributes...
 				//
-				
 				if (! empty ( $data->sid )) {
 					/*
 					 * SetId for the mobile devices session and start...
 					 */
 					$this->sessHandler->startSessionWithSID ( $data->sid );
-					error_log ( 'session_id ()->' . session_id () . PHP_EOL );
-					error_log ( '$data->sid->' . $data->sid . PHP_EOL );
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-					Mlog::addone ( __METHOD__ . __LINE__ . "from sid", $actionname );
+					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
-					// error_log('Inside else if (! empty ( $data->uid ) || ! empty (
-					// $data->username ))'.PHP_EOL);
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
-					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
+					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
 					/*
 					 * SetId for the web browser session and start...
 					 */
 					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
-					// error_log('$_SESSION [ memreascookie ]->'.$_SESSION [ 'memreascookie'
-					// ].PHP_EOL);
-					// error_log ( '$data->memreascookie->' . $data->memreascookie . PHP_EOL );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
-					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
+					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				}
 				
 				if (! $sid_success) {
