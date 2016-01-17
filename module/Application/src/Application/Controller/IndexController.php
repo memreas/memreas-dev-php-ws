@@ -198,13 +198,11 @@ class IndexController extends AbstractActionController {
 		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
 		if (isset ( $_REQUEST ['json'] )) {
                     // Handle JSon
-                    $json = $_REQUEST ['json'];
-			$jsonArr = json_decode ( $json, true );
+                    	$jsonArr = json_decode ( $_REQUEST ['json'], true );
 			$actionname = $jsonArr ['action'];
 			$type = $jsonArr ['type'];
 			$message_data = $jsonArr ['json'];
-			
-                                        
+			                                     
                         if( isset($message_data['xml'])){
                             //is requied by next serving classes
                             $_POST ['xml'] = $message_data ['xml'];
@@ -212,7 +210,7 @@ class IndexController extends AbstractActionController {
                             $data = $this->inputToObject($message_data ['xml']);
                             
                         }else{
-                            error_log('kamammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
+                            error_log('kamlesh HAndles this ----------------------------------------------------------------------------');
                         }
                                         
  			
@@ -2035,7 +2033,8 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( "$currentIPAddress", $currentIPAddress );
 				Mlog::addone ( "ERROR::User IP Address has changed - logging user out!" );
 				Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
-				return 'notlogin';
+                                //disabling ip testing enabewhen going live
+				//return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
