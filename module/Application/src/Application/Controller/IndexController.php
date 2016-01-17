@@ -227,7 +227,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Setup save handler
 		 */
-		//$this->setupSaveHandler ();
+		$this->setupSaveHandler ();
 		
 		/**
 		 * Check session
