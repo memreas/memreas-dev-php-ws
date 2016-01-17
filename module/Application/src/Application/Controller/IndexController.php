@@ -199,7 +199,7 @@ class IndexController extends AbstractActionController {
                         }else{
                             error_log('kamammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
                         }
-                        $data =
+                                        
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data['json']['xml'] );
 			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		} else {
