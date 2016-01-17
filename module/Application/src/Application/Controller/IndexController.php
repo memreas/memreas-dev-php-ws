@@ -185,31 +185,14 @@ class IndexController extends AbstractActionController {
 		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
 		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
 		if (isset ( $_REQUEST ['json'] )) {
-			// Fetch parms
-			
-			$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
+                    // Handle JSon
+        		$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
 			$data = $message_data = json_decode ( $_REQUEST ['json'], true );
                         $actionname = $data['action'];
+                        if( isset($message_data['json']['xml'])){
+                            $_POST ['xml']=$message_data['json']['xml'];
+                        }
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
-			
-			//
-			// Handle JSON
-			//
-			// if (isset ( $message_data ['json'] )) {
-			// $data = json_decode($message_data['json']);
-			// } else if (isset ( $message_data ['xml'] )) {
-			// //
-			// // Handle XML
-			// //
-			// $_POST ['xml'] = $message_data ['xml'];
-			// if (isset ( $message_data ['action'] )) {
-			// $data = json_decode ( $message_data ['xml'] );
-			// } else {
-			//
-			// $data = simplexml_load_string ( $_POST ['xml'] );
-			// }
-			// }
-			
 			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		} else {
 			// assuming xml if not json
@@ -1874,7 +1857,7 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			// error_log ( "callback output ----> *$output*" . PHP_EOL );
+			error_log ( "callback output ----> *$output*" . PHP_EOL );
 		} else {
 			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
