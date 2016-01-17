@@ -58,8 +58,8 @@ class AddEvent {
 			$event_self_destruct = strtotime ( trim ( $data->addevent->event_self_destruct ) );
 			$is_public = trim ( $data->addevent->is_public );
 			$price = trim ( $data->addevent->price );
-			$duration_from = trim ( $data->addevent->duration_from );
-			$duration_to = trim ( $data->addevent->duration_to );
+			$event_from = $duration_from = trim ( $data->addevent->duration_from );
+			$event_to = $duration_to = trim ( $data->addevent->duration_to );
 			$event_id = '';
 			$time = time ();
 			if (! isset ( $user_id ) || empty ( $user_id )) {

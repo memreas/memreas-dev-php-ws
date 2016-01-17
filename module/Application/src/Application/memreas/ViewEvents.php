@@ -285,7 +285,7 @@ class ViewEvents {
 			/*
 			 * Fetch all public events filter in loop...
 			 */
-			$result_pub = $this->fetchPublicEvents ($date);
+			$result_pub = $this->fetchPublicEvents ( $date );
 			
 			if (count ( $result_pub ) == 0) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
@@ -542,7 +542,7 @@ class ViewEvents {
 			 Application\Entity\Event event
 			 WHERE event.event_id=event_friend.event_id
 			 AND event_friend.user_approve=1
-			 AND event_friend.friend_id='".$user_id."'
+			 AND event_friend.friend_id='" . $user_id . "'
 			 ORDER BY event.create_time DESC ";
 		$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 		return $statement->getArrayResult ();
@@ -634,7 +634,7 @@ class ViewEvents {
 					// web - video specific
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
 					// 1080p video specific
-					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';					
+					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
 					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
@@ -660,27 +660,27 @@ class ViewEvents {
 	 * Public event functions
 	 */
 	private function fetchPublicEvents($date) {
-		/*- query not working..
-		$q_public = "select  event.event_id,
-			event.user_id,
-			event.name,
-			event.location,
-			event.date,
-			event.metadata,
-			event.viewable_from,
-			event.viewable_to,
-			user.username,
-			user.profile_photo
-			from Application\Entity\Event event, Application\Entity\User user
-			where event.public=1
-			and event.user_id = user.user_id
-                         and  (event.viewable_to >=" . $date . " or event.viewable_to ='')
-                          and  (event.viewable_from <=" . $date . " or event.viewable_from ='')
-                          and  (event.self_destruct >=" . $date . " or event.self_destruct='')
-                          ORDER BY event.create_time DESC";
-        */                  
-
-		$public_events_array = Array();
+		/*
+		 * - query not working..
+		 * $q_public = "select event.event_id,
+		 * event.user_id,
+		 * event.name,
+		 * event.location,
+		 * event.date,
+		 * event.metadata,
+		 * event.viewable_from,
+		 * event.viewable_to,
+		 * user.username,
+		 * user.profile_photo
+		 * from Application\Entity\Event event, Application\Entity\User user
+		 * where event.public=1
+		 * and event.user_id = user.user_id
+		 * and (event.viewable_to >=" . $date . " or event.viewable_to ='')
+		 * and (event.viewable_from <=" . $date . " or event.viewable_from ='')
+		 * and (event.self_destruct >=" . $date . " or event.self_destruct='')
+		 * ORDER BY event.create_time DESC";
+		 */
+		
 		//
 		// Fetch public events without viewable or ghost
 		//
@@ -697,20 +697,42 @@ class ViewEvents {
 			user.profile_photo
 			from Application\Entity\Event event, Application\Entity\User user
 			where event.public=1
-			and event.user_id = user.user_id
-            and event.viewable_from = ''
-            and event.viewable_to = ''
-            and event.self_destruct = ''
             ORDER BY event.create_time DESC";
-				
+		
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
 		
-		//foreach ($public_events_array as $event) {
-		//	
-		//}
+		foreach ( $public_events_array as $i => $event ) {
+			//
+			// Handle from / to
+			//
+			if (!empty($event['viewable_from']) && !empty($event['viewable_to']) ) {
+				if (($date > $event ['viewable_to']) || ($date < $event ['viewable_from'])) {
+					//
+					// event is not within from to so remove it
+					//
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array removing from/to entry -->', $public_events_array[$i] );
+					unset($public_events_array[$i]);
+				}
+			}
 
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$$public_events_array-->', $public_events_array, 'p');
+			//
+			// Handle ghost
+			//
+			if (!empty($event['self_destruct'])) {
+				if (($date > $event ['self_destruct'])) {
+					//
+					// event is not within ghost date so remove it
+					//
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array removing ghost entry -->', $public_events_array[$i] );
+					unset($public_events_array[$i]);
+				}
+			}
+		}
+		//re-index
+		$public_events_array = array_values($public_events_array);
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
 		return $public_events_array;
 	}
 	private function fetchOwnerProfilePic($user_id) {
