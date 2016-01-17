@@ -161,6 +161,18 @@ class IndexController extends AbstractActionController {
 		
 		return $response->getBody ();
 	}
+         public function inputToObject($string){
+             $in_data = trim($string);
+             if(empty($in_data)){
+                 return null;
+             }
+                        if($in_data[0] == '<'){ 
+                           $data =  simplexml_load_string($in_data);
+                            } else{
+                              $data =  json_decode ($in_data);
+                            }
+                            return $data;
+        }
 	public function indexAction() {
 		// Mlog::addone(__CLASS__ . __METHOD__, '...');
 		// Checking headers for cookie info
@@ -194,8 +206,11 @@ class IndexController extends AbstractActionController {
 			
                                         
                         if( isset($message_data['xml'])){
+                            //is requied by next serving classes
                             $_POST ['xml'] = $message_data ['xml'];
-                            $data = simplexml_load_string ( $_POST ['xml'] );
+                            
+                            $data = $this->inputToObject($message_data ['xml']);
+                            
                         }else{
                             error_log('kamammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
                         }
@@ -205,7 +220,8 @@ class IndexController extends AbstractActionController {
 			// assuming xml if not json
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
-			$message_data ['xml'] = '';
+			//dont remove just to be safe relying on $_POST data
+                        $message_data ['xml'] = '';
 		}
                                         
 		/**
