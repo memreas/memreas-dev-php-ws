@@ -200,15 +200,14 @@ class IndexController extends AbstractActionController {
                             error_log('kamammmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm');
                         }
                                         
-			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data['json']['xml'] );
-			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
+ 			
 		} else {
 			// assuming xml if not json
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 			$message_data ['xml'] = '';
 		}
-		// Mlog::addone ( __CLASS__ . __METHOD__ . '$actionname', $actionname );
+                                        
 		/**
 		 * Setup save handler
 		 */
@@ -217,10 +216,8 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		
-		//Mlog::addone ( __METHOD__ . __LINE__ . '::INPUT $_POST [xml]', $_POST ['xml'] );
-		//Mlog::addone ( __METHOD__ . __LINE__ . '::$actionname', $actionname );
-		//Mlog::addone ( __METHOD__ . __LINE__ . '::$data', $data );
+		error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
+                                        
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
@@ -1865,7 +1862,7 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			error_log ( "callback output ----> *$output*" . PHP_EOL );
+			error_log ("XXXX END XXXXXX" . PHP_EOL );
 		} else {
 			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
