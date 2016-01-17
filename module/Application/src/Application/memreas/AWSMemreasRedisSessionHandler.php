@@ -71,7 +71,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 		}
-		// error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		 error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithUID($uid, $uname) {
 		if (! empty ( $uid )) {
