@@ -217,6 +217,31 @@ class ViewEvents {
 						$xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
 						$xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
 						
+						/*
+						 * Skip if not within viewable from / to
+						 */
+						$viewable_from = $row_friendsevent ['viewable_from'];
+						$viewable_to = $row_friendsevent ['viewable_to'];
+						if ((isset ( $viewable_from ) && ! empty ( $viewable_from )) && (isset ( $viewable_to ) && ! empty ( $viewable_to ))) {
+							if (($viewable_from >= $date) && ($viewable_to <= $date)) {
+								// date is outside of viewable from/to
+								error_log ( "friend event date is outside of from / to..." . PHP_EOL );
+								continue;
+							}
+						}
+						/*
+						 * Skip if not past ghost date
+						 */
+						$self_destruct = $row_friendsevent ['self_destruct'];
+						if (isset ( $self_destruct ) && ! empty ( $self_destruct )) {
+							if (($self_destruct < $date) && ($viewable_to <= $date)) {
+								// date is outside of viewable from/to
+								error_log ( "friend event date is outside of ghost date..." . PHP_EOL );
+								continue;
+							}
+						}
+						
+						
 						/**
 						 * Fetch event friends...
 						 */
@@ -328,7 +353,7 @@ class ViewEvents {
 					 * Skip if not past ghost date
 					 */
 					$self_destruct = $public_event_row ['self_destruct'];
-					if ( isset ( $self_destruct ) && !empty ( $self_destruct ) ) {
+					if (isset ( $self_destruct ) && ! empty ( $self_destruct )) {
 						if (($self_destruct < $date) && ($viewable_to <= $date)) {
 							// date is outside of viewable from/to
 							error_log ( "public event date is outside of ghost date..." . PHP_EOL );
@@ -441,11 +466,11 @@ class ViewEvents {
 			where e.user_id='" . $user_id . "'
 			ORDER BY e.create_time DESC";
 		$statement = $this->dbAdapter->createQuery ( $query_event );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
 		return $statement->getResult ();
 	}
 	private function fetchMyEventsMedia($user_id, $event_id) {
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
@@ -550,7 +575,10 @@ class ViewEvents {
 			 event.name,
 			 event.friends_can_share,
 			 event.friends_can_post,
-			 event.metadata
+			 event.metadata,
+			 event.viewable_from,
+			 event.viewable_to,
+			 event.self_destruct
 			 from Application\Entity\EventFriend event_friend,
 			 Application\Entity\Event event
 			 WHERE event.event_id=event_friend.event_id
@@ -705,6 +733,7 @@ class ViewEvents {
 			event.metadata,
 			event.viewable_from,
 			event.viewable_to,
+			event.self_destruct,
 			user.username,
 			user.profile_photo
 			from Application\Entity\Event event, Application\Entity\User user
