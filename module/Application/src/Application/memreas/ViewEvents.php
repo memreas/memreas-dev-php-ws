@@ -154,7 +154,7 @@ class ViewEvents {
 			$result_friendevent = $this->fetchFriendsEvents ( $user_id );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::$result_friendevent::', $result_friendevent );
 			if (empty ( $result_friendevent )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchFriendsEvents ()::', "fail - no records found..." );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>My Friends Events List</message>";
 				$xml_output .= "<page>0</page>";
@@ -285,7 +285,7 @@ class ViewEvents {
 			/*
 			 * Fetch all public events filter in loop...
 			 */
-			$result_pub = $this->fetchPublicEvents ( $date );
+			$result_pub = $this->fetchPublicEvents ();
 			
 			if (count ( $result_pub ) == 0) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
@@ -305,7 +305,9 @@ class ViewEvents {
 					if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
 						$event_json_array = json_decode ( $public_event_row ['metadata'], true );
-						// skip this event hving
+						//
+						// If selling is off then skip this event
+						//
 						if (! empty ( $event_json_array ['price'] ))
 							continue;
 					}
@@ -319,6 +321,17 @@ class ViewEvents {
 						if (($viewable_from >= $date) && ($viewable_to <= $date)) {
 							// date is outside of viewable from/to
 							error_log ( "public event date is outside of from / to..." . PHP_EOL );
+							continue;
+						}
+					}
+					/*
+					 * Skip if not past ghost date
+					 */
+					$self_destruct = $public_event_row ['self_destruct'];
+					if ( isset ( $self_destruct ) && !empty ( $self_destruct ) ) {
+						if (($self_destruct < $date) && ($viewable_to <= $date)) {
+							// date is outside of viewable from/to
+							error_log ( "public event date is outside of ghost date..." . PHP_EOL );
 							continue;
 						}
 					}
@@ -659,7 +672,7 @@ class ViewEvents {
 	/**
 	 * Public event functions
 	 */
-	private function fetchPublicEvents($date) {
+	private function fetchPublicEvents() {
 		/*
 		 * - query not working..
 		 * $q_public = "select event.event_id,
@@ -692,7 +705,6 @@ class ViewEvents {
 			event.metadata,
 			event.viewable_from,
 			event.viewable_to,
-			event.create_time,
 			user.username,
 			user.profile_photo
 			from Application\Entity\Event event, Application\Entity\User user
@@ -702,36 +714,6 @@ class ViewEvents {
 		
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
-		
-		foreach ( $public_events_array as $i => $event ) {
-			//
-			// Handle from / to
-			//
-			if (!empty($event['viewable_from']) && !empty($event['viewable_to']) ) {
-				if (($date > $event ['viewable_to']) || ($date < $event ['viewable_from'])) {
-					//
-					// event is not within from to so remove it
-					//
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array removing from/to entry -->', $public_events_array[$i] );
-					unset($public_events_array[$i]);
-				}
-			}
-
-			//
-			// Handle ghost
-			//
-			if (!empty($event['self_destruct'])) {
-				if (($date > $event ['self_destruct'])) {
-					//
-					// event is not within ghost date so remove it
-					//
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array removing ghost entry -->', $public_events_array[$i] );
-					unset($public_events_array[$i]);
-				}
-			}
-		}
-		//re-index
-		$public_events_array = array_values($public_events_array);
 		
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
 		return $public_events_array;
