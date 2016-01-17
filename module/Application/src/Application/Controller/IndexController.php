@@ -163,7 +163,7 @@ class IndexController extends AbstractActionController {
 	}
          public function inputToObject($string){
              $in_data = trim($string);
-             error_log("inputdata_ string :".print_r ( $in_data, true ) . PHP_EOL );
+             error_log("inputdata_ string :".print_r ( json_decode ($in_data), true ) .'-----',$in_data[0] PHP_EOL );
              if(empty($in_data)){
                  return null;
              }
