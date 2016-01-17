@@ -192,7 +192,7 @@ class IndexController extends AbstractActionController {
                         if( isset($message_data['json']['xml'])){
                             $_POST ['xml']=$message_data['json']['xml'];
                         }
-			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
+			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data['json']['xml'] );
 			error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		} else {
 			// assuming xml if not json
