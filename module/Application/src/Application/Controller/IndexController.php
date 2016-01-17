@@ -186,9 +186,10 @@ class IndexController extends AbstractActionController {
 		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Fetch parms
-			$actionname = $_REQUEST ['action'];
+			
 			$type = (isset ( $_REQUEST ['type'] )) ? $_REQUEST ['type'] : '';
 			$data = $message_data = json_decode ( $_REQUEST ['json'], true );
+                        $actionname = $data['action'];
 			Mlog::addone ( __METHOD__ . __LINE__ . '::$message_data', $message_data );
 			
 			//
