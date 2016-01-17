@@ -1987,9 +1987,9 @@ class IndexController extends AbstractActionController {
 				//
 				// Check if array if so then convert to object
 				//
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::about to check is_array for $datat->', $data );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::about to check is_array for $datat->', $data );
 				if (is_array ( $data )) {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::converting $data to object', $data );
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::converting $data to object', $data );
 					$data = ( object ) $data;
 				}
 				error_log ( '$data as object-->' . print_r ( $data, true ) . PHP_EOL );
