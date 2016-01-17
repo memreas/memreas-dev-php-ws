@@ -53,27 +53,14 @@ class PaymentsProxy {
 		}
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 				'form_params' => [ 
+						'callback' => $_REQUEST ['callback'],
 						'sid' => $_SESSION ['sid'],
 						'json' => json_encode($jsonArr) 
 				] 
 		] );
-		$data = json_decode($response->getBody(), true);
-		error_log('$data -->'.print_r($data,true).PHP_EOL);
 		
-		//$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL, [
-		//		'form_params' => [
-		//				'action' => $action_method,
-		//				'sid' => $_SESSION['sid'],
-		//				'json' => json_encode($jsonArr) 
-		//		]
-		//]);
-		//$data = json_decode($response->getBody(), true);
-		//error_log('$data -->'.print_r($data,true).PHP_EOL);
-		
-		
-		echo $_REQUEST ['callback'] . "(" . json_encode($data) . ")";
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::response body->', $response->getBody () );
-		exit();
+		echo $response->getBody ();
+		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::response body->',$response->getBody ());
 	}
 }
 
