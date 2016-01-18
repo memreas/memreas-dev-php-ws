@@ -161,19 +161,19 @@ class IndexController extends AbstractActionController {
 		
 		return $response->getBody ();
 	}
-         public function inputToObject($string){
-             $in_data = trim($string);
-             if(empty($in_data)){
-                 return null;
-             }
-             
-                        if($in_data[0] == '<'){ 
-                           $data =  simplexml_load_string($in_data);
-                            } else{
-                              $data =  json_decode ($in_data);
-                            }
-                            return $data;
-        }
+	public function inputToObject($string) {
+		$in_data = trim ( $string );
+		if (empty ( $in_data )) {
+			return null;
+		}
+		
+		if ($in_data [0] == '<') {
+			$data = simplexml_load_string ( $in_data );
+		} else {
+			$data = json_decode ( $in_data );
+		}
+		return $data;
+	}
 	public function indexAction() {
 		// Mlog::addone(__CLASS__ . __METHOD__, '...');
 		// Checking headers for cookie info
@@ -198,32 +198,29 @@ class IndexController extends AbstractActionController {
 		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
 		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
 		if (isset ( $_REQUEST ['json'] )) {
-                    // Handle JSon
-                        
-                    	$reqArr = json_decode ( $_REQUEST ['json'], true );
-			$actionname = $_REQUEST ['action'] != 'ws_tester'?$_REQUEST ['action']:$reqArr['action'];
+			// Handle JSon
+			
+			$reqArr = json_decode ( $_REQUEST ['json'], true );
+			$actionname = $_REQUEST ['action'] != 'ws_tester' ? $_REQUEST ['action'] : $reqArr ['action'];
 			$type = $reqArr ['type'];
 			$message_data = $reqArr ['json'];
-			                                     
-                        if( isset($message_data['xml'])){
-                            //is requied by next serving classes
-                            $_POST ['xml'] = $message_data ['xml'];
-                            
-                            $data = $this->inputToObject($message_data ['xml']);
-                            
-                        }else{
-                            error_log('kamlesh HAndles this ----------------------------------------------------------------------------');
-                        }
-                                        
- 			
+			
+			if (isset ( $message_data ['xml'] )) {
+				// is requied by next serving classes
+				$_POST ['xml'] = $message_data ['xml'];
+				
+				$data = $this->inputToObject ( $message_data ['xml'] );
+			} else {
+				error_log ( 'kamlesh HAndles this ----------------------------------------------------------------------------' );
+			}
 		} else {
 			// assuming xml if not json
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
-			//dont remove just to be safe relying on $_POST data
-                        $message_data ['xml'] = '';
+			// dont remove just to be safe relying on $_POST data
+			$message_data ['xml'] = '';
 		}
-                                        
+		
 		/**
 		 * Setup save handler
 		 */
@@ -232,9 +229,9 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		//error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
-		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::input data as object---> ', $data, 'p');
-                                        
+		// error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
+		// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::input data as object---> ', $data, 'p');
+		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
@@ -832,12 +829,6 @@ class IndexController extends AbstractActionController {
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$user_ids = array ();
-						// if
-						// ((MemreasConstants::REDIS_SERVER_USE)
-						// &&
-						// (!
-						// MemreasConstants::REDIS_SERVER_SESSION_ONLY))
-						// {
 						if (MemreasConstants::REDIS_SERVER_USE) {
 							/*
 							 * -
@@ -872,101 +863,49 @@ class IndexController extends AbstractActionController {
 							$person_meta_hash = $registration->userIndex;
 							/*
 							 * -
-							 * Remove current user All entries in this hash match the search key
+							 * Remove current user - All entries in this hash match the search key
 							 */
 							foreach ( $person_meta_hash as $username => $usermeta ) {
-								// $meta_arr
-								// =
-								// json_decode($usermeta,true);
 								$meta_arr = $usermeta;
 								$uid = $meta_arr ['user_id'];
-								// Remove
-								// existing
-								// user
-								// error_log
-								// (
-								// "username"
-								// .
-								// $username
-								// .
-								// "
-								// ---
-								// uid-->"
-								// .
-								// $uid
-								// .
-								// PHP_EOL
-								// );
-								if ($uid == $user_id)
+								/*
+								 * -
+								 * Remove existing user
+								 */
+								Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "remove existing user for seach key username" . $username . " --- uid-->", $uid );
+								if ($uid == $user_id) {
 									continue;
-									
-									//
-									// TODO:
-									// Fix
-									// Paging
-									//
-									// if
-									// ($rc
-									// >=
-									// $from
-									// &&
-									// $rc
-									// <
-									// ($from
-									// +
-									// $limit))
-									// {
-									// error_log
-									// (
-									// "meta_arr
-									// ['username']--->"
-									// .
-									// $meta_arr
-									// ['username']
-									// .
-									// "
-									// ---
-									// search-->"
-									// .
-									// $search
-									// .
-									// PHP_EOL
-									// );
+								}
+								
+								/*
+								 * - * TODO: Fix Paging
+								 */
+								/*
+								 * -
+								 * if ($rc >= $from && $rc < ($from + $limit)) {
+								 * Mlog::addone(__CLASS__.__METHOD__.__LINE__."meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" , $search);
+								 * }
+								 */
 								if (stripos ( $meta_arr ['username'], $search ) !== false) {
 									$meta_arr ['username'] = '@' . $meta_arr ['username'];
 									$search_result [] = $meta_arr;
 									$user_ids [] = $uid;
-									// error_log
-									// (
-									// "user_ids-->"
-									// .
-									// json_encode
-									// (
-									// $user_ids
-									// )
-									// .
-									// PHP_EOL
-									// );
+									Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "user_ids-->", json_encode ( $user_ids ) );
 								}
 								// }
 								$rc += 1;
 							}
 						}
 						
-						//
-						// This
-						// section
-						// filter
-						// friend
-						// requests
-						// sent...
-						//
+						/*
+						 * -
+						 * This section filter friend requests sent...
+						 */
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
-						// This
-						// query
-						// fetches
-						// user's
-						// friends
+						/*
+						 * -
+						 * This query fetches user's friends
+						 */
 						$qb = $em->createQueryBuilder ();
 						$qb->select ( 'f.friend_id,uf.user_approve' );
 						$qb->from ( 'Application\Entity\Friend', 'f' );
@@ -996,24 +935,26 @@ class IndexController extends AbstractActionController {
 							}
 						}
 						
-						$result ['totalPage'] = 1;
-						$result ['count'] = $rc;
-						$result ['search'] = $search_result;
-						// hide
-						// pagination
+						/*
+						 * -
+						 * hide pagination
+						 */
+						// $result ['totalPage'] = 1;
+						// $result ['count'] = $rc;
+						// $result ['search'] = $search_result;
 						
 						echo json_encode ( $result );
 						$result = '';
 						break;
 					
 					/*
-					 * !event
-					 * search
+					 * -
+					 * !event search
 					 */
 					case '!' :
 
-						/*
-						 * Fetch Event Repository
+						/*-
+						 * Fetch from cache for all public events 
 						 */
 						$mc = $this->redis->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
@@ -1039,26 +980,20 @@ class IndexController extends AbstractActionController {
 								$rc += 1;
 							}
 						}
-						// filter
-						// record
-						// !event
-						// should
-						// show
-						// public
-						// events
-						// and
-						// events
-						// you've
-						// been
-						// invited
-						// to
+						
+						/*
+						 * -
+						 * filter record !event should show public events and events you've been invited to
+						 */
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
 						// $user_id
 						// =
 						// empty($_POST['user_id'])?0:$_POST['user_id'];
 						
-						// Fetch
-						// friends
+						/*
+						 * -
+						 * Fetch Friends
+						 */
 						$qb = $em->createQueryBuilder ();
 						$qb->select ( 'ef' );
 						$qb->from ( 'Application\Entity\EventFriend', 'ef' );
@@ -1070,11 +1005,10 @@ class IndexController extends AbstractActionController {
 						$qb->setParameter ( 'e', $event_ids );
 						$EventFriends = $qb->getQuery ()->getArrayResult ();
 						
-						// Check
-						// if
-						// event
-						// request
-						// sent
+						/*
+						 * -
+						 * Check if event request sent
+						 */
 						$chkEventFriend = array ();
 						foreach ( $EventFriends as $efRow ) {
 							$chkEventFriend [$efRow ['event_id']] = $efRow ['user_approve'];
@@ -1093,33 +1027,18 @@ class IndexController extends AbstractActionController {
 						$result ['page'] = $page;
 						$result ['totalPage'] = ceil ( $rc / $limit );
 						
-						// $result
-						// =
-						// preg_grep("/$search/",
-						// $mc);
-						// echo
-						// '<pre>';print_r($result);
+						$result = preg_grep ( "/$search/", $mc );
+						echo '<pre>';
+						print_r ( $result );
 						
 						echo json_encode ( $result );
-						// error_log
-						// (
-						// "result------>
-						// "
-						// .
-						// json_encode
-						// (
-						// $result
-						// )
-						// .
-						// PHP_EOL
-						// );
+						error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
 						$result = '';
 						break;
 					
 					/*
-					 * #hashtag
-					 * comment
-					 * search
+					 * -
+					 * #hashtag comment search
 					 */
 					case '#':
                     	/*
@@ -1140,56 +1059,44 @@ class IndexController extends AbstractActionController {
 							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
-							$usernames = $this->redis->findSet( '@person', $search );
-							$person_meta_hash = $this->redis->cache->hmget("@person_meta_hash", $usernames);
-							$person_uid_hash = $this->redis->cache->hmget( '@person_uid_hash', $usernames );
+							$usernames = $this->redis->findSet ( '@person', $search );
+							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
+							$person_uid_hash = $this->redis->cache->hmget ( '@person_uid_hash', $usernames );
 							$user_ids = $usernames;
 						} else {
+							/*
+							 * -
+							 * Fetch from db
+							 */
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							// error_log
-							// (
-							// "createDiscoverCache------>$tag"
-							// .
-							// PHP_EOL
-							// );
+							
+							/*
+							 * -
+							 * error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
+							 */
 							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						}
 						
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-							// error_log
-							// (
-							// "tag------>$tag"
-							// .
-							// PHP_EOL
-							// );
-							// error_log
-							// (
-							// "cache_entry------>"
-							// .
-							// json_encode
-							// (
-							// $cache_entry
-							// )
-							// .
-							// PHP_EOL
-							// );
+							/*
+							 * -
+							 * error_log ( "tag------>$tag" . PHP_EOL );
+							 * error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
+							 */
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
-								// if
-								// ($rc
-								// >=
-								// $from
-								// &&
-								// $rc
-								// <
-								// ($from
-								// +
-								// $limit))
-								// {
+								/*
+								 * -
+								 * if ($rc >= $from && $rc < ($from + $limit)) {
+								 */
 								$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
 								$cache_entry ['update_time'] = Utility::toDateTime ( $cache_entry ['update_time'] );
 								$search_result [$tag] = $cache_entry;
-								// }
-								$rc += 1;
+								/*
+								 * -
+								 * }
+								 * $rc += 1;
+								 */
+								//
 							}
 						}
 						
@@ -1212,12 +1119,9 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "findevent") {
 				/*
+				 * -
 				 * TODO:
-				 * This
-				 * is
-				 * covered
-				 * by
-				 * findtag??
+				 * This is covered by findtag?
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$tag = (trim ( $data->findevent->tag ));
@@ -1879,7 +1783,7 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			error_log ("XXXX END XXXXXX" . PHP_EOL );
+			error_log ( "XXXX END XXXXXX" . PHP_EOL );
 		} else {
 			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
@@ -1972,7 +1876,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
-		Mlog::addone ("session required ::->", $actionname );
+		Mlog::addone ( "session required ::->", $actionname );
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
@@ -2002,13 +1906,13 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
+					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
-					$this->sessHandler->startSessionWithUID ( $data);
-					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
+					$this->sessHandler->startSessionWithUID ( $data );
+					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
 					/*
@@ -2018,7 +1922,7 @@ class IndexController extends AbstractActionController {
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
-					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
+					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				}
 				
 				if (! $sid_success) {
@@ -2036,7 +1940,7 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( "$currentIPAddress", $currentIPAddress );
 				Mlog::addone ( "ERROR::User IP Address has changed - logging user out!" );
 				Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
- 				return 'notlogin';
+				return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {

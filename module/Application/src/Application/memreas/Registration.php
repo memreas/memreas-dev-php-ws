@@ -48,7 +48,7 @@ class Registration {
 		return $result;
 	}
 	public function exec() {
-		error_log ( "Inside Registration.exec()..." . PHP_EOL );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::exit" );
 		
 		$user_id = MUUID::fetchUUID ();
 		$invited_by = '';
@@ -382,6 +382,9 @@ class Registration {
 		
 		ob_clean ();
 		echo $xml_output;
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::exit" );
+		
 		// error_log("registration xml_output -------> *****" . $xml_output . "*****" . PHP_EOL);
 		
 		$this->username = $username;
@@ -391,14 +394,15 @@ class Registration {
 		// return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
 	} // end exec()
 	function createUserCache() {
-		error_log ( "Inside function createUserCache()" . PHP_EOL );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::enter" );
+		
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
+		//$qb->where ('u.disable_account = 0');
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-		// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
 		// error_log("qb --->".$qb.PHP_EOL);
-		error_log ( "SQL Query --->" . $qb->getQuery ()->getSql () . PHP_EOL );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::SQL Query --->" . $qb->getQuery ()->getSql () );
 		
 		// create index for catch;
 		$userIndexArr = $qb->getQuery ()->getResult ();
@@ -412,20 +416,22 @@ class Registration {
 			
 			if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
 				// $url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-				$url1 = $this->url_signer->signArrayOfUrls ( 'static/profile-pic.jpg' );
+				$profile_url = $this->url_signer->signArrayOfUrls ( null );
 			} else {
-				$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
+				$profile_url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 			}
 			$this->userIndex [$row ['username']] = array (
 					'username' => $row ['username'],
 					'user_id' => $row ['user_id'],
-					'profile_photo' => $url1 
+					'profile_photo' => json_decode($profile_url)
 			);
 		}
 		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::exit" );
 		return $this->userIndex;
 	}
 	public function FunctionName($invited_by = '') {
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::enter" );
 		$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
 		$statement = $this->dbAdapter->createQuery ( $q_notification );
 		$statement->setParameter ( 'short_code', $invited_by );

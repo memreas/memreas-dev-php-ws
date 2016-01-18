@@ -35,10 +35,10 @@ class EventRepository extends EntityRepository {
 	public function getEventNames($date) {
 		$query_event = "select e.name, e.event_id
         	from Application\Entity\Event e
-            where (e.viewable_to >=" . $date . " or e.viewable_to ='')
-            and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
-            and  (e.self_destruct >=" . $date . " or e.self_destruct='')
-            ORDER BY e.create_time DESC";
+            where ((e.viewable_to >=" . $date . " or e.viewable_to ='')
+            and  (e.viewable_from <=" . $date . " or e.viewable_from =''))
+            or  (e.self_destruct >=" . $date . " or e.self_destruct='')
+			ORDER BY e.create_time DESC";
 		// $statement->setMaxResults ( $limit );
 		// $statement->setFirstResult ( $from );
 		
@@ -53,9 +53,9 @@ class EventRepository extends EntityRepository {
 	public function getEvents($date) {
 		$query_event = "select e.name, e.event_id ,e.location,e.user_id,e.update_time,e.create_time
         	from Application\Entity\Event e
-            where (e.viewable_to >=" . $date . " or e.viewable_to ='')
-            and  (e.viewable_from <=" . $date . " or e.viewable_from ='')
-            and  (e.self_destruct >=" . $date . " or e.self_destruct='')
+            where ((e.viewable_to >=" . $date . " or e.viewable_to ='')
+            and  (e.viewable_from <=" . $date . " or e.viewable_from =''))
+            or  (e.self_destruct >=" . $date . " or e.self_destruct='')
             ORDER BY e.create_time DESC";
 		// $statement->setMaxResults ( $limit );
 		// $statement->setFirstResult ( $from );
@@ -70,10 +70,11 @@ class EventRepository extends EntityRepository {
 		$qb->from ( 'Application\Entity\User', 'u' );
 		$qb->leftjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' ); // removing profile pic - not all users have
+		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' ); 
 		$qb->where ( 'ef.event_id=?1 ' );
 		$qb->setParameter ( 1, $event_id );
 		$rows = $qb->getQuery ()->getResult ();
+
 		if ($rawData) {
 			return $rows;
 		}
@@ -107,7 +108,7 @@ class EventRepository extends EntityRepository {
 			
 			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 		}
-		return $url;
+		return json_decode ( $url );
 	}
 	public function getEventMediaUrl($metadata = '', $size = '') {
 		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
