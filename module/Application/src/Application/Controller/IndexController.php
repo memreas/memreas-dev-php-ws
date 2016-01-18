@@ -866,7 +866,7 @@ class IndexController extends AbstractActionController {
 							 * Remove current user - All entries in this hash match the search key
 							 */
 							foreach ( $person_meta_hash as $username => $usermeta ) {
-								$meta_arr = $usermeta;
+								$meta_arr = json_decode($usermeta);
 								$uid = $meta_arr ['user_id'];
 								/*
 								 * -
