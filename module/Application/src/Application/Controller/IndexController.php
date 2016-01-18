@@ -972,7 +972,7 @@ class IndexController extends AbstractActionController {
 									$er ['created_on'] = Utility::formatDateDiff ( $er ['create_time'] );
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
-									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
+									$er ['event_creator_pic'] = json_decode ($event_creator ['profile_photo'][0]);
 									error_log ( "event_creator ['username']------>" . $event_creator ['username'] . PHP_EOL );
 									error_log ( "event_creator ['profile_photo']------>" . $event_creator ['profile_photo'] . PHP_EOL );
 									$search_result [] = $er;
