@@ -103,6 +103,9 @@ class EventRepository extends EntityRepository {
 	public function getProfileUrl($metadata = '') {
 		$json_array = json_decode ( $metadata, true );
 		// $url = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+		/*-
+		 * signArrayofUrls always returns an array so we get [0]
+		 */
 		$url = "";
 		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
 			
@@ -111,14 +114,17 @@ class EventRepository extends EntityRepository {
 		return json_decode ( $url );
 	}
 	public function getEventMediaUrl($metadata = '', $size = '') {
+		/*-
+		 * signArrayofUrls always returns an array so we get [0]
+		 */
 		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
 		$json_array = json_decode ( $metadata, true );
 		$url = "";
 		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_array[S3_files][thumbnails][79x80]', $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
-		if (($json_array ['S3_files'] ['file_type'] != 'audio') && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-			$url = json_decode($this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ));
+		if (($json_array ['S3_files'] ['file_type'] != 'audio') && isset( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] )) {
+			$url = json_decode($this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] ));
 		}
-		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url, 'p');
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url[0]', $url[0]);
 		return $url[0];
 	}
 	public function createEventCache() {
