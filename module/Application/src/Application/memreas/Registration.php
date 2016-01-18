@@ -60,13 +60,12 @@ class Registration {
 			$email = strtolower ( $email );
 			$password = trim ( $data->registration->password );
 			$this->profile_photo = 0;
-			if (isset($data->registration->profile_photo)) {
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__."::profile_photo value before -->", $this->profile_photo);
+			if (isset ( $data->registration->profile_photo )) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::profile_photo value before -->", $this->profile_photo );
 				if (($data->registration->profile_photo == "true") || ($data->registration->profile_photo == 1)) {
 					$this->profile_photo = 1;
 				}
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__."::profile_photo value after -->", $this->profile_photo);
-				
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::profile_photo value after -->", $this->profile_photo );
 			}
 			$this->profile_photo = isset ( $data->registration->profile_photo ) ? $data->registration->profile_photo : 0;
 			$device_id = trim ( $data->registration->device_id );
@@ -399,12 +398,12 @@ class Registration {
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
-		//$qb->where ('u.disable_account = 0');
+		// $qb->where ('u.disable_account = 0');
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		// error_log("qb --->".$qb.PHP_EOL);
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::SQL Query --->" . $qb->getQuery ()->getSql () );
 		
-		// create index for catch;
+		// create index for cache
 		$userIndexArr = $qb->getQuery ()->getResult ();
 		// $userIndexArr = $this->dbAdapter->createQuery ( 'SELECT u.user_id,u.username FROM Application\Entity\User u Where u.disable_account=0 ORDER BY u.username' );
 		// AND u.username LIKE :username $userIndexSql->setParameter ( 'username', $username[0]."%");//'%'.$username[0]."%"
@@ -414,16 +413,16 @@ class Registration {
 			error_log ( "Inside for loop --->" . $row ['username'] . PHP_EOL );
 			$json_array = json_decode ( $row ['metadata'], true );
 			
-			if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
-				// $url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-				$profile_url = $this->url_signer->signArrayOfUrls ( null );
+			if (!empty( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+				$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 			} else {
-				$profile_url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
+				// $url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+				$url = $this->url_signer->signArrayOfUrls ( null );
 			}
 			$this->userIndex [$row ['username']] = array (
 					'username' => $row ['username'],
 					'user_id' => $row ['user_id'],
-					'profile_photo' => json_decode($profile_url)
+					'profile_photo' => json_decode ( $url[0] ) 
 			);
 		}
 		
