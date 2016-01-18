@@ -955,6 +955,9 @@ class IndexController extends AbstractActionController {
 					case '!' :
 
 						/*-
+						 * Store event cache by user
+						 */
+						/*-
 						 * Fetch from cache for all public events 
 						 */
 						$mc = $this->redis->getCache ( '!event' );
