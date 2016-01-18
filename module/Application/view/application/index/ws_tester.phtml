@@ -665,7 +665,8 @@ echo "user_id ----> " . $user_id;
             
             var stripe_storeCard = '{"username": "kamlesh","action": "addCard", "type":"jsonp", "json": {"user_id":"29aa4b84-b1fe-4eb9-ae76-3f948689c551","first_name":"kamlesh","last_name":"pwar","credit_card_type":"visa","credit_card_number":"4242424242424242","expiration_month":"11","expiration_year":"2017","cvc":"1234","address_line_1":"add-1","address_line_2":"add-2","city":"nagp","state":"mh","zip_code":"4404040"}}';
             var stripe_listCards = '{"username": "kamlesh","action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
-            
+            var stripe_listPlan = '{"username": "kamlesh","action": "listPlan", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
+           
             var stripe_viewCard = '{"username": "kamlesh", "action": "listCard", "type":"jsonp", "json": {"user_id": "29aa4b84-b1fe-4eb9-ae76-3f948689c551","card_id": "card_17MZGP2gUEVpEUdcrRx55Vto"}}';
             var stripe_updateCard = '{"username": "kamlesh","action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
             var stripe_deleteCards = '{"username": "kamlesh","action": "deleteCards", "type":"jsonp", "json": ["card_17SPPV2gUEVpEUdcboUtHZZy"]}';
@@ -674,7 +675,7 @@ echo "user_id ----> " . $user_id;
             var stripe_getUserBalance = '{"username": "kamlesh","action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
             var stripe_getCustomerInfo = '{"username": "kamlesh","action": "getCustomerInfo", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
              var stripe_addSeller = '{"username": "kamlesh","action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
-             var stripe_subscribe = '{"username": "kamlesh","action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';  
+             var stripe_subscribe = '{"username": "kamlesh",{"action": "subscription", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551","card_id": "card_17UUhO2gUEVpEUdcRzwThW50","plan": "PLAN_A_2GB_MONTHLY","amount": 0}}';  
               var stripe_checkOwnEvent = '{"username": "kamlesh","action": "listcards", "type":"jsonp", "json": {"userid": "29aa4b84-b1fe-4eb9-ae76-3f948689c551"}}';
                   
             
@@ -781,6 +782,7 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "stripe_addSeller") { xml = stripe_addSeller; }
                     else if ($("#input_action").val() == "stripe_subscribe") { xml = stripe_subscribe; }
                     else if ($("#input_action").val() == "stripe_checkOwnEvent") { xml = stripe_checkOwnEvent; }
+                    else if ($("#input_action").val() == "stripe_listPlan") { xml = stripe_listPlan; }
                     
                     
                 	$("#action_input").val(xml);
@@ -915,6 +917,7 @@ echo "user_id ----> " . $user_id;
                                                                 <option value="stripe_addSeller">Stripe - add Seller</option>
                                                                 <option value="stripe_subscribe">Stripe - subscribe</option>
                                                                 <option value="stripe_checkOwnEvent">Stripe - check Own Event</option>
+                                                                <option value="stripe_listPlan">Stripe - List plan</option>
 
 						</select>
 					

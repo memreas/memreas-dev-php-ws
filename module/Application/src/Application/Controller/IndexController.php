@@ -2035,8 +2035,7 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( "$currentIPAddress", $currentIPAddress );
 				Mlog::addone ( "ERROR::User IP Address has changed - logging user out!" );
 				Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
-                                //disabling ip testing enabewhen going live
-				//return 'notlogin';
+ 				return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
