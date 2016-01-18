@@ -116,10 +116,10 @@ class EventRepository extends EntityRepository {
 		$url = "";
 		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_array[S3_files][thumbnails][79x80]', $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 		if (($json_array ['S3_files'] ['file_type'] != 'audio') && ! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+			$url = json_decode($this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ));
 		}
 		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url );
-		return json_decode ( $url[0] );
+		return $url[0];
 	}
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
