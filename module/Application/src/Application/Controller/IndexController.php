@@ -939,9 +939,10 @@ class IndexController extends AbstractActionController {
 						 * -
 						 * hide pagination
 						 */
-						// $result ['totalPage'] = 1;
-						// $result ['count'] = $rc;
-						// $result ['search'] = $search_result;
+						$result = Array();
+						$result ['totalPage'] = 1;
+						$result ['count'] = $rc;
+						$result ['search'] = $search_result;
 						
 						echo json_encode ( $result );
 						$result = '';
