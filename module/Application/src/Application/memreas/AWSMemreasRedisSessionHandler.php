@@ -75,9 +75,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function startSessionWithUID($data) {
 		if (! empty ( $data->uid )) {
-			$rUIDSession = $this->mRedis->getCache ( 'uid::' . $uid );
+			$rUIDSession = $this->mRedis->getCache ( 'uid::' .  $data->uid );
 		} else if (! empty ( $data->username )) {
-			$rUIDSession = $this->mRedis->getCache ( 'username::' . $uname );
+			$rUIDSession = $this->mRedis->getCache ( 'username::' . $data->username  );
 		}
 		if ($rUIDSession) {
 			// error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
@@ -89,10 +89,10 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			// error_log ( 'rUIDSessionArr vars after uid start...' . print_r ( $rUIDSessionArr, true ) . PHP_EOL );
 		} else {
 			// error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
-			if (! empty ( $uid )) {
-				$sql = "SELECT u  FROM Application\Entity\User as u  where u.user_id = '$uid'";
+			if (! empty ( $data->uid )) {
+                                $sql = "SELECT u  FROM Application\Entity\User as u  where u.user_id = '{$data->uid}'";
 			} else {
-				$sql = "SELECT u  FROM Application\Entity\User as u  where u.username = '$uname'";
+				$sql = "SELECT u  FROM Application\Entity\User as u  where u.username = '{$data->username}'";
 			}
 			$statement = $this->dbAdapter->createQuery ( $sql );
 			$row = $statement->getResult ();

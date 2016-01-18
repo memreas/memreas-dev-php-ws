@@ -38,8 +38,8 @@ jQuery.fetchWS = function (base_url) {
 	  	$("#action_output").val(resp.data);
                 $("#action_output").text(resp.data);
 	  	if($("#input_action").val() == 'login'){
-	  		var obj = jQuery.parseJSON( resp );
-	  		xmlDoc = $.parseXML( obj.data ),
+	  		//var obj = jQuery.parseJSON( resp );
+	  		xmlDoc = $.parseXML( resp.data ),
 	  		$xml = $( xmlDoc ),
 	  		$sid = $xml.find( "sid" );
 	  		$("#sid").val($sid.html()) ;
