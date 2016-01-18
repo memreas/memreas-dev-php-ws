@@ -866,7 +866,7 @@ class IndexController extends AbstractActionController {
 							 * Remove current user - All entries in this hash match the search key
 							 */
 							foreach ( $person_meta_hash as $username => $usermeta ) {
-								$meta_arr = json_decode($usermeta);
+								$meta_arr = json_decode ( $usermeta );
 								$uid = $meta_arr ['user_id'];
 								/*
 								 * -
@@ -939,7 +939,7 @@ class IndexController extends AbstractActionController {
 						 * -
 						 * hide pagination
 						 */
-						$result = Array();
+						$result = Array ();
 						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
@@ -975,9 +975,9 @@ class IndexController extends AbstractActionController {
 									$er ['created_on'] = Utility::formatDateDiff ( $er ['create_time'] );
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
 									$er ['event_creator_name'] = '@' . $event_creator ['username'];
-									$er ['event_creator_pic'] = json_decode ($event_creator ['profile_photo'][0]);
-									//error_log ( "event_creator ['username']------>" . $event_creator ['username'] . PHP_EOL );
-									//error_log ( "event_creator ['event_creator_pic']------>" . $event_creator ['event_creator_pic'] . PHP_EOL );
+									$er ['event_creator_pic'] = json_decode ( $event_creator ['profile_photo'] [0] );
+									// error_log ( "event_creator ['username']------>" . $event_creator ['username'] . PHP_EOL );
+									// error_log ( "event_creator ['event_creator_pic']------>" . $event_creator ['event_creator_pic'] . PHP_EOL );
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
 								}
@@ -1025,20 +1025,23 @@ class IndexController extends AbstractActionController {
 						
 						$hashtag_comments = $eventRep->createDiscoverCache ( $tag );
 						
+						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
 						$result ['comments'] = empty ( $comments ) ? array () : $comments;
-						$result ['page'] = $page;
-						$result ['totalPage'] = ceil ( $rc / $limit );
-						
-						/*-
-						 * $result = preg_grep ( "/$search/", $mc );
-						 * echo '<pre>';
-						 * print_r ( $result ); 
+						/*
+						 * -
+						 * $result ['page'] = $page;
+						 * $result ['totalPage'] = ceil ( $rc / $limit );
+						 *
 						 */
 						
-						
-						
+						/*
+						 * -
+						 * $result = preg_grep ( "/$search/", $mc );
+						 * echo '<pre>';
+						 * print_r ( $result );
+						 */
 						
 						echo json_encode ( $result );
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
