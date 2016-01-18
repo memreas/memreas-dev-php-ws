@@ -59,7 +59,7 @@ class PaymentsProxy {
 				] 
 		] );
 		
-		echo $response->getBody ();
+		echo trim($response->getBody ());
 		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::response body->',$response->getBody ());
 	}
 }

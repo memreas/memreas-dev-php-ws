@@ -2006,7 +2006,7 @@ class IndexController extends AbstractActionController {
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
-					$this->sessHandler->startSessionWithUID ( $data->uid, $data->username );
+					$this->sessHandler->startSessionWithUID ( $data);
 					//Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {

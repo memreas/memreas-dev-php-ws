@@ -65,7 +65,7 @@ class MakePayout {
 		$xml_output .= $output;
 		$xml_output .= "</makepayoutresponse>";
 		$xml_output .= "</xml>";
-		echo $xml_output;
+		echo trim($xml_output);
 		die ();
 	}
 }

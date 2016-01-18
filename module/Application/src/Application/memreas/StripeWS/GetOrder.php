@@ -88,7 +88,7 @@ class GetOrder {
         $xml_output .= $output;
         $xml_output .= "</getorderresponse>";
         $xml_output .= "</xml>";
-        echo $xml_output;
+        echo trim($xml_output);
         die();
     }
 

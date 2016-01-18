@@ -89,7 +89,7 @@ class GetAccountDetail {
 		$xml_output .= $output;
 		$xml_output .= "</getaccountdetailresponse>";
 		$xml_output .= "</xml>";
-		echo $xml_output;
+		echo trim($xml_output);
 		die ();
 	}
 }
