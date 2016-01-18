@@ -1019,7 +1019,7 @@ class IndexController extends AbstractActionController {
 							}
 						}
 						
-						$comments = $eventRep->createDiscoverCache ( $tag );
+						$hashtag_comments = $eventRep->createDiscoverCache ( $tag );
 						
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
@@ -1027,12 +1027,17 @@ class IndexController extends AbstractActionController {
 						$result ['page'] = $page;
 						$result ['totalPage'] = ceil ( $rc / $limit );
 						
-						$result = preg_grep ( "/$search/", $mc );
-						echo '<pre>';
-						print_r ( $result );
+						/*-
+						 * $result = preg_grep ( "/$search/", $mc );
+						 * echo '<pre>';
+						 * print_r ( $result ); 
+						 */
+						
+						
+						
 						
 						echo json_encode ( $result );
-						error_log ( "result------> " . json_encode ( $result ) . PHP_EOL );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
 						$result = '';
 						break;
 					
