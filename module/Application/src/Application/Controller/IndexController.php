@@ -1028,7 +1028,7 @@ class IndexController extends AbstractActionController {
 						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
-						$result ['comments'] = empty ( $comments ) ? array () : $comments;
+						$result ['comments'] = empty ( $comments ) ? "" : $comments;
 						/*
 						 * -
 						 * $result ['page'] = $page;
