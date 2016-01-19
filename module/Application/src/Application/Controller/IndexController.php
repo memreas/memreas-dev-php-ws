@@ -970,7 +970,7 @@ class IndexController extends AbstractActionController {
 							} else {
 								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS NOT ARRAY --->', $mc);
 							}
-							$this->redis->setCache ( "!event", json_encode($mc) );
+							$this->cache->hmset ( '!event', $mc );
 						}
 						$search_result = array ();
 						$event_ids = array ();
