@@ -229,7 +229,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Check session
 		 */
-		 error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
+		// error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
 		// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::input data as object---> ', $data, 'p');
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
