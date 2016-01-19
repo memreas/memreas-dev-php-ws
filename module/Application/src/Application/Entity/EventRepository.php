@@ -110,8 +110,10 @@ class EventRepository extends EntityRepository {
 		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
 			
 			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
+		} else {
+			$url = $this->url_signer->signArrayOfUrls ( null );
 		}
-		return json_decode($url);
+		return $url;
 	}
 	public function getEventMediaUrl($metadata = '', $size = '') {
 		/*-
@@ -122,9 +124,11 @@ class EventRepository extends EntityRepository {
 		$url = "";
 		if (($json_array ['S3_files'] ['file_type'] != 'audio') && isset( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] )) {
 			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] );
+		} else {
+			$url = $this->url_signer->signArrayOfUrls ( null );
 		}
 		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url);
-		return  json_decode($url);
+		return  $url;
 	}
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
