@@ -414,7 +414,7 @@ class Registration {
 			$json_array = json_decode ( $row ['metadata'], true );
 			
 			if (!empty( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-				$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+				$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] );
 			} else {
 				// $url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
 				$url = $this->url_signer->signArrayOfUrls ( null );
@@ -422,7 +422,7 @@ class Registration {
 			$this->userIndex [$row ['username']] = array (
 					'username' => $row ['username'],
 					'user_id' => $row ['user_id'],
-					'profile_photo' => json_decode ( $url[0] ) 
+					'profile_photo' => $url 
 			);
 		}
 		
