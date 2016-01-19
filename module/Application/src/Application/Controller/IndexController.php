@@ -960,6 +960,7 @@ class IndexController extends AbstractActionController {
 						/*-
 						 * Fetch from cache for all public events 
 						 */
+						//$this->cache->hmset ('!event');
 						$mc = $this->redis->getCache ( '!event' );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
@@ -970,7 +971,8 @@ class IndexController extends AbstractActionController {
 							} else {
 								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS NOT ARRAY --->', $mc);
 							}
-							$this->cache->hmset ( '!event', $mc );
+							//$this->cache->hmset ( '!event', $mc );
+							$this->cache->setCache('!event', $mc);
 						}
 						$search_result = array ();
 						$event_ids = array ();
