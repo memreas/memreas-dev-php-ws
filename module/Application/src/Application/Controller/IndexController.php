@@ -964,6 +964,12 @@ class IndexController extends AbstractActionController {
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
 							$mc = $eventRep->createEventCache ();
+							//debugging
+							if (is_array($mc)) {
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS ARRAY --->', $mc, 'p');
+							} else {
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS NOT ARRAY --->', $mc);
+							}
 							$this->redis->setCache ( "!event", $mc );
 						}
 						$search_result = array ();
@@ -990,9 +996,6 @@ class IndexController extends AbstractActionController {
 						 * filter record !event should show public events and events you've been invited to
 						 */
 						$em = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' );
-						// $user_id
-						// =
-						// empty($_POST['user_id'])?0:$_POST['user_id'];
 						
 						/*
 						 * -
@@ -1005,7 +1008,7 @@ class IndexController extends AbstractActionController {
 						// $qb->andWhere('ef.user_approve
 						// =
 						// 1');
-						$qb->setParameter ( 'f', $user_id );
+						$qb->setParameter ( 'f', $_SESSION['user_id'] );
 						$qb->setParameter ( 'e', $event_ids );
 						$EventFriends = $qb->getQuery ()->getArrayResult ();
 						
@@ -1023,7 +1026,7 @@ class IndexController extends AbstractActionController {
 							}
 						}
 						
-						$hashtag_comments = $eventRep->createDiscoverCache ( $tag );
+						$comments = $eventRep->createDiscoverCache ( $tag );
 						
 						$result ['totalPage'] = 1;
 						$result ['count'] = $rc;
