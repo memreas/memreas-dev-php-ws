@@ -973,6 +973,14 @@ class IndexController extends AbstractActionController {
 							}
 							//$this->cache->hmset ( '!event', $mc );
 							$this->cache->setCache('!event', $mc);
+						} else {
+							//debugging
+							if (is_array($mc)) {
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS ARRAY --->', $mc, 'p');
+							} else {
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS NOT ARRAY --->', $mc);
+							}
+							$mc = (array) $mc;
 						}
 						$search_result = array ();
 						$event_ids = array ();
