@@ -117,13 +117,13 @@ class EventRepository extends EntityRepository {
 		/*-
 		 * signArrayofUrls always returns an array so we get [0]
 		 */
-		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
+		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
 		$json_array = json_decode ( $metadata, true );
 		$url = "";
 		if (($json_array ['S3_files'] ['file_type'] != 'audio') && isset( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] )) {
 			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] );
 		}
-		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url);
+		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url);
 		return  json_decode($url);
 	}
 	public function createEventCache() {
