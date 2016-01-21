@@ -150,9 +150,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
 			} else {
 				// Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail for ', 'null to get default...');
-				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( [ 
-						'S3_files' 
-				] ['full'] );
+				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['full'] );
 			}
 		} else {
 			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( null );
