@@ -43,22 +43,18 @@ class AddFriendtoevent {
 				$data = simplexml_load_string ( $frmweb );
 				error_log ( "Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL );
 			}
-			Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', '...' );
-			Mlog::add ( $data, 'p' );
-			Mlog::out ();
-			// $owner = isset($_REQUEST['user_id']) ? $_REQUEST['user_id'] : 0;
-			
+
 			/**
 			 * fetch input vars
 			 */
 			$friend_array = $data->addfriendtoevent->friends->friend;
 			$user_id = (trim ( $data->addfriendtoevent->user_id ));
 			$event_id = (trim ( $data->addfriendtoevent->event_id ));
-			$group_array = (trim ( $data->addfriendtoevent->groups ));
+			//$group_array = (trim ( $data->addfriendtoevent->groups ));
 			$email_array = $data->addfriendtoevent->emails->email;
 			
-			$status = "failure";
-			$message = "start of exec";
+			$status = "Success";
+			$message = "move to memreas tab";
 			$time = time ();
 			$error = 0;
 			
@@ -78,7 +74,7 @@ class AddFriendtoevent {
 			/**
 			 * add group to event_group
 			 */
-			$result = $this->addToGroup ( $group_array );
+			//$result = $this->addToGroup ( $group_array );
 			
 			/**
 			 * add friends to event loop
