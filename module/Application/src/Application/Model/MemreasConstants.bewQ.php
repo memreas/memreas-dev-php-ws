@@ -54,6 +54,7 @@ class MemreasConstants {
 	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
 	                                      
 	// Same across...
+	const media_id_batch_create_count = 25;
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
 	const URL = "/index";

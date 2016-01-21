@@ -57,9 +57,8 @@ class AddFriendtoevent {
 			$group_array = (trim ( $data->addfriendtoevent->groups ));
 			$email_array = $data->addfriendtoevent->emails->email;
 			
-			$status = "";
-			$message = "";
-			$message = "";
+			$status = "failure";
+			$message = "start of exec";
 			$time = time ();
 			$error = 0;
 			

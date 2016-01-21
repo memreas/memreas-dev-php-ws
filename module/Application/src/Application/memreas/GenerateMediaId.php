@@ -8,10 +8,22 @@
 namespace Application\memreas;
 
 use Application\memreas\MUUID;
+use Application\Model\MemreasConstants;
 
 class GenerateMediaId {
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
+		
+		
+		if ($data->batch) {
+			$media_id_batch = array();
+			for($i=0;$i<=MemreasConstants::media_id_batch_create_count; $i++) {
+				$media_id_batch[] = MUUID::fetchUUID ();
+			}
+			$media_id_output = '<media_id_batch>' . json_encode($media_id_batch) . '<media_id_batch>';
+		} else {
+			$media_id_output = '';
+		}
 		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -19,6 +31,7 @@ class GenerateMediaId {
 		$xml_output .= "<generatemediaidresponse>";
 		$xml_output .= "<status>success</status>";
 		$xml_output .= "<media_id>" . MUUID::fetchUUID () . "</media_id>";
+		$xml_output .= $media_id_output;
 		$xml_output .= "</generatemediaidresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
