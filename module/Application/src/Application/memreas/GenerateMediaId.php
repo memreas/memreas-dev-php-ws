@@ -16,7 +16,7 @@ class GenerateMediaId {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		Mlog::addone ( $cm . '::$data---->', $data, 'p' );
 		
-		if ($data->batch) {
+		if ($data->media_id_batch) {
 			$media_id_batch = array();
 			for($i=0;$i<=MemreasConstants::media_id_batch_create_count; $i++) {
 				$media_id_batch[] = MUUID::fetchUUID ();
