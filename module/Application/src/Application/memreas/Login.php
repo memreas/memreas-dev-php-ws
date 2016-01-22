@@ -56,6 +56,7 @@ class Login {
 			$this->clientIPAddress = $ipAddress;
 			$cm = __CLASS__ . __METHOD__;
 			Mlog::addone ( $cm . '::$this->username', $this->username );
+			Mlog::addone ( $cm . '::$this->password', $this->password );
 			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
 			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
 			Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
@@ -84,6 +85,8 @@ class Login {
 				} else {
 					$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account = 0";
 				}
+				
+				Mlog::addone ( $cm . '::$sql', $sql );
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$row = $statement->getResult ();
 				
