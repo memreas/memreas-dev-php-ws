@@ -960,13 +960,13 @@ class IndexController extends AbstractActionController {
 						/*-
 						 * Fetch from cache for all public events 
 						 */
-						$mc = $this->redis->getCache ( '!event' );
+						$mc = $this->redis->cache->getCache ( '!event' );
 						$mc = json_decode($mc, true);
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
 							$mc = $eventRep->createEventCache ();
 							// json encode is needed given set takes string...
-							$this->cache->setCache('!event', json_encode($mc));
+							$this->redis->cache->setCache('!event', json_encode($mc));
 						} else {
 							// do nothing  - pulled from cache
 							Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$mc if from cache and decoded to array--->', $mc. 'p');
