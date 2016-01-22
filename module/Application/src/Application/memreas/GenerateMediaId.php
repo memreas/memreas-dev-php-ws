@@ -12,8 +12,9 @@ use Application\Model\MemreasConstants;
 
 class GenerateMediaId {
 	public function exec() {
+		$cm = __CLASS__ . __METHOD__;
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		
+		Mlog::addone ( $cm . '::$data---->', $data, 'p' );
 		
 		if ($data->batch) {
 			$media_id_batch = array();
@@ -35,7 +36,6 @@ class GenerateMediaId {
 		$xml_output .= "</generatemediaidresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		$cm = __CLASS__ . __METHOD__;
 		Mlog::addone ( $cm . '::$xml_output---->', $xml_output );
 		
 	}
