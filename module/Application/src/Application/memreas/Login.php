@@ -54,7 +54,7 @@ class Login {
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
-			$cm = __CLASS__ . __METHOD__;
+			//$cm = __CLASS__ . __METHOD__;
 			//Mlog::addone ( $cm . '::$this->username', $this->username );
 			//Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
 			//Mlog::addone ( $cm . '::$this->device_type', $this->device_type );

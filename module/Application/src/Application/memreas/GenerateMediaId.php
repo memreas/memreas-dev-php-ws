@@ -35,6 +35,9 @@ class GenerateMediaId {
 		$xml_output .= "</generatemediaidresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
+		$cm = __CLASS__ . __METHOD__;
+		Mlog::addone ( $cm . '::$xml_output---->', $xml_output );
+		
 	}
 }
 ?>

@@ -67,7 +67,7 @@ class FetchCopyRightBatch {
 		$xml_output .= "</fetchcopyrightbatchresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		error_log ( "fetchcopyrightbatchresponse ---> " . $xml_output . PHP_EOL );
+		//error_log ( "fetchcopyrightbatchresponse ---> " . $xml_output . PHP_EOL );
 	}
 	public function createNewBatch($count) {
 		$copyright_batch = [ ];
@@ -106,7 +106,7 @@ class FetchCopyRightBatch {
 		$this->dbAdapter->flush ();
 		$remaining = $id_count;
 		
-		Mlog::addone ( __CLASS__ . __METHOD__ . '$copyright_batch_json--->', $copyright_batch_json );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . '$copyright_batch_json--->', $copyright_batch_json );
 		return $copyright_batch_json;
 	}
 }
