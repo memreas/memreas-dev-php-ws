@@ -17,7 +17,7 @@ class GenerateMediaId {
 		Mlog::addone ( $cm . '::$data---->', $data, 'p' );
 		Mlog::addone ( $cm . '::$data->media_id_batch---->', $data->media_id_batch );
 		
-		if (!empty($data->media_id_batch)) {
+		if ($data->generateMediaId->media_id_batch) {
 			$media_id_batch = array();
 			for($i=0;$i<=MemreasConstants::media_id_batch_create_count; $i++) {
 				$media_id_batch[] = MUUID::fetchUUID ();
