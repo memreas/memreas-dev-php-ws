@@ -22,7 +22,7 @@ class GenerateMediaId {
 			for($i=0;$i<=MemreasConstants::media_id_batch_create_count; $i++) {
 				$media_id_batch[] = MUUID::fetchUUID ();
 			}
-			$media_id_output = '<media_id_batch>' . json_encode($media_id_batch) . '<media_id_batch>';
+			$media_id_output = '<media_id_batch>' . json_encode($media_id_batch) . '</media_id_batch>';
 		} else {
 			$media_id_output = '';
 		}
