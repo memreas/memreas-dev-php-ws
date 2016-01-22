@@ -960,33 +960,29 @@ class IndexController extends AbstractActionController {
 						/*-
 						 * Fetch from cache for all public events 
 						 */
-						//$this->cache->hmset ('!event');
 						$mc = $this->redis->getCache ( '!event' );
+						$mc = json_decode($mc, true);
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
 							$mc = $eventRep->createEventCache ();
-							//debugging
-							if (is_array($mc)) {
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS ARRAY --->', $mc, 'p');
-							} else {
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS NOT ARRAY --->', $mc);
-							}
-							//$this->cache->hmset ( '!event', $mc );
-							$this->cache->setCache('!event', $mc);
+							// json encode is needed given set takes string...
+							$this->cache->setCache('!event', json_encode($mc));
 						} else {
-							//debugging
-							if (is_array($mc)) {
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS ARRAY --->', $mc, 'p');
-							} else {
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$ms IS NOT ARRAY --->', $mc);
-							}
-							$mc = (array) $mc;
+							// do nothing  - pulled from cache
+							Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$mc if from cache and decoded to array--->', $mc. 'p');
 						}
+						
+						/*- 
+						 * This code pulls out events with expired viewable and 
+						 */
 						$search_result = array ();
 						$event_ids = array ();
 						foreach ( $mc as $er ) {
 							if (stripos ( $er ['name'], $search ) === 0) {
-								if ($rc >= $from && $rc < ($from + $limit)) {
+								/*-
+								 * remove limit for now
+								 */
+								//if ($rc >= $from && $rc < ($from + $limit)) {
 									$er ['name'] = '!' . $er ['name'];
 									$er ['created_on'] = Utility::formatDateDiff ( $er ['create_time'] );
 									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
@@ -996,7 +992,7 @@ class IndexController extends AbstractActionController {
 									// error_log ( "event_creator ['event_creator_pic']------>" . $event_creator ['event_creator_pic'] . PHP_EOL );
 									$search_result [] = $er;
 									$event_ids [] = $er ['event_id'];
-								}
+								//}
 								$rc += 1;
 							}
 						}
