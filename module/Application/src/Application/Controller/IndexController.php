@@ -554,7 +554,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * -
 				 * Cache Approach:
-				 * TODO: invalide - hold for now
+				 * TODO: invalidate - hold for now
 				 */
 				// $this->redis->invalidateEvents
 				// (
@@ -564,11 +564,12 @@ class IndexController extends AbstractActionController {
 				$addevent = new AddEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
-			
-			/**
-			 * Cache Approach:
-			 * TODO: invalide - hold for now
-			 */
+				
+				/*
+				 * -
+				 * Cache Approach:
+				 * TODO: invalide - hold for now
+				 */
 				
 				// $this->redis->invalidateEvents
 				// (
@@ -582,12 +583,14 @@ class IndexController extends AbstractActionController {
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (! empty ( $data->viewevent->is_public_event ) && $data->viewevent->is_public_event) {
-					/*-
-					 *  public includes friend events so add user_id
-					 *  TODO: need to union pulic and friends events in REDIS  
-					 *  */
 					$cache_id = "public";
 				} else if (! empty ( $data->viewevent->is_friend_event ) && $data->viewevent->is_friend_event) {
+					/*
+					 * -
+					 * friend events includes public
+					 * TODO: need to union pulic and friends events in REDIS
+					 *
+					 */
 					$cache_id = "is_friend_event_" . trim ( $data->viewevent->user_id );
 				} else if (! empty ( $data->viewevent->is_my_event ) && $data->viewevent->is_my_event) {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
@@ -595,12 +598,12 @@ class IndexController extends AbstractActionController {
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
-					Mlog::addone($cm.__LINE__,'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
+					Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->getServiceLocator () );
 					$result = $viewevents->exec ();
 					$cache_me = true;
 				} else {
-					Mlog::addone($cm.__LINE__,'FETCHING viewevents FROM REDIS::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
+					Mlog::addone ( $cm . __LINE__, 'FETCHING viewevents FROM REDIS::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 				}
 			} else if ($actionname == "addfriend") {
 				
