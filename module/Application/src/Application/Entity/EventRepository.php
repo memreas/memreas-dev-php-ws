@@ -188,7 +188,7 @@ class EventRepository extends EntityRepository {
 		/**
 		 * call to fetch media all events
 		 */
-		
+		Mlog::addone('createEventCache()::',$eventIndex, 'p');
 		return $eventIndex;
 	}
 	public function getHashTags() {
