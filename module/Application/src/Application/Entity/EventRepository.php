@@ -181,9 +181,12 @@ class EventRepository extends EntityRepository {
 			/**
 			 * metadata is now in result
 			 */
+			Mlog::addone('createEventCache()::$row [event_id],$row [metadata]',$row [event_id].'---->'.$row [metadata]);
 			$eventIndex [$row ['event_id']] = $row;
-			$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+			//$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+			$event_media_url = $this->getEventMediaUrl ( $row ['metadata'] );
 			$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
+			Mlog::addone('createEventCache()::$event_media_url---->',$event_media_url);
 		}
 		/**
 		 * call to fetch media all events
