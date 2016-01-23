@@ -188,10 +188,11 @@ class EventRepository extends EntityRepository {
 		}
 		*/
 		/** attempt to make one call to db - changed query in getPublic events to leftjoin event, event_media, and media*/
-		$event_ids = array();
 		foreach ( $result as $row ) {
-			//
-			
+			/** metadata is now in result */
+			$eventIndex [$row ['event_id']] = $row;
+			$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+			$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
 		}
 		/** call to fetch media all events */
 		
