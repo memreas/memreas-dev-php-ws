@@ -63,12 +63,17 @@ class ListNotification {
 	 */
 	public function exec() {
 		try {
+			$cm = __CLASS__ . __METHOD__;
+			Mlog::addone ( $cm,'::inbound xml--->'. $_POST ['xml'] );
+
 			$oClass = new \ReflectionClass ( 'Application\Entity\Notification' );
 			$array = $oClass->getConstants ();
+			Mlog::addone ( $cm.'::$oClass->getConstants ()--->', $array, 'p');
 			unset ( $array ['EMAIL'], $array ['MEMREAS'], $array ['NONMEMREAS'] );
+			Mlog::addone ( $cm.'::$oClass->getConstants () after unset--->', $array, 'p');
 			$array = array_flip ( $array );
 			
-			//Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', $_POST ['xml'] );
+			Mlog::addone ( basename ( __FILE__ ) . 'inbound xml', $_POST ['xml'] );
 			$error_flag = 0;
 			$message = '';
 			$data = simplexml_load_string ( $_POST ['xml'] );
