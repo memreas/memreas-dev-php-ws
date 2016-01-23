@@ -54,16 +54,44 @@ class EventRepository extends EntityRepository {
 		/**
 		 * - This filter only returns public events with valid from / to / self_destruct(ghost) dates
 		 */
-		$query_event = "select e.name, e.event_id ,e.location,e.user_id,e.update_time,e.create_time
-        	from Application\Entity\Event e
-            where (e.public = 1) 
-			and ((e.viewable_to >=" . $date . " or e.viewable_to ='')
-            and  (e.viewable_from <=" . $date . " or e.viewable_from =''))
-            or  (e.self_destruct >=" . $date . " or e.self_destruct='')
-            ORDER BY e.create_time DESC";
+		$qb = $this->_em->createQueryBuilder ();
+		$qb->select ( 'u.username', 'm.metadata' );
+		$qb->from ( 'Application\Entity\Event', 'e' );
+		$qb->leftjoin ( 'Application\Entity\EventMedia', 'em', 'WITH', 'e.event_id = em.event_id' );
+		$qb->join ( 'Application\Entity\Media', '', 'WITH', 'em.media_id = em.emedia_id' );
+		$qb->where ( 'e.public = 1 ' );
+		$qb->andWhere( "e.viewable_from >= $1 or e.viewable_date=''" );
+		$qb->setParameter ( 1, $event_id );
+		$rows = $qb->getQuery ()->getResult ();
+		
+		
+		/**
+		SELECT O.OrderNumber, CONVERT(date,O.OrderDate) AS Date,
+		P.ProductName, I.Quantity, I.UnitPrice
+		FROM [Order] O
+		JOIN OrderItem I ON O.Id = I.OrderId
+		JOIN Product P ON P.Id = I.ProductId
+		ORDER BY O.OrderNumber
+		*/
+		
+		$query_event = "select 	e.name, 
+								e.event_id ,
+								e.location,
+								e.user_id,
+								e.update_time,
+								e.create_time,
+								m.metadata
+        					from Application\Entity\Event e,
+						join Application\Entity\EventMedia em on e.event_id = em.event_id,
+						join Application\Entity\Media m on em.media_id = m.media_id
+            				where (e.public = 1) 
+						and ((e.viewable_to >=" . $date . " or e.viewable_to ='')
+            				and  (e.viewable_from <=" . $date . " or e.viewable_from =''))
+            				or  (e.self_destruct >=" . $date . " or e.self_destruct='')
+            				ORDER BY e.create_time DESC";
 		// $statement->setMaxResults ( $limit );
 		// $statement->setFirstResult ( $from );
-		
+		Mlog::addone('getPublicEvents()'.$query_event);
 		$statement = $this->_em->createQuery ( $query_event );
 		
 		//return $statement->getResult ();
@@ -147,7 +175,7 @@ class EventRepository extends EntityRepository {
 		$eventIndex = array ();
 		
 		
-		/** this loop causes a sql call to the db for each event - won't scale... added to get public events */
+		/** this loop causes a sql call to the db for each event - won't scale... added to get public events 
 		foreach ( $result as $row ) {
 			$eventIndex [$row ['event_id']] = $row;
 			$mediaRows = $this->getEventMedia ( $row ['event_id'] );
@@ -158,6 +186,15 @@ class EventRepository extends EntityRepository {
 				}
 			}
 		}
+		*/
+		/** attempt to make one call to db - changed query in getPublic events to leftjoin event, event_media, and media*/
+		$event_ids = array();
+		foreach ( $result as $row ) {
+			//
+			
+		}
+		/** call to fetch media all events */
+		
 		return $eventIndex;
 	}
 	public function getHashTags() {
