@@ -489,7 +489,6 @@ class ViewEvents {
 				$url = "";
 				$s3file_basename_prefix = "";
 				$url_web = "";
-				$url_1080p = "";
 				$url_hls = "";
 				$type = "";
 				$thum_url = '';
@@ -520,7 +519,6 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : ''; // get web url
-						$url_1080p = isset ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : ''; // get web url
 						$url_hls = isset ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : ''; // get web url
 						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
 						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
@@ -540,8 +538,7 @@ class ViewEvents {
 					$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 					// web - video specific
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
-					// 1080p video specific
-					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
+					// hls video specific
 					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
@@ -550,7 +547,6 @@ class ViewEvents {
 					// download urls
 					$xml .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
 					$xml .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
-					$xml .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode ( $url_1080p ) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
 					$xml .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode ( $s3file_download_path ) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
 					$xml .= (! empty ( $s3file_location )) ? "<event_media_s3file_location><![CDATA[" . json_encode ( $s3file_location ) . "]]></event_media_s3file_location>" : '';
 					$xml .= "</event_media>";
@@ -625,7 +621,6 @@ class ViewEvents {
 				$url = '';
 				$s3file_basename_prefix = "";
 				$url_web = '';
-				$url_1080p = '';
 				$url_hls = '';
 				$type = "";
 				$thum_url = '';
@@ -655,7 +650,6 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : ''; // get web url
-						$url_1080p = isset ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : ''; // get web url
 						$url_hls = isset ( $json_array ['S3_files'] ['$url_hls'] ) ? $json_array ['S3_files'] ['$url_hls'] : ''; // get web url
 						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
 						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
@@ -674,8 +668,7 @@ class ViewEvents {
 					$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 					// web - video specific
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
-					// 1080p video specific
-					$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
+					// hls video specific
 					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
 					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
@@ -684,7 +677,6 @@ class ViewEvents {
 					// download urls
 					$xml .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
 					$xml .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
-					$xml .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode ( $url_1080p ) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
 					$xml .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode ( $s3file_download_path ) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
 					$xml .= (! empty ( $s3file_location )) ? "<event_media_s3file_location><![CDATA[" . json_encode ( $s3file_location ) . "]]></event_media_s3file_location>" : '';
 					
@@ -767,7 +759,6 @@ class ViewEvents {
 				$url = '';
 				$s3file_basename_prefix = "";
 				$url_web = '';
-				$url_1080p = '';
 				$url_hls = '';
 				$type = "";
 				$thum_url = '';
@@ -800,8 +791,7 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : ''; // get web url
-						$url_1080p = isset ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : ''; // get web url
-						$url_hls = isset ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : ''; // get web url
+						$url_hls = isset ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : ''; // get hls url
 						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
 						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
 						$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
@@ -821,8 +811,7 @@ class ViewEvents {
 				$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
 				// web - video specific
 				$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
-				// 1080p video specific
-				$xml .= (! empty ( $url_1080p )) ? "<event_media_url_1080p><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_1080p ) . "]]></event_media_url_1080p>" : '<event_media_url_1080p></event_media_url_1080p>';
+				// hls video specific
 				$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 				$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
 				$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
@@ -831,7 +820,6 @@ class ViewEvents {
 				// dowload urls
 				$xml .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
 				$xml .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
-				$xml .= (! empty ( $url_1080p )) ? "<event_media_s3_url_1080p_path><![CDATA[" . json_encode ( $url_1080p ) . "]]></event_media_s3_url_1080p_path>" : '<event_media_s3_url_1080p_path></event_media_s3_url_1080p_path>';
 				$xml .= (! empty ( $s3file_download_path )) ? "<event_media_s3file_download_path><![CDATA[" . json_encode ( $s3file_download_path ) . "]]></event_media_s3file_download_path>" : '<event_media_s3file_download_path></event_media_s3file_download_path>';
 				$xml .= (! empty ( $s3file_location )) ? "<event_media_s3file_location><![CDATA[" . json_encode ( $s3file_location ) . "]]></event_media_s3file_location>" : '';
 				
