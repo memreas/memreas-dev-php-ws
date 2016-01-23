@@ -762,6 +762,7 @@ class IndexController extends AbstractActionController {
                     	 */
 						$user_ids = array ();
 						if (MemreasConstants::REDIS_SERVER_USE) {
+							Mlog::addone ( $cm . __LINE__ , "::@person search initiating search from REDIS" );
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
@@ -789,7 +790,10 @@ class IndexController extends AbstractActionController {
 								$search_result [] = $entry_arr;
 							}
 							$rc = count ( $search_result );
+							Mlog::addone ( $cm . __LINE__ ."::@person search completed search from REDIS result count--->", $rc );
+							Mlog::addone ( $cm . __LINE__ ."::@person search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
+							Mlog::addone ( $cm . __LINE__ , "::@person search initiating build cache and search in db" );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -825,8 +829,8 @@ class IndexController extends AbstractActionController {
 									Mlog::addone ( $cm . __LINE__ . "user_ids-->", json_encode ( $user_ids ) );
 								}
 								// }
-								$rc += 1;
 							}
+							$rc = count($search_result);
 						}
 						
 						/*
