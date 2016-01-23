@@ -175,6 +175,7 @@ class IndexController extends AbstractActionController {
 		return $data;
 	}
 	public function indexAction() {
+		$cm = __CLASS__ . __METHOD__;
 		// Mlog::addone(__CLASS__ . __METHOD__, '...');
 		// Checking headers for cookie info
 		// $headers = apache_request_headers();
@@ -182,7 +183,7 @@ class IndexController extends AbstractActionController {
 		// error_log("WS header: $header :: value: $value" . PHP_EOL);
 		// }
 		// End Checking headers for cookie info
-		// Mlog::addone(__CLASS__ . __METHOD__ . '$_POST', $_POST);
+		// Mlog::addone($cm . '$_POST', $_POST);
 		
 		// Capture the echo from the includes in case we need to convert
 		// back to json
@@ -192,14 +193,12 @@ class IndexController extends AbstractActionController {
 		$output = '';
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
-		// error_log("inside indexAction callback ...".$callback.PHP_EOL);
 		
-		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		// Mlog::addone ( __METHOD__ . __LINE__ . '::IndexController $_POST', $_POST );
-		error_log ( '$_REQUEST::' . print_r ( $_REQUEST, true ) . PHP_EOL );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST, 'p' );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
-			
 			$reqArr = json_decode ( $_REQUEST ['json'], true );
 			$actionname = $_REQUEST ['action'] != 'ws_tester' ? $_REQUEST ['action'] : $reqArr ['action'];
 			$type = $reqArr ['type'];
@@ -210,8 +209,6 @@ class IndexController extends AbstractActionController {
 				$_POST ['xml'] = $message_data ['xml'];
 				
 				$data = $this->inputToObject ( $message_data ['xml'] );
-			} else {
-				error_log ( 'kamlesh HAndles this ----------------------------------------------------------------------------' );
 			}
 		} else {
 			// assuming xml if not json
@@ -230,7 +227,7 @@ class IndexController extends AbstractActionController {
 		 * Check session
 		 */
 		// error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
-		// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::input data as object---> ', $data, 'p');
+		// Mlog::addone($cm.__LINE__.'::input data as object---> ', $data, 'p');
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
@@ -364,11 +361,10 @@ class IndexController extends AbstractActionController {
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
 				
-				/*
-				 * Cache approach - Write
-				 * Operation
-				 * - Invalidate existing cache
-				 * here
+				/**
+				 * Cache approach
+				 * - write operation
+				 * - TODO: invalideate cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				// $this->redis->invalidateMedia
@@ -380,9 +376,10 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
-				/*
-				 * Cache approach - write
-				 * operation - pass for now
+				/**
+				 * Cache approach
+				 * - write operation
+				 * - TODO: invalideate cache
 				 */
 				
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
@@ -395,13 +392,11 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$mediainappropriate = new MediaInappropriate ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $mediainappropriate->exec ();
-				/*
-				 * Cache approach -
-				 * Write
-				 * Operation -
-				 * Invalidate
-				 * existing cache here
-				 */
+			/**
+			 * Cache approach
+			 * - write operation
+			 * - TODO: invalideate cache
+			 */
 				// $this->redis->invalidateMedia
 				// (
 				// $data->mediainappropriate->user_id,
@@ -409,10 +404,10 @@ class IndexController extends AbstractActionController {
 				// );
 			} else if ($actionname == "countlistallmedia") {
 				
-				/*
-				 * Cache approach -
-				 * read
-				 * operation - cache
+				/**
+				 * Cache approach
+				 * - read operation
+				 * - cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->countlistallmedia->user_id );
@@ -424,11 +419,10 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "listgroup") {
-				/*
-				 * Cache approach -
-				 * read
-				 * operation -
-				 * cache
+				/**
+				 * Cache approach
+				 * - read operation
+				 * - cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listgroup->user_id );
@@ -442,16 +436,15 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "deletephoto") {
 				$deletephoto = new DeletePhoto ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $deletephoto->exec ();
-				
-				/*
-				 * -
-				 * TODO:
-				 * Cache approach
-				 * - Write Operation
-				 * - Invalidate existing cache here
-				 * -- need user_id or event_id
-				 * --- this is based on media_id
-				 */
+			
+			/**
+			 * TODO:
+			 * Cache approach
+			 * - Write Operation
+			 * - Invalidate existing cache here
+			 * -- need user_id or event_id
+			 * --- this is based on media_id
+			 */
 				
 				// $session
 				// =
@@ -464,14 +457,10 @@ class IndexController extends AbstractActionController {
 				// .
 				// $session->user_id);
 			} else if ($actionname == "listphotos") {
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * read
-				 * operation
-				 * -
-				 * cache
+				/**
+				 * Cache approach
+				 * - read operation
+				 * - cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listphotos->userid );
@@ -485,30 +474,16 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "forgotpassword") {
 				$forgotpassword = new ForgotPassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $forgotpassword->exec ();
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * N/a
-				 */
+				/* - Cache approach - N/a - */
 			} else if ($actionname == "download") {
 				$download = new Download ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $download->exec ();
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * N/a
-				 */
+				/* - Cache approach - N/a - */
 			} else if ($actionname == "viewallfriends") {
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * read
-				 * operation
-				 * -
-				 * cache
+				/**
+				 * Cache approach
+				 * - read operation
+				 * - cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->viewallfriends->user_id );
@@ -525,43 +500,16 @@ class IndexController extends AbstractActionController {
 				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->creategroup->user_id );
-				
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidate
-				 * listgroup
-				 */
-				// $this->redis->invalidateGroups
-				// (
-				// $uid
-				// );
+			
+			/**
+			 * Cache Approach:
+			 * - Check cache first if not there then fetch and cache...
+			 * - if event_id then return that cache else user_id
+			 */
 			} else if ($actionname == "listallmedia") {
-				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
-				 * if
-				 * event_id
-				 * then
-				 * return
-				 * that
-				 * cache
-				 * else
-				 * user_id
+				/**
+				 * Cache Approach: Check cache first if not there then fetch and cache...
+				 * if event_id then return that cache else user_id
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (! empty ( $data->listallmedia->event_id )) {
@@ -577,19 +525,11 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "countviewevent") {
-				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				/**
+				 * Cache Approach:
+				 * TODO: invalide - hold for now
+				 * Check cache first
+				 * if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (! empty ( $data->countviewevent->is_public_event ) && $data->countviewevent->is_public_event) {
@@ -610,15 +550,9 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = trim ( $data->editevent->event_id );
 				
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidate
-				 * events
+				/**
+				 * Cache Approach:
+				 * TODO: invalide - hold for now
 				 */
 				// $this->redis->invalidateEvents
 				// (
@@ -629,24 +563,17 @@ class IndexController extends AbstractActionController {
 				$result = $addevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * hold
-				 * for
-				 * now
+				/**
+				 * Cache Approach:
+				 * TODO: invalide - hold for now
 				 */
+				
 				// $this->redis->invalidateEvents
 				// (
 				// $data->addevent->user_id
 				// );
 			} else if ($actionname == "viewevents") {
-				/*
-				 * -
+				/**
 				 * Cache Approach:
 				 * Check cache first if not there then
 				 * fetch and cache...
@@ -673,8 +600,7 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriend->user_id );
 				$fid = trim ( $data->addfriend->friend_id );
-				/*
-				 * -
+				/**
 				 * Cache approach
 				 * - write operation
 				 * - hold for now
@@ -693,8 +619,7 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriendtoevent->user_id );
 				
-				/*
-				 * -
+				/**
 				 * Cache approach
 				 * - write operation
 				 * - hold for now
@@ -708,8 +633,7 @@ class IndexController extends AbstractActionController {
 				// $uid
 				// );
 			} else if ($actionname == "viewmediadetails") {
-				/*
-				 * -
+				/**
 				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 * if event_id then return then event_id_media_id else cache media_id
 				 */
@@ -741,8 +665,7 @@ class IndexController extends AbstractActionController {
 				$result = $addNotification->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addNotification->user_id );
-				/*
-				 * -
+				/**
 				 * Cache approach
 				 * - write operation
 				 * - invalidate listnotification
@@ -756,8 +679,7 @@ class IndexController extends AbstractActionController {
 				$result = $retranscoder->exec ();
 			} else if ($actionname == "listnotification") {
 				
-				/*
-				 * -
+				/**
 				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = ! empty ( $_POST ['xml'] ) ? simplexml_load_string ( $_POST ['xml'] ) : null;
@@ -780,8 +702,7 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = $updatenotification->user_id;
 				
-				/*
-				 * -
+				/**
 				 * Cache approach
 				 * - write operation
 				 * - invalidate listnotification
@@ -789,8 +710,7 @@ class IndexController extends AbstractActionController {
 				// $this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "findtag") {
 				
-				/*
-				 * -
+				/**
 				 * fetch parameters
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -800,8 +720,7 @@ class IndexController extends AbstractActionController {
 				$a = $tag [0];
 				$search = substr ( $tag, 1 );
 				
-				/*
-				 * -
+				/**
 				 * set paging and limits
 				 */
 				$page = trim ( $data->findtag->page );
@@ -872,7 +791,7 @@ class IndexController extends AbstractActionController {
 								 * -
 								 * Remove existing user
 								 */
-								Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "remove existing user for seach key username" . $username . " --- uid-->", $uid );
+								Mlog::addone ( $cm . __LINE__ . "remove existing user for seach key username" . $username . " --- uid-->", $uid );
 								if ($uid == $user_id) {
 									continue;
 								}
@@ -883,14 +802,14 @@ class IndexController extends AbstractActionController {
 								/*
 								 * -
 								 * if ($rc >= $from && $rc < ($from + $limit)) {
-								 * Mlog::addone(__CLASS__.__METHOD__.__LINE__."meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" , $search);
+								 * Mlog::addone($cm.__LINE__."meta_arr ['username']--->" . $meta_arr ['username'] . " --- search-->" , $search);
 								 * }
 								 */
 								if (stripos ( $meta_arr ['username'], $search ) !== false) {
 									$meta_arr ['username'] = '@' . $meta_arr ['username'];
 									$search_result [] = $meta_arr;
 									$user_ids [] = $uid;
-									Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "user_ids-->", json_encode ( $user_ids ) );
+									Mlog::addone ( $cm . __LINE__ . "user_ids-->", json_encode ( $user_ids ) );
 								}
 								// }
 								$rc += 1;
@@ -961,38 +880,40 @@ class IndexController extends AbstractActionController {
 						 * Fetch from cache for all public events 
 						 */
 						$mc = $this->redis->cache->getCache ( '!event' );
-						$mc = json_decode($mc, true);
+						$mc = json_decode ( $mc, true );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
 							$mc = $eventRep->createEventCache ();
 							// json encode is needed given set takes string...
-							$this->redis->cache->setCache('!event', json_encode($mc));
+							$this->redis->cache->setCache ( '!event', json_encode ( $mc ) );
 						} else {
-							// do nothing  - pulled from cache
-							Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$mc if from cache and decoded to array--->', $mc. 'p');
+							// do nothing - pulled from cache
+							Mlog::addone ( $cm . __LINE__ . '::$mc if from cache and decoded to array--->', $mc . 'p' );
 						}
 						
-						/*- 
-						 * This code pulls out events with expired viewable and 
+						/*
+						 * -
+						 * This code pulls out events with expired viewable and
 						 */
 						$search_result = array ();
 						$event_ids = array ();
 						foreach ( $mc as $er ) {
 							if (stripos ( $er ['name'], $search ) === 0) {
-								/*-
+								/*
+								 * -
 								 * remove limit for now
 								 */
-								//if ($rc >= $from && $rc < ($from + $limit)) {
-									$er ['name'] = '!' . $er ['name'];
-									$er ['created_on'] = Utility::formatDateDiff ( $er ['create_time'] );
-									$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
-									$er ['event_creator_name'] = '@' . $event_creator ['username'];
-									$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-									// error_log ( "event_creator ['username']------>" . $event_creator ['username'] . PHP_EOL );
-									// error_log ( "event_creator ['event_creator_pic']------>" . $event_creator ['event_creator_pic'] . PHP_EOL );
-									$search_result [] = $er;
-									$event_ids [] = $er ['event_id'];
-								//}
+								// if ($rc >= $from && $rc < ($from + $limit)) {
+								$er ['name'] = '!' . $er ['name'];
+								$er ['created_on'] = Utility::formatDateDiff ( $er ['create_time'] );
+								$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
+								$er ['event_creator_name'] = '@' . $event_creator ['username'];
+								$er ['event_creator_pic'] = $event_creator ['profile_photo'];
+								// Mlog::addone($cm.__LINE__, "event_creator ['username']------>" . $event_creator ['username']);
+								// Mlog::addone($cm.__LINE__, "event_creator ['event_creator_pic']------>" . $event_creator ['event_creator_pic']);
+								$search_result [] = $er;
+								$event_ids [] = $er ['event_id'];
+								// }
 								$rc += 1;
 							}
 						}
@@ -1014,7 +935,7 @@ class IndexController extends AbstractActionController {
 						// $qb->andWhere('ef.user_approve
 						// =
 						// 1');
-						$qb->setParameter ( 'f', $_SESSION['user_id'] );
+						$qb->setParameter ( 'f', $_SESSION ['user_id'] );
 						$qb->setParameter ( 'e', $event_ids );
 						$EventFriends = $qb->getQuery ()->getArrayResult ();
 						
@@ -1053,7 +974,7 @@ class IndexController extends AbstractActionController {
 						 */
 						
 						echo json_encode ( $result );
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
+						Mlog::addone ( $cm . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
 						$result = '';
 						break;
 					
@@ -1067,16 +988,16 @@ class IndexController extends AbstractActionController {
                     	 */
 						$search_result = array ();
 						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-							error_log ( "redis hashtag fetch TODO..." . PHP_EOL );
-							error_log ( "Inside findTag # for tag $search" . PHP_EOL );
+							Mlog::addone ( $cm . __LINE__, "redis hashtag fetch TODO..." );
+							Mlog::addone ( $cm . __LINE__, "Inside findTag # for tag $search" );
 							$tags_public = $this->redis->findSet ( '#hashtag', $search );
 							$tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $search );
 							$tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
-							error_log ( "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) . PHP_EOL );
+							Mlog::addone ( $cm . __LINE__, "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) );
 							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
-							error_log ( "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) . PHP_EOL );
+							Mlog::addone ( $cm . __LINE__, "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) );
 							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
-							error_log ( "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) . PHP_EOL );
+							Mlog::addone ( $cm . __LINE__, "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) );
 							
 							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 							$mc = $eventRep->createDiscoverCache ( $search );
@@ -1099,11 +1020,8 @@ class IndexController extends AbstractActionController {
 						}
 						
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-							/*
-							 * -
-							 * error_log ( "tag------>$tag" . PHP_EOL );
-							 * error_log ( "cache_entry------>" . json_encode ( $cache_entry ) . PHP_EOL );
-							 */
+							Mlog::addone ( $cm . __LINE__, "tag------>$tag" );
+							Mlog::addone ( $cm . __LINE__, "cache_entry------>" . json_encode ( $cache_entry ) );
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
 								/*
 								 * -
@@ -1139,8 +1057,7 @@ class IndexController extends AbstractActionController {
 						break;
 				}
 			} else if ($actionname == "findevent") {
-				/*
-				 * -
+				/**
 				 * TODO:
 				 * This is covered by findtag?
 				 */
@@ -1230,15 +1147,9 @@ class IndexController extends AbstractActionController {
 						
 						if ($rc >= $from && $rc < ($from + $limit)) {
 							$er ['name'] = $er ['name'];
-							// $er['comment_count']
-							// =
-							// $eventRep->getLikeCount($eid);
-							// $er['like_count']
-							// =
-							// $eventRep->getLikeCount($eid);
-							// $er['friends']
-							// =
-							// $eventRep->getEventFriends($eid);
+							// $er['comment_count'] = $eventRep->getLikeCount($eid);
+							// $er['like_count'] = $eventRep->getLikeCount($eid);
+							// $er['friends'] = $eventRep->getEventFriends($eid);
 							$search_result [] = $er;
 						}
 						
@@ -1258,83 +1169,43 @@ class IndexController extends AbstractActionController {
 				echo json_encode ( $result );
 				$result = '';
 			} else if ($actionname == "signedurl") {
-				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 */
+				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $signedurl->exec ();
 			} else if ($actionname == "showlog") {
-				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 */
+				/* - Cache Approach: N/a - */
 				echo '<pre>' . file_get_contents ( getcwd () . '/php_errors.log' );
 				ob_end_flush ();
 				exit ();
 			} else if ($actionname == "clearlog") {
-				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 */
+				/* - Cache Approach: N/a - */
 				unlink ( getcwd () . '/php_errors.log' );
 				error_log ( "Log has been cleared!" );
 				echo '<pre>' . file_get_contents ( getcwd () . '/php_errors.log' );
 				ob_end_flush ();
 				exit ();
 			} else if ($actionname == "logout") {
-				/*
-				 * Cache
-				 * Approach:
-				 * N/a
-				 */
+				/* - Cache Approach: N/a - */
 				$logout = new LogOut ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $logout->exec ( $this->sessHandler );
 			} else if ($actionname == "clearallnotification") {
-				/*
-				 * TODO:
-				 * Cache
-				 * Approach:
-				 * write
-				 * operation
-				 * do
-				 * later
-				 */
+				/* - TODO: Cache Approach: write operation do later - */
 				$logout = new ClearAllNotification ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $logout->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->clearallnotification->user_id );
-				/*
-				 * Cache
-				 * approach
-				 * -
-				 * write
-				 * operation
-				 * -
-				 * invalidate
-				 * listnotification
+				/**
+				 * Cache approach
+				 * - write operation
+				 * - invalidate listnotification
 				 */
 				// $this->redis->invalidateNotifications
 				// (
 				// $uid
 				// );
 			} else if ($actionname == "getsession") {
-				/*
-				 * Cache
-				 * Approach:
-				 * Check
-				 * cache
-				 * first
-				 * if
-				 * not
-				 * there
-				 * then
-				 * fetch
-				 * and
-				 * cache...
+				/**
+				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listnotification->user_id );
@@ -1353,9 +1224,8 @@ class IndexController extends AbstractActionController {
 				$result = $register_canonical_device->exec ();
 			} else if ($actionname == "listcomments") {
 				
-				/*
-				 * Cache Approach:
-				 * Check cache first if not there then fetch and cache...
+				/**
+				 * Cache Approach: Check cache first if not there then fetch and cache...
 				 * if event_id then return then event_id_media_id
 				 * else cache media_id
 				 */
@@ -1426,16 +1296,14 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "saveuserdetails") {
-				/*
-				 * TODO:
-				 * Invalidation
-				 * needed
+				/**
+				 * TODO: Invalidation needed
 				 */
 				$SaveUserDetails = new SaveUserDetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $SaveUserDetails->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				
-				/*
+				/**
 				 * Cache approach
 				 * - write operation
 				 * - invalidate listnotification
@@ -1760,7 +1628,7 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$actionname', $actionname );
+				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this );
 				$result = $PaymentsProxy->exec ( $actionname );
 			}

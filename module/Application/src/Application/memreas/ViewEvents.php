@@ -19,7 +19,6 @@ class ViewEvents {
 	protected $service_locator;
 	protected $dbAdapter;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
-		error_log ( "Inside ViewEvents :__construct..." );
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
@@ -736,7 +735,7 @@ class ViewEvents {
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
 		
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
 		return $public_events_array;
 	}
 	private function fetchOwnerProfilePic($user_id) {
