@@ -82,8 +82,8 @@ class EventRepository extends EntityRepository {
 		Mlog::addone ( 'getPublicEvents()' , $query_event );
 		$statement = $this->_em->createQuery ( $query_event );
 		
-		// return $statement->getResult ();
-		return $statement->getArrayResult ();
+		return $statement->getResult ();
+		//return $statement->getArrayResult ();
 	}
 	public function getEventFriends($event_id, $rawData = false) {
 		$qb = $this->_em->createQueryBuilder ();
@@ -157,7 +157,7 @@ class EventRepository extends EntityRepository {
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		$result = $this->getPublicEvents ( $date );
-		Mlog::addone ( "getPublicEvents Array ", $result, 'p' );
+		Mlog::addone ( "getPublicEvents Object ", $result, 'p' );
 		$eventIndex = array ();
 		
 		/**
