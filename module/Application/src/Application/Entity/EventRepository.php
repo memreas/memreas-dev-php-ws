@@ -52,38 +52,37 @@ class EventRepository extends EntityRepository {
 	}
 	public function getPublicEvents($date) {
 		/**
-		 * - This filter only returns public events with valid from / to / self_destruct(ghost) dates
+		 * - This filter only returns public events and public events with valid from / to / self_destruct(ghost) dates
 		 */
-		/**
-		SELECT O.OrderNumber, CONVERT(date,O.OrderDate) AS Date,
-		P.ProductName, I.Quantity, I.UnitPrice
-		FROM [Order] O
-		JOIN OrderItem I ON O.Id = I.OrderId
-		JOIN Product P ON P.Id = I.ProductId
-		ORDER BY O.OrderNumber
-		*/
-		
-		$query_event = "select 	e.name, 
-								e.event_id ,
-								e.location,
-								e.user_id,
-								e.update_time,
-								e.create_time,
-								m.metadata
-        					from Application\Entity\Event e,
-						join Application\Entity\EventMedia em on e.event_id = em.event_id,
-						join Application\Entity\Media m on em.media_id = m.media_id
-            				where (e.public = 1) 
-						and ((e.viewable_to >=" . $date . " or e.viewable_to ='')
-            				and  (e.viewable_from <=" . $date . " or e.viewable_from =''))
-            				or  (e.self_destruct >=" . $date . " or e.self_destruct='')
-            				ORDER BY e.create_time DESC";
+		$query_event = "SELECT 
+    							e.name,
+    							e.event_id,
+    							e.location,
+    							e.user_id,
+    							e.update_time,
+    							e.create_time,
+    							m.media_id,
+    							m.metadata
+    						FROM
+    							Application\Entity\Event e
+    							JOIN
+    							Application\Entity\EventMedia em ON e.event_id = em.event_id
+    							JOIN
+    							Application\Entity\Media m ON em.media_id = m.media_id
+    							WHERE e.public = 1
+    								AND (
+										(e.viewable_from <= " . $date . " AND e.viewable_to >= " . $date . ") 
+										OR 
+										(e.viewable_from = '' AND e.viewable_to = '')
+									)
+        							OR (e.self_destruct >= " . $date . " OR e.self_destruct = '')
+							ORDER BY e.create_time DESC";
 		// $statement->setMaxResults ( $limit );
 		// $statement->setFirstResult ( $from );
-		Mlog::addone('getPublicEvents()'.$query_event);
+		Mlog::addone ( 'getPublicEvents()' , $query_event );
 		$statement = $this->_em->createQuery ( $query_event );
 		
-		//return $statement->getResult ();
+		// return $statement->getResult ();
 		return $statement->getArrayResult ();
 	}
 	public function getEventFriends($event_id, $rawData = false) {
@@ -109,11 +108,9 @@ class EventRepository extends EntityRepository {
 		
 		return $out;
 	}
-
-	
 	public function getEventMedia($event_id, $limit = false) {
 		$qb = $this->_em->createQueryBuilder ();
-		$qb->select ( 'event_media.event_id','event_media.media_id','media.metadata' );
+		$qb->select ( 'event_media.event_id', 'event_media.media_id', 'media.metadata' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
 		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
 		$qb->where ( 'event_media.event_id=?1' );
@@ -160,30 +157,37 @@ class EventRepository extends EntityRepository {
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		$result = $this->getPublicEvents ( $date );
-		Mlog::addone("getPublicEvents Array ", $result, 'p');
+		Mlog::addone ( "getPublicEvents Array ", $result, 'p' );
 		$eventIndex = array ();
 		
-		
-		/** this loop causes a sql call to the db for each event - won't scale... added left join event, event_media, media to get public events 
+		/**
+		 * this loop causes a sql call to the db for each event - won't scale...
+		 * added left join event, event_media, media to get public events
+		 * foreach ( $result as $row ) {
+		 * $eventIndex [$row ['event_id']] = $row;
+		 * $mediaRows = $this->getEventMedia ( $row ['event_id'] );
+		 * foreach ( $mediaRows as $mediaRow ) {
+		 * $event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+		 * if (! empty ( $event_media_url )) {
+		 * $eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
+		 * }
+		 * }
+		 * }
+		 */
+		/**
+		 * attempt to make one call to db - changed query in getPublic events to leftjoin event, event_media, and media
+		 */
 		foreach ( $result as $row ) {
-			$eventIndex [$row ['event_id']] = $row;
-			$mediaRows = $this->getEventMedia ( $row ['event_id'] );
-			foreach ( $mediaRows as $mediaRow ) {
-				$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
-				if (! empty ( $event_media_url )) {
-					$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
-				}
-			}
-		}
-		*/
-		/** attempt to make one call to db - changed query in getPublic events to leftjoin event, event_media, and media*/
-		foreach ( $result as $row ) {
-			/** metadata is now in result */
+			/**
+			 * metadata is now in result
+			 */
 			$eventIndex [$row ['event_id']] = $row;
 			$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
 			$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
 		}
-		/** call to fetch media all events */
+		/**
+		 * call to fetch media all events
+		 */
 		
 		return $eventIndex;
 	}
