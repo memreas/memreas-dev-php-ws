@@ -122,7 +122,7 @@ class EventRepository extends EntityRepository {
 	}
 
 	
-	public function getEventMedia($event_ids, $limit = false) {
+	public function getEventMedia($event_id, $limit = false) {
 		$qb = $this->_em->createQueryBuilder ();
 		$qb->select ( 'event_media.event_id','event_media.media_id','media.metadata' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
@@ -175,7 +175,7 @@ class EventRepository extends EntityRepository {
 		$eventIndex = array ();
 		
 		
-		/** this loop causes a sql call to the db for each event - won't scale... added to get public events 
+		/** this loop causes a sql call to the db for each event - won't scale... added left join event, event_media, media to get public events 
 		foreach ( $result as $row ) {
 			$eventIndex [$row ['event_id']] = $row;
 			$mediaRows = $this->getEventMedia ( $row ['event_id'] );
