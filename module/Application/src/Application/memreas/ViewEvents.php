@@ -189,7 +189,7 @@ class ViewEvents {
 						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ))
 							$pic_98x78 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] );
 					} else {
-						$url1 = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
+						$url1 = $this->url_signer->signArrayOfUrls (null);
 						$pic_79x80 = '';
 						$pic_448x306 = '';
 						$pic_98x78 = '';
