@@ -51,10 +51,13 @@ class EventRepository extends EntityRepository {
 		// ->setParameter('ids', $ids);
 	}
 	public function getPublicEvents($date) {
-		/**
-		 * - This filter only returns public events and public events with valid from / to / self_destruct(ghost) dates
-		 */
-		$query_event = "SELECT 
+		try {
+			/**
+			 * - This filter only returns public events and public events with valid from / to / self_destruct(ghost) dates
+			 */
+			/**
+			 * -
+			$query_event = "SELECT 
     							e.name,
     							e.event_id,
     							e.location,
@@ -77,13 +80,39 @@ class EventRepository extends EntityRepository {
 									)
         							OR (e.self_destruct >= " . $date . " OR e.self_destruct = '')
 							ORDER BY e.create_time DESC";
-		// $statement->setMaxResults ( $limit );
-		// $statement->setFirstResult ( $from );
-		Mlog::addone ( 'getPublicEvents()' , $query_event );
-		$statement = $this->_em->createQuery ( $query_event );
-		
-		return $statement->getResult ();
-		//return $statement->getArrayResult ();
+			// $statement->setMaxResults ( $limit );
+			// $statement->setFirstResult ( $from );
+			Mlog::addone ( 'getPublicEvents()', $query_event );
+			$statement = $this->_em->createQuery ( $query_event );
+			$result = $statement->getResult ();
+			*/
+				
+			
+			
+			$qb = $this->_em->createQueryBuilder ();
+			$qb->select ( 'e.name',
+    							'e.event_id',
+    							'e.location',
+    							'e.user_id',
+    							'e.update_time',
+    							'e.create_time',
+    							'm.media_id',
+    							'm.metadata' );
+			$qb->from ( 'Application\Entity\Event', 'e' );
+			$qb->leftjoin ( 'Application\Entity\EventMedia', 'em', 'WITH', 'e.event_id = em.event_id' );
+			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.media_id = em.media_id' );
+			$qb->where ( 'e.public = 1 ' );
+			$qb->andWhere("(e.viewable_from <= ?1 AND e.viewable_to >= ?1) OR (e.viewable_from = '' AND e.viewable_to = '')");
+			$qb->orWhere("e.self_destruct >= ?1 OR e.self_destruct = ''");
+			$qb->setParameter ( 1, $date );
+			$result = $qb->getQuery ()->getResult ();
+				
+			return $result;
+		} catch ( Doctrine_Connection_Exception $e ) {
+			Mlog::addone ( 'getPublicEvents()::Code : ' , $e->getPortableCode () );
+			Mlog::addone ( 'getPublicEvents()::Message : ' , $e->getPortableMessage () );
+		}
+		return null;
 	}
 	public function getEventFriends($event_id, $rawData = false) {
 		$qb = $this->_em->createQueryBuilder ();
@@ -181,17 +210,17 @@ class EventRepository extends EntityRepository {
 			/**
 			 * metadata is now in result
 			 */
-			Mlog::addone('createEventCache()::$row [event_id],$row [metadata]',$row [event_id].'---->'.$row [metadata]);
+			Mlog::addone ( 'createEventCache()::$row [event_id],$row [metadata]', $row [event_id] . '---->' . $row [metadata] );
 			$eventIndex [$row ['event_id']] = $row;
-			//$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+			// $event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
 			$event_media_url = $this->getEventMediaUrl ( $row ['metadata'] );
 			$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
-			Mlog::addone('createEventCache()::$event_media_url---->',$event_media_url);
+			Mlog::addone ( 'createEventCache()::$event_media_url---->', $event_media_url );
 		}
 		/**
 		 * call to fetch media all events
 		 */
-		Mlog::addone('createEventCache()::',$eventIndex, 'p');
+		Mlog::addone ( 'createEventCache()::', $eventIndex, 'p' );
 		return $eventIndex;
 	}
 	public function getHashTags() {
