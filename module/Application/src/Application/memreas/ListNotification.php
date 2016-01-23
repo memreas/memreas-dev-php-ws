@@ -69,7 +69,7 @@ class ListNotification {
 			$oClass = new \ReflectionClass ( 'Application\Entity\Notification' );
 			$array = $oClass->getConstants ();
 			Mlog::addone ( $cm.'::$oClass->getConstants ()--->', $array, 'p');
-			unset ( $array ['EMAIL'], $array ['MEMREAS'], $array ['NONMEMREAS'] );
+			unset ( $array ['EMAIL'], $array ['MEMREAS'] );
 			Mlog::addone ( $cm.'::$oClass->getConstants () after unset--->', $array, 'p');
 			$array = array_flip ( $array );
 			
@@ -174,6 +174,8 @@ class ListNotification {
 			$this->xml_output .= "</notifications></listnotificationresponse>";
 			$this->xml_output .= "</xml>";
 			echo $this->xml_output;
+			Mlog::addone ( $cm,'::outbound xml--->'. $_POST ['xml'] );
+				
 		} catch ( \Exception $e ) {
 			$status = 'failure';
 			$message .= 'listnotifications error ->' . $e->getMessage ();

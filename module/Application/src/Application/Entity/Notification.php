@@ -26,7 +26,6 @@ class Notification {
 	const ERROR = 'ERROR'; // 8
 	const EMAIL = 'EMAIL'; // 0
 	const MEMREAS = 'MEMREAS'; // 1
-	const NONMEMREAS = 'NONMEMREAS'; // 2
 	const SMS = 'SMS'; // 2
 	
 	/**
