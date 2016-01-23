@@ -54,17 +54,6 @@ class EventRepository extends EntityRepository {
 		/**
 		 * - This filter only returns public events with valid from / to / self_destruct(ghost) dates
 		 */
-		$qb = $this->_em->createQueryBuilder ();
-		$qb->select ( 'u.username', 'm.metadata' );
-		$qb->from ( 'Application\Entity\Event', 'e' );
-		$qb->leftjoin ( 'Application\Entity\EventMedia', 'em', 'WITH', 'e.event_id = em.event_id' );
-		$qb->join ( 'Application\Entity\Media', '', 'WITH', 'em.media_id = em.emedia_id' );
-		$qb->where ( 'e.public = 1 ' );
-		$qb->andWhere( "e.viewable_from >= $1 or e.viewable_date=''" );
-		$qb->setParameter ( 1, $event_id );
-		$rows = $qb->getQuery ()->getResult ();
-		
-		
 		/**
 		SELECT O.OrderNumber, CONVERT(date,O.OrderDate) AS Date,
 		P.ProductName, I.Quantity, I.UnitPrice
