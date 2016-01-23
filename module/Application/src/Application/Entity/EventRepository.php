@@ -50,10 +50,14 @@ class EventRepository extends EntityRepository {
 		// $query_builder->andWhere('r.winner IN (:ids)')
 		// ->setParameter('ids', $ids);
 	}
-	public function getEvents($date) {
+	public function getPublicEvents($date) {
+		/**
+		 * - This filter only returns public events with valid from / to / self_destruct(ghost) dates
+		 */
 		$query_event = "select e.name, e.event_id ,e.location,e.user_id,e.update_time,e.create_time
         	from Application\Entity\Event e
-            where ((e.viewable_to >=" . $date . " or e.viewable_to ='')
+            where (e.public = 1) 
+			and ((e.viewable_to >=" . $date . " or e.viewable_to ='')
             and  (e.viewable_from <=" . $date . " or e.viewable_from =''))
             or  (e.self_destruct >=" . $date . " or e.self_destruct='')
             ORDER BY e.create_time DESC";
@@ -62,7 +66,8 @@ class EventRepository extends EntityRepository {
 		
 		$statement = $this->_em->createQuery ( $query_event );
 		
-		return $statement->getResult ();
+		//return $statement->getResult ();
+		return $statement->getArrayResult ();
 	}
 	public function getEventFriends($event_id, $rawData = false) {
 		$qb = $this->_em->createQueryBuilder ();
@@ -70,11 +75,11 @@ class EventRepository extends EntityRepository {
 		$qb->from ( 'Application\Entity\User', 'u' );
 		$qb->leftjoin ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'ef.friend_id = u.user_id' );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' ); 
+		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		$qb->where ( 'ef.event_id=?1 ' );
 		$qb->setParameter ( 1, $event_id );
 		$rows = $qb->getQuery ()->getResult ();
-
+		
 		if ($rawData) {
 			return $rows;
 		}
@@ -87,12 +92,15 @@ class EventRepository extends EntityRepository {
 		
 		return $out;
 	}
-	public function getEventMedia($event_id, $limit = false) {
+
+	
+	public function getEventsMedia($event_ids, $limit = false) {
 		$qb = $this->_em->createQueryBuilder ();
-		$qb->select ( 'media.metadata' );
+		$qb->select ( 'event_media.event_id','event_media.media_id','media.metadata' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
 		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
 		$qb->where ( 'event_media.event_id=?1' );
+		$qb->where ( 'event_media.event_id IN (:ids)' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $event_id );
 		
@@ -103,7 +111,8 @@ class EventRepository extends EntityRepository {
 	public function getProfileUrl($metadata = '') {
 		$json_array = json_decode ( $metadata, true );
 		// $url = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-		/*-
+		/*
+		 * -
 		 * signArrayofUrls always returns an array so we get [0]
 		 */
 		$url = "";
@@ -116,24 +125,29 @@ class EventRepository extends EntityRepository {
 		return $url;
 	}
 	public function getEventMediaUrl($metadata = '', $size = '') {
-		/*-
+		/*
+		 * -
 		 * signArrayofUrls always returns an array so we get [0]
 		 */
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
 		$json_array = json_decode ( $metadata, true );
 		$url = "";
-		if (($json_array ['S3_files'] ['file_type'] != 'audio') && isset( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] )) {
-			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'][0] );
+		if (($json_array ['S3_files'] ['file_type'] != 'audio') && isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
+			$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 		} else {
 			$url = $this->url_signer->signArrayOfUrls ( null );
 		}
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url);
-		return  $url;
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url);
+		return $url;
 	}
 	public function createEventCache() {
 		$date = strtotime ( date ( 'd-m-Y' ) );
-		$result = $this->getEvents ( $date );
+		$result = $this->getPublicEvents ( $date );
+		Mlog::addone("getPublicEvents Array ", $result, 'p');
 		$eventIndex = array ();
+		
+		
+		/** this loop causes a sql call to the db for each event - won't scale... added to get public events */
 		foreach ( $result as $row ) {
 			$eventIndex [$row ['event_id']] = $row;
 			$mediaRows = $this->getEventMedia ( $row ['event_id'] );

@@ -762,7 +762,7 @@ class IndexController extends AbstractActionController {
                     	 */
 						$user_ids = array ();
 						if (MemreasConstants::REDIS_SERVER_USE) {
-							Mlog::addone ( $cm . __LINE__ , "::@person search initiating search from REDIS" );
+							Mlog::addone ( $cm . __LINE__, "::@person search initiating search from REDIS" );
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
@@ -790,10 +790,10 @@ class IndexController extends AbstractActionController {
 								$search_result [] = $entry_arr;
 							}
 							$rc = count ( $search_result );
-							Mlog::addone ( $cm . __LINE__ ."::@person search completed search from REDIS result count--->", $rc );
-							Mlog::addone ( $cm . __LINE__ ."::@person search completed search from REDIS result --->", $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result count--->", $rc );
+							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
-							Mlog::addone ( $cm . __LINE__ , "::@person search initiating build cache and search in db" );
+							Mlog::addone ( $cm . __LINE__, "::@person search initiating build cache and search in db" );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -830,7 +830,7 @@ class IndexController extends AbstractActionController {
 								}
 								// }
 							}
-							$rc = count($search_result);
+							$rc = count ( $search_result );
 						}
 						
 						/*
@@ -891,49 +891,53 @@ class IndexController extends AbstractActionController {
 					case '!' :
 
 						/*-
-						 * Store event cache by user
-						 */
-						/*-
 						 * Fetch from cache for all public events 
 						 */
-						$mc = $this->redis->getCache ( '!event' );
-						$mc = json_decode ( $mc, true );
-						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-						if (! $mc || empty ( $mc )) {
-							$mc = $eventRep->createEventCache ();
+						$event_cache = $this->redis->getCache ( '!event' );
+						if (! $event_cache || empty ( $event_cache )) {
+							$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+							$events_with_valid_from_to_and_ghost = $eventRep->createEventCache ();
+							$search_result = array ();
+							$event_count = 0;
+							$event_ids = array ();
+								
+							foreach ( $events_with_valid_from_to_and_ghost as $event_key => $event_value  ) {
+								if (stripos ( $er ['name'], $search ) === 0) {
+									$event_key ['name'] = '!' . $event_key ['name'];
+									$event_key ['comment_count'] = $eventRep->getCommentCount ( $event_value );
+									$event_key ['like_count'] = $eventRep->getLikeCount ( $event_value );
+									$event_key ['friends'] = $eventRep->getEventFriends ( $event_value );
+									//$er ['name'] = '!' . $er ['name'];
+									$event_key ['created_on'] = Utility::formatDateDiff ( $event_key ['create_time'] );
+									$event_creator = $eventRep->getUser ( $event_key ['user_id'], 'row' );
+									$event_key ['event_creator_name'] = '@' . $event_creator ['username'];
+									$event_key ['event_creator_pic'] = $event_creator ['profile_photo'];
+									$search_result [] = $event_key;
+									$event_ids [] = $event_key ['event_id'];
+										
+								}
+							}
+							/*
+							 * -
+							 * TODO: Fix paging later - not nedded for Android / iOS, doesn't work on web
+							 */
+							$result ['count'] = count($search_result);
+							$result ['page'] = 1;
+							$result ['totalPage'] = 1;
+							$result ['search'] = $search_result;
+
+							/**
+							 * - Ok now store the list in REDIS as json
+							 */
 							// json encode is needed given set takes string...
-							$this->redis->setCache ( '!event', json_encode ( $mc ) );
+							$this->redis->setCache ( '!event', json_encode ( $result ) );
+							Mlog::addone ( $cm . __LINE__ . '::$mc added to cache as json--->', json_encode ( $result ) );
 						} else {
 							// do nothing - pulled from cache
-							Mlog::addone ( $cm . __LINE__ . '::$mc if from cache and decoded to array--->', $mc . 'p' );
+							Mlog::addone ( $cm . __LINE__ . '::$mc if from cache as json--->', $event_cache );
+							$search_result = json_decode($event_cache, true);
 						}
-						
-						/*
-						 * -
-						 * This code pulls out events with expired viewable and
-						 */
-						$search_result = array ();
-						$event_ids = array ();
-						foreach ( $mc as $er ) {
-							if (stripos ( $er ['name'], $search ) === 0) {
-								/*
-								 * -
-								 * remove limit for now
-								 */
-								// if ($rc >= $from && $rc < ($from + $limit)) {
-								$er ['name'] = '!' . $er ['name'];
-								$er ['created_on'] = Utility::formatDateDiff ( $er ['create_time'] );
-								$event_creator = $eventRep->getUser ( $er ['user_id'], 'row' );
-								$er ['event_creator_name'] = '@' . $event_creator ['username'];
-								$er ['event_creator_pic'] = $event_creator ['profile_photo'];
-								// Mlog::addone($cm.__LINE__, "event_creator ['username']------>" . $event_creator ['username']);
-								// Mlog::addone($cm.__LINE__, "event_creator ['event_creator_pic']------>" . $event_creator ['event_creator_pic']);
-								$search_result [] = $er;
-								$event_ids [] = $er ['event_id'];
-								// }
-								$rc += 1;
-							}
-						}
+						$event_count = count($search_result);
 						
 						/*
 						 * -
@@ -976,20 +980,7 @@ class IndexController extends AbstractActionController {
 						$result ['count'] = $rc;
 						$result ['search'] = $search_result;
 						$result ['comments'] = empty ( $comments ) ? "" : $comments;
-						/*
-						 * -
-						 * $result ['page'] = $page;
-						 * $result ['totalPage'] = ceil ( $rc / $limit );
-						 *
-						 */
-						
-						/*
-						 * -
-						 * $result = preg_grep ( "/$search/", $mc );
-						 * echo '<pre>';
-						 * print_r ( $result );
-						 */
-						
+
 						echo json_encode ( $result );
 						Mlog::addone ( $cm . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
 						$result = '';
@@ -1073,118 +1064,118 @@ class IndexController extends AbstractActionController {
 						$result = '';
 						break;
 				}
-			} else if ($actionname == "findevent") {
-				/*
-				 * - TODO:
-				 * This is covered by findtag?
-				 */
-				$data = simplexml_load_string ( $_POST ['xml'] );
-				$tag = (trim ( $data->findevent->tag ));
-				$search = substr ( $tag, 1 );
-				$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-				$mc = $this->redis->getCache ( '!event' );
-				if (! $mc || empty ( $mc )) {
-					$mc = $eventRep->createEventCache ();
-					$this->redis->setCache ( "!event", $mc );
-				}
+				// } else if ($actionname == "findevent") {
+				// /*
+				// * - TODO:
+				// * This is covered by findtag?
+				// */
+				// $data = simplexml_load_string ( $_POST ['xml'] );
+				// $tag = (trim ( $data->findevent->tag ));
+				// $search = substr ( $tag, 1 );
+				// $eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+				// $mc = $this->redis->getCache ( '!event' );
+				// if (! $mc || empty ( $mc )) {
+				// $mc = $eventRep->createEventCache ();
+				// $this->redis->setCache ( "!event", $mc );
+				// }
 				
-				$search_result = array ();
-				$page = trim ( $data->findevent->page );
-				if (empty ( $page )) {
-					$page = 1;
-				}
+				// $search_result = array ();
+				// $page = trim ( $data->findevent->page );
+				// if (empty ( $page )) {
+				// $page = 1;
+				// }
 				
-				$limit = trim ( $data->findevent->limit );
-				if (empty ( $limit )) {
-					$limit = 20;
-				}
+				// $limit = trim ( $data->findevent->limit );
+				// if (empty ( $limit )) {
+				// $limit = 20;
+				// }
 				
-				$from = ($page - 1) * $limit;
-				$rc = 0;
-				foreach ( $mc as $eid => $er ) {
-					if (stripos ( $er ['name'], $search ) === 0) {
-						if ($rc >= $from && $rc < ($from + $limit)) {
-							$er ['name'] = '!' . $er ['name'];
-							$er ['comment_count'] = $eventRep->getCommentCount ( $eid );
-							$er ['like_count'] = $eventRep->getLikeCount ( $eid );
-							$er ['friends'] = $eventRep->getEventFriends ( $eid );
-							$search_result [] = $er;
-						}
-						
-						$rc += 1;
-					}
-				}
-				$result ['count'] = $rc;
-				$result ['page'] = $page;
-				$result ['totalPage'] = ceil ( $rc / $limit );
-				$result ['search'] = $search_result;
-				// $result
-				// =
-				// preg_grep("/$search/",
-				// $mc);
-				// echo
-				// '<pre>';print_r($result);
-				echo json_encode ( $result );
-				$result = '';
-// 			} else if ($actionname == "getDiscover") {
-// 				/*
-// 				 * TODO:
-// 				 * Is
-// 				 * this
-// 				 * covered
-// 				 * by
-// 				 * findTag?
-// 				 */
-// 				$data = simplexml_load_string ( $_POST ['xml'] );
-// 				$tag = (trim ( $data->getDiscover->tag ));
-// 				$search = $tag;
-// 				$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-// 				$mc = $this->redis->getCache ( '#tag' );
-// 				if (! $mc || empty ( $mc )) {
-// 					$mc = $eventRep->createDiscoverCache ( $tag );
-// 					$this->redis->setCache ( "#tag", $mc );
-// 				}
+				// $from = ($page - 1) * $limit;
+				// $rc = 0;
+				// foreach ( $mc as $eid => $er ) {
+				// if (stripos ( $er ['name'], $search ) === 0) {
+				// if ($rc >= $from && $rc < ($from + $limit)) {
+				// $er ['name'] = '!' . $er ['name'];
+				// $er ['comment_count'] = $eventRep->getCommentCount ( $eid );
+				// $er ['like_count'] = $eventRep->getLikeCount ( $eid );
+				// $er ['friends'] = $eventRep->getEventFriends ( $eid );
+				// $search_result [] = $er;
+				// }
 				
-// 				$search_result = array ();
-// 				$page = trim ( $data->getDiscover->page );
-// 				if (empty ( $page )) {
-// 					$page = 1;
-// 				}
+				// $rc += 1;
+				// }
+				// }
+				// $result ['count'] = $rc;
+				// $result ['page'] = $page;
+				// $result ['totalPage'] = ceil ( $rc / $limit );
+				// $result ['search'] = $search_result;
+				// // $result
+				// // =
+				// // preg_grep("/$search/",
+				// // $mc);
+				// // echo
+				// // '<pre>';print_r($result);
+				// echo json_encode ( $result );
+				// $result = '';
+				// } else if ($actionname == "getDiscover") {
+				// /*
+				// * TODO:
+				// * Is
+				// * this
+				// * covered
+				// * by
+				// * findTag?
+				// */
+				// $data = simplexml_load_string ( $_POST ['xml'] );
+				// $tag = (trim ( $data->getDiscover->tag ));
+				// $search = $tag;
+				// $eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+				// $mc = $this->redis->getCache ( '#tag' );
+				// if (! $mc || empty ( $mc )) {
+				// $mc = $eventRep->createDiscoverCache ( $tag );
+				// $this->redis->setCache ( "#tag", $mc );
+				// }
 				
-// 				$limit = trim ( $data->getDiscover->limit );
-// 				if (empty ( $limit )) {
-// 					$limit = 20;
-// 				}
+				// $search_result = array ();
+				// $page = trim ( $data->getDiscover->page );
+				// if (empty ( $page )) {
+				// $page = 1;
+				// }
 				
-// 				$from = ($page - 1) * $limit;
-// 				$rc = 0;
-// 				foreach ( $mc as $eid => $er ) {
-					
-// 					if (stripos ( $er ['name'], $search ) === 0) {
-						
-// 						if ($rc >= $from && $rc < ($from + $limit)) {
-// 							$er ['name'] = $er ['name'];
-// 							// $er['comment_count'] = $eventRep->getLikeCount($eid);
-// 							// $er['like_count'] = $eventRep->getLikeCount($eid);
-// 							// $er['friends'] = $eventRep->getEventFriends($eid);
-// 							$search_result [] = $er;
-// 						}
-						
-// 						$rc += 1;
-// 					}
-// 				}
-// 				$result ['count'] = $rc;
-// 				$result ['page'] = $page;
-// 				$result ['totalPage'] = ceil ( $rc / $limit );
-// 				$result ['search'] = $search_result;
-// 				// $result
-// 				// =
-// 				// preg_grep("/$search/",
-// 				// $mc);
-// 				// echo
-// 				// '<pre>';print_r($result);
-// 				echo json_encode ( $result );
-// 				$result = '';
+				// $limit = trim ( $data->getDiscover->limit );
+				// if (empty ( $limit )) {
+				// $limit = 20;
+				// }
+				
+				// $from = ($page - 1) * $limit;
+				// $rc = 0;
+				// foreach ( $mc as $eid => $er ) {
+				
+				// if (stripos ( $er ['name'], $search ) === 0) {
+				
+				// if ($rc >= $from && $rc < ($from + $limit)) {
+				// $er ['name'] = $er ['name'];
+				// // $er['comment_count'] = $eventRep->getLikeCount($eid);
+				// // $er['like_count'] = $eventRep->getLikeCount($eid);
+				// // $er['friends'] = $eventRep->getEventFriends($eid);
+				// $search_result [] = $er;
+				// }
+				
+				// $rc += 1;
+				// }
+				// }
+				// $result ['count'] = $rc;
+				// $result ['page'] = $page;
+				// $result ['totalPage'] = ceil ( $rc / $limit );
+				// $result ['search'] = $search_result;
+				// // $result
+				// // =
+				// // preg_grep("/$search/",
+				// // $mc);
+				// // echo
+				// // '<pre>';print_r($result);
+				// echo json_encode ( $result );
+				// $result = '';
 			} else if ($actionname == "signedurl") {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->getServiceLocator () );
