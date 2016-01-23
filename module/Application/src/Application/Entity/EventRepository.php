@@ -122,7 +122,7 @@ class EventRepository extends EntityRepository {
 	}
 
 	
-	public function getEventsMedia($event_ids, $limit = false) {
+	public function getEventMedia($event_ids, $limit = false) {
 		$qb = $this->_em->createQueryBuilder ();
 		$qb->select ( 'event_media.event_id','event_media.media_id','media.metadata' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
