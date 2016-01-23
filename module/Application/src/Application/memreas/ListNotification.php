@@ -258,7 +258,7 @@ class ListNotification {
 			) );
 			if ($profile_pic)
 				$json_array = json_decode ( $profile_pic->metadata, true );
-			$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
+			$url1 = null;
 			if (! empty ( $json_array ['S3_files'] ['path'] )) {
 				$url1 = $json_array ['S3_files'] ['path'];
 			}
