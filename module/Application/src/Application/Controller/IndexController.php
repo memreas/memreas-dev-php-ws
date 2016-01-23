@@ -361,8 +361,8 @@ class IndexController extends AbstractActionController {
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
 				
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - write operation
 				 * - TODO: invalideate cache
 				 */
@@ -376,8 +376,8 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - write operation
 				 * - TODO: invalideate cache
 				 */
@@ -404,8 +404,8 @@ class IndexController extends AbstractActionController {
 				// );
 			} else if ($actionname == "countlistallmedia") {
 				
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - read operation
 				 * - cache
 				 */
@@ -419,8 +419,8 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "listgroup") {
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - read operation
 				 * - cache
 				 */
@@ -436,15 +436,16 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "deletephoto") {
 				$deletephoto = new DeletePhoto ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $deletephoto->exec ();
-			
-			/**
-			 * TODO:
-			 * Cache approach
-			 * - Write Operation
-			 * - Invalidate existing cache here
-			 * -- need user_id or event_id
-			 * --- this is based on media_id
-			 */
+				
+				/*
+				 * -
+				 * TODO:
+				 * Cache approach
+				 * - Write Operation
+				 * - Invalidate existing cache here
+				 * -- need user_id or event_id
+				 * --- this is based on media_id
+				 */
 				
 				// $session
 				// =
@@ -457,8 +458,8 @@ class IndexController extends AbstractActionController {
 				// .
 				// $session->user_id);
 			} else if ($actionname == "listphotos") {
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - read operation
 				 * - cache
 				 */
@@ -480,8 +481,8 @@ class IndexController extends AbstractActionController {
 				$result = $download->exec ();
 				/* - Cache approach - N/a - */
 			} else if ($actionname == "viewallfriends") {
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - read operation
 				 * - cache
 				 */
@@ -507,8 +508,8 @@ class IndexController extends AbstractActionController {
 			 * - if event_id then return that cache else user_id
 			 */
 			} else if ($actionname == "listallmedia") {
-				/**
-				 * Cache Approach: Check cache first if not there then fetch and cache...
+				/*
+				 * - Cache Approach: Check cache first if not there then fetch and cache...
 				 * if event_id then return that cache else user_id
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -525,8 +526,8 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "countviewevent") {
-				/**
-				 * Cache Approach:
+				/*
+				 * - Cache Approach:
 				 * TODO: invalide - hold for now
 				 * Check cache first
 				 * if not there then fetch and cache...
@@ -550,7 +551,8 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = trim ( $data->editevent->event_id );
 				
-				/**
+				/*
+				 * -
 				 * Cache Approach:
 				 * TODO: invalide - hold for now
 				 */
@@ -562,36 +564,43 @@ class IndexController extends AbstractActionController {
 				$addevent = new AddEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				
-				/**
-				 * Cache Approach:
-				 * TODO: invalide - hold for now
-				 */
+			
+			/**
+			 * Cache Approach:
+			 * TODO: invalide - hold for now
+			 */
 				
 				// $this->redis->invalidateEvents
 				// (
 				// $data->addevent->user_id
 				// );
 			} else if ($actionname == "viewevents") {
-				/**
-				 * Cache Approach:
+				/*
+				 * - Cache Approach:
 				 * Check cache first if not there then
 				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (! empty ( $data->viewevent->is_public_event ) && $data->viewevent->is_public_event) {
+					/*-
+					 *  public includes friend events so add user_id
+					 *  TODO: need to union pulic and friends events in REDIS  
+					 *  */
 					$cache_id = "public";
 				} else if (! empty ( $data->viewevent->is_friend_event ) && $data->viewevent->is_friend_event) {
 					$cache_id = "is_friend_event_" . trim ( $data->viewevent->user_id );
 				} else if (! empty ( $data->viewevent->is_my_event ) && $data->viewevent->is_my_event) {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
 				}
-				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->cache->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
+					Mlog::addone($cm.__LINE__,'COULD NOT FIND REDIS viewevents::$this->redis->cachec->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->getServiceLocator () );
 					$result = $viewevents->exec ();
 					$cache_me = true;
+				} else {
+					Mlog::addone($cm.__LINE__,'FETCHING viewevents FROM REDIS::$this->redis->cachec->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
 				}
 			} else if ($actionname == "addfriend") {
 				
@@ -600,7 +609,8 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriend->user_id );
 				$fid = trim ( $data->addfriend->friend_id );
-				/**
+				/*
+				 * -
 				 * Cache approach
 				 * - write operation
 				 * - hold for now
@@ -618,12 +628,12 @@ class IndexController extends AbstractActionController {
 				$result = $addfriendtoevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriendtoevent->user_id );
-				
-				/**
-				 * Cache approach
-				 * - write operation
-				 * - hold for now
-				 */
+			
+			/**
+			 * Cache approach
+			 * - write operation
+			 * - hold for now
+			 */
 				// $this->redis->invalidateEvents
 				// (
 				// $uid
@@ -633,8 +643,8 @@ class IndexController extends AbstractActionController {
 				// $uid
 				// );
 			} else if ($actionname == "viewmediadetails") {
-				/**
-				 * Cache Approach: Check cache first if not there then fetch and cache...
+				/*
+				 * - Cache Approach: Check cache first if not there then fetch and cache...
 				 * if event_id then return then event_id_media_id else cache media_id
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -665,11 +675,11 @@ class IndexController extends AbstractActionController {
 				$result = $addNotification->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addNotification->user_id );
-				/**
-				 * Cache approach
-				 * - write operation
-				 * - invalidate listnotification
-				 */
+			/**
+			 * Cache approach
+			 * - write operation
+			 * - invalidate listnotification
+			 */
 				// $this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -679,8 +689,8 @@ class IndexController extends AbstractActionController {
 				$result = $retranscoder->exec ();
 			} else if ($actionname == "listnotification") {
 				
-				/**
-				 * Cache Approach: Check cache first if not there then fetch and cache...
+				/*
+				 * - Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = ! empty ( $_POST ['xml'] ) ? simplexml_load_string ( $_POST ['xml'] ) : null;
 				$user_id = $data->listnotification->user_id;
@@ -701,17 +711,17 @@ class IndexController extends AbstractActionController {
 				$result = $updatenotification->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = $updatenotification->user_id;
-				
-				/**
-				 * Cache approach
-				 * - write operation
-				 * - invalidate listnotification
-				 */
+			
+			/**
+			 * Cache approach
+			 * - write operation
+			 * - invalidate listnotification
+			 */
 				// $this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "findtag") {
 				
-				/**
-				 * fetch parameters
+				/*
+				 * - fetch parameters
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$tag = (trim ( $data->findtag->tag ));
@@ -720,8 +730,8 @@ class IndexController extends AbstractActionController {
 				$a = $tag [0];
 				$search = substr ( $tag, 1 );
 				
-				/**
-				 * set paging and limits
+				/*
+				 * - set paging and limits
 				 */
 				$page = trim ( $data->findtag->page );
 				if (empty ( $page )) {
@@ -797,7 +807,7 @@ class IndexController extends AbstractActionController {
 								}
 								
 								/*
-								 * - * TODO: Fix Paging
+								 * - TODO: Fix Paging
 								 */
 								/*
 								 * -
@@ -1057,8 +1067,8 @@ class IndexController extends AbstractActionController {
 						break;
 				}
 			} else if ($actionname == "findevent") {
-				/**
-				 * TODO:
+				/*
+				 * - TODO:
 				 * This is covered by findtag?
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -1194,18 +1204,18 @@ class IndexController extends AbstractActionController {
 				$result = $logout->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->clearallnotification->user_id );
-				/**
-				 * Cache approach
-				 * - write operation
-				 * - invalidate listnotification
-				 */
+			/**
+			 * Cache approach
+			 * - write operation
+			 * - invalidate listnotification
+			 */
 				// $this->redis->invalidateNotifications
 				// (
 				// $uid
 				// );
 			} else if ($actionname == "getsession") {
-				/**
-				 * Cache Approach: Check cache first if not there then fetch and cache...
+				/*
+				 * - Cache Approach: Check cache first if not there then fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->listnotification->user_id );
@@ -1224,8 +1234,8 @@ class IndexController extends AbstractActionController {
 				$result = $register_canonical_device->exec ();
 			} else if ($actionname == "listcomments") {
 				
-				/**
-				 * Cache Approach: Check cache first if not there then fetch and cache...
+				/*
+				 * - Cache Approach: Check cache first if not there then fetch and cache...
 				 * if event_id then return then event_id_media_id
 				 * else cache media_id
 				 */
@@ -1296,15 +1306,15 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 				}
 			} else if ($actionname == "saveuserdetails") {
-				/**
-				 * TODO: Invalidation needed
+				/*
+				 * - TODO: Invalidation needed
 				 */
 				$SaveUserDetails = new SaveUserDetails ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $SaveUserDetails->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				
-				/**
-				 * Cache approach
+				/*
+				 * - Cache approach
 				 * - write operation
 				 * - invalidate listnotification
 				 */
