@@ -592,15 +592,15 @@ class IndexController extends AbstractActionController {
 				} else if (! empty ( $data->viewevent->is_my_event ) && $data->viewevent->is_my_event) {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
 				}
-				$result = $this->redis->cache->getCache ( $actionname . '_' . $cache_id );
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
 				if (! $result || empty ( $result )) {
-					Mlog::addone($cm.__LINE__,'COULD NOT FIND REDIS viewevents::$this->redis->cachec->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
+					Mlog::addone($cm.__LINE__,'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->getServiceLocator () );
 					$result = $viewevents->exec ();
 					$cache_me = true;
 				} else {
-					Mlog::addone($cm.__LINE__,'FETCHING viewevents FROM REDIS::$this->redis->cachec->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
+					Mlog::addone($cm.__LINE__,'FETCHING viewevents FROM REDIS::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->'.$actionname . '_' . $cache_id);
 				}
 			} else if ($actionname == "addfriend") {
 				
@@ -889,13 +889,13 @@ class IndexController extends AbstractActionController {
 						/*-
 						 * Fetch from cache for all public events 
 						 */
-						$mc = $this->redis->cache->getCache ( '!event' );
+						$mc = $this->redis->getCache ( '!event' );
 						$mc = json_decode ( $mc, true );
 						$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						if (! $mc || empty ( $mc )) {
 							$mc = $eventRep->createEventCache ();
 							// json encode is needed given set takes string...
-							$this->redis->cache->setCache ( '!event', json_encode ( $mc ) );
+							$this->redis->setCache ( '!event', json_encode ( $mc ) );
 						} else {
 							// do nothing - pulled from cache
 							Mlog::addone ( $cm . __LINE__ . '::$mc if from cache and decoded to array--->', $mc . 'p' );
