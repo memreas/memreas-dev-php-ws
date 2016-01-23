@@ -1126,65 +1126,65 @@ class IndexController extends AbstractActionController {
 				// '<pre>';print_r($result);
 				echo json_encode ( $result );
 				$result = '';
-			} else if ($actionname == "getDiscover") {
-				/*
-				 * TODO:
-				 * Is
-				 * this
-				 * covered
-				 * by
-				 * findTag?
-				 */
-				$data = simplexml_load_string ( $_POST ['xml'] );
-				$tag = (trim ( $data->getDiscover->tag ));
-				$search = $tag;
-				$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-				$mc = $this->redis->getCache ( '#tag' );
-				if (! $mc || empty ( $mc )) {
-					$mc = $eventRep->createDiscoverCache ( $tag );
-					$this->redis->setCache ( "#tag", $mc );
-				}
+// 			} else if ($actionname == "getDiscover") {
+// 				/*
+// 				 * TODO:
+// 				 * Is
+// 				 * this
+// 				 * covered
+// 				 * by
+// 				 * findTag?
+// 				 */
+// 				$data = simplexml_load_string ( $_POST ['xml'] );
+// 				$tag = (trim ( $data->getDiscover->tag ));
+// 				$search = $tag;
+// 				$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+// 				$mc = $this->redis->getCache ( '#tag' );
+// 				if (! $mc || empty ( $mc )) {
+// 					$mc = $eventRep->createDiscoverCache ( $tag );
+// 					$this->redis->setCache ( "#tag", $mc );
+// 				}
 				
-				$search_result = array ();
-				$page = trim ( $data->getDiscover->page );
-				if (empty ( $page )) {
-					$page = 1;
-				}
+// 				$search_result = array ();
+// 				$page = trim ( $data->getDiscover->page );
+// 				if (empty ( $page )) {
+// 					$page = 1;
+// 				}
 				
-				$limit = trim ( $data->getDiscover->limit );
-				if (empty ( $limit )) {
-					$limit = 20;
-				}
+// 				$limit = trim ( $data->getDiscover->limit );
+// 				if (empty ( $limit )) {
+// 					$limit = 20;
+// 				}
 				
-				$from = ($page - 1) * $limit;
-				$rc = 0;
-				foreach ( $mc as $eid => $er ) {
+// 				$from = ($page - 1) * $limit;
+// 				$rc = 0;
+// 				foreach ( $mc as $eid => $er ) {
 					
-					if (stripos ( $er ['name'], $search ) === 0) {
+// 					if (stripos ( $er ['name'], $search ) === 0) {
 						
-						if ($rc >= $from && $rc < ($from + $limit)) {
-							$er ['name'] = $er ['name'];
-							// $er['comment_count'] = $eventRep->getLikeCount($eid);
-							// $er['like_count'] = $eventRep->getLikeCount($eid);
-							// $er['friends'] = $eventRep->getEventFriends($eid);
-							$search_result [] = $er;
-						}
+// 						if ($rc >= $from && $rc < ($from + $limit)) {
+// 							$er ['name'] = $er ['name'];
+// 							// $er['comment_count'] = $eventRep->getLikeCount($eid);
+// 							// $er['like_count'] = $eventRep->getLikeCount($eid);
+// 							// $er['friends'] = $eventRep->getEventFriends($eid);
+// 							$search_result [] = $er;
+// 						}
 						
-						$rc += 1;
-					}
-				}
-				$result ['count'] = $rc;
-				$result ['page'] = $page;
-				$result ['totalPage'] = ceil ( $rc / $limit );
-				$result ['search'] = $search_result;
-				// $result
-				// =
-				// preg_grep("/$search/",
-				// $mc);
-				// echo
-				// '<pre>';print_r($result);
-				echo json_encode ( $result );
-				$result = '';
+// 						$rc += 1;
+// 					}
+// 				}
+// 				$result ['count'] = $rc;
+// 				$result ['page'] = $page;
+// 				$result ['totalPage'] = ceil ( $rc / $limit );
+// 				$result ['search'] = $search_result;
+// 				// $result
+// 				// =
+// 				// preg_grep("/$search/",
+// 				// $mc);
+// 				// echo
+// 				// '<pre>';print_r($result);
+// 				echo json_encode ( $result );
+// 				$result = '';
 			} else if ($actionname == "signedurl") {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->getServiceLocator () );
