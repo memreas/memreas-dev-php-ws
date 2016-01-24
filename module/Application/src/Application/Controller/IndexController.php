@@ -1776,7 +1776,8 @@ class IndexController extends AbstractActionController {
 				// Now continue processing and warm the cache for @person
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				// $this->getServiceLocator () );
-				$this->redis->warmMemreasSet ();
+				Mlog::addone($cm,'::user_id'.$_SESSION['user_id']);
+				$this->redis->warmMemreasSet ($_SESSION['user_id']);
 			}
 		}
 		
