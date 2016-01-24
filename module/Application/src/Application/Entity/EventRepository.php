@@ -50,67 +50,95 @@ class EventRepository extends EntityRepository {
 		// $query_builder->andWhere('r.winner IN (:ids)')
 		// ->setParameter('ids', $ids);
 	}
+	public function getAllEvents($date) {
+		try {
+			/**
+			 * - This filter only returns public events and public events with valid from / to / self_destruct(ghost) dates
+			 */
+			$qb = $this->_em->createQueryBuilder ();
+			$qb->select ( 'e.name', 'e.event_id', 'e.location', 'e.user_id', 'e.update_time', 'e.create_time' );
+			$qb->from ( 'Application\Entity\Event', 'e' );
+			$qb->where ( "((e.viewable_from <= ?1 AND e.viewable_to >= ?1) OR (e.viewable_from = '' AND e.viewable_to = ''))" );
+			$qb->orWhere ( "(e.self_destruct >= ?1 OR e.self_destruct = '')" );
+			$qb->setParameter ( 1, $date );
+			$result = $qb->getQuery ()->getResult ();
+			Mlog::addone ( 'getPublicEvents()::SQL--->', $qb->getQuery ()->getSQL () );
+			
+			return $result;
+		} catch ( Doctrine_Connection_Exception $e ) {
+			Mlog::addone ( 'getPublicEvents()::Code : ', $e->getPortableCode () );
+			Mlog::addone ( 'getPublicEvents()::Message : ', $e->getPortableMessage () );
+		}
+		return null;
+	}
 	public function getPublicEvents($date) {
 		try {
 			/**
 			 * - This filter only returns public events and public events with valid from / to / self_destruct(ghost) dates
 			 */
-			/**
-			 * -
-			$query_event = "SELECT 
-    							e.name,
-    							e.event_id,
-    							e.location,
-    							e.user_id,
-    							e.update_time,
-    							e.create_time,
-    							m.media_id,
-    							m.metadata
-    						FROM
-    							Application\Entity\Event e
-    							JOIN
-    							Application\Entity\EventMedia em ON e.event_id = em.event_id
-    							JOIN
-    							Application\Entity\Media m ON em.media_id = m.media_id
-    							WHERE e.public = 1
-    								AND (
-										(e.viewable_from <= " . $date . " AND e.viewable_to >= " . $date . ") 
-										OR 
-										(e.viewable_from = '' AND e.viewable_to = '')
-									)
-        							OR (e.self_destruct >= " . $date . " OR e.self_destruct = '')
-							ORDER BY e.create_time DESC";
-			// $statement->setMaxResults ( $limit );
-			// $statement->setFirstResult ( $from );
-			Mlog::addone ( 'getPublicEvents()', $query_event );
-			$statement = $this->_em->createQuery ( $query_event );
-			$result = $statement->getResult ();
-			*/
-				
-			
-			
 			$qb = $this->_em->createQueryBuilder ();
-			$qb->select ( 'e.name',
-    							'e.event_id',
-    							'e.location',
-    							'e.user_id',
-    							'e.update_time',
-    							'e.create_time',
-    							'm.media_id',
-    							'm.metadata' );
+			$qb->select ( 'e.name', 'e.event_id', 'e.location', 'e.user_id', 'e.update_time', 'e.create_time' );
 			$qb->from ( 'Application\Entity\Event', 'e' );
-			$qb->leftjoin ( 'Application\Entity\EventMedia', 'em', 'WITH', 'e.event_id = em.event_id' );
-			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.media_id = em.media_id' );
 			$qb->where ( 'e.public = 1 ' );
-			$qb->andWhere("(e.viewable_from <= ?1 AND e.viewable_to >= ?1) OR (e.viewable_from = '' AND e.viewable_to = '')");
-			$qb->orWhere("e.self_destruct >= ?1 OR e.self_destruct = ''");
+			$qb->andWhere ( "((e.viewable_from <= ?1 AND e.viewable_to >= ?1) OR (e.viewable_from = '' AND e.viewable_to = ''))" );
+			$qb->orWhere ( "(e.self_destruct >= ?1 OR e.self_destruct = '')" );
 			$qb->setParameter ( 1, $date );
 			$result = $qb->getQuery ()->getResult ();
-				
+			Mlog::addone ( 'getPublicEvents()::SQL--->', $qb->getQuery ()->getSQL () );
+			
 			return $result;
 		} catch ( Doctrine_Connection_Exception $e ) {
-			Mlog::addone ( 'getPublicEvents()::Code : ' , $e->getPortableCode () );
-			Mlog::addone ( 'getPublicEvents()::Message : ' , $e->getPortableMessage () );
+			Mlog::addone ( 'getPublicEvents()::Code : ', $e->getPortableCode () );
+			Mlog::addone ( 'getPublicEvents()::Message : ', $e->getPortableMessage () );
+		}
+		return null;
+	}
+	public function getFriendEvents($date) {
+		try {
+			/**
+			 * - This filter only returns events where user is a friend events and with valid from / to / self_destruct(ghost) dates
+			 */
+			$qb = $this->_em->createQueryBuilder ();
+			$qb->select ( 'e.name', 'e.event_id', 'e.location', 'e.user_id', 'e.update_time', 'e.create_time' );
+			$qb->from ( 'Application\Entity\Event', 'e' );
+			$qb->join ( 'Application\Entity\EventFriend', 'ef', 'WITH', 'e.event_id = ef.event_id' );
+			$qb->andWhere ( "ef.friend = ?2 " );
+			$qb->andWhere ( 'ef.user_approve = 1' );
+			$qb->andWhere ( 'e.public != 1' );
+			$qb->andWhere ( "((e.viewable_from <= ?1 AND e.viewable_to >= ?1) OR (e.viewable_from = '' AND e.viewable_to = ''))" );
+			$qb->orWhere ( "(e.self_destruct >= ?1 OR e.self_destruct = '')" );
+			$qb->setParameter ( 1, $date );
+			$qb->setParameter ( 2, $_SESSION ['user_id'] );
+			$result = $qb->getQuery ()->getResult ();
+			Mlog::addone ( 'getFriendEvents()::SQL--->', $qb->getQuery ()->getSQL () );
+			
+			return $result;
+		} catch ( Doctrine_Connection_Exception $e ) {
+			Mlog::addone ( 'getFriendEvents()::Code : ', $e->getPortableCode () );
+			Mlog::addone ( 'getFriendEvents()::Message : ', $e->getPortableMessage () );
+		}
+		return null;
+	}
+	public function getMyEvents($date) {
+		try {
+			/**
+			 * - This filter only returns events where user is a friend events and with valid from / to / self_destruct(ghost) dates
+			 */
+			$qb = $this->_em->createQueryBuilder ();
+			$qb->select ( 'e.name', 'e.event_id', 'e.location', 'e.user_id', 'e.update_time', 'e.create_time' );
+			$qb->from ( 'Application\Entity\Event', 'e' );
+			$qb->andWhere ( 'e.user_id = ?2' );
+			$qb->andWhere ( "((e.viewable_from <= ?1 AND e.viewable_to >= ?1) OR (e.viewable_from = '' AND e.viewable_to = ''))" );
+			$qb->orWhere ( "(e.self_destruct >= ?1 OR e.self_destruct = '')" );
+			$qb->setParameter ( 1, $date );
+			$qb->setParameter ( 2, $_SESSION ['user_id'] );
+			$result = $qb->getQuery ()->getResult ();
+			Mlog::addone ( 'getMyEvents()::SQL--->', $qb->getQuery ()->getSQL () );
+			
+			return $result;
+		} catch ( Doctrine_Connection_Exception $e ) {
+			Mlog::addone ( 'getMyEvents()::Code : ', $e->getPortableCode () );
+			Mlog::addone ( 'getMyEvents()::Message : ', $e->getPortableMessage () );
 		}
 		return null;
 	}
@@ -183,45 +211,49 @@ class EventRepository extends EntityRepository {
 		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$url', $url);
 		return $url;
 	}
-	public function createEventCache() {
+	public function createEventCache($type) {
 		$date = strtotime ( date ( 'd-m-Y' ) );
-		$result = $this->getPublicEvents ( $date );
-		Mlog::addone ( "getPublicEvents Object ", $result, 'p' );
-		$eventIndex = array ();
-		
-		/**
-		 * this loop causes a sql call to the db for each event - won't scale...
-		 * added left join event, event_media, media to get public events
-		 * foreach ( $result as $row ) {
-		 * $eventIndex [$row ['event_id']] = $row;
-		 * $mediaRows = $this->getEventMedia ( $row ['event_id'] );
-		 * foreach ( $mediaRows as $mediaRow ) {
-		 * $event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
-		 * if (! empty ( $event_media_url )) {
-		 * $eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
-		 * }
-		 * }
-		 * }
-		 */
+		if ($type = 'public') {
+			$result = $this->getPublicEvents ( $date );
+		} else if ($type = 'friends') {
+			$result = $this->getFriendEvents ( $date );
+		} else if ($type = 'my') {
+			$result = $this->getMyEvents ( $date );
+		} else {
+			$result = $this->getAllEvents ( $date );
+		}
 		/**
 		 * attempt to make one call to db - changed query in getPublic events to leftjoin event, event_media, and media
 		 */
+		$search_result = array ();
 		foreach ( $result as $row ) {
+			$eventIndex = array ();
 			/**
 			 * metadata is now in result
 			 */
-			Mlog::addone ( 'createEventCache()::$row [event_id],$row [metadata]', $row [event_id] . '---->' . $row [metadata] );
+			// Mlog::addone ( 'createEventCache()::$row [event_id],$row [metadata]', $row ['event_id'] . '---->' . $row [metadata] );
+			$event_id = $row ['event_id'];
 			$eventIndex [$row ['event_id']] = $row;
 			// $event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
 			$event_media_url = $this->getEventMediaUrl ( $row ['metadata'] );
+			
 			$eventIndex [$row ['event_id']] ['event_media_url'] = $event_media_url;
-			Mlog::addone ( 'createEventCache()::$event_media_url---->', $event_media_url );
+			$eventIndex ['name'] = '!' . $event_key ['name'];
+			$eventIndex ['event_media'] = $eventRep->getEventMedia ( $event_id );
+			$eventIndex ['comment_count'] = $eventRep->getCommentCount ( $event_id );
+			$eventIndex ['like_count'] = $eventRep->getLikeCount ( $event_id );
+			$eventIndex ['friends'] = $eventRep->getEventFriends ( $event_id );
+			$eventIndex ['created_on'] = Utility::formatDateDiff ( $event_key ['create_time'] );
+			$event_creator = $eventRep->getUser ( $row ['user_id'], 'row' );
+			$eventIndex ['event_creator_name'] = '@' . $event_creator ['username'];
+			$eventIndex ['event_creator_pic'] = $event_creator ['profile_photo'];
+			$search_result [] = $eventIndex;
 		}
 		/**
 		 * call to fetch media all events
 		 */
-		Mlog::addone ( 'createEventCache()::', $eventIndex, 'p' );
-		return $eventIndex;
+		// Mlog::addone ( 'createEventCache()::', $eventIndex, 'p' );
+		return $search_result;
 	}
 	public function getHashTags() {
 		$qb = $this->_em->createQueryBuilder ();

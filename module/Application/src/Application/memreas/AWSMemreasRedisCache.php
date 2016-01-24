@@ -32,13 +32,13 @@ class AWSMemreasRedisCache {
 					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
 					'port' => 6379 
 			] );
-		//} catch ( \Predis\Connection\ConnectionException $ex ) {
-		//	error_log ( "exception ---> " . print_r ( $ex, true ) . PHP_EOL );
+			// } catch ( \Predis\Connection\ConnectionException $ex ) {
+			// error_log ( "exception ---> " . print_r ( $ex, true ) . PHP_EOL );
 		} catch ( \Exception $ex ) {
 			error_log ( "predis connection exception ---> " . print_r ( $ex, true ) . PHP_EOL );
 		}
-		$this->cache->set('foo', 'bar');
-		error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . " for host --->" . gethostname () . PHP_EOL);
+		$this->cache->set ( 'foo', 'bar' );
+		error_log ( "Fetching from REDIS! ---> " . $this->cache->get ( 'foo' ) . " for host --->" . gethostname () . PHP_EOL );
 		$this->cache->del ( 'foo' );
 		
 		// error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . PHP_EOL);
@@ -133,6 +133,72 @@ class AWSMemreasRedisCache {
 			// $this->redis->setCache("!event", $mc);
 		}
 	}
+	/**
+	 * Redis cache for all events
+	 */
+	public function warmMemreasSet($user_id) {
+		sleep ( 1 );
+		$warming_hashtag = $this->cache->get ( 'warming_memreas' );
+		error_log ( "warming_memreas..." . $warming_memreas . PHP_EOL );
+		if (! $warming_hashtag || ($warming_hashtag == "(nil)")) {
+			error_log ( "cache warming @warming_memreas started..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			$warming = $this->cache->set ( 'warming_memreas', '1' );
+			
+			// Fetch public event ids and skip personal 
+			$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+			$result = $this->sExists ( '!memreas' );
+			if (! result) {
+				$events_result = $eventRep->createEventCache ( 'public' );
+				$public_event_ids = array ();
+				foreach ( $events_result as $event ) {
+					if (e.$user_id != $_SESSION['user_id']) {
+						$event_id = $event ['event_id'];
+						$event_names [$event ['name']] = 0;
+						$public_eid_hash [$event_id] = $event;
+						$public_event_meta_hash [$event['name']][] = $event_id;
+					}
+				}
+				$this->cache->zadd ( '!memreas', $event_names );
+				$this->cache->hmset ( '@memreas_meta_hash', $public_event_meta_hash );
+				$this->cache->hmset ( '@memreas_eid_hash', $public_eid_hash );
+			}
+			
+			/**
+			 * Build friends events cache
+			 */
+			$events_result = $eventRep->createEventCache ( 'friends' );
+			foreach ( $events_result as $event ) {
+				if (e.$user_id != $_SESSION['user_id']) {
+					$event_id = $event ['event_id'];
+					$friends_event_names [$event ['name']] = 0;
+					$friends_event_hash [$event_id] = $event;
+					$friends_event_meta_hash [$event['name']][] = $event_id;
+				}
+			}
+			$this->cache->zadd ( '!memreas_friends_events_'.$_SESSION['user_id'], $friends_event_names );
+			$this->cache->hmset ( '!memreas_friends_events_meta_hash', $friends_event_meta_hash );
+			$this->cache->hmset ( '!memreas_friends_events_eid_hash', $friends_event_hash );
+				
+			$result = $this->cache->executeRaw ( array (
+					'HLEN',
+					'#hashtag_friends_hash_' . $user_id 
+			) );
+			// error_log("HLEN result ---> $result".PHP_EOL);
+			$result = $this->cache->executeRaw ( array (
+					'HLEN',
+					'#hashtag_public_eid_hash' 
+			) );
+			// error_log("HLEN result ---> $result".PHP_EOL);
+			$warming = $this->cache->set ( 'warming_memreas', '0' );
+			// error_log("cache warming @warming_hashtag finished...".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
+			
+			// $this->redis->setCache("!event", $mc);
+		}
+	}
+	
+	/**
+	 * Redis cache for all users
+	 */
 	public function warmPersonSet() {
 		sleep ( 1 );
 		$warming = $this->cache->get ( 'warming' );
@@ -203,6 +269,41 @@ class AWSMemreasRedisCache {
 		// error_log ( "matches------> " . json_encode ( $matches ) . PHP_EOL );
 		return $matches;
 	}
+	
+	/**
+	 * Check if set exists
+	 */
+	public function sExists($set) {
+		$result = $this->cache->executeRaw ( array (
+				'EXISTS',
+				$set 
+		) );
+		Mlog::addone ( 'sExists($set)', $set . ' result::' . $result );
+		if ($result = "(integer) 1") {
+			$matches = $result;
+		} else {
+			$matches = 0;
+		}
+		return $matches;
+	}
+	
+	/**
+	 * Check if hash exists
+	 */
+	public function hExists($hash, $field) {
+		$this->cache->executeRaw ( array (
+				'HEXISTS',
+				$hash,
+				$field 
+		) );
+		Mlog::addone ( 'hExists($hash, $field)', '::$set' . $hash . '::$field' . $field . ' result::' . $result );
+		if ($result = "(integer) 1") {
+			$matches = $result;
+		} else {
+			$matches = 0;
+		}
+		return $matches;
+	}
 	public function addSet($set, $key, $val = null) {
 		if (is_null ( $val ) && ! $this->cache->executeRaw ( array (
 				'ZCARD',
@@ -248,12 +349,12 @@ class AWSMemreasRedisCache {
 				$set 
 		) );
 	}
-        public function remSetKeys($set) {
-            $i=0;
-            foreach ($set as $cacheKey) {
-	    	$i+=$this->cache->del($cacheKey);
-	    }
-		 return $i;
+	public function remSetKeys($set) {
+		$i = 0;
+		foreach ( $set as $cacheKey ) {
+			$i += $this->cache->del ( $cacheKey );
+		}
+		return $i;
 	}
 	public function getCache($key) {
 		if (! $this->isCacheEnable) {
@@ -303,10 +404,10 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for media
 	 */
 	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
-		 //error_log("Inside invalidateMedia".PHP_EOL);
-                 //error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
-		 //error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
-		 //error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
+		// error_log("Inside invalidateMedia".PHP_EOL);
+		// error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
+		// error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
+		// error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
 		// write functions for media
 		// - add media event (key is event_id or user_id)
 		// - mediainappropriate (key is user id for invalidate)
