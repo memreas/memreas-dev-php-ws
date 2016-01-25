@@ -902,6 +902,12 @@ class IndexController extends AbstractActionController {
 							
 							$rc = count ( $search_result );
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
+							$result = Array ();
+							$result ['totalPage'] = 1;
+							$result ['count'] = $rc;
+							$result ['search'] = $search_result;
+							
+							echo json_encode ( $result );
 							//Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
 							
