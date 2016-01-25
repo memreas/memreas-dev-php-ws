@@ -588,8 +588,6 @@ class IndexController extends AbstractActionController {
 					/*
 					 * -
 					 * friend events includes public
-					 * TODO: need to union pulic and friends events in REDIS
-					 *
 					 */
 					$cache_id = "is_friend_event_" . trim ( $data->viewevent->user_id );
 				} else if (! empty ( $data->viewevent->is_my_event ) && $data->viewevent->is_my_event) {
@@ -900,12 +898,20 @@ class IndexController extends AbstractActionController {
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
-							$rc = count ( $search_result );
+							
+							/*
+							 * -
+							 * remove self and update indices
+							 */
+							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
+							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
+								
+							$rc = count ( $event_ids_from_search );
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
 							$result = Array ();
 							$result ['totalPage'] = 1;
 							$result ['count'] = $rc;
-							$result ['search'] = $search_result;
+							$result ['search'] = $event_ids_from_search;
 							
 							echo json_encode ( $result );
 							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
