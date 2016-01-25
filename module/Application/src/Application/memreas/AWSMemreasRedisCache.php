@@ -43,6 +43,15 @@ class AWSMemreasRedisCache {
 			$this->aws_manager->sendSeSMail ( $to, 'REDIS CONNECTION ERROR', $html );
 		}
 	}
+	public function setExpire($set) {
+		$reply = $this->cache->executeRaw ( array (
+				'EXPIRE',
+				$set,
+				MemreasConstants::REDIS_CACHE_TTL 
+		) );
+		
+		return $reply;
+	}
 	public function setCache($key, $value, $ttl = MemreasConstants::REDIS_CACHE_TTL) {
 		$cm = __CLASS__ . __METHOD__;
 		if (! $this->isCacheEnable) {
@@ -71,65 +80,88 @@ class AWSMemreasRedisCache {
 		$warming_hashtag = $this->cache->get ( 'warming_hashtag' );
 		Mlog::addone ( $cm, '::warming_hashtag...' . $warming_hashtag );
 		if (! $warming_hashtag || ($warming_hashtag == "(nil)")) {
-			Mlog::addone ( $cm, '::cache warming @warming_hashtag started...' . date ( 'Y-m-d H:i:s.u' ) );
+			Mlog::addone ( $cm, '::cache warming #hashtag started...' . date ( 'Y-m-d H:i:s.u' ) );
 			$warming = $this->cache->set ( 'warming_hashtag', '1' );
 			
 			// Fetch all event ids to check for public and friend
 			$tagRep = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 			$tags = $tagRep->getHashTags ();
-			$event_ids [] = array ();
-			foreach ( $tags as $tag ) {
-				$tag_meta = json_decode ( $tag ['meta'], true );
-				if (! empty ( $tag_meta ['event'] )) {
-					$event_ids [$tag_meta ['event'] [0]] = $tag ['tag'];
+			if ($tags) {
+				
+				$event_ids [] = array ();
+				foreach ( $tags as $tag ) {
+					$tag_meta = json_decode ( $tag ['meta'], true );
+					if (! empty ( $tag_meta ['event'] )) {
+						$event_ids [$tag_meta ['event'] [0]] = $tag ['tag'];
+					}
 				}
-			}
-			
-			/*
-			 * Now filter by public and friends and add to cache...
-			 */
-			$keys = array_keys ( $event_ids );
-			$public_event_ids = $tagRep->filterPublicHashTags ( $keys );
-			$hashtag_public_eid_hash = array ();
-			foreach ( $public_event_ids as $eid ) {
-				if (! empty ( $event_ids [$eid ['event_id']] )) {
-					Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-					Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
-					$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
-					$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past for loop' );
+				
+				/*
+				 * Now filter by public and friends and add to cache...
+				 */
+				$keys = array_keys ( $event_ids );
+				$public_event_ids = $tagRep->filterPublicHashTags ( $keys );
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
+				$hashtag_public_eid_hash = array ();
+				foreach ( $public_event_ids as $eid ) {
+					if (! empty ( $event_ids [$eid ['event_id']] )) {
+						Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
+						$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+					}
 				}
-			}
-			$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
-			Mlog::addone ( $cm, '::ZCARD #hashtag result ---> ' . $this->cache->zcard ( '#hashtag' ) );
-			
-			$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
-			$hashtag_friends_eid_hash = array ();
-			foreach ( $friend_event_ids as $eid ) {
-				if (! empty ( $event_ids [$eid ['event_id']] )) {
-					Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-					Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
-					$result = $this->cache->zadd ( '#hashtag_' . $user_id, 0, $event_ids [$eid ['event_id']] );
-					$hashtag_friends_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
+				$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
+				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
+				$hashtag_friends_eid_hash = array ();
+				foreach ( $friend_event_ids as $eid ) {
+					if (! empty ( $event_ids [$eid ['event_id']] )) {
+						Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						$result = $this->cache->zadd ( '#hashtag_' . $user_id, 0, $event_ids [$eid ['event_id']] );
+						$hashtag_friends_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+					}
 				}
+				Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
+				Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
+				$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
+				Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
+				
+				$result = $this->cache->executeRaw ( array (
+						'HLEN',
+						'#hashtag_friends_hash_' . $user_id 
+				) );
+				Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
+				$result = $this->cache->executeRaw ( array (
+						'HLEN',
+						'#hashtag_public_eid_hash' 
+				) );
+				Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
+				$warming = $this->cache->set ( 'warming_hashtag', '0' );
+				Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
+				
+				/**
+				 * Set expire for each set
+				 */
+				$reply = $this->setExpire ( '#hashtag' );
+				Mlog::addone ( $cm . __LINE__, '::#hashtag setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '#hashtag_' . $user_id );
+				Mlog::addone ( $cm . __LINE__, '::#hashtag_' . $user_id . ' setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '#hashtag_friends_hash_' . $user_id );
+				Mlog::addone ( $cm . __LINE__, '::#hashtag_friends_hash_' . $user_id . ' setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '#hashtag_public_eid_hash' );
+				Mlog::addone ( $cm . __LINE__, '::!memreas_eid_hash setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '#hashtag_public_meta_hash' );
+				Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
+				
+				Mlog::addone ( $cm, '::cache warming #hashtag completed...' . date ( 'Y-m-d H:i:s.u' ) );
+			} else { // end if ($tags)
+				$warming = $this->cache->set ( 'warming_hashtag', '0' );
+				Mlog::addone ( $cm, '::cache warming #hashtag completed 0 entries...' . date ( 'Y-m-d H:i:s.u' ) );
 			}
-			Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
-			Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
-			$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
-			
-			$result = $this->cache->executeRaw ( array (
-					'HLEN',
-					'#hashtag_friends_hash_' . $user_id 
-			) );
-			Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
-			$result = $this->cache->executeRaw ( array (
-					'HLEN',
-					'#hashtag_public_eid_hash' 
-			) );
-			Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
-			$warming = $this->cache->set ( 'warming_hashtag', '0' );
-			Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
-			
-			// $this->redis->setCache("!event", $mc);
 		}
 	}
 	/**
@@ -246,7 +278,7 @@ class AWSMemreasRedisCache {
 					$event = $eventIndex [$event_id];
 					$event_owner = $event ['user_id'];
 					$event_id = $event ['event_id'];
-					//Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
+					// Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
 					if ($event ['user_id'] != $user_id) {
 						
 						/**
@@ -317,6 +349,17 @@ class AWSMemreasRedisCache {
 						'!memreas_eid_hash' 
 				) );
 				Mlog::addone ( $cm, '::HLEN !memreas_eid_hash result --->' . $reply );
+				/**
+				 * Set expire for each set
+				 */
+				$reply = $this->setExpire ( '!memreas' );
+				Mlog::addone ( $cm . __LINE__, '::!memreas setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '!memreas_friends_events_' . $user_id );
+				Mlog::addone ( $cm . __LINE__, '::!memreas_friends_events_' . $user_id . ' setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '!memreas_eid_hash' );
+				Mlog::addone ( $cm . __LINE__, '::!memreas_eid_hash setExpire reply ---> ' . $reply );
+				$reply = $this->setExpire ( '!memreas_meta_hash' );
+				Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
 			} // end if (! $this->sExists ( '!memreas_friends_events_' . $user_id ))
 			
 			$warming = $this->cache->set ( 'warming_memreas', '0' );
@@ -331,9 +374,8 @@ class AWSMemreasRedisCache {
 		$cm = __CLASS__ . __METHOD__;
 		sleep ( 1 );
 		$warming = $this->cache->get ( 'warming' );
-		// error_log ( "warming--->" . $warming . PHP_EOL );
 		if (! $warming) {
-			// error_log ( "cache warming @person started..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			error_log ( "cache warming @person started..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 			$warming = $this->cache->set ( 'warming', '1' );
 			
 			$url_signer = new MemreasSignedURL ();
@@ -379,6 +421,16 @@ class AWSMemreasRedisCache {
 			
 			// Finished warming so reset flag
 			$warming = $this->cache->set ( 'warming', '0' );
+			
+			/**
+			 * Set expire for each set
+			 */
+			$reply = $this->setExpire ( '@person' );
+			Mlog::addone ( $cm . __LINE__, '::@person setExpire reply ---> ' . $reply );
+			$reply = $this->setExpire ( '@person_meta_hash' );
+			Mlog::addone ( $cm . __LINE__, '::@person_meta_hash setExpire reply ---> ' . $reply );
+			$reply = $this->setExpire ( '@person_uid_hash' );
+			Mlog::addone ( $cm . __LINE__, '::@person_uid_hash setExpire reply ---> ' . $reply );
 		}
 	}
 	public function findSet($set, $match) {

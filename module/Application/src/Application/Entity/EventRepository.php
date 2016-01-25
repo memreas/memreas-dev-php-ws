@@ -317,7 +317,7 @@ class EventRepository extends EntityRepository {
 		$qb->from ( 'Application\Entity\Tag', 't' );
 		$qb->where ( 't.tag_type LIKE ?1' );
 		$qb->setParameter ( 1, '#' );
-		// error_log("query---->".$qb->getDql().PHP_EOL);
+		error_log("query---->".$qb->getQuery()->getSQL().PHP_EOL);
 		$result = $qb->getQuery ()->getResult ();
 		
 		return $result;

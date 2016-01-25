@@ -894,11 +894,11 @@ class IndexController extends AbstractActionController {
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
-							 *  - check public then friends...
+							 * - check public then friends...
 							 */
 							$search_result = $this->redis->findSet ( '!memreas', $search );
-							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_'.$user_id, $search );
-							$search_result = array_merge($search_result, $search_result_friends);
+							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
+							$search_result = array_merge ( $search_result, $search_result_friends );
 							
 							$rc = count ( $search_result );
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
@@ -908,14 +908,14 @@ class IndexController extends AbstractActionController {
 							$result ['search'] = $search_result;
 							
 							echo json_encode ( $result );
-							//Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
+							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
 							
 							/*
 							 * -
-							 * Redis must be up for event search - 
+							 * Redis must be up for event search -
 							 */
-							//$this->redis->warmMemreasSet ();
+							// $this->redis->warmMemreasSet ();
 							
 							// $public_event_cache = $this->redis->getCache ( '!memreas' );
 							// if (! $event_cache || empty ( $event_cache )) {
@@ -1753,33 +1753,20 @@ class IndexController extends AbstractActionController {
 				// Do nothing...
 			}
 			
-			$result = $this->redis->hasSet ( '@person' );
-			// error_log ( "result--->*$result*" . PHP_EOL );
-			if (! $result) {
+			if (! $this->redis->hasSet ( '@person' )) {
 				// Now continue processing and warm the cache for @person
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				$this->redis->warmPersonSet ();
 			}
-			$result = $this->redis->hasSet ( '!memreas' );
-			// error_log ( "result--->*$result*" . PHP_EOL );
-			if (! $result) {
+			if (! $this->redis->hasSet ( '!memreas' )) {
 				// Now continue processing and warm the cache for !memreas
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				$this->redis->warmMemreasSet ( $_SESSION ['user_id'] );
 			}
-		}
-		
-		if (($actionname != 'listnotification') && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-			
 			if (! $this->redis->hasSet ( '#hashtag' )) {
-				// error_log ( "Inside Redis warmer #hashtag..." . date ( 'Y-m-d H:i:s.u' ) .
-				// PHP_EOL );
 				// warm the cache for #hashtag
-				$session = new Container ( 'user' );
 				$user_id = $_SESSION ['user_id'];
-				// error_log ( "Inside Redis warmer user_id ---> $user_id" . date ( 'Y-m-d
-				// H:i:s.u' ) . PHP_EOL );
-				$this->redis->warmHashTagSet ( $user_id );
+				$this->redis->warmHashTagSet (  $_SESSION ['user_id'] );
 			}
 		}
 		// Need to exit here to avoid ZF2 framework view.
@@ -1815,7 +1802,7 @@ class IndexController extends AbstractActionController {
                                         
 		);
 		if (in_array ( $actionname, $public )) {
-			//Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
+			// Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
 		Mlog::addone ( "session required ::->", $actionname );
