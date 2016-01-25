@@ -898,13 +898,16 @@ class IndexController extends AbstractActionController {
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
+							Mlog::addone('findSet result-->', $search_result, 'p');
 							
 							/*
 							 * -
 							 * remove self and update indices
 							 */
 							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
+							Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
+							Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
 								
 							$rc = count ( $event_ids_from_search );
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
