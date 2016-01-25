@@ -144,7 +144,7 @@ class Login {
 		
 		header ( "Content-type: text/xml" );
 		echo $xml_output;
-		error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
+		//error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}
 }
 ?>

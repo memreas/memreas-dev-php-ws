@@ -894,33 +894,15 @@ class IndexController extends AbstractActionController {
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
+							 *  - check public then friends...
 							 */
-							$events = $this->redis->findSet ( '!memreas', $search );
+							$search_result = $this->redis->findSet ( '!memreas', $search );
+							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_'.$user_id, $search );
+							$search_result = array_merge($search_result, $search_result_friends);
 							
-							/*
-							 * -
-							 * remove user's events from results
-							 */
-							$index = array_search ( $_SESSION ['username'], $usernames );
-							unset ( $usernames [$index] );
-							$usernames = array_values ( $usernames );
-							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
-							
-							/*
-							 * -
-							 * remove user's events from results
-							 */
-							$user_ids = array ();
-							$search_array_values = array_values ( $person_meta_hash );
-							$search_result = array ();
-							foreach ( $search_array_values as $entry ) {
-								$entry_arr = json_decode ( $entry, true );
-								$user_ids [] = $entry_arr ['user_id'];
-								$search_result [] = $entry_arr;
-							}
 							$rc = count ( $search_result );
-							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result count--->", $rc );
-							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result --->", $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
+							//Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
 							
 							/*
@@ -1770,17 +1752,13 @@ class IndexController extends AbstractActionController {
 			if (! $result) {
 				// Now continue processing and warm the cache for @person
 				// $registration = new Registration ( $message_data, $memreas_tables,
-				// $this->getServiceLocator () );
 				$this->redis->warmPersonSet ();
 			}
 			$result = $this->redis->hasSet ( '!memreas' );
 			// error_log ( "result--->*$result*" . PHP_EOL );
 			if (! $result) {
-			//if (true) {
 				// Now continue processing and warm the cache for !memreas
 				// $registration = new Registration ( $message_data, $memreas_tables,
-				// $this->getServiceLocator () );
-				Mlog::addone ( $cm, '::user_id' . $_SESSION ['user_id'] );
 				$this->redis->warmMemreasSet ( $_SESSION ['user_id'] );
 			}
 		}
@@ -1831,7 +1809,7 @@ class IndexController extends AbstractActionController {
                                         
 		);
 		if (in_array ( $actionname, $public )) {
-			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
+			//Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
 		Mlog::addone ( "session required ::->", $actionname );

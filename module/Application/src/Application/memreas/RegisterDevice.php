@@ -43,7 +43,6 @@ class RegisterDevice {
 		$device_found_result = $checkdevice_query->getResult ();
 		
 		if (empty ( $device_found_result )) {
-			error_log ( "checkdevice_query empty" . PHP_EOL );
 			$device_token = '';
 		} else {
 			$device_found = false;

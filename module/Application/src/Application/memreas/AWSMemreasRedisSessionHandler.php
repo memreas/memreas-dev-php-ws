@@ -18,11 +18,21 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $url_signer;
 	public $xmlCookieData;
 	public function __construct($redis, $service_locator) {
-		$this->db = new \Predis\Client ( [ 
-				'scheme' => 'tcp',
-				'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
-				'port' => 6379 
-		] );
+
+		$this->aws_manager = new AWSManagerSender ( $service_locator );
+		try {
+			$this->db = new \Predis\Client ( [
+					'scheme' => 'tcp',
+					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
+					'port' => 6379
+			] );
+		} catch ( \Exception $e ) {
+			Mlog::addone ( $cm, '::predis connection exception ---> ' . $e->getMessage () );
+			$to = MemreasConstants::ADMIN_EMAIL;
+			$html = '<html><head></head><body><p>REDIS CONNECTION ERROR<p>' . $e->getMessage () . '</body></html>';
+			$this->aws_manager->sendSeSMail ( $to, 'REDIS CONNECTION ERROR', $html );
+		}
+		
 		// $this->prefix = $prefix;
 		$this->prefix = '';
 		$this->mRedis = $redis;
