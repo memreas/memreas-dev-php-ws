@@ -145,8 +145,7 @@ class AWSMemreasRedisCache {
 		$user_id = $_SESSION['user_id'];
 		$reply = $this->sExists ( 'warming_memreas' );
 		Mlog::addone($cm, '::warming_memreas...' . $reply);
-		//if (! $warming_memreas || ($warming_memreas == "(nil)")) {
-		if (true) {
+		if (! $warming_memreas || ($warming_memreas == "(nil)")) {
 			Mlog::addone($cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ));
 			$warming = $this->cache->set ( 'warming_memreas', '1' );
 			
@@ -154,8 +153,7 @@ class AWSMemreasRedisCache {
 			$eventRep = $this->service_locator->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 			$result = $this->sExists ( '!memreas' );
 			Mlog::addone($cm, '::$this->sExists (!memreas) --->' . $result);
-			//if (!$result) {
-			if (true) {
+			if (!$result) {
 				Mlog::addone($cm, '::building cache for public events started...' . date ( 'Y-m-d H:i:s.u' ));
 				
 				$events_result = $eventRep->createEventCache ( 'public' );

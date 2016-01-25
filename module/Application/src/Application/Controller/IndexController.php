@@ -1775,8 +1775,8 @@ class IndexController extends AbstractActionController {
 			}
 			$result = $this->redis->hasSet ( '!memreas' );
 			// error_log ( "result--->*$result*" . PHP_EOL );
-			//if (! $result) {
-			if (true) {
+			if (! $result) {
+			//if (true) {
 				// Now continue processing and warm the cache for !memreas
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				// $this->getServiceLocator () );
