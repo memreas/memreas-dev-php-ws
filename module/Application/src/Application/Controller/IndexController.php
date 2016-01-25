@@ -925,111 +925,118 @@ class IndexController extends AbstractActionController {
 							
 							/*
 							 * -
-							 * Redis must be up for event search 
+							 * Redis must be up for event search - 
 							 */
 							//$this->redis->warmMemreasSet ();
-							$event_cache = $this->redis->getCache ( '!event' );
-							if (! $event_cache || empty ( $event_cache )) {
-								$eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-								$search_result = $eventRep->createEventCache ( 'all' );
-
-								/**
-								 * - Store public in REDIS by TAG
-								 */
-								
-								$search_result = array ();
-								$event_count = 0;
-								$event_ids = array ();
-								
-								/**
-								 * see create event cache - loop for event key naming
-								 * foreach ( $events_with_valid_from_to_and_ghost as $event_key => $event_value ) {
-								 * if (stripos ( $er ['name'], $search ) === 0) {
-								 * $event_key ['name'] = '!' .
-								 * $event_key ['name'];
-								 * $event_key ['comment_count'] = $eventRep->getCommentCount ( $event_value );
-								 * $event_key ['like_count'] = $eventRep->getLikeCount ( $event_value );
-								 * $event_key ['friends'] = $eventRep->getEventFriends ( $event_value );
-								 * //$er ['name'] = '!' . $er ['name'];
-								 * $event_key ['created_on'] = Utility::formatDateDiff ( $event_key ['create_time'] );
-								 * $event_creator = $eventRep->getUser ( $event_key ['user_id'], 'row' );
-								 * $event_key ['event_creator_name'] = '@' . $event_creator ['username'];
-								 * $event_key ['event_creator_pic'] = $event_creator ['profile_photo'];
-								 * $search_result [] = $event_key;
-								 * $event_ids [] = $event_key ['event_id'];
-								 *
-								 * }
-								 * }
-								 */
-								
-								/**
-								 * - For no
-								 */
-								
-								/*
-								 * -
-								 * TODO: Fix paging later - not nedded for Android / iOS, doesn't work on web
-								 */
-								$result ['count'] = count ( $search_result );
-								$result ['page'] = 1;
-								$result ['totalPage'] = 1;
-								$result ['search'] = $search_result;
-								
-							} else {
-								// do nothing - pulled from cache
-								Mlog::addone ( $cm . __LINE__ . '::$mc if from cache as json--->', $event_cache );
-								$search_result = json_decode ( $event_cache, true );
-							}
-							$event_count = count ( $search_result );
 							
-							/**
-							 * - Fetch friend events
-							 */
+							// $public_event_cache = $this->redis->getCache ( '!memreas' );
+							// if (! $event_cache || empty ( $event_cache )) {
+							// $eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+							// $public_event_cache = $eventRep->createEventCache ( 'public' );
 							
-							/*
-							 * -
-							 * filter record !event should show public events and events you've been invited to
-							 */
+							// /**
+							// * - Store public in REDIS by TAG
+							// */
 							
-							/*
-							 * -
-							 * Fetch Friends
-							 */
-							$qb = $em->createQueryBuilder ();
-							$qb->select ( 'ef' );
-							$qb->from ( 'Application\Entity\EventFriend', 'ef' );
-							$qb->from ( 'Application\Entity\EventFriend', 'ef' );
-							$qb->andWhere ( 'ef.event_id IN (:eventIds)' );
-							$qb->andWhere ( 'ef.friend_id =:friendId' );
-							$qb->andWhere ( 'ef.user_approve = 1' );
-							$qb->setParameter ( 'friendId', $_SESSION ['user_id'] );
-							$qb->setParameter ( 'eventIds', $event_ids );
-							$events_with_valid_from_to_and_ghost_and_friend_events = $qb->getQuery ()->getArrayResult ();
+							// $search_result = array ();
+							// $event_count = 0;
+							// $event_ids = array ();
 							
-							/*
-							 * -
-							 * Check if event request sent
-							 */
-							$chkEventFriend = array ();
-							foreach ( $EventFriends as $efRow ) {
-								$chkEventFriend [$efRow ['event_id']] = $efRow ['user_approve'];
-							}
-							foreach ( $search_result as $k => &$srRow ) {
-								if (isset ( $chkEventFriend [$event_ids [$k]] )) {
-									$srRow ['event_request_sent'] = $chkEventFriend [$event_ids [$k]];
-								}
-							}
+							// /**
+							// * see create event cache - loop for event key naming
+							// * foreach ( $events_with_valid_from_to_and_ghost as $event_key => $event_value ) {
+							// * if (stripos ( $er ['name'], $search ) === 0) {
+							// * $event_key ['name'] = '!' .
+							// * $event_key ['name'];
+							// * $event_key ['comment_count'] = $eventRep->getCommentCount ( $event_value );
+							// * $event_key ['like_count'] = $eventRep->getLikeCount ( $event_value );
+							// * $event_key ['friends'] = $eventRep->getEventFriends ( $event_value );
+							// * //$er ['name'] = '!' . $er ['name'];
+							// * $event_key ['created_on'] = Utility::formatDateDiff ( $event_key ['create_time'] );
+							// * $event_creator = $eventRep->getUser ( $event_key ['user_id'], 'row' );
+							// * $event_key ['event_creator_name'] = '@' . $event_creator ['username'];
+							// * $event_key ['event_creator_pic'] = $event_creator ['profile_photo'];
+							// * $search_result [] = $event_key;
+							// * $event_ids [] = $event_key ['event_id'];
+							// *
+							// * }
+							// * }
+							// */
 							
-							$comments = $eventRep->createDiscoverCache ( $tag );
+							// /**
+							// * - For no
+							// */
 							
-							$result ['totalPage'] = 1;
-							$result ['count'] = $rc;
-							$result ['search'] = $search_result;
-							$result ['comments'] = empty ( $comments ) ? "" : $comments;
+							// /*
+							// * -
+							// * TODO: Fix paging later - not nedded for Android / iOS, doesn't work on web
+							// */
+							// $result ['count'] = count ( $search_result );
+							// $result ['page'] = 1;
+							// $result ['totalPage'] = 1;
+							// $result ['search'] = $search_result;
 							
-							echo json_encode ( $result );
-							Mlog::addone ( $cm . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
-							$result = '';
+							// } else {
+							// // do nothing - pulled from cache
+							// Mlog::addone ( $cm . __LINE__ . '::$mc if from cache as json--->', $event_cache );
+							// $public_event_cache = json_decode ( $event_cache, true );
+							// }
+							// $event_count = count ( $search_result );
+							
+							// /**
+							// * - Fetch friend events
+							// */
+							// $friends_event_cache = $eventRep->createEventCache ( 'friends' );
+							
+							// /*
+							// * -
+							// * filter record !memreas should show public events and events you've been invited to
+							// */
+							
+							// /*
+							// * -
+							// * Fetch Friends
+							// */
+							// /*
+							// $qb = $em->createQueryBuilder ();
+							// $qb->select ( 'ef' );
+							// $qb->from ( 'Application\Entity\EventFriend', 'ef' );
+							// $qb->from ( 'Application\Entity\EventFriend', 'ef' );
+							// $qb->andWhere ( 'ef.event_id IN (:eventIds)' );
+							// $qb->andWhere ( 'ef.friend_id =:friendId' );
+							// $qb->andWhere ( 'ef.user_approve = 1' );
+							// $qb->setParameter ( 'friendId', $_SESSION ['user_id'] );
+							// $qb->setParameter ( 'eventIds', $event_ids );
+							// $events_with_valid_from_to_and_ghost_and_friend_events = $qb->getQuery ()->getArrayResult ();
+							
+							// /*
+							// * -
+							// * Check if event request sent
+							// */
+							// /*
+							// $chkEventFriend = array ();
+							// foreach ( $EventFriends as $efRow ) {
+							// $chkEventFriend [$efRow ['event_id']] = $efRow ['user_approve'];
+							// }
+							// foreach ( $search_result as $k => &$srRow ) {
+							// if (isset ( $chkEventFriend [$event_ids [$k]] )) {
+							// $srRow ['event_request_sent'] = $chkEventFriend [$event_ids [$k]];
+							// }
+							// }
+							// */
+							// /*
+							// $comments = $eventRep->createDiscoverCache ( $tag );
+							
+							// $result ['totalPage'] = 1;
+							// $result ['count'] = $rc;
+							// $result ['search'] = $search_result;
+							// $result ['comments'] = empty ( $comments ) ? "" : $comments;
+							// */
+							// //$public_friends_events_cache =
+							
+							// echo json_encode ( $result );
+							// Mlog::addone ( $cm . __LINE__, "::!memreas search result--->" . json_encode ( $result ) );
+							// $result = '';
 						} // end else
 						
 						break;
@@ -1761,10 +1768,6 @@ class IndexController extends AbstractActionController {
 			$result = $this->redis->hasSet ( '@person' );
 			// error_log ( "result--->*$result*" . PHP_EOL );
 			if (! $result) {
-				// error_log ( "Inside Redis warmer @person DOES NOT EXIST??.." . date ( 'Y-m-d
-				// H:i:s.u' ) . PHP_EOL );
-				// error_log ( "Inside Redis warmer @person..." . date ( 'Y-m-d H:i:s.u' ) .
-				// PHP_EOL );
 				// Now continue processing and warm the cache for @person
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				// $this->getServiceLocator () );
@@ -1772,12 +1775,13 @@ class IndexController extends AbstractActionController {
 			}
 			$result = $this->redis->hasSet ( '!memreas' );
 			// error_log ( "result--->*$result*" . PHP_EOL );
-			if (! $result) {
-				// Now continue processing and warm the cache for @person
+			//if (! $result) {
+			if (true) {
+				// Now continue processing and warm the cache for !memreas
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				// $this->getServiceLocator () );
-				Mlog::addone($cm,'::user_id'.$_SESSION['user_id']);
-				$this->redis->warmMemreasSet ($_SESSION['user_id']);
+				Mlog::addone ( $cm, '::user_id' . $_SESSION ['user_id'] );
+				$this->redis->warmMemreasSet ( $_SESSION ['user_id'] );
 			}
 		}
 		

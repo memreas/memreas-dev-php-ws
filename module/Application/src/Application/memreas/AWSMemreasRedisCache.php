@@ -139,11 +139,14 @@ class AWSMemreasRedisCache {
 	 * Redis cache for all events
 	 */
 	public function warmMemreasSet($user_id) {
+		Mlog::addone($cm, 'entered warmMemreasSet' );
 		$cm = __CLASS__ . __METHOD__;
 		sleep ( 1 );
+		$user_id = $_SESSION['user_id'];
 		$reply = $this->sExists ( 'warming_memreas' );
 		Mlog::addone($cm, '::warming_memreas...' . $reply);
-		if (! $warming_hashtag || ($warming_hashtag == "(nil)")) {
+		//if (! $warming_memreas || ($warming_memreas == "(nil)")) {
+		if (true) {
 			Mlog::addone($cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ));
 			$warming = $this->cache->set ( 'warming_memreas', '1' );
 			
@@ -151,72 +154,75 @@ class AWSMemreasRedisCache {
 			$eventRep = $this->service_locator->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 			$result = $this->sExists ( '!memreas' );
 			Mlog::addone($cm, '::$this->sExists (!memreas) --->' . $result);
-			if (! result) {
+			//if (!$result) {
+			if (true) {
+				Mlog::addone($cm, '::building cache for public events started...' . date ( 'Y-m-d H:i:s.u' ));
+				
 				$events_result = $eventRep->createEventCache ( 'public' );
-				Mlog::addone($cm, '::$eventRep->createEventCache ( public ) --->' . $events_result);
+				Mlog::addone($cm .'::$eventRep->createEventCache ( public ) --->' , $events_result);
 				$public_event_ids = array ();
-				foreach ( $events_result as $event ) {
-					Mlog::addone($cm, '::Inside for loop to capture !memreas event names ... user_id is --->' . $_SESSION['user_id']);
-					if ($event['user_id'] != $_SESSION['user_id']) {
-						Mlog::addone($cm, '::Inside for loop to capture !memreas event names where user_id is not current user... $event[user_id] --->'. $event['user_id']);
-						$event_id = $event ['event_id'];
-						$event_names [$event ['name']] = 0;
-						Mlog::addone($cm, '::Inside for loop to capture !memreas event names ... adding $event [name]--->' . $event ['name'] );
-						$public_eid_hash [$event_id] = $event;
-						Mlog::addone($cm, '::Inside for loop to capture !memreas event names ... adding $public_eid_hash[$event_id] for event --->' . $event );
-						$public_event_meta_hash [$event['name']][] = $event_id;
-						Mlog::addone($cm, '::Inside for loop to capture !memreas event names ... adding $$public_event_meta_hash[$event[name]] for event_id --->' . $event_id );
+				foreach ( $events_result as $eventIndex ) {
+					$event_id = $eventIndex['id'];
+					$event = $eventIndex[$event_id];
+					$event_owner = $event['user_id'];
+					if ($event['user_id'] != $user_id) {
+						Mlog::addone($cm, '::Inside for loop to capture !memreas event names ... event_id is --->' . $event['event_id']);
+						
+						/**
+						 * - Check for viewable from / to since db date is string
+						 */
+						if ((!empty($event['viewable_from'])) && (!empty($event['viewable_to'])) ) {
+							$now = time();
+							/** check if now is outside dates */
+							if ( ($now < $event['viewable_from'] ) || ($now > $event['viewable_to']) ){
+								Mlog::addone("warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event['event_id']);
+								continue;
+							}
+						}
+						/**
+						 * - Check for self_destruct/ghost since db date is string
+						 */
+						if (!empty($event['self_destuct'])) {
+							$now = time();
+							/** check if now is outside dates */
+							if ( ($now > $event['self_destruct'] ) ){
+								Mlog::addone("warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event['event_id']);
+								continue;
+							}
+						}
+						
+						/**
+						 * Add to sorted set here ... error
+						 * Note: event_owner_key is set to ensure uniqueness of key (user_id_event_id)
+						 * owner_name_key follows the same premise since we can have duplicate event names we prefix with owner_id $event['user_id']
+						 * i.e. "user_id_ name of my event"
+						 */
+						$reply = $this->cache->zadd ( '!memreas', 0, $event ['name'] );
+						$event_owner_key = $event_owner . '_' . $event_id; 
+						$event_name_key = $event_owner . '_' . $event['name'];
+						$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_id);
+						$reply = $this->cache->hset ( "!memreas_eid_hash", $event_owner_key, json_encode($eventIndex));
+						//$public_event_meta_hash [$event['name']][] = $event_id;
+						
 					}
 				}
-				$reply = $this->cache->zadd ( '!memreas', $event_names );
-				Mlog::addone($cm, '::Past for loop ... $this->cache->zadd ( !memreas, $event_names ) ... reply --->' . $reply );
-				$reply = $this->cache->hmset ( '!memreas_meta_hash', $public_event_meta_hash );
-				Mlog::addone($cm, '::Past for loop ... $this->cache->hmset ( !memreas_meta_hash, $public_event_meta_hash ) ... reply --->' . $reply );
-				$reply = $this->cache->hmset ( '!memreas_eid_hash', $public_eid_hash );
-				Mlog::addone($cm, '::Past for loop ... $this->cache->hmset ( !memreas_eid_hash, $public_eid_hash ) ... reply --->' . $reply );
+				//$reply = $this->cache->hmset ( "!memreas_meta_hash", $public_event_meta_hash );
+				//Mlog::addone($cm, '::Past for loop ... $this->cache->hmset ( !memreas_meta_hash, $public_event_meta_hash ) ... reply --->' . $reply );
+				//$reply = $this->cache->hmset ( "!memreas_eid_hash", $public_eid_hash );
+				//Mlog::addone($cm, '::Past for loop ... $this->cache->hmset ( !memreas_eid_hash, $public_eid_hash ) ... reply --->' . $reply );
+				//Mlog::addone($cm, '::building cache for public events ended...' . date ( 'Y-m-d H:i:s.u' ));
 			}
 			
 			/**
 			 * Build friends events cache
 			 */
-			$events_result = $eventRep->createEventCache ( 'friends' );
-			foreach ( $events_result as $event ) {
-				Mlog::addone($cm, '::Inside for loop to capture !memreas_friends_events_'.$_SESSION['user_id']);
-				if ($event['user_id'] != $_SESSION['user_id']) {
-					Mlog::addone($cm, '::Inside for loop to capture !memreas_friends_events_'.$_SESSION['user_id'].' for $event[user_id] -->'.$event['user_id']);
-					$event_id = $event ['event_id'];
-					$friends_event_names [$event ['name']] = 0;
-					Mlog::addone($cm, '::Inside for loop to capture !memreas_friends_events_'.$_SESSION['user_id'].' for $friends_event_names [$event [name]]-->'.$event['name']);
-					$friends_event_hash [$event_id] = $event;
-					Mlog::addone($cm, '::Inside for loop to capture !memreas_friends_events_'.$_SESSION['user_id'].' for $friends_event_hash [$event_id]-->'.$event);
-					$friends_event_meta_hash [$event['name']][] = $event_id;
-					Mlog::addone($cm, '::Inside for loop to capture !memreas_friends_events_'.$_SESSION['user_id'].' for $friends_event_meta_hash [$event[name]]-->'.$event_id);
-				}
-			}
-			$this->cache->zadd ( '!memreas_friends_events_'.$_SESSION['user_id'], $friends_event_names );
-			Mlog::addone($cm, '::Past for loop ... $this->cache->zadd ( !memreas_friends_events_'.$_SESSION['user_id'].') for $friends_event_names ... reply --->' . $reply );
-			$this->cache->hmset ( '!memreas_friends_events_meta_hash', $friends_event_meta_hash );
-			Mlog::addone($cm, '::Past for loop ... $this->cache->zadd ( !memreas_friends_events_meta_hash) for $friends_event_meta_hash ... reply --->' . $reply );
-			$this->cache->hmset ( '!memreas_friends_events_eid_hash', $friends_event_hash );
-			Mlog::addone($cm, '::Past for loop ... $this->cache->zadd ( !memreas_friends_events_eid_hash) for $friends_event_hash ... reply --->' . $reply );
-				
-			$reply = $this->cache->executeRaw ( array (
-					'HLEN',
-					'#hashtag_friends_hash_' . $_SESSION['user_id'] 
-			) );
-			Mlog::addone($cm, '::HLEN #hashtag_friends_hash_' . $_SESSION['user_id'] . ' result --->'. $reply);
-				
-			
-			$reply = $this->cache->executeRaw ( array (
-					'HLEN',
-					'#hashtag_public_eid_hash' 
-			) );
-			Mlog::addone($cm, '::HLEN #hashtag_public_eid_hash result --->'. $reply);
+
 			$warming = $this->cache->set ( 'warming_memreas', '0' );
-			Mlog::addone($cm, '::cache warming @warming_hashtag finished...'.date( 'Y-m-d H:i:s.u' ));
+			Mlog::addone($cm, '::cache warming @warming_memreas finished...'.date( 'Y-m-d H:i:s.u' ));
 				
 			// $this->redis->setCache("!event", $mc);
 		}
+		
 	}
 	
 	/**
@@ -246,7 +252,7 @@ class AWSMemreasRedisCache {
 			foreach ( $userIndexArr as $row ) {
 				$json_array = json_decode ( $row ['metadata'], true );
 				if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-					$url1 = $this->url_signer->signArrayOfUrls ( 'static/profile-pic.jpg' );
+					$url1 = $this->url_signer->signArrayOfUrls ( null );
 				} else {
 					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 				}
@@ -268,7 +274,7 @@ class AWSMemreasRedisCache {
 			}
 			// $result = $this->cache->zadd ( '@person', 0, $usernames );
 			$result = $this->cache->zadd ( '@person', $usernames );
-			error_log ( 'zadd array $result--->' . print_r ( $result, true ) . PHP_EOL );
+			//error_log ( 'zadd array $result--->' . print_r ( $result, true ) . PHP_EOL );
 			$reply = $this->cache->hmset ( '@person_meta_hash', $person_meta_hash );
 			$reply = $this->cache->hmset ( '@person_uid_hash', $person_uid_hash );
 			
@@ -300,18 +306,13 @@ class AWSMemreasRedisCache {
 	 */
 	public function sExists($set) {
 		$cm = __CLASS__ . __METHOD__;
-		Mlog::addone($cm,'::sExists for $set-->'.$set);
+		//Mlog::addone($cm,'::inside sExists for $set-->'.$set);
 		$result = $this->cache->executeRaw ( array (
 				'EXISTS',
 				$set 
 		) );
-		Mlog::addone ( 'sExists($set)', $set . ' result::' . $result );
-		if ($result = "(integer) 1") {
-			$matches = $result;
-		} else {
-			$matches = 0;
-		}
-		return $matches;
+		//Mlog::addone ( 'sExists($set)', $set . ' result::' . $result );
+		return $result;
 	}
 	
 	/**
@@ -324,13 +325,8 @@ class AWSMemreasRedisCache {
 				$hash,
 				$field 
 		) );
-		Mlog::addone ( 'hExists($hash, $field)', '::$set' . $hash . '::$field' . $field . ' result::' . $result );
-		if ($result = "(integer) 1") {
-			$matches = $result;
-		} else {
-			$matches = 0;
-		}
-		return $matches;
+		//Mlog::addone ( 'hExists($hash, $field)', '::$set' . $hash . '::$field' . $field . ' result::' . $result );
+		return $result;
 	}
 	public function addSet($set, $key, $val = null) {
 		$cm = __CLASS__ . __METHOD__;

@@ -19,6 +19,9 @@ class Utility {
 		self::$collection [] = self::$item;
 		self::$item = array ();
 	}
+	public static function isValidTimeStamp($timestamp) {
+		return (( string ) ( int ) $timestamp === $timestamp) && ($timestamp <= PHP_INT_MAX) && ($timestamp >= ~ PHP_INT_MAX);
+	}
 	public static function toDateTime($unixTimestamp) {
 		// examples...
 		// $today = date("F j, Y, g:i a"); // March 10, 2001, 5:16 pm
@@ -35,6 +38,12 @@ class Utility {
 		return date ( "Y-M-d", $unixTimestamp );
 	}
 	public static function formatDateDiff($start, $end = null) {
+		/**
+		 * Check if timestampe is unix timestamp and convert to datetime
+		 */
+		if (self::isValidTimeStamp($start)) {
+			$start = self::toDateTime($start);
+		}
 		$pos = strpos ( $start, '-' );
 		
 		if ($pos === false) {
@@ -84,7 +93,6 @@ class Utility {
 		// Prepend 'since ' or whatever you like
 		return $interval->format ( $format );
 	}
-      
 }
 
 ?>
