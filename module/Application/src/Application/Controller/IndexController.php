@@ -935,7 +935,7 @@ class IndexController extends AbstractActionController {
 							// $result .= $event . ',';
 							// }
 							$result .= '] } ';
-							//error_log ( '!memreas search result json --->' . $result );
+							error_log ( '!memreas search result json --->' . $result );
 							
 							echo $result;
 							// echo json_encode ( $result );
