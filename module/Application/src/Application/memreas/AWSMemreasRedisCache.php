@@ -396,6 +396,10 @@ class AWSMemreasRedisCache {
 				} else {
 					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 				}
+				//decode here because result will be encoded
+				//error_log('$url1---->'.$url1);
+				$url1 = json_decode($url1);
+				$url1 = $url1[0];
 				
 				$person_json = json_encode ( array (
 						'username' => $row ['username'],

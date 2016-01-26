@@ -78,6 +78,9 @@ class EventRepository extends EntityRepository {
 			$eventIndex ['id'] = $event_id;
 			$eventIndex [$row ['event_id']] = $row;
 			$event_media_url = $this->getEventMediaUrl ( $row ['metadata'] );
+			$event_media_url = json_decode($event_media_url);
+			$event_media_url = $event_media_url[0];
+				
 			if ($result) {
 				$event_media_url = $result;
 			} else {
@@ -398,6 +401,9 @@ class EventRepository extends EntityRepository {
 						$i = 0;
 						foreach ( $event_media as $mediaRow ) {
 							$event_media_url = $this->getEventMediaUrl ( $mediaRow ['metadata'] );
+							$event_media_url = json_decode($event_media_url);
+							$event_media_url = $event_media_url[0];
+								
 							if (! empty ( $event_media_url )) {
 								$temp ['event_media_url'] ["$i"] = $event_media_url;
 								$i ++;

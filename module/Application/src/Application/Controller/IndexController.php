@@ -907,7 +907,6 @@ class IndexController extends AbstractActionController {
 							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
 							// Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
-							// Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
 							
 							$rc = count ( $events_from_search );
 							/**
@@ -929,13 +928,14 @@ class IndexController extends AbstractActionController {
 								if ($i > 0) {
 									$result .= ',';
 								}
+								error_log('hmget $events_from_search[$i] -->'. $events_from_search[$i]);
 								$result .= $events_from_search [$i];
 							}
 							// foreach ( $events_from_search as $event ) {
 							// $result .= $event . ',';
 							// }
 							$result .= '] } ';
-							error_log ( '!memreas search result json --->' . $result );
+							//error_log ( '!memreas search result json --->' . $result );
 							
 							echo $result;
 							// echo json_encode ( $result );
