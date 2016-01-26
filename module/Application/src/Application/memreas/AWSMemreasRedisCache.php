@@ -230,7 +230,7 @@ class AWSMemreasRedisCache {
 						 * i.e.
 						 * "user_id_ name of my event"
 						 */
-						$event_name_key = $event_owner . '_' . $event ['create_time'] . '_' . $event ['name'];
+						$event_name_key = $event ['name'] . '{'.$event_owner . '_' . $event ['create_time'] . '}';
 						$event_owner_key = $event_owner . '_' . $event_id;
 						$reply = $this->cache->zadd ( '!memreas', 0, $event_name_key );
 						$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_owner_key );
@@ -314,7 +314,7 @@ class AWSMemreasRedisCache {
 						 * owner_name_key needs to have create time as part of key since same owner can create event with same name
 						 */
 						
-						$event_name_key = $event_owner . '_' . $event ['create_time'] . '_' . $event ['name'];
+						$event_name_key = $event ['name'] . '{'.$event_owner . '_' . $event ['create_time'] . '}';
 						$event_owner_key = $event_owner . '_' . $event_id;
 						$reply = $this->cache->zadd ( '!memreas_friends_events_' . $user_id, 0, $event_name_key );
 						$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_owner_key );
