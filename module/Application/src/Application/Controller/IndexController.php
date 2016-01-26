@@ -928,7 +928,7 @@ class IndexController extends AbstractActionController {
 							 */
 							$result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
 							foreach($events_from_search as $event) {
-								$result = $event . ',';
+								$result .= $event . ',';
 							}
 							$result .= '] } ';
 							error_log('!memreas search result json --->'. $result);
