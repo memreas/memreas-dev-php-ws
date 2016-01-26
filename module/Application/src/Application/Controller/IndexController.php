@@ -749,9 +749,9 @@ class IndexController extends AbstractActionController {
 				
 				$search_result = array ();
 				switch ($a) {
-					/*
-					 * @person
-					 * search
+					/**
+					 * -
+					 * @person search
 					 */
 					case '@':
 
@@ -882,9 +882,9 @@ class IndexController extends AbstractActionController {
 						$result = '';
 						break;
 					
-					/*
+					/**
 					 * -
-					 * !event search
+					 * !memreas search
 					 */
 					case '!' :
 						if (MemreasConstants::REDIS_SERVER_USE) {
@@ -909,12 +909,25 @@ class IndexController extends AbstractActionController {
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
 							Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
 								
-							$rc = count ( $event_ids_from_search );
+							
+							$rc = count ( $events_from_search );
+							/**
+							 * Decode because we have encode below...
+							 */
+							
+							
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
 							$result = Array ();
 							$result ['totalPage'] = 1;
 							$result ['count'] = $rc;
-							$result ['search'] = $event_ids_from_search;
+							$result ['search'] = $events_from_search;
+							
+							$result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
+							foreach($events_from_search as $event) {
+								$result = $event . ',';
+							}
+							$result .= '] } ';
+							error_log('!memreas search result json --->', $result);
 							
 							echo json_encode ( $result );
 							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
