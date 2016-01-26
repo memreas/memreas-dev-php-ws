@@ -925,9 +925,15 @@ class IndexController extends AbstractActionController {
 							 * Build JSON here so we don't have to decode results
 							 */
 							$result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
-							foreach ( $events_from_search as $event ) {
-								$result .= $event . ',';
+							for($i = 0; $i < count ( $events_from_search ); $i ++) {
+								if ($i > 0) {
+									$result .= ',';
+								}
+								$result .= $events_from_search [$i];
 							}
+							// foreach ( $events_from_search as $event ) {
+							// $result .= $event . ',';
+							// }
 							$result .= '] } ';
 							error_log ( '!memreas search result json --->' . $result );
 							

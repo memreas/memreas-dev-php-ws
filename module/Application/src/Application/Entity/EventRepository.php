@@ -95,13 +95,13 @@ class EventRepository extends EntityRepository {
 			if ($result) {
 				$eventIndex ['comment_count'] = $result;
 			} else {
-				$eventIndex ['comment_count'] = null;
+				$eventIndex ['comment_count'] = 0;
 			}
 			$result = $this->getLikeCount ( $event_id );
 			if ($result) {
 				$eventIndex ['like_count'] = $result;
 			} else {
-				$eventIndex ['like_count'] = null;
+				$eventIndex ['like_count'] = 0;
 			}
 			$result = $this->getEventFriends ( $event_id );
 			if ($result) {
@@ -317,7 +317,7 @@ class EventRepository extends EntityRepository {
 		$qb->from ( 'Application\Entity\Tag', 't' );
 		$qb->where ( 't.tag_type LIKE ?1' );
 		$qb->setParameter ( 1, '#' );
-		error_log("query---->".$qb->getQuery()->getSQL().PHP_EOL);
+		error_log ( "query---->" . $qb->getQuery ()->getSQL () . PHP_EOL );
 		$result = $qb->getQuery ()->getResult ();
 		
 		return $result;
