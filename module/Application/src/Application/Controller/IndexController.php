@@ -789,7 +789,7 @@ class IndexController extends AbstractActionController {
 							}
 							$rc = count ( $search_result );
 							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result count--->", $rc );
-							// Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result --->", $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
 							Mlog::addone ( $cm . __LINE__, "::@person search initiating build cache and search in db" );
 							$registration = new registration ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -898,43 +898,41 @@ class IndexController extends AbstractActionController {
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
-							Mlog::addone('findSet result-->', $search_result, 'p');
+							Mlog::addone ( 'findSet result-->', $search_result, 'p' );
 							
 							/*
 							 * -
 							 * remove self and update indices
 							 */
 							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
-							//Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
+							// Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
-							//Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
-								
+							// Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
 							
 							$rc = count ( $events_from_search );
 							/**
 							 * Decode because we have encode below...
 							 */
 							
-							
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
-							//$result = Array ();
-							//$result ['totalPage'] = 1;
-							//$result ['count'] = $rc;
-							//$result ['search'] = $events_from_search;
+							// $result = Array ();
+							// $result ['totalPage'] = 1;
+							// $result ['count'] = $rc;
+							// $result ['search'] = $events_from_search;
 							
 							/**
-							 * - 
+							 * -
 							 * Build JSON here so we don't have to decode results
 							 */
 							$result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
-							foreach($events_from_search as $event) {
+							foreach ( $events_from_search as $event ) {
 								$result .= $event . ',';
 							}
 							$result .= '] } ';
-							error_log('!memreas search result json --->'. $result);
+							error_log ( '!memreas search result json --->' . $result );
 							
 							echo $result;
-							//echo json_encode ( $result );
+							// echo json_encode ( $result );
 							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
 							
@@ -1793,7 +1791,7 @@ class IndexController extends AbstractActionController {
 			if (! $this->redis->hasSet ( '#hashtag' )) {
 				// warm the cache for #hashtag
 				$user_id = $_SESSION ['user_id'];
-				$this->redis->warmHashTagSet (  $_SESSION ['user_id'] );
+				$this->redis->warmHashTagSet ( $_SESSION ['user_id'] );
 			}
 		}
 		// Need to exit here to avoid ZF2 framework view.
