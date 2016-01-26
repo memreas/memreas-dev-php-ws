@@ -927,7 +927,7 @@ class IndexController extends AbstractActionController {
 								$result = $event . ',';
 							}
 							$result .= '] } ';
-							error_log('!memreas search result json --->', $result);
+							error_log('!memreas search result json --->'. $result);
 							
 							echo json_encode ( $result );
 							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
