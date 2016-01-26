@@ -917,11 +917,15 @@ class IndexController extends AbstractActionController {
 							
 							
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
-							$result = Array ();
-							$result ['totalPage'] = 1;
-							$result ['count'] = $rc;
-							$result ['search'] = $events_from_search;
+							//$result = Array ();
+							//$result ['totalPage'] = 1;
+							//$result ['count'] = $rc;
+							//$result ['search'] = $events_from_search;
 							
+							/**
+							 * - 
+							 * Build JSON here so we don't have to decode results
+							 */
 							$result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
 							foreach($events_from_search as $event) {
 								$result = $event . ',';
