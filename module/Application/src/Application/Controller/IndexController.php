@@ -905,9 +905,9 @@ class IndexController extends AbstractActionController {
 							 * remove self and update indices
 							 */
 							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
-							Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
+							//Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
-							Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
+							//Mlog::addone('hmget $events_from_search -->', $events_from_search, 'p');
 								
 							
 							$rc = count ( $events_from_search );
