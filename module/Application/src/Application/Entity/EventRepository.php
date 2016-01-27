@@ -319,7 +319,17 @@ class EventRepository extends EntityRepository {
 		
 		if ($limit)
 			$qb->setMaxResults ( $limit );
-		return $qb->getQuery ()->getResult ();
+		$eventMedia = $qb->getQuery ()->getResult ();
+		$eventMediaArr = array();
+		foreach($eventMedia as $row) {
+			Mlog::addone('getEventMedia for loop row --->', $row);
+			$eventMediaArrRow = array();
+			$eventMediaArrRow['event_id'] = $row['event_id'];
+			$eventMediaArrRow['media_id'] = $row['media_id'];
+			$eventMediaArrRow['metadata'] = json_decode($row['metadata']);
+			$eventMediaArr[] = $eventMediaArrRow;
+		}
+		return $eventMediaArr;
 	}
 	public function getProfileUrl($metadata = '') {
 		$json_array = json_decode ( $metadata, true );

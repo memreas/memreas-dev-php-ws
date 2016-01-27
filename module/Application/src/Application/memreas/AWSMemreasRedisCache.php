@@ -194,49 +194,46 @@ class AWSMemreasRedisCache {
 					
 					$event_id = $event ['event_id'];
 					$event_owner = $event ['user_id'];
-					if ($event ['user_id'] != $user_id) {
-						// Mlog::addone ( $cm, '::Inside for loop to capture !memreas event names ... event_id is --->' . $event ['event_id'] );
-						
+					/**
+					 * - Check for viewable from / to since db date is string
+					 */
+					if ((! empty ( trim ( $event ['viewable_from'] ) )) && (! empty ( trim ( $event ['viewable_to'] ) ))) {
+						$now = time ();
 						/**
-						 * - Check for viewable from / to since db date is string
+						 * check if now is outside dates
 						 */
-						if ((! empty ( trim ( $event ['viewable_from'] ) )) && (! empty ( trim ( $event ['viewable_to'] ) ))) {
-							$now = time ();
-							/**
-							 * check if now is outside dates
-							 */
-							if (($now < $event ['viewable_from']) || ($now > $event ['viewable_to'])) {
-								Mlog::addone ( "warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event ['event_id'] );
-								continue;
-							}
+						if (($now < $event ['viewable_from']) || ($now > $event ['viewable_to'])) {
+							Mlog::addone ( "warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event ['event_id'] );
+							continue;
 						}
-						/**
-						 * - Check for self_destruct/ghost since db date is string
-						 */
-						if (! empty ( trim ( $event ['self_destuct'] ) )) {
-							$now = time ();
-							/**
-							 * check if now is outside dates
-							 */
-							if (($now > $event ['self_destruct'])) {
-								Mlog::addone ( "warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event ['event_id'] );
-								continue;
-							}
-						}
-						
-						/**
-						 * Add to sorted set here
-						 * Note: event_owner_key is set to ensure uniqueness of key (user_id_event_id)
-						 * owner_name_key needs to have create time as part of key since same owner can create event with same name
-						 * i.e.
-						 * "user_id_ name of my event"
-						 */
-						$event_name_key = $event ['name'] . '{' . $event_owner . '_' . $event ['create_time'] . '}';
-						$event_owner_key = $event_owner . '_' . $event_id;
-						$reply = $this->cache->zadd ( '!memreas', 0, $event_name_key );
-						$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_owner_key );
-						$reply = $this->cache->hset ( "!memreas_eid_hash", $event_owner_key, json_encode ( $eventIndex ) );
 					}
+					/**
+					 * - Check for self_destruct/ghost since db date is string
+					 */
+					if (! empty ( trim ( $event ['self_destuct'] ) )) {
+						$now = time ();
+						/**
+						 * check if now is outside dates
+						 */
+						Mlog::addone('Check for ghost date--->', '$now--->'.$now.' $ghost');
+						if ($now <= $event ['self_destruct']) {
+							Mlog::addone ( "warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event ['event_id'] );
+							continue;
+						}
+					}
+					
+					/**
+					 * Add to sorted set here
+					 * Note: event_owner_key is set to ensure uniqueness of key (user_id_event_id)
+					 * owner_name_key needs to have create time as part of key since same owner can create event with same name
+					 * i.e.
+					 * "user_id_ name of my event"
+					 */
+					$event_name_key = $event ['name'] . '{' . $event_owner . '_' . $event ['create_time'] . '}';
+					$event_owner_key = $event_owner . '_' . $event_id;
+					$reply = $this->cache->zadd ( '!memreas', 0, $event_name_key );
+					$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_owner_key );
+					$reply = $this->cache->hset ( "!memreas_eid_hash", $event_owner_key, json_encode ( $eventIndex ) );
 				}
 				/**
 				 * Adding here would reduce REDIS hits but not working

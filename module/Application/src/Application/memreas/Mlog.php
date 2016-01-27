@@ -29,13 +29,10 @@ class Mlog {
 	public static function addone($objname, $obj, $opt = '\n') {
 		if (empty ( $obj )) {
 			$obj = 'object is empty';
-		} else if ((is_array ( $obj )) && ($opt != 'p')) {
-			$obj = json_encode ( $obj );
-		} else if ((is_array ( $obj )) && ($opt == 'p')) {
-			$obj = print_r ( $obj, true );
-		} else if (is_object ( $obj )) {
-			$obj = print_r ( $obj, true );
+		} else if ( (is_array ( $obj )) || (is_object ( $obj )) ) {
+			$opt = 'p';
 		}
+		error_log('Mlog option --->'.$opt.PHP_EOL);
 		
 		self::add ( $objname . '::' . $obj, $opt );
 		self::out ();
@@ -75,13 +72,10 @@ class Mlog {
 			$opt = $item ['opt'];
 			if ($opt == 'j') {
 				error_log ( json_encode ( $obj ) . PHP_EOL );
-			} else if ($opt == 'a') {
-				error_log ( $obj . '...' );
-			} else if ($opt == 'e') {
-				error_log ( $obj );
 			} else if ($opt == 'p') {
 				error_log ( print_r ( $obj, true ) . PHP_EOL );
 			} else {
+				//must be string
 				error_log ( $obj . PHP_EOL );
 			}
 		} // end for
