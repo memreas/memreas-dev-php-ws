@@ -186,12 +186,13 @@ class AWSMemreasRedisCache {
 				Mlog::addone ( $cm, '::building cache for public events started...' . date ( 'Y-m-d H:i:s.u' ) );
 				
 				$events_result = $eventRep->createEventCache ( 'public' );
-				// Mlog::addone ( $cm . '::$eventRep->createEventCache ( public ) --->', $events_result );
-				Mlog::addone ( $cm . '::warmMemreasSet Public Count --->', count ( $events_result ) );
+				//Mlog::addone ( $cm . '::$eventRep->createEventCache ( public ) --->', $events_result, 'p');
+				//Mlog::addone ( $cm . '::warmMemreasSet Public Count --->', count ( $events_result ) );
 				$public_event_ids = array ();
-				foreach ( $events_result as $eventIndex ) {
-					$event_id = $eventIndex ['id'];
-					$event = $eventIndex [$event_id];
+				foreach ( $events_result as $event ) {
+					Mlog::addone( 'public event after createEventCache top of redis add loop $event ---> ' , $event, 'p');
+					
+					$event_id = $event ['event_id'];
 					$event_owner = $event ['user_id'];
 					if ($event ['user_id'] != $user_id) {
 						// Mlog::addone ( $cm, '::Inside for loop to capture !memreas event names ... event_id is --->' . $event ['event_id'] );
@@ -271,13 +272,12 @@ class AWSMemreasRedisCache {
 			if (! $this->sExists ( '!memreas_friends_events_' . $user_id )) {
 				Mlog::addone ( $cm, '::building cache for friends events started...' . date ( 'Y-m-d H:i:s.u' ) );
 				$events_result = $eventRep->createEventCache ( 'friends' );
-				// Mlog::addone($cm. '::createEventCache results for friends...' , $events_result, 'p');
-				Mlog::addone ( $cm . '::warmMemreasSet Friends Count --->', count ( $events_result ) );
+				//Mlog::addone($cm. '::createEventCache results for friends...' , $events_result, 'p');
+				//Mlog::addone ( $cm . '::warmMemreasSet Friends Count --->', count ( $events_result ) );
 				foreach ( $events_result as $eventIndex ) {
-					$event_id = $eventIndex ['id'];
-					$event = $eventIndex [$event_id];
-					$event_owner = $event ['user_id'];
+					Mlog::addone( 'friend event after createEventCache top of redis add loop $event ---> ' , $event, 'p');
 					$event_id = $event ['event_id'];
+					$event_owner = $event ['user_id'];
 					// Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
 					if ($event ['user_id'] != $user_id) {
 						

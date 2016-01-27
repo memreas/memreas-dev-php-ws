@@ -895,7 +895,9 @@ class IndexController extends AbstractActionController {
 							 * - check public then friends...
 							 */
 							$search_result = $this->redis->findSet ( '!memreas', $search );
+							Mlog::addone ( 'findSet public result-->', $search_result, 'p' );
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
+							Mlog::addone ( 'findSet friends result-->', $search_result, 'p' );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
 							Mlog::addone ( 'findSet result-->', $search_result, 'p' );
@@ -914,28 +916,28 @@ class IndexController extends AbstractActionController {
 							 */
 							
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
-							// $result = Array ();
-							// $result ['totalPage'] = 1;
-							// $result ['count'] = $rc;
-							// $result ['search'] = $events_from_search;
+							$result = Array ();
+							$result ['totalPage'] = 1;
+							$result ['count'] = $rc;
+							$result ['search'] = $events_from_search;
 							
 							/**
 							 * -
 							 * Build JSON here so we don't have to decode results
 							 */
-							$result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
-							for($i = 0; $i < count ( $events_from_search ); $i ++) {
-								if ($i > 0) {
-									$result .= ',';
-								}
-								error_log('hmget $events_from_search[$i] -->'. $events_from_search[$i]);
-								$result .= $events_from_search [$i];
-							}
+							// $result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
+							// for($i = 0; $i < count ( $events_from_search ); $i ++) {
+							// if ($i > 0) {
+							// $result .= ',';
+							// }
+							// //error_log('hmget $events_from_search[$i] -->'. $events_from_search[$i]);
+							// $result .= $events_from_search [$i];
+							// }
 							// foreach ( $events_from_search as $event ) {
 							// $result .= $event . ',';
 							// }
-							$result .= '] } ';
-							error_log ( '!memreas search result json --->' . $result );
+							// $result .= '] } ';
+							// error_log ( '!memreas search result json --->' . $result );
 							
 							echo $result;
 							// echo json_encode ( $result );
@@ -1138,118 +1140,6 @@ class IndexController extends AbstractActionController {
 						$result = '';
 						break;
 				}
-				// } else if ($actionname == "findevent") {
-				// /*
-				// * - TODO:
-				// * This is covered by findtag?
-				// */
-				// $data = simplexml_load_string ( $_POST ['xml'] );
-				// $tag = (trim ( $data->findevent->tag ));
-				// $search = substr ( $tag, 1 );
-				// $eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-				// $mc = $this->redis->getCache ( '!event' );
-				// if (! $mc || empty ( $mc )) {
-				// $mc = $eventRep->createEventCache ();
-				// $this->redis->setCache ( "!event", $mc );
-				// }
-				
-				// $search_result = array ();
-				// $page = trim ( $data->findevent->page );
-				// if (empty ( $page )) {
-				// $page = 1;
-				// }
-				
-				// $limit = trim ( $data->findevent->limit );
-				// if (empty ( $limit )) {
-				// $limit = 20;
-				// }
-				
-				// $from = ($page - 1) * $limit;
-				// $rc = 0;
-				// foreach ( $mc as $eid => $er ) {
-				// if (stripos ( $er ['name'], $search ) === 0) {
-				// if ($rc >= $from && $rc < ($from + $limit)) {
-				// $er ['name'] = '!' . $er ['name'];
-				// $er ['comment_count'] = $eventRep->getCommentCount ( $eid );
-				// $er ['like_count'] = $eventRep->getLikeCount ( $eid );
-				// $er ['friends'] = $eventRep->getEventFriends ( $eid );
-				// $search_result [] = $er;
-				// }
-				
-				// $rc += 1;
-				// }
-				// }
-				// $result ['count'] = $rc;
-				// $result ['page'] = $page;
-				// $result ['totalPage'] = ceil ( $rc / $limit );
-				// $result ['search'] = $search_result;
-				// // $result
-				// // =
-				// // preg_grep("/$search/",
-				// // $mc);
-				// // echo
-				// // '<pre>';print_r($result);
-				// echo json_encode ( $result );
-				// $result = '';
-				// } else if ($actionname == "getDiscover") {
-				// /*
-				// * TODO:
-				// * Is
-				// * this
-				// * covered
-				// * by
-				// * findTag?
-				// */
-				// $data = simplexml_load_string ( $_POST ['xml'] );
-				// $tag = (trim ( $data->getDiscover->tag ));
-				// $search = $tag;
-				// $eventRep = $this->getServiceLocator ()->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-				// $mc = $this->redis->getCache ( '#tag' );
-				// if (! $mc || empty ( $mc )) {
-				// $mc = $eventRep->createDiscoverCache ( $tag );
-				// $this->redis->setCache ( "#tag", $mc );
-				// }
-				
-				// $search_result = array ();
-				// $page = trim ( $data->getDiscover->page );
-				// if (empty ( $page )) {
-				// $page = 1;
-				// }
-				
-				// $limit = trim ( $data->getDiscover->limit );
-				// if (empty ( $limit )) {
-				// $limit = 20;
-				// }
-				
-				// $from = ($page - 1) * $limit;
-				// $rc = 0;
-				// foreach ( $mc as $eid => $er ) {
-				
-				// if (stripos ( $er ['name'], $search ) === 0) {
-				
-				// if ($rc >= $from && $rc < ($from + $limit)) {
-				// $er ['name'] = $er ['name'];
-				// // $er['comment_count'] = $eventRep->getLikeCount($eid);
-				// // $er['like_count'] = $eventRep->getLikeCount($eid);
-				// // $er['friends'] = $eventRep->getEventFriends($eid);
-				// $search_result [] = $er;
-				// }
-				
-				// $rc += 1;
-				// }
-				// }
-				// $result ['count'] = $rc;
-				// $result ['page'] = $page;
-				// $result ['totalPage'] = ceil ( $rc / $limit );
-				// $result ['search'] = $search_result;
-				// // $result
-				// // =
-				// // preg_grep("/$search/",
-				// // $mc);
-				// // echo
-				// // '<pre>';print_r($result);
-				// echo json_encode ( $result );
-				// $result = '';
 			} else if ($actionname == "signedurl") {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->getServiceLocator () );
@@ -1276,11 +1166,13 @@ class IndexController extends AbstractActionController {
 				$result = $logout->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->clearallnotification->user_id );
-			/**
-			 * Cache approach
-			 * - write operation
-			 * - invalidate listnotification
-			 */
+				
+				/**
+				 * -
+				 * Cache approach
+				 * - write operation
+				 * - invalidate listnotification
+				 */
 				// $this->redis->invalidateNotifications
 				// (
 				// $uid
@@ -1719,7 +1611,7 @@ class IndexController extends AbstractActionController {
 			 * Successfully retrieved from cache so echo
 			 */
 			if ($cache_me == false && ! empty ( $result )) {
-				Mlog::addone ( __METHOD__ . __LINE__ . ':OUTPUT', $result );
+				// Mlog::addone ( __METHOD__ . __LINE__ . 'Successfully retrieved from cache so echo:OUTPUT', $result );
 				echo $result;
 			}
 			$output = trim ( ob_get_clean () );
@@ -1743,6 +1635,7 @@ class IndexController extends AbstractActionController {
 		}
 		
 		if (! empty ( $callback )) {
+			error_log ( "XXXX CALLBACK IS NOT EMPTY XXXXXX" . PHP_EOL );
 			$message_data ['data'] = $output;
 			
 			$json_arr = array (
@@ -1756,6 +1649,7 @@ class IndexController extends AbstractActionController {
 			echo $callback . "(" . $json . ")";
 			error_log ( "XXXX END XXXXXX" . PHP_EOL );
 		} else {
+			error_log ( "YYYY CALLBACK IS EMPTY YYYYYY" . PHP_EOL );
 			echo $output;
 			// error_log("output ----> *$output*" . PHP_EOL);
 		}

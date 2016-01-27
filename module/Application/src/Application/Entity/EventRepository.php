@@ -75,6 +75,43 @@ class EventRepository extends EntityRepository {
 			// Mlog::addone ( 'createEventCache()::$row [event_id],$row [metadata]', $row ['event_id'] . '---->' . $row [metadata] );
 			// Mlog::addone ( 'createEventCache()::$row ---->' . $row, 'p' );
 			$event_id = $row ['event_id'];
+			
+			$eventIndex['event_id'] = $row ['event_id'];
+			$eventIndex['user_id'] = $row ['user_id'];
+			$eventIndex ['name'] = '!' . $row ['name'];
+			$eventIndex['event_creator_name'] = '@'. $row ['username'];
+			$event_creator_pic = $this->getEventMediaUrl ( $row ['metadata'] );
+			$event_creator_pic = json_decode($event_creator_pic);
+			$eventIndex['event_creator_pic'] = $event_creator_pic[0];
+			/** event media */
+			$result = $this->getEventMedia ( $event_id );
+			if ($result) {
+				$eventIndex ['event_media'] = $result;
+				$event_media_url = $this->getEventMediaUrl ( $result[0]['metadata'] );
+				$event_media_url = json_decode($event_media_url);
+				$eventIndex ['event_photo'] = $event_media_url[0];
+				//Mlog::addone ( '$eventIndex [event_photo] ---->' , $eventIndex ['event_photo'] );
+			} else {
+				$eventIndex ['event_media'] = null;
+				$eventIndex ['event_photo'] = null;
+			}
+			/** comment_count */
+			$result = $this->getCommentCount ( $event_id );
+			if ($result) {
+				$eventIndex ['comment_count'] = $result;
+			} else {
+				$eventIndex ['comment_count'] = 0;
+			}
+			/** like_count */
+			$result = $this->getLikeCount ( $event_id );
+			if ($result) {
+				$eventIndex ['like_count'] = $result;
+			} else {
+				$eventIndex ['like_count'] = 0;
+			}
+				
+			
+			/*
 			$eventIndex ['id'] = $event_id;
 			$eventIndex [$row ['event_id']] = $row;
 			$event_media_url = $this->getEventMediaUrl ( $row ['metadata'] );
@@ -116,6 +153,7 @@ class EventRepository extends EntityRepository {
 			$event_creator = $this->getUser ( $row ['user_id'], 'row' );
 			$eventIndex ['event_creator_name'] = '@' . $event_creator ['username'];
 			$eventIndex ['event_creator_pic'] = $event_creator ['profile_photo'];
+			*/
 			
 			$search_result [] = $eventIndex;
 		}
@@ -139,11 +177,12 @@ class EventRepository extends EntityRepository {
 						e.viewable_from, 
 						e.viewable_to, 
 						e.self_destruct, 
-						e.metadata, 
+						e.metadata as event_metadata, 
 						e.create_time, 
-						e.update_time, 
+						e.update_time,
+						u.username,
 						m.media_id, 
-						m.metadata
+						m.metadata as media_metadata
 						FROM Application\Entity\Event e
 						LEFT JOIN Application\Entity\User u WITH (e.user_id = u.user_id) 
 						LEFT JOIN Application\Entity\Media m WITH (m.user_id = u.user_id AND m.is_profile_pic = 1) 
@@ -178,11 +217,12 @@ class EventRepository extends EntityRepository {
 						e.viewable_from, 
 						e.viewable_to, 
 						e.self_destruct, 
-						e.metadata, 
+						e.metadata as event_metadata, 
 						e.create_time, 
-						e.update_time, 
+						e.update_time,
+						u.username,
 						m.media_id, 
-						m.metadata
+						m.metadata as media_metadata
 						FROM Application\Entity\Event e 
 						LEFT JOIN Application\Entity\User u WITH (u.user_id = e.user_id)
 						LEFT JOIN Application\Entity\Media m WITH (m.user_id = u.user_id AND m.is_profile_pic = 1)
@@ -221,11 +261,12 @@ class EventRepository extends EntityRepository {
 						e.viewable_from, 
 						e.viewable_to, 
 						e.self_destruct, 
-						e.metadata, 
+						e.metadata as event_metadata, 
 						e.create_time, 
-						e.update_time, 
+						e.update_time,
+						u.username,
 						m.media_id, 
-						m.metadata
+						m.metadata as media_metadata
 					FROM Application\Entity\Event e
 					LEFT JOIN Application\Entity\User u WITH (e.user_id = u.user_id)
 					LEFT JOIN Application\Entity\Media m WITH (m.user_id = u.user_id AND m.is_profile_pic = 1)
@@ -320,7 +361,7 @@ class EventRepository extends EntityRepository {
 		$qb->from ( 'Application\Entity\Tag', 't' );
 		$qb->where ( 't.tag_type LIKE ?1' );
 		$qb->setParameter ( 1, '#' );
-		error_log ( "query---->" . $qb->getQuery ()->getSQL () . PHP_EOL );
+		//error_log ( "query---->" . $qb->getQuery ()->getSQL () . PHP_EOL );
 		$result = $qb->getQuery ()->getResult ();
 		
 		return $result;
@@ -333,8 +374,8 @@ class EventRepository extends EntityRepository {
 		$qb->where ( 'e.public = 1' );
 		$qb->andwhere ( 'e.event_id IN (:ids)' );
 		$qb->setParameter ( 'ids', $event_ids );
-		error_log ( "filterPublicHashTags query---->" . $qb->getDql () . PHP_EOL );
-		error_log ( "filterPublicHashTags event_ids---->" . json_encode ( $event_ids ) . PHP_EOL );
+		//error_log ( "filterPublicHashTags query---->" . $qb->getDql () . PHP_EOL );
+		//error_log ( "filterPublicHashTags event_ids---->" . json_encode ( $event_ids ) . PHP_EOL );
 		$result = $qb->getQuery ()->getResult ();
 		// error_log("Leaving Redis warmer filterPublicHashTags...@".date( 'Y-m-d H:i:s.u' ).PHP_EOL);
 		return $result;
@@ -367,11 +408,11 @@ class EventRepository extends EntityRepository {
 		foreach ( $result as $row ) {
 			$temp = array ();
 			$json_array = json_decode ( $row ['meta'], true );
-			error_log ( 'tag meta->' . $row ['meta'] . PHP_EOL );
+			//error_log ( 'tag meta->' . $row ['meta'] . PHP_EOL );
 			if (empty ( $json_array ['comment'] [0] )) {
 				continue;
 			}
-			error_log ( 'comment[] as json->' . json_encode ( $json_array ['comment'] [0] ) . PHP_EOL );
+			//error_log ( 'comment[] as json->' . json_encode ( $json_array ['comment'] [0] ) . PHP_EOL );
 			
 			foreach ( $json_array ['comment'] as $k => $comm ) {
 				$temp ['tag_name'] = $row ['tag'];
@@ -413,12 +454,12 @@ class EventRepository extends EntityRepository {
 					$Index [] = $temp;
 				} else {
 					// For db lookup
-					error_log ( "Inside Redis warmer createDiscoverCache tag:" . $temp ['tag_name'] . "event_id:" . $temp ['event_id'] . " in event_ids...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+					//error_log ( "Inside Redis warmer createDiscoverCache tag:" . $temp ['tag_name'] . "event_id:" . $temp ['event_id'] . " in event_ids...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 					$Index [] = $temp;
 				}
 			}
 		}
-		error_log ( "Leaving Redis warmer createDiscoverCache...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+		//error_log ( "Leaving Redis warmer createDiscoverCache...@" . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
 		return $Index;
 	}
 	function checkFriendLevelRule($eventId, $eventOwnerId, $userId, $friendId) {
