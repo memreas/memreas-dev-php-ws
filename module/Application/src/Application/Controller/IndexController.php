@@ -894,7 +894,7 @@ class IndexController extends AbstractActionController {
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 * - check public then friends...
 							 */
-							$search_result = $this->redis->findSet ( '!memreas', $search );
+							$search_result = $this->redis->findSet ( '!memreas', '!' . $search );
 							Mlog::addone ( 'findSet public result-->', $search_result, 'p' );
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
 							Mlog::addone ( 'findSet friends result-->', $search_result, 'p' );
@@ -939,8 +939,8 @@ class IndexController extends AbstractActionController {
 							// $result .= '] } ';
 							// error_log ( '!memreas search result json --->' . $result );
 							
-							echo $result;
-							// echo json_encode ( $result );
+							// echo $result;
+							echo json_encode ( $result );
 							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
 							
@@ -1166,13 +1166,13 @@ class IndexController extends AbstractActionController {
 				$result = $logout->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->clearallnotification->user_id );
-				
-				/**
-				 * -
-				 * Cache approach
-				 * - write operation
-				 * - invalidate listnotification
-				 */
+			
+			/**
+			 * -
+			 * Cache approach
+			 * - write operation
+			 * - invalidate listnotification
+			 */
 				// $this->redis->invalidateNotifications
 				// (
 				// $uid

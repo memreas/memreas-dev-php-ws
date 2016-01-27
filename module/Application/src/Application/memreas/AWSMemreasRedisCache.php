@@ -186,11 +186,11 @@ class AWSMemreasRedisCache {
 				Mlog::addone ( $cm, '::building cache for public events started...' . date ( 'Y-m-d H:i:s.u' ) );
 				
 				$events_result = $eventRep->createEventCache ( 'public' );
-				//Mlog::addone ( $cm . '::$eventRep->createEventCache ( public ) --->', $events_result, 'p');
-				//Mlog::addone ( $cm . '::warmMemreasSet Public Count --->', count ( $events_result ) );
+				// Mlog::addone ( $cm . '::$eventRep->createEventCache ( public ) --->', $events_result, 'p');
+				// Mlog::addone ( $cm . '::warmMemreasSet Public Count --->', count ( $events_result ) );
 				$public_event_ids = array ();
 				foreach ( $events_result as $event ) {
-					Mlog::addone( 'public event after createEventCache top of redis add loop $event ---> ' , $event, 'p');
+					Mlog::addone ( 'public event after createEventCache top of redis add loop $event ---> ', $event, 'p' );
 					
 					$event_id = $event ['event_id'];
 					$event_owner = $event ['user_id'];
@@ -272,10 +272,10 @@ class AWSMemreasRedisCache {
 			if (! $this->sExists ( '!memreas_friends_events_' . $user_id )) {
 				Mlog::addone ( $cm, '::building cache for friends events started...' . date ( 'Y-m-d H:i:s.u' ) );
 				$events_result = $eventRep->createEventCache ( 'friends' );
-				//Mlog::addone($cm. '::createEventCache results for friends...' , $events_result, 'p');
-				//Mlog::addone ( $cm . '::warmMemreasSet Friends Count --->', count ( $events_result ) );
+				// Mlog::addone($cm. '::createEventCache results for friends...' , $events_result, 'p');
+				// Mlog::addone ( $cm . '::warmMemreasSet Friends Count --->', count ( $events_result ) );
 				foreach ( $events_result as $eventIndex ) {
-					Mlog::addone( 'friend event after createEventCache top of redis add loop $event ---> ' , $event, 'p');
+					Mlog::addone ( 'friend event after createEventCache top of redis add loop $event ---> ', $event, 'p' );
 					$event_id = $event ['event_id'];
 					$event_owner = $event ['user_id'];
 					// Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
@@ -396,10 +396,10 @@ class AWSMemreasRedisCache {
 				} else {
 					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
 				}
-				//decode here because result will be encoded
-				//error_log('$url1---->'.$url1);
-				$url1 = json_decode($url1);
-				$url1 = $url1[0];
+				// decode here because result will be encoded
+				// error_log('$url1---->'.$url1);
+				$url1 = json_decode ( $url1 );
+				$url1 = $url1 [0];
 				
 				$person_json = json_encode ( array (
 						'username' => $row ['username'],
@@ -451,7 +451,7 @@ class AWSMemreasRedisCache {
 		} else {
 			$matches = 0;
 		}
-		// error_log ( "matches------> " . json_encode ( $matches ) . PHP_EOL );
+		error_log ( "matches------> " . json_encode ( $matches ) . PHP_EOL );
 		return $matches;
 	}
 	

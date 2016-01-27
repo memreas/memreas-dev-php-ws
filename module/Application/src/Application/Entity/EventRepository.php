@@ -78,7 +78,7 @@ class EventRepository extends EntityRepository {
 			
 			$eventIndex['event_id'] = $row ['event_id'];
 			$eventIndex['user_id'] = $row ['user_id'];
-			$eventIndex ['name'] = '!' . $row ['name'];
+			$eventIndex ['name'] = '!'. $row ['name'];
 			$eventIndex['event_creator_name'] = '@'. $row ['username'];
 			$event_creator_pic = $this->getEventMediaUrl ( $row ['metadata'] );
 			$event_creator_pic = json_decode($event_creator_pic);
