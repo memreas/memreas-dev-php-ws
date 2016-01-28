@@ -29,6 +29,8 @@ class Mlog {
 	public static function addone($objname, $obj, $opt = '\n') {
 		if (empty ( $obj )) {
 			$obj = 'object is empty';
+		} else if ($opt != '\n') {
+			// do nothing option set...
 		} else if ( (is_array ( $obj )) || (is_object ( $obj )) ) {
 			$opt = 'p';
 		}

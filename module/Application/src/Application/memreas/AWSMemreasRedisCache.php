@@ -37,7 +37,7 @@ class AWSMemreasRedisCache {
 					'port' => 6379 
 			] );
 		} catch ( \Exception $e ) {
-			Mlog::addone ( $cm, '::predis connection exception ---> ' . $e->getMessage () );
+			// Mlog::addone ( $cm, '::predis connection exception ---> ' . $e->getMessage () );
 			$to = MemreasConstants::ADMIN_EMAIL;
 			$html = '<html><head></head><body><p>REDIS CONNECTION ERROR<p>' . $e->getMessage () . '</body></html>';
 			$this->aws_manager->sendSeSMail ( $to, 'REDIS CONNECTION ERROR', $html );
@@ -67,20 +67,21 @@ class AWSMemreasRedisCache {
 		
 		// Debug
 		// if ($result) {
-		// Mlog::addone($cm, '::JUST ADDED THIS KEY ----> ' . $key . ' value--->' . $value);
+		// //Mlog::addone($cm, '::JUST ADDED THIS KEY ----> ' . $key . ' value--->' . $value);
 		// } else {
-		// Mlog::addone($cm, '::FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode());
-		// Mlog::addone($cm, '::FAILED TO ADD THIS KEY VALUE----> ' . $value);
+		// //Mlog::addone($cm, '::FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode());
+		// //Mlog::addone($cm, '::FAILED TO ADD THIS KEY VALUE----> ' . $value);
 		// }
 		return $result;
 	}
 	public function warmHashTagSet($user_id) {
 		$cm = __CLASS__ . __METHOD__;
 		sleep ( 1 );
+		
 		$warming_hashtag = $this->cache->get ( 'warming_hashtag' );
-		Mlog::addone ( $cm, '::warming_hashtag...' . $warming_hashtag );
+		// Mlog::addone ( $cm, '::warming_hashtag...' . $warming_hashtag );
 		if (! $warming_hashtag || ($warming_hashtag == "(nil)")) {
-			Mlog::addone ( $cm, '::cache warming #hashtag started...' . date ( 'Y-m-d H:i:s.u' ) );
+			// Mlog::addone ( $cm, '::cache warming #hashtag started...' . date ( 'Y-m-d H:i:s.u' ) );
 			$warming = $this->cache->set ( 'warming_hashtag', '1' );
 			
 			// Fetch all event ids to check for public and friend
@@ -95,72 +96,72 @@ class AWSMemreasRedisCache {
 						$event_ids [$tag_meta ['event'] [0]] = $tag ['tag'];
 					}
 				}
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past for loop' );
+				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past for loop' );
 				
 				/*
 				 * Now filter by public and friends and add to cache...
 				 */
 				$keys = array_keys ( $event_ids );
 				$public_event_ids = $tagRep->filterPublicHashTags ( $keys );
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
+				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
 				$hashtag_public_eid_hash = array ();
 				foreach ( $public_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						// Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						// Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
 						$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
 					}
 				}
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
+				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
 				$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
 				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
+				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
 				$hashtag_friends_eid_hash = array ();
 				foreach ( $friend_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						// Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						// Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag_' . $user_id, 0, $event_ids [$eid ['event_id']] );
 						$hashtag_friends_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
 					}
 				}
-				Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
-				Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
+				// Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
+				// Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
 				$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
-				Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
 				
 				$result = $this->cache->executeRaw ( array (
 						'HLEN',
 						'#hashtag_friends_hash_' . $user_id 
 				) );
-				Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
+				// Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
 				$result = $this->cache->executeRaw ( array (
 						'HLEN',
 						'#hashtag_public_eid_hash' 
 				) );
-				Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
+				// Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
 				$warming = $this->cache->set ( 'warming_hashtag', '0' );
-				Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
+				// Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
 				
 				/**
 				 * Set expire for each set
 				 */
 				$reply = $this->setExpire ( '#hashtag' );
-				Mlog::addone ( $cm . __LINE__, '::#hashtag setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::#hashtag setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '#hashtag_' . $user_id );
-				Mlog::addone ( $cm . __LINE__, '::#hashtag_' . $user_id . ' setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::#hashtag_' . $user_id . ' setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '#hashtag_friends_hash_' . $user_id );
-				Mlog::addone ( $cm . __LINE__, '::#hashtag_friends_hash_' . $user_id . ' setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::#hashtag_friends_hash_' . $user_id . ' setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '#hashtag_public_eid_hash' );
-				Mlog::addone ( $cm . __LINE__, '::!memreas_eid_hash setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::!memreas_eid_hash setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '#hashtag_public_meta_hash' );
-				Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
 				
-				Mlog::addone ( $cm, '::cache warming #hashtag completed...' . date ( 'Y-m-d H:i:s.u' ) );
+				// Mlog::addone ( $cm, '::cache warming #hashtag completed...' . date ( 'Y-m-d H:i:s.u' ) );
 			} else { // end if ($tags)
 				$warming = $this->cache->set ( 'warming_hashtag', '0' );
-				Mlog::addone ( $cm, '::cache warming #hashtag completed 0 entries...' . date ( 'Y-m-d H:i:s.u' ) );
+				// Mlog::addone ( $cm, '::cache warming #hashtag completed 0 entries...' . date ( 'Y-m-d H:i:s.u' ) );
 			}
 		}
 	}
@@ -168,14 +169,14 @@ class AWSMemreasRedisCache {
 	 * Redis cache for public and friends events
 	 */
 	public function warmMemreasSet($user_id) {
-		Mlog::addone ( $cm, 'entered warmMemreasSet' );
+		// Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		$cm = __CLASS__ . __METHOD__;
 		sleep ( 1 );
 		$user_id = $_SESSION ['user_id'];
 		$reply = $this->sExists ( 'warming_memreas' );
-		Mlog::addone ( $cm, '::warming_memreas...' . $reply );
+		// Mlog::addone ( $cm, '::warming_memreas...' . $reply );
 		if (! $warming_memreas || ($warming_memreas == "(nil)")) {
-			Mlog::addone ( $cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ) );
+			// Mlog::addone ( $cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ) );
 			$warming = $this->cache->set ( 'warming_memreas', '1' );
 			
 			/**
@@ -183,14 +184,14 @@ class AWSMemreasRedisCache {
 			 */
 			$eventRep = $this->service_locator->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 			if (! $this->sExists ( '!memreas' )) {
-				Mlog::addone ( $cm, '::building cache for public events started...' . date ( 'Y-m-d H:i:s.u' ) );
+				// Mlog::addone ( $cm, '::building cache for public events started...' . date ( 'Y-m-d H:i:s.u' ) );
 				
 				$events_result = $eventRep->createEventCache ( 'public' );
-				// Mlog::addone ( $cm . '::$eventRep->createEventCache ( public ) --->', $events_result, 'p');
-				// Mlog::addone ( $cm . '::warmMemreasSet Public Count --->', count ( $events_result ) );
+				// //Mlog::addone ( $cm . '::$eventRep->createEventCache ( public ) --->', $events_result, 'p');
+				// //Mlog::addone ( $cm . '::warmMemreasSet Public Count --->', count ( $events_result ) );
 				$public_event_ids = array ();
 				foreach ( $events_result as $event ) {
-					Mlog::addone ( 'public event after createEventCache top of redis add loop $event ---> ', $event, 'p' );
+					// Mlog::addone ( 'public event after createEventCache top of redis add loop $event ---> ', $event, 'p' );
 					
 					$event_id = $event ['event_id'];
 					$event_owner = $event ['user_id'];
@@ -203,7 +204,7 @@ class AWSMemreasRedisCache {
 						 * check if now is outside dates
 						 */
 						if (($now < $event ['viewable_from']) || ($now > $event ['viewable_to'])) {
-							Mlog::addone ( "warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event ['event_id'] );
+							// Mlog::addone ( "warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event ['event_id'] );
 							continue;
 						}
 					}
@@ -215,9 +216,9 @@ class AWSMemreasRedisCache {
 						/**
 						 * check if now is outside dates
 						 */
-						Mlog::addone ( 'Check for ghost date--->', '$now--->' . $now . ' $ghost' );
+						// Mlog::addone ( 'Check for ghost date--->', '$now--->' . $now . ' $ghost' );
 						if ($now <= $event ['self_destruct']) {
-							Mlog::addone ( "warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event ['event_id'] );
+							// Mlog::addone ( "warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event ['event_id'] );
 							continue;
 						}
 					}
@@ -233,7 +234,7 @@ class AWSMemreasRedisCache {
 					$event_owner_key = $event_owner . '_' . $event_id;
 					$reply = $this->cache->zadd ( '!memreas', 0, $event_name_key );
 					$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_owner_key );
-					$reply = $this->cache->hset ( "!memreas_eid_hash", $event_owner_key, json_encode ( $eventIndex ) );
+					$reply = $this->cache->hset ( "!memreas_eid_hash", $event_owner_key, json_encode ( $event ) );
 				}
 				/**
 				 * Adding here would reduce REDIS hits but not working
@@ -248,34 +249,34 @@ class AWSMemreasRedisCache {
 						'ZCARD',
 						'!memreas' 
 				) );
-				Mlog::addone ( $cm, '::Public ZCARD !memreas result --->' . $reply );
+				// Mlog::addone ( $cm, '::Public ZCARD !memreas result --->' . $reply );
 				
 				$reply = $this->cache->executeRaw ( array (
 						'HLEN',
 						'!memreas_meta_hash' 
 				) );
-				Mlog::addone ( $cm, '::public HLEN !memreas_meta_hash result --->' . $reply );
+				// Mlog::addone ( $cm, '::public HLEN !memreas_meta_hash result --->' . $reply );
 				
 				$reply = $this->cache->executeRaw ( array (
 						'HLEN',
 						'!memreas_eid_hash' 
 				) );
-				Mlog::addone ( $cm, '::HLEN !memreas_eid_hash result --->' . $reply );
+				// Mlog::addone ( $cm, '::HLEN !memreas_eid_hash result --->' . $reply );
 			}
 			
 			/**
 			 * - Friends event cache filtered for valid viewable and ghost dates
 			 */
 			if (! $this->sExists ( '!memreas_friends_events_' . $user_id )) {
-				Mlog::addone ( $cm, '::building cache for friends events started...' . date ( 'Y-m-d H:i:s.u' ) );
+				// Mlog::addone ( $cm, '::building cache for friends events started...' . date ( 'Y-m-d H:i:s.u' ) );
 				$events_result = $eventRep->createEventCache ( 'friends' );
-				// Mlog::addone($cm. '::createEventCache results for friends...' , $events_result, 'p');
-				// Mlog::addone ( $cm . '::warmMemreasSet Friends Count --->', count ( $events_result ) );
+				// //Mlog::addone($cm. '::createEventCache results for friends...' , $events_result, 'p');
+				// //Mlog::addone ( $cm . '::warmMemreasSet Friends Count --->', count ( $events_result ) );
 				foreach ( $events_result as $eventIndex ) {
-					Mlog::addone ( 'friend event after createEventCache top of redis add loop $event ---> ', $event, 'p' );
+					// Mlog::addone ( 'friend event after createEventCache top of redis add loop $event ---> ', $event, 'p' );
 					$event_id = $event ['event_id'];
 					$event_owner = $event ['user_id'];
-					// Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
+					// //Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
 					if ($event ['user_id'] != $user_id) {
 						
 						/**
@@ -287,7 +288,7 @@ class AWSMemreasRedisCache {
 							 * check if now is outside dates
 							 */
 							if (($now < $event ['viewable_from']) || ($now > $event ['viewable_to'])) {
-								Mlog::addone ( "warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event ['event_id'] );
+								// Mlog::addone ( "warmMemreasSet::checking viewable from to bounds event_id is out of bounds for now $now --> ", $event ['event_id'] );
 								continue;
 							}
 						}
@@ -300,7 +301,7 @@ class AWSMemreasRedisCache {
 							 * check if now is outside dates
 							 */
 							if (($now > $event ['self_destruct'])) {
-								Mlog::addone ( "warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event ['event_id'] );
+								// Mlog::addone ( "warmMemreasSet::checking ghost is out of bounds for now $now --> ", $event ['event_id'] );
 								continue;
 							}
 						}
@@ -315,6 +316,7 @@ class AWSMemreasRedisCache {
 						$event_owner_key = $event_owner . '_' . $event_id;
 						$reply = $this->cache->zadd ( '!memreas_friends_events_' . $user_id, 0, $event_name_key );
 						$reply = $this->cache->hset ( "!memreas_meta_hash", $event_name_key, $event_owner_key );
+						Mlog::addone ( '!memreas_eid_hash adding $eventIndex', $eventIndex, 'p' );
 						$reply = $this->cache->hset ( "!memreas_eid_hash", $event_owner_key, json_encode ( $eventIndex ) );
 					}
 				} // end for
@@ -332,34 +334,34 @@ class AWSMemreasRedisCache {
 						'ZCARD',
 						'!memreas_friends_events_' . $user_id 
 				) );
-				Mlog::addone ( $cm, '::Friends ZCARD !memreas_friends_events_' . $user_id . ' result --->' . $reply );
+				// Mlog::addone ( $cm, '::Friends ZCARD !memreas_friends_events_' . $user_id . ' result --->' . $reply );
 				
 				$reply = $this->cache->executeRaw ( array (
 						'HLEN',
 						'!memreas_meta_hash' 
 				) );
-				Mlog::addone ( $cm, '::public and friends HLEN !memreas_meta_hash result --->' . $reply );
+				// Mlog::addone ( $cm, '::public and friends HLEN !memreas_meta_hash result --->' . $reply );
 				
 				$reply = $this->cache->executeRaw ( array (
 						'HLEN',
 						'!memreas_eid_hash' 
 				) );
-				Mlog::addone ( $cm, '::HLEN !memreas_eid_hash result --->' . $reply );
+				// Mlog::addone ( $cm, '::HLEN !memreas_eid_hash result --->' . $reply );
 				/**
 				 * Set expire for each set
 				 */
 				$reply = $this->setExpire ( '!memreas' );
-				Mlog::addone ( $cm . __LINE__, '::!memreas setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::!memreas setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '!memreas_friends_events_' . $user_id );
-				Mlog::addone ( $cm . __LINE__, '::!memreas_friends_events_' . $user_id . ' setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::!memreas_friends_events_' . $user_id . ' setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '!memreas_eid_hash' );
-				Mlog::addone ( $cm . __LINE__, '::!memreas_eid_hash setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::!memreas_eid_hash setExpire reply ---> ' . $reply );
 				$reply = $this->setExpire ( '!memreas_meta_hash' );
-				Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
 			} // end if (! $this->sExists ( '!memreas_friends_events_' . $user_id ))
 			
 			$warming = $this->cache->set ( 'warming_memreas', '0' );
-			Mlog::addone ( $cm, '::cache warming @warming_memreas finished...' . date ( 'Y-m-d H:i:s.u' ) );
+			// Mlog::addone ( $cm, '::cache warming @warming_memreas finished...' . date ( 'Y-m-d H:i:s.u' ) );
 		} // end if (! $warming_memreas || ($warming_memreas == "(nil)"))
 	}
 	
@@ -426,11 +428,11 @@ class AWSMemreasRedisCache {
 			 * Set expire for each set
 			 */
 			$reply = $this->setExpire ( '@person' );
-			Mlog::addone ( $cm . __LINE__, '::@person setExpire reply ---> ' . $reply );
+			// Mlog::addone ( $cm . __LINE__, '::@person setExpire reply ---> ' . $reply );
 			$reply = $this->setExpire ( '@person_meta_hash' );
-			Mlog::addone ( $cm . __LINE__, '::@person_meta_hash setExpire reply ---> ' . $reply );
+			// Mlog::addone ( $cm . __LINE__, '::@person_meta_hash setExpire reply ---> ' . $reply );
 			$reply = $this->setExpire ( '@person_uid_hash' );
-			Mlog::addone ( $cm . __LINE__, '::@person_uid_hash setExpire reply ---> ' . $reply );
+			// Mlog::addone ( $cm . __LINE__, '::@person_uid_hash setExpire reply ---> ' . $reply );
 		}
 	}
 	public function findSet($set, $match) {
@@ -448,7 +450,6 @@ class AWSMemreasRedisCache {
 		} else {
 			$matches = 0;
 		}
-		error_log ( "matches------> " . json_encode ( $matches ) . PHP_EOL );
 		return $matches;
 	}
 	
@@ -457,12 +458,12 @@ class AWSMemreasRedisCache {
 	 */
 	public function sExists($set) {
 		$cm = __CLASS__ . __METHOD__;
-		// Mlog::addone($cm,'::inside sExists for $set-->'.$set);
+		// //Mlog::addone($cm,'::inside sExists for $set-->'.$set);
 		$result = $this->cache->executeRaw ( array (
 				'EXISTS',
 				$set 
 		) );
-		// Mlog::addone ( 'sExists($set)', $set . ' result::' . $result );
+		// //Mlog::addone ( 'sExists($set)', $set . ' result::' . $result );
 		return $result;
 	}
 	
@@ -476,7 +477,7 @@ class AWSMemreasRedisCache {
 				$hash,
 				$field 
 		) );
-		// Mlog::addone ( 'hExists($hash, $field)', '::$set' . $hash . '::$field' . $field . ' result::' . $result );
+		// //Mlog::addone ( 'hExists($hash, $field)', '::$set' . $hash . '::$field' . $field . ' result::' . $result );
 		return $result;
 	}
 	public function addSet($set, $key, $val = null) {
@@ -544,13 +545,12 @@ class AWSMemreasRedisCache {
 		}
 		
 		$result = $this->cache->get ( $key );
-		/*
-		 * if ($result) {
-		 * //error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
-		 * } else {
-		 * error_log('COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL);
-		 * }
-		 */
+		
+		if ($result) {
+			error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+		} else {
+			error_log ( 'COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL );
+		}
 		
 		return $result;
 	}

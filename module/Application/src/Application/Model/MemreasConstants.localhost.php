@@ -48,7 +48,7 @@ class MemreasConstants {
 	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
-	const CLOUDFRONT_EXPIRY_TIME = 360000; // 100 hours
+	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
 	                                      
 	// Same across...
 	const copyright_batch_create_count = 25;

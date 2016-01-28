@@ -887,7 +887,10 @@ class IndexController extends AbstractActionController {
 					 * !memreas search
 					 */
 					case '!' :
-						if ((MemreasConstants::REDIS_SERVER_USE) && ($this->redis) ) {
+						if (MemreasConstants::REDIS_SERVER_USE) {
+							Mlog::addone ( '$this->redis->getCache ( "warming_memreas" )--->', $this->redis->getCache ( "warming_memreas" ) );
+							
+							Mlog::addone ( $cm . __LINE__ . '$this->redis->getCache("warming_memreas")', $this->redis->getCache ( "warming_memreas" ) );
 							Mlog::addone ( $cm . __LINE__, "::!memreas search initiating search from REDIS" );
 							/*
 							 * -
@@ -904,10 +907,10 @@ class IndexController extends AbstractActionController {
 							
 							/*
 							 * -
-							 * remove self and update indices
+							 * fetch from hash
 							 */
 							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
-							// Mlog::addone('hmget $event_ids_from_search -->', $event_ids_from_search, 'p');
+							Mlog::addone ( 'hmget $event_ids_from_search -->', $event_ids_from_search, 'p' );
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
 							
 							$rc = count ( $events_from_search );
@@ -916,10 +919,15 @@ class IndexController extends AbstractActionController {
 							 */
 							
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
+							Mlog::addone ( $cm . __LINE__ . '::gettype($events_from_search)--->', gettype($events_from_search) );
 							$result = Array ();
 							$result ['totalPage'] = 1;
 							$result ['count'] = $rc;
-							$result ['search'] = $events_from_search;
+							//$result ['search'] = $events_from_search;
+							/** Need to decode json to avoid double encode */
+							foreach ($events_from_search as $event) {
+								$result ['search'][] = json_decode($event);
+							}
 							
 							/**
 							 * -
@@ -941,17 +949,11 @@ class IndexController extends AbstractActionController {
 							
 							// echo $result;
 							echo json_encode ( $result );
-							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $search_result, 'p' );
-						} else {
-							
-							/*
-							 * -
-							 * Redis must be up for event search -
-							 * TODO: add in sql lookup if redis is down
-							 */
-							
-						} // end else
-						
+							//$output = $result;
+							//Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $result, 'p' );
+							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", json_encode ( $result ) );
+						}
+						$result = '';
 						break;
 					
 					/*
