@@ -32,9 +32,8 @@ class Mlog {
 		} else if ( (is_array ( $obj )) || (is_object ( $obj )) ) {
 			$opt = 'p';
 		}
-		error_log('Mlog option --->'.$opt.PHP_EOL);
 		
-		self::add ( $objname . '::' . $obj, $opt );
+		self::addObj ( $objname . '::' , $obj, $opt );
 		self::out ();
 	}
 	
@@ -59,6 +58,16 @@ class Mlog {
 			self::out ();
 		}
 	}
+	public static function addObj($objname, $obj, $opt = '\n', $out = 0) {
+		self::$log [] = array (
+				'objname' => $objname,
+				'obj' => $obj,
+				'opt' => $opt
+		);
+		if ($out) {
+			self::out ();
+		}
+	}
 	
 	/**
 	 * function outs to error_log()
@@ -68,15 +77,20 @@ class Mlog {
 	 */
 	public static function out() {
 		foreach ( self::$log as $item ) {
+			if ( !empty($item ['objname']) ) {
+				$objname = $item ['objname'];
+			} else {
+				$objname = '';
+			}
 			$obj = $item ['obj'];
 			$opt = $item ['opt'];
 			if ($opt == 'j') {
-				error_log ( json_encode ( $obj ) . PHP_EOL );
+				error_log ( $objname . json_encode ( $obj ) . PHP_EOL );
 			} else if ($opt == 'p') {
-				error_log ( print_r ( $obj, true ) . PHP_EOL );
+				error_log ( $objname . print_r ( $obj, true ) . PHP_EOL );
 			} else {
 				//must be string
-				error_log ( $obj . PHP_EOL );
+				error_log ( $objname . $obj . PHP_EOL );
 			}
 		} // end for
 		self::$log = array ();

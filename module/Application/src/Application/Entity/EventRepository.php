@@ -323,6 +323,7 @@ class EventRepository extends EntityRepository {
 		$eventMediaArr = array();
 		foreach($eventMedia as $row) {
 			Mlog::addone('getEventMedia for loop row --->', $row);
+			error_log('$row'.print_r($row, true).PHP_EOL);
 			$eventMediaArrRow = array();
 			$eventMediaArrRow['event_id'] = $row['event_id'];
 			$eventMediaArrRow['media_id'] = $row['media_id'];
