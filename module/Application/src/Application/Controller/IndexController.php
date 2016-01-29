@@ -919,39 +919,20 @@ class IndexController extends AbstractActionController {
 							 */
 							
 							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
-							Mlog::addone ( $cm . __LINE__ . '::gettype($events_from_search)--->', gettype($events_from_search) );
+							Mlog::addone ( $cm . __LINE__ . '::gettype($events_from_search)--->', gettype ( $events_from_search ) );
 							$result = Array ();
 							$result ['totalPage'] = 1;
 							$result ['count'] = $rc;
-							//$result ['search'] = $events_from_search;
-							/** Need to decode json to avoid double encode */
-							foreach ($events_from_search as $event) {
-								$result ['search'][] = json_decode($event);
+							// $result ['search'] = $events_from_search;
+							/**
+							 * Need to decode json to avoid double encode
+							 */
+							foreach ( $events_from_search as $event ) {
+								$result ['search'] [] = json_decode ( $event );
 							}
 							
-							/**
-							 * -
-							 * Build JSON here so we don't have to decode results
-							 */
-							// $result = '{ "totalPage" : 1, "count" : ' . $rc . ', "search" : [';
-							// for($i = 0; $i < count ( $events_from_search ); $i ++) {
-							// if ($i > 0) {
-							// $result .= ',';
-							// }
-							// //error_log('hmget $events_from_search[$i] -->'. $events_from_search[$i]);
-							// $result .= $events_from_search [$i];
-							// }
-							// foreach ( $events_from_search as $event ) {
-							// $result .= $event . ',';
-							// }
-							// $result .= '] } ';
-							// error_log ( '!memreas search result json --->' . $result );
-							
-							// echo $result;
 							echo json_encode ( $result );
-							//$output = $result;
-							//Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", $result, 'p' );
-							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", json_encode ( $result ) );
+							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", json_encode ( $result ) );
 						}
 						$result = '';
 						break;

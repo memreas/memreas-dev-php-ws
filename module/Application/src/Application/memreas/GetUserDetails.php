@@ -55,80 +55,86 @@ class GetUserDetails {
 				$message = "No data available to this user";
 			} else {
 				$status = 'Success';
-				$user_id = $result_user[0]->user_id;
+				$user_id = $result_user [0]->user_id;
 				$output .= '<user_id>' . $user_id . '</user_id>';
 				$output .= '<username>' . $result_user [0]->username . '</username>';
 				$output .= '<email>' . $result_user [0]->email_address . '</email>';
 				$metadata = $result_user [0]->metadata;
 				$metadata = json_decode ( $metadata, true );
-				if (isset ( $metadata ['alternate_email'] ))
+				if (isset ( $metadata ['alternate_email'] )) {
 					$output .= '<alternate_email>' . $metadata ['alternate_email'] . '</alternate_email>';
-				else
+				} else {
 					$output .= '<alternate_email></alternate_email>';
+				}
 				
-				if (isset ( $metadata ['gender'] ))
+				if (isset ( $metadata ['gender'] )) {
 					$output .= '<gender>' . $metadata ['gender'] . '</gender>';
-				else
+				} else {
 					$output .= '<gender></gender>';
+				}
 				
-				if (isset ( $metadata ['dob'] ))
+				if (isset ( $metadata ['dob'] )) {
 					$output .= '<dob>' . $metadata ['dob'] . '</dob>';
-				else
+				} else {
 					$output .= '<dob></dob>';
-					
-					// For plan
+				}
+				
+				// For stripe customer id
+				if ($metadata ['stripe_customer_id']) {
+					$_SESSION ['stripe_customer_id'] = $metadata ['stripe_customer_id'];
+				}
+				
+				// For plan
 				if (! empty ( $metadata ['subscription'] )) {
 					Mlog::addone ( 'if (!empty( $metadata [subscription] )', $metadata ['subscription'] );
 					$subscription = $metadata ['subscription'];
 					$output .= '<subscription><plan>' . $subscription ['plan'] . '</plan><plan_name>' . $subscription ['name'] . '</plan_name></subscription>';
 					
+					// Store data in session for stripe customer id
+					$_SESSION ['plan'] = $subscription ['plan'];
 					//
 					// Fetch account details
 					//
 					$guzzle = new Client ();
-					//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
-					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE.'getCustomerInfo', [
-							'form_params' => [
-									'sid' => $_SESSION['sid'],
-									'user_id' => $user_id 
-							]
-					]);
-					$data = json_decode($response->getBody(), true);
-					//error_log('$data -->'.print_r($data,true).PHP_EOL);
-								
+					// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
+					$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'getCustomerInfo', [ 
+							'form_params' => [ 
+									'sid' => $_SESSION ['sid'],
+									'stripe_customer_id' => $_SESSION ['stripe_customer_id'] 
+							] 
+					] );
+					$data = json_decode ( $response->getBody (), true );
+					// error_log('$data -->'.print_r($data,true).PHP_EOL);
 				} else {
-					//Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
+					// Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 				}
-				//error_log('$data -->'.print_r($data,true).PHP_EOL);
+				// error_log('$data -->'.print_r($data,true).PHP_EOL);
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
 					$output .= '<accounts>';
 					//
 					// Handle buyer_account
 					//
-					$account = (!empty($data['buyer_account'])) ? $data['buyer_account'] : null;
+					$account = (! empty ( $data ['buyer_account'] )) ? $data ['buyer_account'] : null;
 					if ($account) {
 						$output .= '<account>';
-						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
-						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
-						$output .= '<account_balance>' . $account['accountHeader']['balance'] . '</account_balance>';
+						// $output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						$output .= '<account_type>' . $account ['accountHeader'] ['account_type'] . '</account_type>';
+						$output .= '<account_balance>' . $account ['accountHeader'] ['balance'] . '</account_balance>';
 						$output .= '</account>';
-						
 					}
 					//
 					// Handle seller_account
 					//
-					$account = (!empty($data['seller_account'])) ? $data['seller_account'] : null;
+					$account = (! empty ( $data ['seller_account'] )) ? $data ['seller_account'] : null;
 					if ($account) {
 						$output .= '<account>';
-						//$output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
-						$output .= '<account_type>' . $account['accountHeader']['account_type'] . '</account_type>';
-						$output .= '<account_balance>' . $account['accountHeader']['balance'] . '</account_balance>';
+						// $output .= '<account_id>' . $account['accountHeader']['account_id'] . '</account_id>';
+						$output .= '<account_type>' . $account ['accountHeader'] ['account_type'] . '</account_type>';
+						$output .= '<account_balance>' . $account ['accountHeader'] ['balance'] . '</account_balance>';
 						$output .= '</account>';
-						
 					}
 					$output .= '</accounts>';
-						
 				} else {
 					$output .= '<account_type>Free user</account_type>';
 				}
@@ -161,7 +167,7 @@ class GetUserDetails {
 			$xml_output .= "</xml>";
 			echo $xml_output;
 		}
-		//error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
+		// error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
 	} // end exec()
 }
 
