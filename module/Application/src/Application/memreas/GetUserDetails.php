@@ -55,7 +55,7 @@ class GetUserDetails {
 				$message = "No data available to this user";
 			} else {
 				$status = 'Success';
-				$user_id = $result_user [0]->user_id;
+				$user_id = $result_user[0]->user_id;
 				$output .= '<user_id>' . $user_id . '</user_id>';
 				$output .= '<username>' . $result_user [0]->username . '</username>';
 				$output .= '<email>' . $result_user [0]->email_address . '</email>';
@@ -87,9 +87,8 @@ class GetUserDetails {
 					//
 					$guzzle = new Client ();
 					//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
-					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE, [
+					$response = $guzzle->request('POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE.'getCustomerInfo', [
 							'form_params' => [
-									'action' => 'getCustomerInfo',
 									'sid' => $_SESSION['sid'],
 									'user_id' => $user_id 
 							]
