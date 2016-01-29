@@ -104,7 +104,7 @@ class GetUserDetails {
 							] 
 					] );
 					$data = json_decode ( $response->getBody (), true );
-					// error_log('$data -->'.print_r($data,true).PHP_EOL);
+					error_log('$data -->'.print_r($data,true).PHP_EOL);
 				} else {
 					// Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
