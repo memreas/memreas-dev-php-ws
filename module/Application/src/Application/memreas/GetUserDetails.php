@@ -13,11 +13,9 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 use Application\Entity\User;
-use Application\Entity\Media;
+use Application\Model\MemreasConstants;
+use Application\memreas\StripeWS\PaymentsProxy;
 use GuzzleHttp\Client;
 
 class GetUserDetails {
@@ -92,19 +90,22 @@ class GetUserDetails {
 					
 					// Store data in session for stripe customer id
 					$_SESSION ['plan'] = $subscription ['plan'];
-					//
-					// Fetch account details
-					//
-					$guzzle = new Client ();
-					// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::', $_SESSION);
-					$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'getCustomerInfo', [ 
-							'form_params' => [ 
-									'sid' => $_SESSION ['sid'],
-									'stripe_customer_id' => $_SESSION ['stripe_customer_id'] 
-							] 
-					] );
-					$data = json_decode ( $response->getBody (), true );
-					error_log('$data -->'.print_r($data,true).PHP_EOL);
+					
+					if (isset ( $_SESSION ['user_id'] )) {
+						//
+						// Fetch account details using payments proxy
+						// variables: $action, $json, $callback (optional here)
+						//
+						$json = [ ];
+						$json ['user_id'] = $_SESSION ['user_id'];
+						$json = json_encode ( $json );
+						$PaymentsProxy = new PaymentsProxy ();
+						$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $json );
+						//
+						// Store data in session here...
+						//
+					}
+					
 				} else {
 					// Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';

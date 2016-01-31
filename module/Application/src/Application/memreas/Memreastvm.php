@@ -104,7 +104,6 @@ class Memreastvm {
 			} else {
 				header ( 'Content-Type: application/json' );
 				echo json_encode ( $signature_data );
-				error_log ( '$signature_data json' . json_encode ( $signature_data ) );
 			}
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . 'error::', $e->getMessage () );

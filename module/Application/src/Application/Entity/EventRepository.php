@@ -363,7 +363,12 @@ class EventRepository extends EntityRepository {
 		 */
 		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
 		if (! empty ( $metadata )) {
-			$json_array = json_decode ( $metadata, true );
+			if (is_array($metadata) || is_object($metadata)) {
+				$json_array = json_decode(json_encode($metadata), true);
+			} else {
+				
+				$json_array = json_decode ( $metadata, true );
+			}
 			$url = "";
 			if (($json_array ['S3_files'] ['file_type'] != 'audio') && isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] )) {
 				$url = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );

@@ -194,21 +194,22 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST, 'p' );
+		//Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		//Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
 			$reqArr = json_decode ( $_REQUEST ['json'], true );
 			$actionname = $_REQUEST ['action'] != 'ws_tester' ? $_REQUEST ['action'] : $reqArr ['action'];
 			$type = $reqArr ['type'];
-			$message_data = $reqArr ['json'];
+			$data = $message_data = $reqArr ['json'];
 			
 			if (isset ( $message_data ['xml'] )) {
 				// is requied by next serving classes
 				$_POST ['xml'] = $message_data ['xml'];
 				
 				$data = $this->inputToObject ( $message_data ['xml'] );
+			} else {
+				$data = (object) $data;
 			}
 		} else {
 			// assuming xml if not json
@@ -217,6 +218,7 @@ class IndexController extends AbstractActionController {
 			// dont remove just to be safe relying on $_POST data
 			$message_data ['xml'] = '';
 		}
+		//Mlog::addone ( $cm . __LINE__ . '::IndexController $data', $data );
 		
 		/**
 		 * Setup save handler
@@ -1478,8 +1480,8 @@ class IndexController extends AbstractActionController {
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
-				$PaymentsProxy = new PaymentsProxy ( $message_data, $memreas_tables, $this );
-				$result = $PaymentsProxy->exec ( $actionname );
+				$PaymentsProxy = new PaymentsProxy ( );
+				$result = $PaymentsProxy->exec ( $actionname, $message_data, $callback );
 			}
 			
 			/*
@@ -1522,11 +1524,9 @@ class IndexController extends AbstractActionController {
 			// header('Content-Type: application/json');
 			// callback json
 			echo $callback . "(" . $json . ")";
-			error_log ( "XXXX END XXXXXX" . PHP_EOL );
 		} else {
-			error_log ( "YYYY CALLBACK IS EMPTY YYYYYY" . PHP_EOL );
+			// callback is empty
 			echo $output;
-			// error_log("output ----> *$output*" . PHP_EOL);
 		}
 		
 		/**
@@ -1644,6 +1644,7 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
+					
 					/*
 					 * SetId for the web browser session and start...
 					 */

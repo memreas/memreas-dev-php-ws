@@ -64,7 +64,7 @@ class ListNotification {
 	public function exec() {
 		try {
 			$cm = __CLASS__ . __METHOD__;
-			Mlog::addone ( $cm,'::inbound xml--->'. $_POST ['xml'] );
+			//Mlog::addone ( $cm,'::inbound xml--->'. $_POST ['xml'] );
 				
 			$oClass = new \ReflectionClass ( 'Application\Entity\Notification' );
 			$array = $oClass->getConstants ();
@@ -171,7 +171,7 @@ class ListNotification {
 			$this->xml_output .= "</notifications></listnotificationresponse>";
 			$this->xml_output .= "</xml>";
 			echo $this->xml_output;
-			Mlog::addone ( $cm,'::outbound xml--->'. $_POST ['xml'] );
+			//Mlog::addone ( $cm,'::outbound xml--->'. $_POST ['xml'] );
 				
 		} catch ( \Exception $e ) {
 			$status = 'failure';

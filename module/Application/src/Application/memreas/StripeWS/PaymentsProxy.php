@@ -15,52 +15,58 @@ use Application\memreas\Mlog;
 use Application\memreas\Utility;
 
 class PaymentsProxy {
-	protected $message_data;
-	protected $memreas_tables;
-	protected $dbAdapter;
-	public function __construct($message_data, $memreas_tables, $parent) {
-		error_log ( "Inside__construct..." );
-		$this->message_data = $message_data;
-		$this->memreas_tables = $memreas_tables;
-		$this->parent = $parent;
+
+	public function __construct() {
 	}
 	
 	/*
 	 *
 	 */
-	public function exec($action) {
-		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__, $this->message_data );
-		$error_flag = 0;
-		$message = '';
-		// stripe_
+	public function exec($action, $jsonArr, $callback = null) {
+		$cm = __CLASS__ . __METHOD__;
+		Mlog::addone ( $cm . __LINE__, jsonArr );
+
 		$action_method = substr ( $action, 7 );
-		Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__, $action_method );
-		$this->getStripeData ( $action_method );
-	}
-	public function getStripeData($action_method) {
-		$guzzle = new Client ();
-		
-		//
-		// Check xml or json
-		//
-		if (! empty ( $this->message_data ['xml'] )) {
-			$jsonArr = json_decode ( $this->message_data ['xml'], true );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::xml as JSON::', $jsonArr );
-		} else if (! empty ( $this->message_data ['json'] )) {
-			$jsonArr = $this->message_data;
-			//Mlog::addone ( __CLASS__ . __METHOD__ . '-' . __LINE__ . '::json as JSON::', $jsonArr );
-			error_log(__CLASS__.__METHOD__.__LINE__.'$this->message_data::'.print_r($this->message_data, true).PHP_EOL);
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'json--->', jsonArr );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$action_method----->', $action_method );
+		$guzzle = new \GuzzleHttp\Client ();
+		if (!empty($callback)) {
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [
+					'form_params' => [
+							'callback' => $callback,
+							'sid' => $_SESSION ['sid'],
+							'json' => json_encode($json)
+					]
+			] );
+			
+			//$sid = $_SESSION ['sid'];
+			//$json = json_encode($jsonArr);
+			//$query_string = "?callback=$callback&sid=$sid&json=$json";
+			//$url = MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method . $query_string;
+			//Mlog::addone($cm.'stripe get url--->', $url);
+			//$response = $guzzle->request ( 'GET', $url);
+		} else {
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [
+					'form_params' => [
+							'sid' => $_SESSION ['sid'],
+							'json' => json_encode($json)
+					]
+			] );
+			
+			//$sid = $_SESSION ['sid'];
+			//$json = json_encode($jsonArr);
+			//$query_string = "?sid=$sid&json=$json";
+			//$url = MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method . $query_string;
+			//Mlog::addone($cm.'stripe get url--->', $url);
+			//$response = $guzzle->request ( 'GET', $url);
 		}
-		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
-				'form_params' => [ 
-						'callback' => $_REQUEST ['callback'],
-						'sid' => $_SESSION ['sid'],
-						'json' => json_encode($jsonArr) 
-				] 
-		] );
+		Mlog::addone($cm.'$response->getStatusCode()--->', $response->getStatusCode());
+		Mlog::addone($cm.'$response->getReasonPhrase()--->', $response->getReasonPhrase());
+		Mlog::addone($cm.'$response->getBody ()--->', (string) $response->getBody ());
 		
-		echo trim($response->getBody ());
-		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::response body->',$response->getBody ());
+		
+		echo (string) $response->getBody ();
+		Mlog::addone ( $cm.__LINE.'::$response->getBody ()--->', (string) $response->getBody () );
 	}
 }
 

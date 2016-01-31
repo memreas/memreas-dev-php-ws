@@ -22,7 +22,6 @@ class GetPlans {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-		// $this->dbAdapter = $P->get(MemreasConstants::MEMREASDB);
 	}
 	
 	/*
@@ -33,21 +32,28 @@ class GetPlans {
 		$message = '';
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
+			$jsonArr = json_decode  
 		} else {
 			
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
-		$user_id = trim ( $data->getplans->user_id );
-		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [
-                    'form_params' =>[
-                        'action' => 'listplans',
-			'user_id' => $user_id 
-                    ]
-                ]
-				
-		 );
+		
+		//$user_id = trim ( $data->getplans->user_id );
+		$message_data = [];
+		$message_data['user_id'] = trim ( $data->getplans->user_id );
+
+		$PaymentsProxy = new PaymentsProxy ();
+		$result = $PaymentsProxy->exec ( stripe_listplans, $message_data );
+		
+		//$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [
+        //            'form_params' =>[
+        //                'action' => 'listplans',
+		//	'user_id' => $user_id 
+        //            ]
+        //        ]
+		//		
+		// );
 		 
 		$data = json_decode ( $response->getBody (), true );
 		$status = $data ['status'];

@@ -546,11 +546,11 @@ class AWSMemreasRedisCache {
 		
 		$result = $this->cache->get ( $key );
 		
-		if ($result) {
-			error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
-		} else {
-			error_log ( 'COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL );
-		}
+		//if ($result) {
+		//	error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
+		//} else {
+		//	error_log ( 'COULD NOT FIND THIS KEY GOING TO DB ----> ' . $key . PHP_EOL );
+		//}
 		
 		return $result;
 	}
