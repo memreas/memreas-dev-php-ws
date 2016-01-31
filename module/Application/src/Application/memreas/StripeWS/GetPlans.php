@@ -32,14 +32,11 @@ class GetPlans {
 		$message = '';
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			$jsonArr = json_decode  
 		} else {
-			
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
 		
 		
-		//$user_id = trim ( $data->getplans->user_id );
 		$message_data = [];
 		$message_data['user_id'] = trim ( $data->getplans->user_id );
 

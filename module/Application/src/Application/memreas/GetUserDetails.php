@@ -98,7 +98,6 @@ class GetUserDetails {
 						//
 						$json = [ ];
 						$json ['user_id'] = $_SESSION ['user_id'];
-						$json = json_encode ( $json );
 						$PaymentsProxy = new PaymentsProxy ();
 						$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $json );
 						//

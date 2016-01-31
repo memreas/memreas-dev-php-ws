@@ -1481,7 +1481,7 @@ class IndexController extends AbstractActionController {
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( );
-				$result = $PaymentsProxy->exec ( $actionname, $message_data, $callback );
+				$result = $PaymentsProxy->exec ( $actionname, $message_data );
 			}
 			
 			/*
