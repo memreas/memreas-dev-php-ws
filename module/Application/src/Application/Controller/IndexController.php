@@ -194,8 +194,9 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
-		//Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		//Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
 			$reqArr = json_decode ( $_REQUEST ['json'], true );
@@ -218,7 +219,7 @@ class IndexController extends AbstractActionController {
 			// dont remove just to be safe relying on $_POST data
 			$message_data ['xml'] = '';
 		}
-		//Mlog::addone ( $cm . __LINE__ . '::IndexController $data', $data );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $data', $data );
 		
 		/**
 		 * Setup save handler
@@ -249,6 +250,15 @@ class IndexController extends AbstractActionController {
 			                              // folder
 			return $view;
 		}
+		if ($actionname == "stripe_ws_tester") {
+			// error_log ( "path--->" . $path );
+			$view = new ViewModel ();
+			$view->setVariable("user_id", $_SESSION['user_id']);
+			$view->setVariable("username", $_SESSION['username']);
+			$view->setTemplate ( "application/index/stripe_ws_tester.phtml" ); // path to phtml file under view
+			// folder
+			return $view;
+		}
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
 			$cache_me = false;
@@ -269,10 +279,10 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == "login") {
-				// error_log ( 'login action ipAddress' .
-				// $this->fetchUserIPAddress () . PHP_EOL );
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
+				
+				Mlog::addone('login result --->', $result);
 				
 				/*
 				 * Cache approach - warm @person if not set here
@@ -1511,6 +1521,10 @@ class IndexController extends AbstractActionController {
 			}
 		}
 		
+		//Debugging - remove me
+		Mlog::addone('indexController output section $_SESSION--->', $_SESSION);
+		
+		
 		if (! empty ( $callback )) {
 			error_log ( "XXXX CALLBACK IS NOT EMPTY XXXXXX" . PHP_EOL );
 			$message_data ['data'] = $output;
@@ -1586,6 +1600,7 @@ class IndexController extends AbstractActionController {
 				'changepassword',
 				'verifyemailaddress',
 				'ws_tester',
+				'stripe_ws_tester',
 				'clearlog',
 				'showlog',
 				/* For stripe
@@ -1605,7 +1620,6 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
-		Mlog::addone ( "session required ::->", $actionname );
 		return true;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {

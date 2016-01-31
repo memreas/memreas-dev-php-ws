@@ -136,6 +136,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_regenerate_id ();
 		}
 		
+		Mlog::addone(__CLASS__.__METHOD__.'::user---->', $user);
 		//
 		// Check Headers sent
 		//
