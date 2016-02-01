@@ -125,6 +125,132 @@ var doStripeStoreCard = function () {
 
 
 /////////////////////
+//List Cards
+/////////////////////
+var doListCards = function (element, list) {
+
+	var action = "stripe_listCards";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+ 	obj.user_id = user_id;
+ var jsonStoreCard = JSON.stringify(obj);
+ var data = "";
+
+ data = '{"action": "' + action + '", ' +
+ '"type":"jsonp", ' +
+ '"json": ' + jsonStoreCard  +
+ '}';
+
+	//var results += json_paypalStoreCard;
+	$("#results").val(jsonStoreCard, null, '\t');
+
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+		  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+		  	var html_str = "";
+		  	var html_button = "";
+		  	$(element).val(req_resp);
+		  	if (json.status == "Success") {
+		  		for (var i=0;i<json.payment_methods.length;i++)
+				{
+					html_str +=
+							'<tr>' +
+							'<td><input type="radio" onclick="onRadioCardListforSubscribeSelected(this);" id="card_selected_' + i + '" name="card_selected" value="'+ i + '">' +
+							//'<td>user_id' +
+							//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i].user_id + '">' +
+							'<td>stripe ref id:' +
+							'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i].stripe_card_reference_id + '">' +
+							'<td>card type:' +
+							'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i].card_type + '">' +
+							'<td>card number' +
+							'<td><input type="text" id="card_number_' + i + '" name="card_number_' + i + '" value="'+ json.payment_methods[i].obfuscated_card_number + '">' +
+							'</tr><tr>' +
+							'<td>' +
+							'<td>first name:' +
+							'<td><input type="text" id="first_name_' + i + '" name="first_name_' + i + '" value="'+ json.payment_methods[i].first_name + '">' +
+							'<td>last name' +
+							'<td><input type="text" id="last_name_' + i + '" name="last_name_' + i + '" value="'+ json.payment_methods[i].last_name + '">' +
+							'<td>address line 1:' +
+							'<td><input type="text" id="address_line_1_' + i + '" name="address_line_1_' + i + '" value="'+ json.payment_methods[i].address_line_1 + '">' +
+							'<td>address line 2:' +
+							'<td><input type="text" id="address_line_2_' + i + '" name="address_line_2_' + i + '" value="'+ json.payment_methods[i].address_line_2 + '">' +
+							'<td>city:' +
+							'<td><input type="text" id="city_' + i + '" name="city_' + i + '" value="'+ json.payment_methods[i].city + '">' +
+							'<td>state:' +
+							'<td><input type="text" id="state_' + i + '" name="state_' + i + '" value="'+ json.payment_methods[i].state + '">' +
+							'<td>zip code:' +
+							'<td><input type="text" id="zip_code_' + i + '" name="zip_code_' + i + '" value="'+ json.payment_methods[i].zip_code + '">' +
+							'</tr>';
+				}
+		  		$(list).html(html_str);
+		  	}
+		  	return true;
+		  },
+		  error: function (jqXHR, textStatus, errorThrown) {
+	       	alert(jqXHR.responseText);
+	       	alert(jqXHR.status);
+	    		//alert(textStatus);
+	       	//alert(errorThrown);
+		  }
+	});
+	return false;
+}
+
+/////////////////////
+//Delete Cards
+/////////////////////
+doDeleteCards = function () {
+
+	//Fetch the list of cards to delete...
+	var selected = new Array();
+	$("input[name=card_selected]:checked").each(function() {
+     card_number = $(this).parents("tr").find('input.card_numbers').val();
+	    selected.push(card_number);
+	});
+
+	if(selected.length == 0) {
+		alert("No cards checked to delete");
+		return;
+	}
+
+ var jsonDeleteCards = JSON.stringify(selected, null, '\t');
+ var data = "";
+ var result = "";
+
+ //if () {}
+ data = '{"action": "delete", ' +
+ '"type":"jsonp", ' +
+ '"json": ' + jsonDeleteCards  +
+ '}';
+
+	$("#list_delete_cards_results").val(jsonDeleteCards);
+
+	$.ajax( {
+	  type:'post',
+	  url: stripeDeleteCards_url,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $("#list_delete_cards_results").val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	$("#list_delete_cards_results").val(req_resp);
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+    		alert(jqXHR.responseText);
+    		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+
+/////////////////////
 //- Login
 /////////////////////
 var doLogin = function () {
@@ -221,13 +347,28 @@ var doLogin = function () {
         doStripeStoreCard();
     }
 
-    /*
-	//List Cards Picker for Add Value
+	//List Card(s)
     $(document).ready(function () {
-        $("#btnOK4").click(onBtn4CallClicked);
+        $("#btnOK2").click(onListCardsCallClicked);
     });
-    function onBtn4CallClicked() {
-        jQuery.paypalListCards('#add_value_results', '#card_list4');
+    function onListCardsCallClicked() {
+    		doListCards('#list_delete_cards_results', '#card_list');
+    }
+    
+	//Delete Card(s)
+    $(document).ready(function () {
+        $("#btnDelete").click(onBtnDeleteCallClicked);
+    });
+    function onBtnDeleteCallClicked() {
+        jQuery.paypalDeleteCards();
+    }
+    /*
+    //List Cards Picker for Add Value
+    $(document).ready(function () {
+        $("#btnOK4").click(onListCardsForAddValueCallClicked);
+    });
+    function onListCardsForAddValueCallClicked() {
+    		doListCards('#add_value_results', '#card_list4');
     }
     
 	//Add Value
@@ -244,22 +385,6 @@ var doLogin = function () {
     });
     function onBtnDecrementValue5CallClicked() {
         jQuery.paypalDecrementValue('#decrement_value_results');
-    }
-
-	//List Card(s)
-    $(document).ready(function () {
-        $("#btnOK2").click(onBtn2CallClicked);
-    });
-    function onBtn2CallClicked() {
-        jQuery.paypalListCards('#list_delete_cards_results', '#card_list');
-    }
-    
-	//Delete Card(s)
-    $(document).ready(function () {
-        $("#btnDelete").click(onBtnDeleteCallClicked);
-    });
-    function onBtnDeleteCallClicked() {
-        jQuery.paypalDeleteCards();
     }
 
 	//Account History
@@ -361,8 +486,7 @@ var doLogin = function () {
 			<li><a href="#tabs-9">Login</a></li>
 		</ul>
 		<div id="tabs-1">
-			<form id="store_card_form" name=store_card_form
-				" action="/index?action=stripe_storecard">
+			<form id="store_card_form" name=store_card_form " action="#">
 				<table>
 					<tr>
 						<td>first name:
@@ -436,7 +560,7 @@ var doLogin = function () {
 					</tr>
 					<tr>
 						<td>CVC</td>
-						<td><input id="cvc" type="text" name="cvc" value="111" /></td>
+						<td><input id="cvc" type="text" name="cvc" value="317" /></td>
 					</tr>
 					<tr>
 						<td>state:
@@ -550,7 +674,7 @@ var doLogin = function () {
 
 		<div id="tabs-2">
 			<form id="list_delete_cards_form" name=list_delete_cards_form
-				" action="/index/paypalListDeleteCards">
+				" action="#">
 				<table>
 					<div id="card_list"></div>
 					<tr>
@@ -1176,8 +1300,8 @@ var doLogin = function () {
 						
 						</tr>
 						<tr>
-							<td><textarea id="login_results" name="login_results"
-									rows="10" cols="120">Result will be shown here.</textarea>
+							<td><textarea id="login_results" name="login_results" rows="10"
+									cols="120">Result will be shown here.</textarea>
 						
 						</tr>
 					</table>
