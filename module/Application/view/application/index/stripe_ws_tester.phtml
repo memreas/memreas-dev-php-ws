@@ -69,9 +69,8 @@ var memreascookie;
  * updateCardAction()
  */
 
- console.log("cookies" + document.cookie);
-	
-/////////////////////
+
+ /////////////////////
 // Store Card
 /////////////////////
 var doStripeStoreCard = function () {
@@ -133,57 +132,88 @@ var doListCards = function (element, list) {
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
  	obj.user_id = user_id;
- var jsonStoreCard = JSON.stringify(obj);
- var data = "";
+ 	var jsonStoreCard = JSON.stringify(obj);
+ 	var data = "";
 
- data = '{"action": "' + action + '", ' +
- '"type":"jsonp", ' +
- '"json": ' + jsonStoreCard  +
- '}';
+	 data = '{"action": "' + action + '", ' +
+	 '"type":"jsonp", ' +
+	 '"json": ' + jsonStoreCard  +
+	 '}';
 
 	//var results += json_paypalStoreCard;
 	$("#results").val(jsonStoreCard, null, '\t');
 
+	console.log("about to call ajax for url --->" + proxy_url + action);
 	$.ajax( {
 	  type:'post',
 	  url: proxy_url + action,
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
-	  success: function(json){
-		  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  success: function(response){
+		  	//var req_resp = $(element).val() + "\n\n" + JSON.stringify(response.data, null, '\t');
+		  	var req_resp = $(element).val() + "\n\n" + response.data;
 		  	var html_str = "";
 		  	var html_button = "";
+		  	var json = jQuery.parseJSON( response.data );
+		  	
 		  	$(element).val(req_resp);
 		  	if (json.status == "Success") {
+				console.log("about to enter for loop...");
 		  		for (var i=0;i<json.payment_methods.length;i++)
 				{
+
+		  			
+		  			//console.log("json.payment_methods[i]" + JSON.stringify(json.payment_methods[i]));
+
+		  			/*
+		  			for (j in json.payment_methods){
+		  			    console.log(j);
+		  			    for (key in json.payment_methods[j]){
+		  			        console.log( key + ": " + json.payment_methods[j][key]);
+		  			    }
+		  			}
+		  			*/
+					console.log("i-->" + i);
+					//console.log("json.payment_methods[i] -->" + json.payment_methods[i]);
+					
+					console.log("json.payment_methods[i]['stripe_card_reference_id'] -->" + json.payment_methods[i]['stripe_card_reference_id']);
+					console.log("json.payment_methods[i]['card_type'] -->" + json.payment_methods[i]['card_type']);
+					console.log("json.payment_methods[i]['obfuscated_card_number'] -->" + json.payment_methods[i]['obfuscated_card_number']);
+					console.log("json.payment_methods[i]['first_name'] -->" + json.payment_methods[i]['first_name']);
+					console.log("json.payment_methods[i]['last_name'] -->" + json.payment_methods[i]['last_name']);
+					console.log("json.payment_methods[i]['address_line_1'] -->" + json.payment_methods[i]['address_line_1']);
+					console.log("json.payment_methods[i]['address_line_2'] -->" + json.payment_methods[i]['address_line_2']);
+					console.log("json.payment_methods[i]['city'] -->" + json.payment_methods[i]['city']);
+					console.log("json.payment_methods[i]['state'] -->" + json.payment_methods[i]['state']);
+					console.log("json.payment_methods[i]['zip_code'] -->" + json.payment_methods[i]['zip_code']);
+					
 					html_str +=
 							'<tr>' +
 							'<td><input type="radio" onclick="onRadioCardListforSubscribeSelected(this);" id="card_selected_' + i + '" name="card_selected" value="'+ i + '">' +
 							//'<td>user_id' +
-							//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i].user_id + '">' +
+							//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i]['user_id + '">' +
 							'<td>stripe ref id:' +
-							'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i].stripe_card_reference_id + '">' +
+							'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i]['stripe_card_reference_id'] + '">' +
 							'<td>card type:' +
-							'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i].card_type + '">' +
+							'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i]['card_type'] + '">' +
 							'<td>card number' +
-							'<td><input type="text" id="card_number_' + i + '" name="card_number_' + i + '" value="'+ json.payment_methods[i].obfuscated_card_number + '">' +
+							'<td><input type="text" id="card_number_' + i + '" name="card_number_' + i + '" value="'+ json.payment_methods[i]['obfuscated_card_number'] + '">' +
 							'</tr><tr>' +
 							'<td>' +
 							'<td>first name:' +
-							'<td><input type="text" id="first_name_' + i + '" name="first_name_' + i + '" value="'+ json.payment_methods[i].first_name + '">' +
+							'<td><input type="text" id="first_name_' + i + '" name="first_name_' + i + '" value="'+ json.payment_methods[i]['first_name'] + '">' +
 							'<td>last name' +
-							'<td><input type="text" id="last_name_' + i + '" name="last_name_' + i + '" value="'+ json.payment_methods[i].last_name + '">' +
+							'<td><input type="text" id="last_name_' + i + '" name="last_name_' + i + '" value="'+ json.payment_methods[i]['last_name'] + '">' +
 							'<td>address line 1:' +
-							'<td><input type="text" id="address_line_1_' + i + '" name="address_line_1_' + i + '" value="'+ json.payment_methods[i].address_line_1 + '">' +
+							'<td><input type="text" id="address_line_1_' + i + '" name="address_line_1_' + i + '" value="'+ json.payment_methods[i]['address_line_1'] + '">' +
 							'<td>address line 2:' +
-							'<td><input type="text" id="address_line_2_' + i + '" name="address_line_2_' + i + '" value="'+ json.payment_methods[i].address_line_2 + '">' +
+							'<td><input type="text" id="address_line_2_' + i + '" name="address_line_2_' + i + '" value="'+ json.payment_methods[i]['address_line_2'] + '">' +
 							'<td>city:' +
-							'<td><input type="text" id="city_' + i + '" name="city_' + i + '" value="'+ json.payment_methods[i].city + '">' +
+							'<td><input type="text" id="city_' + i + '" name="city_' + i + '" value="'+ json.payment_methods[i]['city'] + '">' +
 							'<td>state:' +
-							'<td><input type="text" id="state_' + i + '" name="state_' + i + '" value="'+ json.payment_methods[i].state + '">' +
+							'<td><input type="text" id="state_' + i + '" name="state_' + i + '" value="'+ json.payment_methods[i]['state'] + '">' +
 							'<td>zip code:' +
-							'<td><input type="text" id="zip_code_' + i + '" name="zip_code_' + i + '" value="'+ json.payment_methods[i].zip_code + '">' +
+							'<td><input type="text" id="zip_code_' + i + '" name="zip_code_' + i + '" value="'+ json.payment_methods[i]['zip_code'] + '">' +
 							'</tr>';
 				}
 		  		$(list).html(html_str);
@@ -357,10 +387,10 @@ var doLogin = function () {
     
 	//Delete Card(s)
     $(document).ready(function () {
-        $("#btnDelete").click(onBtnDeleteCallClicked);
+        $("#btnDelete").click(onDeleteCardsCallClicked);
     });
-    function onBtnDeleteCallClicked() {
-        jQuery.paypalDeleteCards();
+    function onDeleteCardsCallClicked() {
+        doDeleteCards();
     }
     /*
     //List Cards Picker for Add Value

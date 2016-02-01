@@ -1489,9 +1489,14 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
+				/**
+				 * -
+				 * Payments should not be cached - will be small portion of usage
+				 */
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( );
-				$result = $PaymentsProxy->exec ( $actionname, $message_data );
+				$cache_me = false;
+				$PaymentsProxy->exec ( $actionname, $message_data );
 			}
 			
 			/*
@@ -1519,14 +1524,10 @@ class IndexController extends AbstractActionController {
 				$this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
 				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
 			}
-		}
-		
-		//Debugging - remove me
-		Mlog::addone('indexController output section $_SESSION--->', $_SESSION);
-		
+		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
 		
 		if (! empty ( $callback )) {
-			error_log ( "XXXX CALLBACK IS NOT EMPTY XXXXXX" . PHP_EOL );
+			
 			$message_data ['data'] = $output;
 			
 			$json_arr = array (
@@ -1535,8 +1536,9 @@ class IndexController extends AbstractActionController {
 			$json = json_encode ( $json_arr );
 			
 			// header ( "Content-type: plain/text" );
-			// header('Content-Type: application/json');
+			header('Content-Type: application/json');
 			// callback json
+			Mlog::addone ( __METHOD__ . __LINE__ . 'response with callback', $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty

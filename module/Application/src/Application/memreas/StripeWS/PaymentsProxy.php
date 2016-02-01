@@ -53,16 +53,13 @@ class PaymentsProxy {
 						'json' => json_encode ( $jsonArr ) 
 				] 
 		] );
-		Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
-		Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
-		Mlog::addone ( $cm . '$response->getBody ()--->', ( string ) $response->getBody () );
+		//Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
+		//Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
+		//Mlog::addone ( $cm . '$response->getBody ()--->', trim(( string ) $response->getBody ()) );
 		
-		if (! empty ( $callback )) {
-			echo $callback . "(" . trim ( ( string ) $response->getBody () ) . ")";
-		} else {
-			echo trim ( ( string ) $response->getBody () );
-		}
-		Mlog::addone ( $cm . __LINE . '::$response->getBody ()--->', trim ( ( string ) $response->getBody () ) );
+		$result = trim(( string ) $response->getBody ());
+		Mlog::addone ( $cm . __LINE . '::$ouptput--->', $result );
+		echo $result;
 	}
 }
 
