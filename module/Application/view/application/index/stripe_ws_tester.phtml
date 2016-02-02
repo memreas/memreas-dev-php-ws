@@ -284,6 +284,57 @@ doDeleteCards = function () {
 	return false;
 }
 
+/////////////////////
+// Add Seller
+/////////////////////
+doAddSeller = function () {
+
+	var action = "stripe_addSeller";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.user_name = $("#add_seller_user_name").val();
+	obj.stripe_email_address = $("#add_seller_email_address").val();
+	obj.first_name = $("#add_seller_first_name").val();
+	obj.last_name = $("#add_seller_last_name").val();
+	obj.address_line_1 = $("#add_seller_address_line_1").val();
+	obj.address_line_2 = $("#add_seller_address_line_2").val();
+	obj.city = $("#add_seller_city").val();
+	obj.state = $("#add_seller_state").val();
+	obj.zip_code = $("#add_seller_zip_code").val();
+	obj.bank_routing = $("#add_seller_bank_routing_number").val();
+	obj.account_number = $("#add_seller_bank_account_number").val();
+	
+ var json_addSeller = JSON.stringify(obj);
+ var data = "";
+
+ data = '{"action": "addSeller", ' +
+ '"type":"jsonp", ' +
+ '"json": ' + json_addSeller  +
+ '}';
+
+	//var results += json_paypalAddSeller;
+	$("#add_seller_form_results").val(json_addSeller, null, '\t');
+
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $("#add_seller_form_results").val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	$("#add_seller_form_results").val(req_resp);
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+	  	//alert("Inside error jqXHR...");
+	    	alert(jqXHR.responseText);
+	    	alert(jqXHR.status);
+	    	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
 
 /////////////////////
 //- Login
@@ -397,6 +448,16 @@ var doLogin = function () {
     function onDeleteCardsCallClicked() {
         doDeleteCards();
     }
+
+	//Add Seller
+    $(document).ready(function () {
+        $("#btnOK3").click(onAddSellerCallClicked);
+    });
+    function onAddSellerCallClicked() {
+        doAddSeller();
+    }
+
+
     /*
     //List Cards Picker for Add Value
     $(document).ready(function () {
@@ -428,14 +489,6 @@ var doLogin = function () {
     });
     function onBtnAccountHistoryCallClicked() {
         jQuery.paypalAccountHistory('#account_history_results');
-    }
-
-	//Add Seller
-    $(document).ready(function () {
-        $("#btnOK3").click(onBtn3CallClicked);
-    });
-    function onBtn3CallClicked() {
-        jQuery.paypalAddSeller();
     }
 
 	//List MassPayees
@@ -510,6 +563,7 @@ var doLogin = function () {
 	<input type="hidden" name="user_id" value="<?php echo $user_id; ?>" />
 	<div id="tabs">
 		<ul>
+			<li><a href="#tabs-9">Login</a></li>
 			<li><a href="#tabs-1">Store Card</a></li>
 			<li><a href="#tabs-2">List and Delete Cards</a></li>
 			<li><a href="#tabs-3">Add a Seller</a></li>
@@ -518,7 +572,6 @@ var doLogin = function () {
 			<li><a href="#tabs-6">Account History</a></li>
 			<li><a href="#tabs-7">MassPay</a></li>
 			<li><a href="#tabs-8">Subscriptions</a></li>
-			<li><a href="#tabs-9">Login</a></li>
 		</ul>
 		<div id="tabs-1">
 			<form id="store_card_form" name=store_card_form " action="#">
@@ -752,9 +805,8 @@ var doLogin = function () {
 						
 						<td>stripe email address:
 						
-						<td><input type="text" id="add_seller_paypal_email_address"
-							name="add_seller_paypal_email_address"
-							value="jmeah_seller@memreas.com">
+						<td><input type="text" id="add_seller_email_address"
+							name="add_seller_email_address" value="jmeah_seller@memreas.com">
 					
 					</tr>
 					<tr>
@@ -874,6 +926,19 @@ var doLogin = function () {
 						
 						<td><input type="hidden" id="isValid" name="isValid" value="1">
 					
+					</tr>
+					<tr>
+						<td>bank routing number:
+						
+						<td><input type="text" id="add_seller_bank_routing_number"
+							name="add_seller_bank_routing_number" value="110000000">
+					</tr>
+					<tr>
+						<td>bank account number:
+						
+						<td><input type="text" id="add_seller_bank_account_number"
+							name="add_seller_bank_account_number" value="000123456789">
+						
 					</tr>
 					<tr>
 						<td>
@@ -1353,62 +1418,30 @@ var doLogin = function () {
 
 	<script language="JavaScript">
 	function generateCC(){
-		$('#credit_card_number').val('4242424242424242');
-		$('#subscribe_credit_card_number').val('4242424242424242');
-		return;
-		var cc_number = new Array(16);
-		var cc_len = 16;
-		var start = 0;
-		var rand_number = Math.random();
 
-		//switch(document.store_card_form.credit_card_type.value)
+	    var card_number;
 		switch($('#credit_card_type').val())		
-        {
-			case "Visa":
-				cc_number[start++] = 4;
-				break;
-			case "Discover":
-				cc_number[start++] = 6;
-				cc_number[start++] = 0;
-				cc_number[start++] = 1;
-				cc_number[start++] = 1;
-				break;
-			case "MasterCard":
-				cc_number[start++] = 5;
-				cc_number[start++] = Math.floor(Math.random() * 5) + 1;
-				break;
-			case "Amex":
-				cc_number[start++] = 3;
-				cc_number[start++] = Math.round(Math.random()) ? 7 : 4 ;
-				cc_len = 15;
-				break;
-        }
+	        {
+	        		//Stripe test #'s
+				case "Visa":
+					card_number = '4242424242424242';
+					break;
+				case "Discover":
+					card_number = '6011111111111117';
+					break;
+				case "MasterCard":
+					card_number = '5555555555554444';
+					break;
+				case "Amex":
+					card_number = '378282246310005';
+					break;
+	        }
 
-        for (var i = start; i < (cc_len - 1); i++) {
-			cc_number[i] = Math.floor(Math.random() * 10);
-        }
-
-		var sum = 0;
-		for (var j = 0; j < (cc_len - 1); j++) {
-			var digit = cc_number[j];
-			if ((j & 1) == (cc_len & 1)) digit *= 2;
-			if (digit > 9) digit -= 9;
-			sum += digit;
-		}
-
-		var check_digit = new Array(0, 9, 8, 7, 6, 5, 4, 3, 2, 1);
-		cc_number[cc_len - 1] = check_digit[sum % 10];
-
-		//document.store_card_form.credit_card_number.value = "";
-		var cc = "";
-		for (var k = 0; k < cc_len; k++) {
-			cc += cc_number[k];
-		}
-		$('#credit_card_number').val(cc);
-		$('#subscribe_credit_card_number').val(cc);
-}
-</script>
-	<script language="javascript">
+	    $('#credit_card_number').val(card_number);
+		$('#subscribe_credit_card_number').val(card_number);
+		return;
+		
+	}
 	generateCC();
 </script>
 
