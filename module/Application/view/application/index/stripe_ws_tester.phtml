@@ -247,26 +247,31 @@ doDeleteCards = function () {
 		return;
 	}
 
- var jsonDeleteCards = JSON.stringify(selected, null, '\t');
- var data = "";
- var result = "";
+	var action = "stripe_deleteCards";
+	var obj = new Object();
+	obj.selectedCard = selected;
+	obj.sid = getCookie("PHPSESSID");
+	var jsonDeleteCards = JSON.stringify(obj, null, '\t');
+	var data = "";
+ 	var result = "";
 
- //if () {}
- data = '{"action": "delete", ' +
- '"type":"jsonp", ' +
- '"json": ' + jsonDeleteCards  +
- '}';
+	data = '{"action": "deleteCards", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + jsonDeleteCards  +
+	'}';
 
 	$("#list_delete_cards_results").val(jsonDeleteCards);
 
 	$.ajax( {
 	  type:'post',
-	  url: stripeDeleteCards_url,
+	  url: proxy_url + action,
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
 	  	var req_resp = $("#list_delete_cards_results").val() + "\n\n" + JSON.stringify(json, null, '\t');
 	  	$("#list_delete_cards_results").val(req_resp);
+	  	// update card list
+	  	doListCards('#list_delete_cards_results', '#card_list');
 	  	return true;
 	  },
 	  error: function (jqXHR, textStatus, errorThrown) {
