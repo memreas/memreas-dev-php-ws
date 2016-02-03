@@ -1605,6 +1605,7 @@ class IndexController extends AbstractActionController {
 				'stripe_ws_tester',
 				'clearlog',
 				'showlog',
+				'stripe_activeCredit',
 				/* For stripe
 				'getplans',
 				'getplansstatic',

@@ -40,24 +40,33 @@ class PaymentsProxy {
 	 */
 	public function exec($action, $jsonArr) {
 		$cm = __CLASS__ . __METHOD__;
-		Mlog::addone ( $cm . __LINE__, jsonArr );
-		
 		$action_method = substr ( $action, 7 );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', jsonArr );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE );
 		$guzzle = new \GuzzleHttp\Client ();
-		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
-				'form_params' => [ 
-						'sid' => $_SESSION ['sid'],
-						'json' => json_encode ( $jsonArr ) 
-				] 
-		] );
-		//Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
-		//Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
-		//Mlog::addone ( $cm . '$response->getBody ()--->', trim(( string ) $response->getBody ()) );
+		if (isset($_REQUEST['token'])) {
+			Mlog::addone ( $cm . __LINE__ . 'token--->', $_REQUEST['token'] );
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [
+					'form_params' => [
+							'token' => $_REQUEST['token']
+					]
+			] );
+					
+		} else {
+			Mlog::addone ( $cm . __LINE__, jsonArr );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', jsonArr );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE );
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+					'form_params' => [ 
+							'sid' => $_SESSION ['sid'],
+							'json' => json_encode ( $jsonArr ) 
+					] 
+			] );
+		}
+		// Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
+		// Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
+		// Mlog::addone ( $cm . '$response->getBody ()--->', trim(( string ) $response->getBody ()) );
 		
-		$result = trim(( string ) $response->getBody ());
+		$result = trim ( ( string ) $response->getBody () );
 		Mlog::addone ( $cm . __LINE . '::$ouptput--->', $result );
 		echo $result;
 	}

@@ -304,13 +304,13 @@ doAddSeller = function () {
 	obj.bank_routing = $("#add_seller_bank_routing_number").val();
 	obj.account_number = $("#add_seller_bank_account_number").val();
 	
- var json_addSeller = JSON.stringify(obj);
- var data = "";
-
- data = '{"action": "addSeller", ' +
- '"type":"jsonp", ' +
- '"json": ' + json_addSeller  +
- '}';
+	 var json_addSeller = JSON.stringify(obj);
+	 var data = "";
+	
+	 data = '{"action": "addSeller", ' +
+	 '"type":"jsonp", ' +
+	 '"json": ' + json_addSeller  +
+	 '}';
 
 	//var results += json_paypalAddSeller;
 	$("#add_seller_form_results").val(json_addSeller, null, '\t');
@@ -329,6 +329,73 @@ doAddSeller = function () {
 	    	alert(jqXHR.responseText);
 	    	alert(jqXHR.status);
 	    	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+/////////////////////
+//Add Value
+/////////////////////
+doAddValue = function (element) {
+
+	var action = "stripe_addValue";
+	//Fetch the list of cards to delete...
+	var selected = new Array();
+	$("input[name=card_selected]:checked").each(function() {
+     card_number = $(this).parents("tr").find('input.card_numbers').val();
+	    selected.push(card_number);
+	});
+
+	if(selected.length == 0) {
+		alert("No cards checked");
+		return;
+	} else if (selected.length > 1) {
+		alert("Please choose only one card");
+		return;
+	}
+
+	if(!$.isNumeric($('#amount').val())) {
+		alert("Amount must be numeric.");
+		return;
+	}
+
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.stripe_card_reference_id = selected[0];
+	obj.amount = $("#amount").val();
+ 	var json_AddValue = JSON.stringify(obj, null, '\t');
+ 	var data = "";
+ 	var result = "";
+
+	 data = '{"action": "list", ' +
+ 	'"type":"jsonp", ' +
+ 	'"json": ' + json_AddValue  +
+ 	'}';
+
+	$(element).val(json_AddValue);
+
+
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	//if (json.Status == "Success") {
+	  	//	alert("Inside");
+	  	//}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+    		alert(jqXHR.responseText);
+	    	alert(jqXHR.status);
+	 	//alert(textStatus);
 	    	//alert(errorThrown);
 	  }
 	});
@@ -458,7 +525,6 @@ var doLogin = function () {
     }
 
 
-    /*
     //List Cards Picker for Add Value
     $(document).ready(function () {
         $("#btnOK4").click(onListCardsForAddValueCallClicked);
@@ -469,12 +535,13 @@ var doLogin = function () {
     
 	//Add Value
     $(document).ready(function () {
-        $("#btnAddValue4").click(onBtnAddValue4CallClicked);
+        $("#btnAddValue4").click(onBtnAddValueCallClicked);
     });
-    function onBtnAddValue4CallClicked() {
-        jQuery.paypalAddValue('#add_value_results');
+    function onBtnAddValueCallClicked() {
+        doAddValue('#add_value_results');
     }
     
+    /*
 	//Decrement Value
     $(document).ready(function () {
         $("#btnDecrementValue5").click(onBtnDecrementValue5CallClicked);
