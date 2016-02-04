@@ -678,8 +678,10 @@ class IndexController extends AbstractActionController {
 				$snsProcessMediaPublish = new snsProcessMediaPublish ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $snsProcessMediaPublish->exec ();
 			} else if ($actionname == "memreas_tvm") {
+				Mlog::addone($cm.__LINE__, 'Enter ' . $actionname);
 				$memreastvm = new Memreastvm ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $memreastvm->exec ();
+				Mlog::addone($cm.__LINE__.'::Exit ' . $actionname . ' result--->', $result);
 			} else if ($actionname == "uploadadvertisement") {
 				$uploadadvertisement = new UploadAdvertisement ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $uploadadvertisement->exec ();
