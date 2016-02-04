@@ -1542,6 +1542,7 @@ class IndexController extends AbstractActionController {
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
+			Mlog::addone ( __METHOD__ . __LINE__ . 'response ', $json );
 			echo $output;
 		}
 		
