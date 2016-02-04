@@ -31,10 +31,8 @@
 // SOFTWARE.
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
+use Application\Model\MemreasConstants;
 // use Application\memreas\PostPolicy
 class Memreastvm {
 	protected $message_data;
@@ -61,20 +59,8 @@ class Memreastvm {
 		$this->iam = $this->aws->createIam ();
 	}
 	public function exec($type = "") {
+		$cm = __CLASS__.__METHOD__;
 		try {
-			/* - covered in indexcontroller
-			if (empty ( $_SESSION ['user_id'] )) {
-				header ( 'Content-Type: application/json' );
-				$status = 'error';
-				$message = 'user is not logged in';
-				$arr = array (
-						'status' => $status,
-						'message' => $message 
-				);
-				echo json_encode ( $arr );
-				return;
-			}
-			*/
 			/**
 			 * Fetch data return type
 			 */
@@ -101,9 +87,11 @@ class Memreastvm {
 				$xml_output .= "<memreas_tvm>$cdata</memreas_tvm>";
 				$xml_output .= "</xml>";
 				echo $xml_output;
+				Mlog::addone ( $cm.__LINE__ . '::output::', $xml_output);
 			} else {
 				header ( 'Content-Type: application/json' );
 				echo json_encode ( $signature_data );
+				Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
 			}
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . 'error::', $e->getMessage () );
