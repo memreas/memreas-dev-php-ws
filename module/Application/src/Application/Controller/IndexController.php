@@ -1528,6 +1528,7 @@ class IndexController extends AbstractActionController {
 			}
 		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
 		
+		Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 		if (! empty ( $callback )) {
 			
 			$message_data ['data'] = $output;
@@ -1544,7 +1545,7 @@ class IndexController extends AbstractActionController {
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
-			Mlog::addone ( __METHOD__ . __LINE__ . 'response ', $json );
+			Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			echo $output;
 		}
 		

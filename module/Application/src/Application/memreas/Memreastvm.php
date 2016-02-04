@@ -87,11 +87,11 @@ class Memreastvm {
 				$xml_output .= "<memreas_tvm>$cdata</memreas_tvm>";
 				$xml_output .= "</xml>";
 				echo $xml_output;
-				Mlog::addone ( $cm.__LINE__ . '::output::', $xml_output);
+				//Mlog::addone ( $cm.__LINE__ . '::output::', $xml_output);
 			} else {
 				header ( 'Content-Type: application/json' );
 				echo json_encode ( $signature_data );
-				Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
+				//Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
 			}
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . 'error::', $e->getMessage () );
