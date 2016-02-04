@@ -46,10 +46,11 @@ class ReTransCoder {
 			 * -
 			 * handle a list of media ids if we detect a comma separated list or single entry
 			 */
+			Mlog::addone ( $cm . __LINE__ . '$data---->', $data );
+			Mlog::addone ( $cm . __LINE__ . '$media_id_list---->', $media_id_list );
 			if (! empty ( $media_id_list )) {
 				$mediaIdArr = explode ( ',', $media_id_list );
 				Mlog::addone ( $cm . __LINE__ . '$mediaIdArr---->', $mediaIdArr );
-				
 				
 				foreach ( $mediaIdArr as $media_id ) {
 					
@@ -89,35 +90,40 @@ class ReTransCoder {
 								// $message_data ['applyCopyrightOnServer'] = empty ( $meta ['S3_files'] ['copyright'] ['applyCopyrightOnServer'] ) ? 0 : 1;
 								$message_data ['copyright'] = $meta ['S3_files'] ['copyright'];
 							}
-							Mlog::addone ( '$message_data', $message_data );
-							Mlog::addone ( '$meta [S3_files] [is_video] ', $meta ['S3_files'] ['is_video'] );
+							//Mlog::addone ( '$message_data', $message_data );
+							//Mlog::addone ( '$meta [S3_files] [is_video] ', $meta ['S3_files'] ['is_video'] );
 						} else {
 							throw new \Exception ( "can't find media by media id" );
 						}
-					} // end if (!empty($media_id))
-				} // end foreach foreach ($mediaIdArr as $media_id)
-			} else if (! empty ( $backlog )) {
-				$message_data = array (
-						'backlog' => 1 
-				);
+					} else if (! empty ( $backlog )) {
+						$message_data = array (
+								'backlog' => 1 
+						);
+					} else {
+						throw new \Exception ( "missing media id and backlog flag" );
+					}
+					
+					
+					if ($message_data) {
+						//
+						// Now send the message...
+						//
+						$aws_manager = new AWSManagerSender ( $this->service_locator );
+						$response = $aws_manager->snsProcessMediaPublish ( $message_data );
+						Mlog::addone ( '$response', $response );
+					}
+					
+					if ($response) {
+						$status = 'Success';
+						$message = "Media successfully added for retranscode";
+					} else {
+						throw new \Exception ( 'Error In snsProcessMediaPublish' );
+					}
+				}
+				// end foreach foreach ($mediaIdArr as $media_id)
+				// end if (!empty($media_id))
 			} else {
 				throw new \Exception ( "missing media id and backlog flag" );
-			}
-			
-			if ($message_data) {
-				/**
-				 * Now send the message...
-				 */
-				$aws_manager = new AWSManagerSender ( $this->service_locator );
-				$response = $aws_manager->snsProcessMediaPublish ( $message_data );
-				Mlog::addone ( '$response', $response );
-				
-				if ($response) {
-					$status = 'Success';
-					$message = "Media successfully added for retranscode";
-				} else {
-					throw new \Exception ( 'Error In snsProcessMediaPublish' );
-				}
 			}
 		} catch ( \Exception $exc ) {
 			$status = 'Failure';

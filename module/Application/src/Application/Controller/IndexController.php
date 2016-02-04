@@ -1541,11 +1541,11 @@ class IndexController extends AbstractActionController {
 			// header ( "Content-type: plain/text" );
 			header('Content-Type: application/json');
 			// callback json
-			Mlog::addone ( __METHOD__ . __LINE__ . 'response with callback', $callback . "(" . $json . ")" );
+			//Mlog::addone ( __METHOD__ . __LINE__ . 'response with callback', $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
-			Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
+			//Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			echo $output;
 		}
 		

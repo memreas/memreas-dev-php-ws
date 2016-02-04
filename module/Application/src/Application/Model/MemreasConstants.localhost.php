@@ -20,7 +20,7 @@ class MemreasConstants {
 	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
 	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
 	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
-	const MEMREAS_TRANSCODE_URL = "http://memreas-dev-php-backend.localhost/";
+	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
 	const MEMREAS_PAY_URL_STRIPE = "http://memreas-dev-php-stripe.localhost/stripe/";	
 	const MEMREAS_PAY_URL_INDEX = "http://memreas-dev-php-stripe.localhost/index/";
