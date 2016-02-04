@@ -402,6 +402,61 @@ doAddValue = function (element) {
 	return false;
 }
 
+/////////////////////
+//Decrement Value
+/////////////////////
+doDecrementValue = function (element) {
+
+	//Fetch the list of cards to delete...
+	var selected = new Array();
+
+	if(!$.isNumeric($('#decrement_amount').val())) {
+		alert("Decrement amount must be numeric.");
+		return;
+	}
+
+	var obj = new Object();
+	obj.amount = $("#decrement_amount").val();
+	obj.seller = $("#seller").val();
+	obj.memreas_master = $("#memreas_master").val();
+	var json_decrementValue = JSON.stringify(obj, null, '\t');
+	var data = "";
+	var result = "";
+	
+	 //if () {}
+	 data = '{"action": "decrement", ' +
+	 '"type":"jsonp", ' +
+	 '"json": ' + json_decrementValue  +
+	 '}';
+
+	$(element).val(json_decrementValue);	
+	
+	$.ajax( {
+	  type:'post',
+	  url: stripeDecrementValue_url,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	//if (json.Status == "Success") {
+	  	//	alert("Inside");
+	  	//}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+    	alert(jqXHR.responseText);
+    	alert(jqXHR.status);
+ 	//alert(textStatus);
+    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+
 
 /////////////////////
 //- Login
@@ -541,15 +596,15 @@ var doLogin = function () {
         doAddValue('#add_value_results');
     }
     
-    /*
 	//Decrement Value
     $(document).ready(function () {
-        $("#btnDecrementValue5").click(onBtnDecrementValue5CallClicked);
+        $("#btnDecrementValue5").click(onBtnDecrementValueCallClicked);
     });
-    function onBtnDecrementValue5CallClicked() {
-        jQuery.paypalDecrementValue('#decrement_value_results');
+    function onBtnDecrementValueCallClicked() {
+        doDecrementValue('#decrement_value_results');
     }
 
+    /*
 	//Account History
     $(document).ready(function () {
         $("#btnAccountHistory6").click(onBtnAccountHistoryCallClicked);
@@ -999,13 +1054,14 @@ var doLogin = function () {
 						
 						<td><input type="text" id="add_seller_bank_routing_number"
 							name="add_seller_bank_routing_number" value="110000000">
+					
 					</tr>
 					<tr>
 						<td>bank account number:
 						
 						<td><input type="text" id="add_seller_bank_account_number"
 							name="add_seller_bank_account_number" value="000123456789">
-						
+					
 					</tr>
 					<tr>
 						<td>
@@ -1087,7 +1143,7 @@ var doLogin = function () {
 						
 						<td>
 						
-						<td><input id="seller" type="text" name="seller" value="jmeah2">
+						<td><input id="seller" type="text" name="seller" value="jmeah80">
 					
 					</tr>
 					<tr>
@@ -1098,7 +1154,7 @@ var doLogin = function () {
 						<td>
 						
 						<td><input id="memreas_master" type="text" name="memreas_master"
-							value="jmeah3">
+							value="memreas_master">
 					
 					</tr>
 					<tr>
