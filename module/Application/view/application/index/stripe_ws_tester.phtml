@@ -340,7 +340,6 @@ doAddSeller = function () {
 /////////////////////
 doAddValue = function (element) {
 
-	var action = "stripe_addValue";
 	//Fetch the list of cards to delete...
 	var selected = new Array();
 	$("input[name=card_selected]:checked").each(function() {
@@ -361,6 +360,7 @@ doAddValue = function (element) {
 		return;
 	}
 
+	var action = "stripe_addValue";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
 	obj.stripe_card_reference_id = selected[0];
@@ -403,9 +403,9 @@ doAddValue = function (element) {
 }
 
 /////////////////////
-//Decrement Value
+//Buy Media
 /////////////////////
-doDecrementValue = function (element) {
+doBuyMedia = function (element) {
 
 	//Fetch the list of cards to delete...
 	var selected = new Array();
@@ -415,10 +415,14 @@ doDecrementValue = function (element) {
 		return;
 	}
 
+	var action = "stripe_buyMedia";
 	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.seller_id = $("#seller_id").val();
+	obj.event_id = $("#event_id").val();
 	obj.amount = $("#decrement_amount").val();
-	obj.seller = $("#seller").val();
-	obj.memreas_master = $("#memreas_master").val();
+	obj.duration_from = $("#duration_from").val();
+	obj.duration_from = $("#duration_to").val();
 	var json_decrementValue = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";
@@ -433,7 +437,7 @@ doDecrementValue = function (element) {
 	
 	$.ajax( {
 	  type:'post',
-	  url: stripeDecrementValue_url,
+	  url: proxy_url + action,
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
@@ -447,10 +451,10 @@ doDecrementValue = function (element) {
 	  	return true;
 	  },
 	  error: function (jqXHR, textStatus, errorThrown) {
-    	alert(jqXHR.responseText);
-    	alert(jqXHR.status);
- 	//alert(textStatus);
-    	//alert(errorThrown);
+	    	alert(jqXHR.responseText);
+    		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
 	  }
 	});
 	return false;
@@ -601,7 +605,7 @@ var doLogin = function () {
         $("#btnDecrementValue5").click(onBtnDecrementValueCallClicked);
     });
     function onBtnDecrementValueCallClicked() {
-        doDecrementValue('#decrement_value_results');
+        doBuyMedia('#decrement_value_results');
     }
 
     /*
@@ -690,7 +694,7 @@ var doLogin = function () {
 			<li><a href="#tabs-2">List and Delete Cards</a></li>
 			<li><a href="#tabs-3">Add a Seller</a></li>
 			<li><a href="#tabs-4">Add Value to Account</a></li>
-			<li><a href="#tabs-5">Decrement Account</a></li>
+			<li><a href="#tabs-5">Buy Media</a></li>
 			<li><a href="#tabs-6">Account History</a></li>
 			<li><a href="#tabs-7">MassPay</a></li>
 			<li><a href="#tabs-8">Subscriptions</a></li>
@@ -1134,27 +1138,27 @@ var doLogin = function () {
 		</div>
 		<div id="tabs-5">
 			<form id="decrement_value_form" name=decrement_value_form
-				" action="/index/paypalAddValue">
+				" action="#">
 				<table>
 					<tr>
 						<td>
 						
-						<td>Seller:
+						<td>Seller Id (jmeah2):
 						
 						<td>
 						
-						<td><input id="seller" type="text" name="seller" value="jmeah80">
+						<td><input id="seller_id" type="text" name="seller_id" value="a4911fef-eef7-4286-a9de-3d5703cafd20">
 					
 					</tr>
 					<tr>
 						<td>
 						
-						<td>memreas_master:
+						<td>event id:
 						
 						<td>
 						
-						<td><input id="memreas_master" type="text" name="memreas_master"
-							value="memreas_master">
+						<td><input id="event_id" type="text" name="event_id"
+							value="9879eba9-0490-4ae7-b3f7-ff213e92493d">
 					
 					</tr>
 					<tr>
@@ -1166,6 +1170,28 @@ var doLogin = function () {
 						
 						<td><input id="decrement_amount" type="text"
 							name="decrement_amount" value=".25">
+					
+					</tr>
+					<tr>
+						<td>
+						
+						<td>duration from:
+						
+						<td>
+						
+						<td><input id="duration_from" type="text"
+							name="duration_from" value="2016-02-03">
+					
+					</tr>
+					<tr>
+						<td>
+						
+						<td>duration to:
+						
+						<td>
+						
+						<td><input id="duration_to" type="text"
+							name="duration_to" value="2017-02-03">
 					
 					</tr>
 					<tr>
