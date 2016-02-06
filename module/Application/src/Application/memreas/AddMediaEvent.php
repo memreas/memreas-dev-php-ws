@@ -23,11 +23,13 @@ class AddMediaEvent {
 	protected $AddNotification;
 	protected $url_signer;
 	protected $notification;
+	protected $aws_manager;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->aws_manager = new AWSManagerSender ( $service_locator );
 		if (! $this->AddNotification) {
 			$this->AddNotification = new AddNotification ( $message_data, $memreas_tables, $service_locator );
 		}
@@ -96,19 +98,17 @@ class AddMediaEvent {
 				// $applyCopyrightOnServer = isset ( $_POST ['applyCopyrightOnServer'] ) ? $_POST ['applyCopyrightOnServer'] : 0;
 			}
 			$time = time ();
-
 			
-			Mlog::addone(__CLASS__.__METHOD__.'$event_id',$event_id );
-			Mlog::addone(__CLASS__.__METHOD__.'$media_id',$media_id );
-			Mlog::addone(__CLASS__.__METHOD__.'$$is_profile_pic',$is_profile_pic );
-			Mlog::addone(__CLASS__.__METHOD__.'$is_server_image',$is_server_image );
-			Mlog::addone(__CLASS__.__METHOD__.'$content_type',$content_type );
-			Mlog::addone(__CLASS__.__METHOD__.'$s3url',$s3url );
-			Mlog::addone(__CLASS__.__METHOD__.'$s3file_name',$s3file_name );
-			Mlog::addone(__CLASS__.__METHOD__.'$s3file_basename_prefix',$s3file_basename_prefix );
-			Mlog::addone(__CLASS__.__METHOD__.'$location',$location );
-			Mlog::addone(__CLASS__.__METHOD__.'$copyright',$copyright );
-				
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$event_id', $event_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$media_id', $media_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$$is_profile_pic', $is_profile_pic );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$is_server_image', $is_server_image );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$content_type', $content_type );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$s3url', $s3url );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$s3file_name', $s3file_name );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$s3file_basename_prefix', $s3file_basename_prefix );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$location', $location );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$copyright', $copyright );
 			
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media
@@ -132,7 +132,7 @@ class AddMediaEvent {
 				//
 				Mlog::addone ( 'insert::', 'new media' );
 				Mlog::addone ( '$copyright', $copyright );
-
+				
 				//
 				// media_id must be set
 				//
@@ -166,7 +166,6 @@ class AddMediaEvent {
 				// create metadata based on content type
 				// ///////////////////////////////////////
 				$json_array = array ();
-				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 				$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 				$json_array ['S3_files'] ['copyright'] = json_decode ( $copyright );
@@ -195,6 +194,16 @@ class AddMediaEvent {
 				}
 				$json_array ['S3_files'] ['type'] [strtolower ( $file_type [0] )] ['format'] = $file_type [1];
 				$json_str = json_encode ( $json_array );
+				
+				/**
+				 * -
+				 * Check if media is uploaded to S3 if you can't find it then return exception
+				 */
+				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
+				$result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
+				if (! $result) {
+					throw new Exception ( 'media did not upload properly' );
+				}
 				
 				//
 				// if copyright add id to media table

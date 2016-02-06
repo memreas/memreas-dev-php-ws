@@ -7,11 +7,9 @@
  */
 namespace Application\memreas;
 
-use GuzzleHttp\Client;
-use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
+use GuzzleHttp\Client;
 
-error_reporting ( E_ALL & ~ E_NOTICE );
 class AWSManagerSender {
 	private $aws = null;
 	private $s3 = null;
@@ -53,6 +51,36 @@ class AWSManagerSender {
 		] );
 		
 		return $response->getBody ();
+	}
+	public function checkIfS3MediaExists($key) {
+		try {
+			$result = $this->s3->headObject ( array (
+					// Bucket is required
+					'Bucket' => MemreasConstants::S3BUCKET,
+					'Key' => $key 
+			) );
+			
+			// If the file exists we can return result else an exception will be raised
+			return $result;
+		} catch ( S3Exception $e ) {
+			// File doesn't exist
+			return false;
+		}
+	}
+	public function pullMediaFromS3($s3file, $file) {
+		try {
+			Mlog::addone ( __FILE__ . __METHOD__ . '::pulling s3file', $s3file );
+			$result = $this->s3->getObject ( array (
+					'Bucket' => MemreasConstants::S3BUCKET,
+					'Key' => $s3file,
+					'SaveAs' => $file 
+			) );
+			$lsal = shell_exec ( 'ls -al ' . $file );
+			// Mlog::addone ( __FILE__ . __METHOD__ . '::finished pullMediaFromS3', $lsal );
+			return true;
+		} catch ( Exception $e ) {
+			throw $e;
+		}
 	}
 	public function snsProcessMediaPublish($message_data) {
 		$var = 0;
