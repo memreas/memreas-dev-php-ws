@@ -103,6 +103,7 @@ class GetUserDetails {
 						//
 						// Store data in session here...
 						//
+						Mlog::addone('GetUserDetails-->stripe_getCustomerInfo--->', $result);
 					}
 					
 				} else {
