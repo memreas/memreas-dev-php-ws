@@ -7,10 +7,8 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
+use Application\Model\MemreasConstants;
 
 class LikeMedia {
 	protected $message_data;
@@ -108,8 +106,6 @@ class LikeMedia {
 						}
 					}
 					
-					// error_log ( "LikeMedia.media_id ---> " . $media_id . PHP_EOL );
-					// error_log ( "LikeMedia.row['media_id'] " . $row [0] ->media_id . PHP_EOL );
 					/*
 					 * Fetch like count
 					 */

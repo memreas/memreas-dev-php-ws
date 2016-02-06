@@ -51,8 +51,8 @@ class PaymentsProxy {
 			] );
 					
 		} else {
-			Mlog::addone ( $cm . __LINE__, jsonArr );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', jsonArr );
+			Mlog::addone ( $cm . __LINE__, $jsonArr );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
@@ -67,7 +67,7 @@ class PaymentsProxy {
 		// Mlog::addone ( $cm . '$response->getBody ()--->', trim(( string ) $response->getBody ()) );
 		
 		$result = trim ( ( string ) $response->getBody () );
-		Mlog::addone ( $cm . __LINE . '::$ouptput--->', $result );
+		Mlog::addone ( $cm . __LINE__ . '::$ouptput--->', $result );
 		echo $result;
 	}
 }

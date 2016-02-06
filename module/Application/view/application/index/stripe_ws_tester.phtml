@@ -11,7 +11,7 @@ $username = $this->username;
 // echo "user_id ----> " . $user_id;
 // echo "<p>";
 echo "Welcome to Stripe Services" . PHP_EOL;
-echo "whoami ----> " . $username . " : " . $user_id;
+//echo "whoami ----> " . $username . " : " . $user_id;
 
 ?>
 <!doctype html>
@@ -422,7 +422,7 @@ doBuyMedia = function (element) {
 	obj.event_id = $("#event_id").val();
 	obj.amount = $("#decrement_amount").val();
 	obj.duration_from = $("#duration_from").val();
-	obj.duration_from = $("#duration_to").val();
+	obj.duration_to = $("#duration_to").val();
 	var json_decrementValue = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";

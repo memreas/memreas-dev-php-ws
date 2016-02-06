@@ -210,7 +210,7 @@ class IndexController extends AbstractActionController {
 				
 				$data = $this->inputToObject ( $message_data ['xml'] );
 			} else {
-				$data = (object) $data;
+				$data = ( object ) $data;
 			}
 		} else {
 			// assuming xml if not json
@@ -253,10 +253,12 @@ class IndexController extends AbstractActionController {
 		if ($actionname == "stripe_ws_tester") {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
-			$view->setVariable("user_id", $_SESSION['user_id']);
-			$view->setVariable("username", $_SESSION['username']);
+			$user_id = (isset ( $_SESSION ['user_id'] )) ? $_SESSION ['user_id'] : '';
+			$username = (isset ( $_SESSION ['username'] )) ? $_SESSION ['username'] : '';
+			$view->setVariable ( "user_id", $user_id );
+			$view->setVariable ( "username", $username );
 			$view->setTemplate ( "application/index/stripe_ws_tester.phtml" ); // path to phtml file under view
-			// folder
+			                                                                   // folder
 			return $view;
 		}
 		
@@ -282,7 +284,7 @@ class IndexController extends AbstractActionController {
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
 				
-				Mlog::addone('login result --->', $result);
+				Mlog::addone ( 'login result --->', $result );
 				
 				/*
 				 * Cache approach - warm @person if not set here
@@ -678,10 +680,10 @@ class IndexController extends AbstractActionController {
 				$snsProcessMediaPublish = new snsProcessMediaPublish ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $snsProcessMediaPublish->exec ();
 			} else if ($actionname == "memreas_tvm") {
-				Mlog::addone($cm.__LINE__, 'Enter ' . $actionname);
+				Mlog::addone ( $cm . __LINE__, 'Enter ' . $actionname );
 				$memreastvm = new Memreastvm ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $memreastvm->exec ();
-				Mlog::addone($cm.__LINE__.'::Exit ' . $actionname . ' result--->', $result);
+				Mlog::addone ( $cm . __LINE__ . '::Exit ' . $actionname . ' result--->', $result );
 			} else if ($actionname == "uploadadvertisement") {
 				$uploadadvertisement = new UploadAdvertisement ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $uploadadvertisement->exec ();
@@ -1496,7 +1498,7 @@ class IndexController extends AbstractActionController {
 				 * Payments should not be cached - will be small portion of usage
 				 */
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
-				$PaymentsProxy = new PaymentsProxy ( );
+				$PaymentsProxy = new PaymentsProxy ();
 				$cache_me = false;
 				$PaymentsProxy->exec ( $actionname, $message_data );
 			}
@@ -1539,13 +1541,13 @@ class IndexController extends AbstractActionController {
 			$json = json_encode ( $json_arr );
 			
 			// header ( "Content-type: plain/text" );
-			header('Content-Type: application/json');
+			header ( 'Content-Type: application/json' );
 			// callback json
-			//Mlog::addone ( __METHOD__ . __LINE__ . 'response with callback', $callback . "(" . $json . ")" );
+			// Mlog::addone ( __METHOD__ . __LINE__ . 'response with callback', $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
-			//Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
+			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			echo $output;
 		}
 		
@@ -1578,12 +1580,12 @@ class IndexController extends AbstractActionController {
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				$this->redis->warmPersonSet ();
 			}
-			if (! $this->redis->hasSet ( '!memreas' )) {
+			if ((! $this->redis->hasSet ( '!memreas' )) && (isset ( $_SESSION ['user_id'] ))) {
 				// Now continue processing and warm the cache for !memreas
 				// $registration = new Registration ( $message_data, $memreas_tables,
 				$this->redis->warmMemreasSet ( $_SESSION ['user_id'] );
 			}
-			if (! $this->redis->hasSet ( '#hashtag' )) {
+			if ((! $this->redis->hasSet ( '#hashtag' )) && (isset ( $_SESSION ['user_id'] ))) {
 				// warm the cache for #hashtag
 				$user_id = $_SESSION ['user_id'];
 				$this->redis->warmHashTagSet ( $_SESSION ['user_id'] );
