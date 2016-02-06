@@ -428,7 +428,7 @@ doBuyMedia = function (element) {
 	var result = "";
 	
 	 //if () {}
-	 data = '{"action": "decrement", ' +
+	 data = '{"action": "buyMedia", ' +
 	 '"type":"jsonp", ' +
 	 '"json": ' + json_decrementValue  +
 	 '}';
@@ -448,6 +448,50 @@ doBuyMedia = function (element) {
 	  	//if (json.Status == "Success") {
 	  	//	alert("Inside");
 	  	//}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+	    	alert(jqXHR.responseText);
+    		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+/////////////////////
+//Account History
+/////////////////////
+doAccountHistory = function (element) {
+
+	var action = "stripe_accounthistory";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.user_name = $("#account_history_form_user_name").val();
+	var json_AccountHistory = JSON.stringify(obj, null, '\t');
+ 	var data = "";
+ 	var result = "";
+
+	data = '{"action": "list", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json_AccountHistory  +
+	'}';
+
+	$(element).val(json_AccountHistory);
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	if (json.Status == "Success") {
+	  		//Do Something...
+	  	}
 	  	return true;
 	  },
 	  error: function (jqXHR, textStatus, errorThrown) {
@@ -608,21 +652,21 @@ var doLogin = function () {
         doBuyMedia('#decrement_value_results');
     }
 
-    /*
 	//Account History
     $(document).ready(function () {
         $("#btnAccountHistory6").click(onBtnAccountHistoryCallClicked);
     });
     function onBtnAccountHistoryCallClicked() {
-        jQuery.paypalAccountHistory('#account_history_results');
+        doAccountHistory('#account_history_results');
     }
 
+    /*
 	//List MassPayees
     $(document).ready(function () {
         $("#btnOK7").click(onBtn7CallClicked);
     });
     function onBtn7CallClicked() {
-        jQuery.paypalListMassPayees('#mass_pay_results', '#mass_pay_list');
+        jQuery.ListMassPayees('#mass_pay_results', '#mass_pay_list');
     }
 
 	//Payout MassPayees
@@ -630,7 +674,7 @@ var doLogin = function () {
         $("#btnPayOut7").click(onBtnPayOut7CallClicked);
     });
     function onBtnPayOut7CallClicked() {
-        jQuery.paypalPayoutMassPayees('#mass_pay_results', '#mass_pay_list');
+        jQuery.PayoutMassPayees('#mass_pay_results', '#mass_pay_list');
     }
 
 	//Create and Manage Subscription
@@ -639,7 +683,7 @@ var doLogin = function () {
         $("#btnListCardsForSubscribe").click(onBtnListCardsForSubscribeCallClicked);
     });
     function onBtnListCardsForSubscribeCallClicked() {
-        jQuery.paypalListCards('#subscribe_results', '#subscribe_card_list');
+        jQuery.ListCards('#subscribe_results', '#subscribe_card_list');
     }
 	//Create/Update subscription
 	$(document).ready(function () {
@@ -921,7 +965,7 @@ var doLogin = function () {
 		</div>
 		<div id="tabs-3">
 			<form id="add_seller_form" name=add_seller_form
-				" action="/index/paypal">
+				" action="#">
 				<table>
 					<tr>
 						<td>user name:
@@ -1095,7 +1139,7 @@ var doLogin = function () {
 		</div>
 		<div id="tabs-4">
 			<form id="add_value_form" name=add_value_form
-				" action="/index/paypalAddValue">
+				" action="#">
 				<table>
 					<div id="card_list4"></div>
 					<tr>
@@ -1220,13 +1264,13 @@ var doLogin = function () {
 		</div>
 		<div id="tabs-6">
 			<form id="account_history_form" name=account_history_form
-				" action="/index/paypalListDeleteCards">
+				" action="#">
 				<table>
 					<tr>
 						<td>User Name:
 						
 						<td><input id="account_history_form_user_name" type="text"
-							name="account_history_form_user_name" value="jmeah1">
+							name="account_history_form_user_name" value="jmeah80">
 					
 					</tr>
 					<!--
@@ -1263,7 +1307,7 @@ var doLogin = function () {
 		</div>
 		<div id="tabs-7">
 			<form id="mass_pay_form" name=mass_pay_form
-				" action="/index/payPalListMassPayee">
+				" action="#">
 				<table>
 					<div id="mass_pay_list"></div>
 					<tr>
@@ -1297,7 +1341,7 @@ var doLogin = function () {
 		</div>
 		<div id="tabs-8">
 			<form id="subscribe_form" name=subscribe_form
-				" action="/index/paypal">
+				" action="#">
 				<table>
 					<div id="subscribe_card_list"></div>
 					<tr>
