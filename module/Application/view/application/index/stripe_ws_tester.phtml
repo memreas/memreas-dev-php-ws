@@ -11,7 +11,7 @@ $username = $this->username;
 // echo "user_id ----> " . $user_id;
 // echo "<p>";
 echo "Welcome to Stripe Services" . PHP_EOL;
-//echo "whoami ----> " . $username . " : " . $user_id;
+// echo "whoami ----> " . $username . " : " . $user_id;
 
 ?>
 <!doctype html>
@@ -57,7 +57,6 @@ var memreascookie;
  * buyMediaAction()
  * checkOwnEventAction()
  * deleteCardsAction()
- * decrementAction()
  * getCustomerInfoAction()
  * getUserBalanceAction()
  * listPlanAction()
@@ -469,6 +468,8 @@ doAccountHistory = function (element) {
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
 	obj.user_name = $("#account_history_form_user_name").val();
+	obj.date_from = $("#account_history_form_user_date_from").val();
+	obj.date_to = $("#account_history_form_user_date_to").val();
 	var json_AccountHistory = JSON.stringify(obj, null, '\t');
  	var data = "";
  	var result = "";
@@ -496,6 +497,113 @@ doAccountHistory = function (element) {
 	  },
 	  error: function (jqXHR, textStatus, errorThrown) {
 	    	alert(jqXHR.responseText);
+    		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+/////////////////////
+//List Mass Payees
+/////////////////////
+doListMassPayees = function (element, list) {
+
+	var action = "stripe_listMassPayee";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.txt = "";
+	var json_listMassPayee = JSON.stringify(obj, null, '\t');
+	var data = "";
+	var result = "";
+
+	data = '{"action": "list", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json_listMassPayee  +
+	'}';
+
+	$(element).val(json_listMassPayee);
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	if (json.Status == "Success") {
+
+	  		for (var i=0;i<json.accounts.length;i++)
+			{
+				html_str += '<tr>' +
+						'<td><input type="checkbox" id="account_selected_' + i + '" name="account_selected_" value="'+ json.accounts[i].account_id + '">' +
+						'<td>account id:' +
+						'<td><input type="text" id="account_id_' + i + '" name="account_id" value="'+ json.accounts[i].account_id + '">' +
+						'<td>user id:' +
+						'<td><input type="text" id="user_id_' + i + '" name="user_id" value="'+ json.accounts[i].user_id + '">' +
+						'<td>user name:' +
+						'<td><input type="text" id="username_' + i + '" name="username" value="'+ json.accounts[i].username + '">' +
+						'<td>account type:' +
+						'<td><input type="text" id="account_type_' + i + '" name="account_type" value="'+ json.accounts[i].account_type + '">' +
+						'<td>balance:' +
+						'<td><input type="text" id="balance_' + i + '" name="balance" value="'+ json.accounts[i].balance + '">' +
+						'</tr>';
+			}
+			$(list).html(html_str);
+	  	}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+    		alert(jqXHR.responseText);
+    		alert(jqXHR.status);
+ 		//alert(textStatus);
+    		//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+/////////////////////
+//Payout Mass Payees
+/////////////////////
+doPayoutMassPayees = function (element, list) {
+	//Fetch the list of cards to delete...
+	var selected = new Array();
+	$("input:checked").each(function() {
+	    selected.push($(this).attr('value'));
+	});
+
+	if(selected.length == 0) {
+		alert("No accounts checked to payout");
+		return;
+	}
+
+	var json_paypalPayoutMassPayees = JSON.stringify(selected, null, '\t');
+	var data = "";
+	var result = "";
+
+	data = '{"action": "delete", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json_paypalPayoutMassPayees  +
+	'}';
+
+	$(element).val(json_paypalPayoutMassPayees);
+
+	$.ajax( {
+	  type:'post',
+	  url: paypalPayoutMassPayees_url,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	$(element).val(req_resp);
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+    		alert(jqXHR.responseText);
     		alert(jqXHR.status);
 	 	//alert(textStatus);
 	    	//alert(errorThrown);
@@ -660,23 +768,23 @@ var doLogin = function () {
         doAccountHistory('#account_history_results');
     }
 
-    /*
-	//List MassPayees
+    //List MassPayees
     $(document).ready(function () {
-        $("#btnOK7").click(onBtn7CallClicked);
+        $("#btnOK7").click(onBtnListMassPayeesCallClicked);
     });
-    function onBtn7CallClicked() {
-        jQuery.ListMassPayees('#mass_pay_results', '#mass_pay_list');
+    function onBtnListMassPayeesCallClicked() {
+        doListMassPayees('#mass_pay_results', '#mass_pay_list');
     }
 
 	//Payout MassPayees
     $(document).ready(function () {
-        $("#btnPayOut7").click(onBtnPayOut7CallClicked);
+        $("#btnPayOut7").click(onBtnPayOutMassPayeesCallClicked);
     });
-    function onBtnPayOut7CallClicked() {
-        jQuery.PayoutMassPayees('#mass_pay_results', '#mass_pay_list');
+    function onBtnPayOutMassPayeesCallClicked() {
+        doPayoutMassPayees('#mass_pay_results', '#mass_pay_list');
     }
 
+    /*
 	//Create and Manage Subscription
 	//List Card(s)
     $(document).ready(function () {
@@ -964,8 +1072,7 @@ var doLogin = function () {
 		
 		</div>
 		<div id="tabs-3">
-			<form id="add_seller_form" name=add_seller_form
-				" action="#">
+			<form id="add_seller_form" name=add_seller_form " action="#">
 				<table>
 					<tr>
 						<td>user name:
@@ -1138,8 +1245,7 @@ var doLogin = function () {
 		
 		</div>
 		<div id="tabs-4">
-			<form id="add_value_form" name=add_value_form
-				" action="#">
+			<form id="add_value_form" name=add_value_form " action="#">
 				<table>
 					<div id="card_list4"></div>
 					<tr>
@@ -1191,7 +1297,8 @@ var doLogin = function () {
 						
 						<td>
 						
-						<td><input id="seller_id" type="text" name="seller_id" value="a4911fef-eef7-4286-a9de-3d5703cafd20">
+						<td><input id="seller_id" type="text" name="seller_id"
+							value="a4911fef-eef7-4286-a9de-3d5703cafd20">
 					
 					</tr>
 					<tr>
@@ -1223,8 +1330,8 @@ var doLogin = function () {
 						
 						<td>
 						
-						<td><input id="duration_from" type="text"
-							name="duration_from" value="2016-02-03">
+						<td><input id="duration_from" type="text" name="duration_from"
+							value="2016-02-03">
 					
 					</tr>
 					<tr>
@@ -1234,8 +1341,8 @@ var doLogin = function () {
 						
 						<td>
 						
-						<td><input id="duration_to" type="text"
-							name="duration_to" value="2017-02-03">
+						<td><input id="duration_to" type="text" name="duration_to"
+							value="2017-02-03">
 					
 					</tr>
 					<tr>
@@ -1273,14 +1380,18 @@ var doLogin = function () {
 							name="account_history_form_user_name" value="jmeah80">
 					
 					</tr>
-					<!--
-			<tr>
-				<td>Date From:
-				<td><input id="dteFrom" type="text" name="dteFrom" value="">
-				<td>Date To:
-				<td><input id="dteTo" type="text" name="dteTo" value="">
-			</tr>
-			-->
+					<tr>
+						<td>Date From:
+						
+						<td><input id="account_history_form_user_date_from" type="text"
+							name="account_history_form_user_date_from" value="2015-12-31">
+						
+						<td>Date To:
+						
+						<td><input id="account_history_form_user_date_to" type="text"
+							name="account_history_form_user_date_to" value="2016-12-31">
+					
+					</tr>
 					<tr>
 						<td>
 						
@@ -1306,8 +1417,7 @@ var doLogin = function () {
 		
 		</div>
 		<div id="tabs-7">
-			<form id="mass_pay_form" name=mass_pay_form
-				" action="#">
+			<form id="mass_pay_form" name=mass_pay_form " action="#">
 				<table>
 					<div id="mass_pay_list"></div>
 					<tr>
@@ -1340,8 +1450,7 @@ var doLogin = function () {
 		
 		</div>
 		<div id="tabs-8">
-			<form id="subscribe_form" name=subscribe_form
-				" action="#">
+			<form id="subscribe_form" name=subscribe_form " action="#">
 				<table>
 					<div id="subscribe_card_list"></div>
 					<tr>
