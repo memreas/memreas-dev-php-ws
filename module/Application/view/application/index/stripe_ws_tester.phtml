@@ -570,7 +570,8 @@ doListMassPayees = function (element, list) {
 //Payout Mass Payees
 /////////////////////
 doPayoutMassPayees = function (element, list) {
-	//Fetch the list of cards to delete...
+
+    //Fetch the list of cards to delete...
 	var selected = new Array();
 	$("input:checked").each(function() {
 	    selected.push($(this).attr('value'));
@@ -581,20 +582,24 @@ doPayoutMassPayees = function (element, list) {
 		return;
 	}
 
-	var json_paypalPayoutMassPayees = JSON.stringify(selected, null, '\t');
+	var action = "stripe_payeePayout";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.selected = selected;
+	var json_payoutMassPayees = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";
 
 	data = '{"action": "delete", ' +
 	'"type":"jsonp", ' +
-	'"json": ' + json_paypalPayoutMassPayees  +
+	'"json": ' + json_payoutMassPayees  +
 	'}';
 
-	$(element).val(json_paypalPayoutMassPayees);
+	$(element).val(json_payoutMassPayees);
 
 	$.ajax( {
 	  type:'post',
-	  url: paypalPayoutMassPayees_url,
+	  url: proxy_url + action,
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
