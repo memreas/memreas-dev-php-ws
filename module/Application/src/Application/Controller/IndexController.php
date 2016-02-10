@@ -178,10 +178,10 @@ class IndexController extends AbstractActionController {
 		$cm = __CLASS__ . __METHOD__;
 		// Mlog::addone(__CLASS__ . __METHOD__, '...');
 		// Checking headers for cookie info
-		// $headers = apache_request_headers();
-		// foreach ($headers as $header => $value) {
-		// error_log("WS header: $header :: value: $value" . PHP_EOL);
-		// }
+		$headers = apache_request_headers();
+		foreach ($headers as $header => $value) {
+			error_log("WS header: $header :: value: $value" . PHP_EOL);
+		}
 		// End Checking headers for cookie info
 		// Mlog::addone($cm . '$_POST', $_POST);
 		

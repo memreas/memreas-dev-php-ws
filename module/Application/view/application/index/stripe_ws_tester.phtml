@@ -98,7 +98,7 @@ var doStripeStoreCard = function () {
     '"json": ' + jsonStoreCard  +
     '}';
 
-	//var results += json_paypalStoreCard;
+	//var results += json_storeCard;
 	$("#results").val(jsonStoreCard, null, '\t');
 
 	$.ajax( {
@@ -139,7 +139,7 @@ var doListCards = function (element, list) {
 	 '"json": ' + jsonStoreCard  +
 	 '}';
 
-	//var results += json_paypalStoreCard;
+	//var results += json_storeCard;
 	$("#results").val(jsonStoreCard, null, '\t');
 
 	console.log("about to call ajax for url --->" + proxy_url + action);
@@ -618,6 +618,67 @@ doPayoutMassPayees = function (element, list) {
 }
 
 
+///////////////////
+//Subscribe
+/////////////////////
+doSubscribe = function (element) {
+	var selected = $("input[type='radio'][name='card_selected']:checked");
+	if (selected.length > 0) {
+	selectedVal = selected.val();
+	}
+	alert('selected ' + selected.val());
+	//var objSubscribe = new Object();
+	var objSubscribe = {};
+	//objSubscribe.paypal_card_reference_id = selected[0];
+	objSubscribe.plan = $("#plan").val();
+	objSubscribe.subscribe_first_name = $("#subscribe_first_name").val();
+	objSubscribe.subscribe_last_name = $("#subscribe_last_name").val();
+	objSubscribe.subscribe_address_line_1 = $("#subscribe_address_line_1").val();
+	objSubscribe.subscribe_address_line_2 = $("#subscribe_address_line_2").val();
+	objSubscribe.subscribe_city = $("#subscribe_city").val();
+	objSubscribe.subscribe_state = $("#subscribe_state").val();
+	objSubscribe.subscribe_zip_code = $("#subscribe_zip_code").val();
+	objSubscribe.subscribe_credit_card_type = $("#subscribe_credit_card_type").val();
+	objSubscribe.subscribe_credit_card_number = $("#subscribe_credit_card_number").val();
+	objSubscribe.subscribe_expiration_month = $("#subscribe_expiration_month").val();
+	objSubscribe.subscribe_expiration_year = $("#subscribe_expiration_year").val();
+	
+	var json_subscribe = JSON.stringify(objSubscribe, null, "\t");
+	var data = "";
+	var result = "";
+	
+	alert(JSON.stringify(json_subscribe));
+	
+	data = '{"action": "subscribe", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json_subscribe  +
+	'}';
+	
+	$(element).val(json_subscribe);
+	$.ajax( {
+	type:'post',
+	url: stripeSubscribe_url,
+	dataType: 'jsonp',
+	data: 'json=' + data,
+	success: function(json){
+	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	var html_str = "";
+	var html_button = "";
+	$(element).val(req_resp);
+	//if (json.Status == "Success") {
+	//	alert("Inside");
+	//}
+	return true;
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+	alert(jqXHR.responseText);
+	alert(jqXHR.status);
+	//alert(textStatus);
+	//alert(errorThrown);
+	}
+	});
+	return false;
+}
 
 /////////////////////
 //- Login
@@ -789,7 +850,6 @@ var doLogin = function () {
         doPayoutMassPayees('#mass_pay_results', '#mass_pay_list');
     }
 
-    /*
 	//Create and Manage Subscription
 	//List Card(s)
     $(document).ready(function () {
@@ -803,7 +863,7 @@ var doLogin = function () {
         $("#btnSubscribe").click(onBtnSubscribeCallClicked);
     });
     function onBtnSubscribeCallClicked() {
-        jQuery.payPalSubscribe('#subscribe_results');
+        jQuery.subscribe('#subscribe_results');
     }
 
 	//Update address based on selection
@@ -821,7 +881,6 @@ var doLogin = function () {
         $('#subscribe_state').val($('#state_'+i).val());
         $('#subscribe_zip_code').val($('#zip_code_'+i).val());
 	}
-	*/
 	
     $(function() {
 	    $( "#tabs" ).tabs();
