@@ -192,6 +192,8 @@ var doListCards = function (element, list) {
 							//'<td>user_id' +
 							//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i]['user_id + '">' +
 							'<td>stripe ref id:' +
+							'<td><input type="text" class="card_numbers" id="payment_method_id_' + i + '" name="payment_method_id_' + i + '" value="'+ json.payment_methods[i]['payment_method_id'] + '">' +
+							'<td>stripe ref id:' +
 							'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i]['stripe_card_reference_id'] + '">' +
 							'<td>card type:' +
 							'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i]['card_type'] + '">' +
@@ -657,56 +659,8 @@ doListPlans = function (element, list) {
 			  	console.log("plan interval_count::" + plans[i]['interval_count']);
 			  	console.log("plan livemode::" + plans[i]['livemode']);
 
-			  	$(list).append('<option value="' + plans[i]['id'] + '">' + plans[i]['id'] + ' monthly cost: $' + amount + '</option>');
+			  	$(list).append('<option value="' + plans[i]['id'] + ' amount="' + amount + '"">' + plans[i]['id'] + ' monthly cost: $' + amount + '</option>');
 		  	}
-			/*
-	  		for (var i=0;i<json.payment_methods.length;i++)
-			{
-			
-
-	  			
-				console.log("json.payment_methods[i]['stripe_card_reference_id'] -->" + json.payment_methods[i]['stripe_card_reference_id']);
-				console.log("json.payment_methods[i]['card_type'] -->" + json.payment_methods[i]['card_type']);
-				console.log("json.payment_methods[i]['obfuscated_card_number'] -->" + json.payment_methods[i]['obfuscated_card_number']);
-				console.log("json.payment_methods[i]['first_name'] -->" + json.payment_methods[i]['first_name']);
-				console.log("json.payment_methods[i]['last_name'] -->" + json.payment_methods[i]['last_name']);
-				console.log("json.payment_methods[i]['address_line_1'] -->" + json.payment_methods[i]['address_line_1']);
-				console.log("json.payment_methods[i]['address_line_2'] -->" + json.payment_methods[i]['address_line_2']);
-				console.log("json.payment_methods[i]['city'] -->" + json.payment_methods[i]['city']);
-				console.log("json.payment_methods[i]['state'] -->" + json.payment_methods[i]['state']);
-				console.log("json.payment_methods[i]['zip_code'] -->" + json.payment_methods[i]['zip_code']);
-				
-				html_str +=
-						'<tr>' +
-						'<td><input type="radio" onclick="onRadioCardListforSubscribeSelected(this);" id="card_selected_' + i + '" name="card_selected" value="'+ i + '">' +
-						//'<td>user_id' +
-						//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i]['user_id + '">' +
-						'<td>stripe ref id:' +
-						'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i]['stripe_card_reference_id'] + '">' +
-						'<td>card type:' +
-						'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i]['card_type'] + '">' +
-						'<td>card number' +
-						'<td><input type="text" id="card_number_' + i + '" name="card_number_' + i + '" value="'+ json.payment_methods[i]['obfuscated_card_number'] + '">' +
-						'</tr><tr>' +
-						'<td>' +
-						'<td>first name:' +
-						'<td><input type="text" id="first_name_' + i + '" name="first_name_' + i + '" value="'+ json.payment_methods[i]['first_name'] + '">' +
-						'<td>last name' +
-						'<td><input type="text" id="last_name_' + i + '" name="last_name_' + i + '" value="'+ json.payment_methods[i]['last_name'] + '">' +
-						'<td>address line 1:' +
-						'<td><input type="text" id="address_line_1_' + i + '" name="address_line_1_' + i + '" value="'+ json.payment_methods[i]['address_line_1'] + '">' +
-						'<td>address line 2:' +
-						'<td><input type="text" id="address_line_2_' + i + '" name="address_line_2_' + i + '" value="'+ json.payment_methods[i]['address_line_2'] + '">' +
-						'<td>city:' +
-						'<td><input type="text" id="city_' + i + '" name="city_' + i + '" value="'+ json.payment_methods[i]['city'] + '">' +
-						'<td>state:' +
-						'<td><input type="text" id="state_' + i + '" name="state_' + i + '" value="'+ json.payment_methods[i]['state'] + '">' +
-						'<td>zip code:' +
-						'<td><input type="text" id="zip_code_' + i + '" name="zip_code_' + i + '" value="'+ json.payment_methods[i]['zip_code'] + '">' +
-						'</tr>';
-			}
-	  		$(list).html(html_str);
-	  		*/
 	  	}
 	  	return true;
 	  },
@@ -727,46 +681,17 @@ doListPlans = function (element, list) {
 /////////////////////
 doSubscribe = function (element) {
 
-	//Fetch the list of cards for selection...
-	/*
-	var selected = new Array();
-	$("input:checked").each(function() {
-		alert("val ---> " + $(this).val())
-		alert("attr.val ---->" + $(this).attr('value'));
-		selected.push($(this).attr('value'));
-	});
-
-	if(selected.length == 0) {
-		alert("No cards checked");
-		return;
-	} else if (selected.length > 1) {
-		alert("Please choose only one card");
-		return;
-	}
-	*/
-
 	var selected = $("input[type='radio'][name='card_selected']:checked");
 	if (selected.length > 0) {
 		selectedVal = selected.val();
 	}
 	var action = "stripe_subscribe";
 	var objSubscribe = {};
-	//objSubscribe.paypal_card_reference_id = selected[0];
-	obj.sid = getCookie("PHPSESSID");
-	objSubscribe.plan = $("#plan").val();
-	objSubscribe.subscribe_first_name = $("#subscribe_first_name").val();
-	objSubscribe.subscribe_last_name = $("#subscribe_last_name").val();
-	objSubscribe.subscribe_address_line_1 = $("#subscribe_address_line_1").val();
-	objSubscribe.subscribe_address_line_2 = $("#subscribe_address_line_2").val();
-	objSubscribe.subscribe_city = $("#subscribe_city").val();
-	objSubscribe.subscribe_state = $("#subscribe_state").val();
-	objSubscribe.subscribe_zip_code = $("#subscribe_zip_code").val();
-	objSubscribe.subscribe_credit_card_type = $("#subscribe_credit_card_type").val();
-	objSubscribe.subscribe_credit_card_number = $("#subscribe_credit_card_number").val();
-	objSubscribe.subscribe_expiration_month = $("#subscribe_expiration_month").val();
-	objSubscribe.subscribe_expiration_year = $("#subscribe_expiration_year").val();
-
-
+	objSubscribe.sid = getCookie("PHPSESSID");
+	objSubscribe.plan = $("#subscribe_plan_list :checked").val();
+	objSubscribe.amount = $('option:selected', this).attr('amount');
+	var i = $("#subscribe_card_list :checked").val();
+	objSubscribe.card_id = $("#stripe_card_reference_id_" + i).val();
 	
 	var json_subscribe = JSON.stringify(objSubscribe, null, "\t");
 	var data = "";
