@@ -619,17 +619,140 @@ doPayoutMassPayees = function (element, list) {
 
 
 ///////////////////
+// list plans
+/////////////////////
+doListPlans = function (element, list) {
+	var action = "stripe_listPlan";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	var json_listPlan = JSON.stringify(obj, null, '\t');
+	var data = "";
+	var result = "";
+
+	data = '{"action": "' + action + '", ' +
+		'"type":"jsonp", ' +
+		'"json": ' + json_listPlan  +
+	'}';
+
+	$(element).val(json_listPlan);
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(response){
+	  	var json = jQuery.parseJSON( response.data );
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+		console.log("listPlans response --->" + JSON.stringify(response, null, '\t'));
+		  	
+	  	$(element).val(req_resp);
+	  	if (json.status == "Success") {
+		  	var plans = json.plans;
+		  	for (var i=0; i < plans.length; i++) {
+			  	console.log("plan id::" + plans[i]['id']);
+			  	var amount = (plans[i]['amount'])/100;
+			  	console.log("plan amount::" + amount);
+			  	console.log("plan currency::" + plans[i]['currency']);
+			  	console.log("plan interval::" + plans[i]['interval']);
+			  	console.log("plan interval_count::" + plans[i]['interval_count']);
+			  	console.log("plan livemode::" + plans[i]['livemode']);
+
+			  	$(list).append('<option value="' + plans[i]['id'] + '">' + plans[i]['id'] + ' monthly cost: $' + amount + '</option>');
+		  	}
+			/*
+	  		for (var i=0;i<json.payment_methods.length;i++)
+			{
+			
+
+	  			
+				console.log("json.payment_methods[i]['stripe_card_reference_id'] -->" + json.payment_methods[i]['stripe_card_reference_id']);
+				console.log("json.payment_methods[i]['card_type'] -->" + json.payment_methods[i]['card_type']);
+				console.log("json.payment_methods[i]['obfuscated_card_number'] -->" + json.payment_methods[i]['obfuscated_card_number']);
+				console.log("json.payment_methods[i]['first_name'] -->" + json.payment_methods[i]['first_name']);
+				console.log("json.payment_methods[i]['last_name'] -->" + json.payment_methods[i]['last_name']);
+				console.log("json.payment_methods[i]['address_line_1'] -->" + json.payment_methods[i]['address_line_1']);
+				console.log("json.payment_methods[i]['address_line_2'] -->" + json.payment_methods[i]['address_line_2']);
+				console.log("json.payment_methods[i]['city'] -->" + json.payment_methods[i]['city']);
+				console.log("json.payment_methods[i]['state'] -->" + json.payment_methods[i]['state']);
+				console.log("json.payment_methods[i]['zip_code'] -->" + json.payment_methods[i]['zip_code']);
+				
+				html_str +=
+						'<tr>' +
+						'<td><input type="radio" onclick="onRadioCardListforSubscribeSelected(this);" id="card_selected_' + i + '" name="card_selected" value="'+ i + '">' +
+						//'<td>user_id' +
+						//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i]['user_id + '">' +
+						'<td>stripe ref id:' +
+						'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i]['stripe_card_reference_id'] + '">' +
+						'<td>card type:' +
+						'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i]['card_type'] + '">' +
+						'<td>card number' +
+						'<td><input type="text" id="card_number_' + i + '" name="card_number_' + i + '" value="'+ json.payment_methods[i]['obfuscated_card_number'] + '">' +
+						'</tr><tr>' +
+						'<td>' +
+						'<td>first name:' +
+						'<td><input type="text" id="first_name_' + i + '" name="first_name_' + i + '" value="'+ json.payment_methods[i]['first_name'] + '">' +
+						'<td>last name' +
+						'<td><input type="text" id="last_name_' + i + '" name="last_name_' + i + '" value="'+ json.payment_methods[i]['last_name'] + '">' +
+						'<td>address line 1:' +
+						'<td><input type="text" id="address_line_1_' + i + '" name="address_line_1_' + i + '" value="'+ json.payment_methods[i]['address_line_1'] + '">' +
+						'<td>address line 2:' +
+						'<td><input type="text" id="address_line_2_' + i + '" name="address_line_2_' + i + '" value="'+ json.payment_methods[i]['address_line_2'] + '">' +
+						'<td>city:' +
+						'<td><input type="text" id="city_' + i + '" name="city_' + i + '" value="'+ json.payment_methods[i]['city'] + '">' +
+						'<td>state:' +
+						'<td><input type="text" id="state_' + i + '" name="state_' + i + '" value="'+ json.payment_methods[i]['state'] + '">' +
+						'<td>zip code:' +
+						'<td><input type="text" id="zip_code_' + i + '" name="zip_code_' + i + '" value="'+ json.payment_methods[i]['zip_code'] + '">' +
+						'</tr>';
+			}
+	  		$(list).html(html_str);
+	  		*/
+	  	}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+    		alert(jqXHR.responseText);
+    		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+    
+}
+
+
+///////////////////
 //Subscribe
 /////////////////////
 doSubscribe = function (element) {
+
+	//Fetch the list of cards for selection...
+	/*
+	var selected = new Array();
+	$("input:checked").each(function() {
+		alert("val ---> " + $(this).val())
+		alert("attr.val ---->" + $(this).attr('value'));
+		selected.push($(this).attr('value'));
+	});
+
+	if(selected.length == 0) {
+		alert("No cards checked");
+		return;
+	} else if (selected.length > 1) {
+		alert("Please choose only one card");
+		return;
+	}
+	*/
+
 	var selected = $("input[type='radio'][name='card_selected']:checked");
 	if (selected.length > 0) {
-	selectedVal = selected.val();
+		selectedVal = selected.val();
 	}
-	alert('selected ' + selected.val());
-	//var objSubscribe = new Object();
+	var action = "stripe_subscribe";
 	var objSubscribe = {};
 	//objSubscribe.paypal_card_reference_id = selected[0];
+	obj.sid = getCookie("PHPSESSID");
 	objSubscribe.plan = $("#plan").val();
 	objSubscribe.subscribe_first_name = $("#subscribe_first_name").val();
 	objSubscribe.subscribe_last_name = $("#subscribe_last_name").val();
@@ -642,6 +765,8 @@ doSubscribe = function (element) {
 	objSubscribe.subscribe_credit_card_number = $("#subscribe_credit_card_number").val();
 	objSubscribe.subscribe_expiration_month = $("#subscribe_expiration_month").val();
 	objSubscribe.subscribe_expiration_year = $("#subscribe_expiration_year").val();
+
+
 	
 	var json_subscribe = JSON.stringify(objSubscribe, null, "\t");
 	var data = "";
@@ -649,33 +774,33 @@ doSubscribe = function (element) {
 	
 	alert(JSON.stringify(json_subscribe));
 	
-	data = '{"action": "subscribe", ' +
+	data = '{"action": "' + action + '", ' +
 	'"type":"jsonp", ' +
 	'"json": ' + json_subscribe  +
 	'}';
 	
 	$(element).val(json_subscribe);
 	$.ajax( {
-	type:'post',
-	url: stripeSubscribe_url,
-	dataType: 'jsonp',
-	data: 'json=' + data,
-	success: function(json){
-	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
-	var html_str = "";
-	var html_button = "";
-	$(element).val(req_resp);
-	//if (json.Status == "Success") {
-	//	alert("Inside");
-	//}
-	return true;
+		type:'post',
+		url: proxy_url + action,
+		dataType: 'jsonp',
+		data: 'json=' + data,
+		success: function(json){
+		var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+		var html_str = "";
+		var html_button = "";
+		$(element).val(req_resp);
+		//if (json.Status == "Success") {
+		//	alert("Inside");
+		//}
+		return true;
 	},
-	error: function (jqXHR, textStatus, errorThrown) {
-	alert(jqXHR.responseText);
-	alert(jqXHR.status);
-	//alert(textStatus);
-	//alert(errorThrown);
-	}
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert(jqXHR.responseText);
+			alert(jqXHR.status);
+			//alert(textStatus);
+			//alert(errorThrown);
+		}
 	});
 	return false;
 }
@@ -856,14 +981,22 @@ var doLogin = function () {
         $("#btnListCardsForSubscribe").click(onBtnListCardsForSubscribeCallClicked);
     });
     function onBtnListCardsForSubscribeCallClicked() {
-        jQuery.ListCards('#subscribe_results', '#subscribe_card_list');
+        doListCards('#subscribe_results', '#subscribe_card_list');
     }
+    //List Plans
+    $(document).ready(function () {
+        $("#btnListPlansForSubscribe").click(onBtnListPlansForSubscribeCallClicked);
+    });
+    function onBtnListPlansForSubscribeCallClicked() {
+        doListPlans('#subscribe_results', '#subscribe_plan_list');
+    }
+    
 	//Create/Update subscription
 	$(document).ready(function () {
         $("#btnSubscribe").click(onBtnSubscribeCallClicked);
     });
     function onBtnSubscribeCallClicked() {
-        jQuery.subscribe('#subscribe_results');
+        doSubscribe('#subscribe_results');
     }
 
 	//Update address based on selection
@@ -1516,11 +1649,11 @@ var doLogin = function () {
 		<div id="tabs-8">
 			<form id="subscribe_form" name=subscribe_form " action="#">
 				<table>
-					<div id="subscribe_card_list"></div>
 					<tr>
 						<td>plan:
 						
-						<td><select id=plan name="plan">
+						<td><select id="subscribe_plan_list" name="subscribe_plan_list">
+						<!-- 
 								<option value="PLAN_A_2GB_MONTHLY" selected>plan a: free for 2GB
 									monthly</option>
 								<option value="PLAN_B_10GB_MONTHLY">plan b: $2.95 for 10GB
@@ -1529,6 +1662,7 @@ var doLogin = function () {
 									monthly</option>
 								<option value="PLAN_D_100GB_MONTHLY">plan d: $9.95 for 100GB
 									monthly</option>
+						-->
 						</select>
 						
 						<td>
@@ -1536,177 +1670,22 @@ var doLogin = function () {
 						<td>
 					
 					</tr>
-					<tr>
-						<td>first name:
-						
-						<td><input type="text" id="subscribe_first_name"
-							name="subscribe_first_name" value="Joe">
-						
-						<td>last name:
-						
-						<td><input type="text" id="subscribe_last_name"
-							name="subscribe_last_name" value="Blake">
-					
-					</tr>
-					<tr>
-						<td>address line 1:
-						
-						<td><input type="text" id="subscribe_address_line_1"
-							name="subscribe_address_line_1" value="900 Overbrook Drive">
-						
-						<td>Card Type#:
-						
-						<td><select id="subscribe_credit_card_type"
-							name="subscribe_credit_card_type"
-							onChange="javascript:generateCC(); return false;">
-								<option value="Visa" selected="selected">Visa</option>
-								<option value="MasterCard">MasterCard</option>
-								<option value="Discover">Discover</option>
-								<option value="Amex">American Express</option>
-						</select>
-					
-					</tr>
-					<tr>
-						<td>address line 2:
-						
-						<td><input type="text" id="subscribe_address_line_2"
-							name="subscribe_address_line_2" value="Suite 109">
-						
-						<td>credit card #:
-						
-						<td><input type="text" id="subscribe_credit_card_number"
-							name="subscribe_credit_card_number">
-					
-					</tr>
-					<tr>
-						<td>city:
-						
-						<td><input type="text" id="subscribe_city" name="subscribe_city"
-							value="New York">
-						
-						<td>expiration date:
-						
-						<td><select id="subscribe_expiration_month"
-							name="subscribe_expiration_month">
-								<option value="01">01</option>
-								<option value="02">02</option>
-								<option value="03">03</option>
-								<option value="04">04</option>
-								<option value="05">05</option>
-								<option value="06">06</option>
-								<option value="07">07</option>
-								<option value="08 selected">08</option>
-								<option value="09">09</option>
-								<option value="10">10</option>
-								<option value="11">11</option>
-								<option value="12">12</option>
-						</select> <select id="subscribe_expiration_year"
-							name="subscribe_expiration_year">
-								<option value="2013">2013</option>
-								<option value="2014" selected>2014</option>
-								<option value="2015">2015</option>
-								<option value="2016">2016</option>
-								<option value="2017">2017</option>
-								<option value="2018">2018</option>
-								<option value="2019">2019</option>
-								<option value="2020">2020</option>
-						</select>
-					
-					</tr>
-					<tr>
-						<td>CVC</td>
-						<td><input type="text" name="cvc" value="111" /></td>
-					</tr>
-					<tr>
-						<td>state:
-						
-						<td><select id=subscribe_state name="subscribe_state">
-								<option value=""></option>
-								<option value="AK">AK</option>
-								<option value="AL">AL</option>
-								<option value="AR">AR</option>
-								<option value="AZ">AZ</option>
-								<option value="CA" selected>CA</option>
-								<option value="CO">CO</option>
-								<option value="CT">CT</option>
-								<option value="DC">DC</option>
-								<option value="DE">DE</option>
-								<option value="FL">FL</option>
-								<option value="GA">GA</option>
-								<option value="HI">HI</option>
-								<option value="IA">IA</option>
-								<option value="ID">ID</option>
-								<option value="IL">IL</option>
-								<option value="IN">IN</option>
-								<option value="KS">KS</option>
-								<option value="KY">KY</option>
-								<option value="LA">LA</option>
-								<option value="MA">MA</option>
-								<option value="MD">MD</option>
-								<option value="ME">ME</option>
-								<option value="MI">MI</option>
-								<option value="MN">MN</option>
-								<option value="MO">MO</option>
-								<option value="MS">MS</option>
-								<option value="MT">MT</option>
-								<option value="NC">NC</option>
-								<option value="ND">ND</option>
-								<option value="NE">NE</option>
-								<option value="NH">NH</option>
-								<option value="NJ">NJ</option>
-								<option value="NM">NM</option>
-								<option value="NV">NV</option>
-								<option value="NY" selected>NY</option>
-								<option value="OH">OH</option>
-								<option value="OK">OK</option>
-								<option value="OR">OR</option>
-								<option value="PA">PA</option>
-								<option value="RI">RI</option>
-								<option value="SC">SC</option>
-								<option value="SD">SD</option>
-								<option value="TN">TN</option>
-								<option value="TX">TX</option>
-								<option value="UT">UT</option>
-								<option value="VA">VA</option>
-								<option value="VT">VT</option>
-								<option value="WA">WA</option>
-								<option value="WI">WI</option>
-								<option value="WV">WV</option>
-								<option value="WY">WY</option>
-								<option value="AA">AA</option>
-								<option value="AE">AE</option>
-								<option value="AP">AP</option>
-								<option value="AS">AS</option>
-								<option value="FM">FM</option>
-								<option value="GU">GU</option>
-								<option value="MH">MH</option>
-								<option value="MP">MP</option>
-								<option value="PR">PR</option>
-								<option value="PW">PW</option>
-								<option value="VI">VI</option>
-						</select>
-						
-						<td>
-						
-						<td>
-					
-					</tr>
-					<tr>
-						<td>zip:
-						
-						<td><input type="text" id="subscribe_zip_code"
-							name="subscribe_zip_code" value="10018">
-					
-					</tr>
+
+					<div id="subscribe_card_list"></div>
 					<tr>
 						<td>
 						
-						<td><input id="btnListCardsForSubscribe" type="button" name="ok"
+						<td><input id="btnListPlansForSubscribe" type="button" name="btnListPlansForSubscribe"
+							value="list plans">
+
+						<td>
+						
+						<td><input id="btnListCardsForSubscribe" type="button" name="btnListCardsForSubscribe"
 							value="list cards">
 						
 						<td>
 						
-						<td><input id="btnSubscribe" type="button" name="subscribe"
+						<td><input id="btnSubscribe" type="button" name="btnSubscribe"
 							value="subscribe">
 					
 					</tr>
