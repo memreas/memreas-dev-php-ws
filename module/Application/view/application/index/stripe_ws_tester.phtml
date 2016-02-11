@@ -659,7 +659,7 @@ doListPlans = function (element, list) {
 			  	console.log("plan interval_count::" + plans[i]['interval_count']);
 			  	console.log("plan livemode::" + plans[i]['livemode']);
 
-			  	$(list).append('<option value="' + plans[i]['id'] + ' amount="' + amount + '"">' + plans[i]['id'] + ' monthly cost: $' + amount + '</option>');
+			  	$(list).append('<option value="' + plans[i]['id'] + '">' + plans[i]['id'] + ' monthly cost: $' + amount + '</option>');
 		  	}
 	  	}
 	  	return true;
@@ -689,7 +689,6 @@ doSubscribe = function (element) {
 	var objSubscribe = {};
 	objSubscribe.sid = getCookie("PHPSESSID");
 	objSubscribe.plan = $("#subscribe_plan_list :checked").val();
-	objSubscribe.amount = $('option:selected', this).attr('amount');
 	var i = $("#subscribe_card_list :checked").val();
 	objSubscribe.card_id = $("#stripe_card_reference_id_" + i).val();
 	
@@ -787,11 +786,10 @@ var doLogin = function () {
 		  	
 		  },
 		  error: function (jqXHR, textStatus, errorThrown) {
-		  	//alert("Inside error jqXHR...");
-		    	alert(jqXHR.responseText);
-		    	alert(jqXHR.status);
+		    alert(jqXHR.responseText);
+		    alert(jqXHR.status);
 	 		//alert(textStatus);
-		    	//alert(errorThrown);
+		    //alert(errorThrown);
 		  }
 		});
 }
