@@ -52,6 +52,9 @@ class MemreasConstants {
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
 	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
+	
+	//free plan id
+	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
 	                                      
 	// Same across...
 	const media_id_batch_create_count = 25;
