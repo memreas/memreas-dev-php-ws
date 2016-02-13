@@ -18,13 +18,12 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $url_signer;
 	public $xmlCookieData;
 	public function __construct($redis, $service_locator) {
-
 		$this->aws_manager = new AWSManagerSender ( $service_locator );
 		try {
-			$this->db = new \Predis\Client ( [
+			$this->db = new \Predis\Client ( [ 
 					'scheme' => 'tcp',
 					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
-					'port' => 6379
+					'port' => 6379 
 			] );
 		} catch ( \Exception $e ) {
 			Mlog::addone ( $cm, '::predis connection exception ---> ' . $e->getMessage () );
@@ -69,6 +68,32 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	/**
 	 * User defined
 	 */
+	public function checkChameleon($chameleon) {
+		/*
+		// check chameleon and set new one
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::enter checkChameleon', $_COOKIE );
+		$sid = $_SESSION ['sid'];
+		if ($chameleon == $_SESSION ['x_memreas_chameleon']) {
+			// user passed token test
+			// set a new chameleon
+			$chameleon_value = base64_encode ( openssl_random_pseudo_bytes ( 16 ) );
+			$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
+			return $_SESSION [$chameleon];
+		}
+		//should have equaled - close session;
+		return 0;
+		*/
+		
+	}
+	public function setChameleon() {
+		/**
+		 * -
+		 * create so set and return
+		 */
+		$chameleon_value = base64_encode ( openssl_random_pseudo_bytes ( 16 ) );
+		$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
+		return $_SESSION ['x_memreas_chameleon'];
+	}
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
@@ -81,13 +106,25 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 		}
-		// error_log ( '_SESSION vars after memreascookie start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before startSessionWithMemreasCookie $_COOKIE--->', $_COOKIE );
+		/*
+		$chameleon_value = $this->checkChameleon ();
+		if ($chameleon_value) {
+			$chameleon = 'x_memreas_chameleon-' . $_SESSION ['sid'];
+			$memreascookieArr [$chameleon] = $_SESSION [$chameleon] = $chameleon_value;
+			$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
+		} else {
+			// suspicious - failed chameleon test
+			$this->closeSessionWithMemreasCookie ();
+		}
+		*/
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_COOKIE--->', $_COOKIE );
 	}
 	public function startSessionWithUID($data) {
 		if (! empty ( $data->uid )) {
-			$rUIDSession = $this->mRedis->getCache ( 'uid::' .  $data->uid );
+			$rUIDSession = $this->mRedis->getCache ( 'uid::' . $data->uid );
 		} else if (! empty ( $data->username )) {
-			$rUIDSession = $this->mRedis->getCache ( 'username::' . $data->username  );
+			$rUIDSession = $this->mRedis->getCache ( 'username::' . $data->username );
 		}
 		if ($rUIDSession) {
 			// error_log ( 'startSessionWithUID pulling from redis...' . PHP_EOL );
@@ -100,7 +137,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		} else {
 			// error_log ( 'startSessionWithUID pulling from db...' . PHP_EOL );
 			if (! empty ( $data->uid )) {
-                                $sql = "SELECT u  FROM Application\Entity\User as u  where u.user_id = '{$data->uid}'";
+				$sql = "SELECT u  FROM Application\Entity\User as u  where u.user_id = '{$data->uid}'";
 			} else {
 				$sql = "SELECT u  FROM Application\Entity\User as u  where u.username = '{$data->username}'";
 			}
@@ -136,7 +173,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_regenerate_id ();
 		}
 		
-		Mlog::addone(__CLASS__.__METHOD__.'::user---->', $user);
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::user---->', $user );
 		//
 		// Check Headers sent
 		//
@@ -153,14 +190,10 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		// Mlog::addone(__CLASS__.__METHOD__.'$_SESSION [profile_pic_meta]::', $_SESSION ['profile_pic_meta']);
-		// Mlog::addone(__CLASS__.__METHOD__, 'setting $_SESSION[profile_pic]');
 		if ($_SESSION ['profile_pic_meta']) {
 			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
-				// Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail ', $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80']);
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
 			} else {
-				// Mlog::addone(__CLASS__.__METHOD__.':: setting profile pic for thumbnail for ', 'null to get default...');
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['full'] );
 			}
 		} else {
@@ -172,7 +205,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->setUIDLookup ();
 		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {
-			$this->setMemreasCookieLookup ();
+			$this->setMemreasCookieLookup ( true );
 		}
 	}
 	public function setUIDLookup() {
@@ -189,7 +222,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->mRedis->setCache ( 'uid::' . $_SESSION ['user_id'], json_encode ( $userNameArr ) );
 		$this->mRedis->setCache ( 'username::' . $_SESSION ['username'], json_encode ( $userNameArr ) );
 	}
-	public function setMemreasCookieLookup() {
+	public function setMemreasCookieLookup($create = false) {
 		// error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
 		$memreascookieArr = array ();
 		$memreascookieArr ['user_id'] = $_SESSION ['user_id'];
@@ -200,8 +233,19 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$memreascookieArr ['ipAddress'] = $_SESSION ['ipAddress'];
 		$memreascookieArr ['profile_pic_meta'] = $_SESSION ['profile_pic_meta'];
 		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
-		// error_log ( 'setMemreasCookieLookup() _SESSION vars --->'.print_r($_SESSION, true) . PHP_EOL );
-		$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
+		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before setSession $_COOKIE--->', $_COOKIE );
+		$chameleon_value = $this->setChameleon ();
+		if ($chameleon_value) {
+			$chameleon = 'x_memreas_chameleon-' . $_SESSION ['sid'];
+			$memreascookieArr [$chameleon] = $_SESSION [$chameleon] = $chameleon_value;
+			$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
+		} else {
+			// suspicious - failed chameleon test
+			$this->closeSessionWithMemreasCookie ();
+		}
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setSession $_COOKIE--->', $_COOKIE );
 	}
 	public function closeSessionWithSID() {
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
