@@ -41,7 +41,7 @@ class Login {
 	}
 	public function exec($sessHandler, $ipAddress = '') {
 		try {
-			// error_log ( 'login exec $ipAddress--->' . $ipAddress . PHP_EOL );
+			//Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
@@ -94,7 +94,8 @@ class Login {
 					 * Set the session for the user data...
 					 */
 					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie, $this->clientIPAddress );
-					
+					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+						
 					/*
 					 * Check if the device is registered and update as needed
 					 */
@@ -102,7 +103,8 @@ class Login {
 					if (! empty ( $this->device_type )) {
 						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type );
 					}
-					
+					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+						
 					/*
 					 * check if email is verified
 					 */
@@ -120,7 +122,6 @@ class Login {
 						$xml_output .= "<user_id>" . $user_id . "</user_id>";
 						$xml_output .= "<username>" . $username . "</username>";
 						$xml_output .= "<sid>" . session_id () . "</sid>";
-						$xml_output .= "<x_memreas_chameleon>" . $_SESSION ['x_memreas_chameleon'] . "</x_memreas_chameleon>";
 						$xml_output .= "<device_token><![CDATA[" . $device_token . "]]></device_token>";
 					} else {
 						$xml_output .= "<status>failure</status><message>Please verify your email address then try again.</message>";
@@ -141,6 +142,7 @@ class Login {
 			$xml_output .= "<message>" . $e->getMessage () . "</message>";
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
+			Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 		}
 		
 		header ( "Content-type: text/xml" );

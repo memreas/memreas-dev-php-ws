@@ -16,7 +16,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $mRedis;
 	private $dbAdapter;
 	private $url_signer;
-	public $xmlCookieData;
+	private $aws_manager;
 	public function __construct($redis, $service_locator) {
 		$this->aws_manager = new AWSManagerSender ( $service_locator );
 		try {
@@ -26,7 +26,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 					'port' => 6379 
 			] );
 		} catch ( \Exception $e ) {
-			Mlog::addone ( $cm, '::predis connection exception ---> ' . $e->getMessage () );
+			Mlog::addone ( __CLASS__.__METHOD__, '::predis connection exception ---> ' . $e->getMessage () );
 			$to = MemreasConstants::ADMIN_EMAIL;
 			$html = '<html><head></head><body><p>REDIS CONNECTION ERROR<p>' . $e->getMessage () . '</body></html>';
 			$this->aws_manager->sendSeSMail ( $to, 'REDIS CONNECTION ERROR', $html );
@@ -64,36 +64,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function gc($maxLifetime) {
 		// no action necessary because using EXPIRE
 	}
-	
-	/**
-	 * User defined
-	 */
-	public function checkChameleon($chameleon) {
-		/*
-		// check chameleon and set new one
-		Mlog::addone ( __CLASS__ . __METHOD__ . '::enter checkChameleon', $_COOKIE );
-		$sid = $_SESSION ['sid'];
-		if ($chameleon == $_SESSION ['x_memreas_chameleon']) {
-			// user passed token test
-			// set a new chameleon
-			$chameleon_value = base64_encode ( openssl_random_pseudo_bytes ( 16 ) );
-			$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
-			return $_SESSION [$chameleon];
-		}
-		//should have equaled - close session;
-		return 0;
-		*/
-		
-	}
-	public function setChameleon() {
-		/**
-		 * -
-		 * create so set and return
-		 */
-		$chameleon_value = base64_encode ( openssl_random_pseudo_bytes ( 16 ) );
-		$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
-		return $_SESSION ['x_memreas_chameleon'];
-	}
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
@@ -102,23 +72,26 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithMemreasCookie($memreascookie) {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: fetch $rMemreasCookieSessionArr-->', $rMemreasCookieSessionArr );
 		if (! session_id ()) {
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before startSessionWithMemreasCookie $_COOKIE--->', $_COOKIE );
+
 		/*
-		$chameleon_value = $this->checkChameleon ();
-		if ($chameleon_value) {
-			$chameleon = 'x_memreas_chameleon-' . $_SESSION ['sid'];
-			$memreascookieArr [$chameleon] = $_SESSION [$chameleon] = $chameleon_value;
-			$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
-		} else {
-			// suspicious - failed chameleon test
-			$this->closeSessionWithMemreasCookie ();
+		if ($reset) {
+			$chameleon_value = $this->checkChameleon ( $x_memreascookie_chameleon );
+			if ($chameleon_value) {
+				$rMemreasCookieSessionArr ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] = $chameleon_value;
+				$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $rMemreasCookieSessionArr ) );
+			} else {
+				// suspicious - failed chameleon test
+				$this->closeSessionWithMemreasCookie ();
+			}
 		}
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[x_memreas_chameleon]--->', $_SESSION ['x_memreas_chameleon'] );
 		*/
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_COOKIE--->', $_COOKIE );
 	}
 	public function startSessionWithUID($data) {
 		if (! empty ( $data->uid )) {
@@ -205,6 +178,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->setUIDLookup ();
 		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . ':: about to set $this->setMemreasCookieLookup for cookie::', $_SESSION ['memreascookie'] );
 			$this->setMemreasCookieLookup ( true );
 		}
 	}
@@ -223,7 +197,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->mRedis->setCache ( 'username::' . $_SESSION ['username'], json_encode ( $userNameArr ) );
 	}
 	public function setMemreasCookieLookup($create = false) {
-		// error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
+		error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
 		$memreascookieArr = array ();
 		$memreascookieArr ['user_id'] = $_SESSION ['user_id'];
 		$memreascookieArr ['username'] = $_SESSION ['username'];
@@ -235,17 +209,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
 		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
 		
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before setSession $_COOKIE--->', $_COOKIE );
-		$chameleon_value = $this->setChameleon ();
-		if ($chameleon_value) {
-			$chameleon = 'x_memreas_chameleon-' . $_SESSION ['sid'];
-			$memreascookieArr [$chameleon] = $_SESSION [$chameleon] = $chameleon_value;
-			$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
-		} else {
-			// suspicious - failed chameleon test
-			$this->closeSessionWithMemreasCookie ();
-		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setSession $_COOKIE--->', $_COOKIE );
+		$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setSession $_SESSION--->', $_SESSION ['x_memreas_chameleon'] );
 	}
 	public function closeSessionWithSID() {
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
