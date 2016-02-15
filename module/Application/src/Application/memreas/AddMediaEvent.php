@@ -194,13 +194,14 @@ class AddMediaEvent {
 				
 				/**
 				 * -
+				 * doesn't work...
 				 * Check if media is uploaded to S3 if you can't find it then return exception
 				 */
-				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
-				$result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
-				if (! $result) {
-					throw new Exception ( 'media did not upload properly' );
-				}
+				//$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
+				//$result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
+				//if (! $result) {
+				//		throw new Exception ( 'media did not upload properly' );
+				//}
 				
 				//
 				// if copyright add id to media table
