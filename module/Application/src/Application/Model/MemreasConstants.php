@@ -16,18 +16,21 @@ class MemreasConstants {
 	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
 	const FORGOT_PASSWORD_CODE_LENGTH = 6;
 	
-	// localhost urls
-	const WEB_URL = "http://memreas-dev-php-frontend.localhost/";
-	const ORIGINAL_URL = "http://memreas-dev-php-ws.localhost/";
-	const MEDIA_URL = "http://memreas-dev-php-ws.localhost/?action=addmediaevent";
+	// memreasdev urls
+	const WEB_URL = "https://fe.memreas.com/";
+	const ORIGINAL_URL = "https://memreasdev-wsj.memreas.com/";
+	const MEDIA_URL = "https://memreasdev-wsj.memreas.com/?action=addmediaevent";
 	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
-	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
-	const MEMREAS_PAY_URL_STRIPE = "http://memreas-dev-php-stripe.localhost/stripe/";	
-	const MEMREAS_PAY_URL_INDEX = "http://memreas-dev-php-stripe.localhost/index/";
+	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com/";
+	const MEMREAS_PAY_URL_STRIPE = "https://memreasdev-pay.memreas.com/stripe/";
+	const MEMREAS_PAY_URL_INDEX = "https://memreasdev-pay.memreas.com/index/";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	
-	// Redis constant section
-	const REDIS_SERVER_ENDPOINT = "127.0.0.1";
+	// Redis section
+	// ubuntu standalone for
+	// redis 3 version
+	//const REDIS_SERVER_ENDPOINT = "54.225.187.57";
+	const REDIS_SERVER_ENDPOINT = "10.179.214.247";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = true;
 	const REDIS_SERVER_PORT = "6379";
@@ -54,6 +57,7 @@ class MemreasConstants {
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
 	                                      
 	// Same across...
+	const media_id_batch_create_count = 25;
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
 	const URL = "/index";
@@ -73,8 +77,8 @@ class MemreasConstants {
 	const AUDIO = "/data/media/upload_audio";
 	const FB_APPID = '462180953876554';
 	const FB_SECRET = '23dcd2db19b17f449f39bfe9e93176e6';
-	// const FB_FBHREF = 'https://apps.facebook.com/462180953876554/';
-	const FB_FBHREF = ' /index/canvas';
+	// const FB_FBHREF = 'https://apps.facebook.com/462180953876554';
+	const FB_FBHREF = '/index';
 	const TW_CONSUMER_KEY = '9jwg1vX4MgH7rfBzxqkcjI90f';
 	const TW_CONSUMER_SECRET = 'bDqOeHkJ7OIQ4QPNnT1PA9oz55gf51YW0REBo12aazGA0CBrbY';
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';
