@@ -7,14 +7,14 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\memreas\MUUID;
-use Application\memreas\RmWorkDir;
 use \Exception;
 use Application\memreas\AddFriendtoevent;
+use Application\memreas\AWSManagerSender;
+use Application\memreas\StripeWS\PaymentsProxy;
+use Application\memreas\MUUID;
+use Application\memreas\RmWorkDir;
+use Application\Model\MemreasConstants;
+use Zend\View\Model\ViewModel;
 
 class Registration {
 	protected $message_data;
@@ -326,8 +326,19 @@ class Registration {
 						// http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
 						// Always set content-type when sending HTML email
 						
-						$to [] = $email;
+						/*
+						 * setup new user with free plan
+						 */
+						$PaymentsProxy = new PaymentsProxy ();
+						$message_data['sid'] = $_SESSION['sid'];
+						$message_data['plan'] = MemreasConstants::MEMREAS_FREE_PLAN;
+						$result = $PaymentsProxy->exec ( "stripe_subscribe", $message_data );
 						
+						
+						/*
+						 * Send user email
+						 */
+						$to [] = $email;
 						$viewVar = array (
 								'email' => $email,
 								'username' => $username,

@@ -41,7 +41,7 @@ class Login {
 	}
 	public function exec($sessHandler, $ipAddress = '') {
 		try {
-			// error_log ( 'login exec $ipAddress--->' . $ipAddress . PHP_EOL );
+			//Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
@@ -55,12 +55,12 @@ class Login {
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
 			$cm = __CLASS__ . __METHOD__;
-			Mlog::addone ( $cm . '::$this->username', $this->username );
-			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
-			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
-			Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
-			Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
-			Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
+			//Mlog::addone ( $cm . '::$this->username', $this->username );
+			//Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
+			//Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
+			//Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
+			//Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
+			//Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
 			
 			$time = time ();
 			if (empty ( $this->username )) {
@@ -94,7 +94,8 @@ class Login {
 					 * Set the session for the user data...
 					 */
 					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie, $this->clientIPAddress );
-					
+					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+						
 					/*
 					 * Check if the device is registered and update as needed
 					 */
@@ -102,7 +103,8 @@ class Login {
 					if (! empty ( $this->device_type )) {
 						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type );
 					}
-					
+					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+						
 					/*
 					 * check if email is verified
 					 */
@@ -140,6 +142,7 @@ class Login {
 			$xml_output .= "<message>" . $e->getMessage () . "</message>";
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
+			Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 		}
 		
 		header ( "Content-type: text/xml" );

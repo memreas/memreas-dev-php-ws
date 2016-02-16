@@ -7,106 +7,96 @@
  */
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Session\SessionManager;
-use Zend\Session\Container;
-use Zend\Session\Config\SessionConfig;
-use Application\Model;
-use Application\Form;
-use Zend\Mail\Message;
-use Zend\Mail\Transport\Sendmail as SendmailTransport;
-use GuzzleHttp\Client;
-use Application\Model\MemreasConstants;
-use Application\memreas\Login;
-use Application\memreas\Registration;
 use Application\memreas\AddComment;
-use Application\memreas\AddMediaEvent;
-use Application\memreas\FetchCopyRightBatch;
-use Application\memreas\GenerateMediaId;
-use Application\memreas\ChkUname;
-use Application\memreas\LikeMedia;
-use Application\memreas\MediaInappropriate;
-use Application\memreas\CountListallmedia;
-use Application\memreas\ListGroup;
-use Application\memreas\DeletePhoto;
-use Application\memreas\ListPhotos;
-use Application\memreas\ForgotPassword;
-use Application\memreas\Download;
-use Application\memreas\ViewAllfriends;
-use Application\memreas\CreateGroup;
-use Application\memreas\ListAllmedia;
-use Application\memreas\CountViewevent;
-use Application\memreas\EditEvent;
 use Application\memreas\AddEvent;
+use Application\memreas\AddExistMediaToEvent;
 use Application\memreas\AddFriend;
-use Application\memreas\ViewEvents;
+use Application\memreas\AddFriendtoevent;
+use Application\memreas\AddFriendToGroup;
+use Application\memreas\AddMediaEvent;
+use Application\memreas\AddNotification;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\AWSMemreasRedisCache;
 use Application\memreas\AWSMemreasRedisSessionHandler;
-use Application\memreas\AddFriendtoevent;
-use Application\memreas\ViewMediadetails;
-use Application\memreas\snsProcessMediaPublish;
-use Application\memreas\Memreastvm;
-use Application\memreas\FetchPreSignedUploadURL;
-use Application\memreas\Mlog;
-use Application\memreas\MemreasSignedURL;
-use Application\memreas\UploadAdvertisement;
-use Application\memreas\AddNotification;
 use Application\memreas\ChangePassword;
-use Application\memreas\ListNotification;
-use Application\memreas\UpdateNotification;
-use Application\memreas\FindTag;
-use Application\memreas\LogOut;
-use Application\memreas\ClearAllNotification;
-use Application\memreas\GetSession;
-use Application\memreas\RegisterDevice;
-use Application\memreas\ReTransCoder;
-use Application\memreas\RegisterCanonicalDevice;
-use Application\memreas\ListComments;
-use Application\memreas\Memreas;
-use Application\memreas\MemreasTables;
-use Application\memreas\GetEventLocation;
-use Application\memreas\GetEventCount;
-use Application\memreas\GetUserDetails;
-use Application\memreas\SaveUserDetails;
-use Application\memreas\GetUserGroups;
-use Application\memreas\GetGroupFriends;
-use Application\memreas\AddFriendToGroup;
-use Application\memreas\RemoveFriendGroup;
-use Application\memreas\GetEventPeople;
-use Application\memreas\AddExistMediaToEvent;
-use Application\memreas\GetMediaLike;
-use Application\memreas\CheckExistMedia;
-use Application\memreas\ListMemreasFriends;
-use Application\memreas\GetSocialCredentials;
-use Application\memreas\UpdateMedia;
-use Application\memreas\MediaDeviceTracker;
-use Application\memreas\FeedBack;
-use Application\memreas\GetEventDetails;
-use Application\memreas\RemoveEventMedia;
-use Application\memreas\RemoveEventFriend;
-use Application\memreas\RemoveFriends;
-use Application\memreas\GetFriends;
-use Application\memreas\Utility;
-use Application\memreas\RemoveGroup;
 use Application\memreas\CheckEvent;
-use Application\memreas\VerifyEmailAddress;
-use Application\memreas\UpdatePassword;
-use Application\Storage\DBStorage;
-use Application\Model\DbTableGatewayOptions;
+use Application\memreas\CheckExistMedia;
+use Application\memreas\ChkUname;
+use Application\memreas\ClearAllNotification;
+use Application\memreas\CountListallmedia;
+use Application\memreas\CountViewevent;
+use Application\memreas\CreateGroup;
+use Application\memreas\DeletePhoto;
+use Application\memreas\Download;
+use Application\memreas\EditEvent;
+use Application\memreas\FeedBack;
+use Application\memreas\FetchCopyRightBatch;
+use Application\memreas\ForgotPassword;
+use Application\memreas\GenerateMediaId;
 use Application\memreas\GetDiskUsage;
+use Application\memreas\GetEventCount;
+use Application\memreas\GetEventDetails;
+use Application\memreas\GetEventLocation;
+use Application\memreas\GetEventPeople;
+use Application\memreas\GetFriends;
+use Application\memreas\GetGroupFriends;
+use Application\memreas\GetMediaLike;
+use Application\memreas\GetSession;
+use Application\memreas\GetSocialCredentials;
+use Application\memreas\GetUserDetails;
+use Application\memreas\GetUserGroups;
+use Application\memreas\LikeMedia;
+use Application\memreas\ListAllmedia;
+use Application\memreas\ListComments;
+use Application\memreas\ListGroup;
+use Application\memreas\ListMemreasFriends;
+use Application\memreas\ListNotification;
+use Application\memreas\ListPhotos;
+use Application\memreas\Login;
+use Application\memreas\LogOut;
+use Application\memreas\MediaDeviceTracker;
+use Application\memreas\MediaInappropriate;
+use Application\memreas\MemreasSignedURL;
+use Application\memreas\MemreasTables;
+use Application\memreas\Memreastvm;
+use Application\memreas\Mlog;
+use Application\memreas\RegisterCanonicalDevice;
+use Application\memreas\RegisterDevice;
+use Application\memreas\Registration;
+use Application\memreas\RemoveEventFriend;
+use Application\memreas\RemoveEventMedia;
+use Application\memreas\RemoveFriendGroup;
+use Application\memreas\RemoveFriends;
+use Application\memreas\RemoveGroup;
+use Application\memreas\ReTransCoder;
+use Application\memreas\SaveUserDetails;
+use Application\memreas\snsProcessMediaPublish;
 use Application\memreas\StripeWS\ListPayees;
+use Application\memreas\UpdateMedia;
+use Application\memreas\UpdateNotification;
+use Application\memreas\UpdatePassword;
+use Application\memreas\UploadAdvertisement;
+use Application\memreas\Utility;
+use Application\memreas\VerifyEmailAddress;
+use Application\memreas\ViewAllfriends;
+use Application\memreas\ViewEvents;
+use Application\memreas\ViewMediadetails;
+use Application\Model\MemreasConstants;
+use GuzzleHttp\Client;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Session\Container;
+use Zend\View\Model\ViewModel;
 
 // Stripe Web Services
+use Application\memreas\StripeWS\GetAccountDetail;
+use Application\memreas\StripeWS\GetOrder;
+use Application\memreas\StripeWS\GetOrderHistory;
 use Application\memreas\StripeWS\GetPlans;
 use Application\memreas\StripeWS\GetPlansStatic;
-use Application\memreas\StripeWS\GetOrderHistory;
-use Application\memreas\StripeWS\GetOrder;
-use Application\memreas\StripeWS\GetAccountDetail;
-use Application\memreas\StripeWS\Refund;
 use Application\memreas\StripeWS\MakePayout;
 use Application\memreas\StripeWS\PaymentsProxy;
+use Application\memreas\StripeWS\Refund;
+use Application\memreas\FetchChameleon;
 
 class IndexController extends AbstractActionController {
 	protected $xml_in;
@@ -123,6 +113,9 @@ class IndexController extends AbstractActionController {
 	protected $aws;
 	protected $sid;
 	protected $sessHandler;
+	public function isJSON($string) {
+		return is_string ( $string ) && is_array ( json_decode ( $string, true ) ) && (json_last_error () == JSON_ERROR_NONE) ? true : false;
+	}
 	public function setupSaveHandler() {
 		$this->redis = new AWSMemreasRedisCache ( $this->getServiceLocator () );
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->getServiceLocator () );
@@ -178,10 +171,10 @@ class IndexController extends AbstractActionController {
 		$cm = __CLASS__ . __METHOD__;
 		// Mlog::addone(__CLASS__ . __METHOD__, '...');
 		// Checking headers for cookie info
-		$headers = apache_request_headers();
-		foreach ($headers as $header => $value) {
-			error_log("WS header: $header :: value: $value" . PHP_EOL);
-		}
+		// $headers = apache_request_headers ();
+		// foreach ( $headers as $header => $value ) {
+		// error_log ( "WS header: $header :: value: $value" . PHP_EOL );
+		// }
 		// End Checking headers for cookie info
 		// Mlog::addone($cm . '$_POST', $_POST);
 		
@@ -194,9 +187,9 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
-		Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
-		Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
 			$reqArr = json_decode ( $_REQUEST ['json'], true );
@@ -219,7 +212,7 @@ class IndexController extends AbstractActionController {
 			// dont remove just to be safe relying on $_POST data
 			$message_data ['xml'] = '';
 		}
-		Mlog::addone ( $cm . __LINE__ . '::IndexController $data', $data );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $data', $data );
 		
 		/**
 		 * Setup save handler
@@ -280,11 +273,13 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach - N/a
 				 */
+			} else if ($actionname == 'fetchchameleon') {
+				
+				$fetchChameleon = new FetchChameleon ();
+				$fetchChameleon->exec ();
 			} else if ($actionname == "login") {
 				$login = new Login ( $message_data, $memreas_tables, $this->getServiceLocator () );
-				$result = $login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
-				
-				Mlog::addone ( 'login result --->', $result );
+				$login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
 				
 				/*
 				 * Cache approach - warm @person if not set here
@@ -368,9 +363,6 @@ class IndexController extends AbstractActionController {
 				$generatemediaid = new GenerateMediaId ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $generatemediaid->exec ();
 			} else if ($actionname == "addmediaevent") {
-				// error_log("inside indexAction
-				// addmediaevent
-				// ...".$callback.PHP_EOL);
 				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $addmediaevent->exec ();
@@ -1530,9 +1522,7 @@ class IndexController extends AbstractActionController {
 			}
 		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
 		
-		Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 		if (! empty ( $callback )) {
-			
 			$message_data ['data'] = $output;
 			
 			$json_arr = array (
@@ -1540,15 +1530,39 @@ class IndexController extends AbstractActionController {
 			);
 			$json = json_encode ( $json_arr );
 			
-			// header ( "Content-type: plain/text" );
 			header ( 'Content-Type: application/json' );
 			// callback json
-			// Mlog::addone ( __METHOD__ . __LINE__ . 'response with callback', $callback . "(" . $json . ")" );
+			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
 			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+			
+			/*
+			 * if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
+			 * if ($this->isJson ( $output )) {
+			 * $message_data = json_decode ( $output, true );
+			 *
+			 * $message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+			 * Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+			 * $output = json_encode ( $message_data );
+			 * } else {
+			 * $data = simplexml_load_string ( $output );
+			 * if (empty ( $data->x_memreas_chameleon )) {
+			 * // $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
+			 * $data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
+			 * $output = $data->asXML ();
+			 * // error_log ( '$xml-->' . $xml );
+			 * }
+			 * Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
+			 * }
+			 * }
+			 * // Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			 */
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			echo $output;
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		}
 		
 		/**
@@ -1671,7 +1685,10 @@ class IndexController extends AbstractActionController {
 					/*
 					 * SetId for the web browser session and start...
 					 */
-					$this->sessHandler->startSessionWithMemreasCookie ( $data->memreascookie );
+					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
+					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->memreascookie----> ', ( string ) $data->memreascookie );
+					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->x_memreas_chameleon ----->', ( string ) $data->x_memreas_chameleon );
+					$this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
@@ -1680,6 +1697,7 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
+					session_destroy ();
 					return 'notlogin';
 				}
 			} // end if ($requiresExistingSession)

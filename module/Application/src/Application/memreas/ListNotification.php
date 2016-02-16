@@ -7,11 +7,9 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 use Application\Entity\Notification;
 use Application\memreas\Utility;
+use Application\Model\MemreasConstants;
 
 class ListNotification {
 	protected $message_data;
@@ -155,9 +153,9 @@ class ListNotification {
 							 */
 							$this->handleEmpty ();
 						}
-					}
 					$this->xml_output .= "</notification>";
-				} // end for each
+					}// end for each
+				} //end if count > 0 
 				
 				if (count ( $result ) == 0) {
 					$this->xml_output .= "<status>failure</status>";

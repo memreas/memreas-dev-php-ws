@@ -192,8 +192,6 @@ var doListCards = function (element, list) {
 							//'<td>user_id' +
 							//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i]['user_id + '">' +
 							'<td>stripe ref id:' +
-							'<td><input type="text" class="card_numbers" id="payment_method_id_' + i + '" name="payment_method_id_' + i + '" value="'+ json.payment_methods[i]['payment_method_id'] + '">' +
-							'<td>stripe ref id:' +
 							'<td><input type="text" class="card_numbers" id="stripe_card_reference_id_' + i + '" name="stripe_card_reference_id_' + i + '" value="'+ json.payment_methods[i]['stripe_card_reference_id'] + '">' +
 							'<td>card type:' +
 							'<td><input type="text" id="card_type_' + i + '" name="card_type_' + i + '" value="'+ json.payment_methods[i]['card_type'] + '">' +
@@ -344,7 +342,7 @@ doAddValue = function (element) {
 	//Fetch the list of cards to delete...
 	var selected = new Array();
 	$("input[name=card_selected]:checked").each(function() {
-     card_number = $(this).parents("tr").find('input.card_numbers').val();
+    	card_number = $(this).parents("tr").find('input.card_numbers').val();
 	    selected.push(card_number);
 	});
 
@@ -396,7 +394,7 @@ doAddValue = function (element) {
 	  error: function (jqXHR, textStatus, errorThrown) {
     		alert(jqXHR.responseText);
 	    	alert(jqXHR.status);
-	 	//alert(textStatus);
+	 		//alert(textStatus);
 	    	//alert(errorThrown);
 	  }
 	});

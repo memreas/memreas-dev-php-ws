@@ -50,6 +50,13 @@ class PaymentsProxy {
 					]
 			] );
 					
+		} else if (isset($_REQUEST['memreascookie'])) {
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+					'form_params' => [ 
+							'memreascookie' => $_SESSION ['memreascookie'],
+							'json' => json_encode ( $jsonArr ) 
+					] 
+			] );
 		} else {
 			Mlog::addone ( $cm . __LINE__, $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
