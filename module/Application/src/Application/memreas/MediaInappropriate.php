@@ -37,6 +37,7 @@ class MediaInappropriate {
 			$message = ' ';
 			$event_id = trim ( $data->mediainappropriate->event_id );
 			$user_id = trim ( $data->mediainappropriate->user_id );
+			$reporting_user_id = trim ( $data->mediainappropriate->reporting_user_id );
 			$media_id = trim ( $data->mediainappropriate->media_id );
 			$inappropriate = trim ( $data->mediainappropriate->inappropriate );
 			$reason_types = $data->mediainappropriate->reason_types->reason_type;
@@ -96,6 +97,7 @@ class MediaInappropriate {
 						$media_inappropriate_event = Array ();
 						$media_inappropriate_event ['events'] [] = $event_id;
 						$media_inappropriate_event ['event:' . $event_id] ['users'] = $user_id;
+						$media_inappropriate_event ['event:' . $event_id] ['reporting_user_id'] = $reporting_user_id;
 						$now = date ( 'Y-m-d H:i:s' );
 						$media_inappropriate_event ['event:' . $event_id] ['user:' . $user_id] ['date_created'] = $now;
 					} else {
@@ -107,6 +109,7 @@ class MediaInappropriate {
 							$media_inappropriate_event = Array ();
 							$media_inappropriate_event ['events'] [] = $event_id;
 							$media_inappropriate_event ['event:' . $event_id] ['users'] = $user_id;
+							$media_inappropriate_event ['event:' . $event_id] ['reporting_user_id'] = $reporting_user_id;
 							$now = date ( 'Y-m-d H:i:s' );
 							$media_inappropriate_event ['event:' . $event_id] ['user:' . $user_id] ['date_created'] = $now;
 						}
