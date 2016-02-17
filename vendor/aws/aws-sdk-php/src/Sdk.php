@@ -4,6 +4,7 @@ namespace Aws;
 /**
  * Builds AWS clients based on configuration settings.
  *
+ * @method \Aws\Acm\AcmClient createAcm(array $args = [])
  * @method \Aws\ApiGateway\ApiGatewayClient createApiGateway(array $args = [])
  * @method \Aws\AutoScaling\AutoScalingClient createAutoScaling(array $args = [])
  * @method \Aws\CloudFormation\CloudFormationClient createCloudFormation(array $args = [])
@@ -38,6 +39,7 @@ namespace Aws;
  * @method \Aws\ElasticsearchService\ElasticsearchServiceClient createElasticsearchService(array $args = [])
  * @method \Aws\Emr\EmrClient createEmr(array $args = [])
  * @method \Aws\Firehose\FirehoseClient createFirehose(array $args = [])
+ * @method \Aws\GameLift\GameLiftClient createGameLift(array $args = [])
  * @method \Aws\Glacier\GlacierClient createGlacier(array $args = [])
  * @method \Aws\Iam\IamClient createIam(array $args = [])
  * @method \Aws\Inspector\InspectorClient createInspector(array $args = [])
@@ -67,7 +69,7 @@ namespace Aws;
  */
 class Sdk
 {
-    const VERSION = '3.13.0';
+    const VERSION = '3.15.2';
 
     /** @var array Arguments for creating clients */
     private $args;
