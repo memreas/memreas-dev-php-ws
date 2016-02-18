@@ -12,7 +12,9 @@ class FetchChameleon {
 	}
 
 	public function exec() {
-		//check old chameleon here..
+		/***
+		 * TODO: check old chameleon here.. 
+		 */
 		
 		$this->setChameleon();
 	
