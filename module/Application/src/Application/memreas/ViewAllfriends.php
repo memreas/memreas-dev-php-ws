@@ -43,7 +43,7 @@ class ViewAllfriends {
 			$message = 'User id is empty';
 		} else {
 			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'f' );
+			$qb->select ( 'f', 'u' );
 			$qb->from ( 'Application\Entity\Friend', 'f' );
 			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" );
 			$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'uf.friend_id = u.user_id' )->andwhere ( "u.user_id = :userid" )->setParameter ( 'userid', $user_id );
@@ -61,7 +61,7 @@ class ViewAllfriends {
 						$count ++;
 						$view_all_friend [$count] ['id'] = $row1->friend_id;
 						$view_all_friend [$count] ['network'] = $row1->network;
-						$view_all_friend [$count] ['social_username'] = $row1->social_username;
+						$view_all_friend [$count] ['social_username'] = $row1->username;
 						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $row1->url_image );
 					}
 				} else {
@@ -77,7 +77,7 @@ class ViewAllfriends {
 				$xml_output .= "<friend>";
 				$xml_output .= "<friend_id>" . $friend ['id'] . "</friend_id>";
 				$xml_output .= "<network>" . $friend ['network'] . "</network>";
-				$xml_output .= "<social_username>" . $friend ['social_username'] . "</social_username>";
+				$xml_output .= "<username>" . $friend ['social_username'] . "</social_username>";
 				$xml_output .= "<url><![CDATA[" . $friend ['url_image'] . "]]></url>";
 				$xml_output .= "<url_79x80><![CDATA[" . empty ( $friend ['url_image_79x80'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_79x80'] ) . "]]></url_79x80>";
 				$xml_output .= "<url_448x306><![CDATA[" . empty ( $friend ['url_image_448x306'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_448x306'] ) . "]]></url_448x306>";
