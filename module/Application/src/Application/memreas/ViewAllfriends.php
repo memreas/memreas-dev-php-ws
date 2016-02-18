@@ -42,37 +42,11 @@ class ViewAllfriends {
 			$error_flag = 1;
 			$message = 'User id is empty';
 		} else {
-			/*
-			$query_event = "
-			
-			select uf.friend_id, 'memreas', u.username, m.metadata 
-			from Application\Entity\UserFriend uf 
-			inner join user u with uf.friend_id = u.user_id and uf.user_id = '3f68e4a4-74bc-4c2d-bf5c-09f8fd501b7d'
-			left join  Application\Entity\Media m with m.user_id = uf.friend_id and m.is_profile_pic = '1'
-			order by u.username asc;
-
-			
-			
-			select f, u
-			from Application\Entity\Friend f,
-			Application\Entity\UserFriend uf,
-			Application\Entity\User u
-			where f.friend_id = uf.friend_id
-			and uf.user_approve = '1'
-			and uf.user_id = u.user_id 
-			ORDER BY uf.create_time DESC";
-			$statement = $this->dbAdapter->createQuery ( $query_event );
-			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
-			$result = $statement->getResult ();
-			*/
-			
-			
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'f' );
 			$qb->from ( 'Application\Entity\Friend', 'f' );
-			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" );
-			$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'uf.friend_id = u.user_id' )->andwhere ( "u.user_id = :userid" )->setParameter ( 'userid', $user_id );
-			$qb->orderBy ( 'u.username', 'ASC' );
+			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" )->andwhere ( "uf.user_id = :userid" )->setParameter ( 'userid', $user_id );
+			$qb->orderBy ( 'f.social_username', 'ASC' );
 			// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 			$result = $qb->getQuery ()->getResult ();
 			
