@@ -42,6 +42,29 @@ class ViewAllfriends {
 			$error_flag = 1;
 			$message = 'User id is empty';
 		} else {
+			/*
+			$query_event = "select f, u
+			from Application\Entity\Friend f,
+			Application\Entity\UserFriend uf,
+			Application\Entity\User u
+			where f.friend_id = uf.friend_id
+			and uf.user_approve = '1'
+			and uf.user_id = u.user_id 
+			ORDER BY uf.create_time DESC";
+			$statement = $this->dbAdapter->createQuery ( $query_event );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
+			$result = $statement->getResult ();
+			*/
+			
+			/*
+			$qb = $this->dbAdapter->createQueryBuilder ();
+			$qb->select ( 'uf.friend_id', 'memreas', 'u.username', 'm.metadata' );
+			$qb->from ( 'Application\Entity\Friend', 'f' );
+			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" );
+			$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'uf.friend_id = u.user_id' )->andwhere ( "u.user_id = :userid" )->setParameter ( 'userid', $user_id );
+			$qb->orderBy ( 'u.username', 'ASC' );
+			*/
+			
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'f', 'u' );
 			$qb->from ( 'Application\Entity\Friend', 'f' );
