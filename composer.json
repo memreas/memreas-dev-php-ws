@@ -14,7 +14,7 @@
         "zendframework/zendframework": "2.5.2",
         "ext-curl": "*",
         "ext-json": "*",
-        "aws/aws-sdk-php": "3.15.*",
+        "aws/aws-sdk-php": "3.12.*",
 		"sybio/image-workshop": "2.0.9",
 		"ramsey/uuid": "2.8.0",
 		"doctrine/doctrine-orm-module": "0.8.0",
