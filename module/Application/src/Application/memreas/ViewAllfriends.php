@@ -43,7 +43,17 @@ class ViewAllfriends {
 			$message = 'User id is empty';
 		} else {
 			/*
-			$query_event = "select f, u
+			$query_event = "
+			
+			select uf.friend_id, 'memreas', u.username, m.metadata 
+			from Application\Entity\UserFriend uf 
+			inner join user u with uf.friend_id = u.user_id and uf.user_id = '3f68e4a4-74bc-4c2d-bf5c-09f8fd501b7d'
+			left join  Application\Entity\Media m with m.user_id = uf.friend_id and m.is_profile_pic = '1'
+			order by u.username asc;
+
+			
+			
+			select f, u
 			from Application\Entity\Friend f,
 			Application\Entity\UserFriend uf,
 			Application\Entity\User u
@@ -56,17 +66,9 @@ class ViewAllfriends {
 			$result = $statement->getResult ();
 			*/
 			
-			/*
-			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'uf.friend_id', 'memreas', 'u.username', 'm.metadata' );
-			$qb->from ( 'Application\Entity\Friend', 'f' );
-			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" );
-			$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'uf.friend_id = u.user_id' )->andwhere ( "u.user_id = :userid" )->setParameter ( 'userid', $user_id );
-			$qb->orderBy ( 'u.username', 'ASC' );
-			*/
 			
 			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'f', 'u' );
+			$qb->select ( 'f' );
 			$qb->from ( 'Application\Entity\Friend', 'f' );
 			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" );
 			$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'uf.friend_id = u.user_id' )->andwhere ( "u.user_id = :userid" )->setParameter ( 'userid', $user_id );
@@ -84,7 +86,7 @@ class ViewAllfriends {
 						$count ++;
 						$view_all_friend [$count] ['id'] = $row1->friend_id;
 						$view_all_friend [$count] ['network'] = $row1->network;
-						$view_all_friend [$count] ['social_username'] = $row1->username;
+						$view_all_friend [$count] ['social_username'] = $row1->social_username;
 						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $row1->url_image );
 					}
 				} else {
