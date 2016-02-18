@@ -77,7 +77,7 @@ class ViewAllfriends {
 				$xml_output .= "<friend>";
 				$xml_output .= "<friend_id>" . $friend ['id'] . "</friend_id>";
 				$xml_output .= "<network>" . $friend ['network'] . "</network>";
-				$xml_output .= "<username>" . $friend ['social_username'] . "</social_username>";
+				$xml_output .= "<social_username>" . $friend ['social_username'] . "</social_username>";
 				$xml_output .= "<url><![CDATA[" . $friend ['url_image'] . "]]></url>";
 				$xml_output .= "<url_79x80><![CDATA[" . empty ( $friend ['url_image_79x80'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_79x80'] ) . "]]></url_79x80>";
 				$xml_output .= "<url_448x306><![CDATA[" . empty ( $friend ['url_image_448x306'] ) ? '' : $this->url_signer->signArrayOfUrls ( $friend ['url_image_448x306'] ) . "]]></url_448x306>";
