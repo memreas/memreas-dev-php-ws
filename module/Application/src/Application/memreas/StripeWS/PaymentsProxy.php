@@ -42,11 +42,17 @@ class PaymentsProxy {
 		$cm = __CLASS__ . __METHOD__;
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
-		if (isset($_REQUEST['token'])) {
+		if (isset($_REQUEST['admin_key'])) {
+			/**
+			 * Admin is logged in and request user data
+			 */
 			Mlog::addone ( $cm . __LINE__ . 'token--->', $_REQUEST['token'] );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [
 					'form_params' => [
-							'token' => $_REQUEST['token']
+							'sid' => $_SESSION ['sid'],
+							'admin_key' => $_REQUEST['admin_key'],
+							'json' => json_encode ( $jsonArr )
+								
 					]
 			] );
 					

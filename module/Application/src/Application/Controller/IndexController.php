@@ -220,10 +220,9 @@ class IndexController extends AbstractActionController {
 		$this->setupSaveHandler ();
 		
 		/**
-		 * Check session
+		 * Bypass section - handle with care!!
 		 */
-		// error_log ( '$data--->' . print_r ( $data, true ) . PHP_EOL );
-		// Mlog::addone($cm.__LINE__.'::input data as object---> ', $data, 'p');
+		Mlog::addone($cm.__LINE__.'::input data as object---> ', $data, 'p');
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
@@ -1717,12 +1716,13 @@ class IndexController extends AbstractActionController {
 			//if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
 			//	$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 			//}
-		} catch ( \Exception $e ) {
-			// echo 'Caught exception: ', $e->getMessage(), "\n";
-			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
-		}
-		
-		return $actionname;
+		} catch ( \Exception $e ) 
+{
+	// echo 'Caught exception: ', $e->getMessage(), "\n";
+	error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
+}
+
+return $actionname;
 	}
 	public function fetchUserIPAddress() {
 		/*
