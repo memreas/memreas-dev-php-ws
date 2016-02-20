@@ -27,9 +27,9 @@ class ViewAllfriends {
 		$this->url_signer = new MemreasSignedURL ();
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
+
 	public function exec() {
-		error_log ( "Inside ViewAllfriends.exec()..." . PHP_EOL );
-		error_log ( "Inside ViewAllfriends.exec().xml ---> " . $_POST ['xml'] . PHP_EOL );
+		$cm = __CLASS__ . __METHOD__;
 		
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = $data->viewallfriends->user_id;
@@ -42,6 +42,7 @@ class ViewAllfriends {
 			$error_flag = 1;
 			$message = 'User id is empty';
 		} else {
+			/*
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'f' );
 			$qb->from ( 'Application\Entity\Friend', 'f' );
@@ -49,19 +50,41 @@ class ViewAllfriends {
 			$qb->orderBy ( 'f.social_username', 'ASC' );
 			// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 			$result = $qb->getQuery ()->getResult ();
+			*/
 			
+			/**
+			 * Query to fetch the user's friends
+			 * - Inner joing on user and user_friends based on user_id
+			 * - outer join with media for profile_pic so that result set rows match inner join
+			 */
+			$query = "select uf.friend_id, u.username, m.metadata
+						from Application\Entity\UserFriend uf
+						inner join Application\Entity\User u with uf.friend_id = u.user_id and uf.user_id = '$user_id'
+						left join Application\Entity\Media m with m.user_id = uf.friend_id and m.is_profile_pic = '1'";		
+			$statement = $this->dbAdapter->createQuery ( $query );
+			$result =  $statement->getResult();
+				
+			//Mlog::addone($cm .__LINE__.'::result --->', $result); 
 			if (! $result) {
 				$error_flag = 1;
 				$message = mysql_error ();
 			} else {
 				if (count ( $result ) > 0) {
 					$xml_output .= "<status>Success</status><message>Friends list</message>";
-					foreach ( $result as $row1 ) {
+					foreach ( $result as $row ) {
 						$count ++;
-						$view_all_friend [$count] ['id'] = $row1->friend_id;
-						$view_all_friend [$count] ['network'] = $row1->network;
-						$view_all_friend [$count] ['social_username'] = $row1->social_username;
-						$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $row1->url_image );
+						$view_all_friend [$count] ['id'] = $row['friend_id'];
+						/**
+						 * hard code to memreas for network
+						 */
+						$view_all_friend [$count] ['network'] = 'memreas';
+						$view_all_friend [$count] ['social_username'] = $row['username'];
+						if (isset($row['metadata']) && !empty($row['metadata'])) {
+							$profile = json_decode($row['metadata'], true);
+							$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $profile['S3_files']['thumbnails']['98x78'] );
+						} else {
+							$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( null );
+						}
 					}
 				} else {
 					$error_flag = 2;
