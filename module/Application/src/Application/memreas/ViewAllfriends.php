@@ -108,17 +108,18 @@ class ViewAllfriends {
 			}
 		}
 		$xml_output .= "</friends>";
+		/*
 		$group = "SELECT g  FROM Application\Entity\Group g  where g.user_id = '" . $user_id . "'";
 		$statement = $this->dbAdapter->createQuery ( $group );
 		$res = $statement->getResult ();
 		$xml_output .= "<groups>";
 		if (count ( $res ) <= 0) {
-			/*
-			 * $xml_output .= "<group>";
-			 * $xml_output .= "<group_id></group_id>";
-			 * $xml_output .= "<group_name></group_name>";
-			 * $xml_output .= "</group>";
-			 */
+			//
+			// $xml_output .= "<group>";
+			// $xml_output .= "<group_id></group_id>";
+			// $xml_output .= "<group_name></group_name>";
+			// $xml_output .= "</group>";
+			//
 		} else
 			foreach ( $res as $row ) {
 				$xml_output .= "<group>";
@@ -127,6 +128,7 @@ class ViewAllfriends {
 				$xml_output .= "</group>";
 			}
 		$xml_output .= "</groups>";
+		*/
 		$xml_output .= "</xml>";
 		error_log ( "Exiting ViewAllfriends.exec().xml ---> " . $xml_output . PHP_EOL );
 		echo $xml_output;
