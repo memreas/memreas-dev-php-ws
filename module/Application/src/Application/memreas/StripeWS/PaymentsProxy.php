@@ -58,10 +58,21 @@ class PaymentsProxy {
 			
 					
 		} else if (isset($_REQUEST['memreascookie'])) {
-			Mlog::addone ( $cm , __LINE__ );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
 							'memreascookie' => $_SESSION ['memreascookie'],
+							'json' => json_encode ( $jsonArr ) 
+					] 
+			] );
+				
+		} else {
+			Mlog::addone ( $cm . __LINE__, $jsonArr );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE );
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+					'form_params' => [ 
+							'sid' => $_SESSION ['sid'],
 							'json' => json_encode ( $jsonArr ) 
 					] 
 			] );
@@ -76,18 +87,6 @@ class PaymentsProxy {
 					] 
 			] );
 			Mlog::addone ( $cm , __LINE__ );
-				
-		} else {
-			Mlog::addone ( $cm . __LINE__, $jsonArr );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE );
-			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
-					'form_params' => [ 
-							'sid' => $_SESSION ['sid'],
-							'json' => json_encode ( $jsonArr ) 
-					] 
-			] );
 		}
 		// Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
 		// Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
