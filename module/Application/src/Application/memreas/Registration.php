@@ -329,10 +329,10 @@ class Registration {
 						/*
 						 * setup new user with free plan
 						 */
-						$PaymentsProxy = new PaymentsProxy ();
-						$message_data['sid'] = $_SESSION['sid'];
-						$message_data['plan'] = MemreasConstants::MEMREAS_FREE_PLAN;
-						$result = $PaymentsProxy->exec ( "stripe_subscribe", $message_data );
+						//$PaymentsProxy = new PaymentsProxy ();
+						//$message_data['sid'] = $_SESSION['sid'];
+						//$message_data['plan'] = MemreasConstants::MEMREAS_FREE_PLAN;
+						//$result = $PaymentsProxy->exec ( "stripe_subscribe", $message_data );
 						
 						
 						/*
