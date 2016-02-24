@@ -93,7 +93,8 @@ class MemreasConstants {
 				'credentials' => [ 
 						'key' => self::S3_APPKEY,
 						'secret' => self::S3_APPSEC 
-				] 
+				],
+				'debug' => true
 		];
 		
 		return new \Aws\Sdk ( $sharedConfig );
