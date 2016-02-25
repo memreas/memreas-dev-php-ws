@@ -57,10 +57,8 @@ class DcmaList {
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
             $qb->where('dcma.user_id = ?1');
             $qb->orderBy('m.create_date', 'DESC');
-            $qb->setParameter(1, $event_id);
-            $qb->setMaxResults($limit);
-            $qb->setFirstResult($from);
-
+            $qb->setParameter(1, $user_id);
+             
             $result = $qb->getQuery()->getArrayResult();
             $dcmalist='';
             if(!empty($result )){
