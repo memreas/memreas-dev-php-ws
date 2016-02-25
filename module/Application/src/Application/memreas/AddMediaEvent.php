@@ -114,7 +114,15 @@ class AddMediaEvent {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::AddMediaEvent exec is_server_image::', $is_server_image );
 			if ($is_server_image == 1) {
 				if (! isset ( $media_id ) || empty ( $media_id )) {
-					throw new \Exception ( 'Error : media_id is empty' );
+					/**
+					 * Allow empty media id for web uploads
+					 */
+					if (isset($_SESSION ['memreascookie'])) {
+						$media_id = MUUID::fetchUUID();
+						
+					} else {
+						throw new \Exception ( 'Error : media_id is empty' );
+					}
 				}
 				$tblEventMedia = new \Application\Entity\EventMedia ();
 				$tblEventMedia->media_id = $media_id;

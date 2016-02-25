@@ -55,15 +55,30 @@ class PaymentsProxy {
 								
 					]
 			] );
+			
 					
 		} else if (isset($_REQUEST['memreascookie'])) {
+			Mlog::addone ( $cm , __LINE__ );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
 							'memreascookie' => $_SESSION ['memreascookie'],
 							'json' => json_encode ( $jsonArr ) 
 					] 
 			] );
+				
 		} else {
+			Mlog::addone ( $cm . __LINE__ , 'about to send email action==>'.$action_method);
+			/*
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'email', [ 
+					'form_params' => [ 
+							'sid' => $_SESSION ['sid'],
+							'to' => 'johnmeah0@gmail.com',
+							'subject' => 'hello',
+							'content' => 'world'
+					] 
+			] );
+			*/
+			Mlog::addone ( $cm , __LINE__ );
 			Mlog::addone ( $cm . __LINE__, $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );

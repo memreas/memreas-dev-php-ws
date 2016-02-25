@@ -152,6 +152,7 @@ var doListCards = function (element, list) {
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(response){
+		  	console.log("response-->" + response)
 		  	//var req_resp = $(element).val() + "\n\n" + JSON.stringify(response.data, null, '\t');
 		  	var req_resp = $(element).val() + "\n\n" + response.data;
 		  	var html_str = "";

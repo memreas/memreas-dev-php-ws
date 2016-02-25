@@ -18,25 +18,28 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $url_signer;
 	private $aws_manager;
 	public function __construct($redis, $service_locator) {
-		$this->aws_manager = new AWSManagerSender ( $service_locator );
 		try {
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 			$this->db = new \Predis\Client ( [ 
 					'scheme' => 'tcp',
 					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
 					'port' => 6379 
 			] );
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__.__METHOD__, '::predis connection exception ---> ' . $e->getMessage () );
-			$to = MemreasConstants::ADMIN_EMAIL;
-			$html = '<html><head></head><body><p>REDIS CONNECTION ERROR<p>' . $e->getMessage () . '</body></html>';
-			$this->aws_manager->sendSeSMail ( $to, 'REDIS CONNECTION ERROR', $html );
 		}
 		
 		// $this->prefix = $prefix;
 		$this->prefix = '';
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		$this->mRedis = $redis;
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		$this->url_signer = new MemreasSignedURL ();
+		Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
+		
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected
@@ -65,8 +68,14 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		// no action necessary because using EXPIRE
 	}
 	public function startSessionWithSID($sid) {
-		session_id ( $sid );
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
+			Mlog::addone ( __CLASS__ . __METHOD__ .__LINE__, 'sid--->'.$sid);
+			session_id ( $sid );
+			Mlog::addone ( __CLASS__ . __METHOD__ .__LINE__, 'session_id set--->'.$sid);
+			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		session_start ();
+			Mlog::addone ( __CLASS__ . __METHOD__ .__LINE__, 'session_start() complete');
+		Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie) {

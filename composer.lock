@@ -2542,16 +2542,16 @@
         },
         {
             "name": "zendframework/zend-captcha",
-            "version": "2.5.2",
+            "version": "2.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-captcha.git",
-                "reference": "43c276df6e94e498bf530538aea53876a24fc47c"
+                "reference": "3d4e9913244e7efd1f9816decf4b0506d7c0be00"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-captcha/zipball/43c276df6e94e498bf530538aea53876a24fc47c",
-                "reference": "43c276df6e94e498bf530538aea53876a24fc47c",
+                "url": "https://api.github.com/repos/zendframework/zend-captcha/zipball/3d4e9913244e7efd1f9816decf4b0506d7c0be00",
+                "reference": "3d4e9913244e7efd1f9816decf4b0506d7c0be00",
                 "shasum": ""
             },
             "require": {
@@ -2595,7 +2595,7 @@
                 "captcha",
                 "zf2"
             ],
-            "time": "2015-11-23 15:37:27"
+            "time": "2016-02-22 21:56:40"
         },
         {
             "name": "zendframework/zend-code",
