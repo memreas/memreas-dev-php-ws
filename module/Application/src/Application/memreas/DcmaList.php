@@ -56,7 +56,7 @@ class DcmaList {
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.event_id = dcma.user_id');
             $qb->where('dcma.user_id = ?1');
-            $qb->orderBy('media.create_date', 'DESC');
+            $qb->orderBy('m.create_date', 'DESC');
             $qb->setParameter(1, $event_id);
             $qb->setMaxResults($limit);
             $qb->setFirstResult($from);
