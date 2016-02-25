@@ -33,7 +33,7 @@ class DcmaViolation {
 	
         /**
 	 *
-	 * @var string @ORM\Column(name="$media_id", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="media_id", type="string", length=255, nullable=false)
 	 */
 	private $media_id;
 	/**
