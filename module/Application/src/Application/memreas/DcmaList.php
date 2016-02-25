@@ -54,7 +54,7 @@ class DcmaList {
             $qb->select('m.user_id', 'm.media_id', 'm.transcode_status', 'm.metadata', 'm.create_date');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
-            $qb->join('Application\Entity\User', 'u', 'WITH', 'u.event_id = dcma.user_id');
+            $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
             $qb->where('dcma.user_id = ?1');
             $qb->orderBy('m.create_date', 'DESC');
             $qb->setParameter(1, $event_id);
