@@ -51,7 +51,7 @@ class DcmaList {
 
         if ($status != 'Failure') {
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('media.user_id', 'media.media_id', 'media.transcode_status', 'media.metadata', 'media.create_date');
+            $qb->select('m.user_id', 'm.media_id', 'm.transcode_status', 'm.metadata', 'm.create_date');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.event_id = dcma.user_id');
