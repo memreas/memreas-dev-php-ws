@@ -476,7 +476,6 @@ class ViewEvents {
 		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
 		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
 		$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
-                $qb->andWhere ( 'media.report_flag = 0' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $user_id );
 		$qb->setParameter ( 2, $event_id );

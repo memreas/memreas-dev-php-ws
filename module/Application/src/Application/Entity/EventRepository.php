@@ -318,12 +318,12 @@ class EventRepository extends EntityRepository {
 	public function getEventMedia($event_id, $limit = false) {
 		$qb = $this->_em->createQueryBuilder ();
 		$qb->select ( 'event_media.event_id', 'event_media.media_id', 'media.metadata' );
+		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
+		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
 		$qb->where ( 'event_media.event_id=?1' );
 		// $qb->where ( 'event_media.event_id IN (:ids)' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $event_id );
-				$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
-		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id AND media.report_flag=0' );
 
 		// //Mlog::addone ( 'getEventMedia $qb->getQuery ()->getSQL()', $qb->getQuery ()->getSQL () );
 		
