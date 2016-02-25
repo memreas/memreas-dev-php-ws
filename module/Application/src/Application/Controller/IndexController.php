@@ -1487,7 +1487,7 @@ class IndexController extends AbstractActionController {
 				$MakePayout = new MakePayout ($this->getServiceLocator () );
 				$result = $MakePayout->exec ();
                         } else if ($actionname == "dcmareportviolation") {
-				$MakePayout = new DcmaReportViolation ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$MakePayout = new DcmaReportViolation ($this->getServiceLocator () );
 				$result = $MakePayout->exec ();
                                 } else if ($actionname == "dcmacounterclaim") {
 				$MakePayout = new DcmaCounterClaim ($this->getServiceLocator () );
