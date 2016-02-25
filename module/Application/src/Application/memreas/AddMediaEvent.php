@@ -114,7 +114,15 @@ class AddMediaEvent {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::AddMediaEvent exec is_server_image::', $is_server_image );
 			if ($is_server_image == 1) {
 				if (! isset ( $media_id ) || empty ( $media_id )) {
-					throw new \Exception ( 'Error : media_id is empty' );
+					/**
+					 * Allow empty media id for web uploads
+					 */
+					if (isset($_SESSION ['memreascookie'])) {
+						$media_id = MUUID::fetchUUID();
+						
+					} else {
+						throw new \Exception ( 'Error : media_id is empty' );
+					}
 				}
 				$tblEventMedia = new \Application\Entity\EventMedia ();
 				$tblEventMedia->media_id = $media_id;
@@ -197,11 +205,11 @@ class AddMediaEvent {
 				 * doesn't work...
 				 * Check if media is uploaded to S3 if you can't find it then return exception
 				 */
-				// $s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
-				// $result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
-				// if (! $result) {
-				// throw new Exception ( 'media did not upload properly' );
-				// }
+				//$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
+				//$result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
+				//if (! $result) {
+				//		throw new Exception ( 'media did not upload properly' );
+				//}
 				
 				//
 				// if copyright add id to media table
