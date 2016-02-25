@@ -86,7 +86,9 @@ use GuzzleHttp\Client;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
-use Application\memreas\Dcma;
+use Application\memreas\DcmaList;
+use Application\memreas\DcmaCounterClaim;
+use Application\memreas\DcmaReportViolation;
 
 // Stripe Web Services
 use Application\memreas\StripeWS\GetAccountDetail;
@@ -1483,6 +1485,16 @@ class IndexController extends AbstractActionController {
 				$result = $ListPayees->exec ();
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $MakePayout->exec ();
+                        } else if ($actionname == "dcmareportviolation") {
+				$MakePayout = new DcmaReportViolation ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $MakePayout->exec ();
+                                } else if ($actionname == "dcmacounterclaim") {
+				$MakePayout = new DcmaCounterClaim ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$result = $MakePayout->exec ();
+			
+                        } else if ($actionname == "dcmalist") {
+				$MakePayout = new DcmaList ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
 				/**
