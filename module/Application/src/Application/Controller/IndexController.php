@@ -1484,17 +1484,17 @@ class IndexController extends AbstractActionController {
 				$ListPayees = new ListPayees ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $ListPayees->exec ();
 			} else if ($actionname == "makepayout") {
-				$MakePayout = new MakePayout ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$MakePayout = new MakePayout ($this->getServiceLocator () );
 				$result = $MakePayout->exec ();
                         } else if ($actionname == "dcmareportviolation") {
 				$MakePayout = new DcmaReportViolation ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
                                 } else if ($actionname == "dcmacounterclaim") {
-				$MakePayout = new DcmaCounterClaim ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$MakePayout = new DcmaCounterClaim ($this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			
                         } else if ($actionname == "dcmalist") {
-				$MakePayout = new DcmaList ( $message_data, $memreas_tables, $this->getServiceLocator () );
+				$MakePayout = new DcmaList($this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
 				/**
