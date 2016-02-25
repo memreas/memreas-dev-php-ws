@@ -68,6 +68,7 @@ class PaymentsProxy {
 				
 		} else {
 			Mlog::addone ( $cm . __LINE__ , 'about to send email action==>'.$action_method);
+			/*
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'email', [ 
 					'form_params' => [ 
 							'sid' => $_SESSION ['sid'],
@@ -76,6 +77,7 @@ class PaymentsProxy {
 							'content' => 'world'
 					] 
 			] );
+			*/
 			Mlog::addone ( $cm , __LINE__ );
 			Mlog::addone ( $cm . __LINE__, $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
