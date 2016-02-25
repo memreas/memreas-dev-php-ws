@@ -476,6 +476,7 @@ class ViewEvents {
 		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
 		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
 		$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
+                $qb->andWhere ( 'media.report_flag = 0' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $user_id );
 		$qb->setParameter ( 2, $event_id );
@@ -743,7 +744,7 @@ class ViewEvents {
 		media.is_profile_pic,
 		media.metadata
 		from Application\Entity\Media media
-		where media.user_id=?1
+		where media.report_flag=0 and media.user_id=?1
 		and media.is_profile_pic=1";
 		$profile_query = $this->dbAdapter->createQuery ( $q_public_profile );
 		$profile_query->setParameter ( 1, $user_id );
@@ -851,6 +852,7 @@ class ViewEvents {
 							from Application\Entity\Media media,
 							Application\Entity\EventMedia event_media
 							where event_media.media_id = media.media_id
+                                                        and media.report_flag =0
 							and event_media.event_id = ?1
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );

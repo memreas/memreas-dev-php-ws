@@ -86,6 +86,7 @@ use GuzzleHttp\Client;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
+use Application\memreas\Dcma;
 
 // Stripe Web Services
 use Application\memreas\StripeWS\GetAccountDetail;

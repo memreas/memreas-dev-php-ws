@@ -661,6 +661,32 @@ echo "user_id ----> " . $user_id;
 					            '<description>description of payout</description>'+
 					            '</makepayout>'+
 					            '</xml>';
+             var dcmareportviolation = '<xml>'+ 
+					         '<username>jmeah80</username>'+
+					            '<dcmareportviolation>'+
+					               
+                                                    '<media_id></media_id>'+
+                                                    '<copyright_owner_name></copyright_owner_name>'+
+                                                    '<copyright_owner_address></copyright_owner_address>'+
+                                                    '<copyright_owner_email_address></copyright_owner_email_address>'+ 
+					            '</dcmareportviolation>'+
+					            '</xml>';         
+            var dcmacounterclaim = '<xml>'+ 
+					         '<username>jmeah80</username>'+
+					            '<dcmacounterclaim>'+
+                                                    '<violation_id><violation_id>'+
+					            '<counter_claim_url></counter_claim_url>'+
+                                                    '<counter_claim_name></counter_claim_name>'+
+                                                    '<counter_claim_address></counter_claim_address>'+
+                                                    '<counter_claim_email_address></counter_claim_email_address>'+
+					            '</dcmacounterclaim>'+
+					            '</xml>'; 
+            var dcmalist = '<xml>'+ 
+					         '<username>jmeah80</username>'+
+					            '<dcmalist>'+
+					            '<user_id>1</user_id>'+
+					            '</dcmalist>'+
+					            '</xml>'; 
                                                                    
             
 			var stripe_addValue = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}'; 
@@ -782,6 +808,9 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "stripe_listPlan") { xml = stripe_listPlan; }
                     else if ($("#input_action").val() == "stripe_updateCard") { xml = stripe_updateCard; }
                     else if ($("#input_action").val() == "stripe_viewCard") { xml = stripe_viewCard; }
+                        else if ($("#input_action").val() == "dcmacounterclaim") { xml = dcmacounterclaim; }
+                        else if ($("#input_action").val() == "dcmareportviolation") { xml = dcmareportviolation; }
+                        else if ($("#input_action").val() == "dcmalist") { xml = dcmalist; }
                     
                     
                 	$("#action_input").val(xml);
@@ -845,6 +874,9 @@ echo "user_id ----> " . $user_id;
 								<option>creategroup</option>
 								<option>deletephoto</option>
 								<option>download</option>
+                                                                <option>dcmalist</option>
+                                                                <option>dcmareportviolation</option>
+                                                                <option>dcmacounterclaim</option>
 								<option>editevent</option>
 								<option>feedback</option>
 								<option>fetchcopyrightbatch</option>
