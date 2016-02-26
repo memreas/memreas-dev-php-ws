@@ -58,7 +58,7 @@ class DcmaList {
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
             $qb->where('dcma.user_id = ?1');
-            $qb->orderBy('dcma.create_date', 'DESC');
+            $qb->orderBy('dcma.create_time', 'DESC');
             $qb->setParameter(1, $user_id);
              
             $result = $qb->getQuery()->getArrayResult();
