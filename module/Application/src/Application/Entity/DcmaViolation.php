@@ -101,7 +101,7 @@ class DcmaViolation {
 	 *
 	 * @var string @ORM\Column(name="update_time", type="string", nullable=false)
 	 */
-	private $update_time;
+	private $update_time='';
         
         public function __set($name, $value) {
 		$this->$name = $value;
