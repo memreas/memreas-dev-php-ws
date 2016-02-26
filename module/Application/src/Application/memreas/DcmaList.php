@@ -98,7 +98,7 @@ class DcmaList {
                 $xml_output .= "<dcmalistresult>";
                 $xml_output .= "<status>$status</status>";
                 $xml_output .= "<message>" . $message . "</message>";
-                $xml_outpur .= $dcmalist;
+                $xml_output .= $dcmalist;
                 $xml_output .= "</dcmalistresult>";
                 $xml_output .= "</xml>";
                 echo $xml_output;
