@@ -40,6 +40,7 @@ class DcmaCounterClaim {
 		$counter_email = trim ( $data->dcmacounterclaim->counter_claim_email_address );
                 $time = time ();
 		$message = '';
+                 $status = 'Success';
                 
                 
                 if(empty ( $violation_id )){
@@ -67,7 +68,7 @@ class DcmaCounterClaim {
 			$violation_id = MUUID::fetchUUID ();
 			$tblDcmaViolation = new \Application\Entity\DcmaViolation();
  			$tblDcmaViolation->counter_claim_url = $counter_url;
-                        $tblDcmaViolation->counter_claim_address = $counter_addres;
+                        $tblDcmaViolation->counter_claim_address = $counter_address;
 			$tblDcmaViolation->counter_claim_email_address = $counter_email;
 			$tblDcmaViolation->counter_claim_report_date = $time;			 
                         
@@ -92,7 +93,7 @@ class DcmaCounterClaim {
                         $mediaUser = $this->dbAdapter->getRepository ( "\Application\Entity\User" )
                                                      ->findOneBy ( array ('user_id' => $mediaObj->user_id ) );
                         
-                        $to [] = $mediaUser->email_address;
+                        $to [0] = $mediaUser->email_address;
                         $viewVar = array (
                                         'email' => $mediaUser->email_address,
                                         'username' => $mediaUser->username,
@@ -113,7 +114,7 @@ class DcmaCounterClaim {
                         /*
                          * reporter will recive mail$violationObj->copyright_owner_email_address
                          */
-                        $to [] = $violationObj->copyright_owner_email_address;
+                        $to [0] = $violationObj->copyright_owner_email_address;
                         $viewVar = array (
                                         'reporter' => $violationObj->copyright_owner_name,
                                         'media_url' => $this->getMediaUrl($mediaObj),

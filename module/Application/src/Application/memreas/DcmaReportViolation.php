@@ -97,7 +97,7 @@ class DcmaReportViolation {
                         $mediaUser = $this->dbAdapter->getRepository ( "\Application\Entity\User" )
                             ->findOneBy ( array ('user_id' => $mediaObj->user_id ) );
                         
-                        $to [] = $mediaUser->email_address;
+                        $to [0] = $mediaUser->email_address;
                         $viewVar = array (
                                         'email' => $mediaUser->email_address,
                                         'username' => $mediaUser->username,
@@ -116,7 +116,7 @@ class DcmaReportViolation {
                         /*
                          * reporter will recive mail
                          */
-                        $to [] = $email;
+                        $to [0] = $email;
                         $viewVar = array (
                                         'email' => $email,
                                         'reporter' => $name,
