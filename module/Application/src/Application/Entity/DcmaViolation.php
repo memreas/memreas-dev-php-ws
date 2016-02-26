@@ -70,7 +70,7 @@ class DcmaViolation {
 	 *
 	 * @var string @ORM\Column(name="counter_claim_url", type="string", nullable=false)
 	 */
-	private $counter_claim_url;
+	private $counter_claim_url='';
         
         /**
 	 *
