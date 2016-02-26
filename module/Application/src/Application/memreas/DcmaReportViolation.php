@@ -75,8 +75,6 @@ class DcmaReportViolation {
                         $tblDcmaViolation->copyright_owner_email_address = $email;
 			$tblDcmaViolation->meta = $meta;
                         $tblDcmaViolation->status = MemreasConstants::DCMA_CLAIM;
-                        
-			 
                         $tblDcmaViolation->dmca_violation_report_date = $time;
                        
 			$tblDcmaViolation->create_time = $time;

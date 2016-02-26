@@ -585,7 +585,9 @@ class ViewEvents {
 					$xml .= "</event_media>";
 				}
 			} // end foreach event media
-		} else {
+		
+                        }
+                } else {
 			// don't send back xml tags if empty...
 		}
 		return $xml;
