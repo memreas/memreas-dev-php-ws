@@ -94,14 +94,14 @@ class DcmaViolation {
 	private $counter_claim_report_date;
         /**
 	 *
-	 * @var string @ORM\Column(name="create_date", type="string", nullable=false)
+	 * @var string @ORM\Column(name="create_time", type="string", nullable=false)
 	 */
-	private $create_date;
+	private $create_time;
         /**
 	 *
-	 * @var string @ORM\Column(name="update_date", type="string", nullable=false)
+	 * @var string @ORM\Column(name="update_time", type="string", nullable=false)
 	 */
-	private $update_date;
+	private $update_time;
         
         public function __set($name, $value) {
 		$this->$name = $value;
