@@ -52,6 +52,11 @@ class DcmaViolation {
 	 * @var string @ORM\Column(name="copyright_owner_email_address", type="string", length=255, nullable=false)
 	 */
 	private $copyright_owner_email_address;
+         /**
+	 *
+	 * @var string @ORM\Column(name="status", type="string", length=255, nullable=false)
+	 */
+	private $status;
 	
         
 	
@@ -92,6 +97,20 @@ class DcmaViolation {
 	 * @var string @ORM\Column(name="counter_claim_report_date ", type="string", nullable=false)
 	 */
 	private $counter_claim_report_date;
+        
+         /**
+	 *
+	 * @var string @ORM\Column(name="copyright_owner_agreed_to_terms", type="string", length=255, nullable=false)
+	 */
+	private $copyright_owner_agreed_to_terms;
+        
+        
+         /**
+	 *
+	 * @var string @ORM\Column(name="counter_claim_agreed_to_terms", type="string", length=255, nullable=false)
+	 */
+	private $counter_claim_agreed_to_terms;
+        
         /**
 	 *
 	 * @var string @ORM\Column(name="create_time", type="string", nullable=false)
