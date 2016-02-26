@@ -497,7 +497,32 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if (isset ( $row1 ['metadata'] )) {
+				/**
+				 * Check if media was deleted
+				 */
+				$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
+				if ($row1['delete_flag'] == 1) {
+					$host = MemreasConstants::ORIGINAL_URL;
+					$delete_path = 'memreas/img/large/1.jpg';
+					$s3file_basename_prefix = 'media removed';
+					$s3file_location = $json_array ['S3_files'] ['location'];
+					$s3file_download_path = $delete_path;
+						
+					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
+						$type = "image";
+						$url79x80 = $delete_path;
+						$url448x306 = $delete_path;
+						$url98x78 = $delete_path;
+					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
+						$type = "video";
+						$url_web = $delete_path;
+						$url_hls = $delete_path;
+						$thum_url = $delete_path;
+						$url79x80 = $delete_path;
+						$url448x306 = $delete_path;
+						$url98x78 = $delete_path;
+								
+				} else if (isset ( $row1 ['metadata'] )) {
 					$json_array = json_decode ( $row1 ['metadata'], true );
 					$url = $json_array ['S3_files'] ['path'];
 					if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
@@ -534,15 +559,20 @@ class ViewEvents {
 					$xml .= "<event_media_type>" . $type . "</event_media_type>";
 					$xml .= "<event_media_id>" . $row1 ['media_id'] . "</event_media_id>";
 					$xml .= (! empty ( $s3file_basename_prefix )) ? "<event_media_name><![CDATA[" . $s3file_basename_prefix . "]]></event_media_name>" : '<event_media_name></event_media_name>';
-					$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : '<event_media_url></event_media_url>';
+					$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url, $host ) . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 					// web - video specific
-					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
+					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web, $host ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
 					// hls video specific
-					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
-					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
-					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80 ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
-					$xml .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78 ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
-					$xml .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306 ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
+					if ($host == MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST) {
+						$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
+						
+					} else {
+						$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, $host ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
+					}
+					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url, $host ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
+					$xml .= (! empty ( $url79x80 )) ? "<event_media_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url79x80, $host ) . "]]></event_media_79x80>" : "<event_media_79x80/>";
+					$xml .= (! empty ( $url98x78 )) ? "<event_media_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url98x78, $host ) . "]]></event_media_98x78>" : "<event_media_98x78/>";
+					$xml .= (! empty ( $url448x306 )) ? "<event_media_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url448x306, $host ) . "]]></event_media_448x306>" : "<event_media_448x306/>";
 					// download urls
 					$xml .= (! empty ( $url )) ? "<event_media_s3_url_path><![CDATA[" . json_encode ( $url ) . "]]></event_media_s3_url_path>" : '<event_media_s3_url_path></event_media_s3_url_path>';
 					$xml .= (! empty ( $url_web )) ? "<event_media_s3_url_web_path><![CDATA[" . json_encode ( $url_web ) . "]]></event_media_s3_url_web_path>" : '<event_media_s3_url_web_path></event_media_s3_url_web_path>';
