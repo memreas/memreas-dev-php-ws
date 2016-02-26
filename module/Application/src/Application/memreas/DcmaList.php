@@ -76,7 +76,6 @@ class DcmaList {
                     $dcmalist .= "<copyright_owner_name>{$rec['copyright_owner_name']}</copyright_owner_name>";
                     $dcmalist .= "<copyright_owner_address>{$rec['copyright_owner_address']}</copyright_owner_address>";
                     $dcmalist .= "<copyright_owner_email_address>{$rec['copyright_owner_email_address']}</copyright_owner_email_address>";
-                    $dcmalist .= "<copyright_owner_agree_provide_email>{$rec['copyright_owner_agree_provide_email']}</copyright_owner_agree_provide_email>";
                     $dcmalist .= "<dmca_violation_report_date>{$rec['dmca_violation_report_date']}</dmca_violation_report_date>";
                     $dcmalist .= "<meta>{$rec['meta']}</meta>";
                     $dcmalist .= "<status>{$rec['status']}</status>";
