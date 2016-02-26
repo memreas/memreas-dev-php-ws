@@ -42,11 +42,11 @@ class DcmaCounterClaim {
 		$message = '';
                 
                 
-                if(empty ( $violationObj )){
+                if(empty ( $violation_id )){
                     $message = 'Violation record not found';
 		    $status = 'Failure';
                 } else {
-                    $violationObj = $this->dbAdapter->getRepository ( "\Application\Entity\Media" )
+                    $violationObj = $this->dbAdapter->getRepository ( "\Application\Entity\DcmaViolation" )
                                                 ->findOneBy ( array ('violation_id' => $violation_id ) );
                     $mediaObj = $this->dbAdapter->getRepository ( "\Application\Entity\Media" )
                                                 ->findOneBy ( array ('media_id' => $violationObj->media_id ) );
