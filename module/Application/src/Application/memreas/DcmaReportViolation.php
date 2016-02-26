@@ -41,7 +41,6 @@ class DcmaReportViolation {
                 $email = trim ( $data->dcmareportviolation->copyright_owner_email_address);
                 $meta = trim ( $data->dcmareportviolation->meta);
                 $claim_status = MemreasConstants::DCMA_CLAIM;
-                $emailProvided = trim ( $data->dcmareportviolation->copyright_owner_agree_provide_email);
                 $time = time ();
 		$message = '';
                 
@@ -77,7 +76,7 @@ class DcmaReportViolation {
 			$tblDcmaViolation->meta = $meta;
                         $tblDcmaViolation->status = MemreasConstants::DCMA_CLAIM;
                         
-			$tblDcmaViolation->copyright_owner_agree_provide_email = $emailProvided;
+			 
                         $tblDcmaViolation->dmca_violation_report_date = $time;
                        
 			$tblDcmaViolation->create_time = $time;
