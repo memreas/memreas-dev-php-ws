@@ -65,16 +65,14 @@ class DcmaCounterClaim {
 
 		if($status != 'Failure') {
 			// add Violation
-			$violation_id = MUUID::fetchUUID ();
-			$tblDcmaViolation = new \Application\Entity\DcmaViolation();
- 			$tblDcmaViolation->counter_claim_url = $counter_url;
-                        $tblDcmaViolation->counter_claim_address = $counter_address;
-			$tblDcmaViolation->counter_claim_email_address = $counter_email;
-			$tblDcmaViolation->counter_claim_report_date = $time;			 
+   			$violationObj->counter_claim_url = $counter_url;
+                        $violationObj->counter_claim_address = $counter_address;
+			$violationObj->counter_claim_email_address = $counter_email;
+			$violationObj->counter_claim_report_date = $time;			 
                         
-                        $tblDcmaViolation->status = MemreasConstants::DCMA_COUNTER_CLAIM;
-                        $tblDcmaViolation->update_date = $time;
-			$this->dbAdapter->persist ( $tblDcmaViolation );
+                        $violationObj->status = MemreasConstants::DCMA_COUNTER_CLAIM;
+                        $violationObj->update_date = $time;
+			$this->dbAdapter->persist ( $violationObj );
 			$this->dbAdapter->flush ();
 			$message .= 'Dcma counter Claim ';
 			$status = 'success';
