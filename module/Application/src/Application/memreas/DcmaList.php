@@ -36,7 +36,7 @@ class DcmaList {
         } else {
             $data = json_decode(json_encode($frmweb));
         }
-        $stausMessage = $violation_id = '';
+         $status =$stausMessage = $violation_id = '';
         $user_id = trim($data->dcmalist->user_id);
 
         $time = time();
