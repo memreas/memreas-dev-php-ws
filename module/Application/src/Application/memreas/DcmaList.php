@@ -53,12 +53,12 @@ class DcmaList {
              $status = 'Success';
              
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('m.user_id', 'm.media_id', 'm.transcode_status', 'm.metadata', 'm.create_date');
+            $qb->select('dcma');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
-            $qb->leftjoin('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
-            $qb->leftjoin('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
+            $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
+            $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
             $qb->where('dcma.user_id = ?1');
-            $qb->orderBy('m.create_date', 'DESC');
+            $qb->orderBy('dcma.create_date', 'DESC');
             $qb->setParameter(1, $user_id);
              
             $result = $qb->getQuery()->getArrayResult();
@@ -66,8 +66,7 @@ class DcmaList {
             if(empty($result )){
                 $message='No record found';
             }else{
-                error_log('dcma:'.print_r($result,true));
-                foreach ($result as $rec) {
+                 foreach ($result as $rec) {
                     $dcmalist .= "<media>";
                     $dcmalist .= "<violation_id>{$rec['violation_id']}<violation_id>";
                      
