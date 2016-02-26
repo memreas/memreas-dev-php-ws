@@ -19,7 +19,7 @@ class DcmaViolation {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="$violation_id", type="string", length=255, nullable=false)
+	 * @var string @ORM\Column(name="violation_id", type="string", length=255, nullable=false)
 	 *      @ORM\Id
 	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
