@@ -73,6 +73,12 @@ class Media {
 	
 	/**
 	 *
+	 * @var string @ORM\Column(name="delete_flag", type="string", length=1, nullable=false)
+	 */
+	private $delete_flag = '0';
+	
+	/**
+	 *
 	 * @var string @ORM\Column(name="create_date", type="string", length=255, nullable=false)
 	 */
 	private $create_date;
