@@ -53,11 +53,7 @@ class DcmaViolation {
 	 */
 	private $copyright_owner_email_address;
 	
-        /**
-	 *
-	 * @var string @ORM\Column(name="copyright_owner_agree_provide_email", type="string", length=255, nullable=false)
-	 */
-	private $copyright_owner_agree_provide_email;
+        
 	
 	/**
 	 *
