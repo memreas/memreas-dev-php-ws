@@ -57,7 +57,7 @@ class ListAllmedia {
 		$from = ($page - 1) * $limit;
 		
 		if (empty ( $event_id )) {
-			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' and m.transcode_status='success' ORDER BY m.create_date DESC";
+			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' and m.transcode_status='success' and m.delete_flag != 1 ORDER BY m.create_date DESC";
 			$statement = $this->dbAdapter->createQuery ( $q1 );
 			$statement->setMaxResults ( $limit );
 			$statement->setFirstResult ( $from );
