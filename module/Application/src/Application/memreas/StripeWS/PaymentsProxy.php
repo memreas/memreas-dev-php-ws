@@ -42,51 +42,47 @@ class PaymentsProxy {
 		$cm = __CLASS__ . __METHOD__;
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
-		if (isset($_REQUEST['admin_key'])) {
+		if (isset ( $_REQUEST ['admin_key'] )) {
 			/**
 			 * Admin is logged in and request user data
 			 */
-			Mlog::addone ( $cm . __LINE__ . 'token--->', $_REQUEST['token'] );
-			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [
-					'form_params' => [
-							'sid' => $_SESSION ['sid'],
-							'admin_key' => $_REQUEST['admin_key'],
-							'json' => json_encode ( $jsonArr )
-								
-					]
-			] );
-			
-					
-		} else if (isset($_REQUEST['token']) && ($action_method == 'activeCredit')) {
-			Mlog::addone ( $cm , __LINE__ );
+			Mlog::addone ( $cm . __LINE__ . 'token--->', $_REQUEST ['token'] );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
+							'sid' => $_SESSION ['sid'],
+							'admin_key' => $_REQUEST ['admin_key'],
 							'json' => json_encode ( $jsonArr ) 
+					]
+					 
+			] );
+		} else if (isset ( $_REQUEST ['token'] ) && ($action_method == 'activeCredit')) {
+			Mlog::addone ( $cm, __LINE__ );
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+					'form_params' => [ 
+							'token' => $_REQUEST ['token'] 
 					] 
 			] );
-				
-		} else if (isset($_REQUEST['memreascookie'])) {
-			Mlog::addone ( $cm , __LINE__ );
+		} else if (isset ( $_REQUEST ['memreascookie'] )) {
+			Mlog::addone ( $cm, __LINE__ );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
 							'memreascookie' => $_SESSION ['memreascookie'],
 							'json' => json_encode ( $jsonArr ) 
 					] 
 			] );
-				
 		} else {
-			Mlog::addone ( $cm . __LINE__ , 'about to send email action==>'.$action_method);
+			Mlog::addone ( $cm . __LINE__, 'about to send email action==>' . $action_method );
 			/*
-			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'email', [ 
-					'form_params' => [ 
-							'sid' => $_SESSION ['sid'],
-							'to' => 'johnmeah0@gmail.com',
-							'subject' => 'hello',
-							'content' => 'world'
-					] 
-			] );
-			*/
-			Mlog::addone ( $cm , __LINE__ );
+			 * $response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'email', [
+			 * 'form_params' => [
+			 * 'sid' => $_SESSION ['sid'],
+			 * 'to' => 'johnmeah0@gmail.com',
+			 * 'subject' => 'hello',
+			 * 'content' => 'world'
+			 * ]
+			 * ] );
+			 */
+			Mlog::addone ( $cm, __LINE__ );
 			Mlog::addone ( $cm . __LINE__, $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
