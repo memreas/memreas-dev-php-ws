@@ -57,6 +57,14 @@ class PaymentsProxy {
 			] );
 			
 					
+		} else if (isset($_REQUEST['token']) && ($action_method == 'activeCredit')) {
+			Mlog::addone ( $cm , __LINE__ );
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+					'form_params' => [ 
+							'json' => json_encode ( $jsonArr ) 
+					] 
+			] );
+				
 		} else if (isset($_REQUEST['memreascookie'])) {
 			Mlog::addone ( $cm , __LINE__ );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
