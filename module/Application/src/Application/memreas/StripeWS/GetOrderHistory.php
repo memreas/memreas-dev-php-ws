@@ -53,6 +53,8 @@ class GetOrderHistory {
 		
 		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
+                                                'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],	 
 						'action' => 'getorderhistory',
 						'data' => json_encode ( $request_data )
                                     ] 
