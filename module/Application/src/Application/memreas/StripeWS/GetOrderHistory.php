@@ -37,6 +37,7 @@ class GetOrderHistory {
 			
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
+                error_log('kkk->'.print_r($_POST,true));
 		$user_id = trim ( $data->getorderhistory->user_id );
 		$search_username = trim ( $data->getorderhistory->search_username );
 		$page = trim ( $data->getorderhistory->page );
