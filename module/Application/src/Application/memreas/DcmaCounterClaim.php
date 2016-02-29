@@ -38,12 +38,16 @@ class DcmaCounterClaim {
 		$counter_url = trim ( $data->dcmacounterclaim->counter_claim_url );
 		$counter_address = trim ( $data->dcmacounterclaim->counter_claim_address );
 		$counter_email = trim ( $data->dcmacounterclaim->counter_claim_email_address );
+                $agreedTerm = trim ( $data->dcmareportviolation->counter_claim_agreed_to_terms);
+
                 $time = time ();
 		$message = '';
                  $status = 'Success';
                 
-                
-                if(empty ( $violation_id )){
+                if(empty ( $agreedTerm )){
+                    $message = 'Pleae aceept terms ';
+			$status = 'Failure';
+                }elseif(empty ( $violation_id )){
                     $message = 'Violation record not found';
 		    $status = 'Failure';
                 } else {

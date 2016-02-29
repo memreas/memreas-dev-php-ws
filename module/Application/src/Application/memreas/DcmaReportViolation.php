@@ -39,12 +39,16 @@ class DcmaReportViolation {
 		$name = trim ( $data->dcmareportviolation->copyright_owner_name );
 		$address = trim ( $data->dcmareportviolation->copyright_owner_address );
                 $email = trim ( $data->dcmareportviolation->copyright_owner_email_address);
+                $agreedTerm = trim ( $data->dcmareportviolation->copyright_owner_agreed_to_terms);
                 $meta = trim ( $data->dcmareportviolation->meta);
                 $claim_status = MemreasConstants::DCMA_CLAIM;
                 $time = time ();
 		$message = '';
                 
-		if (empty ( $media_id )) {
+                if(empty ( $agreedTerm )){
+                    $message = 'Pleae aceept terms ';
+			$status = 'Failure';
+                }else if (empty ( $media_id )) {
 			$message = 'Media Not Found';
 			$status = 'Failure';
                 } else {
@@ -73,6 +77,7 @@ class DcmaReportViolation {
 			$tblDcmaViolation->copyright_owner_name = $name;
 			$tblDcmaViolation->copyright_owner_address = $address;
                         $tblDcmaViolation->copyright_owner_email_address = $email;
+                        $tblDcmaViolation->copyright_owner_agreed_to_terms = $agreedTerm;
 			$tblDcmaViolation->meta = $meta;
                         $tblDcmaViolation->status = MemreasConstants::DCMA_CLAIM;
                         $tblDcmaViolation->dmca_violation_report_date = $time;
