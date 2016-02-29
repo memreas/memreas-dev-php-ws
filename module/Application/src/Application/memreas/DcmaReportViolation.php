@@ -31,7 +31,7 @@ class DcmaReportViolation {
 		} else {
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
-		$stausMessage = $violation_id = '';
+		$staus = $violation_id = '';
 		$media_id = trim ( $data->dcmareportviolation->media_id );
 		$user_id = trim ( $data->dcmareportviolation->user_id );
 		$name = trim ( $data->dcmareportviolation->copyright_owner_name );
