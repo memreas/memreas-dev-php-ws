@@ -155,7 +155,7 @@ class DcmaReportViolation {
 			$xml_output .= "<dcmareportviolationresult>";
 			$xml_output .= "<status>$status</status>";
 			$xml_output .= "<message>" . $message . "</message>";
-			$xml_output .= "<voilation_id>$voilation_id</voilation_id>";
+			$xml_output .= "<violation_id>$violation_id</violation_id>";
 			
 			$xml_output .= "</dcmareportviolationresult>";
 			$xml_output .= "</xml>";
