@@ -1486,16 +1486,15 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "makepayout") {
 				$MakePayout = new MakePayout ($this->getServiceLocator () );
 				$result = $MakePayout->exec ();
-                        } else if ($actionname == "dcmareportviolation") {
-				$MakePayout = new DcmaReportViolation ($this->getServiceLocator () );
-				$result = $MakePayout->exec ();
-                                } else if ($actionname == "dcmacounterclaim") {
-				$MakePayout = new DcmaCounterClaim ($this->getServiceLocator () );
-				$result = $MakePayout->exec ();
-			
-                        } else if ($actionname == "dcmalist") {
-				$MakePayout = new DcmaList($this->getServiceLocator () );
-				$result = $MakePayout->exec ();
+			} else if ($actionname == "dcmareportviolation") {
+				$dcmaReportViolation = new DcmaReportViolation ($this->getServiceLocator () );
+				$result = $dcmaReportViolation->exec ();
+			} else if ($actionname == "dcmacounterclaim") {
+				$dcmaCounterClaim = new DcmaCounterClaim ($this->getServiceLocator () );
+				$result = $dcmaCounterClaim->exec ();
+			} else if ($actionname == "dcmalist") {
+				$dcmaList = new DcmaList($this->getServiceLocator () );
+				$result = $dcmaList->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
 				/**
 				 * -
@@ -1653,7 +1652,7 @@ class IndexController extends AbstractActionController {
                                         
 		);
 		if (in_array ( $actionname, $public )) {
-			// Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
+			Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
 			return false;
 		}
 		return true;
