@@ -1638,6 +1638,7 @@ class IndexController extends AbstractActionController {
 				'clearlog',
 				'showlog',
 				'stripe_activeCredit',
+				'dcmareportviolation',
 				/* For stripe
 				'getplans',
 				'getplansstatic',
