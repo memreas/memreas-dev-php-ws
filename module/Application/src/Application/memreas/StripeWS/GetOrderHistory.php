@@ -60,62 +60,7 @@ class GetOrderHistory {
 		]);
 		
  		$result = trim ( ( string ) $response->getBody () );
-                $data = json_decode($result, true); 
-		//error_log('resultws ----->'.print_r($data,true));
-		$status = $data ['status'];
-		
-		if ($status == 'Success') {
-			$status = 'Success';
-			$orders = $data ['orders'];
-			if (! empty ( $orders )) {
-				$output .= '<orders>';
-				if ($user_id)
-					$output .= '<user_id>' . $user_id . '</user_id>';
-				foreach ( $orders as $order ) {
-					$username = $order ['username'];
-					$transaction = $order ['transaction'];
-					$transactionRequest = json_decode ( $transaction ['transaction_request'], true );
-					if (is_array ( $transactionRequest )) {
-						if (isset ( $transaction ['description'] ))
-							$description = $transaction ['description'];
-						else
-							$description = '';
-					} else
-						$description = '';
-					
-					$output .= '<order>';
-					$output .= '<username>' . $username . '</username>';
-					$output .= '<transaction_id>' . $transaction ['transaction_id'] . '</transaction_id>';
-					$output .= '<transaction_type>' . str_replace ( "_", " ", $transaction ['transaction_type'] ) . '</transaction_type>';
-					$output .= '<transaction_detail>' . $description . '</transaction_detail>';
-					$output .= '<amount>' . $transaction ['amount'] . '</amount>';
-					$output .= '<balance>' . $order ['balance'] . '</balance>';
-					$output .= '<transaction_sent>' . $transaction ['transaction_sent'] . '</transaction_sent>';
-					$output .= '</order>';
-				}
-				$output .= '</orders>';
-			} else {
-				$status = 'Failure';
-				$message = 'No record found';
-			}
-		} else {
-			$status = 'Failure';
-			$message = $data ['message'];
-		}
-		
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<getorderhistoryresponse>";
-		$xml_output .= "<status>" . $status . "</status>";
-		if (isset ( $message ))
-			$xml_output .= "<message>{$message}</message>";
-		$xml_output .= $output;
-		$xml_output .= "</getorderhistoryresponse>";
-		$xml_output .= "</xml>";
-                		error_log('oooop'.$xml_output);
-
-		echo trim($xml_output);
+		echo $result;
 		die ();
 	}
 }
