@@ -50,10 +50,10 @@ class DcmaList {
 
 
         if ($status != 'Failure') {
-             $status = 'Success';
+             
              
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('dcma');
+            $qb->select('dcma,m');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
@@ -64,10 +64,13 @@ class DcmaList {
             $result = $qb->getQuery()->getArrayResult();
             $dcmalist='';
             if(empty($result )){
+                $status = 'Failure';
                 $message='No record found';
             }else{
               //  error_log('dcma-->'.print_r($result,true));
+              $status = 'Success';
                  foreach ($result as $rec) {
+                     error_log(print_r($re, true));
                     $dcmalist .= "<media>";
                     $dcmalist .= "<violation_id>{$rec['violation_id']}<violation_id>";
                      
