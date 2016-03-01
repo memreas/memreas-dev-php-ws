@@ -50,8 +50,7 @@ class GetOrderHistory {
 				'page' => $page,
 				'limit' => $limit 
 		);
-		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [ 
+		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
                                                 'sid' => $_SESSION ['sid'],
 						'admin_key' => $_REQUEST ['admin_key'],	 
@@ -60,8 +59,8 @@ class GetOrderHistory {
                                     ] 
 		]);
 		
- 		$data = json_decode ( $response->getBody (), true );
-		error_log('resultws ----->'.print_r($response->getBody (),true));
+ 		$result = trim ( ( string ) $response->getBody () );
+		error_log('resultws ----->'.print_r($result,true));
 		$status = $data ['status'];
 		
 		if ($status == 'Success') {
