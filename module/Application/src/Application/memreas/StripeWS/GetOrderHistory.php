@@ -113,6 +113,8 @@ class GetOrderHistory {
 		$xml_output .= $output;
 		$xml_output .= "</getorderhistoryresponse>";
 		$xml_output .= "</xml>";
+                		error_log('oooop'.$xml_output);
+
 		echo trim($xml_output);
 		die ();
 	}
