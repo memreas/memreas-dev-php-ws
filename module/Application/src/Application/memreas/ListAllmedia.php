@@ -136,9 +136,11 @@ class ListAllmedia {
 					}
 					$content_type = isset ( $json_array ['S3_files'] ['content_type'] ) ? $json_array ['S3_files'] ['content_type'] : "";
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : $json_array ['S3_files'] ['path'];
-					$media_name = basename ( $json_array ['S3_files'] ['path'] );
 					// Prefix added for matching and sync...
-					$media_name_prefix = pathinfo ( $media_name ) ['filename'];
+					//$media_name = basename ( $json_array ['S3_files'] ['path'] );
+					//$media_name_prefix = pathinfo ( $media_name ) ['filename'];
+					$media_name = $json_array ['S3_files'] ['s3file_name'];
+					$media_name_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
 					
 					// fetch device_id and type
 					$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
