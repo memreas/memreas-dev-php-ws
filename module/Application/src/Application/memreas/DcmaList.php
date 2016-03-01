@@ -53,7 +53,7 @@ class DcmaList {
              
              
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('dcma,m');
+            $qb->select('dcma,m.meta  media_meta');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
@@ -70,11 +70,14 @@ class DcmaList {
                
               $status = 'Success';
                  foreach ($result as $rec) {
-                     error_log('dcma-->'.print_r($rec,true));
+                     error_log('dcma-->'.print_r($rec['media_meta'],true));
+                     $media_url = $this->getMediaUrl($rec['media_meta']);
                      $dcmalist .= "<media>";
                     $dcmalist .= "<violation_id>{$rec['violation_id']}<violation_id>";
                      
                     $dcmalist .= "<user_id>{$rec['user_id']}</user_id>";
+                    $dcmalist .= "<media_id>{$rec['media_id']}</media_id>";
+                     $dcmalist .= "<media_url>{$media_url}</media_url>";
                     $dcmalist .= "<media_id>{$rec['media_id']}</media_id>";
                     $dcmalist .= "<copyright_owner_name>{$rec['copyright_owner_name']}</copyright_owner_name>";
                     $dcmalist .= "<copyright_owner_address>{$rec['copyright_owner_address']}</copyright_owner_address>";
@@ -117,8 +120,8 @@ class DcmaList {
         return $result;
     }
 
-    public function getMediaUrl($media) {
-        $json_array = json_decode($media->metadata, true);
+    public function getMediaUrl($metadata) {
+        $json_array = json_decode($metadata, true);
         return $this->url_signer->signArrayOfUrls($json_array ['S3_files'] ['path']);
     }
 
