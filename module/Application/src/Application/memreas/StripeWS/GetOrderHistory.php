@@ -60,8 +60,8 @@ class GetOrderHistory {
 		]);
 		
  		$result = trim ( ( string ) $response->getBody () );
-                
-		error_log('resultws ----->'.print_r($result,true));
+                $data = json_decode($result, true); 
+		error_log('resultws ----->'.print_r($data,true));
 		$status = $data ['status'];
 		
 		if ($status == 'Success') {
