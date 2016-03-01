@@ -60,6 +60,7 @@ class GetOrderHistory {
 		]);
 		
  		$result = trim ( ( string ) $response->getBody () );
+                
 		error_log('resultws ----->'.print_r($result,true));
 		$status = $data ['status'];
 		
