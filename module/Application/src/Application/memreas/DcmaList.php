@@ -53,7 +53,7 @@ class DcmaList {
              
              
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('dcma,m.meta  media_meta');
+            $qb->select('dcma,m.metadata  media_meta');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
@@ -78,8 +78,7 @@ class DcmaList {
                     $dcmalist .= "<user_id>{$rec['user_id']}</user_id>";
                     $dcmalist .= "<media_id>{$rec['media_id']}</media_id>";
                      $dcmalist .= "<media_url>{$media_url}</media_url>";
-                    $dcmalist .= "<media_id>{$rec['media_id']}</media_id>";
-                    $dcmalist .= "<copyright_owner_name>{$rec['copyright_owner_name']}</copyright_owner_name>";
+                     $dcmalist .= "<copyright_owner_name>{$rec['copyright_owner_name']}</copyright_owner_name>";
                     $dcmalist .= "<copyright_owner_address>{$rec['copyright_owner_address']}</copyright_owner_address>";
                     $dcmalist .= "<copyright_owner_email_address>{$rec['copyright_owner_email_address']}</copyright_owner_email_address>";
                     $dcmalist .= "<dmca_violation_report_date>{$rec['dmca_violation_report_date']}</dmca_violation_report_date>";
