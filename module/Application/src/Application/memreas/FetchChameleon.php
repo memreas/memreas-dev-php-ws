@@ -13,10 +13,15 @@ class FetchChameleon {
 
 	public function exec() {
 		/***
-		 * TODO: check old chameleon here.. 
+		 * Checking chameleon against cache 
 		 */
-		
-		$this->setChameleon();
+		$data = simplexml_load_string ( $_POST ['xml'] );
+		if ( $this->checkChameleon($data->fetchchameleon->x_memreas_chameleon) ) {
+			$this->setChameleon();
+		} else {
+			$this->setChameleon();
+			$token_test = "token test failed";	
+		}
 	
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -24,6 +29,9 @@ class FetchChameleon {
 		$xml_output .= "<fetchchameleonresponse>";
 		$xml_output .= "<status>success</status>";
 		$xml_output .= "<x_memreas_chameleon>" . $_SESSION['x_memreas_chameleon'] . "</x_memreas_chameleon>";
+		if (isset($token_test)) {
+			$xml_output .= "<token_test>".$token_test."</token_test>";
+		}
 		$xml_output .= "</fetchchameleonresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
