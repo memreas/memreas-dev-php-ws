@@ -67,9 +67,10 @@ class DcmaList {
                 $status = 'Failure';
                 $message='No record found';
             }else{
-               error_log('dcma-->'.print_r($result,true));
+               
               $status = 'Success';
                  foreach ($result as $rec) {
+                     error_log('dcma-->'.print_r($rec,true));
                      $dcmalist .= "<media>";
                     $dcmalist .= "<violation_id>{$rec['violation_id']}<violation_id>";
                      
