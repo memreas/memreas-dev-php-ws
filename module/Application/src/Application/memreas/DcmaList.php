@@ -53,7 +53,7 @@ class DcmaList {
              
              
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('dcma,m.metadata  media_meta');
+            $qb->select('dcma.*' ,'m.metadata  media_meta');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
             $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
@@ -61,7 +61,7 @@ class DcmaList {
             $qb->orderBy('dcma.create_time', 'DESC');
             $qb->setParameter(1, $user_id);
              
-            $result = $qb->getQuery()->getResult();
+            $result = $qb->getQuery()->getArrayResult();
             $dcmalist='';
             if(empty($result )){
                 $status = 'Failure';
