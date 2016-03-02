@@ -169,8 +169,8 @@ class AWSMemreasRedisCache {
 	 * Redis cache for public and friends events
 	 */
 	public function warmMemreasSet($user_id) {
-		// Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		$cm = __CLASS__ . __METHOD__;
+		Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		sleep ( 1 );
 		$user_id = $_SESSION ['user_id'];
 		$reply = $this->sExists ( 'warming_memreas' );
@@ -360,7 +360,8 @@ class AWSMemreasRedisCache {
 				// Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
 			} // end if (! $this->sExists ( '!memreas_friends_events_' . $user_id ))
 			
-			$warming = $this->cache->set ( 'warming_memreas', '0' );
+			//$warming = $this->cache->set ( 'warming_memreas', '0' );
+			$this->cacheremSet('warming_memreas');
 			// Mlog::addone ( $cm, '::cache warming @warming_memreas finished...' . date ( 'Y-m-d H:i:s.u' ) );
 		} // end if (! $warming_memreas || ($warming_memreas == "(nil)"))
 	}
