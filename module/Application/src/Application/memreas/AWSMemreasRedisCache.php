@@ -79,9 +79,8 @@ class AWSMemreasRedisCache {
 		sleep ( 1 );
 		
 		$warming_hashtag = $this->cache->get ( 'warming_hashtag' );
-		// Mlog::addone ( $cm, '::warming_hashtag...' . $warming_hashtag );
-		if (! $warming_hashtag || ($warming_hashtag == "(nil)")) {
-			// Mlog::addone ( $cm, '::cache warming #hashtag started...' . date ( 'Y-m-d H:i:s.u' ) );
+		if (! $warming_hashtag) {
+			Mlog::addone ( $cm, '::cache warming #hashtag started...' . date ( 'Y-m-d H:i:s.u' ) );
 			$warming = $this->cache->set ( 'warming_hashtag', '1' );
 			
 			// Fetch all event ids to check for public and friend
@@ -158,10 +157,11 @@ class AWSMemreasRedisCache {
 				$reply = $this->setExpire ( '#hashtag_public_meta_hash' );
 				// Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
 				
-				// Mlog::addone ( $cm, '::cache warming #hashtag completed...' . date ( 'Y-m-d H:i:s.u' ) );
+				$warming = $this->cache->set ( 'warming_hashtag', '0' );
+				Mlog::addone ( $cm, '::cache warming #hashtag completed...' . date ( 'Y-m-d H:i:s.u' ) );
 			} else { // end if ($tags)
 				$warming = $this->cache->set ( 'warming_hashtag', '0' );
-				// Mlog::addone ( $cm, '::cache warming #hashtag completed 0 entries...' . date ( 'Y-m-d H:i:s.u' ) );
+				Mlog::addone ( $cm, '::cache warming #hashtag completed 0 entries...' . date ( 'Y-m-d H:i:s.u' ) );
 			}
 		}
 	}
@@ -173,9 +173,9 @@ class AWSMemreasRedisCache {
 		Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		sleep ( 1 );
 		$user_id = $_SESSION ['user_id'];
-		$warming = $this->cache->get ( 'warming_memreas' );
+		$warming_memreas = $this->cache->get ( 'warming_memreas' );
 		if (! $warming_memreas) {
-			// Mlog::addone ( $cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ) );
+			Mlog::addone ( $cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ) );
 			$warming = $this->cache->set ( 'warming_memreas', '1' );
 			
 			/**
@@ -372,7 +372,7 @@ class AWSMemreasRedisCache {
 		sleep ( 1 );
 		$warming = $this->cache->get ( 'warming' );
 		if (! $warming) {
-			error_log ( "cache warming @person started..." . date ( 'Y-m-d H:i:s.u' ) . PHP_EOL );
+			Mlog::addone( $cm . __LINE__ , "cache warming @person started..." . date ( 'Y-m-d H:i:s.u' ));
 			$warming = $this->cache->set ( 'warming', '1' );
 			
 			$url_signer = new MemreasSignedURL ();
