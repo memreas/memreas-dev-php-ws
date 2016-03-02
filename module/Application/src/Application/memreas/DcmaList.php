@@ -53,9 +53,9 @@ class DcmaList {
              
              
             $qb = $this->dbAdapter->createQueryBuilder();
-            $qb->select('dcma.violation_id' ,'m.metadata  media_meta');
+            $qb->select('dcma');
             $qb->from('Application\Entity\DcmaViolation', 'dcma');
-            $qb->join('Application\Entity\Media', 'm', 'WITH', 'm.media_id = dcma.media_id');
+            
             $qb->join('Application\Entity\User', 'u', 'WITH', 'u.user_id = dcma.user_id');
             $qb->where('dcma.user_id = ?1');
             $qb->orderBy('dcma.create_time', 'DESC');
@@ -71,7 +71,7 @@ class DcmaList {
               $status = 'Success';
                  foreach ($result as $rec) {
                      error_log('dcma-->'.print_r($rec,true));
-                     $media_url = $this->getMediaUrl($rec['media_meta']);
+                     $media_url = $this->getMediaUrl($rec['media_id']);
                      $dcmalist .= "<media>";
                     $dcmalist .= "<violation_id>{$rec['violation_id']}<violation_id>";
                      
@@ -119,8 +119,11 @@ class DcmaList {
         return $result;
     }
 
-    public function getMediaUrl($metadata) {
-        $json_array = json_decode($metadata, true);
+    public function getMediaUrl($media_id) {
+        $mediaObj = $this->dbAdapter->getRepository ( "\Application\Entity\Media" )->findOneBy ( array (
+					'media_id' => $media_id 
+			) );
+        $json_array = json_decode($mediaObj->metadata, true);
         return $this->url_signer->signArrayOfUrls($json_array ['S3_files'] ['path']);
     }
 
