@@ -54,8 +54,7 @@ class GetOrder {
 		]);
 		
  		$result = trim ( ( string ) $response->getBody () );
-                error_log('order----'.print_r($result,TRUE));
-		echo $result;
+ 		echo $result;
                 die();
          
     }
