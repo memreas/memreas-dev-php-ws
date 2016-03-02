@@ -70,7 +70,7 @@ class DcmaList {
                
               $status = 'Success';
                  foreach ($result as $rec) {
-                     error_log('dcma-->'.print_r($rec['media_meta'],true));
+                     error_log('dcma-->'.print_r($rec,true));
                      $media_url = $this->getMediaUrl($rec['media_meta']);
                      $dcmalist .= "<media>";
                     $dcmalist .= "<violation_id>{$rec['violation_id']}<violation_id>";
