@@ -173,9 +173,8 @@ class AWSMemreasRedisCache {
 		Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		sleep ( 1 );
 		$user_id = $_SESSION ['user_id'];
-		$reply = $this->sExists ( 'warming_memreas' );
-		// Mlog::addone ( $cm, '::warming_memreas...' . $reply );
-		if (! $warming_memreas || ($warming_memreas == "(nil)")) {
+		$warming = $this->cache->get ( 'warming_memreas' );
+		if (! $warming_memreas) {
 			// Mlog::addone ( $cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ) );
 			$warming = $this->cache->set ( 'warming_memreas', '1' );
 			
@@ -360,9 +359,8 @@ class AWSMemreasRedisCache {
 				// Mlog::addone ( $cm . __LINE__, '::!memreas_meta_hash setExpire reply ---> ' . $reply );
 			} // end if (! $this->sExists ( '!memreas_friends_events_' . $user_id ))
 			
-			//$warming = $this->cache->set ( 'warming_memreas', '0' );
-			$this->cacheremSet('warming_memreas');
-			// Mlog::addone ( $cm, '::cache warming @warming_memreas finished...' . date ( 'Y-m-d H:i:s.u' ) );
+			$warming = $this->cache->set ( 'warming_memreas', '0' );
+			Mlog::addone ( $cm, '::cache warming @warming_memreas finished...' . date ( 'Y-m-d H:i:s.u' ) );
 		} // end if (! $warming_memreas || ($warming_memreas == "(nil)"))
 	}
 	
