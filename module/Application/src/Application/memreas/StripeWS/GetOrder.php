@@ -44,52 +44,19 @@ class GetOrder {
         $transaction_id = trim($data->getorder->transaction_id);
 
         $guzzle = new Client ();
-
-        $response = $guzzle->post(MemreasConstants::MEMREAS_PAY_URL,  [
-                                                'form_params' => [
-                                                    'action' => 'getorder',
-                                                    'transaction_id' => $transaction_id
-                                                ]
-                                                    ]
-        );
-
-        $data = json_decode($response->getBody(), true);
-        $status = $data ['status'];
-
-        if ($status == 'Success') {
-            $status = 'Success';
-            $order = $data ['order'];
-            if (!empty($order)) {
-                $output .= '<order>';
-                $output .= '<transaction_id>' . $order ['transaction_id'] . '</transaction_id>';
-                $output .= '<transaction_type>' . $order ['transaction_type'] . '</transaction_type>';
-                $output .= '<amount>' . $order ['amount'] . '</amount>';
-                $output .= '<transaction_receive>' . $order ['transaction_sent'] . '</transaction_receive>';
-                $output .= '<transaction_request>' . $order ['transaction_request'] . '</transaction_request>';
-                $output .= '<transaction_response>' . $order ['transaction_response'] . '</transaction_response>';
-                $output .= '<user_detail>' . json_encode($data ['user']) . '</user_detail>';
-                $output .= '</order>';
-            } else {
-                $status = 'Failure';
-                $message = $data ['message'];
-            }
-        } else {
-            $status = 'Failure';
-            $message = $data ['message'];
-        }
-
-        header("Content-type: text/xml");
-        $xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-        $xml_output .= "<xml>";
-        $xml_output .= "<getorderresponse>";
-        $xml_output .= "<status>" . $status . "</status>";
-        if (isset($message))
-            $xml_output .= "<message>{$message}</message>";
-        $xml_output .= $output;
-        $xml_output .= "</getorderresponse>";
-        $xml_output .= "</xml>";
-        echo trim($xml_output);
-        die();
+        $response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
+				'form_params' => [ 
+                                                'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],	 
+						'action' => 'getorder',
+						'transaction_id' => $transaction_id
+                                    ] 
+		]);
+		
+ 		$result = trim ( ( string ) $response->getBody () );
+		echo $result;
+                die();
+         
     }
 
 }
