@@ -39,6 +39,7 @@ class DcmaCounterClaim {
 		$counter_address = trim ( $data->dcmacounterclaim->counter_claim_address );
 		$counter_email = trim ( $data->dcmacounterclaim->counter_claim_email_address );
                 $agreedTerm = trim ( $data->dcmareportviolation->counter_claim_agreed_to_terms);
+                $counter_phone = trim ( $data->dcmareportviolation->counter_claim_phone_number);
 
                 $time = time ();
 		$message = '';
@@ -73,7 +74,7 @@ class DcmaCounterClaim {
                         $violationObj->counter_claim_address = $counter_address;
 			$violationObj->counter_claim_email_address = $counter_email;
 			$violationObj->counter_claim_report_date = $time;			 
-                        
+                        $violationObj->counter_claim_phone_number = $counter_phone;
                         $violationObj->status = MemreasConstants::DCMA_COUNTER_CLAIM;
                         $violationObj->update_date = $time;
 			$this->dbAdapter->persist ( $violationObj );

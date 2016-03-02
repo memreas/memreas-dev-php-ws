@@ -94,6 +94,11 @@ class DcmaViolation {
 	private $counter_claim_email_address;
         /**
 	 *
+	 * @var string @ORM\Column(name="counter_claim_phone_number", type="string", nullable=false)
+	 */
+	private $counter_claim_phone_number;
+        /**
+	 *
 	 * @var string @ORM\Column(name="counter_claim_report_date ", type="string", nullable=false)
 	 */
 	private $counter_claim_report_date;
