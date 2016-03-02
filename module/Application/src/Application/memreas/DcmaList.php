@@ -77,7 +77,7 @@ class DcmaList {
                      
                     $dcmalist .= "<user_id>{$rec['user_id']}</user_id>";
                     $dcmalist .= "<media_id>{$rec['media_id']}</media_id>";
-                     $dcmalist .= "<media_url>{$media_url}</media_url>";
+                     $dcmalist .= "<media_url><![CDATA[".$media_url."]]></media_url>";
                      $dcmalist .= "<copyright_owner_name>{$rec['copyright_owner_name']}</copyright_owner_name>";
                     $dcmalist .= "<copyright_owner_address>{$rec['copyright_owner_address']}</copyright_owner_address>";
                     $dcmalist .= "<copyright_owner_email_address>{$rec['copyright_owner_email_address']}</copyright_owner_email_address>";
