@@ -92,7 +92,7 @@ class DcmaList {
 
                    
                    
-                   $dcmalist .= "<media>";
+                   $dcmalist .= "</media>";
                 }
                 
             }
