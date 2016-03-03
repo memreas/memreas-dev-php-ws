@@ -42,8 +42,10 @@ class GetAccountDetail {
 		
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL,  [ 
-				'form_params' =>  [
+		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
+				'form_params' => [ 
+                                                'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],	
                             'action' => 'getaccountdetail',
 				'user_id' => $user_id 
                         ]
@@ -53,44 +55,10 @@ class GetAccountDetail {
 				
 		 );
 		
-		 
-		$data = json_decode ( $response->getBody (), true );
-		
-		$status = $data ['status'];
-		
-		if ($status == 'Success') {
-			$account = $data ['account'];
-			$accountDetail = $data ['accountDetail'];
-			$output .= "<account>";
-			$output .= "<username>" . $account ['username'] . "</username>";
-			$output .= "<account_id>" . $account ['account_id'] . "</account_id>";
-			$output .= "<account_type>" . $account ['account_type'] . "</account_type>";
-			$output .= "<balance>" . $account ['balance'] . "</balance>";
-			$output .= "<first_name>" . $accountDetail ['first_name'] . "</first_name>";
-			$output .= "<last_name>" . $accountDetail ['last_name'] . "</last_name>";
-			$output .= "<last_name>" . $accountDetail ['last_name'] . "</last_name>";
-			$output .= "<address_line_2>" . $accountDetail ['address_line_2'] . "</address_line_2>";
-			$output .= "<city>" . $accountDetail ['city'] . "</city>";
-			$output .= "<state>" . $accountDetail ['state'] . "</state>";
-			$output .= "<postal_code>" . $accountDetail ['postal_code'] . "</postal_code>";
-			$output .= "</account>";
-		} else {
-			$status = 'Failure';
-			$message = $data ['message'];
-		}
-		
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<getaccountdetailresponse>";
-		$xml_output .= "<status>" . $status . "</status>";
-		if (isset ( $message ))
-			$xml_output .= "<message>{$message}</message>";
-		$xml_output .= $output;
-		$xml_output .= "</getaccountdetailresponse>";
-		$xml_output .= "</xml>";
-		echo trim($xml_output);
-		die ();
+		 $result = trim ( ( string ) $response->getBody () );
+ 		echo $result;
+                die();
+	 
 	}
 }
 

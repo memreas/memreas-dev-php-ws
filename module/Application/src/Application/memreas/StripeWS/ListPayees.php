@@ -38,8 +38,10 @@ class ListPayees {
 		
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL,[
-                    'form_params' =>[
+		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
+				'form_params' => [ 
+                                                'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],	
                         'action' => 'listpayees',
 				'username' => $username,
 				'page' => $page,
@@ -50,37 +52,9 @@ class ListPayees {
 		 );
 		
 		 
-		$data = json_decode ( $response->getBody (), true );
-		
-		if ($data ['status'] == 'Success' && $data ['Numrows'] > 0) {
-			$accounts = $data ['accounts'];
-			$output .= '<accounts>';
-			foreach ( $accounts as $account ) {
-				$output .= '<account>';
-				$output .= '<account_id>' . $account ['account_id'] . '</account_id>';
-				$output .= '<username>' . $account ['username'] . '</username>';
-				$output .= '<balance>' . $account ['balance'] . '</balance>';
-				$output .= '</account>';
-			}
-			$output .= '</accounts>';
-			$status = 'Success';
-		} else {
-			$status = 'Failure';
-			$message = 'No record found';
-		}
-		
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<listpayeesresponse>";
-		$xml_output .= "<status>" . $status . "</status>";
-		if (isset ( $message ))
-			$xml_output .= "<message>{$message}</message>";
-		$xml_output .= $output;
-		$xml_output .= "</listpayeesresponse>";
-		$xml_output .= "</xml>";
-		echo trim($xml_output);
-		die ();
+$result = trim ( ( string ) $response->getBody () );
+ 		echo $result;
+                die();
 	}
 }
 

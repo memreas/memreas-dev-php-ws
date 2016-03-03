@@ -40,8 +40,10 @@ class GetPlansStatic {
 		$static = trim ( $data->getplansstatic->static );
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL,  [
-                    'form_params' =>[
+		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
+				'form_params' => [ 
+                                                'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],	
                         'action' => 'listplansstatic',
                         'static' => $static 
                     ]
@@ -49,43 +51,9 @@ class GetPlansStatic {
 				
 		 );
 		 
-		$data = json_decode ( $response->getBody (), true );
-		$status = $data ['status'];
-		
-		if ($status == 'Success') {
-			$plans = $data ['plans'];
-			if (! empty ( $plans )) {
-				$output .= "<plans>";
-				foreach ( $plans as $plan ) {
-					$output .= "<plan>";
-					$output .= '<plan_id>' . $plan ['id'] . '</plan_id>';
-					$output .= '<plan_name>' . $plan ['name'] . '</plan_name>';
-					$output .= '<plan_amount>' . ($plan ['amount'] / 100) . '</plan_amount>';
-					$output .= '<plan_currency>' . $plan ['currency'] . '</plan_currency>';
-					if ($static)
-						$output .= '<user_count>' . $plan ['total_user'] . '</user_count>';
-					$output .= "</plan>";
-				}
-				$output .= "</plans>";
-			} else {
-				$status = 'Failure';
-				$message = 'There is no plan at this time';
-			}
-		} else
-			$message = $data ['message'];
-		
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<getplansresponse>";
-		$xml_output .= "<status>" . $status . "</status>";
-		if (isset ( $message ))
-			$xml_output .= "<message>{$message}</message>";
-		$xml_output .= $output;
-		$xml_output .= "</getplansresponse>";
-		$xml_output .= "</xml>";
-		echo trim($xml_output);
-		die ();
+		$result = trim ( ( string ) $response->getBody () );
+ 		echo $result;
+                die();
 	}
 }
 

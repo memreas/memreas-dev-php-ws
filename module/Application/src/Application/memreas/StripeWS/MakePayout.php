@@ -38,8 +38,10 @@ class MakePayout {
 		
 		$guzzle = new Client ();
 		
-		$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL,  [
-                    'form_params' =>[
+		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
+				'form_params' => [ 
+                                                'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],	
                         'action' => 'makepayout',
 				'account_id' => $account_id,
 				'amount' => $amount,
@@ -48,25 +50,9 @@ class MakePayout {
                 ]
 				
                 );
-		
-		 
-		$data = json_decode ( $response->getBody (), true );
-		
-		$status = $data ['status'];
-		$message = $data ['message'];
-		
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<makepayoutresponse>";
-		$xml_output .= "<status>" . $status . "</status>";
-		if (isset ( $message ))
-			$xml_output .= "<message>{$message}</message>";
-		$xml_output .= $output;
-		$xml_output .= "</makepayoutresponse>";
-		$xml_output .= "</xml>";
-		echo trim($xml_output);
-		die ();
+		$result = trim ( ( string ) $response->getBody () );
+ 		echo $result;
+                die();
 	}
 }
 
