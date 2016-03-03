@@ -32,31 +32,35 @@ class DeletePhoto {
 		$this->s3 = $this->aws->createS3 ();
 	}
 	public function exec() {
+		$cm = __CLASS__.__METHOD__;
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$mediaid = trim ( $data->deletephoto->mediaid );
 		
-		error_log ( "Deleting ---> " . $mediaid . PHP_EOL );
+		Mlog::addone($cm.__LINE__."Deleting ---> " , $mediaid);
 		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
 		$xml_output .= "<deletephotoresponse>";
+		Mlog::addone($cm,__LINE__);
 		
 		if (isset ( $mediaid ) && ! empty ( $mediaid )) {
 			$seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'";
-			
 			$statement = $this->dbAdapter->createQuery ( $seldata );
 			$resseldata = $statement->getResult ();
+			Mlog::addone($cm,__LINE__);
+				
 			$user_id = $resseldata [0]->user_id;
 			$copyright_id = $resseldata [0]->copyright_id;
 			$metadata = json_decode($resseldata [0]->metadata, true);
-			
+			Mlog::addone($cm,__LINE__);
+				
 			if (count ( $resseldata ) > 0) {
 				
 				// Check if media related to any event
-				$media_event = "SELECT em FROM Application\Entity\EventMedia em WHERE em.media_id = '$mediaid'";
-				$statement = $this->dbAdapter->createQuery ( $media_event );
-				$result = $statement->getResult ();
+				//$media_event = "SELECT em FROM Application\Entity\EventMedia em WHERE em.media_id = '$mediaid'";
+				//$statement = $this->dbAdapter->createQuery ( $media_event );
+				//$result = $statement->getResult ();
 				
 				/**
 				 * Allow delete even if memreas share uses
@@ -65,9 +69,11 @@ class DeletePhoto {
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'fail::count($result)::', count ( $result ) );
 				// $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
 				// } else {
+				
 				//
 				// Batch Delete - memreasdevsec
 				//
+				/*
 				$prefix = $resseldata [0]->user_id . '/' . $mediaid;
 				$listObjectsParams = [ 
 						'Bucket' => MemreasConstants::S3BUCKET,
@@ -75,13 +81,13 @@ class DeletePhoto {
 				];
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'memreasdevsec Prefix => $prefix::', $prefix );
 				$delete = BatchDelete::fromListObjects ( $this->s3, $listObjectsParams );
-				// Asynchronously delete $promise = $delete->promise();
-				// Force synchronous completion $delete->delete();
 				$delete->delete ();
+				*/
 				
 				//
-				// memreasdevsec
+				// memreasdevsec and memreasdevhlssec
 				//
+Mlog::addone($cm,__LINE__);
 				$user_id = $resseldata [0]->user_id;
 				$prefix = $user_id . '/' . $mediaid;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', $prefix );
@@ -117,20 +123,10 @@ class DeletePhoto {
 					Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . 'Error deleting $prefix::', $prefix );
 				}
 				
-				/*
-				 * JM: 28-NOV-2014 below commented - won't work given above
-				 * if...
-				 */
-				// Remove event media related to this media also
-				// $query_event = "DELETE FROM Application\Entity\EventMedia
-				// em WHERE em.media_id='$mediaid'";
-				// $event_statement = $this->dbAdapter->createQuery (
-				// $query_event );
-				// $event_result = $event_statement->getResult ();
-				
+Mlog::addone($cm,__LINE__);
 				try {
 					/**
-					 * Scrub metadata to set stock image
+					 * Scrub metadata to set stock image in case added to event
 					 */
 					$metadata['S3_files']['delete_flag'] = '1';
 					$metadata['S3_files']['path'] = '';
@@ -141,33 +137,38 @@ class DeletePhoto {
 					$metadata['S3_files']['thumbnails']["98x78"] = '';
 					$metadata['S3_files']['thumbnails']["1280x720"] = '';					
 					
+Mlog::addone($cm,__LINE__);
 					/**
 					 * Update media table to set delete_flag to 1 and replace metadata with stock image 
 					 */
 					$now = date ( 'Y-m-d H:i:s' );
 					$meta = json_encode($metadata);
-					$delete_media = "
+					$update_media = "
 						UPDATE Application\Entity\Media m 
 						SET m.metadata = '{$meta}',
 							m.delete_flag = 1,
-							m.update_date = {$now}
+							m.update_date = '{$now}'
 						WHERE m.media_id='{$mediaid}'";					
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $delete_media::', $delete_media );
-					$media_statement = $this->dbAdapter->createQuery ( $delete_media );
-					$delete_media_result = $media_statement->getResult ();
-					// Media Device
-					$delete_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $delete_media_device::', $delete_media_device );
-					$media_statement = $this->dbAdapter->createQuery ( $delete_media );
-					$delete_media_result = $media_statement->getResult ();
+					
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_media::', $update_media );
+					
+					$media_statement = $this->dbAdapter->createQuery ( $update_media );
+					$update_media_result = $media_statement->getResult ();
+					
+					// Media Device - not necessary - tracking data
+					//$update_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_media_device::', $update_media_device );
+					//$media_statement = $this->dbAdapter->createQuery ( $update_media );
+					//$update_media_result = $media_statement->getResult ();
 				} catch ( \Exception $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Caught exception::', $e->getMessage () );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Error deleting from db::', $delete_media );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Error deleting from db::', $update_media );
 				}
 				
 				//
 				// if copyright then update to note user deleted media invalidating copyright
 				//
+Mlog::addone($cm,__LINE__);
 				try {
 					if (! empty ( $copyright_id )) {
 						$now = date ( 'Y-m-d H:i:s' );
@@ -184,13 +185,15 @@ class DeletePhoto {
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_copyright::', $update_copyright );
 						$statement = $this->dbAdapter->createQuery ( $update_copyright );
 						$result_update_copyright = $statement->getResult ();
+Mlog::addone($cm,__LINE__);
 					}
+Mlog::addone($cm,__LINE__);
 				} catch ( \Exception $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Caught exception::', $e->getMessage () );
 				}
 				
 				// if (count ( $result ) > 0) {
-				if (count ( $delete_media_result ) > 0) {
+				if (count ( $update_media_result ) > 0) {
 					$xml_output .= "<status>success</status>";
 					$xml_output .= "<message>Media removed successfully</message>";
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::db entry deleted!' );
