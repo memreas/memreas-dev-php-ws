@@ -529,6 +529,7 @@ class ViewEvents {
 						$url79x80 = $delete_path;
 						$url448x306 = $delete_path;
 						$url98x78 = $delete_path;
+					}
 								
 				} else if (isset ( $row1 ['metadata'] )) {
 					$json_array = json_decode ( $row1 ['metadata'], true );
@@ -595,10 +596,11 @@ class ViewEvents {
 			} // end foreach event media
 		
                         }
-                } else {
-			// don't send back xml tags if empty...
-		}
-		return $xml;
+                } else 
+{
+	// don't send back xml tags if empty...
+}
+return $xml;
 	} // generateMyEventMediaXML($query_event_media_result)
 	
 	/**
@@ -668,7 +670,29 @@ class ViewEvents {
 				$url98x78 = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if (isset ( $row ['metadata'] )) {
+				if ($row['delete_flag'] == 1) {
+					$host = MemreasConstants::ORIGINAL_URL;
+					$delete_path = 'memreas/img/large/1.jpg';
+					$s3file_basename_prefix = 'media removed';
+					$s3file_location = $json_array ['S3_files'] ['location'];
+					$s3file_download_path = $delete_path;
+				
+					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
+						$type = "image";
+						$url79x80 = $delete_path;
+						$url448x306 = $delete_path;
+						$url98x78 = $delete_path;
+					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
+						$type = "video";
+						$url_web = $delete_path;
+						$url_hls = $delete_path;
+						$thum_url = $delete_path;
+						$url79x80 = $delete_path;
+						$url448x306 = $delete_path;
+						$url98x78 = $delete_path;
+					}
+				
+				} else if (isset ( $row ['metadata'] )) {
 					$json_array = json_decode ( $row ['metadata'], true );
 					
 					$url = $json_array ['S3_files'] ['path'];
@@ -807,7 +831,29 @@ class ViewEvents {
 				$media_inappropriate = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if (isset ( $event_media ['metadata'] )) {
+				if ($event_media['delete_flag'] == 1) {
+					$host = MemreasConstants::ORIGINAL_URL;
+					$delete_path = 'memreas/img/large/1.jpg';
+					$s3file_basename_prefix = 'media removed';
+					$s3file_location = $json_array ['S3_files'] ['location'];
+					$s3file_download_path = $delete_path;
+						
+					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
+						$type = "image";
+						$url79x80 = $delete_path;
+						$url448x306 = $delete_path;
+						$url98x78 = $delete_path;
+					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
+						$type = "video";
+						$url_web = $delete_path;
+						$url_hls = $delete_path;
+						$thum_url = $delete_path;
+						$url79x80 = $delete_path;
+						$url448x306 = $delete_path;
+						$url98x78 = $delete_path;
+					}
+								
+				} else if (isset ( $event_media ['metadata'] )) {
 					$json_array = json_decode ( $event_media ['metadata'], true );
 					$url = $json_array ['S3_files'] ['path'];
 					if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
