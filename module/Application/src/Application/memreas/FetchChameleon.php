@@ -8,34 +8,28 @@
 namespace Application\memreas;
 
 class FetchChameleon {
-	public function __construct() {
+	private $x_memreas_chameleon;
+	public function __construct($chameleon) {
+		$this->x_memreas_chameleon = $chameleon;
 	}
 
 	public function exec() {
 		/***
 		 * Checking chameleon against cache 
 		 */
-		$data = simplexml_load_string ( $_POST ['xml'] );
-		if ( $this->checkChameleon($data->fetchchameleon->x_memreas_chameleon) ) {
-			$this->setChameleon();
-		} else {
-			$token_test = "before server_token:: ". $_SESSION ['x_memreas_chameleon']. " ::client_token::" .$data->fetchchameleon->x_memreas_chameleon;	
-			$this->setChameleon();
-			$token_test .= "  after server_token:: ". $_SESSION ['x_memreas_chameleon'];	
+		//$data = simplexml_load_string ( $_POST ['xml'] );
+
+		$result = $this->checkChameleon($this->x_memreas_chameleon);
+		if (!$result) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . '::X_MEMREAS_CHAMELEON FAILURE check::action::', $action . ' ::$this->x_memreas_chameleon->' . $this->x_memreas_chameleon );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '::X_MEMREAS_CHAMELEON FAILURE check::$_SERVER[x_memreas_chameleon]->' , $_SERVER['x_memreas_chameleon'] );
 		}
-	
-		header ( "Content-type: text/xml" );
-		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-		$xml_output .= "<xml>";
-		$xml_output .= "<fetchchameleonresponse>";
-		$xml_output .= "<status>success</status>";
-		$xml_output .= "<x_memreas_chameleon>" . $_SESSION['x_memreas_chameleon'] . "</x_memreas_chameleon>";
-		if (isset($token_test)) {
-			$xml_output .= "<token_test>".$token_test."</token_test>";
-		}
-		$xml_output .= "</fetchchameleonresponse>";
-		$xml_output .= "</xml>";
-		echo $xml_output;
+		/**
+		 * Always set new chameleon - keep last 3
+		 */
+		$this->setChameleon();
+		
+		return $result;
 	}
 	
 	public function setChameleon() {
@@ -44,16 +38,25 @@ class FetchChameleon {
 		 * create so set and return
 		 */
 		$chameleon_value = hash ( 'sha256', uniqid ( '', true ) );
-		$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'exit x_memreas_chameleon--->', $_SESSION ['x_memreas_chameleon'] );
-	
-		return $_SESSION ['x_memreas_chameleon'];
+		$x_memreas_chameleonArr = $_SESSION ['x_memreas_chameleon'];
+		/**
+		 * keep last 3
+		 */
+		$_SESSION ['x_memreas_chameleon'][] = $chameleon_value;
+		
+		if (count($_SESSION ['x_memreas_chameleon']) > 3) {
+			unset($_SESSION ['x_memreas_chameleon'][0]);
+			$_SESSION ['x_memreas_chameleon'] = array_values($_SESSION ['x_memreas_chameleon']);
+		}
 	}
 
-	public function checkChameleon($x_memreas_chameleon) {
-		Mlog::addone ( __CLASS__ . __METHOD__ . '::enter checkChameleon checking ::', '$x_memreas_chameleon->' . $x_memreas_chameleon . '  $_SESSION[x_memreas_chameleon]-->' . $_SESSION ['x_memreas_chameleon'] );
-		if ($x_memreas_chameleon == $_SESSION ['x_memreas_chameleon']) {
-			return true;
+	public function checkChameleon($client_x_memreas_chameleon) {
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::enter checkChameleon checking ::', '$client_x_memreas_chameleon->' . $client_x_memreas_chameleon . '  $_SESSION[x_memreas_chameleon]-->' . $_SESSION ['x_memreas_chameleon'] );
+		$x_memreas_chameleonArr = $_SESSION ['x_memreas_chameleon'];
+		foreach ($x_memreas_chameleonArr as $x_memreas_chameleon) {
+			if ($x_memreas_chameleon == $client_x_memreas_chameleon) {
+				return true;
+			}
 		}
 		return false;
 	

@@ -1700,7 +1700,7 @@ class IndexController extends AbstractActionController {
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->memreascookie----> ', ( string ) $data->memreascookie );
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->x_memreas_chameleon ----->', ( string ) $data->x_memreas_chameleon );
-					$this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie );
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, $data->x_memreas_chameleon );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}

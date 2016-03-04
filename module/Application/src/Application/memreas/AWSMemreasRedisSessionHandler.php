@@ -65,7 +65,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		session_start ();
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
-	public function startSessionWithMemreasCookie($memreascookie) {
+	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon='') {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 		Mlog::addone ( __CLASS__ . __METHOD__ . ':: fetch $rMemreasCookieSessionArr-->', $rMemreasCookieSessionArr );
@@ -73,6 +73,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 		}
+		
+		$result = new FetchChameleon($x_memreas_chameleon);
 		
 		/*
 		 * if ($reset) {
