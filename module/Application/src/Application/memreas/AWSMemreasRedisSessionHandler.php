@@ -19,27 +19,20 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $aws_manager;
 	public function __construct($redis, $service_locator) {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 			$this->db = new \Predis\Client ( [ 
 					'scheme' => 'tcp',
 					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
 					'port' => 6379 
 			] );
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		} catch ( \Exception $e ) {
-			Mlog::addone ( __CLASS__.__METHOD__, '::predis connection exception ---> ' . $e->getMessage () );
+			Mlog::addone ( __CLASS__ . __METHOD__, '::predis connection exception ---> ' . $e->getMessage () );
 		}
 		
 		// $this->prefix = $prefix;
 		$this->prefix = '';
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		$this->mRedis = $redis;
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		$this->url_signer = new MemreasSignedURL ();
-		Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
-		
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected
@@ -68,14 +61,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		// no action necessary because using EXPIRE
 	}
 	public function startSessionWithSID($sid) {
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
-			Mlog::addone ( __CLASS__ . __METHOD__ .__LINE__, 'sid--->'.$sid);
-			session_id ( $sid );
-			Mlog::addone ( __CLASS__ . __METHOD__ .__LINE__, 'session_id set--->'.$sid);
-			Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
+		session_id ( $sid );
 		session_start ();
-			Mlog::addone ( __CLASS__ . __METHOD__ .__LINE__, 'session_start() complete');
-		Mlog::addone ( __CLASS__ . __METHOD__ ,__LINE__);
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie) {
@@ -86,21 +73,21 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 		}
-
+		
 		/*
-		if ($reset) {
-			$chameleon_value = $this->checkChameleon ( $x_memreascookie_chameleon );
-			if ($chameleon_value) {
-				$rMemreasCookieSessionArr ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] = $chameleon_value;
-				$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $rMemreasCookieSessionArr ) );
-			} else {
-				// suspicious - failed chameleon test
-				$this->closeSessionWithMemreasCookie ();
-			}
-		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[x_memreas_chameleon]--->', $_SESSION ['x_memreas_chameleon'] );
-		*/
+		 * if ($reset) {
+		 * $chameleon_value = $this->checkChameleon ( $x_memreascookie_chameleon );
+		 * if ($chameleon_value) {
+		 * $rMemreasCookieSessionArr ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] = $chameleon_value;
+		 * $this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $rMemreasCookieSessionArr ) );
+		 * } else {
+		 * // suspicious - failed chameleon test
+		 * $this->closeSessionWithMemreasCookie ();
+		 * }
+		 * }
+		 * Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
+		 * Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[x_memreas_chameleon]--->', $_SESSION ['x_memreas_chameleon'] );
+		 */
 	}
 	public function startSessionWithUID($data) {
 		if (! empty ( $data->uid )) {
