@@ -95,20 +95,20 @@ class ViewEvents {
 						 */
 						$likeCount = $this->fetchEventLikeCount ( $row->event_id );
 						$xml_output .= "<like_count>" . $likeCount . "</like_count>";
-						Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::',  $likeCount);
+						Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::', $likeCount );
 						
 						/**
 						 * get comment count for event
 						 */
 						$commCount = $this->fetchEventCommentCount ( $row->event_id );
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
-						Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::',  $commCount);
+						Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::', $commCount );
 						
 						/**
 						 * Fetch event friends...
 						 */
 						$friends = $this->fetchEventFriends ( $row->event_id );
-						Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::',  count($friends));
+						Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::', count ( $friends ) );
 						
 						/**
 						 * Generate event friends xml...
@@ -124,13 +124,13 @@ class ViewEvents {
 						 * get event media
 						 */
 						$query_event_media_result = $this->fetchMyEventsMedia ( $user_id, $row->event_id );
-						Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::',  $query_event_media_result);
+						Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::', $query_event_media_result );
 						
 						/**
 						 * generateMyEventMediaXML
 						 */
 						$xml_output .= $this->generateMyEventMediaXML ( $query_event_media_result );
-						Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::',  $this->generateMyEventMediaXML ( $query_event_media_result ));
+						Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
 						
 						$xml_output .= "</event>";
 					} // end for loop my events
@@ -194,7 +194,7 @@ class ViewEvents {
 						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ))
 							$pic_98x78 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] );
 					} else {
-						$url1 = $this->url_signer->signArrayOfUrls (null);
+						$url1 = $this->url_signer->signArrayOfUrls ( null );
 						$pic_79x80 = '';
 						$pic_448x306 = '';
 						$pic_98x78 = '';
@@ -245,7 +245,6 @@ class ViewEvents {
 								continue;
 							}
 						}
-						
 						
 						/**
 						 * Fetch event friends...
@@ -458,7 +457,7 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
-		//error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
+		// error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
 		echo $xml_output;
 	} // end exec()
 	
@@ -486,7 +485,7 @@ class ViewEvents {
 		$qb->setParameter ( 1, $user_id );
 		$qb->setParameter ( 2, $event_id );
 		$result = $qb->getQuery ()->getResult ();
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result);
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
 		return $result;
 	}
 	private function generateMyEventMediaXML($query_event_media_result) {
@@ -509,13 +508,13 @@ class ViewEvents {
 				 * Check if media was deleted
 				 */
 				$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
-				if ($row1['delete_flag'] == 1) {
+				if ($row1 ['delete_flag'] == 1) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
 					$s3file_location = $json_array ['S3_files'] ['location'];
 					$s3file_download_path = $delete_path;
-						
+					
 					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						$type = "image";
 						$url79x80 = $delete_path;
@@ -530,7 +529,6 @@ class ViewEvents {
 						$url448x306 = $delete_path;
 						$url98x78 = $delete_path;
 					}
-								
 				} else if (isset ( $row1 ['metadata'] )) {
 					$json_array = json_decode ( $row1 ['metadata'], true );
 					$url = $json_array ['S3_files'] ['path'];
@@ -574,7 +572,6 @@ class ViewEvents {
 					// hls video specific
 					if ($host == MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST) {
 						$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
-						
 					} else {
 						$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, $host ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					}
@@ -594,13 +591,10 @@ class ViewEvents {
 					$xml .= "</event_media>";
 				}
 			} // end foreach event media
-		
-                        }
-                } else 
-{
-	// don't send back xml tags if empty...
-}
-return $xml;
+		} else {
+			// don't send back xml tags if empty...
+		}
+		return $xml;
 	} // generateMyEventMediaXML($query_event_media_result)
 	
 	/**
@@ -670,13 +664,13 @@ return $xml;
 				$url98x78 = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if ($row['delete_flag'] == 1) {
+				if ($row ['delete_flag'] == 1) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
 					$s3file_location = $json_array ['S3_files'] ['location'];
 					$s3file_download_path = $delete_path;
-				
+					
 					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						$type = "image";
 						$url79x80 = $delete_path;
@@ -691,7 +685,6 @@ return $xml;
 						$url448x306 = $delete_path;
 						$url98x78 = $delete_path;
 					}
-				
 				} else if (isset ( $row ['metadata'] )) {
 					$json_array = json_decode ( $row ['metadata'], true );
 					
@@ -799,7 +792,7 @@ return $xml;
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
 		
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
 		return $public_events_array;
 	}
 	private function fetchOwnerProfilePic($user_id) {
@@ -831,13 +824,13 @@ return $xml;
 				$media_inappropriate = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if ($event_media['delete_flag'] == 1) {
+				if ($event_media ['delete_flag'] == 1) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
 					$s3file_location = $json_array ['S3_files'] ['location'];
 					$s3file_download_path = $delete_path;
-						
+					
 					if (isset ( $json_array ['S3_files'] ['type'] ['image'] ) && is_array ( $json_array ['S3_files'] ['type'] ['image'] )) {
 						$type = "image";
 						$url79x80 = $delete_path;
@@ -852,7 +845,6 @@ return $xml;
 						$url448x306 = $delete_path;
 						$url98x78 = $delete_path;
 					}
-								
 				} else if (isset ( $event_media ['metadata'] )) {
 					$json_array = json_decode ( $event_media ['metadata'], true );
 					$url = $json_array ['S3_files'] ['path'];
