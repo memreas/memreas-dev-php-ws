@@ -191,7 +191,7 @@ class IndexController extends AbstractActionController {
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		 Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
@@ -225,7 +225,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Bypass section - handle with care!!
 		 */
-		Mlog::addone($cm.__LINE__.'::input data as object---> ', $data, 'p');
+		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data, 'p' );
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
@@ -1484,16 +1484,16 @@ class IndexController extends AbstractActionController {
 				$ListPayees = new ListPayees ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $ListPayees->exec ();
 			} else if ($actionname == "makepayout") {
-				$MakePayout = new MakePayout ($this->getServiceLocator () );
+				$MakePayout = new MakePayout ( $this->getServiceLocator () );
 				$result = $MakePayout->exec ();
 			} else if ($actionname == "dcmareportviolation") {
-				$dcmaReportViolation = new DcmaReportViolation ($this->getServiceLocator () );
+				$dcmaReportViolation = new DcmaReportViolation ( $this->getServiceLocator () );
 				$result = $dcmaReportViolation->exec ();
 			} else if ($actionname == "dcmacounterclaim") {
-				$dcmaCounterClaim = new DcmaCounterClaim ($this->getServiceLocator () );
+				$dcmaCounterClaim = new DcmaCounterClaim ( $this->getServiceLocator () );
 				$result = $dcmaCounterClaim->exec ();
 			} else if ($actionname == "dcmalist") {
-				$dcmaList = new DcmaList($this->getServiceLocator () );
+				$dcmaList = new DcmaList ( $this->getServiceLocator () );
 				$result = $dcmaList->exec ();
 			} else if (strpos ( $actionname, "stripe_" ) !== false) {
 				/**
@@ -1550,30 +1550,27 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
-			/*
-			 * if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
-			 * if ($this->isJson ( $output )) {
-			 * $message_data = json_decode ( $output, true );
-			 *
-			 * $message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
-			 * Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
-			 * $output = json_encode ( $message_data );
-			 * } else {
-			 * $data = simplexml_load_string ( $output );
-			 * if (empty ( $data->x_memreas_chameleon )) {
-			 * // $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
-			 * $data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
-			 * $output = $data->asXML ();
-			 * // error_log ( '$xml-->' . $xml );
-			 * }
-			 * Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
-			 * }
-			 * }
-			 * // Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
-			 */
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
+				if ($this->isJson ( $output )) {
+					$message_data = json_decode ( $output, true );
+					
+					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+					$output = json_encode ( $message_data );
+				} else {
+					$data = simplexml_load_string ( $output );
+					if (empty ( $data->x_memreas_chameleon )) {
+						// $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
+						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
+						$output = $data->asXML ();
+						// error_log ( '$xml-->' . $xml );
+					}
+					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
+				}
+			}
+			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		}
 		
 		/**
@@ -1713,29 +1710,28 @@ class IndexController extends AbstractActionController {
 					return 'notlogin';
 				}
 			} // end if ($requiresExistingSession)
-			
-			/**
-			 * Fetch user ip
-			 */
-			//$currentIPAddress = $this->fetchUserIPAddress ();
-			//if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-			//	Mlog::addone ( "$_SESSION [ipAddress]", $_SESSION ['ipAddress'] );
-			//	Mlog::addone ( "$currentIPAddress", $currentIPAddress );
-			//	Mlog::addone ( __CLASS__.__METHOD__,"ERROR::User IP Address has changed - logging user out!" );
-			//	Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
-			//	return 'notlogin';
-			//}
-			//$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-			//if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-			//	$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
-			//}
-		} catch ( \Exception $e ) 
-{
-	// echo 'Caught exception: ', $e->getMessage(), "\n";
-	error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
-}
-
-return $actionname;
+		
+		/**
+		 * Fetch user ip
+		 */
+			// $currentIPAddress = $this->fetchUserIPAddress ();
+			// if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+			// Mlog::addone ( "$_SESSION [ipAddress]", $_SESSION ['ipAddress'] );
+			// Mlog::addone ( "$currentIPAddress", $currentIPAddress );
+			// Mlog::addone ( __CLASS__.__METHOD__,"ERROR::User IP Address has changed - logging user out!" );
+			// Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
+			// return 'notlogin';
+			// }
+			// $_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+			// if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+			// $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			// }
+		} catch ( \Exception $e ) {
+			// echo 'Caught exception: ', $e->getMessage(), "\n";
+			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
+		}
+		
+		return $actionname;
 	}
 	public function fetchUserIPAddress() {
 		/*
