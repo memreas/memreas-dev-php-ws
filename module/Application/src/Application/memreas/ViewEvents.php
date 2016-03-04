@@ -27,7 +27,8 @@ class ViewEvents {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
-		Mlog::addone ( __CLASS__ . __METHOD__ . '::inbound xml-->', $_POST ['xml'] );
+		$cm = __CLASS__ . __METHOD__;
+		Mlog::addone ( $cm . '::inbound xml-->', $_POST ['xml'] );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
 		$is_my_event = trim ( $data->viewevent->is_my_event );
@@ -53,7 +54,7 @@ class ViewEvents {
 		 * ---------------------------my events----------------------------
 		 */
 		if ($is_my_event) {
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::my event::', __LINE__ );
+			Mlog::addone ( $cm . '::my event::', __LINE__ );
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -62,7 +63,7 @@ class ViewEvents {
 			 * MyEvents Query
 			 */
 			$result_event = $this->fetchMyEvents ( $user_id );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
+			Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -94,17 +95,20 @@ class ViewEvents {
 						 */
 						$likeCount = $this->fetchEventLikeCount ( $row->event_id );
 						$xml_output .= "<like_count>" . $likeCount . "</like_count>";
+						Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::',  $likeCount);
 						
 						/**
 						 * get comment count for event
 						 */
 						$commCount = $this->fetchEventCommentCount ( $row->event_id );
 						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
+						Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::',  $commCount);
 						
 						/**
 						 * Fetch event friends...
 						 */
 						$friends = $this->fetchEventFriends ( $row->event_id );
+						Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::',  count($friends));
 						
 						/**
 						 * Generate event friends xml...
@@ -120,11 +124,13 @@ class ViewEvents {
 						 * get event media
 						 */
 						$query_event_media_result = $this->fetchMyEventsMedia ( $user_id, $row->event_id );
+						Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::',  $query_event_media_result);
 						
 						/**
 						 * generateMyEventMediaXML
 						 */
 						$xml_output .= $this->generateMyEventMediaXML ( $query_event_media_result );
+						Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::',  $this->generateMyEventMediaXML ( $query_event_media_result ));
 						
 						$xml_output .= "</event>";
 					} // end for loop my events
@@ -141,7 +147,7 @@ class ViewEvents {
 		 * ------------------------for friends event-------------------------
 		 */
 		if ($is_friend_event) {
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::friends event::', __LINE__ );
+			Mlog::addone ( $cm . '::friends event::', __LINE__ );
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -151,15 +157,15 @@ class ViewEvents {
 			 * FriendsEvents Query
 			 */
 			$result_friendevent = $this->fetchFriendsEvents ( $user_id );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::$result_friendevent::', $result_friendevent );
+			Mlog::addone ( $cm . '::$result_friendevent::', $result_friendevent );
 			if (empty ( $result_friendevent )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchFriendsEvents ()::', "fail - no records found..." );
+				Mlog::addone ( $cm . __LINE__ . '::$this->fetchFriendsEvents ()::', "fail - no records found..." );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>My Friends Events List</message>";
 				$xml_output .= "<page>0</page>";
 				$xml_output .= "<friends/>";
 			} else {
-				Mlog::addone ( __CLASS__ . __METHOD__ . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
+				Mlog::addone ( $cm . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>My Friends Events List</message>";
 				$xml_output .= "<page>$page</page>";
@@ -312,13 +318,13 @@ class ViewEvents {
 			$result_pub = $this->fetchPublicEvents ();
 			
 			if (count ( $result_pub ) == 0) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
+				Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>Public Event List</message>";
 				$xml_output .= "<page>0</page>";
 				$xml_output .= "<events/>";
 			} else {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->fetchPublicEvents ()::', "success - records found..." . count ( $result_pub ) );
+				Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "success - records found..." . count ( $result_pub ) );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>Public Event List</message>";
 				$xml_output .= "<page>$page</page>";
@@ -327,7 +333,7 @@ class ViewEvents {
 				foreach ( $result_pub as $public_event_row ) {
 					
 					if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
+						Mlog::addone ( $cm . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
 						$event_json_array = json_decode ( $public_event_row ['metadata'], true );
 						//
 						// If selling is off then skip this event
@@ -469,9 +475,9 @@ class ViewEvents {
 		return $statement->getResult ();
 	}
 	private function fetchMyEventsMedia($user_id, $event_id) {
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
 		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata' );
+		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata', 'media.delete_flag' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
 		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
 		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
@@ -479,7 +485,9 @@ class ViewEvents {
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $user_id );
 		$qb->setParameter ( 2, $event_id );
-		return $qb->getQuery ()->getResult ();
+		$result = $qb->getQuery ()->getResult ();
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result);
+		return $result;
 	}
 	private function generateMyEventMediaXML($query_event_media_result) {
 		$xml = '';
