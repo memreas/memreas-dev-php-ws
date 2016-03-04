@@ -19,8 +19,9 @@ class FetchChameleon {
 		if ( $this->checkChameleon($data->fetchchameleon->x_memreas_chameleon) ) {
 			$this->setChameleon();
 		} else {
+			$token_test = "before server_token:: ". $_SESSION ['x_memreas_chameleon']. " ::client_token::" .$data->fetchchameleon->x_memreas_chameleon;	
 			$this->setChameleon();
-			$token_test = "token test failed";	
+			$token_test = "  after server_token:: ". $_SESSION ['x_memreas_chameleon'];	
 		}
 	
 		header ( "Content-type: text/xml" );
@@ -44,7 +45,7 @@ class FetchChameleon {
 		 */
 		$chameleon_value = hash ( 'sha256', uniqid ( '', true ) );
 		$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'exit x_memreas_chameleon--->', $_SESSION ['x_memreas_chameleon'] );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'exit x_memreas_chameleon--->', $_SESSION ['x_memreas_chameleon'] );
 	
 		return $_SESSION ['x_memreas_chameleon'];
 	}

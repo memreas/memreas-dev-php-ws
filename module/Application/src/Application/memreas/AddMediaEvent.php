@@ -117,6 +117,9 @@ class AddMediaEvent {
 				if (! isset ( $media_id ) || empty ( $media_id )) {
 					throw new \Exception ( 'Error : media_id is empty' );
 				}
+				if (! isset ( $event_id ) || empty ( $event_id )) {
+					throw new \Exception ( 'Error : event_id is empty' );
+				}
 				$tblEventMedia = new \Application\Entity\EventMedia ();
 				$tblEventMedia->media_id = $media_id;
 				$tblEventMedia->event_id = $event_id;
@@ -139,7 +142,7 @@ class AddMediaEvent {
 				$is_audio = 0;
 				
 				// ///////////////////////////////////////////////
-				// insert into media and event media
+				// insert into user and media for profile pic
 				// ///////////////////////////////////////////////
 				if ($is_profile_pic) {
 					//
@@ -164,14 +167,14 @@ class AddMediaEvent {
 				// create metadata based on content type
 				// ///////////////////////////////////////
 				$s3file = $s3path . $s3file_name;
+				$s3bucket = MemreasConstants::S3BUCKET;
 				$json_array = array ();
 				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 				$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 				$json_array ['S3_files'] ['copyright'] = json_decode ( $copyright );
-				$json_array ['S3_files'] ['bucket'] = MemreasConstants::S3BUCKET;
+				$json_array ['S3_files'] ['bucket'] = $s3bucket;
 				$json_array ['S3_files'] ['path'] = $s3file;
 				$json_array ['S3_files'] ['full'] = $s3file;
-				$json_array ['S3_files'] ['bucket'] = S3BUCKET;
 				$json_array ['S3_files'] ['location'] = json_decode ( ( string ) $location );
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_id'] = $device_id;
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_id'] = $device_id;
@@ -181,9 +184,9 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['file_type'] = $file_type [0];
 				$json_array ['S3_files'] ['content_type'] = $content_type;
 				$file_type = explode ( '/', $content_type );
-				Mlog::addone ( '$file_type', $file_type );
-				Mlog::addone ( '$file_type[0]', $file_type [0] );
-				Mlog::addone ( '$file_type[1]', $file_type [1] );
+				//Mlog::addone ( '$file_type', $file_type );
+				//Mlog::addone ( '$file_type[0]', $file_type [0] );
+				//Mlog::addone ( '$file_type[1]', $file_type [1] );
 				if (strtolower ( $file_type [0] ) == "video") {
 					$is_video = 1;
 					$json_array ['S3_files'] ['is_video'] = 1;
@@ -196,8 +199,9 @@ class AddMediaEvent {
 				
 				/**
 				 * -
-				 * doesn't work...
-				 * Check if media is uploaded to S3 if you can't find it then return exception
+				 * TODO: Check if media is uploaded to S3 if you can't find it then return exception 
+				 * doesn't work... commented out for now
+				 * 
 				 */
 				// $s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 				// $result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
@@ -227,6 +231,7 @@ class AddMediaEvent {
 				$tblMedia->create_date = $now;
 				$tblMedia->update_date = $now;
 				$this->dbAdapter->persist ( $tblMedia );
+				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'addmediaevent media insert metadata--->', $json_str);
 				
 				/**
 				 * Update copyright batch data and copyright table.

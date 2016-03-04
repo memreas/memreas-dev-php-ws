@@ -739,6 +739,18 @@ class ViewEvents {
 					$xml .= "</event_media>";
 				} // end if (isset ( $row ['metadata'] ))
 			} // end for each event friend media
+			if ($only_audio_in_event) {
+				$xml .= "<event_media>";
+				$xml .= "<event_media_id></event_media_id>";
+				$xml .= "<event_media_name></event_media_name>";
+				$xml .= "<event_media_type></event_media_type>";
+				$xml .= "<event_media_url></event_media_url>";
+				$xml .= "<event_media_video_thum></event_media_video_thum>";
+				$xml .= "<event_media_79x80></event_media_79x80>";
+				$xml .= "<event_media_98x78></event_media_98x78>";
+				$xml .= "<event_media_448x306></event_media_448x306>";
+				$xml .= "</event_media>";
+			}
 		} else {
 			// don't send tags if empty
 		}
