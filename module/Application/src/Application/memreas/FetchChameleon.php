@@ -21,7 +21,7 @@ class FetchChameleon {
 		} else {
 			$token_test = "before server_token:: ". $_SESSION ['x_memreas_chameleon']. " ::client_token::" .$data->fetchchameleon->x_memreas_chameleon;	
 			$this->setChameleon();
-			$token_test = "  after server_token:: ". $_SESSION ['x_memreas_chameleon'];	
+			$token_test .= "  after server_token:: ". $_SESSION ['x_memreas_chameleon'];	
 		}
 	
 		header ( "Content-type: text/xml" );
