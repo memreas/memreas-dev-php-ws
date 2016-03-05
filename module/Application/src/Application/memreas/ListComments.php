@@ -73,12 +73,10 @@ class ListComments {
 			$qb->andWhere ( "c.media_id=?2" );
 			$qb->setParameter ( 2, $media_id );
 		}
-		
 		$qb->orderBy ( 'c.create_time', 'DESC' );
-		
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
-		// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
+		error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 		$result_comment = $qb->getQuery ()->getResult ();
 		
 		$output .= '<comments>';
@@ -121,8 +119,9 @@ class ListComments {
 				}
 				
 				$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0] ))
+				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0] )){
 					$url1 = $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0];
+				}
 				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
 				$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
 				
