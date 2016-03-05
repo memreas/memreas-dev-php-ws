@@ -69,10 +69,10 @@ class AddComment {
 					$type;
 					if (empty ( $audio_media_id )) {
 						$type = 'text';
-						$audio_media_id = null;
+						$audio_media_id = "";
 					} else if (empty ( $comment )) {
 						$type = 'audio';
-						$comment = null;
+						$comment = "";
 					} else {
 						$type = 'text|audio';
 					}
