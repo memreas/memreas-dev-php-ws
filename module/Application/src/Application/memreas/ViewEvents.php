@@ -475,18 +475,35 @@ class ViewEvents {
 	}
 	private function fetchMyEventsMedia($user_id, $event_id) {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
+		/*
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata', 'media.delete_flag' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
 		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
-		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' and 'media.delete_flag != 1' );
+		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
 		$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $user_id );
 		$qb->setParameter ( 2, $event_id );
 		$result = $qb->getQuery ()->getResult ();
+		*/
+		$q_event_media = "select event.event_id, event.name, media.media_id, media.metadata, media.delete_flag
+							from  Application\Entity\Media media,
+								 Application\Entity\Event event,
+								 Application\Entity\EventMedia eventmedia,
+							where event_media.media_id = media.media_id
+							and event.event_id = eventmedia.event_id
+							and media.report_flag = 0
+				            and media.delete_flag != 1
+							and event_media.event_id = ?1
+							and event.user_id = ?2
+							order by media.create_date desc";
+		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
+		$event_media_query->setParameter ( 1, $event_id );
+		$event_media_query->setParameter ( 2, $user_id );
+		$result = $event_media_query->getResult ();
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
-		return $result;
+		return $result;		
 	}
 	private function generateMyEventMediaXML($query_event_media_result) {
 		$xml = '';
@@ -941,7 +958,7 @@ class ViewEvents {
 							from Application\Entity\Media media,
 							Application\Entity\EventMedia event_media
 							where event_media.media_id = media.media_id
-                            and media.report_flag =0
+                            and media.report_flag = 0
 				            and media.delete_flag != 1
 							and event_media.event_id = ?1
 							order by media.create_date desc";
