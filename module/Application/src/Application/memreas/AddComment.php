@@ -53,13 +53,10 @@ class AddComment {
 			if (! isset ( $event_id ) || empty ( $event_id )) {
 				$message = 'event id is empty';
 				$status = 'Failure';
-				// } else if (empty ( $media_id )) {
-				// $message = 'media_id is empty';
-				// $status = 'Failure';
 			} else if (empty ( $comment ) && empty ( $audio_media_id )) {
-				throw new \Exception ( 'comment is empty' );
+				throw new \Exception ( 'audio and text are empty' );
 			} else if (empty ( $user_id )) {
-				throw new \Exception ( 'user_id is empty' );
+				throw new \Exception ( 'user id is empty' );
 			} else {
 				$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 				$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
@@ -69,37 +66,36 @@ class AddComment {
 					throw new \Exception ( 'event_id not found' );
 				} else {
 					
-					$uuid = MUUID::fetchUUID ();
-					$tblComment = new \Application\Entity\Comment ();
-					// profanity check
-					$comment = $this->tester->censor ( $comment );
 					$type;
-					
 					if (empty ( $audio_media_id )) {
 						$type = 'text';
+						$audio_media_id = null;
 					} else if (empty ( $comment )) {
 						$type = 'audio';
+						$comment = null;
 					} else {
 						$type = 'text|audio';
 					}
-					
-					if (empty ( $audio_media_id )) {
-						
-						$tblComment->comment_id = $uuid;
-						$tblComment->media_id = $media_id;
-						$tblComment->user_id = $user_id;
-						$tblComment->type = $type;
-						$tblComment->event_id = $event_id;
-						$tblComment->text = $comment;
-						$tblComment->create_time = $time;
-						$tblComment->update_time = $time;
-						$this->dbAdapter->persist ( $tblComment );
-						$this->dbAdapter->flush ();
-						Mlog::add ( __CLASS__ . __METHOD__ . '::Text Comment' );
-						Mlog::add ( $tblComment, 'p', 1 );
-						$status = 'success';
-						// error_log("Inserted Comment without audio_media_id ---> ".$audio_media_id.PHP_EOL);
+					// profanity check
+					if (! empty ( $comment )) {
+						$comment = $this->tester->censor ( $comment );
 					}
+
+					$uuid = MUUID::fetchUUID ();
+					$tblComment = new \Application\Entity\Comment ();
+					$tblComment->comment_id = $uuid;
+					$tblComment->media_id = $media_id;
+					$tblComment->audio_id = $audio_media_id;
+					$tblComment->user_id = $user_id;
+					$tblComment->type = $type;
+					$tblComment->event_id = $event_id;
+					$tblComment->text = $comment;
+					$tblComment->create_time = $time;
+					$tblComment->update_time = $time;
+					$this->dbAdapter->persist ( $tblComment );
+					$this->dbAdapter->flush ();
+					$status = 'success';
+					// error_log("Inserted Comment without audio_media_id ---> ".$audio_media_id.PHP_EOL);
 					
 					$message = "Comment successfully added";
 					
