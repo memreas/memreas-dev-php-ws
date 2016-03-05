@@ -479,7 +479,7 @@ class ViewEvents {
 		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata', 'media.delete_flag' );
 		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
 		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
-		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
+		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' and 'media.delete_flag != 1' );
 		$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $user_id );
@@ -941,7 +941,8 @@ class ViewEvents {
 							from Application\Entity\Media media,
 							Application\Entity\EventMedia event_media
 							where event_media.media_id = media.media_id
-                                                        and media.report_flag =0
+                            and media.report_flag =0
+				            and media.delete_flag != 1
 							and event_media.event_id = ?1
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
