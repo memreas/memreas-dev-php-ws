@@ -74,8 +74,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_start ();
 		}
 		
-		$result = new FetchChameleon($x_memreas_chameleon);
-		
 		/*
 		 * if ($reset) {
 		 * $chameleon_value = $this->checkChameleon ( $x_memreascookie_chameleon );

@@ -8,18 +8,16 @@
 namespace Application\memreas;
 
 class FetchChameleon {
-	private $x_memreas_chameleon;
-	public function __construct($chameleon) {
-		$this->x_memreas_chameleon = $chameleon;
+	public function __construct() {
 	}
 
 	public function exec() {
 		/***
 		 * Checking chameleon against cache 
 		 */
-		//$data = simplexml_load_string ( $_POST ['xml'] );
+		$data = simplexml_load_string ( $_POST ['xml'] );
 
-		$result = $this->checkChameleon($this->x_memreas_chameleon);
+		$result = $this->checkChameleon($data->fetchchameleon->x_memreas_chameleon);
 		if (!$result) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::X_MEMREAS_CHAMELEON FAILURE check::action::', $action . ' ::$this->x_memreas_chameleon->' . $this->x_memreas_chameleon );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::X_MEMREAS_CHAMELEON FAILURE check::$_SERVER[x_memreas_chameleon]->' , $_SERVER['x_memreas_chameleon'] );
@@ -35,13 +33,10 @@ class FetchChameleon {
 	public function setChameleon() {
 		/**
 		 * -
-		 * create so set and return
+		 * create chameleon and add to array - keep last 3 given async calls
 		 */
 		$chameleon_value = hash ( 'sha256', uniqid ( '', true ) );
 		$x_memreas_chameleonArr = $_SESSION ['x_memreas_chameleon'];
-		/**
-		 * keep last 3
-		 */
 		$_SESSION ['x_memreas_chameleon'][] = $chameleon_value;
 		
 		if (count($_SESSION ['x_memreas_chameleon']) > 3) {
