@@ -487,17 +487,20 @@ class ViewEvents {
 		$qb->setParameter ( 2, $event_id );
 		$result = $qb->getQuery ()->getResult ();
 		*/
-		$q_event_media = "select event.event_id, event.name, media.media_id, media.metadata, media.delete_flag
-							from  Application\Entity\Media media,
-								 Application\Entity\Event event,
-								 Application\Entity\EventMedia eventmedia,
-							where event_media.media_id = media.media_id
-							and event.event_id = eventmedia.event_id
-							and media.report_flag = 0
-				            and media.delete_flag != 1
-							and event_media.event_id = ?1
-							and event.user_id = ?2
-							order by media.create_date desc";
+		$q_event_media = "select e.event_id, e.name, m.media_id, m.metadata, m.delete_flag
+							from 	Application\Entity\Media m,
+									Application\Entity\Event e,
+									Application\Entity\EventMedia em
+							where em.media_id = m.media_id
+							and e.event_id = em.event_id
+							and m.report_flag = 0
+							and m.delete_flag != 1
+							and e.event_id = ?1
+							and e.user_id = ?2
+							order by m.create_date desc";
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$user_id::', $user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$event_id::', $event_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$q_event_media::', $q_event_media );
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
 		$event_media_query->setParameter ( 1, $event_id );
 		$event_media_query->setParameter ( 2, $user_id );
