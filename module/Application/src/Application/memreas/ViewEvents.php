@@ -830,7 +830,7 @@ class ViewEvents {
 	private function fetchOwnerProfilePic($user_id) {
 		$q_public_profile = "select  media.media_id,
 		media.is_profile_pic,
-		media.metadata
+		media.metadata, media.delete_flag
 		from Application\Entity\Media media
 		where media.report_flag=0 and media.user_id=?1
 		and media.is_profile_pic=1";
