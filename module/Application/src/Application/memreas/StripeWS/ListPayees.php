@@ -53,6 +53,7 @@ class ListPayees {
 		
 		 
 $result = trim ( ( string ) $response->getBody () );
+$result = substr($result, strpos($result, "{") );
  		echo $result;
                 die();
 	}

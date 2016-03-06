@@ -1569,7 +1569,7 @@ class IndexController extends AbstractActionController {
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
 			}
-			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
 		}
 		
