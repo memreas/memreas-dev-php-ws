@@ -114,14 +114,17 @@ class DeletePhoto {
 					$meta = json_encode($metadata);
 					$update_media = "
 						UPDATE Application\Entity\Media m 
-						SET m.metadata = '{$meta}',
+						SET m.metadata = '?1',
 							m.delete_flag = 1,
-							m.update_date = '{$now}'
-						WHERE m.media_id='{$mediaid}'";					
-					
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_media::', $update_media );
+							m.update_date = '?2'
+						WHERE m.media_id='?3'";					
+					//$query = $em->createQuery('SELECT u FROM ForumUser u WHERE u.id = ?1');
+					//$query->setParameter(1, 321);
 					
 					$media_statement = $this->dbAdapter->createQuery ( $update_media );
+					$media_statement->setParameter(1, $meta);
+					$media_statement->setParameter(2, $now);
+					$media_statement->setParameter(3, $media_id);
 					$update_media_result = $media_statement->getResult ();
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$update_media_result-->', $update_media_result );
 						
