@@ -53,7 +53,7 @@ class ListPayees {
 		
 		 
 $result = trim ( ( string ) $response->getBody () );
-error_log('listpayee -->>>'.print_r($result,TRUE));
+$result = substr($result, strpos($result, "{") );
  		echo $result;
                 die();
 	}
