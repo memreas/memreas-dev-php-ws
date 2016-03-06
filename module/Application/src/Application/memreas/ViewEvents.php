@@ -382,7 +382,6 @@ class ViewEvents {
 					 * Fetch Owner Profile photo...
 					 */
 					$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
-					
 					if ($profile) {
 						$profile_image = json_decode ( $profile [0] ['metadata'], true );
 						if (! empty ( $profile_image ['S3_files'] ['path'] ))

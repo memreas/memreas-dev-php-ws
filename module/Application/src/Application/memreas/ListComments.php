@@ -76,7 +76,7 @@ class ListComments {
 		$qb->orderBy ( 'c.create_time', 'DESC' );
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
-		error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
+		//error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 		$result_comment = $qb->getQuery ()->getResult ();
 		
 		$output .= '<comments>';
