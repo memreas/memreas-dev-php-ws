@@ -48,46 +48,17 @@ class DeletePhoto {
 			$seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'";
 			$statement = $this->dbAdapter->createQuery ( $seldata );
 			$resseldata = $statement->getResult ();
-			Mlog::addone($cm,__LINE__);
 				
 			$user_id = $resseldata [0]->user_id;
 			$copyright_id = $resseldata [0]->copyright_id;
 			$metadata = json_decode($resseldata [0]->metadata, true);
-			Mlog::addone($cm,__LINE__);
 				
 			if (count ( $resseldata ) > 0) {
 				
-				// Check if media related to any event
-				//$media_event = "SELECT em FROM Application\Entity\EventMedia em WHERE em.media_id = '$mediaid'";
-				//$statement = $this->dbAdapter->createQuery ( $media_event );
-				//$result = $statement->getResult ();
-				
 				/**
 				 * Allow delete even if memreas share uses
+				 *  memreasdevsec and memreasdevhlssec
 				 */
-				// if (count ( $result ) > 0) {
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'fail::count($result)::', count ( $result ) );
-				// $xml_output .= '<status>failure</status><message>This media is related to a memreas share.</message>';
-				// } else {
-				
-				//
-				// Batch Delete - memreasdevsec
-				//
-				/*
-				$prefix = $resseldata [0]->user_id . '/' . $mediaid;
-				$listObjectsParams = [ 
-						'Bucket' => MemreasConstants::S3BUCKET,
-						'Prefix' => $prefix 
-				];
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'memreasdevsec Prefix => $prefix::', $prefix );
-				$delete = BatchDelete::fromListObjects ( $this->s3, $listObjectsParams );
-				$delete->delete ();
-				*/
-				
-				//
-				// memreasdevsec and memreasdevhlssec
-				//
-Mlog::addone($cm,__LINE__);
 				$user_id = $resseldata [0]->user_id;
 				$prefix = $user_id . '/' . $mediaid;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', $prefix );
@@ -123,7 +94,6 @@ Mlog::addone($cm,__LINE__);
 					Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . 'Error deleting $prefix::', $prefix );
 				}
 				
-Mlog::addone($cm,__LINE__);
 				try {
 					/**
 					 * Scrub metadata to set stock image in case added to event
@@ -137,7 +107,6 @@ Mlog::addone($cm,__LINE__);
 					$metadata['S3_files']['thumbnails']["98x78"] = '';
 					$metadata['S3_files']['thumbnails']["1280x720"] = '';					
 					
-Mlog::addone($cm,__LINE__);
 					/**
 					 * Update media table to set delete_flag to 1 and replace metadata with stock image 
 					 */
@@ -154,12 +123,13 @@ Mlog::addone($cm,__LINE__);
 					
 					$media_statement = $this->dbAdapter->createQuery ( $update_media );
 					$update_media_result = $media_statement->getResult ();
-					
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$update_media_result-->', $update_media_result );
+						
 					// Media Device - not necessary - tracking data
-					//$update_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_media_device::', $update_media_device );
-					//$media_statement = $this->dbAdapter->createQuery ( $update_media );
-					//$update_media_result = $media_statement->getResult ();
+					// $update_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_media_device::', $update_media_device );
+					// $media_statement = $this->dbAdapter->createQuery ( $update_media );
+					// $update_media_result = $media_statement->getResult ();
 				} catch ( \Exception $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Caught exception::', $e->getMessage () );
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Error deleting from db::', $update_media );
@@ -168,7 +138,6 @@ Mlog::addone($cm,__LINE__);
 				//
 				// if copyright then update to note user deleted media invalidating copyright
 				//
-Mlog::addone($cm,__LINE__);
 				try {
 					if (! empty ( $copyright_id )) {
 						$now = date ( 'Y-m-d H:i:s' );
