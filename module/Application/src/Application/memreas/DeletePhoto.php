@@ -34,9 +34,9 @@ class DeletePhoto {
 	public function exec() {
 		$cm = __CLASS__.__METHOD__;
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		$mediaid = trim ( $data->deletephoto->mediaid );
+		$media_id = trim ( $data->deletephoto->mediaid );
 		
-		Mlog::addone($cm.__LINE__."Deleting ---> " , $mediaid);
+		Mlog::addone($cm.__LINE__."Deleting ---> " , $media_id);
 		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -44,8 +44,8 @@ class DeletePhoto {
 		$xml_output .= "<deletephotoresponse>";
 		Mlog::addone($cm,__LINE__);
 		
-		if (isset ( $mediaid ) && ! empty ( $mediaid )) {
-			$seldata = "select m from Application\Entity\Media m where m.media_id='$mediaid'";
+		if (isset ( $media_id ) && ! empty ( $media_id )) {
+			$seldata = "select m from Application\Entity\Media m where m.media_id='$media_id'";
 			$statement = $this->dbAdapter->createQuery ( $seldata );
 			$resseldata = $statement->getResult ();
 				
@@ -60,7 +60,7 @@ class DeletePhoto {
 				 *  memreasdevsec and memreasdevhlssec
 				 */
 				$user_id = $resseldata [0]->user_id;
-				$prefix = $user_id . '/' . $mediaid;
+				$prefix = $user_id . '/' . $media_id;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$prefix::', $prefix );
 				try {
 					
@@ -124,7 +124,7 @@ class DeletePhoto {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$update_media_result-->', $update_media_result );
 						
 					// Media Device - not necessary - tracking data
-					// $update_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$mediaid}' and m.user_id='{$user_id}' ";
+					// $update_media_device = "DELETE FROM Application\Entity\MediaDevice m WHERE m.media_id='{$media_id}' and m.user_id='{$user_id}' ";
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_media_device::', $update_media_device );
 					// $media_statement = $this->dbAdapter->createQuery ( $update_media );
 					// $update_media_result = $media_statement->getResult ();
@@ -174,7 +174,7 @@ Mlog::addone($cm,__LINE__);
 		} else
 			$xml_output .= "<status>failure</status><message>Please check media id specified.</message>";
 		
-		$xml_output .= "<media_id>{$mediaid}</media_id>";
+		$xml_output .= "<media_id>{$media_id}</media_id>";
 		$xml_output .= "</deletephotoresponse>";
 		$xml_output .= "</xml>\n";
 		echo $xml_output;
