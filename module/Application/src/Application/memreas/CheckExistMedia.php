@@ -45,8 +45,9 @@ class CheckExistMedia {
 		$media_name = $data->checkexistmedia->filename;
 		
 		$query = $this->dbAdapter->createQueryBuilder ();
-		$query->select ( 'm.metadata' )->from ( 'Application\Entity\Media', 'm' )->where ( 'm.user_id = ?1' )->andWhere('m.transcode_status = ?2')->andWhere('m.delete_flag != 1')->setParameter ( 1, $user_id )->setParameter ( 2, 'success' );
+		$query->select ( 'm.metadata' )->from ( 'Application\Entity\Media', 'm' )->where ( 'm.user_id = ?1' )->andWhere('m.transcode_status = ?2')->andWhere('m.delete_flag != ?3')->setParameter ( 1, $user_id )->setParameter ( 2, 'success')->setParameter ( 3, '1');
 		$result = $query->getQuery ()->getResult ();
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result-->', $query->getQuery()->getSql());
 		if (! empty ( $result )) {
 			error_log ( "Inside CheckExistMedia.exec() - !empty(result)" . PHP_EOL );
 			$pass = true;
