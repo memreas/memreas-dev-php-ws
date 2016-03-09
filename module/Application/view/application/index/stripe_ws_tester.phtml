@@ -306,6 +306,7 @@ doAddSeller = function () {
 	obj.zip_code = $("#add_seller_zip_code").val();
 	obj.bank_routing = $("#add_seller_bank_routing_number").val();
 	obj.account_number = $("#add_seller_bank_account_number").val();
+	obj.tax_ssn_ein = $("#add_seller_tax_ssn_ein_number").val();
 	
 	 var json_addSeller = JSON.stringify(obj);
 	 var data = "";
@@ -1347,6 +1348,13 @@ var doLogin = function () {
 						<td>
 						
 						<td><input type="hidden" id="isValid" name="isValid" value="1">
+					
+					</tr>
+					<tr>
+						<td>social security or tax ein number:
+						
+						<td><input type="text" id="add_seller_tax_ssn_ein_number"
+							name="add_seller_tax_ssn_ein_number" value="000000000">
 					
 					</tr>
 					<tr>
