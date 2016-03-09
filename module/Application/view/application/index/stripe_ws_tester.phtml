@@ -535,27 +535,31 @@ doListMassPayees = function (element, list) {
 	  data: 'json=' + data,
 	  success: function(json){
 	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var results = jQuery.parseJSON( json.data );
 	  	var html_str = "";
 	  	var html_button = "";
 	  	$(element).val(req_resp);
-	  	if (json.Status == "Success") {
+	  	console.log("results.status--->" + results.status);
+	  	if (results.status == "Success") {
+		  	console.log("inside Success");
 
-	  		for (var i=0;i<json.accounts.length;i++)
+	  		for (var i=0;i<results.accounts.length;i++)
 			{
 				html_str += '<tr>' +
-						'<td><input type="checkbox" id="account_selected_' + i + '" name="account_selected_" value="'+ json.accounts[i].account_id + '">' +
+						'<td><input type="checkbox" id="account_selected_' + i + '" name="account_selected_" value="'+ results.accounts[i].account_id + '">' +
 						'<td>account id:' +
-						'<td><input type="text" id="account_id_' + i + '" name="account_id" value="'+ json.accounts[i].account_id + '">' +
+						'<td><input type="text" id="account_id_' + i + '" name="account_id" value="'+ results.accounts[i].account_id + '">' +
 						'<td>user id:' +
-						'<td><input type="text" id="user_id_' + i + '" name="user_id" value="'+ json.accounts[i].user_id + '">' +
+						'<td><input type="text" id="user_id_' + i + '" name="user_id" value="'+ results.accounts[i].user_id + '">' +
 						'<td>user name:' +
-						'<td><input type="text" id="username_' + i + '" name="username" value="'+ json.accounts[i].username + '">' +
+						'<td><input type="text" id="username_' + i + '" name="username" value="'+ results.accounts[i].username + '">' +
 						'<td>account type:' +
-						'<td><input type="text" id="account_type_' + i + '" name="account_type" value="'+ json.accounts[i].account_type + '">' +
+						'<td><input type="text" id="account_type_' + i + '" name="account_type" value="'+ results.accounts[i].account_type + '">' +
 						'<td>balance:' +
-						'<td><input type="text" id="balance_' + i + '" name="balance" value="'+ json.accounts[i].balance + '">' +
+						'<td><input type="text" id="balance_' + i + '" name="balance" value="'+ results.accounts[i].balance + '">' +
 						'</tr>';
 			}
+			console.log(html_str);
 			$(list).html(html_str);
 	  	}
 	  	return true;
