@@ -1503,8 +1503,8 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ();
 				$cache_me = false;
-				$response = $PaymentsProxy->exec ( $actionname, $message_data );
-                                echo $response;
+				$result = $PaymentsProxy->exec ( $actionname, $message_data );
+                                        
 			}
 			
 			/*
