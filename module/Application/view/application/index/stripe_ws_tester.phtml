@@ -597,6 +597,7 @@ doPayoutMassPayees = function (element, list) {
 		    obj.username = $("#username_" + i).val(); 
 		    obj.account_type = $("#account_type_" + i).val(); 
 		    obj.balance = $("#balance_" + i).val();
+		    obj.reason = "payout";
 		    payees.push(obj);
 		    obj = new Object(); 
 		}
