@@ -581,24 +581,28 @@ doPayoutMassPayees = function (element, list) {
 
     //Fetch the list of cards to delete...
 	var selected = new Array();
+	var payees = new Array();
+	var obj = new Object();
+
 	$("input:checked").each(function() {
 	    selected.push($(this).attr('value'));
 	});
-
 	if(selected.length == 0) {
 		alert("No accounts checked to payout");
 		return;
 	} else {
+		$('#account_selected_' + i).is(":checked")
 		for (i=0; i<selected.length; i++) {
-			selected.account_id = $("#account_id_" + i).val(); 
-			selected.user_id = $("#user_id_" + i).val(); 
-			selected.username = $("#username_" + i).val(); 
-			selected.account_type = $("#account_type_" + i).val(); 
-			selected.balance = $("#balance_" + i).val(); 
+		    obj.account_id = $("#account_id_" + i).val(); 
+		    obj.user_id = $("#user_id_" + i).val(); 
+		    obj.username = $("#username_" + i).val(); 
+		    obj.account_type = $("#account_type_" + i).val(); 
+		    obj.balance = $("#balance_" + i).val();
+		    payees.push(obj);
+		    obj = new Object(); 
 		}
 	}
 	
-
 	var action = "stripe_payeePayout";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
