@@ -59,7 +59,8 @@ class PaymentsProxy {
 			Mlog::addone ( $cm, __LINE__ );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
-							'token' => $_REQUEST ['token'] 
+							'token' => $_REQUEST ['token'], 
+							'cid' => $_REQUEST ['cid'] 
 					] 
 			] );
 		} else if (isset ( $_REQUEST ['memreascookie'] )) {
