@@ -531,7 +531,7 @@ doListMassPayees = function (element, list) {
 	$(element).val(json_listMassPayee);
 	$.ajax( {
 	  type:'post',
-	  url: proxy_url + action,
+	  url: proxy_url + action + "&adminkey=true",
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
@@ -621,7 +621,7 @@ doPayoutMassPayees = function (element, list) {
 
 	$.ajax( {
 	  type:'post',
-	  url: proxy_url + action,
+	  url: proxy_url + action + "&admin_key=true",
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
