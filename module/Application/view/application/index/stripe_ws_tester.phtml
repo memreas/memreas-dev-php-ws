@@ -524,7 +524,7 @@ doListMassPayees = function (element, list) {
 	var data = "";
 	var result = "";
 
-	data = '{"action": "listMassPayee", ' +
+	data = '{"action": "list", ' +
 	'"type":"jsonp", ' +
 	'"json": ' + json_listMassPayee  +
 	'}';
@@ -536,6 +536,7 @@ doListMassPayees = function (element, list) {
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
+	  	console.log("json--->" + JSON.stringify(json, null, '\t'));
 	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
 	  	var results = jQuery.parseJSON( json.data );
 	  	var html_str = "";

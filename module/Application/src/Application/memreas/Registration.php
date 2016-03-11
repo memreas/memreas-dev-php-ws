@@ -107,6 +107,7 @@ class Registration {
 				} else {
 					
 					/*
+					 * FOR TESTING ONLY - CHANGE FLAG IN PROD
 					 * email check working...
 					 */
 					
@@ -329,11 +330,14 @@ class Registration {
 						/*
 						 * setup new user with free plan
 						 */
-						//$PaymentsProxy = new PaymentsProxy ();
-						//$message_data['sid'] = $_SESSION['sid'];
-						//$message_data['plan'] = MemreasConstants::MEMREAS_FREE_PLAN;
-						//$result = $PaymentsProxy->exec ( "stripe_subscribe", $message_data );
-						
+						$PaymentsProxy = new PaymentsProxy ();
+						$message_data['sid'] = $_SESSION['sid'];
+						$message_data['user_id'] = $user_id;
+						$message_data['username'] = $username;
+						$message_data['email'] = $email;
+						$message_data['description'] = "new registered user associated with email: ". $email;
+						$message_data['metadata'] = array('user_id' => $user_id);
+						$result = $PaymentsProxy->exec ( "stripe_createCustomer", $message_data );
 						
 						/*
 						 * Send user email
