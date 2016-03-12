@@ -296,9 +296,9 @@ doAddSeller = function () {
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
 	obj.user_name = $("#add_seller_user_name").val();
-	obj.stripe_email_address = $("#add_seller_email_address").val();
 	obj.first_name = $("#add_seller_first_name").val();
 	obj.last_name = $("#add_seller_last_name").val();
+	obj.date_of_birth = $("#add_seller_dob").val();
 	obj.address_line_1 = $("#add_seller_address_line_1").val();
 	obj.address_line_2 = $("#add_seller_address_line_2").val();
 	obj.city = $("#add_seller_city").val();
@@ -1225,12 +1225,6 @@ var doLogin = function () {
 						
 						<td><input type="text" id="add_seller_user_name"
 							name="add_seller_user_name" value="jmeah2">
-						
-						<td>stripe email address:
-						
-						<td><input type="text" id="add_seller_email_address"
-							name="add_seller_email_address" value="jmeah_seller@memreas.com">
-					
 					</tr>
 					<tr>
 						<td>first name:
@@ -1243,6 +1237,13 @@ var doLogin = function () {
 						<td><input type="text" id="add_seller_last_name"
 							name="add_seller_last_name" value="Meah">
 					
+					</tr>
+					<tr>
+						<td>date of birth (i.e. month-day-yea):
+						
+						<td><input type="text" id="add_seller_dob"
+							name="add_seller_dob" value="12-31-1999">
+						
 					</tr>
 					<tr>
 						<td>address line 1:
