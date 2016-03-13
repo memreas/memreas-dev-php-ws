@@ -8,11 +8,16 @@
 namespace Application\memreas\StripeWS;
 
 use Application\memreas\Mlog;
+use Application\memreas\GetDiskUsage;
 use Application\Model\MemreasConstants;
 use GuzzleHttp\Client;
 
 class PaymentsProxy {
-	public function __construct() {
+	protected $service_locator;
+	protected $dbAdapter;
+	public function __construct($service_locator) {
+		$this->service_locator = $service_locator;
+		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
 	
 	/*
@@ -42,6 +47,15 @@ class PaymentsProxy {
 		$cm = __CLASS__ . __METHOD__;
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
+		
+		
+		/*-
+		 * special case for subscribe
+		 */
+		if ($action_method == 'subscribe') {
+			$disk_usage = new GetDiskUsage($this->service_locator);
+			$jsonArr['disk_usage'] = $disk_usage->exec($_SESSION['user_id'], true);
+		}
 		if (isset ( $_REQUEST ['admin_key'] )) {
 			/**
 			 * Admin is logged in and request user data

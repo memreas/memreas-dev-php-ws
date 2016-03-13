@@ -1503,7 +1503,7 @@ class IndexController extends AbstractActionController {
 				 * Payments should not be cached - will be small portion of usage
 				 */
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
-				$PaymentsProxy = new PaymentsProxy ();
+				$PaymentsProxy = new PaymentsProxy ($this->getServiceLocator ());
 				$cache_me = false;
 				$message_data['ip_address'] = $this->fetchUserIPAddress();
 				$message_data['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
