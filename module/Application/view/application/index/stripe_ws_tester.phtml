@@ -814,6 +814,53 @@ var doLogin = function () {
 		});
 }
 
+/////////////////////
+//- getCustomerInfo
+/////////////////////
+var doGetCustomerInfo = function (element) {
+
+
+	var action = "stripe_getCustomerInfo";
+	var obj = {};
+	obj.sid = getCookie("PHPSESSID");
+	obj.user_id = $("#getcustomerinfo_user_id").val();
+	var json = JSON.stringify(obj, null, "\t");
+	var data = "";
+	var result = "";
+	
+	data = '{"action": "' + action + '", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json  +
+	'}';
+	
+	$(element).val(json);
+	$.ajax( {
+		type:'post',
+		url: proxy_url + action,
+		dataType: 'jsonp',
+		data: 'json=' + data,
+		success: function(json){
+		var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+		var html_str = "";
+		var html_button = "";
+		$(element).val(req_resp);
+		//if (json.Status == "Success") {
+		//	alert("Inside");
+		//}
+		return true;
+	},
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert(jqXHR.responseText);
+			alert(jqXHR.status);
+			//alert(textStatus);
+			//alert(errorThrown);
+		}
+	});
+	return false;
+
+
+}
+
 </script>
 
 <!-- JQuery -->
@@ -841,6 +888,14 @@ var doLogin = function () {
     });
     function onLoginCallClicked() {
         doLogin();
+    }
+	
+	//Login
+    $(document).ready(function () {
+        $("#btnOK10").click(onGetCustomerInfoCallClicked);
+    });
+    function onGetCustomerInfoCallClicked() {
+        doGetCustomerInfo('#getcustomerinfo_results');
     }
 	
 	//Store Card
@@ -988,6 +1043,7 @@ var doLogin = function () {
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-9">Login</a></li>
+			<li><a href="#tabs-10">Get Customer Info</a></li>
 			<li><a href="#tabs-1">Store Card</a></li>
 			<li><a href="#tabs-2">List and Delete Cards</a></li>
 			<li><a href="#tabs-3">Add a Seller</a></li>
@@ -1710,6 +1766,39 @@ var doLogin = function () {
 				</div>
 		
 		</div>
+		<div id="tabs-10">
+			<form id="getcustomerinfo_form" name=getcustomerinfo_form " action="#">
+				<table>
+					<tr>
+						<td>User Name:
+						
+						<td><input id="getcustomerinfo_user_id" type="text"
+							name="getcustomerinfo_user_id" value="de561d5f-6e96-4839-82ac-dbc3d4d29237">
+					
+					<div id="getcustomerinfo10"></div>
+					<tr>
+						<td>
+						
+						<td><input id="btnOK10" type="button" name="ok" value="submit">
+					
+					</tr>
+				</table>
+
+				<div id="getcustomerinfo_form_results">
+					<table>
+						<tr>
+							<td>Results:
+						
+						</tr>
+						<tr>
+							<td><textarea id="getcustomerinfo_results" name="getcustomerinfo_results" rows="10"
+									cols="120">Result will be shown here.</textarea>
+						
+						</tr>
+					</table>
+				</div>
+		
+		</div>		
 
 	</div>
 

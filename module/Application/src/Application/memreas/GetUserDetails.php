@@ -77,40 +77,43 @@ class GetUserDetails {
 					$output .= '<dob></dob>';
 				}
 				
+				//
+				// Fetch account details using payments proxy
+				// variables: $action, $json, $callback (optional here)
+				//
+				$json = [ ];
+				$json ['user_id'] = $_SESSION ['user_id'];
+				$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
+				$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $json );
+				Mlog::addone ( 'stripe_getCustomerInfo-->', $result );
+				
+				$userAccountArr = json_decode ( $result, true );
+				
 				// For stripe customer id
-				if ($metadata ['stripe_customer_id']) {
-					$_SESSION ['stripe_customer_id'] = $metadata ['stripe_customer_id'];
+				if (isset ( $userAccountArr ['buyer_account'] ['accountHeader'] ['stripe_customer_id'] )) {
+					$_SESSION ['stripe_customer_id'] = $userAccountArr ['buyer_account'] ['accountHeader'] ['stripe_customer_id'];
 				}
 				
-				// For plan
-				if (! empty ( $metadata ['subscription'] )) {
-					Mlog::addone ( 'if (!empty( $metadata [subscription] )', $metadata ['subscription'] );
-					$subscription = $metadata ['subscription'];
-					$output .= '<subscription><plan>' . $subscription ['plan'] . '</plan><plan_name>' . $subscription ['name'] . '</plan_name></subscription>';
+				// For stripe seller customer id
+				if (isset ( $userAccountArr ['seller_account'] ['accountHeader'] ['stripe_customer_id'] )) {
+					$_SESSION ['stripe_seller_customer_id'] = $userAccountArr ['seller_account'] ['accountHeader'] ['stripe_customer_id'];
+				}
+				
+				// For Plan 
+				if (isset ( $userAccountArr ['seller_account'] ['subscription'] )) {
+					$subscription = $userAccountArr ['seller_account'] ['subscription']; 
+					$output .= '<subscription><plan>' . $subscription ['plan'] . '</plan><plan_name>' . $subscription ['description'] . '</plan_name></subscription>';
 					
 					// Store data in session for stripe customer id
 					$_SESSION ['plan'] = $subscription ['plan'];
-					
-					if (isset ( $_SESSION ['user_id'] )) {
-						//
-						// Fetch account details using payments proxy
-						// variables: $action, $json, $callback (optional here)
-						//
-						$json = [ ];
-						$json ['user_id'] = $_SESSION ['user_id'];
-						$PaymentsProxy = new PaymentsProxy ();
-						$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $json );
-						//
-						// Store data in session here...
-						//
-						Mlog::addone('GetUserDetails-->stripe_getCustomerInfo--->', $result);
-					}
 					
 				} else {
 					// Mlog::addone ( 'if (empty( $metadata [subscription] )', '<subscription><plan>FREE</plan></subscription>' );
 					$output .= '<subscription><plan>FREE</plan></subscription>';
 				}
+				
 				// error_log('$data -->'.print_r($data,true).PHP_EOL);
+				$data = $$userAccountArr;
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
 					$output .= '<accounts>';
 					//
