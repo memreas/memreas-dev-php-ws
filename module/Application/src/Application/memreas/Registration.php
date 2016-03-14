@@ -330,7 +330,7 @@ class Registration {
 						/*
 						 * setup new user with free plan
 						 */
-						$PaymentsProxy = new PaymentsProxy ();
+						$PaymentsProxy = new PaymentsProxy ($this->service_locator);
 						$message_data['sid'] = $_SESSION['sid'];
 						$message_data['user_id'] = $user_id;
 						$message_data['username'] = $username;
