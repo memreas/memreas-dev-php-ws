@@ -38,8 +38,8 @@ class DcmaCounterClaim {
 		$counter_url = trim ( $data->dcmacounterclaim->counter_claim_url );
 		$counter_address = trim ( $data->dcmacounterclaim->counter_claim_address );
 		$counter_email = trim ( $data->dcmacounterclaim->counter_claim_email_address );
-                $agreedTerm = trim ( $data->dcmareportviolation->counter_claim_agreed_to_terms);
-                $counter_phone = trim ( $data->dcmareportviolation->counter_claim_phone_number);
+                $agreedTerm = trim ( $data->dcmacounterclaim->counter_claim_agreed_to_terms);
+                $counter_phone = trim ( $data->dcmacounterclaim->counter_claim_phone_number);
 
                 $time = time ();
 		$message = '';
