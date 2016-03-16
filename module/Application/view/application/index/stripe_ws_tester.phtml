@@ -295,6 +295,7 @@ doAddSeller = function () {
 	var action = "stripe_addSeller";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
+	obj.add_seller_account_type = $("#add_seller_account_type").val();
 	obj.user_name = $("#add_seller_user_name").val();
 	obj.first_name = $("#add_seller_first_name").val();
 	obj.last_name = $("#add_seller_last_name").val();
@@ -861,6 +862,55 @@ var doGetCustomerInfo = function (element) {
 
 }
 
+/////////////////////
+//Order History
+/////////////////////
+doOrderHistory = function (element) {
+
+	var action = "stripe_getorderhistory";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.user_id = $("#order_history_form_user_id").val();
+	obj.search_username = $("#account_history_form_user_name").val();
+	obj.page = $("#order_history_form_page").val();
+	obj.limit = $("#order_history_form_limit").val();
+	var json_OrderHistory = JSON.stringify(obj, null, '\t');
+	var data = "";
+	var result = "";
+
+	data = '{"action": "list", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json_OrderHistory  +
+	'}';
+
+	$(element).val(json_OrderHistory);
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	if (json.Status == "Success") {
+	  		//Do Something...
+	  	}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+	    	alert(jqXHR.responseText);
+  		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+
+
 </script>
 
 <!-- JQuery -->
@@ -1003,6 +1053,18 @@ var doGetCustomerInfo = function (element) {
         doSubscribe('#subscribe_results');
     }
 
+	//Order History
+    $(document).ready(function () {
+        $("#btnOrderHistory11").click(onBtnOrderHistoryCallClicked);
+    });
+    function onBtnOrderHistoryCallClicked() {
+        doOrderHistory('#order_history_results');
+    }
+
+
+
+    
+
 	//Update address based on selection
     $(document).ready(function () {
         $("#card_selected").change(onRadioCardListforSubscribeSelected);
@@ -1052,6 +1114,7 @@ var doGetCustomerInfo = function (element) {
 			<li><a href="#tabs-6">Account History</a></li>
 			<li><a href="#tabs-7">MassPay</a></li>
 			<li><a href="#tabs-8">Subscriptions</a></li>
+			<li><a href="#tabs-11">Order History</a></li>
 		</ul>
 		<div id="tabs-1">
 			<form id="store_card_form" name=store_card_form " action="#">
@@ -1276,6 +1339,12 @@ var doGetCustomerInfo = function (element) {
 		<div id="tabs-3">
 			<form id="add_seller_form" name=add_seller_form " action="#">
 				<table>
+					<tr>
+						<td>account type:
+						
+						<td><input type="text" id="add_seller_account_type"
+							name="add_seller_account_type" value="seller">
+					</tr>
 					<tr>
 						<td>user name:
 						
@@ -1799,6 +1868,60 @@ var doGetCustomerInfo = function (element) {
 				</div>
 		
 		</div>		
+		<div id="tabs-11">
+			<form id="order_history_form" name=order_history_form
+				" action="#">
+				<table>
+					<tr>
+						<td>User ID:
+						
+						<td><input id="order_history_form_user_id" type="text"
+							name="order_history_form_user_id" value="">
+					
+					</tr>
+					<tr>
+						<td>User Name:
+						
+						<td><input id="order_history_form_user_name" type="text"
+							name="order_history_form_user_name" value="jmeah114">
+					
+					</tr>
+					<tr>
+						<td>Page:
+						
+						<td><input id="order_history_form_page" type="text"
+							name="order_history_form_page" value="1">
+						
+						<td>Limit:
+						
+						<td><input id="order_history_form_limit" type="text"
+							name="order_history_form_limit" value="1000">
+					
+					</tr>
+					<tr>
+						<td>
+						
+						<td><input id="btnOrderHistory11" type="button" name="ok"
+							value="fetch order history">
+					
+					</tr>
+				</table>
+
+				<div id="order_history_form_results">
+					<table>
+						<tr>
+							<td>Results:
+						
+						</tr>
+						<tr>
+							<td><textarea id="order_history_results"
+									name="order_history_results" rows="10" cols="120">Result will be shown here.</textarea>
+						
+						</tr>
+					</table>
+				</div>
+		
+		</div>		
 
 	</div>
 
@@ -1818,7 +1941,8 @@ var doGetCustomerInfo = function (element) {
 					card_number = '4242424242424242';
 					break;
 				case "Discover":
-					card_number = '6011111111111117';
+					card_number = '4000000000000077';
+					//card_number = '6011111111111117';
 					break;
 				case "MasterCard":
 					card_number = '5555555555554444';
