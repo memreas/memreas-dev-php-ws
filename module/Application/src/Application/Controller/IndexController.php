@@ -1720,10 +1720,10 @@ class IndexController extends AbstractActionController {
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
 			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-				Mlog::addone ( "$_SESSION [ipAddress]", $_SESSION ['ipAddress'] );
-				Mlog::addone ( "$currentIPAddress", $currentIPAddress );
+				Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+				Mlog::addone ( '$currentIPAddress', $currentIPAddress );
 				Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-				Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
+				Mlog::addone ( '_SESSION vars after sid_success', $_SESSION );
 				return 'notlogin';
 			}
 			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";

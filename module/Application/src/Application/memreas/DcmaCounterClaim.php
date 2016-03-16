@@ -56,23 +56,23 @@ class DcmaCounterClaim {
                                                 ->findOneBy ( array ('violation_id' => $violation_id ) );
                     $mediaObj = $this->dbAdapter->getRepository ( "\Application\Entity\Media" )
                                                 ->findOneBy ( array ('media_id' => $violationObj->media_id ) );
+                    $mediaUser = $this->dbAdapter->getRepository ( "\Application\Entity\User" )
+                                                ->findOneBy ( array ('user_id' => $mediaObj->user_id ) );
+                    
                         if(empty($mediaObj)){
                             $message = 'Media Not Found';
                             $status = 'Failure';
                         }
                 }
                     
-                    if (! $this->is_valid_email ( $counter_address )) {
-			$message .= 'Please enter valid email address. ';
-			$status = 'Failure';
-                    }  
+                    
             
-
+                    
 		if($status != 'Failure') {
 			// add Violation
    			$violationObj->counter_claim_url = $counter_url;
                         $violationObj->counter_claim_address = $counter_address;
-			$violationObj->counter_claim_email_address = $counter_email;
+			$violationObj->counter_claim_email_address = $mediaUser->email_address;
 			$violationObj->counter_claim_report_date = $time;			 
                         $violationObj->counter_claim_phone_number = $counter_phone;
                         $violationObj->status = MemreasConstants::DCMA_COUNTER_CLAIM;
@@ -93,8 +93,7 @@ class DcmaCounterClaim {
                          * site user will recive mail
                          */
                         
-                        $mediaUser = $this->dbAdapter->getRepository ( "\Application\Entity\User" )
-                                                     ->findOneBy ( array ('user_id' => $mediaObj->user_id ) );
+                        
                         
                         $to [0] = $mediaUser->email_address;
                         $viewVar = array (
@@ -121,7 +120,8 @@ class DcmaCounterClaim {
                         $viewVar = array (
                                         'reporter' => $violationObj->copyright_owner_name,
                                         'media_url' => $this->getMediaUrl($mediaObj),
-                                        'user_email_address' => $counter_address
+                                        'user_address' => $counter_address,
+                             'user_email_address' => $mediaUser->email_address
                         );
                         $viewModel = new ViewModel ( $viewVar );
                         $viewModel->setTemplate ( 'email/dcma-counter-reporter' );
