@@ -63,12 +63,13 @@ class ListAllmedia {
 			$statement->setFirstResult ( $from );
 			$result = $statement->getArrayResult ();
 		} else {
+                     
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'media.user_id', 'media.media_id', 'media.transcode_status', 'media.metadata', 'media.create_date' );
 			$qb->from ( 'Application\Entity\Media', 'media' );
 			$qb->join ( 'Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id' );
 			$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id' );
-			$qb->where ( 'event.event_id = ?1' );
+			$qb->where ( ' media.delete_flag != 1 and event.event_id = ?1' );
 			$qb->orderBy ( 'media.create_date', 'DESC' );
 			$qb->setParameter ( 1, $event_id );
 			$qb->setMaxResults ( $limit );

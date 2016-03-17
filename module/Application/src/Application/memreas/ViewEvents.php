@@ -955,7 +955,7 @@ class ViewEvents {
 	 * Common queries
 	 */
 	private function fetchEventMedia($event_id) {
-		$q_event_media = "select event_media.event_id,
+		$q_event_media = "select media.delete_flag,event_media.event_id,
 							media.media_id, media.metadata
 							from Application\Entity\Media media,
 							Application\Entity\EventMedia event_media

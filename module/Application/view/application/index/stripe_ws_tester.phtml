@@ -295,17 +295,19 @@ doAddSeller = function () {
 	var action = "stripe_addSeller";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
+	obj.add_seller_account_type = $("#add_seller_account_type").val();
 	obj.user_name = $("#add_seller_user_name").val();
-	obj.stripe_email_address = $("#add_seller_email_address").val();
 	obj.first_name = $("#add_seller_first_name").val();
 	obj.last_name = $("#add_seller_last_name").val();
+	obj.date_of_birth = $("#add_seller_dob").val();
 	obj.address_line_1 = $("#add_seller_address_line_1").val();
 	obj.address_line_2 = $("#add_seller_address_line_2").val();
 	obj.city = $("#add_seller_city").val();
 	obj.state = $("#add_seller_state").val();
 	obj.zip_code = $("#add_seller_zip_code").val();
-	obj.bank_routing = $("#add_seller_bank_routing_number").val();
+	obj.routing_number = $("#add_seller_bank_routing_number").val();
 	obj.account_number = $("#add_seller_bank_account_number").val();
+	obj.tax_ssn_ein = $("#add_seller_tax_ssn_ein_number").val();
 	
 	 var json_addSeller = JSON.stringify(obj);
 	 var data = "";
@@ -426,6 +428,7 @@ doBuyMedia = function (element) {
 	obj.amount = $("#decrement_amount").val();
 	obj.duration_from = $("#duration_from").val();
 	obj.duration_to = $("#duration_to").val();
+	obj.stripe_ws_tester = "true";
 	var json_decrementValue = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";
@@ -517,7 +520,7 @@ doListMassPayees = function (element, list) {
 	var action = "stripe_listMassPayee";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
-	obj.txt = "";
+	obj.username = "all";
 	var json_listMassPayee = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";
@@ -530,32 +533,37 @@ doListMassPayees = function (element, list) {
 	$(element).val(json_listMassPayee);
 	$.ajax( {
 	  type:'post',
-	  url: proxy_url + action,
+	  url: proxy_url + action + "&adminkey=true",
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
+	  	console.log("json--->" + JSON.stringify(json, null, '\t'));
 	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var results = jQuery.parseJSON( json.data );
 	  	var html_str = "";
 	  	var html_button = "";
 	  	$(element).val(req_resp);
-	  	if (json.Status == "Success") {
+	  	console.log("results.status--->" + results.status);
+	  	if (results.status == "Success") {
+		  	console.log("inside Success");
 
-	  		for (var i=0;i<json.accounts.length;i++)
+	  		for (var i=0;i<results.accounts.length;i++)
 			{
 				html_str += '<tr>' +
-						'<td><input type="checkbox" id="account_selected_' + i + '" name="account_selected_" value="'+ json.accounts[i].account_id + '">' +
+						'<td><input type="checkbox" id="account_selected_' + i + '" name="account_selected_" value="'+ results.accounts[i].account_id + '">' +
 						'<td>account id:' +
-						'<td><input type="text" id="account_id_' + i + '" name="account_id" value="'+ json.accounts[i].account_id + '">' +
+						'<td><input type="text" id="account_id_' + i + '" name="account_id" value="'+ results.accounts[i].account_id + '">' +
 						'<td>user id:' +
-						'<td><input type="text" id="user_id_' + i + '" name="user_id" value="'+ json.accounts[i].user_id + '">' +
+						'<td><input type="text" id="user_id_' + i + '" name="user_id" value="'+ results.accounts[i].user_id + '">' +
 						'<td>user name:' +
-						'<td><input type="text" id="username_' + i + '" name="username" value="'+ json.accounts[i].username + '">' +
+						'<td><input type="text" id="username_' + i + '" name="username" value="'+ results.accounts[i].username + '">' +
 						'<td>account type:' +
-						'<td><input type="text" id="account_type_' + i + '" name="account_type" value="'+ json.accounts[i].account_type + '">' +
+						'<td><input type="text" id="account_type_' + i + '" name="account_type" value="'+ results.accounts[i].account_type + '">' +
 						'<td>balance:' +
-						'<td><input type="text" id="balance_' + i + '" name="balance" value="'+ json.accounts[i].balance + '">' +
+						'<td><input type="text" id="balance_' + i + '" name="balance" value="'+ results.accounts[i].balance + '">' +
 						'</tr>';
 			}
+			console.log(html_str);
 			$(list).html(html_str);
 	  	}
 	  	return true;
@@ -577,24 +585,37 @@ doPayoutMassPayees = function (element, list) {
 
     //Fetch the list of cards to delete...
 	var selected = new Array();
+	var payees = new Array();
+	var obj = new Object();
+
 	$("input:checked").each(function() {
 	    selected.push($(this).attr('value'));
 	});
-
 	if(selected.length == 0) {
 		alert("No accounts checked to payout");
 		return;
+	} else {
+		for (i=0; i<selected.length; i++) {
+		    obj.account_id = $("#account_id_" + i).val(); 
+		    obj.user_id = $("#user_id_" + i).val(); 
+		    obj.username = $("#username_" + i).val(); 
+		    obj.account_type = $("#account_type_" + i).val(); 
+		    obj.amount = $("#balance_" + i).val();
+		    obj.description = "payout";
+		    payees.push(obj);
+		    obj = new Object(); 
+		}
 	}
-
+	
 	var action = "stripe_payeePayout";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
-	obj.selected = selected;
+	obj.payees = payees;
 	var json_payoutMassPayees = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";
 
-	data = '{"action": "delete", ' +
+	data = '{"action": "payeePayout", ' +
 	'"type":"jsonp", ' +
 	'"json": ' + json_payoutMassPayees  +
 	'}';
@@ -603,7 +624,7 @@ doPayoutMassPayees = function (element, list) {
 
 	$.ajax( {
 	  type:'post',
-	  url: proxy_url + action,
+	  url: proxy_url + action + "&admin_key=true",
 	  dataType: 'jsonp',
 	  data: 'json=' + data,
 	  success: function(json){
@@ -697,8 +718,6 @@ doSubscribe = function (element) {
 	var json_subscribe = JSON.stringify(objSubscribe, null, "\t");
 	var data = "";
 	var result = "";
-	
-	alert(JSON.stringify(json_subscribe));
 	
 	data = '{"action": "' + action + '", ' +
 	'"type":"jsonp", ' +
@@ -796,6 +815,102 @@ var doLogin = function () {
 		});
 }
 
+/////////////////////
+//- getCustomerInfo
+/////////////////////
+var doGetCustomerInfo = function (element) {
+
+
+	var action = "stripe_getCustomerInfo";
+	var obj = {};
+	obj.sid = getCookie("PHPSESSID");
+	obj.user_id = $("#getcustomerinfo_user_id").val();
+	var json = JSON.stringify(obj, null, "\t");
+	var data = "";
+	var result = "";
+	
+	data = '{"action": "' + action + '", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json  +
+	'}';
+	
+	$(element).val(json);
+	$.ajax( {
+		type:'post',
+		url: proxy_url + action,
+		dataType: 'jsonp',
+		data: 'json=' + data,
+		success: function(json){
+		var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+		var html_str = "";
+		var html_button = "";
+		$(element).val(req_resp);
+		//if (json.Status == "Success") {
+		//	alert("Inside");
+		//}
+		return true;
+	},
+		error: function (jqXHR, textStatus, errorThrown) {
+			alert(jqXHR.responseText);
+			alert(jqXHR.status);
+			//alert(textStatus);
+			//alert(errorThrown);
+		}
+	});
+	return false;
+
+
+}
+
+/////////////////////
+//Order History -
+/////////////////////
+doOrderHistory = function (element) {
+
+	var action = "stripe_getorderhistory";
+	var obj = new Object();
+	obj.sid = getCookie("PHPSESSID");
+	obj.user_id = $("#order_history_form_user_id").val();
+	obj.search_username = $("#account_history_form_user_name").val();
+	obj.page = $("#order_history_form_page").val();
+	obj.limit = $("#order_history_form_limit").val();
+	var json_OrderHistory = JSON.stringify(obj, null, '\t');
+	var data = "";
+	var result = "";
+
+	data = '{"action": "list", ' +
+	'"type":"jsonp", ' +
+	'"json": ' + json_OrderHistory  +
+	'}';
+
+	$(element).val(json_OrderHistory);
+	$.ajax( {
+	  type:'post',
+	  url: proxy_url + action,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	if (json.Status == "Success") {
+	  		//Do Something...
+	  	}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+	    	alert(jqXHR.responseText);
+  		alert(jqXHR.status);
+	 	//alert(textStatus);
+	    	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+
+
 </script>
 
 <!-- JQuery -->
@@ -823,6 +938,14 @@ var doLogin = function () {
     });
     function onLoginCallClicked() {
         doLogin();
+    }
+	
+	//Login
+    $(document).ready(function () {
+        $("#btnOK10").click(onGetCustomerInfoCallClicked);
+    });
+    function onGetCustomerInfoCallClicked() {
+        doGetCustomerInfo('#getcustomerinfo_results');
     }
 	
 	//Store Card
@@ -930,6 +1053,18 @@ var doLogin = function () {
         doSubscribe('#subscribe_results');
     }
 
+	//Order History
+    $(document).ready(function () {
+        $("#btnOrderHistory11").click(onBtnOrderHistoryCallClicked);
+    });
+    function onBtnOrderHistoryCallClicked() {
+        doOrderHistory('#order_history_results');
+    }
+
+
+
+    
+
 	//Update address based on selection
     $(document).ready(function () {
         $("#card_selected").change(onRadioCardListforSubscribeSelected);
@@ -970,6 +1105,7 @@ var doLogin = function () {
 	<div id="tabs">
 		<ul>
 			<li><a href="#tabs-9">Login</a></li>
+			<li><a href="#tabs-10">Get Customer Info</a></li>
 			<li><a href="#tabs-1">Store Card</a></li>
 			<li><a href="#tabs-2">List and Delete Cards</a></li>
 			<li><a href="#tabs-3">Add a Seller</a></li>
@@ -978,6 +1114,7 @@ var doLogin = function () {
 			<li><a href="#tabs-6">Account History</a></li>
 			<li><a href="#tabs-7">MassPay</a></li>
 			<li><a href="#tabs-8">Subscriptions</a></li>
+			<li><a href="#tabs-11">Order History</a></li>
 		</ul>
 		<div id="tabs-1">
 			<form id="store_card_form" name=store_card_form " action="#">
@@ -1203,16 +1340,16 @@ var doLogin = function () {
 			<form id="add_seller_form" name=add_seller_form " action="#">
 				<table>
 					<tr>
+						<td>account type:
+						
+						<td><input type="text" id="add_seller_account_type"
+							name="add_seller_account_type" value="seller">
+					</tr>
+					<tr>
 						<td>user name:
 						
 						<td><input type="text" id="add_seller_user_name"
 							name="add_seller_user_name" value="jmeah2">
-						
-						<td>stripe email address:
-						
-						<td><input type="text" id="add_seller_email_address"
-							name="add_seller_email_address" value="jmeah_seller@memreas.com">
-					
 					</tr>
 					<tr>
 						<td>first name:
@@ -1225,6 +1362,13 @@ var doLogin = function () {
 						<td><input type="text" id="add_seller_last_name"
 							name="add_seller_last_name" value="Meah">
 					
+					</tr>
+					<tr>
+						<td>date of birth (i.e. month-day-yea):
+						
+						<td><input type="text" id="add_seller_dob"
+							name="add_seller_dob" value="12-31-1999">
+						
 					</tr>
 					<tr>
 						<td>address line 1:
@@ -1330,6 +1474,13 @@ var doLogin = function () {
 						<td>
 						
 						<td><input type="hidden" id="isValid" name="isValid" value="1">
+					
+					</tr>
+					<tr>
+						<td>social security or tax ein number:
+						
+						<td><input type="text" id="add_seller_tax_ssn_ein_number"
+							name="add_seller_tax_ssn_ein_number" value="000000000">
 					
 					</tr>
 					<tr>
@@ -1505,7 +1656,7 @@ var doLogin = function () {
 						<td>User Name:
 						
 						<td><input id="account_history_form_user_name" type="text"
-							name="account_history_form_user_name" value="jmeah80">
+							name="account_history_form_user_name" value="jmeah114">
 					
 					</tr>
 					<tr>
@@ -1649,7 +1800,7 @@ var doLogin = function () {
 						<td>
 						
 						<td><input id="username" type="text" name="username"
-							value="jmeah80">
+							value="jmeah114">
 						
 						<td>
 						
@@ -1684,6 +1835,93 @@ var doLogin = function () {
 				</div>
 		
 		</div>
+		<div id="tabs-10">
+			<form id="getcustomerinfo_form" name=getcustomerinfo_form " action="#">
+				<table>
+					<tr>
+						<td>User Name:
+						
+						<td><input id="getcustomerinfo_user_id" type="text"
+							name="getcustomerinfo_user_id" value="de561d5f-6e96-4839-82ac-dbc3d4d29237">
+					
+					<div id="getcustomerinfo10"></div>
+					<tr>
+						<td>
+						
+						<td><input id="btnOK10" type="button" name="ok" value="submit">
+					
+					</tr>
+				</table>
+
+				<div id="getcustomerinfo_form_results">
+					<table>
+						<tr>
+							<td>Results:
+						
+						</tr>
+						<tr>
+							<td><textarea id="getcustomerinfo_results" name="getcustomerinfo_results" rows="10"
+									cols="120">Result will be shown here.</textarea>
+						
+						</tr>
+					</table>
+				</div>
+		
+		</div>		
+		<div id="tabs-11">
+			<form id="order_history_form" name=order_history_form
+				" action="#">
+				<table>
+					<tr>
+						<td>User ID:
+						
+						<td><input id="order_history_form_user_id" type="text"
+							name="order_history_form_user_id" value="">
+					
+					</tr>
+					<tr>
+						<td>User Name:
+						
+						<td><input id="order_history_form_user_name" type="text"
+							name="order_history_form_user_name" value="jmeah114">
+					
+					</tr>
+					<tr>
+						<td>Page:
+						
+						<td><input id="order_history_form_page" type="text"
+							name="order_history_form_page" value="1">
+						
+						<td>Limit:
+						
+						<td><input id="order_history_form_limit" type="text"
+							name="order_history_form_limit" value="1000">
+					
+					</tr>
+					<tr>
+						<td>
+						
+						<td><input id="btnOrderHistory11" type="button" name="ok"
+							value="fetch order history">
+					
+					</tr>
+				</table>
+
+				<div id="order_history_form_results">
+					<table>
+						<tr>
+							<td>Results:
+						
+						</tr>
+						<tr>
+							<td><textarea id="order_history_results"
+									name="order_history_results" rows="10" cols="120">Result will be shown here.</textarea>
+						
+						</tr>
+					</table>
+				</div>
+		
+		</div>		
 
 	</div>
 
@@ -1703,7 +1941,8 @@ var doLogin = function () {
 					card_number = '4242424242424242';
 					break;
 				case "Discover":
-					card_number = '6011111111111117';
+					card_number = '4000000000000077';
+					//card_number = '6011111111111117';
 					break;
 				case "MasterCard":
 					card_number = '5555555555554444';

@@ -400,11 +400,12 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$mediainappropriate = new MediaInappropriate ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $mediainappropriate->exec ();
-			/**
-			 * Cache approach
-			 * - write operation
-			 * - TODO: invalideate cache
-			 */
+				/*
+				 * -
+				 * Cache approach
+				 * - write operation
+				 * - TODO: invalideate cache
+				 */
 				// $this->redis->invalidateMedia
 				// (
 				// $data->mediainappropriate->user_id,
@@ -637,12 +638,13 @@ class IndexController extends AbstractActionController {
 				$result = $addfriendtoevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addfriendtoevent->user_id );
-			
-			/**
-			 * Cache approach
-			 * - write operation
-			 * - hold for now
-			 */
+				
+				/*
+				 * -
+				 * Cache approach
+				 * - write operation
+				 * - hold for now
+				 */
 				// $this->redis->invalidateEvents
 				// (
 				// $uid
@@ -1501,9 +1503,11 @@ class IndexController extends AbstractActionController {
 				 * Payments should not be cached - will be small portion of usage
 				 */
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
-				$PaymentsProxy = new PaymentsProxy ();
+				$PaymentsProxy = new PaymentsProxy ($this->getServiceLocator ());
 				$cache_me = false;
-				$PaymentsProxy->exec ( $actionname, $message_data );
+				$message_data['ip_address'] = $this->fetchUserIPAddress();
+				$message_data['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
+				$result = $PaymentsProxy->exec ( $actionname, $message_data );
 			}
 			
 			/*
@@ -1569,7 +1573,7 @@ class IndexController extends AbstractActionController {
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
 			}
-			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
 		}
 		
@@ -1710,22 +1714,22 @@ class IndexController extends AbstractActionController {
 					return 'notlogin';
 				}
 			} // end if ($requiresExistingSession)
-		
-		/**
-		 * Fetch user ip
-		 */
-			// $currentIPAddress = $this->fetchUserIPAddress ();
-			// if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-			// Mlog::addone ( "$_SESSION [ipAddress]", $_SESSION ['ipAddress'] );
-			// Mlog::addone ( "$currentIPAddress", $currentIPAddress );
-			// Mlog::addone ( __CLASS__.__METHOD__,"ERROR::User IP Address has changed - logging user out!" );
-			// Mlog::addone ( "_SESSION vars after sid_success", $_SESSION );
-			// return 'notlogin';
-			// }
-			// $_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-			// if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-			// $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
-			// }
+			
+			/**
+			 * Fetch user ip
+			 */
+			$currentIPAddress = $this->fetchUserIPAddress ();
+			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+				Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+				Mlog::addone ( '$currentIPAddress', $currentIPAddress );
+				Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
+				Mlog::addone ( '_SESSION vars after sid_success', $_SESSION );
+				return 'notlogin';
+			}
+			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+				$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			}
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
