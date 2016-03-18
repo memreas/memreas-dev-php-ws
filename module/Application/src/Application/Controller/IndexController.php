@@ -225,7 +225,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Bypass section - handle with care!!
 		 */
-		Mlog::addone ( $cm . __LINE__ . '::input data as object---> $actionname: '.$actionname, $data, 'p' );
+		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data, 'p' );
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
@@ -234,7 +234,7 @@ class IndexController extends AbstractActionController {
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
-		Mlog::addone ( __LINE__ . '::after cheking---> $actionname: ',$actionname );
+		
 		/**
 		 * For testing only...
 		 */
@@ -1685,13 +1685,13 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-					 Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
+					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data );
-					 Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
+					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				} else if (! empty ( $data->memreascookie )) {
 					
