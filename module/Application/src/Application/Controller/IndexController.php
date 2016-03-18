@@ -225,7 +225,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Bypass section - handle with care!!
 		 */
-		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data, 'p' );
+		Mlog::addone ( $cm . __LINE__ . '::input data as object---> $actionname'.$actionname, $data, 'p' );
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
