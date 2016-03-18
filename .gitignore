@@ -11,6 +11,8 @@ composer.lock
 composer.phar
 php_errors.log
 
+# ignore MemreasConstants given shell overwrite
+module/Application/src/Application/Model/MemreasConstants.php
 
 # Elastic Beanstalk Files
 .elasticbeanstalk
