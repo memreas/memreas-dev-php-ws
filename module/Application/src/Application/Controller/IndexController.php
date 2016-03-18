@@ -234,7 +234,7 @@ class IndexController extends AbstractActionController {
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
-		Mlog::addone ( $cm . __LINE__ . '::after cheking---> $actionname: '.$actionname );
+		Mlog::addone ( __LINE__ . '::after cheking---> $actionname: ',$actionname );
 		/**
 		 * For testing only...
 		 */
