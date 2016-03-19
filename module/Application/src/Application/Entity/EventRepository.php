@@ -95,6 +95,7 @@ class EventRepository extends EntityRepository {
 			$event_creator_pic = (! empty ( $row ['media_metadata'] )) ? $this->getEventMediaUrl ( $row ['media_metadata'] ) : $this->getEventMediaUrl ( '' );
 			$event_creator_pic = json_decode ( $event_creator_pic );
 			$eventIndex ['event_creator_pic'] = $event_creator_pic [0];
+			$eventIndex ['create_time'] = $row['create_time'];
 			/**
 			 * comment_count
 			 */
