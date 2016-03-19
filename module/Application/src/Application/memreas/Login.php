@@ -80,7 +80,7 @@ class Login {
 				$this->username = strtolower ( $this->username );
 				$checkvalidemail = $this->is_valid_email ( $this->username );
 				if ($checkvalidemail == TRUE) {
-					$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account = 0";
+					$sql = "SELECT u  FROM Application\Entity\User as u  where u.email_address = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account != 1";
 				} else {
 					$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account = 0";
 				}
