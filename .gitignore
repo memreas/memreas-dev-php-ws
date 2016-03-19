@@ -11,6 +11,5 @@ composer.lock
 composer.phar
 php_errors.log
 
-
 # Elastic Beanstalk Files
 .elasticbeanstalk
