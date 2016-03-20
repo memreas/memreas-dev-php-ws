@@ -3,9 +3,14 @@
 #Author = John Meah
 #Version 1.0
 
+echo -n "Do you want to point to local after push (y\n) > "
+read local
+echo "You entered $local\n"
+
+
 echo -n "Enter the details of your deployment (i.e. 4-FEB-2014 Updating this script.) > "
 read comment
-echo "You entered $comment"
+echo "You entered $comment\n"
 #set -v verbose #echo on
 
 #copy fe settings to push to git...
@@ -19,6 +24,9 @@ echo "Pushing to github..."
 set -v verbose #echo on
 git push
 
-cp module/Application/src/Application/Model/MemreasConstants.localhost.php module/Application/src/Application/Model/MemreasConstants.php
+if [ "$local" = "y" ]
+then
+	cp module/Application/src/Application/Model/MemreasConstants.localhost.php module/Application/src/Application/Model/MemreasConstants.php
+fi
 
 #eb events -f
