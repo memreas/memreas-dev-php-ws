@@ -19,6 +19,6 @@ echo "Pushing to github..."
 set -v verbose #echo on
 git push
 
-cp module/Application/src/Application/Model/MemreasConstants.localhost.php module/Application/src/Application/Model/MemreasConstants.php
+#cp module/Application/src/Application/Model/MemreasConstants.localhost.php module/Application/src/Application/Model/MemreasConstants.php
 
 curl https://memreas-dev-deploy.memreas.com/prod_pull_n_aws_push.php?repo=ws
