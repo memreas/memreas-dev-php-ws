@@ -18,6 +18,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $url_signer;
 	private $aws_manager;
 	public function __construct($redis, $service_locator) {
+		$cm = __CLASS__.__METHOD__;
+		Mlog::addone ( $cm . __LINE__.'::','enter __construct' );
 		try {
 			$this->db = new \Predis\Client ( [ 
 					'scheme' => 'tcp',
@@ -28,11 +30,13 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			Mlog::addone ( __CLASS__ . __METHOD__, '::predis connection exception ---> ' . $e->getMessage () );
 		}
 		
+		Mlog::addone ( $cm . __LINE__.'','' );
 		// $this->prefix = $prefix;
 		$this->prefix = '';
 		$this->mRedis = $redis;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->url_signer = new MemreasSignedURL ();
+		Mlog::addone ( $cm . __LINE__.'::','exit __construct' );
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected

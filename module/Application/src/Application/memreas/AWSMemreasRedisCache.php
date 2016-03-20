@@ -197,7 +197,7 @@ class AWSMemreasRedisCache {
 					/**
 					 * - Check for viewable from / to since db date is string
 					 */
-					if ((! empty ( ( int ) (trim ( $event ['viewable_from'] )) )) && (! empty ( ( int ) (trim ( $event ['viewable_to'] )) ))) {
+					if ( isset ( $event ['viewable_from'] ) && isset ( $event ['viewable_to'] ) ) {
 						$now = time ();
 						/**
 						 * check if now is outside dates
@@ -210,7 +210,7 @@ class AWSMemreasRedisCache {
 					/**
 					 * - Check for self_destruct/ghost since db date is string
 					 */
-					if (! empty ( ( int ) (trim ( $event ['self_destuct'] )) )) {
+					if (isset ( $event ['self_destuct'] )) {
 						$now = time ();
 						/**
 						 * check if now is outside dates
