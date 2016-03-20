@@ -51,6 +51,7 @@ class MemreasConstants {
 	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
 	                                      
 	// Same across...
+	const registration_secret_passphrase = 'freedom tower';
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
 	const URL = "/index";

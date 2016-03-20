@@ -70,6 +70,7 @@ class Registration {
 			$this->profile_photo = isset ( $data->registration->profile_photo ) ? $data->registration->profile_photo : 0;
 			$device_id = trim ( $data->registration->device_id );
 			$device_type = trim ( $data->registration->device_type );
+			$secret = trim ( $data->registration->secret );
 			$invited_by = trim ( $data->registration->invited_by );
 			// $invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 			$assign_event = trim ( $data->registration->event_id );
@@ -80,6 +81,7 @@ class Registration {
 			$password = trim ( $_REQUEST ['password'] );
 			$device_id = trim ( $_REQUEST ['device_id'] );
 			$device_type = trim ( $_REQUEST ['device_type'] );
+			$secret = trim ( $_REQUEST ['secret'] );
 			if (isset ( $_REQUEST ['invited_by'] ) && (! empty ( $_REQUEST ['invited_by'] ))) {
 				$invited_by = $_REQUEST ['invited_by'];
 			} else {
@@ -92,10 +94,11 @@ class Registration {
 		error_log ( "password--->" . $password . PHP_EOL );
 		error_log ( "device_id--->" . $device_id . PHP_EOL );
 		error_log ( "device_type--->" . $device_type . PHP_EOL );
+		error_log ( "secret--->" . $secret . PHP_EOL );
 		error_log ( "invited_by--->" . $invited_by . PHP_EOL );
 		error_log ( "event_id--->" . $event_id . PHP_EOL );
 		
-		// $this->FunctionName($invited_by);exit;
+		// $this->processInvitedBy($invited_by);exit;
 		try {
 			if (isset ( $email ) && ! empty ( $email ) && isset ( $username ) && ! empty ( $username ) && isset ( $password ) && ! empty ( $password )) {
 				$checkvalidemail = $this->is_valid_email ( $email );
@@ -104,6 +107,9 @@ class Registration {
 					// throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
 					$status = 'failure';
 					$message = 'email address is invalid';
+				} else if ($secret != MemreasConstants::registration_secret_passphrase) {
+					$status = 'failure';
+					throw new \Exception ( "We're in beta, please enter the secret to pass" );
 				} else {
 					
 					/*
@@ -345,7 +351,7 @@ class Registration {
 						$to [] = $email;
 						$viewVar = array (
 								'email' => $email,
-								'username' => $username,
+								'receiver_name' => $username,
 								'email_verification_url' => $meta_arr ['user'] ['email_verification_url'] 
 						);
 						$viewModel = new ViewModel ( $viewVar );
@@ -444,7 +450,7 @@ class Registration {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::exit" );
 		return $this->userIndex;
 	}
-	public function FunctionName($invited_by = '') {
+	public function processInvitedBy($invited_by = '') {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::enter" );
 		$q_notification = "SELECT n FROM Application\Entity\Notification n  where n.short_code=:short_code AND n.notification_type = :notification_type";
 		$statement = $this->dbAdapter->createQuery ( $q_notification );

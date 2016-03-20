@@ -54,6 +54,7 @@ class MemreasConstants {
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
 	                                      
 	// Same across...
+	const registration_secret_passphrase = 'freedom tower';
 	const media_id_batch_create_count = 25;
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
