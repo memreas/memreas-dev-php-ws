@@ -363,6 +363,20 @@ class AWSMemreasRedisCache {
 			Mlog::addone ( $cm, '::cache warming @warming_memreas finished...' . date ( 'Y-m-d H:i:s.u' ) );
 		} // end if (! $warming_memreas || ($warming_memreas == "(nil)"))
 	}
+        
+        public function getPresonData($user_id=FALSE) {
+            $qb = $this->dbAdapter->createQueryBuilder ();
+			$qb->select ( 'u.user_id', 'u.username', 'u.email_address', 'm.metadata' );
+			$qb->from ( 'Application\Entity\User', 'u' );
+			// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
+                        if($user_id){
+                            $qb->where ( "u.user_id = '{$user_id}'" );
+                        }
+			// error_log("Inside warming qb ----->".$qb->getDql().PHP_EOL);
+			// create index for catch;
+			return $qb->getQuery ()->getResult ();
+        }
 	
 	/**
 	 * Redis cache for all users
@@ -375,16 +389,8 @@ class AWSMemreasRedisCache {
 			Mlog::addone( $cm . __LINE__ , "cache warming @person started..." . date ( 'Y-m-d H:i:s.u' ));
 			$warming = $this->cache->set ( 'warming', '1' );
 			
-			$url_signer = new MemreasSignedURL ();
-			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'u.user_id', 'u.username', 'u.email_address', 'm.metadata' );
-			$qb->from ( 'Application\Entity\User', 'u' );
-			// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
-			$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
-			
-			// error_log("Inside warming qb ----->".$qb->getDql().PHP_EOL);
-			// create index for catch;
-			$userIndexArr = $qb->getQuery ()->getResult ();
+			 
+			$userIndexArr = $this->getPresonData();
 			$person_meta_hash = array ();
 			$person_uid_hash = array ();
 			foreach ( $userIndexArr as $row ) {
@@ -434,6 +440,39 @@ class AWSMemreasRedisCache {
 			// Mlog::addone ( $cm . __LINE__, '::@person_uid_hash setExpire reply ---> ' . $reply );
 		}
 	}
+        
+        public function updatePesonCache($user_id) {
+            $row = $this->getPresonData($user_id);
+            $json_array = json_decode ( $row ['metadata'], true );
+				if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+					$url1 = $this->url_signer->signArrayOfUrls ( null );
+				} else {
+					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+				}
+				// decode here because result will be encoded
+				// error_log('$url1---->'.$url1);
+				$url1 = json_decode ( $url1 );
+				$url1 = $url1 [0];
+				
+				$person_json = json_encode ( array (
+						'username' => $row ['username'],
+						'user_id' => $row ['user_id'],
+						'email_address' => $row ['email_address'],
+						'profile_photo' => $url1 
+				) );
+				/*
+				 * TODO: need to send this in one shot
+				 */
+				$person_meta_hash [$row ['username']] = $person_json;
+				$person_uid_hash [$row ['user_id']] = $row ['username'];
+				$usernames [$row ['username']] = 0;
+                                
+                                $result = $this->cache->zadd ( '@person', $usernames );
+			// error_log ( 'zadd array $result--->' . print_r ( $result, true ) . PHP_EOL );
+			$reply = $this->cache->hmset ( '@person_meta_hash', $person_meta_hash );
+			$reply = $this->cache->hmset ( '@person_uid_hash', $person_uid_hash );
+            
+        }
 	public function findSet($set, $match) {
 		$cm = __CLASS__ . __METHOD__;
 		error_log ( "Inside findSet.... set $set match $match" . PHP_EOL );
