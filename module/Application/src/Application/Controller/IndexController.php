@@ -337,6 +337,8 @@ class IndexController extends AbstractActionController {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $verifyemailaddress->exec ();
 				if ($result) {
+                                    //udpade catch
+                                    $this->catch->updatePesonCache($verifyemailaddress->user_id);
 					if (! empty ( $_GET ['perf'] )) {
 						return true;
 					} else {
@@ -348,8 +350,10 @@ class IndexController extends AbstractActionController {
 					return $this->redirect ()->toUrl ( $redirect );
 				}
 				/*
-				 * Cache approach - N/a
+				 * Cache approach - N/a 
+                                 * suggested update user catch
 				 */
+                                
 			} else if ($actionname == "checkusername" || $actionname == "chkuname") {
 				$chkuname = new ChkUname ( $message_data, $memreas_tables, $this->getServiceLocator () );
 				$result = $chkuname->exec ();
