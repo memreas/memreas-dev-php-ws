@@ -37,8 +37,8 @@ class MemreasConstants {
 	// memreasdevsec related
 	const S3BUCKET = "memreasdevsec";
 	const S3HLSBUCKET = "memreasdevhlssec";
-	const S3_APPKEY = 'AKIAIXDH3Q23AP4KPZRA';
-	const S3_APPSEC = 'TM+p8s9hlJwnKECCEKSVVhEOBjVhTWDG4ijIhJdk';
+	const S3_APPKEY = 'AKIAJZE2O2WDMXLGR27A';
+	const S3_APPSEC = 'FI09T7vRXcWx+QBE/n5ysEtZxx/DOAxkks/o2rzG';
 	const S3_REGION = 'us-east-1';
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
 	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
