@@ -1728,7 +1728,7 @@ class IndexController extends AbstractActionController {
 			 * Fetch user ip
 			 */
 			$currentIPAddress = $this->fetchUserIPAddress ();
-			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+			if ($currentIPAddress != '23.20.63.97'&& ! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
 				Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
 				Mlog::addone ( '$currentIPAddress', $currentIPAddress );
 				Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
@@ -1750,10 +1750,7 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Fetch the user's ip address
 		 */
-            Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
-            Mlog::addone ( '$_SERVER [HTTP_CLIENT_Ip]', $_SERVER ['HTTP_CLIENT_IP'] );
-            Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]',$_SERVER ['HTTP_X_FORWARDED_FOR']);
-		$ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+                $ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
 		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
 			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
 		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
