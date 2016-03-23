@@ -93,8 +93,12 @@ return array (
 				) 
 		),
 		'controllers' => array (
-				'invokables' => array (
-						'Application\Controller\Index' => 'Application\Controller\IndexController' 
+				'factories' => array (
+						'Application\Controller\Index' =>    function($cm) {
+                                                $sm   = $cm->getServiceLocator();
+                                                $controller = new \Application\Controller\IndexController($sm);
+                                                return $controller;
+                                                } 
 				) 
 		),
 		
