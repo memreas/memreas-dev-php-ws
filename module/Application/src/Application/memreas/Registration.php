@@ -262,7 +262,7 @@ class Registration {
 								// Upload to S3 here
 							$media_id = MUUID::fetchUUID ();
 							$aws_manager = new AWSManagerSender ( $this->service_locator );
-							$s3_data = $aws_manager->webserviceUpload ( $user_id, $dirPath, $s3file_name, $content_type );
+							$s3_data = $aws_manager->webserviceUpload ( $user_id, $media_id, $dirPath, $s3file_name, $content_type );
 							
 							$file_type = explode ( '/', $content_type );
 							$json_array = array (
