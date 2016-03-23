@@ -419,7 +419,7 @@ class Registration {
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
-		// $qb->where ('u.disable_account = 0');
+		$qb->where ('u.disable_account = 0');
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		// error_log("qb --->".$qb.PHP_EOL);
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::SQL Query --->" . $qb->getQuery ()->getSql () );
