@@ -116,11 +116,10 @@ class IndexController extends AbstractActionController {
 	protected $aws;
 	protected $sid;
 	protected $sessHandler;
-        protected $sm;
-        public function __construct($sm)
-    {
-        $this->sm = $sm;
-    }
+	protected $sm;
+	public function __construct($sm) {
+		$this->sm = $sm;
+	}
 	public function isJSON($string) {
 		return is_string ( $string ) && is_array ( json_decode ( $string, true ) ) && (json_last_error () == JSON_ERROR_NONE) ? true : false;
 	}
@@ -340,10 +339,10 @@ class IndexController extends AbstractActionController {
 				// }
 			} else if ($actionname == "verifyemailaddress") {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->sm );
-				$result = $verifyemailaddress->exec ();
-				if ($result) {
-                                    //udpade catch
-                                    $this->catch->updatePesonCache($verifyemailaddress->user_id);
+				$verified_user_id = $verifyemailaddress->exec ();
+				if ($verified_user_id) {
+					// udpade catch
+					$this->redis->updatePersonCache ( $verified_user_id );
 					if (! empty ( $_GET ['perf'] )) {
 						return true;
 					} else {
@@ -355,10 +354,9 @@ class IndexController extends AbstractActionController {
 					return $this->redirect ()->toUrl ( $redirect );
 				}
 				/*
-				 * Cache approach - N/a 
-                                 * suggested update user catch
+				 * Cache approach - N/a
+				 * suggested update user catch
 				 */
-                                
 			} else if ($actionname == "checkusername" || $actionname == "chkuname") {
 				$chkuname = new ChkUname ( $message_data, $memreas_tables, $this->sm );
 				$result = $chkuname->exec ();
@@ -1512,10 +1510,10 @@ class IndexController extends AbstractActionController {
 				 * Payments should not be cached - will be small portion of usage
 				 */
 				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
-				$PaymentsProxy = new PaymentsProxy ($this->sm);
+				$PaymentsProxy = new PaymentsProxy ( $this->sm );
 				$cache_me = false;
-				$message_data['ip_address'] = $this->fetchUserIPAddress();
-				$message_data['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
+				$message_data ['ip_address'] = $this->fetchUserIPAddress ();
+				$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
 				$result = $PaymentsProxy->exec ( $actionname, $message_data );
 			}
 			
@@ -1752,8 +1750,8 @@ class IndexController extends AbstractActionController {
 		 */
 		Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
 		Mlog::addone ( '$_SERVER [HTTP_CLIENT_Ip]', $_SERVER ['HTTP_CLIENT_IP'] );
-		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]',$_SERVER ['HTTP_X_FORWARDED_FOR']);
-        $ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
+		$ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
 		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
 			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
 		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {

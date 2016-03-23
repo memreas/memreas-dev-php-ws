@@ -16,7 +16,7 @@ class VerifyEmailAddress {
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
-        protected $user_id;
+	protected $user_id;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
@@ -37,7 +37,7 @@ class VerifyEmailAddress {
 			 */
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'u' )->from ( 'Application\Entity\User', 'u' )->where ( "u.user_id = '{$user_id}'" );
-			 $user = $qb->getQuery ()->getOneOrNullResult ();
+			$user = $qb->getQuery ()->getOneOrNullResult ();
 			
 			if ($user) {
 				$metadata = json_decode ( $user->metadata, true );
@@ -71,7 +71,7 @@ class VerifyEmailAddress {
 				$this->dbAdapter->persist ( $user );
 				$this->dbAdapter->flush ();
 				$this->user_id = $user->user_id;
-				return true;
+				return $this->user_id;
 			}
 			return false;
 		}

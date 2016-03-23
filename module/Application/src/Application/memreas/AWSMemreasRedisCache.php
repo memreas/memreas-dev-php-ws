@@ -441,7 +441,7 @@ class AWSMemreasRedisCache {
 		}
 	}
         
-        public function updatePesonCache($user_id) {
+        public function updatePersonCache($user_id) {
             $row = $this->getPresonData($user_id);
             $json_array = json_decode ( $row ['metadata'], true );
 				if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
