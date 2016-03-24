@@ -43,6 +43,7 @@ class FetchChameleon {
 			unset($_SESSION ['x_memreas_chameleon'][0]);
 			$_SESSION ['x_memreas_chameleon'] = array_values($_SESSION ['x_memreas_chameleon']);
 		}
+		return $chameleon_value;
 	}
 
 	public function checkChameleon($client_x_memreas_chameleon) {

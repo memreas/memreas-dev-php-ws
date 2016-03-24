@@ -1546,7 +1546,9 @@ class IndexController extends AbstractActionController {
 		
 		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
-			
+			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
+					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+			}
 			$json_arr = array (
 					"data" => $message_data ['data'] 
 			);
