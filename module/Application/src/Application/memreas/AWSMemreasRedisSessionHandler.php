@@ -19,7 +19,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $aws_manager;
 	public function __construct($redis, $service_locator) {
 		$cm = __CLASS__ . __METHOD__;
-		Mlog::addone ( $cm . __LINE__ . '::', 'enter __construct' );
+		//Mlog::addone ( $cm . __LINE__ . '::', 'enter __construct' );
 		try {
 			$this->db = new \Predis\Client ( [ 
 					'scheme' => 'tcp',
@@ -30,13 +30,11 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			Mlog::addone ( __CLASS__ . __METHOD__, '::predis connection exception ---> ' . $e->getMessage () );
 		}
 		
-		Mlog::addone ( $cm . __LINE__ . '', '' );
-		// $this->prefix = $prefix;
 		$this->prefix = '';
 		$this->mRedis = $redis;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->url_signer = new MemreasSignedURL ();
-		Mlog::addone ( $cm . __LINE__ . '::', 'exit __construct' );
+		//Mlog::addone ( $cm . __LINE__ . '::', 'exit __construct' );
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected
@@ -69,8 +67,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		session_start ();
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
-	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '') {
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
+	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before startSessionWithMemreasCookie $x_memreas_chameleon--->', $x_memreas_chameleon );
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 		Mlog::addone ( __CLASS__ . __METHOD__ . ':: fetch $rMemreasCookieSessionArr-->', $rMemreasCookieSessionArr );
@@ -79,17 +77,25 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_start ();
 		}
 		
-		$fetchChameleon = new FetchChameleon();
-		$x_memreascookie_chameleon = $fetchChameleon->setChameleon();
-		//$chameleon_pass = $fetchChameleon->checkChameleon ( $x_memreascookie_chameleon );
-		//if ($chameleon_pass) {
-		//	$x_memreascookie_chameleon = $fetchChameleon->setChameleon();
-		//} else {
-		//	// suspicious - failed chameleon test
-		//	$this->closeSessionWithMemreasCookie ();
-		//}
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after startSessionWithMemreasCookie $_SESSION[x_memreas_chameleon]--->', $_SESSION ['x_memreas_chameleon'] );
+		$fetchChameleon = new FetchChameleon ();
+		// $_SESSION ['x_memreas_chameleon'] = $fetchChameleon->setChameleon();
+		if ($actionname == 'login') {
+			$fetchChameleon->setChameleon ();
+		} else {
+			if (! $fetchChameleon->checkChameleon ( $x_memreas_chameleon )) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::failed fetchChameleon->checkChameleon($x_memreas_chameleon)-->', $x_memreas_chameleon );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::failed fetchChameleon->checkChameleon($x_memreas_chameleon) $_SESSION[x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
+			}
+		}
+		// $chameleon_pass = $fetchChameleon->checkChameleon ( $x_memreascookie_chameleon );
+		// if ($chameleon_pass) {
+		// $x_memreascookie_chameleon = $fetchChameleon->setChameleon();
+		// } else {
+		// // suspicious - failed chameleon test
+		// $this->closeSessionWithMemreasCookie ();
+		// }
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: after startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: after startSessionWithMemreasCookie $_SESSION[x_memreas_chameleon]--->', $_SESSION ['x_memreas_chameleon'] );
 	}
 	public function startSessionWithUID($data) {
 		if (! empty ( $data->uid )) {
@@ -170,6 +176,12 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		} else {
 			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( null );
 		}
+		//
+		//handle x_memreas_chameleon on login $_SESSION is set in function
+		//
+		$fetchChameleon = new FetchChameleon();
+		$fetchChameleon->setChameleon();
+		
 		// Mlog::addone(__CLASS__.__METHOD__.':: $_SESSION[profile_pic]', $_SESSION['profile_pic']);
 		
 		// error_log ( 'setSession(...) _SESSION vars --->' . print_r ( $_SESSION, true ) . PHP_EOL );
@@ -205,11 +217,11 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$memreascookieArr ['ipAddress'] = $_SESSION ['ipAddress'];
 		$memreascookieArr ['profile_pic_meta'] = $_SESSION ['profile_pic_meta'];
 		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
-		$memreascookieArr ['profile_pic'] = $_SESSION ['profile_pic'];
+		$memreascookieArr ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
 		
 		$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
 		
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setSession $_SESSION--->', $_SESSION ['x_memreas_chameleon'] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setSession $_SESSION--->', $_SESSION ['x_memreas_chameleon'][count($_SESSION ['x_memreas_chameleon'])-1] );
 	}
 	public function closeSessionWithSID() {
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );

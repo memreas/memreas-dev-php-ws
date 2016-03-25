@@ -109,6 +109,7 @@ class Login {
 					 * check if email is verified
 					 */
 					$user_metadata = json_decode ( $row [0]->metadata, true );
+					$email = $row [0]->email_address;
 					$verified_email = isset ( $user_metadata ['user'] ['email_verified'] ) ? $user_metadata ['user'] ['email_verified'] : "0";
 					
 					if ($verified_email) {
@@ -121,6 +122,7 @@ class Login {
 						$xml_output .= "<message>User logged in successfully.</message>";
 						$xml_output .= "<user_id>" . $user_id . "</user_id>";
 						$xml_output .= "<username>" . $username . "</username>";
+						$xml_output .= "<email>" . $email . "</email>";
 						$xml_output .= "<sid>" . session_id () . "</sid>";
 						$xml_output .= "<device_token><![CDATA[" . $device_token . "]]></device_token>";
 					} else {

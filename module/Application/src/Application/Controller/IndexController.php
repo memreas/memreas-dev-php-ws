@@ -176,17 +176,7 @@ class IndexController extends AbstractActionController {
 	}
 	public function indexAction() {
 		$cm = __CLASS__ . __METHOD__;
-		// Mlog::addone(__CLASS__ . __METHOD__, '...');
-		// Checking headers for cookie info
-		// $headers = apache_request_headers ();
-		// foreach ( $headers as $header => $value ) {
-		// error_log ( "WS header: $header :: value: $value" . PHP_EOL );
-		// }
-		// End Checking headers for cookie info
-		// Mlog::addone($cm . '$_POST', $_POST);
-		
-		// Capture the echo from the includes in case we need to convert
-		// back to json
+		// Start capture so we control what is sent back...
 		ob_start ();
 		
 		$path = "application/index/ws_tester.phtml";
@@ -195,7 +185,7 @@ class IndexController extends AbstractActionController {
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
@@ -229,7 +219,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Bypass section - handle with care!!
 		 */
-		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data, 'p' );
+		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
 		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
 			// do nothing - profile pic upload for registration
@@ -267,8 +257,9 @@ class IndexController extends AbstractActionController {
 			$invalidate = false;
 			$invalidate_me = false;
 			
-			// if (isset($_POST ['xml']) && !empty($_POST ['xml'])) {
-			// error_log("Input data as xml ----> ".$_POST ['xml'].PHP_EOL); }
+			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
+				error_log ( "Input data as xml ----> " . $_POST ['xml'] . PHP_EOL );
+			}
 			
 			$memreas_tables = new MemreasTables ( $this->sm );
 			
@@ -296,7 +287,7 @@ class IndexController extends AbstractActionController {
 					if ($this->redis->hasSet ( '@person' )) {
 						
 						/*
-						 * TODO: Add the user only if s/he doesn't exist in
+						 * TODO: Add the user (login from email verification) only if s/he doesn't exist in
 						 * the hash (i.e. 1st login will force cache to
 						 * warm)
 						 */
@@ -1547,7 +1538,7 @@ class IndexController extends AbstractActionController {
 		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
 			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
-					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+				$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
 			}
 			$json_arr = array (
 					"data" => $message_data ['data'] 
@@ -1560,21 +1551,23 @@ class IndexController extends AbstractActionController {
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
-			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
+			Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
 			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
 				if ($this->isJson ( $output )) {
 					$message_data = json_decode ( $output, true );
 					
-					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+					$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
+					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] [$entry];
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 					$output = json_encode ( $message_data );
 				} else {
-					$data = simplexml_load_string ( $output );
+					$data = simplexml_load_string ( trim ( $output ) );
 					if (empty ( $data->x_memreas_chameleon )) {
 						// $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
-						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
+						$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
+						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] [$entry] );
 						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
 						$output = $data->asXML ();
 						// error_log ( '$xml-->' . $xml );
@@ -1707,10 +1700,10 @@ class IndexController extends AbstractActionController {
 					/*
 					 * SetId for the web browser session and start...
 					 */
-					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
+					//Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->memreascookie----> ', ( string ) $data->memreascookie );
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->x_memreas_chameleon ----->', ( string ) $data->x_memreas_chameleon );
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, $data->x_memreas_chameleon );
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, (string) $data->x_memreas_chameleon, $actionname );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
@@ -1750,20 +1743,11 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Fetch the user's ip address
 		 */
-		Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
-		Mlog::addone ( '$_SERVER [HTTP_CLIENT_Ip]', $_SERVER ['HTTP_CLIENT_IP'] );
-		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
-		$ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
-		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
-			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
-		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
-			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
-		} else {
-			$ipAddress = $_SERVER ['REMOTE_ADDR'];
-		}
-		// error_log ( 'ip is ' . $ipAddress );
+		$remote = new \Zend\Http\PhpEnvironment\RemoteAddress ();
+		$this->ipAddress = $remote->getIpAddress ();
+		error_log ( 'ip is ' . $this->ipAddress );
 		
-		return $ipAddress;
+		return $this->ipAddress;
 	}
 }
 // end class IndexController
