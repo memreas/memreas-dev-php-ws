@@ -1747,23 +1747,26 @@ class IndexController extends AbstractActionController {
 		return $actionname;
 	}
 	public function fetchUserIPAddress() {
+		$this->memreas_session ();
 		/*
 		 * Fetch the user's ip address
 		 */
-		Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
-		Mlog::addone ( '$_SERVER [HTTP_CLIENT_Ip]', $_SERVER ['HTTP_CLIENT_IP'] );
-		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
-		$ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+		$remote = new Zend\Http\PhpEnvironment\RemoteAddress;
+		$this->ipAddress = $remote->getIpAddress();
+		error_log ( 'ip is ' . $this->ipAddress );
+		/*
+		$this->ipAddress = $this->getServiceLocator ()->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
 		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
-			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
+			$this->ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
 		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
-			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
+			$this->ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
-			$ipAddress = $_SERVER ['REMOTE_ADDR'];
+			$this->ipAddress = $_SERVER ['REMOTE_ADDR'];
 		}
-		// error_log ( 'ip is ' . $ipAddress );
+		error_log ( 'ip is ' . $this->ipAddress );
+		*/
 		
-		return $ipAddress;
+		return $this->ipAddress;
 	}
 }
 // end class IndexController
