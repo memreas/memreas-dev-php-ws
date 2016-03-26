@@ -38,7 +38,7 @@ class AddMediaEvent {
 		}
 		$this->url_signer = new MemreasSignedURL ();
 	}
-	public function exec() {
+	public function exec($redis = null) {
 		$cm = __CLASS__. __METHOD__;	
 		$is_audio = false;
 		try {
@@ -149,7 +149,7 @@ class AddMediaEvent {
 				// ///////////////////////////////////////////////
 				if ($is_profile_pic) {
 					//
-					// refresh session profile pic
+					// refresh session profile pic and store the session
 					//
 					$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $s3path . $s3file_name );
 					
