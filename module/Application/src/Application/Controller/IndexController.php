@@ -221,7 +221,7 @@ class IndexController extends AbstractActionController {
 		 */
 		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
-		if (($actionname == 'addmediaevent') && (((int)$data->addmediaevent->is_profile_pic) == 1)) {
+		if (($actionname == 'addmediaevent') && ( ((int) $data->addmediaevent->is_profile_pic) == 1) && ( ((int) $data->addmediaevent->is_registration) == 1) ) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// do nothing - fetching token to upload profile pic
@@ -366,6 +366,7 @@ class IndexController extends AbstractActionController {
 				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addmediaevent->exec ();
+				//$this->sessHandler->startSessionWithSID($_SESSION['sid']);
 				
 				/*
 				 * - Cache approach
