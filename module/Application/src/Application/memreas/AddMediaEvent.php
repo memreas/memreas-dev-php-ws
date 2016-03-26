@@ -12,6 +12,8 @@ use Application\memreas\AddNotification;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\Email;
 use Application\Model\MemreasConstants;
+use Zend\View\Model\ViewModel;
+
 
 class AddMediaEvent {
 	protected $message_data;
@@ -37,10 +39,11 @@ class AddMediaEvent {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
+		$cm = __CLASS__. __METHOD__;	
 		$is_audio = false;
 		try {
 			$media_id = '';
-			Mlog::addone ( '$_POST [xml]', $_POST ['xml'] );
+			//Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -131,8 +134,8 @@ class AddMediaEvent {
 				//
 				// New Media - insert media
 				//
-				Mlog::addone ( 'insert::', 'new media' );
-				Mlog::addone ( '$copyright', $copyright );
+				// Mlog::addone ( 'insert::', 'new media' );
+				// Mlog::addone ( '$copyright', $copyright );
 				
 				//
 				// media_id must be set
@@ -184,9 +187,9 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['file_type'] = $file_type [0];
 				$json_array ['S3_files'] ['content_type'] = $content_type;
 				$file_type = explode ( '/', $content_type );
-				//Mlog::addone ( '$file_type', $file_type );
-				//Mlog::addone ( '$file_type[0]', $file_type [0] );
-				//Mlog::addone ( '$file_type[1]', $file_type [1] );
+				// Mlog::addone ( '$file_type', $file_type );
+				// Mlog::addone ( '$file_type[0]', $file_type [0] );
+				// Mlog::addone ( '$file_type[1]', $file_type [1] );
 				if (strtolower ( $file_type [0] ) == "video") {
 					$is_video = 1;
 					$json_array ['S3_files'] ['is_video'] = 1;
@@ -199,9 +202,9 @@ class AddMediaEvent {
 				
 				/**
 				 * -
-				 * TODO: Check if media is uploaded to S3 if you can't find it then return exception 
-				 * doesn't work... commented out for now
-				 * 
+				 * TODO: Check if media is uploaded to S3 if you can't find it then return exception
+				 * doesn't work...
+				 * commented out for now
 				 */
 				// $s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 				// $result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
@@ -231,7 +234,7 @@ class AddMediaEvent {
 				$tblMedia->create_date = $now;
 				$tblMedia->update_date = $now;
 				$this->dbAdapter->persist ( $tblMedia );
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'addmediaevent media insert metadata--->', $json_str);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'addmediaevent media insert metadata--->', $json_str );
 				
 				/**
 				 * Update copyright batch data and copyright table.
@@ -315,17 +318,43 @@ class AddMediaEvent {
 				$this->dbAdapter->flush ();
 				Mlog::addone ( 'flushed to db to update media, copyright_batch, and copyright', '' );
 				
+				/*
+				 * Send copyright email
+				 */
+				if (! empty ( $copyright )) {
+					Mlog::addone($cm . __LINE__. '::', $_SESSION);
+					$email = $_SESSION ['email_address'];
+					$username = $_SESSION ['username'];
+					$to [] = $email;
+					$viewVar = array (
+							'email' => $email,
+							'receiver_name' => $username,
+							'copyright_array' => $copyright_array,
+							'device_type' => $device_type 
+					);
+					$viewModel = new ViewModel ( $viewVar );
+					$viewModel->setTemplate ( 'email/copyright_received' );
+					$viewRender = $this->service_locator->get ( 'ViewRenderer' );
+					$html = $viewRender->render ( $viewModel );
+					$subject = 'memreas media copyright receipt';
+					if (empty ( $aws_manager ))
+						$aws_manager = new AWSManagerSender ( $this->service_locator );
+					if (MemreasConstants::SEND_EMAIL) {
+						$aws_manager->sendSeSMail ( $to, $subject, $html ); // Active this line when app go live
+					}
+				}
+				
 				Mlog::addone ( '$is_profile_pic', $is_profile_pic );
 				if ($is_profile_pic === 1) {
-					// Remove previous profile images
-					$remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
+					// update profile image so we don't have media in S3 without database entry
+					$update_old_profile = "UPDATE Application\Entity\Media m SET m.is_profile_pic = 0 WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
 					$remove_result = $this->dbAdapter->createQuery ( $remove_old_profile );
 					$remove_result->getResult ();
 					
 					// if profile pic then update media
 					$update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
 					$statement = $this->dbAdapter->createQuery ( $update_media );
-					$rs_is_profil = $statement->getResult ();
+					$rs_is_profile = $statement->getResult ();
 					
 					// Update friend table profile image if this user is memreas
 					// network
