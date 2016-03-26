@@ -83,6 +83,8 @@ class GetUserDetails {
 				//
 				$json = [ ];
 				$json ['user_id'] = $_SESSION ['user_id'];
+				Mlog::addone ( 'stripe_getCustomerInfo->session->user_id-->', $_SESSION ['user_id'] );
+				Mlog::addone ( 'stripe_getCustomerInfo->json->user_id-->', $json ['user_id'] );
 				$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
 				$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $json );
 				Mlog::addone ( 'stripe_getCustomerInfo-->', $result );
