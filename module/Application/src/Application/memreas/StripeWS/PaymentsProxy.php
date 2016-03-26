@@ -56,6 +56,9 @@ class PaymentsProxy {
 			$disk_usage = new GetDiskUsage($this->service_locator);
 			$jsonArr['disk_usage'] = $disk_usage->exec($_SESSION['user_id'], true);
 		}
+		/*-
+		 * these cases handle admin, credit activation from email, web queries, and mobile queries
+		 */
 		if (isset ( $_REQUEST ['admin_key'] )) {
 			/**
 			 * Admin is logged in and request user data
@@ -67,7 +70,6 @@ class PaymentsProxy {
 							'admin_key' => $_REQUEST ['admin_key'],
 							'json' => json_encode ( $jsonArr ) 
 					]
-					 
 			] );
 		} else if (isset ( $_REQUEST ['token'] ) && ($action_method == 'activeCredit')) {
 			Mlog::addone ( $cm, __LINE__ );
@@ -101,7 +103,9 @@ class PaymentsProxy {
 			Mlog::addone ( $cm . __LINE__, $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json--->', $jsonArr );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$action_method----->', $action_method );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'MemreasConstants::MEMREAS_PAY_URL_STRIPE----->', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION[sid]----->', $_SESSION['sid'] );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'json----->', json_encode ( $jsonArr ) );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
 							'sid' => $_SESSION ['sid'],

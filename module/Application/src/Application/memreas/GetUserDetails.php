@@ -81,15 +81,32 @@ class GetUserDetails {
 				// Fetch account details using payments proxy
 				// variables: $action, $json, $callback (optional here)
 				//
-				$json = [ ];
-				$json ['user_id'] = $_SESSION ['user_id'];
-				Mlog::addone ( 'stripe_getCustomerInfo->session->user_id-->', $_SESSION ['user_id'] );
-				Mlog::addone ( 'stripe_getCustomerInfo->json->user_id-->', $json ['user_id'] );
+				$jsonArr = [ ];
+				$jsonArr ['user_id'] = $_SESSION ['user_id'];
 				$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
-				$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $json );
+				$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
 				Mlog::addone ( 'stripe_getCustomerInfo-->', $result );
 				
 				$userAccountArr = json_decode ( $result, true );
+				if ($userAccountArr['status'] == 'Failure') {
+					//user has not account so create one
+					/*
+					 * setup new user with free plan
+					 *  - should only need this in short run to correct bad data...
+					 */
+					$message_data['sid'] = $_SESSION['sid'];
+					$message_data['user_id'] = $_SESSION['user_id'];
+					$message_data['username'] = $_SESSION['username'];
+					$message_data['email'] = $_SESSION['email_address'];
+					$message_data['description'] = "corrected registered user associated with email: ". $email;
+					$message_data['metadata'] = array('user_id' => $_SESSION['user_id']);
+					$result = $PaymentsProxy->exec ( "stripe_createCustomer", $message_data );
+						
+					if ($result) {
+						$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
+					}
+						
+				}
 				
 				// For stripe customer id
 				if (isset ( $userAccountArr ['buyer_account'] ['accountHeader'] ['stripe_customer_id'] )) {
@@ -115,7 +132,7 @@ class GetUserDetails {
 				}
 				
 				// error_log('$data -->'.print_r($data,true).PHP_EOL);
-				$data = $$userAccountArr;
+				$data = $userAccountArr;
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
 					$output .= '<accounts>';
 					//
