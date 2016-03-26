@@ -39,6 +39,7 @@ class AddMediaEvent {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec() {
+		$cm = __CLASS__. __METHOD__;	
 		$is_audio = false;
 		try {
 			$media_id = '';
