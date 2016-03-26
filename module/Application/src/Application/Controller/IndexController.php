@@ -221,7 +221,7 @@ class IndexController extends AbstractActionController {
 		 */
 		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
-		if (($actionname == 'addmediaevent') && ($data->addmediaevent->is_profile_pic)) {
+		if (($actionname == 'addmediaevent') && (((int)$data->addmediaevent->is_profile_pic) == 1)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// do nothing - fetching token to upload profile pic
