@@ -43,8 +43,7 @@ class AddMediaEvent {
 		$is_audio = false;
 		try {
 			$media_id = '';
-			Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
-			Mlog::addone ( $cm .__LINE__.'::top of exec $_SESSION--->', $_SESSION );
+			//Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -334,7 +333,7 @@ class AddMediaEvent {
 							'device_type' => $device_type 
 					);
 					$viewModel = new ViewModel ( $viewVar );
-					$viewModel->setTemplate ( 'email/copyright_receiver' );
+					$viewModel->setTemplate ( 'email/copyright_received' );
 					$viewRender = $this->service_locator->get ( 'ViewRenderer' );
 					$html = $viewRender->render ( $viewModel );
 					$subject = 'memreas media copyright receipt';
