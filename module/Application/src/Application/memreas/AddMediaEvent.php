@@ -131,8 +131,8 @@ class AddMediaEvent {
 				//
 				// New Media - insert media
 				//
-				Mlog::addone ( 'insert::', 'new media' );
-				Mlog::addone ( '$copyright', $copyright );
+				//Mlog::addone ( 'insert::', 'new media' );
+				//Mlog::addone ( '$copyright', $copyright );
 				
 				//
 				// media_id must be set
@@ -314,6 +314,35 @@ class AddMediaEvent {
 				//
 				$this->dbAdapter->flush ();
 				Mlog::addone ( 'flushed to db to update media, copyright_batch, and copyright', '' );
+				
+				if (! empty ( $copyright )) {
+						
+					/*
+					 * Send user email
+					 */
+					$email = $_SESSION ['email_address'];
+					$username = $_SESSION ['username'];
+					$to [] = $email;
+					$viewVar = array (
+							'email' => $email,
+							'receiver_name' => $username,
+							'copyright_array' => $copyright_array,
+							'device_type' => $device_type
+					);
+					$viewModel = new ViewModel ( $viewVar );
+					$viewModel->setTemplate ( 'email/copyright_receiver' );
+					$viewRender = $this->service_locator->get ( 'ViewRenderer' );
+					$html = $viewRender->render ( $viewModel );
+					$subject = 'memreas media copyright receipt';
+					if (empty ( $aws_manager ))
+						$aws_manager = new AWSManagerSender ( $this->service_locator );
+						if (MemreasConstants::SEND_EMAIL) {
+							$aws_manager->sendSeSMail ( $to, $subject, $html ); // Active this line when app go live
+						}
+							
+				}
+				
+				
 				
 				Mlog::addone ( '$is_profile_pic', $is_profile_pic );
 				if ($is_profile_pic === 1) {

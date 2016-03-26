@@ -89,14 +89,14 @@ class Registration {
 			}
 		}
 		
-		error_log ( "username--->" . $username . PHP_EOL );
-		error_log ( "email--->" . $email . PHP_EOL );
-		error_log ( "password--->" . $password . PHP_EOL );
-		error_log ( "device_id--->" . $device_id . PHP_EOL );
-		error_log ( "device_type--->" . $device_type . PHP_EOL );
-		error_log ( "secret--->" . $secret . PHP_EOL );
-		error_log ( "invited_by--->" . $invited_by . PHP_EOL );
-		error_log ( "event_id--->" . $event_id . PHP_EOL );
+		//error_log ( "username--->" . $username . PHP_EOL );
+		//error_log ( "email--->" . $email . PHP_EOL );
+		//error_log ( "password--->" . $password . PHP_EOL );
+		//error_log ( "device_id--->" . $device_id . PHP_EOL );
+		//error_log ( "device_type--->" . $device_type . PHP_EOL );
+		//error_log ( "secret--->" . $secret . PHP_EOL );
+		//error_log ( "invited_by--->" . $invited_by . PHP_EOL );
+		//error_log ( "event_id--->" . $event_id . PHP_EOL );
 		
 		// $this->processInvitedBy($invited_by);exit;
 		try {
