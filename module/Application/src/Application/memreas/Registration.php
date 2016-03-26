@@ -10,9 +10,9 @@ namespace Application\memreas;
 use \Exception;
 use Application\memreas\AddFriendtoevent;
 use Application\memreas\AWSManagerSender;
-use Application\memreas\StripeWS\PaymentsProxy;
 use Application\memreas\MUUID;
 use Application\memreas\RmWorkDir;
+use Application\memreas\StripeWS\PaymentsProxy;
 use Application\Model\MemreasConstants;
 use Zend\View\Model\ViewModel;
 

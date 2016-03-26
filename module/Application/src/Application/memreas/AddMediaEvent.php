@@ -12,6 +12,8 @@ use Application\memreas\AddNotification;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\Email;
 use Application\Model\MemreasConstants;
+use Zend\View\Model\ViewModel;
+
 
 class AddMediaEvent {
 	protected $message_data;
@@ -319,6 +321,7 @@ class AddMediaEvent {
 				 * Send copyright email
 				 */
 				if (! empty ( $copyright )) {
+					Mlog::addone($cm . __LINE__. '::', $_SESSION);
 					$email = $_SESSION ['email_address'];
 					$username = $_SESSION ['username'];
 					$to [] = $email;
@@ -342,15 +345,15 @@ class AddMediaEvent {
 				
 				Mlog::addone ( '$is_profile_pic', $is_profile_pic );
 				if ($is_profile_pic === 1) {
-					// Remove previous profile images
-					$remove_old_profile = "DELETE FROM Application\Entity\Media m WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
+					// update profile image so we don't have media in S3 without database entry
+					$update_old_profile = "UPDATE Application\Entity\Media m SET m.is_profile_pic = 0 WHERE m.is_profile_pic = 1 AND m.media_id <> '$media_id' AND m.user_id = '$user_id'";
 					$remove_result = $this->dbAdapter->createQuery ( $remove_old_profile );
 					$remove_result->getResult ();
 					
 					// if profile pic then update media
 					$update_media = "UPDATE Application\Entity\Media m SET m.is_profile_pic = $is_profile_pic WHERE m.user_id ='$user_id' AND m.media_id='$media_id'";
 					$statement = $this->dbAdapter->createQuery ( $update_media );
-					$rs_is_profil = $statement->getResult ();
+					$rs_is_profile = $statement->getResult ();
 					
 					// Update friend table profile image if this user is memreas
 					// network
