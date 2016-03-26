@@ -131,8 +131,8 @@ class AddMediaEvent {
 				//
 				// New Media - insert media
 				//
-				//Mlog::addone ( 'insert::', 'new media' );
-				//Mlog::addone ( '$copyright', $copyright );
+				// Mlog::addone ( 'insert::', 'new media' );
+				// Mlog::addone ( '$copyright', $copyright );
 				
 				//
 				// media_id must be set
@@ -184,9 +184,9 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['file_type'] = $file_type [0];
 				$json_array ['S3_files'] ['content_type'] = $content_type;
 				$file_type = explode ( '/', $content_type );
-				//Mlog::addone ( '$file_type', $file_type );
-				//Mlog::addone ( '$file_type[0]', $file_type [0] );
-				//Mlog::addone ( '$file_type[1]', $file_type [1] );
+				// Mlog::addone ( '$file_type', $file_type );
+				// Mlog::addone ( '$file_type[0]', $file_type [0] );
+				// Mlog::addone ( '$file_type[1]', $file_type [1] );
 				if (strtolower ( $file_type [0] ) == "video") {
 					$is_video = 1;
 					$json_array ['S3_files'] ['is_video'] = 1;
@@ -199,9 +199,9 @@ class AddMediaEvent {
 				
 				/**
 				 * -
-				 * TODO: Check if media is uploaded to S3 if you can't find it then return exception 
-				 * doesn't work... commented out for now
-				 * 
+				 * TODO: Check if media is uploaded to S3 if you can't find it then return exception
+				 * doesn't work...
+				 * commented out for now
 				 */
 				// $s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
 				// $result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
@@ -231,7 +231,7 @@ class AddMediaEvent {
 				$tblMedia->create_date = $now;
 				$tblMedia->update_date = $now;
 				$this->dbAdapter->persist ( $tblMedia );
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'addmediaevent media insert metadata--->', $json_str);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'addmediaevent media insert metadata--->', $json_str );
 				
 				/**
 				 * Update copyright batch data and copyright table.
@@ -315,11 +315,10 @@ class AddMediaEvent {
 				$this->dbAdapter->flush ();
 				Mlog::addone ( 'flushed to db to update media, copyright_batch, and copyright', '' );
 				
+				/*
+				 * Send copyright email
+				 */
 				if (! empty ( $copyright )) {
-						
-					/*
-					 * Send user email
-					 */
 					$email = $_SESSION ['email_address'];
 					$username = $_SESSION ['username'];
 					$to [] = $email;
@@ -327,7 +326,7 @@ class AddMediaEvent {
 							'email' => $email,
 							'receiver_name' => $username,
 							'copyright_array' => $copyright_array,
-							'device_type' => $device_type
+							'device_type' => $device_type 
 					);
 					$viewModel = new ViewModel ( $viewVar );
 					$viewModel->setTemplate ( 'email/copyright_receiver' );
@@ -336,13 +335,10 @@ class AddMediaEvent {
 					$subject = 'memreas media copyright receipt';
 					if (empty ( $aws_manager ))
 						$aws_manager = new AWSManagerSender ( $this->service_locator );
-						if (MemreasConstants::SEND_EMAIL) {
-							$aws_manager->sendSeSMail ( $to, $subject, $html ); // Active this line when app go live
-						}
-							
+					if (MemreasConstants::SEND_EMAIL) {
+						$aws_manager->sendSeSMail ( $to, $subject, $html ); // Active this line when app go live
+					}
 				}
-				
-				
 				
 				Mlog::addone ( '$is_profile_pic', $is_profile_pic );
 				if ($is_profile_pic === 1) {
