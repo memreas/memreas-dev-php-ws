@@ -65,7 +65,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
-		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
 		Mlog::addone ( __CLASS__ . __METHOD__ . ':: before startSessionWithMemreasCookie $x_memreas_chameleon--->', $x_memreas_chameleon );
