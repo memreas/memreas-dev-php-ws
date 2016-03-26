@@ -43,7 +43,8 @@ class AddMediaEvent {
 		$is_audio = false;
 		try {
 			$media_id = '';
-			Mlog::addone ( '$_POST [xml]', $_POST ['xml'] );
+			Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
+			Mlog::addone ( $cm .__LINE__.'::top of exec $_SESSION--->', $_SESSION );
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
