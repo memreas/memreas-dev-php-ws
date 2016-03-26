@@ -132,7 +132,7 @@ class GetUserDetails {
 				}
 				
 				// error_log('$data -->'.print_r($data,true).PHP_EOL);
-				$data = $$userAccountArr;
+				$data = $userAccountArr;
 				if ((! empty ( $data )) && ($data ['status'] == 'Success')) {
 					$output .= '<accounts>';
 					//
