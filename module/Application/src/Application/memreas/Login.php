@@ -45,9 +45,9 @@ class Login {
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			Mlog::addone ( $cm . __LINE__.'::$data---->', $data );
-			if ( isset($data->clientIPAddress) && !empty($data->clientIPAddress) ) {
-				Mlog::addone ( $cm . __LINE__.'::$data->clientIPAddress---->', $data->clientIPAddress );
-				$ipAddress = $data->clientIPAddress;
+			if ( !empty($data->clientIPAddress) ) {
+				Mlog::addone ( $cm . __LINE__.'::$data->clientIPAddress---->', (string) $data->clientIPAddress );
+				$ipAddress = (string) $data->clientIPAddress;
 			}
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
