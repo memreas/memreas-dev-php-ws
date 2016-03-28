@@ -1559,18 +1559,26 @@ class IndexController extends AbstractActionController {
 				if ($this->isJson ( $output )) {
 					$message_data = json_decode ( $output, true );
 					
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] [$entry];
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 					$output = json_encode ( $message_data );
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
 					if (empty ( $data->x_memreas_chameleon )) {
 						// $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 						$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] [$entry] );
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
 						$output = $data->asXML ();
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 						// error_log ( '$xml-->' . $xml );
 					}
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
