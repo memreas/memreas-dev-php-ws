@@ -1573,7 +1573,7 @@ class IndexController extends AbstractActionController {
 						// $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
 					Mlog::addone ( $cm . __LINE__ . '', '...' );
 						$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
-					Mlog::addone ( $cm . __LINE__ . '', '...' );
+					Mlog::addone ( $cm . __LINE__ . '$_SESSION [x_memreas_chameleon] [$entry]', $_SESSION ['x_memreas_chameleon'] [$entry] );
 						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] [$entry] );
 					Mlog::addone ( $cm . __LINE__ . '', '...' );
 						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
