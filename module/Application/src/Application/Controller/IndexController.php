@@ -1705,9 +1705,6 @@ class IndexController extends AbstractActionController {
 					/*
 					 * SetId for the web browser session and start...
 					 */
-					// Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
-					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->memreascookie----> ', ( string ) $data->memreascookie );
-					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->x_memreas_chameleon ----->', ( string ) $data->x_memreas_chameleon );
 					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
@@ -1732,10 +1729,10 @@ class IndexController extends AbstractActionController {
 				$currentIPAddress = $this->fetchUserIPAddress ();
 				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$currentIPAddress', $currentIPAddress);
 				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-					Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-					Mlog::addone ( '$currentIPAddress', $currentIPAddress );
+					Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+					Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'$currentIPAddress', $currentIPAddress );
 					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-					Mlog::addone ( '_SESSION vars after sid_success', $_SESSION );
+					Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'_SESSION vars after sid_success', $_SESSION );
 					return 'notlogin';
 				}
 				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
@@ -1757,8 +1754,8 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Fetch the user's ip address
 		 */
-		Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
-		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
+		//Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
+		//Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
 		if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
 			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
