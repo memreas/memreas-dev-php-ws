@@ -44,9 +44,11 @@ class Login {
 			$cm = __CLASS__.__METHOD__;
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			//if ( !empty($data->clientIPAddress) ) {
-			//	$ipAddress = $data->clientIPAddress;
-			//}
+			Mlog::addone ( $cm . __LINE__.'::$data---->', $data );
+			if ( isset($data->clientIPAddress) && !empty($data->clientIPAddress) ) {
+				Mlog::addone ( $cm . __LINE__.'::$data->clientIPAddress---->', $data->clientIPAddress );
+				$ipAddress = $data->clientIPAddress;
+			}
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
 			$flagusername = 0;
@@ -57,7 +59,6 @@ class Login {
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
-			$cm = __CLASS__ . __METHOD__;
 			//Mlog::addone ( $cm . '::$this->username', $this->username );
 			//Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
 			//Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
