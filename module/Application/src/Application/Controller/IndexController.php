@@ -184,9 +184,9 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
-		 Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-                 Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
-		 Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
 			$reqArr = json_decode ( $_REQUEST ['json'], true );
@@ -1725,17 +1725,20 @@ class IndexController extends AbstractActionController {
 			/**
 			 * Fetch user ip
 			 */
-			$currentIPAddress = $this->fetchUserIPAddress ();
-			if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-				Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-				Mlog::addone ( '$currentIPAddress', $currentIPAddress );
-				Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-				Mlog::addone ( '_SESSION vars after sid_success', $_SESSION );
-				return 'notlogin';
-			}
-			$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-			if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-				$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			if (empty ( $data->clientIPAddress )) {
+				
+				$currentIPAddress = $this->fetchUserIPAddress ();
+				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+					Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+					Mlog::addone ( '$currentIPAddress', $currentIPAddress );
+					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
+					Mlog::addone ( '_SESSION vars after sid_success', $_SESSION );
+					return 'notlogin';
+				}
+				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+				}
 			}
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -1749,11 +1752,8 @@ class IndexController extends AbstractActionController {
 		 * Fetch the user's ip address
 		 */
 		Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
-		Mlog::addone ( '$_SERVER [HTTP_CLIENT_Ip]', $_SERVER ['HTTP_CLIENT_IP'] );
 		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
-		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
-			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
-		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
+		if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
 			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
 			$ipAddress = $_SERVER ['REMOTE_ADDR'];
