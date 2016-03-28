@@ -44,7 +44,7 @@ class Login {
 			//Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			if ( isset($data->clientIPAddress) && !empty($data->clientIPAddress) ) {
+			if ( !empty($data->clientIPAddress) ) {
 				$ipAddress = $data->clientIPAddress;
 			}
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );

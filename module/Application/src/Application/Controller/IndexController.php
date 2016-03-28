@@ -1725,9 +1725,12 @@ class IndexController extends AbstractActionController {
 			/**
 			 * Fetch user ip
 			 */
+			Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$data---->',$data);
 			if (empty ( $data->clientIPAddress )) {
+				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$data->clientIPAddress---->','is empty...');
 				
 				$currentIPAddress = $this->fetchUserIPAddress ();
+				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$currentIPAddress', $currentIPAddress);
 				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
 					Mlog::addone ( '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
 					Mlog::addone ( '$currentIPAddress', $currentIPAddress );
@@ -1735,8 +1738,11 @@ class IndexController extends AbstractActionController {
 					Mlog::addone ( '_SESSION vars after sid_success', $_SESSION );
 					return 'notlogin';
 				}
+				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
 				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
 					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 				}
 			}
