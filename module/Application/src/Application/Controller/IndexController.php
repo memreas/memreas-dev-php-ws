@@ -221,7 +221,7 @@ class IndexController extends AbstractActionController {
 		 */
 		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
-		if (($actionname == 'addmediaevent') && ( ((int) $data->addmediaevent->is_profile_pic) == 1) && ( ((int) $data->addmediaevent->is_registration) == 1) ) {
+		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// do nothing - fetching token to upload profile pic
@@ -366,7 +366,7 @@ class IndexController extends AbstractActionController {
 				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addmediaevent->exec ();
-				//$this->sessHandler->startSessionWithSID($_SESSION['sid']);
+				// $this->sessHandler->startSessionWithSID($_SESSION['sid']);
 				
 				/*
 				 * - Cache approach
@@ -1559,10 +1559,14 @@ class IndexController extends AbstractActionController {
 				if ($this->isJson ( $output )) {
 					$message_data = json_decode ( $output, true );
 					
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] [$entry];
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 					$output = json_encode ( $message_data );
+					Mlog::addone ( $cm . __LINE__ . '', '...' );
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
 					if (empty ( $data->x_memreas_chameleon )) {
@@ -1701,10 +1705,10 @@ class IndexController extends AbstractActionController {
 					/*
 					 * SetId for the web browser session and start...
 					 */
-					//Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->actionname----> ', $actionname );
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->memreascookie----> ', ( string ) $data->memreascookie );
 					Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->sessHandler->startSessionWithMemreasCookie --->(string) $data->x_memreas_chameleon ----->', ( string ) $data->x_memreas_chameleon );
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, (string) $data->x_memreas_chameleon, $actionname );
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
@@ -1744,11 +1748,20 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Fetch the user's ip address
 		 */
-		$remote = new \Zend\Http\PhpEnvironment\RemoteAddress ();
-		$this->ipAddress = $remote->getIpAddress ();
-		error_log ( 'ip is ' . $this->ipAddress );
+		Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
+		Mlog::addone ( '$_SERVER [HTTP_CLIENT_Ip]', $_SERVER ['HTTP_CLIENT_IP'] );
+		Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
+		$ipAddress = $this->sm->get ( 'Request' )->getServer ( 'REMOTE_ADDR' );
+		if (! empty ( $_SERVER ['HTTP_CLIENT_IP'] )) {
+			$ipAddress = $_SERVER ['HTTP_CLIENT_IP'];
+		} else if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
+			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
+		} else {
+			$ipAddress = $_SERVER ['REMOTE_ADDR'];
+		}
+		// error_log ( 'ip is ' . $ipAddress );
 		
-		return $this->ipAddress;
+		return $ipAddress;
 	}
 }
 // end class IndexController
