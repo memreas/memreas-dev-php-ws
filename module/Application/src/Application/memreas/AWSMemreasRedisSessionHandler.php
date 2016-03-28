@@ -78,15 +78,16 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
+		$fetchChameleon->setChameleon ();
 		// $_SESSION ['x_memreas_chameleon'] = $fetchChameleon->setChameleon();
-		if ($actionname == 'login') {
-			$fetchChameleon->setChameleon ();
-		} else {
-			if (! $fetchChameleon->checkChameleon ( $x_memreas_chameleon )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::failed fetchChameleon->checkChameleon($x_memreas_chameleon)-->', $x_memreas_chameleon );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::failed fetchChameleon->checkChameleon($x_memreas_chameleon) $_SESSION[x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
-			}
-		}
+		//if ($actionname == 'login') {
+		//	$fetchChameleon->setChameleon ();
+		//} else {
+		//	if (! $fetchChameleon->checkChameleon ( $x_memreas_chameleon )) {
+		//		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::failed fetchChameleon->checkChameleon($x_memreas_chameleon)-->', $x_memreas_chameleon );
+		//		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::failed fetchChameleon->checkChameleon($x_memreas_chameleon) $_SESSION[x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
+		//	}
+		//}
 		// $chameleon_pass = $fetchChameleon->checkChameleon ( $x_memreascookie_chameleon );
 		// if ($chameleon_pass) {
 		// $x_memreascookie_chameleon = $fetchChameleon->setChameleon();
