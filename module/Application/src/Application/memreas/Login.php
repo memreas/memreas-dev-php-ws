@@ -43,7 +43,7 @@ class Login {
 		try {
 			$cm = __CLASS__.__METHOD__;
 			
-			//$data = simplexml_load_string ( $_POST ['xml'] );
+			$data = simplexml_load_string ( $_POST ['xml'] );
 			//if ( !empty($data->clientIPAddress) ) {
 			//	$ipAddress = $data->clientIPAddress;
 			//}
