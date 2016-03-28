@@ -63,7 +63,6 @@ class PaymentsProxy {
 			/**
 			 * Admin is logged in and request user data
 			 */
-			Mlog::addone ( $cm . __LINE__ . 'token--->', $_REQUEST ['token'] );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
 							'sid' => $_SESSION ['sid'],
