@@ -147,6 +147,7 @@ class Login {
 			$xml_output .= "<message>" . $e->getMessage () . "</message>";
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$e->getMessage ()--->', $e->getMessage ());
 			Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 		}
 		
