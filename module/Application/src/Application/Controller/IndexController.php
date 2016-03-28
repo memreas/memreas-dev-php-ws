@@ -1716,7 +1716,7 @@ class IndexController extends AbstractActionController {
 				}
 				
 				if (! $sid_success) {
-					error_log ( 'SID IS NOT SET !!!!!' . PHP_EOL );
+					error_log ( 'SID IS NOT SET !!!!' . PHP_EOL );
 					session_destroy ();
 					return 'notlogin';
 				}
