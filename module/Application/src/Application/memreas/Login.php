@@ -41,12 +41,12 @@ class Login {
 	}
 	public function exec($sessHandler, $ipAddress = '') {
 		try {
-			//Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+			$cm = __CLASS__.__METHOD__;
 			
-			$data = simplexml_load_string ( $_POST ['xml'] );
-			if ( !empty($data->clientIPAddress) ) {
-				$ipAddress = $data->clientIPAddress;
-			}
+			//$data = simplexml_load_string ( $_POST ['xml'] );
+			//if ( !empty($data->clientIPAddress) ) {
+			//	$ipAddress = $data->clientIPAddress;
+			//}
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
 			$flagusername = 0;
