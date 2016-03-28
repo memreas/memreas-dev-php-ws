@@ -1558,15 +1558,10 @@ class IndexController extends AbstractActionController {
 			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
 				if ($this->isJson ( $output )) {
 					$message_data = json_decode ( $output, true );
-					
-					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
-					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] [$entry];
-					Mlog::addone ( $cm . __LINE__ . '', '...' );
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 					$output = json_encode ( $message_data );
-					Mlog::addone ( $cm . __LINE__ . '', '...' );
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
 					if (empty ( $data->x_memreas_chameleon )) {
@@ -1722,24 +1717,21 @@ class IndexController extends AbstractActionController {
 			/**
 			 * Fetch user ip
 			 */
-			Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$data---->',$data);
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data---->', $data );
 			if (empty ( $data->clientIPAddress )) {
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$data->clientIPAddress---->','is empty...');
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
 				
 				$currentIPAddress = $this->fetchUserIPAddress ();
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::$currentIPAddress', $currentIPAddress);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
 				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-					Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-					Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'$currentIPAddress', $currentIPAddress );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
 					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-					Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'_SESSION vars after sid_success', $_SESSION );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
 					return 'notlogin';
 				}
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
 				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-				Mlog::addone ( __CLASS__.__METHOD__.__LINE__.'::','..');
 					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 				}
 			}
@@ -1754,8 +1746,8 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Fetch the user's ip address
 		 */
-		//Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
-		//Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
+		// Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
+		// Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
 		if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
 			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
