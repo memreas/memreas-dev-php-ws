@@ -67,10 +67,10 @@ class AWSMemreasRedisCache {
 		
 		// Debug
 		if ($result) {
-			Mlog::addone ( $cm, '::JUST ADDED THIS KEY ----> ' . $key  );
+			Mlog::addone ( $cm, '::JUST ADDED THIS KEY ----> ' . $key );
 		} else {
 			Mlog::addone ( $cm, '::FAILED TO ADD THIS KEY ----> ' . $key . ' reason code ---> ' . $this->cache->getResultCode () );
-			//Mlog::addone ( $cm, '::FAILED TO ADD THIS KEY VALUE----> ' . $value );
+			// Mlog::addone ( $cm, '::FAILED TO ADD THIS KEY VALUE----> ' . $value );
 		}
 		return $result;
 	}
@@ -212,14 +212,14 @@ class AWSMemreasRedisCache {
 			return false;
 		}
 		
-		return $this->cache->deleteMulti ( $keys );
-		// $result = $this->cache->deleteMulti ( $keys );
-		// if ($result) {
-		// // error_log('JUST DELETED THESE KEYS ----> ' . json_encode($keys) . PHP_EOL);
-		// } else {
-		// error_log ( 'COULD NOT DELETE THES KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
-		// }
-		// return $result;
+		// return $this->cache->deleteMulti ( $keys );
+		$result = $this->cache->deleteMulti ( $keys );
+		if ($result) {
+			error_log ( 'JUST DELETED THESE KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
+		} else {
+			error_log ( 'COULD NOT DELETE THES KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
+		}
+		return $result;
 	}
 	
 	/*
