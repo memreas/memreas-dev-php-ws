@@ -44,7 +44,6 @@ class Login {
 			$cm = __CLASS__.__METHOD__;
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			Mlog::addone ( $cm . __LINE__.'::$data---->', $data );
 			if ( !empty($data->clientIPAddress) ) {
 				Mlog::addone ( $cm . __LINE__.'::$data->clientIPAddress---->', (string) $data->clientIPAddress );
 				$ipAddress = (string) $data->clientIPAddress;
