@@ -692,12 +692,16 @@ class IndexController extends AbstractActionController {
 				$cache_id = ! empty ( $data ) ? trim ( $data->listnotification->receiver_uid ) : null;
 				try {
 					$result = ! empty ( $cache_id ) ? $this->redis->getCache ( $actionname . '_' . $cache_id ) : false;
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$actionname_$cache_id',$actionname . '_' . $cache_id);
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result',$result);
 				} catch ( \Exception $e ) {
 					$result = false;
 				}
 				
 				if (! $result || empty ( $result )) {
-					$listnotification = new ListNotification ( $message_data, $memreas_tables, $this->sm );
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::','...');
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::','...');
+					$listnotification = new ListNotification ( $message_data, $memreas_tables, $this->sm, $this->redis );
 					$result = $listnotification->exec ();
 					$cache_me = true;
 				}
@@ -1353,6 +1357,7 @@ class IndexController extends AbstractActionController {
 						$result ['search'] = $search_result;
 						
 						echo json_encode ( $result );
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result',$result);
 						$result = '';
 						break;
 					
