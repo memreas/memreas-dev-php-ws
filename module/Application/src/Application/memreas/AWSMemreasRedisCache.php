@@ -681,22 +681,46 @@ class AWSMemreasRedisCache {
 			$person_meta_hash = array ();
 			$person_uid_hash = array ();
 			foreach ( $userIndexArr as $row ) {
-				$json_array = json_decode ( $row ['metadata'], true );
-				if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-					$url1 = $this->url_signer->signArrayOfUrls ( null );
+				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+					$pic_79x80 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 				} else {
-					$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+					$pic_79x80 = $this->url_signer->signArrayOfUrls ( null );
+				}
+				if (! empty ( $json_array ['S3_files'] ['path'] )) {
+					$pic_full = $json_array ['S3_files'] ['path'];
+				} else {
+					$pic_full = $this->url_signer->signArrayOfUrls ( null );
+				}
+				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
+					$pic_448x306 = $json_array ['S3_files'] ['thumbnails'] ['448x306'];
+				} else {
+					$pic_448x306 = $this->url_signer->signArrayOfUrls ( null );
+				}
+				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) {
+					$pic_98x78 = $json_array ['S3_files'] ['thumbnails'] ['98x78'];
+				} else {
+					$pic_98x78 = $this->url_signer->signArrayOfUrls ( null );
 				}
 				// decode here because result will be encoded
 				// error_log('$url1---->'.$url1);
-				$url1 = json_decode ( $url1 );
-				$url1 = $url1 [0];
+				$pic_79x80 = json_decode ( $pic_79x80 );
+				$pic_79x80 = $pic_79x80 [0];
+				$pic_448x306 = json_decode ( $pic_448x306 );
+				$pic_448x306 = $pic_448x306 [0];
+				$pic_98x78 = json_decode ( $pic_98x78 );
+				$pic_98x78 = $pic_98x78 [0];
+				$pic_full = json_decode ( $pic_full );
+				$pic_full = $pic_full [0];
 				
 				$person_json = json_encode ( array (
 						'username' => $row ['username'],
 						'user_id' => $row ['user_id'],
 						'email_address' => $row ['email_address'],
-						'profile_photo' => $url1 
+						'profile_photo' => $pic_79x80,
+						'profile_photo_79x80' => $pic_79x80,
+						'profile_photo_448x306' => $pic_448x306,
+						'profile_photo_98x78' => $pic_98x78,
+						'profile_photo_full' => $pic_full 
 				) );
 				/*
 				 * TODO: need to send this in one shot
@@ -730,10 +754,25 @@ class AWSMemreasRedisCache {
 	public function updatePersonCache($user_id) {
 		$row = $this->getPersonData ( $user_id );
 		$json_array = json_decode ( $row ['metadata'], true );
-		if (empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-			$url1 = $this->url_signer->signArrayOfUrls ( null );
+		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+			$pic_79x80 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] [0] );
 		} else {
-			$url1 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+			$pic_79x80 = $this->url_signer->signArrayOfUrls ( null );
+		}
+		if (! empty ( $json_array ['S3_files'] ['path'] )) {
+			$pic_full = $json_array ['S3_files'] ['path'];
+		} else {
+			$pic_full = $this->url_signer->signArrayOfUrls ( null );
+		}
+		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
+			$pic_448x306 = $json_array ['S3_files'] ['thumbnails'] ['448x306'];
+		} else {
+			$pic_448x306 = $this->url_signer->signArrayOfUrls ( null );
+		}
+		if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) {
+			$pic_98x78 = $json_array ['S3_files'] ['thumbnails'] ['98x78'];
+		} else {
+			$pic_98x78 = $this->url_signer->signArrayOfUrls ( null );
 		}
 		// decode here because result will be encoded
 		// error_log('$url1---->'.$url1);
@@ -744,8 +783,13 @@ class AWSMemreasRedisCache {
 				'username' => $row ['username'],
 				'user_id' => $row ['user_id'],
 				'email_address' => $row ['email_address'],
-				'profile_photo' => $url1 
+				'profile_photo' => $pic_79x80,
+				'profile_photo_79x80' => $pic_79x80,
+				'profile_photo_448x306' => $pic_448x306,
+				'profile_photo_98x78' => $pic_98x78,
+				'profile_photo_full' => $pic_full 
 		) );
+		
 		/*
 		 * TODO: need to send this in one shot
 		 */

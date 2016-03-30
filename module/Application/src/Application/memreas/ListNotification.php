@@ -16,12 +16,14 @@ class ListNotification {
 	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	protected $redis;
 	protected $xml_output;
-	public function __construct($message_data, $memreas_tables, $service_locator) {
+	public function __construct($message_data, $memreas_tables, $service_locator, $redis) {
 		$this->message_data = $message_data;
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->redis = $redis;
 		$this->url_signer = new MemreasSignedURL ();
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
@@ -62,8 +64,8 @@ class ListNotification {
 	public function exec() {
 		try {
 			$cm = __CLASS__ . __METHOD__;
-			//Mlog::addone ( $cm,'::inbound xml--->'. $_POST ['xml'] );
-				
+			Mlog::addone ( $cm, '::inbound xml--->' . $_POST ['xml'] );
+			
 			$oClass = new \ReflectionClass ( 'Application\Entity\Notification' );
 			$array = $oClass->getConstants ();
 			unset ( $array ['EMAIL'], $array ['MEMREAS'] );
@@ -78,6 +80,7 @@ class ListNotification {
 			$this->xml_output .= "<xml>";
 			$this->xml_output .= "<listnotificationresponse>";
 			if (! empty ( $receiver_uid )) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', '...' );
 				
 				/**
 				 * Fetch list of notifications
@@ -93,6 +96,7 @@ class ListNotification {
 				
 				$this->xml_output .= "<notifications>";
 				if (count ( $result ) > 0) {
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', '...' );
 					
 					$count = 0;
 					$this->xml_output .= "<status>success</status>";
@@ -101,7 +105,9 @@ class ListNotification {
 						
 						$this->xml_output .= "<notification>";
 						$meta = json_decode ( $row ['meta'], true );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );
 						
 						/**
 						 * Fetch Profile Pics
@@ -138,8 +144,8 @@ class ListNotification {
 							/**
 							 * Handle ADD_FRIEND_TO_EVENT
 							 */
-							//Mlog::addone ( __FILE__, 'Handle ADD_FRIEND_TO_EVENT' );
-							//Mlog::add ( $meta, 'j', 1 );
+							// Mlog::addone ( __FILE__, 'Handle ADD_FRIEND_TO_EVENT' );
+							// Mlog::add ( $meta, 'j', 1 );
 							$this->handleAddFriendToEvent ( $eventRepository, $meta ['sent'] ['event_id'] );
 						} else if ($row ['notification_type'] == Notification::ADD_COMMENT) {
 							/**
@@ -153,9 +159,9 @@ class ListNotification {
 							 */
 							$this->handleEmpty ();
 						}
-					$this->xml_output .= "</notification>";
-					}// end for each
-				} //end if count > 0 
+						$this->xml_output .= "</notification>";
+					} // end for each
+				} // end if count > 0
 				
 				if (count ( $result ) == 0) {
 					$this->xml_output .= "<status>failure</status>";
@@ -169,8 +175,7 @@ class ListNotification {
 			$this->xml_output .= "</notifications></listnotificationresponse>";
 			$this->xml_output .= "</xml>";
 			echo $this->xml_output;
-			//Mlog::addone ( $cm,'::outbound xml--->'. $_POST ['xml'] );
-				
+			// Mlog::addone ( $cm,'::outbound xml--->'. $_POST ['xml'] );
 		} catch ( \Exception $e ) {
 			$status = 'failure';
 			$message .= 'listnotifications error ->' . $e->getMessage ();
@@ -183,7 +188,7 @@ class ListNotification {
 					</xml>";
 			echo $this->xml_output;
 		}
-		//error_log ( __CLASS__.__METHOD__.'::$this->xml_output--->' . $this->xml_output . PHP_EOL );
+		// error_log ( __CLASS__.__METHOD__.'::$this->xml_output--->' . $this->xml_output . PHP_EOL );
 	} // end exec()
 	
 	/**
@@ -191,13 +196,13 @@ class ListNotification {
 	 */
 	public function handleAddFriendToEvent($eventRepository, $event_id) {
 		$eventMedia = $eventRepository->getEventMedia ( $event_id, 1 );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia', $eventMedia );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia', $eventMedia );
 		
 		// echo'<pre>';print_r($eventMedia);
 		$eventMediaUrl = '';
 		if (isset ( $eventMedia [0] )) {
 			$eventMediaUrl = $eventRepository->getEventMediaUrl ( $eventMedia [0] ['metadata'], 'thumb' );
-			//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
+			// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
 			$this->xml_output .= "<event_media_url><![CDATA[" . json_encode ( $eventMediaUrl ) . "]]></event_media_url>";
 		}
 	}
@@ -250,33 +255,54 @@ class ListNotification {
 	 */
 	public function fetchPics($from_user_id) {
 		if (! empty ( $from_user_id )) {
-			
-			$from_user = $this->dbAdapter->getRepository ( 'Application\Entity\User' )->findOneBy ( array (
-					'user_id' => $from_user_id 
-			) );
-			$profile_pic = $this->dbAdapter->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
-					'user_id' => $from_user_id,
-					'is_profile_pic' => 1 
-			) );
-			if ($profile_pic)
-				$json_array = json_decode ( $profile_pic->metadata, true );
-			$url1 = null;
-			if (! empty ( $json_array ['S3_files'] ['path'] )) {
-				$url1 = $json_array ['S3_files'] ['path'];
+
+			/*-
+			 * Pull from redis session data
+			 */
+			$username = $username_redis = $this->redis->cache->hget ( '@person_uid_hash', $from_user_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$username_redis', $username_redis );
+			if ($username_redis) {
+				$userprofile_redis = json_decode($this->redis->cache->hget ( '@person_meta_hash', $username_redis ), true);
+				// $user_redis = $this->redis->findSet ('@person', $username_redis );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
+				$pic_79x80 = $url1 = $userprofile_redis['profile_photo_79x80']; 
+				$pic_448x306 = $userprofile_redis['profile_photo_448x306'];
+				$pic_98x78 = $userprofile_redis['profile_photo_98x78'];
+			} else {
+				// go to db redis not found
+				$from_user = $this->dbAdapter->getRepository ( 'Application\Entity\User' )->findOneBy ( array (
+						'user_id' => $from_user_id 
+				) );
+				$username = $from_user->username;
+				
+				$profile_pic = $this->dbAdapter->getRepository ( 'Application\Entity\Media' )->findOneBy ( array (
+						'user_id' => $from_user_id,
+						'is_profile_pic' => 1 
+				) );
+				/**
+				 * try redis @person for profile pic
+				 */
+				
+				if ($profile_pic)
+					$json_array = json_decode ( $profile_pic->metadata, true );
+				$url1 = null;
+				if (! empty ( $json_array ['S3_files'] ['path'] )) {
+					$url1 = $json_array ['S3_files'] ['path'];
+				}
+				$pic_79x80 = '';
+				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+					$pic_79x80 = $json_array ['S3_files'] ['thumbnails'] ['79x80'];
+				}
+				$pic_448x306 = '';
+				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
+					$pic_448x306 = $json_array ['S3_files'] ['thumbnails'] ['448x306'];
+				}
+				$pic_98x78 = '';
+				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) {
+					$pic_98x78 = $json_array ['S3_files'] ['thumbnails'] ['98x78'];
+				}
 			}
-			$pic_79x80 = '';
-			if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-				$pic_79x80 = $json_array ['S3_files'] ['thumbnails'] ['79x80'];
-			}
-			$pic_448x306 = '';
-			if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
-				$pic_448x306 = $json_array ['S3_files'] ['thumbnails'] ['448x306'];
-			}
-			$pic_98x78 = '';
-			if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) {
-				$pic_98x78 = $json_array ['S3_files'] ['thumbnails'] ['98x78'];
-			}
-			$this->xml_output .= "<profile_username>$from_user->username</profile_username>";
+			$this->xml_output .= "<profile_username>$username</profile_username>";
 			$this->xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
 			$this->xml_output .= "<profile_pic_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_79x80 ) . "]]></profile_pic_79x80>";
 			$this->xml_output .= "<profile_pic_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_448x306 ) . "]]></profile_pic_448x306>";
