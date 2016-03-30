@@ -520,7 +520,8 @@ doListMassPayees = function (element, list) {
 	var action = "stripe_listMassPayee";
 	var obj = new Object();
 	obj.sid = getCookie("PHPSESSID");
-	obj.username = "all";
+	obj.username = $("#mass_payee_form_user_name").val(); 
+	obj.payeelist = "all";
 	var json_listMassPayee = JSON.stringify(obj, null, '\t');
 	var data = "";
 	var result = "";
@@ -1699,6 +1700,13 @@ doOrderHistory = function (element) {
 			<form id="mass_pay_form" name=mass_pay_form " action="#">
 				<table>
 					<div id="mass_pay_list"></div>
+					<tr>
+						<td>User Name:
+						
+						<td><input id="mass_payee_form_user_name" type="text"
+							name="mass_payee_form_user_name" value="jmeah114">
+					
+					</tr>
 					<tr>
 						<td>
 						
