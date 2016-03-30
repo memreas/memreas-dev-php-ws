@@ -17,7 +17,7 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 8;
 	
 	// memreasprod urls
-	const WEB_URL = "https://pfe.memreas.com/";
+	const WEB_URL = "https://www.memreas.com/";
 	const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
 	const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
 	const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
