@@ -1688,6 +1688,7 @@ class IndexController extends AbstractActionController {
 					/*
 					 * SetId for the web browser session and start...
 					 */
+					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
