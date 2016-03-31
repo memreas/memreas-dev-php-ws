@@ -719,6 +719,7 @@ class AWSMemreasRedisCache {
 		$cm = __CLASS__ . __METHOD__;
 		if (empty ( $row )) {
 			$row = $this->getPersonData ( $user_id );
+			$row = $row[0];
 		}
 		$meta = $row ['metadata'];
 		if (empty ( $meta )) {
