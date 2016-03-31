@@ -47,6 +47,7 @@ class PaymentsProxy {
 		$cm = __CLASS__ . __METHOD__;
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
+		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_REQUEST', $_REQUEST);
 		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_SESSION', $_SESSION);
 		
 		/*
