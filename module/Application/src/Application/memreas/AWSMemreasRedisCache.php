@@ -706,10 +706,10 @@ class AWSMemreasRedisCache {
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'u.user_id', 'u.username', 'u.email_address', 'm.metadata' );
 		$qb->from ( 'Application\Entity\User', 'u' );
-		// $qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id' );
+		$qb->where ( "u.disable_account = 0" );
 		$qb->leftjoin ( 'Application\Entity\Media', 'm', 'WITH', 'm.user_id = u.user_id AND m.is_profile_pic = 1' );
 		if ($user_id) {
-			$qb->where ( "u.user_id = '{$user_id}'" );
+			$qb->andWhere ( "u.user_id = '{$user_id}'" );
 		}
 		error_log ( "Inside warming qb ----->" . $qb->getDql () . PHP_EOL );
 		// create index for catch;
