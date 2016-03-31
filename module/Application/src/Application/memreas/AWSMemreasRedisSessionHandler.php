@@ -69,9 +69,12 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
 		Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+		
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSession-->', $rMemreasCookieSession);
 		if ($rMemreasCookieSession) {
 			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSessionArr-->', $rMemreasCookieSessionArr);
 			if (! session_id ()) {
 				session_id ( $rMemreasCookieSessionArr ['sid'] );
 				session_start ();
