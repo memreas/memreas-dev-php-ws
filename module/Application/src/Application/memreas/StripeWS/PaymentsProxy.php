@@ -47,6 +47,8 @@ class PaymentsProxy {
 		$cm = __CLASS__ . __METHOD__;
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
+		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_REQUEST', $_REQUEST);
+		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_SESSION', $_SESSION);
 		
 		/*
 		 * -
@@ -54,6 +56,7 @@ class PaymentsProxy {
 		 */
 		if ($action_method == 'subscribe') {
 			$disk_usage = new GetDiskUsage ( $this->service_locator );
+			Mlog::addone($cm.__LINE__.'::paymentsproxy->$_SESSION', $_SESSION);
 			$jsonArr ['disk_usage'] = $disk_usage->exec ( $_SESSION ['user_id'], true );
 		}
 		/*
@@ -88,7 +91,7 @@ class PaymentsProxy {
 					] 
 			] );
 		} else {
-			Mlog::addone ( $cm . __LINE__, 'about to send email action==>' . $action_method );
+			Mlog::addone ( $cm . __LINE__, 'action==>' . $action_method );
 			/*
 			 * $response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'email', [
 			 * 'form_params' => [
