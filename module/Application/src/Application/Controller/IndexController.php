@@ -1667,7 +1667,20 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
-				if (! empty ( $data->sid )) {
+				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
+				if (! empty ( $data->memreascookie )) {
+					
+					/*
+					 * SetId for the web browser session and start...
+					 */
+					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
+					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
+						$sid_success = 1;
+					}
+					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
+				} else if (! empty ( $data->sid )) {
+					Mlog::addone ( __METHOD__ . __LINE__ . 'from $data->sid--->', $actionname );
 					/*
 					 * SetId for the mobile devices session and start...
 					 */
@@ -1677,22 +1690,13 @@ class IndexController extends AbstractActionController {
 					}
 					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
+					Mlog::addone ( __METHOD__ . __LINE__ . '$data->uid ) || ! empty ( $data->username )--->', $actionname );
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data );
 					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
-				} else if (! empty ( $data->memreascookie )) {
-					
-					/*
-					 * SetId for the web browser session and start...
-					 */
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
-					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
-						$sid_success = 1;
-					}
-					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				}
 				
 				if (! $sid_success) {
