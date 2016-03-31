@@ -88,7 +88,7 @@ class PaymentsProxy {
 					] 
 			] );
 		} else {
-			Mlog::addone ( $cm . __LINE__, 'about to send email action==>' . $action_method );
+			Mlog::addone ( $cm . __LINE__, 'action==>' . $action_method );
 			/*
 			 * $response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . 'email', [
 			 * 'form_params' => [

@@ -71,12 +71,14 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		if ($rMemreasCookieSession) {
-			
-		}
-		$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
-		if (! session_id ()) {
-			session_id ( $rMemreasCookieSessionArr ['sid'] );
-			session_start ();
+			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
+			if (! session_id ()) {
+				session_id ( $rMemreasCookieSessionArr ['sid'] );
+				session_start ();
+			}
+		} else {
+			//need to logout
+			exit();
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
