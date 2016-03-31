@@ -1668,7 +1668,18 @@ class IndexController extends AbstractActionController {
 				// Check data to attributes...
 				//
 				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
-				if (! empty ( $data->sid )) {
+				if (! empty ( $data->memreascookie )) {
+					
+					/*
+					 * SetId for the web browser session and start...
+					 */
+					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
+					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
+						$sid_success = 1;
+					}
+					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
+				} else if (! empty ( $data->sid )) {
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from $data->sid--->', $actionname );
 					/*
 					 * SetId for the mobile devices session and start...
@@ -1686,17 +1697,6 @@ class IndexController extends AbstractActionController {
 					$this->sessHandler->startSessionWithUID ( $data );
 					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
-				} else if (! empty ( $data->memreascookie )) {
-					
-					/*
-					 * SetId for the web browser session and start...
-					 */
-					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
-					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
-						$sid_success = 1;
-					}
-					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				}
 				
 				if (! $sid_success) {
