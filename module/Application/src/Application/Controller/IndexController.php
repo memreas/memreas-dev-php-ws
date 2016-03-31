@@ -1667,6 +1667,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
+				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
 				if (! empty ( $data->sid )) {
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from $data->sid--->', $actionname );
 					/*
