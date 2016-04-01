@@ -86,28 +86,28 @@ class GetUserDetails {
 				//
 				// Try redis first
 				//
-				$userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $result_user [0]->username ), true );
-				$stripe_getCustomerInfo = $userprofile_redis ['stripe_getCustomerInfo'];
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$stripe_getCustomerInfo', $stripe_getCustomerInfo );
-				if (! empty ( $stripe_getCustomerInfo )) {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::! empty($stripe_getCustomerInfo)', '...' );
-					$userAccountArr = json_decode ( $stripe_getCustomerInfo, true );
-				} else {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: empty($stripe_getCustomerInfo)', '...' );
-					//
-					// Make network call...
-					// Fetch account details using payments proxy
-					// variables: $action, $json, $callback (optional here)
-					//
-					
-					$jsonArr = [ ];
-					$jsonArr ['user_id'] = $_SESSION ['user_id'];
-					$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
-					$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
-					Mlog::addone ( 'stripe_getCustomerInfo-->', $result );
-					
-					$userAccountArr = json_decode ( $result, true );
-				}
+				// $userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $result_user [0]->username ), true );
+				// $stripe_getCustomerInfo = $userprofile_redis ['stripe_getCustomerInfo'];
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$stripe_getCustomerInfo', $stripe_getCustomerInfo );
+				// if (! empty ( $stripe_getCustomerInfo )) {
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::! empty($stripe_getCustomerInfo)', '...' );
+				// $userAccountArr = json_decode ( $stripe_getCustomerInfo, true );
+				// } else {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: empty($stripe_getCustomerInfo)', '...' );
+				//
+				// Make network call...
+				// Fetch account details using payments proxy
+				// variables: $action, $json, $callback (optional here)
+				//
+				
+				$jsonArr = [ ];
+				$jsonArr ['user_id'] = $_SESSION ['user_id'];
+				$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
+				$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
+				Mlog::addone ( 'stripe_getCustomerInfo-->', $result );
+				
+				$userAccountArr = json_decode ( $result, true );
+				// }
 				if ($userAccountArr ['status'] == 'Failure') {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: ($userAccountArr [status] == Failure)', '...' );
 					// user has not account so create one
@@ -211,7 +211,7 @@ class GetUserDetails {
 			$xml_output .= "</xml>";
 			echo $xml_output;
 		}
-		// error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
+		// error_log ( __CLASS__.__METHOD__.__LINE__.'$this->xml_output--->' . $xml_output . PHP_EOL );
 	} // end exec()
 }
 

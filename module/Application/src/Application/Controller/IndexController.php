@@ -1267,8 +1267,13 @@ class IndexController extends AbstractActionController {
 								unset ( $usernames [$index] );
 								$usernames = array_values ( $usernames );
 								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
-							} else {
+							} else if (is_array ( $usernames ) ){
 								$username = $usernames[0];
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
+								$person_meta_hash[] = $this->redis->cache->hget ( "@person_meta_hash", $username );
+							} else {
+								//must be string
+								$username = $usernames;
 								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
 								$person_meta_hash[] = $this->redis->cache->hget ( "@person_meta_hash", $username );
 							}
@@ -1557,7 +1562,7 @@ class IndexController extends AbstractActionController {
 			
 			header ( 'Content-Type: application/json' );
 			// callback json
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
+			Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
@@ -1584,7 +1589,7 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
 			}
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
 		}
 		
@@ -1688,7 +1693,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
-				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
+				//Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
 				if (! empty ( $data->memreascookie )) {
 					/*
 					 * SetId for the web browser session and start...

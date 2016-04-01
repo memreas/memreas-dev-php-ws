@@ -326,7 +326,7 @@ class EventRepository extends EntityRepository {
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $event_id );
 
-		// //Mlog::addone ( 'getEventMedia $qb->getQuery ()->getSQL()', $qb->getQuery ()->getSQL () );
+		//Mlog::addone ( 'getEventMedia $qb->getQuery ()->getSQL()', $qb->getQuery()->getSQL() );
 		
 		if ($limit)
 			$qb->setMaxResults ( $limit );
