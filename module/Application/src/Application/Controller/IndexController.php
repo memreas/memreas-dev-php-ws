@@ -1402,10 +1402,11 @@ class IndexController extends AbstractActionController {
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 * - check public then friends...
 							 */
+							Mlog::addone ( $cm . __LINE__ .'findSet public $search-->', $search );
 							$search_result = $this->redis->findSet ( '!memreas', '!' . $search );
-							// Mlog::addone ( 'findSet public result-->', $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ .'findSet public result-->', $search_result );
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
-							// Mlog::addone ( 'findSet friends result-->', $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ .'findSet public result-->', $search_result_friends );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
 							// Mlog::addone ( 'findSet result-->', $search_result, 'p' );

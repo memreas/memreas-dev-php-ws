@@ -83,7 +83,7 @@ class EventRepository extends EntityRepository {
 				$eventIndex ['event_media'] = $result;
 				$event_media_url = (! empty ( $row ['metadata'] )) ? $this->getEventMediaUrl ( $row ['metadata'] ) : $this->getEventMediaUrl ( '' );
 				$event_media_url = json_decode ( $event_media_url );
-				$eventIndex ['event_photo'] = $event_media_url [0];
+				$eventIndex ['event_photo'] = $event_media_url;
 			} else {
 				$eventIndex ['event_media'] = [];
 				$eventIndex ['event_photo'] = [];
@@ -94,7 +94,7 @@ class EventRepository extends EntityRepository {
 			$eventIndex ['event_creator_name'] = '@' . $row ['username'];
 			$event_creator_pic = (! empty ( $row ['media_metadata'] )) ? $this->getEventMediaUrl ( $row ['media_metadata'] ) : $this->getEventMediaUrl ( '' );
 			$event_creator_pic = json_decode ( $event_creator_pic );
-			$eventIndex ['event_creator_pic'] = $event_creator_pic [0];
+			$eventIndex ['event_creator_pic'] = $event_creator_pic;
 			$eventIndex ['create_time'] = $row['create_time'];
 			/**
 			 * comment_count
@@ -309,7 +309,7 @@ class EventRepository extends EntityRepository {
 		}
 		$out = array ();
 		foreach ( $rows as &$row ) {
-			$o ['profile_photo'] = $this->getProfileUrl ( $row ['metadata'] );
+			$o ['profile_photo'] = json_decode($this->getProfileUrl ( $row ['metadata'] ));
 			$o ['username'] = $row ['username'];
 			$out [] = $o;
 		}
