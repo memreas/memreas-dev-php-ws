@@ -309,15 +309,15 @@ class UpdateNotification {
 		
 		// add notification in db.
 		$result = $this->AddNotification->exec ( $data );
-		$data = simplexml_load_string ( $result );
-		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
-		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
+		 
+		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
+		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
 		
 		if ($this->notification_status != 3) {
 			// send email (reversed due to response)
 			$email_sender_uid = $this->receiver_uid;
 			$email_receiver_uid = $this->sender_uid;
-			Email::sendEmailNotification ( $this->service_locator, $this->dbAdapter, $email_receiver_uid, $email_sender_uid, $email_type, $email_notification_status, $nmessage );
+			Email::sendEmailNotification ( $this->service_locator, $this->dbAdapter, $email_receiver_uid, $email_sender_uid, $email_type, $this->notification_status, $nmessage );
 			// send push message add user id
 			$result = $this->notification->add ( $this->receiver_uid );
 		}
