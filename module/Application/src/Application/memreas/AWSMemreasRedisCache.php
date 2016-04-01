@@ -756,13 +756,13 @@ class AWSMemreasRedisCache {
 		// decode here because result will be encoded
 		// error_log('$url1---->'.$url1);
 		$pic_79x80 = json_decode ( $pic_79x80 );
-		$pic_79x80 = $pic_79x80 [0];
+		//$pic_79x80 = $pic_79x80 [0];
 		$pic_448x306 = json_decode ( $pic_448x306 );
-		$pic_448x306 = $pic_448x306 [0];
+		//$pic_448x306 = $pic_448x306 [0];
 		$pic_98x78 = json_decode ( $pic_98x78 );
-		$pic_98x78 = $pic_98x78 [0];
+		//$pic_98x78 = $pic_98x78 [0];
 		$pic_full = json_decode ( $pic_full );
-		$pic_full = $pic_full [0];
+		//$pic_full = $pic_full [0];
 
 		/*
 		 * -
