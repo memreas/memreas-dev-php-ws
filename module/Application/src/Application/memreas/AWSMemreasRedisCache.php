@@ -220,7 +220,7 @@ class AWSMemreasRedisCache {
 		}
 		Mlog::addone (  __LINE__ ,$keys );
 		// return $this->cache->deleteMulti ( $keys );
-		$result = $this->cache->deleteMulti ( $keys );
+		$result = $this->remSetKeys ( $keys );
                 Mlog::addone (  __LINE__ ,$frmweb );
 		if ($result) {
 			error_log ( 'JUST DELETED THESE KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
