@@ -218,9 +218,10 @@ class AWSMemreasRedisCache {
 		if (! $this->isCacheEnable) {
 			return false;
 		}
-		
+		Mlog::addone (  __LINE__ ,$keys );
 		// return $this->cache->deleteMulti ( $keys );
-		$result = $this->cache->deleteMulti ( $keys );
+		$result = $this->remSetKeys ( $keys );
+                Mlog::addone (  __LINE__ ,$frmweb );
 		if ($result) {
 			error_log ( 'JUST DELETED THESE KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
 		} else {
@@ -276,17 +277,18 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for events
 	 */
 	public function invalidateEvents($user_id) {
-		$cm = __CLASS__ . __METHOD__;
-		error_log ( "Inside invalidateEvents" . PHP_EOL );
+		 
 		// write functions for media
 		// - add event (key is event_id)
 		// - removeevent
+            
 		if (! empty ( $user_id )) {
 			// countviewevent can return me / friends / public
 			$cache_keys = array (
 					"viewevents_is_my_event_" . $user_id,
 					"viewevents_is_friend_event_" . $user_id 
 			);
+                        Mlog::addone (  __METHOD__.__LINE__ ,$cache_keys );
 			$this->invalidateCacheMulti ( $cache_keys );
 		}
 	}
