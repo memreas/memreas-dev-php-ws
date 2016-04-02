@@ -254,6 +254,7 @@ class ListNotification {
 	 * Fetch Profile pics and sign...
 	 */
 	public function fetchPics($from_user_id) {
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchPics($from_user_id)', $from_user_id );
 		if (! empty ( $from_user_id )) {
 			
 			/*
@@ -266,9 +267,9 @@ class ListNotification {
 				$userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $username_redis ), true );
 				// $user_redis = $this->redis->findSet ('@person', $username_redis );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
-				$pic_79x80 = $url1 = $userprofile_redis ['profile_photo_79x80'];
-				$pic_448x306 = $userprofile_redis ['profile_photo_448x306'];
-				$pic_98x78 = $userprofile_redis ['profile_photo_98x78'];
+				$pic_79x80 = json_encode ( $userprofile_redis ['profile_photo_79x80'] );
+				$pic_448x306 = json_encode ( $userprofile_redis ['profile_photo_448x306'] );
+				$pic_98x78 = json_encode ( $userprofile_redis ['profile_photo_98x78'] );
 				
 				//
 				// urls in redis already signed
