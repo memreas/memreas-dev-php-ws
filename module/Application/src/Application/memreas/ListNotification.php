@@ -222,7 +222,7 @@ class ListNotification {
 		if (isset ( $eventMedia [0] )) {
 			$eventMediaUrl = $eventRepository->getEventMediaUrl ( $eventMedia [0] ['metadata'], 'thumb' );
 			// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
-			$this->xml_output .= "<event_media_url><![CDATA[" . json_encode ( $eventMediaUrl ) . "]]></event_media_url>";
+			$this->xml_output .= "<event_media_url><![CDATA[" . $eventMediaUrl . "]]></event_media_url>";
 		}
 	}
 	
