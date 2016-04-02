@@ -223,6 +223,8 @@ class IndexController extends AbstractActionController {
 		
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
 			// do nothing - profile pic upload for registration
+		} else if (isset ( $data->username ) || isset ( $data->user_id )) {
+			// TESTING - to be removed...
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
@@ -692,15 +694,15 @@ class IndexController extends AbstractActionController {
 				$cache_id = ! empty ( $data ) ? trim ( $data->listnotification->receiver_uid ) : null;
 				try {
 					$result = ! empty ( $cache_id ) ? $this->redis->getCache ( $actionname . '_' . $cache_id ) : false;
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$actionname_$cache_id',$actionname . '_' . $cache_id);
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result',$result);
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$actionname_$cache_id', $actionname . '_' . $cache_id );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
 				} catch ( \Exception $e ) {
 					$result = false;
 				}
 				
 				if (! $result || empty ( $result )) {
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::','...');
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::','...');
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', '...' );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', '...' );
 					$listnotification = new ListNotification ( $message_data, $memreas_tables, $this->sm, $this->redis );
 					$result = $listnotification->exec ();
 					$cache_me = true;
@@ -1198,6 +1200,7 @@ class IndexController extends AbstractActionController {
 			 */
 				// $this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "findtag") {
+				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				
 				/*
 				 * - fetch parameters
@@ -1209,6 +1212,7 @@ class IndexController extends AbstractActionController {
 				$a = $tag [0];
 				$search = substr ( $tag, 1 );
 				
+				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				/*
 				 * - set paging and limits
 				 */
@@ -1217,41 +1221,63 @@ class IndexController extends AbstractActionController {
 					$page = 1;
 				}
 				
+				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				$limit = trim ( $data->findtag->limit );
 				if (empty ( $limit )) {
 					$limit = 20;
 				}
 				
+				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				$from = ($page - 1) * $limit;
 				$rc = 0;
 				
+				Mlog::addone ( $cm . __LINE__ . '::$a', $a );
 				$search_result = array ();
 				switch ($a) {
 					/**
 					 * -
 					 * @person search
 					 */
-					case '@':
-
-                    	/*
-                    	 * TODO: Migrate to redis search - see example below
-                    	 */
+					case '@' :
+						Mlog::addone ( $cm . __LINE__ . '::', '...' );
+						
+						/*
+						 * TODO: Migrate to redis search - see example below
+						 */
 						$user_ids = array ();
+						Mlog::addone ( $cm . __LINE__ . '::', '...' );
 						if (MemreasConstants::REDIS_SERVER_USE) {
+							Mlog::addone ( $cm . __LINE__ . '::', '...' );
 							// Mlog::addone ( $cm . __LINE__, "::@person search initiating search from REDIS" );
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 */
+							Mlog::addone ( $cm . __LINE__ . '::$search ', $search );
 							$usernames = $this->redis->findSet ( '@person', $search );
+							Mlog::addone ( $cm . __LINE__ . '::$usernames', $usernames );
 							/*
 							 * -
 							 * remove self and update indices
 							 */
-							$index = array_search ( $_SESSION ['username'], $usernames );
-							unset ( $usernames [$index] );
-							$usernames = array_values ( $usernames );
-							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
+							Mlog::addone ( $cm . __LINE__ . '::$usernames', $usernames );
+							if (is_array ( $usernames ) && (count ( $usernames ) > 1)) {
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_array' );
+								$index = array_search ( $_SESSION ['username'], $usernames );
+								unset ( $usernames [$index] );
+								$usernames = array_values ( $usernames );
+								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
+							} else if (is_array ( $usernames ) ){
+								$username = $usernames[0];
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
+								$person_meta_hash[] = $this->redis->cache->hget ( "@person_meta_hash", $username );
+							} else {
+								//must be string
+								$username = $usernames;
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
+								$person_meta_hash[] = $this->redis->cache->hget ( "@person_meta_hash", $username );
+							}
+							Mlog::addone ( $cm . __LINE__ . '::$person_meta_hash', $person_meta_hash );
 							
 							/*
 							 * -
@@ -1357,7 +1383,7 @@ class IndexController extends AbstractActionController {
 						$result ['search'] = $search_result;
 						
 						echo json_encode ( $result );
-						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result',$result);
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
 						$result = '';
 						break;
 					
@@ -1376,10 +1402,11 @@ class IndexController extends AbstractActionController {
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 * - check public then friends...
 							 */
+							Mlog::addone ( $cm . __LINE__ .'findSet public $search-->', $search );
 							$search_result = $this->redis->findSet ( '!memreas', '!' . $search );
-							// Mlog::addone ( 'findSet public result-->', $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ .'findSet public result-->', $search_result );
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
-							// Mlog::addone ( 'findSet friends result-->', $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ .'findSet public result-->', $search_result_friends );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
 							// Mlog::addone ( 'findSet result-->', $search_result, 'p' );
@@ -1536,7 +1563,7 @@ class IndexController extends AbstractActionController {
 			
 			header ( 'Content-Type: application/json' );
 			// callback json
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
+			Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
@@ -1563,7 +1590,7 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
 			}
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
 		}
 		
@@ -1667,9 +1694,8 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
-				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
+				//Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
 				if (! empty ( $data->memreascookie )) {
-					
 					/*
 					 * SetId for the web browser session and start...
 					 */
@@ -1688,7 +1714,7 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = 1;
 					}
-					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithSID", $data->sid );
+					// Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . 'from startSessionWithSID--> $_SESSION', $_SESSION );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
 					Mlog::addone ( __METHOD__ . __LINE__ . '$data->uid ) || ! empty ( $data->username )--->', $actionname );
 					/*

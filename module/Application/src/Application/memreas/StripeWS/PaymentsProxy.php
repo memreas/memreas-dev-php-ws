@@ -48,7 +48,7 @@ class PaymentsProxy {
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
 		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_REQUEST', $_REQUEST);
-		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_SESSION', $_SESSION);
+		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$jsonArr', $jsonArr);
 		
 		/*
 		 * -
@@ -82,11 +82,11 @@ class PaymentsProxy {
 							'cid' => $_REQUEST ['cid'] 
 					] 
 			] );
-		} else if (isset ( $_REQUEST ['memreascookie'] )) {
+		} else if (isset ( $jsonArr ['memreascookie'] )) {
 			Mlog::addone ( $cm, __LINE__ );
 			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
 					'form_params' => [ 
-							'memreascookie' => $_SESSION ['memreascookie'],
+							'memreascookie' => $jsonArr ['memreascookie'],
 							'json' => json_encode ( $jsonArr ) 
 					] 
 			] );

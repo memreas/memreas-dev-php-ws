@@ -32,10 +32,9 @@ class AddNotification {
 			// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
 			if (empty ( $frmweb )) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				error_log ( "Inside Add Notification _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
 			} else {
 				$data = json_decode ( json_encode ( $frmweb ) );
-				error_log ( "Inside Add Notification frmweb ---> " . json_encode ( $frmweb, JSON_PRETTY_PRINT ) . PHP_EOL );
+				Mlog::addone (  __LINE__ ,$frmweb ); 
 			}
 			
 			// save notification in table
@@ -81,7 +80,7 @@ class AddNotification {
 			$xml_output .= "</xml>";
 			echo $xml_output;
 		}
-		error_log ( '$this->xml_output--->' . $xml_output . PHP_EOL );
+		 
 		return true;
 	} // end exec()
 }
