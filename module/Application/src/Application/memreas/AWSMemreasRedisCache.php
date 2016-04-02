@@ -83,7 +83,7 @@ class AWSMemreasRedisCache {
 	}
 	public function findSet($set, $match) {
 		$cm = __CLASS__ . __METHOD__;
-		// error_log ( "Inside findSet.... set $set match $match" . PHP_EOL );
+		error_log ( "Inside findSet.... set $set match $match" . PHP_EOL );
 		// Scan the hash and return 0 or the sub-array
 		$result = $this->cache->executeRaw ( array (
 				'ZRANGEBYLEX',

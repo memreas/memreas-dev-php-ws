@@ -90,7 +90,7 @@ class UpdateNotification {
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND) {
 							$result = $this->handleAddFriendResponse ();
 							if (! $result) {
-								throw new \Exception ( $e->getMessage ( 'error in handleAddFriendResponse' ) );
+								throw new \Exception ( 'error in handleAddFriendResponse' );
 							}
 						} // end add friend update
 						
@@ -199,6 +199,7 @@ class UpdateNotification {
 				}
 				
 				$result = $this->handleNotification ( \Application\Entity\Notification::ADD_FRIEND_RESPONSE, Email::FRIEND_REQUEST_RESPONSE, $nmessage );
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result', $result);
 				// user friend updated
 			} else {
 				throw new Exception ( 'empty user friend entry - check parameters...' );
@@ -321,6 +322,7 @@ class UpdateNotification {
 			// send push message add user id
 			$result = $this->notification->add ( $this->receiver_uid );
 		}
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result', $result);
 		return $result;
 	}
 } // end class
