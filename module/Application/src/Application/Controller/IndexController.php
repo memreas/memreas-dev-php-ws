@@ -1302,6 +1302,7 @@ class IndexController extends AbstractActionController {
 							/*
 							 * -
 							 * Remove current user - All entries in this hash match the search key
+							 *  - JM::note::this code will be problem at some point - maybe push out to client 
 							 */
 							foreach ( $person_meta_hash as $username => $usermeta ) {
 								$meta_arr = json_decode ( $usermeta );
@@ -1704,6 +1705,7 @@ class IndexController extends AbstractActionController {
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
+					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				} else if (! empty ( $data->sid )) {
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from $data->sid--->', $actionname );

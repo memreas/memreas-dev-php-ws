@@ -7,7 +7,7 @@
  */
 namespace Application\memreas;
 
-use Application\Model\MemreasConstants;
+
 
 class Mlog {
 	public static $log;

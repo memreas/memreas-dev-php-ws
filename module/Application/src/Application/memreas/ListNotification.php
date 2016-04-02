@@ -254,20 +254,31 @@ class ListNotification {
 	 * Fetch Profile pics and sign...
 	 */
 	public function fetchPics($from_user_id) {
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchPics($from_user_id)', $from_user_id );
 		if (! empty ( $from_user_id )) {
-
-			/*-
+			
+			/*
+			 * -
 			 * Pull from redis session data
 			 */
 			$username = $username_redis = $this->redis->cache->hget ( '@person_uid_hash', $from_user_id );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$username_redis', $username_redis );
 			if ($username_redis) {
-				$userprofile_redis = json_decode($this->redis->cache->hget ( '@person_meta_hash', $username_redis ), true);
+				$userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $username_redis ), true );
 				// $user_redis = $this->redis->findSet ('@person', $username_redis );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
-				$pic_79x80 = $url1 = $userprofile_redis['profile_photo_79x80']; 
-				$pic_448x306 = $userprofile_redis['profile_photo_448x306'];
-				$pic_98x78 = $userprofile_redis['profile_photo_98x78'];
+				$pic_79x80 = json_encode ( $userprofile_redis ['profile_photo_79x80'] );
+				$pic_448x306 = json_encode ( $userprofile_redis ['profile_photo_448x306'] );
+				$pic_98x78 = json_encode ( $userprofile_redis ['profile_photo_98x78'] );
+				
+				//
+				// urls in redis already signed
+				//
+				$this->xml_output .= "<profile_username>$username</profile_username>";
+				$this->xml_output .= "<profile_pic><![CDATA[" . $pic_79x80 . "]]></profile_pic>";
+				$this->xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
+				$this->xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
+				$this->xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
 			} else {
 				// go to db redis not found
 				$from_user = $this->dbAdapter->getRepository ( 'Application\Entity\User' )->findOneBy ( array (
@@ -301,12 +312,12 @@ class ListNotification {
 				if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] )) {
 					$pic_98x78 = $json_array ['S3_files'] ['thumbnails'] ['98x78'];
 				}
+				$this->xml_output .= "<profile_username>$username</profile_username>";
+				$this->xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
+				$this->xml_output .= "<profile_pic_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_79x80 ) . "]]></profile_pic_79x80>";
+				$this->xml_output .= "<profile_pic_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_448x306 ) . "]]></profile_pic_448x306>";
+				$this->xml_output .= "<profile_pic_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_98x78 ) . "]]></profile_pic_98x78>";
 			}
-			$this->xml_output .= "<profile_username>$username</profile_username>";
-			$this->xml_output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
-			$this->xml_output .= "<profile_pic_79x80><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_79x80 ) . "]]></profile_pic_79x80>";
-			$this->xml_output .= "<profile_pic_448x306><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_448x306 ) . "]]></profile_pic_448x306>";
-			$this->xml_output .= "<profile_pic_98x78><![CDATA[" . $this->url_signer->signArrayOfUrls ( $pic_98x78 ) . "]]></profile_pic_98x78>";
 		} else {
 			// missing user_id
 			$this->xml_output .= "<profile_username></profile_username>";
