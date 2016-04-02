@@ -103,7 +103,6 @@ class ListNotification {
 					$eventRepository = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 					foreach ( $result as $row ) {
 						
-						$this->xml_output .= "<notification>";
 						$meta = json_decode ( $row ['meta'], true );
 						if (empty($meta)) {
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
@@ -123,6 +122,11 @@ class ListNotification {
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );
+						
+						//
+						// data must be good so start entry
+						//
+						$this->xml_output .= "<notification>";
 						
 						/**
 						 * Fetch Profile Pics
