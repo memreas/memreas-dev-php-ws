@@ -113,10 +113,10 @@ class ListNotification {
 							//
 							$tblNotification = $this->dbAdapter->find ( "\Application\Entity\Notification", $row['notification_id'] );
 							$tblNotification->is_read = 1;
+							$tblNotification->status = '-1';
 							$tblNotification->response_status = 'FAILURE';
-							$this->tblNotification->update_time = MNow::now();
-							
-								
+							$tblNotification->update_time = MNow::now();
+							$this->dbAdapter->flush ();
 						}
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];

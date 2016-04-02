@@ -38,7 +38,6 @@ class AddNotification {
 			}
 			
 			// save notification in table
-			$time = time ();
 			$this->notification_id = $notification_id = MUUID::fetchUUID ();
 			$tblNotification = new \Application\Entity\Notification ();
 			$tblNotification->notification_id = $notification_id;
@@ -49,17 +48,17 @@ class AddNotification {
 			$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;
 			$tblNotification->status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
 			if ($tblNotification->status == 0) {
-				$tblNotification->response_status = '';	
+				$tblNotification->response_status = 'add';	
 			} else if ($tblNotification->status == 1) {
-				$tblNotification->response_status = 'ACCEPT';
+				$tblNotification->response_status = 'accept';
 			} else if ($tblNotification->status == 2) {
-				$tblNotification->response_status = 'DECLINE';
+				$tblNotification->response_status = 'decline';
 			} else if ($tblNotification->status == 3) {
-				$tblNotification->response_status = 'IGNORE';
+				$tblNotification->response_status = 'ignore';
 			}
 			$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
-			$tblNotification->create_time = $time;
-			$tblNotification->update_time = $time;
+			$tblNotification->create_time = MNow::now();
+			$tblNotification->update_time = MNow::now();
 			$this->dbAdapter->persist ( $tblNotification );
 			$this->dbAdapter->flush ();
 			
