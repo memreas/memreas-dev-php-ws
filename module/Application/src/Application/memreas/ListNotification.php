@@ -104,7 +104,8 @@ class ListNotification {
 					foreach ( $result as $row ) {
 						
 						$meta = json_decode ( $row ['meta'], true );
-						if (empty($meta)) {
+						/*
+						if (empty($meta ['sent'])) {
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
 							//
 							// something is wrong
@@ -119,6 +120,7 @@ class ListNotification {
 							$this->dbAdapter->flush ();
 							continue;
 						}
+						*/
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );
