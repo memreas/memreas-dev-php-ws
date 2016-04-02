@@ -105,6 +105,19 @@ class ListNotification {
 						
 						$this->xml_output .= "<notification>";
 						$meta = json_decode ( $row ['meta'], true );
+						if (empty($meta)) {
+							//
+							// something is wrong
+							//  - data should be populated
+							//  - fail this and continue;
+							//
+							$tblNotification = $this->dbAdapter->find ( "\Application\Entity\Notification", $row['notification_id'] );
+							$tblNotification->is_read = 1;
+							$tblNotification->response_status = 'FAILURE';
+							$this->tblNotification->update_time = MNow::now();
+							
+								
+						}
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );

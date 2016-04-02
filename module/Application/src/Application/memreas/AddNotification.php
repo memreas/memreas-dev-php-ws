@@ -48,7 +48,15 @@ class AddNotification {
 			$tblNotification->meta = json_encode ( $data->addNotification->meta );
 			$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;
 			$tblNotification->status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
-			$tblNotification->response_status = empty ( $data->addNotification->response_status ) ? 0 : $data->addNotification->response_status;
+			if ($tblNotification->status == 0) {
+				$tblNotification->response_status = '';	
+			} else if ($tblNotification->status == 1) {
+				$tblNotification->response_status = 'ACCEPT';
+			} else if ($tblNotification->status == 2) {
+				$tblNotification->response_status = 'DECLINE';
+			} else if ($tblNotification->status == 3) {
+				$tblNotification->response_status = 'IGNORE';
+			}
 			$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
 			$tblNotification->create_time = $time;
 			$tblNotification->update_time = $time;
