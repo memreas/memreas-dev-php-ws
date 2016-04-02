@@ -90,7 +90,7 @@ class UpdateNotification {
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND) {
 							$result = $this->handleAddFriendResponse ();
 							if (! $result) {
-								throw new \Exception ( $e->getMessage ( 'error in handleAddFriendResponse' ) );
+								throw new \Exception ( 'error in handleAddFriendResponse' );
 							}
 						} // end add friend update
 						
@@ -125,7 +125,6 @@ class UpdateNotification {
 		try {
 			$json_data = json_decode ( $this->tblNotification->meta, true );
 			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
-			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data [sent] [event_id]', $json_data ['sent'] ['event_id'] );
 			$EventFriend = $this->dbAdapter->getRepository ( "\Application\Entity\EventFriend" )->findOneBy ( array (
 					'event_id' => $json_data ['sent'] ['event_id'],
 					'friend_id' => $this->sender_uid 
@@ -199,6 +198,7 @@ class UpdateNotification {
 				}
 				
 				$result = $this->handleNotification ( \Application\Entity\Notification::ADD_FRIEND_RESPONSE, Email::FRIEND_REQUEST_RESPONSE, $nmessage );
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result', $result);
 				// user friend updated
 			} else {
 				throw new Exception ( 'empty user friend entry - check parameters...' );
@@ -321,6 +321,7 @@ class UpdateNotification {
 			// send push message add user id
 			$result = $this->notification->add ( $this->receiver_uid );
 		}
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result', $result);
 		return $result;
 	}
 } // end class
