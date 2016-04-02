@@ -712,6 +712,13 @@ class IndexController extends AbstractActionController {
 				$result = $updatenotification->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = $updatenotification->user_id;
+				/**
+				 * -
+				 * Cache approach
+				 * - write operation
+				 * - invalidate listnotification
+				 */
+				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "signedurl") {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->sm );
@@ -738,17 +745,14 @@ class IndexController extends AbstractActionController {
 				$result = $logout->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->clearallnotification->user_id );
-			
-			/**
-			 * -
-			 * Cache approach
-			 * - write operation
-			 * - invalidate listnotification
-			 */
-				// $this->redis->invalidateNotifications
-				// (
-				// $uid
-				// );
+				
+				/**
+				 * -
+				 * Cache approach
+				 * - write operation
+				 * - invalidate listnotification
+				 */
+				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "getsession") {
 				/*
 				 * - Cache Approach: Check cache first if not there then fetch and cache...
@@ -1267,15 +1271,15 @@ class IndexController extends AbstractActionController {
 								unset ( $usernames [$index] );
 								$usernames = array_values ( $usernames );
 								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
-							} else if (is_array ( $usernames ) ){
-								$username = $usernames[0];
+							} else if (is_array ( $usernames )) {
+								$username = $usernames [0];
 								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
-								$person_meta_hash[] = $this->redis->cache->hget ( "@person_meta_hash", $username );
+								$person_meta_hash [] = $this->redis->cache->hget ( "@person_meta_hash", $username );
 							} else {
-								//must be string
+								// must be string
 								$username = $usernames;
 								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
-								$person_meta_hash[] = $this->redis->cache->hget ( "@person_meta_hash", $username );
+								$person_meta_hash [] = $this->redis->cache->hget ( "@person_meta_hash", $username );
 							}
 							Mlog::addone ( $cm . __LINE__ . '::$person_meta_hash', $person_meta_hash );
 							
@@ -1302,7 +1306,7 @@ class IndexController extends AbstractActionController {
 							/*
 							 * -
 							 * Remove current user - All entries in this hash match the search key
-							 *  - JM::note::this code will be problem at some point - maybe push out to client 
+							 * - JM::note::this code will be problem at some point - maybe push out to client
 							 */
 							foreach ( $person_meta_hash as $username => $usermeta ) {
 								$meta_arr = json_decode ( $usermeta );
@@ -1403,11 +1407,11 @@ class IndexController extends AbstractActionController {
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 * - check public then friends...
 							 */
-							Mlog::addone ( $cm . __LINE__ .'findSet public $search-->', $search );
+							Mlog::addone ( $cm . __LINE__ . 'findSet public $search-->', $search );
 							$search_result = $this->redis->findSet ( '!memreas', '!' . $search );
-							Mlog::addone ( $cm . __LINE__ .'findSet public result-->', $search_result );
+							Mlog::addone ( $cm . __LINE__ . 'findSet public result-->', $search_result );
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
-							Mlog::addone ( $cm . __LINE__ .'findSet public result-->', $search_result_friends );
+							Mlog::addone ( $cm . __LINE__ . 'findSet public result-->', $search_result_friends );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
 							// Mlog::addone ( 'findSet result-->', $search_result, 'p' );
@@ -1564,7 +1568,7 @@ class IndexController extends AbstractActionController {
 			
 			header ( 'Content-Type: application/json' );
 			// callback json
-			Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
@@ -1695,7 +1699,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
-				//Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
+				// Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
 				if (! empty ( $data->memreascookie )) {
 					/*
 					 * SetId for the web browser session and start...
