@@ -79,7 +79,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			}
 		} else {
 			//need to logout
-			exit();
+			session_destroy ();
+			return 'notlogin';
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
