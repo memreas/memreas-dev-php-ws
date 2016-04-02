@@ -125,6 +125,7 @@ class UpdateNotification {
 		try {
 			$json_data = json_decode ( $this->tblNotification->meta, true );
 			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
+			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data', $json_data );
 			Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$json_data [sent] [event_id]', $json_data ['sent'] ['event_id'] );
 			$EventFriend = $this->dbAdapter->getRepository ( "\Application\Entity\EventFriend" )->findOneBy ( array (
 					'event_id' => $json_data ['sent'] ['event_id'],
