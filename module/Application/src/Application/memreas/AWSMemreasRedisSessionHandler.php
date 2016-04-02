@@ -68,20 +68,19 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		//error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 	}
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
-		Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 		
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSession-->', $rMemreasCookieSession);
+		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSession-->', $rMemreasCookieSession);
 		if ($rMemreasCookieSession) {
 			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSessionArr-->', $rMemreasCookieSessionArr);
 			if (! session_id ()) {
 				session_id ( $rMemreasCookieSessionArr ['sid'] );
 				session_start ();
 			}
 		} else {
 			//need to logout
-			exit();
+			session_destroy ();
+			return 'notlogin';
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
@@ -103,10 +102,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		// }
 		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: after startSessionWithMemreasCookie $_SESSION[memreascookie]--->', $_SESSION ['memreascookie'] );
 		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: after startSessionWithMemreasCookie $_SESSION[x_memreas_chameleon]--->', $_SESSION ['x_memreas_chameleon'] );
-		Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 	}
 	public function startSessionWithUID($data) {
-		Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+		//Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 		if (! empty ( $data->uid )) {
 			$rUIDSession = $this->mRedis->getCache ( 'uid::' . $data->uid );
 		} else if (! empty ( $data->username )) {
