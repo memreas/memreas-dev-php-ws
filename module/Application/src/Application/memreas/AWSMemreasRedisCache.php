@@ -83,7 +83,7 @@ class AWSMemreasRedisCache {
 	}
 	public function findSet($set, $match) {
 		$cm = __CLASS__ . __METHOD__;
-		// error_log ( "Inside findSet.... set $set match $match" . PHP_EOL );
+		error_log ( "Inside findSet.... set $set match $match" . PHP_EOL );
 		// Scan the hash and return 0 or the sub-array
 		$result = $this->cache->executeRaw ( array (
 				'ZRANGEBYLEX',
@@ -207,11 +207,12 @@ class AWSMemreasRedisCache {
 		}
 		
 		$result = $this->cache->del ( $key );
-		// if ($result) {
-		// // error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
-		// } else {
-		// error_log ( 'COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL );
-		// }
+		if ($result) {
+			error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+		} else {
+			error_log ( 'COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL );
+		}
+		return $result;
 	}
 	public function invalidateCacheMulti($keys) {
 		$cm = __CLASS__ . __METHOD__;
@@ -345,7 +346,8 @@ class AWSMemreasRedisCache {
 		// write functions for groups
 		// - list notification (key is user_id)
 		if (! empty ( $user_id )) {
-			$this->invalidateCache ( "listnotification_" . $user_id );
+			Mlog::addone($cm .__LINE__.'::$this->invalidateCache ( "listnotification_" . $user_id );', $user_id);
+			$result = $this->invalidateCache ( "listnotification_" . $user_id );
 		}
 	}
 	

@@ -103,11 +103,30 @@ class ListNotification {
 					$eventRepository = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 					foreach ( $result as $row ) {
 						
-						$this->xml_output .= "<notification>";
 						$meta = json_decode ( $row ['meta'], true );
+						if (empty($meta)) {
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
+							//
+							// something is wrong
+							//  - data should be populated
+							//  - fail this and continue;
+							//
+							$tblNotification = $this->dbAdapter->find ( "\Application\Entity\Notification", $row['notification_id'] );
+							$tblNotification->is_read = 1;
+							$tblNotification->status = '-1';
+							$tblNotification->response_status = 'FAILURE';
+							$tblNotification->update_time = MNow::now();
+							$this->dbAdapter->flush ();
+							continue;
+						}
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );
+						
+						//
+						// data must be good so start entry
+						//
+						$this->xml_output .= "<notification>";
 						
 						/**
 						 * Fetch Profile Pics
@@ -117,10 +136,17 @@ class ListNotification {
 						/**
 						 * Fetch event id
 						 */
-						if (isset ( $meta ['event_id'] ))
+						if (isset ( $meta ['event_id'] )) {
 							$this->xml_output .= "<event_id>{$meta ['sent']['event_id']}</event_id>";
-						else
+							$redis = AWSMemreasRedisCache::getHandle();
+							$event = $from_user_id . '_' . $meta ['sent']['event_id'];
+							$event_key_meta = $redis->cache->hget("!memreas_eid_hash", $event);
+							$event_data = $redis->cache->hget("!memreas_meta_hash", $event_key_meta);
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_data', $event_data );
+							
+						} else {
 							$this->xml_output .= "<event_id></event_id>";
+						}
 						
 						/**
 						 * Fetch Notification data
@@ -203,7 +229,7 @@ class ListNotification {
 		if (isset ( $eventMedia [0] )) {
 			$eventMediaUrl = $eventRepository->getEventMediaUrl ( $eventMedia [0] ['metadata'], 'thumb' );
 			// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$eventMedia[0][metadata]', $eventMedia [0] ['metadata'] );
-			$this->xml_output .= "<event_media_url><![CDATA[" . json_encode ( $eventMediaUrl ) . "]]></event_media_url>";
+			$this->xml_output .= "<event_media_url><![CDATA[" . $eventMediaUrl . "]]></event_media_url>";
 		}
 	}
 	
@@ -254,7 +280,7 @@ class ListNotification {
 	 * Fetch Profile pics and sign...
 	 */
 	public function fetchPics($from_user_id) {
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchPics($from_user_id)', $from_user_id );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchPics($from_user_id)', $from_user_id );
 		if (! empty ( $from_user_id )) {
 			
 			/*
@@ -262,11 +288,11 @@ class ListNotification {
 			 * Pull from redis session data
 			 */
 			$username = $username_redis = $this->redis->cache->hget ( '@person_uid_hash', $from_user_id );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$username_redis', $username_redis );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$username_redis', $username_redis );
 			if ($username_redis) {
 				$userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $username_redis ), true );
 				// $user_redis = $this->redis->findSet ('@person', $username_redis );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
 				$pic_79x80 = json_encode ( $userprofile_redis ['profile_photo_79x80'] );
 				$pic_448x306 = json_encode ( $userprofile_redis ['profile_photo_448x306'] );
 				$pic_98x78 = json_encode ( $userprofile_redis ['profile_photo_98x78'] );
