@@ -106,7 +106,7 @@ class ListNotification {
 						$this->xml_output .= "<notification>";
 						$meta = json_decode ( $row ['meta'], true );
 						if (empty($meta)) {
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
 							//
 							// something is wrong
 							//  - data should be populated
