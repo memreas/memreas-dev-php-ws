@@ -209,7 +209,9 @@ class IndexController extends AbstractActionController {
 			// dont remove just to be safe relying on $_POST data
 			$message_data ['xml'] = '';
 		}
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $data', $data );
+		Mlog::addone ( $cm . __LINE__, '*********************************************' );
+		Mlog::addone ( $cm . __LINE__ . '::Starting process for $actionname-->', $actionname );
+		Mlog::addone ( $cm . __LINE__, '*********************************************' );
 		
 		/**
 		 * Setup save handler
@@ -222,12 +224,14 @@ class IndexController extends AbstractActionController {
 		// Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - profile pic upload for registration
-		} else if (isset ( $data->username ) || isset ( $data->user_id )) {
-			// TESTING - to be removed...
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
+			Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for  ( $actionname )--> ', $actionname );
+			Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for  ( $data)--> ', $data );
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
 		
@@ -736,7 +740,9 @@ class IndexController extends AbstractActionController {
 				ob_end_flush ();
 				exit ();
 			} else if ($actionname == "logout") {
-				/* - Cache Approach: N/a - */
+				/*
+				 * Now logout
+				 */
 				$logout = new LogOut ( $message_data, $memreas_tables, $this->sm );
 				$result = $logout->exec ( $this->sessHandler );
 			} else if ($actionname == "clearallnotification") {
@@ -1194,15 +1200,47 @@ class IndexController extends AbstractActionController {
 				// Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( $this->sm );
 				$cache_me = false;
-				$message_data ['ip_address'] = $this->fetchUserIPAddress ();
-				$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
-				$result = $PaymentsProxy->exec ( $actionname, $message_data );
-			/**
-			 * Cache approach
-			 * - write operation
-			 * - invalidate listnotification
-			 */
-				// $this->redis->invalidateNotifications($uid);
+				$cache_found = false;
+				
+				Mlog::addone ( $cm . __LINE__ . '::$data', $data );
+				if ($actionname == 'stripe_listCards') {
+					$cache_id = $_SESSION ['user_id'];
+					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+					
+					if (! $result || empty ( $result )) {
+						$cache_me = true;
+					} else {
+						$cache_found = true;
+					}
+				} else if ($actionname == 'stripe_viewCard') {
+					$cache_id = $data->user_id . '_' . $data->card_id;
+					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+					
+					if (! $result || empty ( $result )) {
+						$cache_me = true;
+					} else {
+						$cache_found = true;
+					}
+				} else if (($actionname == 'stripe_saveCard') || ($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards') ) {
+					/**
+					 * Invalidate stripe_listCards cache since update is happening.
+					 */
+					$cache_id = $data->user_id;
+					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
+					$cache_id = $data->user_id . '_' . $data->id;
+					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
+				}
+				
+				/*
+				 * -
+				 * not caching so run against stripe server
+				 */
+				if (! $cache_found) {
+					$message_data ['ip_address'] = $this->fetchUserIPAddress ();
+					$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
+					$result = $PaymentsProxy->exec ( $actionname, $message_data );
+				}
+				echo $result;
 			} else if ($actionname == "findtag") {
 				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				
@@ -1533,10 +1571,10 @@ class IndexController extends AbstractActionController {
 			 * - this
 			 * Successfully retrieved from cache so echo
 			 */
-			if ($cache_me == false && ! empty ( $result )) {
-				// Mlog::addone ( __METHOD__ . __LINE__ . 'Successfully retrieved from cache so echo:OUTPUT', $result );
-				echo $result;
-			}
+			// if ($cache_me == false && ! empty ( $result )) {
+			// Mlog::addone ( __METHOD__ . __LINE__ . 'Successfully retrieved from cache so echo:OUTPUT', $result );
+			// echo $result;
+			// }
 			$output = trim ( ob_get_clean () );
 			
 			/*
@@ -1544,9 +1582,19 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
+				$result = $this->redis->getCache ( $_SESSION ['username'] . '::' . "cached_actions" );
+				if ((! $result) || empty ( $result )) {
+					$cached_actions = [ ];
+					$cached_actions [] = $actionname . '_' . $cache_id;
+				} else {
+					$cached_actions = json_decode ( $result );
+					$cached_actions [] = $actionname . '_' . $cache_id;
+				}
+				$this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
+				
 				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
 			}
-			
 			/*
 			 * TODO - Invalidate cache in if statements (id is all that is needed)
 			 */
@@ -1595,7 +1643,10 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
 			}
-			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+			Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
+			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 			echo $output;
 		}
 		
@@ -1647,6 +1698,7 @@ class IndexController extends AbstractActionController {
 		/*
 		 * Check action to see if session is needed...
 		 */
+		$requires = false;
 		$public = array (
 				'login',
 				'registration',
@@ -1675,10 +1727,15 @@ class IndexController extends AbstractActionController {
                                         
 		);
 		if (in_array ( $actionname, $public )) {
-			// Mlog::addone ( 'Inside else public action in_array actionname ->', $actionname );
-			return false;
+			$requires = false;
+		} else if (strpos ( $actionname, "stripe_" ) !== false) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::"stripe_--->', $actionname );
+			$requires = true;
+		} else {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $actionname );
+			$requires = true;
 		}
-		return true;
+		return $requires;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
 		/*
@@ -1699,13 +1756,16 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
-				// Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
+				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
 				if (! empty ( $data->memreascookie )) {
 					/*
 					 * SetId for the web browser session and start...
 					 */
 					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, ( string ) $data->x_memreas_chameleon, $actionname );
+					/**
+					 * TODO - Fix token
+					 */
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, '', $actionname );
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
@@ -1733,7 +1793,11 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!' . PHP_EOL );
-					session_destroy ();
+					// need to logout
+					$logout = new LogOut ( null, null, $this->service_locator );
+					$sessHandler = new AWSMemreasRedisSessionHandler ( AWSMemreasRedisCache::getHandle (), $this->service_locator );
+					$logout->exec ( $sessHandler );
+					
 					return 'notlogin';
 				}
 			} // end if ($requiresExistingSession)
