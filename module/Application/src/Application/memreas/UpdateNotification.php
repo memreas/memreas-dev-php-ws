@@ -132,8 +132,8 @@ class UpdateNotification {
 			$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $json_data ['sent'] ['event_id'] );
 			$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $this->sender_uid );
 			
-			// accepted
 			if (($this->notification_status == 1) || (strtolower ( $this->notification_status ) == 'accept')) {
+				// accepted
 				/**
 				 * Update status for event_friend table
 				 */
@@ -142,14 +142,12 @@ class UpdateNotification {
 				
 				$this->notification_status = 'accept';
 				$email_notification_status = 'accepted';
-			}
-			// declined
-			if (($this->notification_status == 2) || (strtolower ( $this->notification_status ) == 'decline')) {
+			} else if (($this->notification_status == 2) || (strtolower ( $this->notification_status ) == 'decline')) {
+				// declined
 				$this->notification_status = 'decline';
 				$email_notification_status = 'declined';
-			}
-			// ignored
-			if (($this->notification_status == 3) || (strtolower ( $this->notification_status ) == 'ignore')) {
+			} else if (($this->notification_status == 3) || (strtolower ( $this->notification_status ) == 'ignore')) {
+				// ignored
 				$this->notification_status = 'ignore';
 			}
 			$nmessage = "$userOBj->username has $email_notification_status your invite to !$eventOBj->name";
@@ -198,7 +196,7 @@ class UpdateNotification {
 				}
 				
 				$result = $this->handleNotification ( \Application\Entity\Notification::ADD_FRIEND_RESPONSE, Email::FRIEND_REQUEST_RESPONSE, $nmessage );
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result', $result);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
 				// user friend updated
 			} else {
 				throw new Exception ( 'empty user friend entry - check parameters...' );
@@ -309,9 +307,9 @@ class UpdateNotification {
 		
 		// add notification in db.
 		$result = $this->AddNotification->exec ( $data );
-		 
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
+		
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
 		
 		if ($this->notification_status != 3) {
 			// send email (reversed due to response)
@@ -321,7 +319,7 @@ class UpdateNotification {
 			// send push message add user id
 			$result = $this->notification->add ( $this->receiver_uid );
 		}
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result', $result);
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
 		return $result;
 	}
 } // end class
