@@ -83,52 +83,14 @@ class GetUserDetails {
 					$output .= '<dob></dob>';
 				}
 				
-				//
-				// Try redis first
-				//
-				// $userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $result_user [0]->username ), true );
-				// $stripe_getCustomerInfo = $userprofile_redis ['stripe_getCustomerInfo'];
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$stripe_getCustomerInfo', $stripe_getCustomerInfo );
-				// if (! empty ( $stripe_getCustomerInfo )) {
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::! empty($stripe_getCustomerInfo)', '...' );
-				// $userAccountArr = json_decode ( $stripe_getCustomerInfo, true );
-				// } else {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: empty($stripe_getCustomerInfo)', '...' );
-				//
-				// Make network call...
-				// Fetch account details using payments proxy
-				// variables: $action, $json, $callback (optional here)
-				//
-				
 				$jsonArr = [ ];
+				$jsonArr ['memreascookie'] = $_SESSION ['memreascookie'];
 				$jsonArr ['user_id'] = $_SESSION ['user_id'];
 				$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
 				$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
 				Mlog::addone ( 'stripe_getCustomerInfo-->', $result );
-				
 				$userAccountArr = json_decode ( $result, true );
-				// }
-				if ($userAccountArr ['status'] == 'Failure') {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . ':: ($userAccountArr [status] == Failure)', '...' );
-					// user has not account so create one
-					/*
-					 * setup new user with free plan
-					 * - should only need this in short run to correct bad data...
-					 */
-					$message_data ['sid'] = $_SESSION ['sid'];
-					$message_data ['user_id'] = $_SESSION ['user_id'];
-					$message_data ['username'] = $_SESSION ['username'];
-					$message_data ['email'] = $_SESSION ['email_address'];
-					$message_data ['description'] = "corrected registered user associated with email: " . $email;
-					$message_data ['metadata'] = array (
-							'user_id' => $_SESSION ['user_id'] 
-					);
-					$result = $PaymentsProxy->exec ( "stripe_createCustomer", $message_data );
-					
-					if ($result) {
-						$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
-					}
-				}
 				
 				// For stripe customer id
 				if (isset ( $userAccountArr ['buyer_account'] ['accountHeader'] ['stripe_customer_id'] )) {

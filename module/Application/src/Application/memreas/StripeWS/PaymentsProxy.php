@@ -130,7 +130,7 @@ class PaymentsProxy {
 		
 		$result = trim ( ( string ) $response->getBody () );
 		// Mlog::addone ( $cm . __LINE__ . '::$ouptput--->', $result );
-		// return data not echo to output
+		// return data not echo to output for caching outside of this process
 		return $result;
 	}
 }

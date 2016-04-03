@@ -17,8 +17,10 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $dbAdapter;
 	private $url_signer;
 	private $aws_manager;
+	protected $service_locator;
 	public function __construct($redis, $service_locator) {
 		$cm = __CLASS__ . __METHOD__;
+		$this->service_locator = $service_locator;
 		//Mlog::addone ( $cm . __LINE__ . '::', 'enter __construct' );
 		try {
 			$this->db = new \Predis\Client ( [ 
@@ -70,17 +72,13 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
 		
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
-		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSession-->', $rMemreasCookieSession);
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$rMemreasCookieSession-->', $rMemreasCookieSession);
 		if ($rMemreasCookieSession) {
 			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 			if (! session_id ()) {
 				session_id ( $rMemreasCookieSessionArr ['sid'] );
 				session_start ();
 			}
-		} else {
-			//need to logout
-			session_destroy ();
-			return 'notlogin';
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
