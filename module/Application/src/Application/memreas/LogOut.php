@@ -24,6 +24,28 @@ class LogOut {
 	public function exec($sessHandler) {
 		error_log ( 'IndexController -> logout->exec()...' . PHP_EOL );
 		try {
+			
+			/*
+			 * -
+			 * Cache Approach:
+			 * - release all caches on logout for now to ease testing
+			 */
+			try {
+				$redis = AWSMemreasRedisCache::getHandle();
+				$result = $redis->getCache ( '@' . $_SESSION ['username'] . '::cachedactions' );
+				Mlog::addone ( $cm . __LINE__ . '::$redis->getCache ( @username::cachedactions)', $result );
+				if ($result) {
+					$invalidateArr = json_decode ( $result );
+					foreach ( $invalidateArr as $cache ) {
+						Mlog::addone ( $cm . __LINE__ . '::$redis->invalidateCache ( $cache )', $cache );
+						$redis->invalidateCache ( $cache );
+					}
+				}
+			} catch ( \Exception $e ) {
+				Mlog::addone ( $cm . __LINE__ . '::exception invalidating caches on logout', $e->getMessage () );
+			}
+			
+				
 			if (! empty ( $_SESSION ['memreascookie'] )) {
 				$sessHandler->closeSessionWithMemreasCookie ();
 			} else {
