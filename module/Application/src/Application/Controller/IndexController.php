@@ -1699,7 +1699,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Check data to attributes...
 				//
-				// Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
+				Mlog::addone ( __METHOD__ . __LINE__ . 'indexController fetchSession $data--->', $data );
 				if (! empty ( $data->memreascookie )) {
 					/*
 					 * SetId for the web browser session and start...

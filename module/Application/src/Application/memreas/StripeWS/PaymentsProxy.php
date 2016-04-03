@@ -90,6 +90,14 @@ class PaymentsProxy {
 							'json' => json_encode ( $jsonArr ) 
 					] 
 			] );
+		} else if (isset ( $jsonArr ['sid'] )) {
+			Mlog::addone ( $cm, __LINE__ );
+			$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL_STRIPE . $action_method, [ 
+					'form_params' => [ 
+							'sid' => $jsonArr ['sid'],
+							'json' => json_encode ( $jsonArr ) 
+					] 
+			] );
 		} else {
 			Mlog::addone ( $cm . __LINE__, 'action==>' . $action_method );
 			/*
