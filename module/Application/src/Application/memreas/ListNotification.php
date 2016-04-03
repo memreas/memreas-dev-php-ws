@@ -80,7 +80,6 @@ class ListNotification {
 			$this->xml_output .= "<xml>";
 			$this->xml_output .= "<listnotificationresponse>";
 			if (! empty ( $receiver_uid )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', '...' );
 				
 				/**
 				 * Fetch list of notifications
@@ -96,7 +95,6 @@ class ListNotification {
 				
 				$this->xml_output .= "<notifications>";
 				if (count ( $result ) > 0) {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', '...' );
 					
 					$count = 0;
 					$this->xml_output .= "<status>success</status>";
@@ -104,18 +102,18 @@ class ListNotification {
 					foreach ( $result as $row ) {
 						
 						$meta = json_decode ( $row ['meta'], true );
-						if (empty($meta)) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
+						if (empty ( $meta ['sent'] )) {
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
 							//
 							// something is wrong
-							//  - data should be populated
-							//  - fail this and continue;
+							// - data should be populated
+							// - fail this and continue;
 							//
-							$tblNotification = $this->dbAdapter->find ( "\Application\Entity\Notification", $row['notification_id'] );
+							$tblNotification = $this->dbAdapter->find ( "\Application\Entity\Notification", $row ['notification_id'] );
 							$tblNotification->is_read = 1;
 							$tblNotification->status = '-1';
 							$tblNotification->response_status = 'FAILURE';
-							$tblNotification->update_time = MNow::now();
+							$tblNotification->update_time = MNow::now ();
 							$this->dbAdapter->flush ();
 							continue;
 						}
@@ -138,12 +136,11 @@ class ListNotification {
 						 */
 						if (isset ( $meta ['event_id'] )) {
 							$this->xml_output .= "<event_id>{$meta ['sent']['event_id']}</event_id>";
-							$redis = AWSMemreasRedisCache::getHandle();
-							$event = $from_user_id . '_' . $meta ['sent']['event_id'];
-							$event_key_meta = $redis->cache->hget("!memreas_eid_hash", $event);
-							$event_data = $redis->cache->hget("!memreas_meta_hash", $event_key_meta);
+							$redis = AWSMemreasRedisCache::getHandle ();
+							$event = $from_user_id . '_' . $meta ['sent'] ['event_id'];
+							$event_key_meta = $redis->cache->hget ( "!memreas_eid_hash", $event );
+							$event_data = $redis->cache->hget ( "!memreas_meta_hash", $event_key_meta );
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_data', $event_data );
-							
 						} else {
 							$this->xml_output .= "<event_id></event_id>";
 						}
@@ -170,8 +167,6 @@ class ListNotification {
 							/**
 							 * Handle ADD_FRIEND_TO_EVENT
 							 */
-							// Mlog::addone ( __FILE__, 'Handle ADD_FRIEND_TO_EVENT' );
-							// Mlog::add ( $meta, 'j', 1 );
 							$this->handleAddFriendToEvent ( $eventRepository, $meta ['sent'] ['event_id'] );
 						} else if ($row ['notification_type'] == Notification::ADD_COMMENT) {
 							/**
@@ -214,7 +209,6 @@ class ListNotification {
 					</xml>";
 			echo $this->xml_output;
 		}
-		// error_log ( __CLASS__.__METHOD__.'::$this->xml_output--->' . $this->xml_output . PHP_EOL );
 	} // end exec()
 	
 	/**
@@ -280,7 +274,7 @@ class ListNotification {
 	 * Fetch Profile pics and sign...
 	 */
 	public function fetchPics($from_user_id) {
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchPics($from_user_id)', $from_user_id );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchPics($from_user_id)', $from_user_id );
 		if (! empty ( $from_user_id )) {
 			
 			/*
@@ -288,11 +282,11 @@ class ListNotification {
 			 * Pull from redis session data
 			 */
 			$username = $username_redis = $this->redis->cache->hget ( '@person_uid_hash', $from_user_id );
-			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$username_redis', $username_redis );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$username_redis', $username_redis );
 			if ($username_redis) {
 				$userprofile_redis = json_decode ( $this->redis->cache->hget ( '@person_meta_hash', $username_redis ), true );
 				// $user_redis = $this->redis->findSet ('@person', $username_redis );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$userprofile_redis', $userprofile_redis );
 				$pic_79x80 = json_encode ( $userprofile_redis ['profile_photo_79x80'] );
 				$pic_448x306 = json_encode ( $userprofile_redis ['profile_photo_448x306'] );
 				$pic_98x78 = json_encode ( $userprofile_redis ['profile_photo_98x78'] );
