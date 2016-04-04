@@ -208,7 +208,7 @@ class AWSMemreasRedisCache {
 		
 		$result = $this->cache->del ( $key );
 		if ($result) {
-			error_log('JUST DELETED THIS KEY ----> ' . $key . PHP_EOL);
+			error_log ( 'JUST DELETED THIS KEY ----> ' . $key . PHP_EOL );
 		} else {
 			error_log ( 'COULD NOT DELETE THIS KEY ----> ' . $key . PHP_EOL );
 		}
@@ -219,10 +219,10 @@ class AWSMemreasRedisCache {
 		if (! $this->isCacheEnable) {
 			return false;
 		}
-		Mlog::addone (  __LINE__ ,$keys );
+		// Mlog::addone ( __LINE__ ,$keys );
 		// return $this->cache->deleteMulti ( $keys );
 		$result = $this->remSetKeys ( $keys );
-                Mlog::addone (  __LINE__ ,$frmweb );
+		//Mlog::addone ( __LINE__, $frmweb );
 		if ($result) {
 			error_log ( 'JUST DELETED THESE KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
 		} else {
@@ -278,18 +278,17 @@ class AWSMemreasRedisCache {
 	 * Add function to invalidate cache for events
 	 */
 	public function invalidateEvents($user_id) {
-		 
+		
 		// write functions for media
 		// - add event (key is event_id)
 		// - removeevent
-            
 		if (! empty ( $user_id )) {
 			// countviewevent can return me / friends / public
 			$cache_keys = array (
 					"viewevents_is_my_event_" . $user_id,
 					"viewevents_is_friend_event_" . $user_id 
 			);
-                        Mlog::addone (  __METHOD__.__LINE__ ,$cache_keys );
+			Mlog::addone ( __METHOD__ . __LINE__, $cache_keys );
 			$this->invalidateCacheMulti ( $cache_keys );
 		}
 	}
@@ -346,7 +345,7 @@ class AWSMemreasRedisCache {
 		// write functions for groups
 		// - list notification (key is user_id)
 		if (! empty ( $user_id )) {
-			Mlog::addone($cm .__LINE__.'::$this->invalidateCache ( "listnotification_" . $user_id );', $user_id);
+			Mlog::addone ( $cm . __LINE__ . '::$this->invalidateCache ( "listnotification_" . $user_id );', $user_id );
 			$result = $this->invalidateCache ( "listnotification_" . $user_id );
 		}
 	}
@@ -410,10 +409,11 @@ class AWSMemreasRedisCache {
 						// Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
 						$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+						$reply = $this->cache->hset ( '#hashtag_public_eid_hash', $eid ['event_id'],  $event_ids [$eid ['event_id']] );
 					}
 				}
 				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
-				$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
+				//$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
 				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
 				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
 				$hashtag_friends_eid_hash = array ();
@@ -423,11 +423,12 @@ class AWSMemreasRedisCache {
 						// Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag_' . $user_id, 0, $event_ids [$eid ['event_id']] );
 						$hashtag_friends_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+						$reply = $this->cache->hset ( '#hashtag_friends_hash_' . $user_id, $eid ['event_id'], $event_ids [$eid ['event_id']] );
 					}
 				}
 				// Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
 				// Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
-				$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
+				//$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
 				// Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
 				
 				$result = $this->cache->executeRaw ( array (
@@ -723,7 +724,7 @@ class AWSMemreasRedisCache {
 		$cm = __CLASS__ . __METHOD__;
 		if (empty ( $row )) {
 			$row = $this->getPersonData ( $user_id );
-			$row = $row[0];
+			$row = $row [0];
 		}
 		$meta = $row ['metadata'];
 		if (empty ( $meta )) {
@@ -758,30 +759,31 @@ class AWSMemreasRedisCache {
 		// decode here because result will be encoded
 		// error_log('$url1---->'.$url1);
 		$pic_79x80 = json_decode ( $pic_79x80 );
-		//$pic_79x80 = $pic_79x80 [0];
+		// $pic_79x80 = $pic_79x80 [0];
 		$pic_448x306 = json_decode ( $pic_448x306 );
-		//$pic_448x306 = $pic_448x306 [0];
+		// $pic_448x306 = $pic_448x306 [0];
 		$pic_98x78 = json_decode ( $pic_98x78 );
-		//$pic_98x78 = $pic_98x78 [0];
+		// $pic_98x78 = $pic_98x78 [0];
 		$pic_full = json_decode ( $pic_full );
-		//$pic_full = $pic_full [0];
-
+		// $pic_full = $pic_full [0];
+		
 		/*
 		 * -
 		 * Fetch stripe data
 		 * - failures will only be called once ...
 		 * should correct all entries
 		 */
-		//$jsonArr = [ ];
-		//$jsonArr ['user_id'] = $row ['user_id'];
-		//$PaymentsProxy = new PaymentsProxy ( $this->service_locator );
-		//$result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
-		//if ($result) {
-		//	$result = json_decode ( $result, true );
-		//} else {
-		//	$result = '';
-		//}
-		/* -
+		// $jsonArr = [ ];
+		// $jsonArr ['user_id'] = $row ['user_id'];
+		// $PaymentsProxy = new PaymentsProxy ( $this->service_locator );
+		// $result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
+		// if ($result) {
+		// $result = json_decode ( $result, true );
+		// } else {
+		// $result = '';
+		// }
+		/*
+		 * -
 		 * Code to recreate
 		 * if ($result ['status'] = 'Failure') {
 		 * //
@@ -811,9 +813,10 @@ class AWSMemreasRedisCache {
 				'profile_photo_79x80' => $pic_79x80,
 				'profile_photo_448x306' => $pic_448x306,
 				'profile_photo_98x78' => $pic_98x78,
-				'profile_photo_full' => $pic_full
-				//'stripe_getCustomerInfo' => $result 
-		) );
+				'profile_photo_full' => $pic_full 
+		)
+		// 'stripe_getCustomerInfo' => $result
+		 );
 		
 		$result = $this->cache->zadd ( '@person', 0, $row ['username'] );
 		$reply = $this->cache->hset ( '@person_meta_hash', $row ['username'], $person_json );

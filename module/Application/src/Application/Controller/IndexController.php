@@ -117,6 +117,7 @@ class IndexController extends AbstractActionController {
 	protected $sid;
 	protected $sessHandler;
 	protected $sm;
+	protected $is_valid_session;
 	public function __construct($sm) {
 		$this->sm = $sm;
 	}
@@ -184,7 +185,7 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
@@ -211,6 +212,7 @@ class IndexController extends AbstractActionController {
 		}
 		Mlog::addone ( $cm . __LINE__, '*********************************************' );
 		Mlog::addone ( $cm . __LINE__ . '::Starting process for $actionname-->', $actionname );
+		Mlog::addone ( $cm . __LINE__ . '::Starting process for $data-->', $data );
 		Mlog::addone ( $cm . __LINE__, '*********************************************' );
 		
 		/**
@@ -395,6 +397,8 @@ class IndexController extends AbstractActionController {
 					$likemedia = new LikeMedia ( $message_data, $memreas_tables, $this->sm );
 					$result = $likemedia->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "mediainappropriate") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -422,6 +426,8 @@ class IndexController extends AbstractActionController {
 					$countlistallmedia = new CountListallmedia ( $message_data, $memreas_tables, $this->sm );
 					$result = $countlistallmedia->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "listgroup") {
 				/*
@@ -437,6 +443,8 @@ class IndexController extends AbstractActionController {
 					$listgroup = new ListGroup ( $message_data, $memreas_tables, $this->sm );
 					$result = $listgroup->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "listphotos") {
 				/*
@@ -452,6 +460,8 @@ class IndexController extends AbstractActionController {
 					$listphotos = new ListPhotos ( $message_data, $memreas_tables, $this->sm );
 					$result = $listphotos->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "forgotpassword") {
 				$forgotpassword = new ForgotPassword ( $message_data, $memreas_tables, $this->sm );
@@ -475,6 +485,8 @@ class IndexController extends AbstractActionController {
 					$viewallfriends = new ViewAllfriends ( $message_data, $memreas_tables, $this->sm );
 					$result = $viewallfriends->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "creategroup") {
 				$creategroup = new CreateGroup ( $message_data, $memreas_tables, $this->sm );
@@ -525,7 +537,7 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 					Mlog::addone ( $cm . __LINE__ . '::' . $actionname . '_$cache_me-->', 'true' );
 				} else {
-					Mlog::addone ( $cm . __LINE__, 'FETCHING listallmedia FROM REDIS::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
+					echo $result;
 				}
 			} else if ($actionname == "countviewevent") {
 				/*
@@ -546,6 +558,8 @@ class IndexController extends AbstractActionController {
 					$countviewevent = new CountViewevent ( $message_data, $memreas_tables, $this->sm );
 					$result = $countviewevent->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "editevent") {
 				$editevent = new EditEvent ( $message_data, $memreas_tables, $this->sm );
@@ -598,7 +612,7 @@ class IndexController extends AbstractActionController {
 					$cache_me = true;
 					Mlog::addone ( $cm . __LINE__ . '::' . $actionname . '_$cache_me', 'true' );
 				} else {
-					Mlog::addone ( $cm . __LINE__, 'FETCHING viewevents FROM REDIS::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
+					echo $result;
 				}
 			} else if ($actionname == "addfriend") {
 				
@@ -659,6 +673,8 @@ class IndexController extends AbstractActionController {
 					$viewmediadetails = new ViewMediadetails ( $message_data, $memreas_tables, $this->sm );
 					$result = $viewmediadetails->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "snsProcessMediaPublish") {
 				$snsProcessMediaPublish = new snsProcessMediaPublish ( $message_data, $memreas_tables, $this->sm );
@@ -710,6 +726,8 @@ class IndexController extends AbstractActionController {
 					$listnotification = new ListNotification ( $message_data, $memreas_tables, $this->sm, $this->redis );
 					$result = $listnotification->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "updatenotification") {
 				$updatenotification = new UpdateNotification ( $message_data, $memreas_tables, $this->sm );
@@ -771,6 +789,8 @@ class IndexController extends AbstractActionController {
 					$getsession = new GetSession ( $message_data, $memreas_tables, $this->sm );
 					$result = $getsession->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "registerdevice") {
 				$register_device = new RegisterDevice ( $message_data, $memreas_tables, $this->sm );
@@ -798,6 +818,8 @@ class IndexController extends AbstractActionController {
 					$listcomments = new ListComments ( $message_data, $memreas_tables, $this->sm );
 					$result = $listcomments->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "verifyemail") {
 				/*
@@ -822,6 +844,8 @@ class IndexController extends AbstractActionController {
 					$GetEventLocation = new GetEventLocation ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetEventLocation->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "geteventcount") {
 				/*
@@ -836,6 +860,8 @@ class IndexController extends AbstractActionController {
 					$GetEventLocation = new GetEventCount ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetEventLocation->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "getuserdetails") {
 				/*
@@ -850,6 +876,8 @@ class IndexController extends AbstractActionController {
 					$GetUserDetails = new GetUserDetails ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetUserDetails->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "saveuserdetails") {
 				/*
@@ -878,6 +906,8 @@ class IndexController extends AbstractActionController {
 					$GetUserGroups = new GetUserGroups ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetUserGroups->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "getgroupfriends") {
 				/*
@@ -895,6 +925,8 @@ class IndexController extends AbstractActionController {
 					$GetGroupFriends = new GetGroupFriends ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetGroupFriends->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "addfriendtogroup") {
 				/*
@@ -934,6 +966,8 @@ class IndexController extends AbstractActionController {
 					$GetEventPeople = new GetEventPeople ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetEventPeople->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "addexistmediatoevent") {
 				$AddExistMediaToEvent = new AddExistMediaToEvent ( $message_data, $memreas_tables, $this->sm );
@@ -963,6 +997,8 @@ class IndexController extends AbstractActionController {
 					$GetMediaLike = new GetMediaLike ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetMediaLike->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "checkexistmedia") {
 				/*
@@ -988,6 +1024,8 @@ class IndexController extends AbstractActionController {
 					$ListMemreasFriends = new ListMemreasFriends ( $message_data, $memreas_tables, $this->sm );
 					$result = $ListMemreasFriends->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "getsocialcredentials") {
 				/*
@@ -1047,6 +1085,8 @@ class IndexController extends AbstractActionController {
 					$GetEventDetails = new GetEventDetails ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetEventDetails->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "removeeventmedia") {
 				$RemoveEventMedia = new RemoveEventMedia ( $message_data, $memreas_tables, $this->sm );
@@ -1102,6 +1142,8 @@ class IndexController extends AbstractActionController {
 					$GetFriends = new GetFriends ( $message_data, $memreas_tables, $this->sm );
 					$result = $GetFriends->exec ();
 					$cache_me = true;
+				} else {
+					echo $result;
 				}
 			} else if ($actionname == "getplans") {
 				/*
@@ -1221,7 +1263,19 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
-				} else if (($actionname == 'stripe_saveCard') || ($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards') ) {
+				} else if ($actionname == 'stripe_buyMedia') {
+					/**
+					 * Invalidate stripe_listCards cache since update is happening.
+					 */
+					$cache_id = $data->event_id;
+					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
+				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
+					/**
+					 * Invalidate stripe_listCards cache since update is happening.
+					 */
+					$cache_id = $data->user_id;
+					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
+				} else if (($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
@@ -1602,7 +1656,16 @@ class IndexController extends AbstractActionController {
 				$this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
 				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
 			}
-		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
+			//
+			// end if (isset ( $actionname ) && ! empty ( $actionname ))
+			//
+		} else {
+			//
+			// couldn't start session so logout
+			//
+			$logout = new LogOut($message_data, $memreas_tables, $this->sm);
+			$logout->exec($this->sessHandler);
+		}
 		
 		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
@@ -1620,35 +1683,34 @@ class IndexController extends AbstractActionController {
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
-			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
-			// Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+			Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
 			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
+				
 				if ($this->isJson ( $output )) {
 					$message_data = json_decode ( $output, true );
-					$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
-					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'] [$entry];
-					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 					$output = json_encode ( $message_data );
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
-					if (!empty ( $data->memreascookie )) {
+					if (! empty ( $data->memreascookie )) {
 						$data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
-						$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
-						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] [$entry] );
-						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
+						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon']);
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
 						$output = $data->asXML ();
 						// error_log ( '$xml-->' . $xml );
 					}
 					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
 			}
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
-			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-			Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
-			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
 		}
+		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
+		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		
 		/**
 		 * close session for ajax
@@ -1793,12 +1855,9 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!' . PHP_EOL );
-					// need to logout
-					$logout = new LogOut ( null, null, $this->service_locator );
-					$sessHandler = new AWSMemreasRedisSessionHandler ( AWSMemreasRedisCache::getHandle (), $this->service_locator );
-					$logout->exec ( $sessHandler );
-					
-					return 'notlogin';
+					Mlog::add(__CLASS__.__METHOD__.__LINE__.'::logging out due to bad session - last action ----> ', $actionname);
+						
+					return '';
 				}
 			} // end if ($requiresExistingSession)
 			
@@ -1816,7 +1875,7 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
 					// Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
-					return 'notlogin';
+					return '';
 				}
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
