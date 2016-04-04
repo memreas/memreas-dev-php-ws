@@ -337,8 +337,9 @@ class ViewEvents {
 						//
 						// If selling is off then skip this event
 						//
-						if (! empty ( $event_json_array ['price'] ))
+						if (! empty ( $event_json_array ['price'] )) {
 							continue;
+						}
 					}
 					
 					/*
@@ -364,9 +365,23 @@ class ViewEvents {
 							continue;
 						}
 					}
+					
+					
+					
+					//
+					// Check if event has media if so show otherwise skip
+					//
+					$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
+					if (!count($result_event_media_public) > 0) {
+						continue;
+					}
+					
 					/*
 					 * Add event entry data...
 					 */
+					
+					
+					
 					$xml_output .= "<event>";
 					$xml_output .= "<event_id>" . $public_event_row ['event_id'] . "</event_id>";
 					$xml_output .= "<event_name>" . $public_event_row ['name'] . "</event_name>";
@@ -441,7 +456,7 @@ class ViewEvents {
 					/*
 					 * Fetch event photo thumbs...
 					 */
-					$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
+					// done above to check count
 					
 					/**
 					 * generatePublicEventMediaXML
