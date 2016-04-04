@@ -1632,8 +1632,8 @@ class IndexController extends AbstractActionController {
 					$output = json_encode ( $message_data );
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
-					if (empty ( $data->x_memreas_chameleon )) {
-						// $data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
+					if (!empty ( $data->memreascookie )) {
+						$data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
 						$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
 						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] [$entry] );
 						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );

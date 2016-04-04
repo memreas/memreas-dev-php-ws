@@ -82,7 +82,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
-		$_SESSION ['x_memreas_chameleon'] = $fetchChameleon->setChameleon();
+		$fetchChameleon->setChameleon();
+		//$_SESSION ['x_memreas_chameleon'] = $fetchChameleon->setChameleon();
 		//if ($actionname == 'login') {
 		//	$fetchChameleon->setChameleon ();
 		//} else {
