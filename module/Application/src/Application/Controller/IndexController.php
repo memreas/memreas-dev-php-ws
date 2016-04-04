@@ -1263,6 +1263,12 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
+				} else if ($actionname == 'stripe_buyMedia') {
+					/**
+					 * Invalidate stripe_listCards cache since update is happening.
+					 */
+					$cache_id = $data->event_id;
+					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
