@@ -35,6 +35,8 @@ class FetchChameleon {
 		 * create chameleon and add to array - keep last 3 given async calls
 		 */
 		$chameleon_value = hash ( 'sha256', uniqid ( '', true ) );
+		$_SESSION ['x_memreas_chameleon'] = $chameleon_value; 
+		/*
 		if (isset ( $_SESSION ['x_memreas_chameleon'] )) {
 			$x_memreas_chameleonArr = $_SESSION ['x_memreas_chameleon'];
 		} else {
@@ -56,7 +58,9 @@ class FetchChameleon {
 			$x_memreas_chameleonArr [] = $chameleon_value;
 			$_SESSION ['x_memreas_chameleon'] = $x_memreas_chameleonArr;
 		}
-		//return $chameleon_value;
+		*/
+		
+		return $chameleon_value;
 	}
 	public function checkChameleon($client_x_memreas_chameleon) {
 		// Mlog::addone ( __CLASS__ . __METHOD__ . '::enter checkChameleon checking ::', '$client_x_memreas_chameleon->' . $client_x_memreas_chameleon . ' $_SESSION[x_memreas_chameleon]-->' . $_SESSION ['x_memreas_chameleon'] );
