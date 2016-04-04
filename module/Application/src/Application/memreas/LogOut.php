@@ -29,7 +29,9 @@ class LogOut {
 			 * -
 			 * Cache Approach:
 			 * - release all caches on logout for now to ease testing
+			 *  - hold off not working correctly
 			 */
+			/*
 			try {
 				$redis = AWSMemreasRedisCache::getHandle();
 				$result = $redis->getCache ( '@' . $_SESSION ['username'] . '::cachedactions' );
@@ -44,6 +46,7 @@ class LogOut {
 			} catch ( \Exception $e ) {
 				Mlog::addone ( $cm . __LINE__ . '::exception invalidating caches on logout', $e->getMessage () );
 			}
+			*/
 			
 				
 			if (! empty ( $_SESSION ['memreascookie'] )) {
@@ -56,7 +59,7 @@ class LogOut {
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml>";
 			$xml_output .= "<logoutresponse>";
-			$xml_output .= "<status>Success</status><message>Log out success</message>";
+			$xml_output .= "<status>Success</status><message>Log out success</message><logout>1</logout>";
 			
 			$xml_output .= "</logoutresponse>";
 			$xml_output .= "</xml>";

@@ -117,6 +117,7 @@ class IndexController extends AbstractActionController {
 	protected $sid;
 	protected $sessHandler;
 	protected $sm;
+	protected $is_valid_session;
 	public function __construct($sm) {
 		$this->sm = $sm;
 	}
@@ -1221,7 +1222,7 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
-				} else if (($actionname == 'stripe_saveCard') || ($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards') ) {
+				} else if (($actionname == 'stripe_saveCard') || ($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
@@ -1602,7 +1603,16 @@ class IndexController extends AbstractActionController {
 				$this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
 				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
 			}
-		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
+			//
+			// end if (isset ( $actionname ) && ! empty ( $actionname ))
+			//
+		} else {
+			//
+			// couldn't start session so logout
+			//
+			$logout = new LogOut($message_data, $memreas_tables, $this->sm);
+			$logout->exec($this->sessHandler);
+		}
 		
 		if (! empty ( $callback )) {
 			$message_data ['data'] = $output;
@@ -1616,7 +1626,7 @@ class IndexController extends AbstractActionController {
 			
 			header ( 'Content-Type: application/json' );
 			// callback json
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
 			echo $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
@@ -1632,7 +1642,7 @@ class IndexController extends AbstractActionController {
 					$output = json_encode ( $message_data );
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
-					if (!empty ( $data->memreascookie )) {
+					if (! empty ( $data->memreascookie )) {
 						$data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
 						$entry = count ( $_SESSION ['x_memreas_chameleon'] ) - 1;
 						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] [$entry] );
@@ -1793,12 +1803,9 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!' . PHP_EOL );
-					// need to logout
-					$logout = new LogOut ( null, null, $this->service_locator );
-					$sessHandler = new AWSMemreasRedisSessionHandler ( AWSMemreasRedisCache::getHandle (), $this->service_locator );
-					$logout->exec ( $sessHandler );
-					
-					return 'notlogin';
+					Mlog::add(__CLASS__.__METHOD__.__LINE__.'::logging out due to bad session - last action ----> ', $actionname);
+						
+					return '';
 				}
 			} // end if ($requiresExistingSession)
 			
@@ -1816,7 +1823,7 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
 					// Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
-					return 'notlogin';
+					return '';
 				}
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
 				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
