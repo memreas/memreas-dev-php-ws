@@ -76,7 +76,7 @@ class EventRepository extends EntityRepository {
 			// Mlog::addone ( 'createEventCache()::$row ---->', $row, 'p' );
 			$event_id = $row ['event_id'];
 			/**
-			 * event media
+			 * event media 
 			 */
 			$result = $this->getEventMedia ( $event_id );
 			if ($result) {
@@ -85,8 +85,8 @@ class EventRepository extends EntityRepository {
 				$event_media_url = json_decode ( $event_media_url );
 				$eventIndex ['event_photo'] = $event_media_url;
 			} else {
-				$eventIndex ['event_media'] = [];
-				$eventIndex ['event_photo'] = [];
+				$eventIndex ['event_media'] = [ ];
+				$eventIndex ['event_photo'] = [ ];
 			}
 			$eventIndex ['event_id'] = $row ['event_id'];
 			$eventIndex ['user_id'] = $row ['user_id'];
@@ -95,7 +95,7 @@ class EventRepository extends EntityRepository {
 			$event_creator_pic = (! empty ( $row ['media_metadata'] )) ? $this->getEventMediaUrl ( $row ['media_metadata'] ) : $this->getEventMediaUrl ( '' );
 			$event_creator_pic = json_decode ( $event_creator_pic );
 			$eventIndex ['event_creator_pic'] = $event_creator_pic;
-			$eventIndex ['create_time'] = $row['create_time'];
+			$eventIndex ['create_time'] = $row ['create_time'];
 			/**
 			 * comment_count
 			 */
@@ -118,9 +118,8 @@ class EventRepository extends EntityRepository {
 			if ($result) {
 				$eventIndex ['friends'] = $result;
 			} else {
-				$eventIndex ['friends'] = [];
+				$eventIndex ['friends'] = [ ];
 			}
-						
 			
 			/*
 			 * $eventIndex ['id'] = $event_id;
@@ -168,7 +167,7 @@ class EventRepository extends EntityRepository {
 			
 			$search_result [] = $eventIndex;
 		}
-		//Mlog::addone('createEventCache::',$search_result, 'p' );
+		// Mlog::addone('createEventCache::',$search_result, 'p' );
 		return $search_result;
 	}
 	public function getPublicEvents($date) {
@@ -309,7 +308,7 @@ class EventRepository extends EntityRepository {
 		}
 		$out = array ();
 		foreach ( $rows as &$row ) {
-			$o ['profile_photo'] = json_decode($this->getProfileUrl ( $row ['metadata'] ));
+			$o ['profile_photo'] = json_decode ( $this->getProfileUrl ( $row ['metadata'] ) );
 			$o ['username'] = $row ['username'];
 			$out [] = $o;
 		}
@@ -325,15 +324,15 @@ class EventRepository extends EntityRepository {
 		// $qb->where ( 'event_media.event_id IN (:ids)' );
 		$qb->orderBy ( 'media.create_date', 'DESC' );
 		$qb->setParameter ( 1, $event_id );
-
-		//Mlog::addone ( 'getEventMedia $qb->getQuery ()->getSQL()', $qb->getQuery()->getSQL() );
+		
+		// Mlog::addone ( 'getEventMedia $qb->getQuery ()->getSQL()', $qb->getQuery()->getSQL() );
 		
 		if ($limit)
 			$qb->setMaxResults ( $limit );
 		$eventMedia = $qb->getQuery ()->getResult ();
 		$eventMediaArr = array ();
 		foreach ( $eventMedia as $row ) {
-			//Mlog::addone ( 'getEventMedia for loop row --->', $row, 'p' );
+			// Mlog::addone ( 'getEventMedia for loop row --->', $row, 'p' );
 			$eventMediaArrRow = array ();
 			$eventMediaArrRow ['event_id'] = $row ['event_id'];
 			$eventMediaArrRow ['media_id'] = $row ['media_id'];
@@ -364,8 +363,8 @@ class EventRepository extends EntityRepository {
 		 */
 		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$metadata', $metadata );
 		if (! empty ( $metadata )) {
-			if (is_array($metadata) || is_object($metadata)) {
-				$json_array = json_decode(json_encode($metadata), true);
+			if (is_array ( $metadata ) || is_object ( $metadata )) {
+				$json_array = json_decode ( json_encode ( $metadata ), true );
 			} else {
 				
 				$json_array = json_decode ( $metadata, true );
@@ -466,8 +465,8 @@ class EventRepository extends EntityRepository {
 						$event_media = $this->getEventMedia ( $event_id );
 						$i = 0;
 						foreach ( $event_media as $mediaRow ) {
-							$event_media_url = (!empty ($this->getEventMediaUrl ( $mediaRow ['metadata'] ))) ? $this->getEventMediaUrl ( $mediaRow ['metadata'] ) : $this->getEventMediaUrl ( '' );
-							//$this->getEventMediaUrl ( $mediaRow ['metadata'] ) 
+							$event_media_url = (! empty ( $this->getEventMediaUrl ( $mediaRow ['metadata'] ) )) ? $this->getEventMediaUrl ( $mediaRow ['metadata'] ) : $this->getEventMediaUrl ( '' );
+							// $this->getEventMediaUrl ( $mediaRow ['metadata'] )
 							$event_media_url = json_decode ( $event_media_url );
 							$event_media_url = $event_media_url [0];
 							
