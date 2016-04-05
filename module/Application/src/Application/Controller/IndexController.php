@@ -508,10 +508,10 @@ class IndexController extends AbstractActionController {
 				 * --- this is based on media_id
 				 */
 				
-				Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $session->user_id );
-				$this->redis->invalidateCache ( "listallmedia_" . $session->user_id );
-				Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $session->user_id );
-				$this->redis->invalidateCache ( "viewevents_" . $session->user_id );
+				Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION['user_id'] );
+				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION['user_id'] );
+				Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION['user_id'] );
+				$this->redis->invalidateCache ( "viewevents_" . $_SESSION['user_id'] );
 			/**
 			 * Cache Approach:
 			 * - Check cache first if not there then fetch and cache...
@@ -1296,7 +1296,6 @@ class IndexController extends AbstractActionController {
 				}
 				echo $result;
 			} else if ($actionname == "findtag") {
-				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				
 				/*
 				 * - fetch parameters
@@ -1308,7 +1307,6 @@ class IndexController extends AbstractActionController {
 				$a = $tag [0];
 				$search = substr ( $tag, 1 );
 				
-				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				/*
 				 * - set paging and limits
 				 */
@@ -1317,13 +1315,11 @@ class IndexController extends AbstractActionController {
 					$page = 1;
 				}
 				
-				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				$limit = trim ( $data->findtag->limit );
 				if (empty ( $limit )) {
 					$limit = 20;
 				}
 				
-				Mlog::addone ( $cm . __LINE__ . '::', '...' );
 				$from = ($page - 1) * $limit;
 				$rc = 0;
 				
