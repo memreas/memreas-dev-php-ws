@@ -366,22 +366,16 @@ class ViewEvents {
 						}
 					}
 					
-					
-					
 					//
 					// Check if event has media if so show otherwise skip
 					//
 					$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
-					if (!count($result_event_media_public) > 0) {
+					if (! count ( $result_event_media_public ) > 0) {
 						continue;
 					}
-					
 					/*
 					 * Add event entry data...
 					 */
-					
-					
-					
 					$xml_output .= "<event>";
 					$xml_output .= "<event_id>" . $public_event_row ['event_id'] . "</event_id>";
 					$xml_output .= "<event_name>" . $public_event_row ['name'] . "</event_name>";
@@ -395,38 +389,58 @@ class ViewEvents {
 					
 					/*
 					 * Fetch Owner Profile photo...
+					 * - check redis first
 					 */
-					$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
-					if ($profile) {
-						$profile_image = json_decode ( $profile [0] ['metadata'], true );
-						if (! empty ( $profile_image ['S3_files'] ['path'] ))
-							$pic = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['path'] );
-						
-						if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] )) {
-							$pic_79x80 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] );
+					
+					/*
+					 * Check REDIS to fetch event owner profile pic
+					 */
+					$redis = AWSMemreasRedisCache::getHandle ();
+					$event_owner_name = $redis->cache->hget ( '@person_uid_hash', $public_event_row ['user_id'] );
+					$event_owner_profile = $redis->cache->hget ( '@person_meta_hash', $event_owner_name );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profile--->', $event_owner_profile );
+					$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = $this->url_signer->signArrayOfUrls ( null );
+					if ($event_owner_profile) {
+						$event_owner_profileArr = json_decode ( $event_owner_profile, true );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profileArr--->', $event_owner_profileArr );
+						$pic = json_encode ( $event_owner_profileArr ['profile_photo'] );
+						$pic_79x80 = json_encode ( $event_owner_profileArr ['profile_photo_79x80'] );
+						$pic_448x306 = json_encode ( $event_owner_profileArr ['profile_photo_448x306'] );
+						$pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo_98x78'] );
+					} else {
+						$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
+						if ($profile) {
+							$profile_image = json_decode ( $profile [0] ['metadata'], true );
+							if (! empty ( $profile_image ['S3_files'] ['path'] )) {
+								$pic = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['path'] );
+							}
+							
+							if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] )) {
+								$pic_79x80 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] );
+							}
 							
 							if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['448x306'] )) {
 								$pic_448x306 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['448x306'] );
-								
-								if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] ))
-									$pic_98x78 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] );
-									
-									/*
-								 * Set xml output for profile photo data...
-								 */
-								$xml_output .= "<profile_pic><![CDATA[" . $pic . "]]></profile_pic>";
-								$xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
-								$xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
-								$xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
-							} else {
-								$pic = MemreasConstants::ORIGINAL_URL . 'memreas/img/profile-pic.jpg';
-								$xml_output .= "<profile_pic><![CDATA[" . $pic . "]]></profile_pic>";
-								$xml_output .= "<profile_pic_79x80 />";
-								$xml_output .= "<profile_pic_448x306 />";
-								$xml_output .= "<profile_pic_98x78 />";
 							}
-						} // if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] ))
-					} // end if ($profile)
+							
+							if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] )) {
+								$pic_98x78 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] );
+							}
+						}
+					} // if $event_owner_profile
+					
+					/**
+					 * Output profile urls
+					 */
+					/*
+					 * Set xml output for profile photo data...
+					 *  - data set in cachec or from profile lookup
+					 */
+					$xml_output .= "<profile_pic><![CDATA[" . $pic . "]]></profile_pic>";
+					$xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
+					$xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
+					$xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
+							
 					
 					/**
 					 * Fetch event friends...
@@ -490,17 +504,17 @@ class ViewEvents {
 	private function fetchMyEventsMedia($user_id, $event_id) {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
 		/*
-		$qb = $this->dbAdapter->createQueryBuilder ();
-		$qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata', 'media.delete_flag' );
-		$qb->from ( 'Application\Entity\EventMedia', 'event_media' );
-		$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
-		$qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
-		$qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
-		$qb->orderBy ( 'media.create_date', 'DESC' );
-		$qb->setParameter ( 1, $user_id );
-		$qb->setParameter ( 2, $event_id );
-		$result = $qb->getQuery ()->getResult ();
-		*/
+		 * $qb = $this->dbAdapter->createQueryBuilder ();
+		 * $qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata', 'media.delete_flag' );
+		 * $qb->from ( 'Application\Entity\EventMedia', 'event_media' );
+		 * $qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
+		 * $qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
+		 * $qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
+		 * $qb->orderBy ( 'media.create_date', 'DESC' );
+		 * $qb->setParameter ( 1, $user_id );
+		 * $qb->setParameter ( 2, $event_id );
+		 * $result = $qb->getQuery ()->getResult ();
+		 */
 		$q_event_media = "select e.event_id, e.name, m.media_id, m.metadata, m.delete_flag
 							from 	Application\Entity\Media m,
 									Application\Entity\Event e,
@@ -520,7 +534,7 @@ class ViewEvents {
 		$event_media_query->setParameter ( 2, $user_id );
 		$result = $event_media_query->getResult ();
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
-		return $result;		
+		return $result;
 	}
 	private function generateMyEventMediaXML($query_event_media_result) {
 		$xml = '';
