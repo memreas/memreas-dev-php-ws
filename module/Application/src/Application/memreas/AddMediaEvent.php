@@ -246,7 +246,7 @@ class AddMediaEvent {
 				$data ['device_type'] = $device_type;
 				$data ['device_id'] = $device_id;
 				$data ['device_local_identifier'] = $s3file_basename_prefix;
-				$data ['task_identifier'] = $task_identifier;
+				$data ['task_identifier'] = if (!empty($task_identifier)) ? $task_identifier : 0;
 				$result = $MediaDeviceTracker->exec ( $data );
 				
 				/**
