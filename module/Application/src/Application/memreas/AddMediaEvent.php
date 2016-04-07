@@ -14,7 +14,6 @@ use Application\memreas\Email;
 use Application\Model\MemreasConstants;
 use Zend\View\Model\ViewModel;
 
-
 class AddMediaEvent {
 	protected $message_data;
 	protected $memreas_tables;
@@ -39,11 +38,11 @@ class AddMediaEvent {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec($redis = null) {
-		$cm = __CLASS__. __METHOD__;	
+		$cm = __CLASS__ . __METHOD__;
 		$is_audio = false;
 		try {
 			$media_id = '';
-			//Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
+			// Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -171,7 +170,18 @@ class AddMediaEvent {
 				// ///////////////////////////////////////
 				$s3file = $s3path . $s3file_name;
 				$s3bucket = MemreasConstants::S3BUCKET;
+				$file_type = explode ( '/', $content_type );
 				$json_array = array ();
+				// Mlog::addone ( '$file_type', $file_type );
+				// Mlog::addone ( '$file_type[0]', $file_type [0] );
+				// Mlog::addone ( '$file_type[1]', $file_type [1] );
+				if (strtolower ( $file_type [0] ) == "video") {
+					$is_video = 1;
+					$json_array ['S3_files'] ['is_video'] = 1;
+				} else if (strtolower ( $file_type [0] ) == "audio") {
+					$is_audio = 1;
+					$json_array ['S3_files'] ['is_audio'] = 1;
+				}
 				$json_array ['S3_files'] ['s3file_name'] = $s3file_name;
 				$json_array ['S3_files'] ['s3file_basename_prefix'] = $s3file_basename_prefix;
 				$json_array ['S3_files'] ['copyright'] = json_decode ( $copyright );
@@ -186,17 +196,6 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['devices'] ['device'] ['origin'] = 1;
 				$json_array ['S3_files'] ['file_type'] = $file_type [0];
 				$json_array ['S3_files'] ['content_type'] = $content_type;
-				$file_type = explode ( '/', $content_type );
-				// Mlog::addone ( '$file_type', $file_type );
-				// Mlog::addone ( '$file_type[0]', $file_type [0] );
-				// Mlog::addone ( '$file_type[1]', $file_type [1] );
-				if (strtolower ( $file_type [0] ) == "video") {
-					$is_video = 1;
-					$json_array ['S3_files'] ['is_video'] = 1;
-				} else if (strtolower ( $file_type [0] ) == "audio") {
-					$is_audio = 1;
-					$json_array ['S3_files'] ['is_audio'] = 1;
-				}
 				$json_array ['S3_files'] ['type'] [strtolower ( $file_type [0] )] ['format'] = $file_type [1];
 				$json_str = json_encode ( $json_array );
 				
@@ -246,7 +245,7 @@ class AddMediaEvent {
 				$data ['device_type'] = $device_type;
 				$data ['device_id'] = $device_id;
 				$data ['device_local_identifier'] = $s3file_basename_prefix;
-				$data ['task_identifier'] = if (!empty($task_identifier)) ? $task_identifier : 0;
+				$data ['task_identifier'] = (! empty ( $task_identifier )) ? $task_identifier : 0;
 				$result = $MediaDeviceTracker->exec ( $data );
 				
 				/**
@@ -322,7 +321,7 @@ class AddMediaEvent {
 				 * Send copyright email
 				 */
 				if (! empty ( $copyright )) {
-					Mlog::addone($cm . __LINE__. '::', $_SESSION);
+					Mlog::addone ( $cm . __LINE__ . '::', $_SESSION );
 					$email = $_SESSION ['email_address'];
 					$username = $_SESSION ['username'];
 					$to [] = $email;
