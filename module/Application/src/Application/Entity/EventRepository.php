@@ -426,6 +426,10 @@ class EventRepository extends EntityRepository {
 		$qb->select ( 't.tag,t.tag_id,t.meta' );
 		$qb->from ( 'Application\Entity\Tag', 't' );
 		$qb->where ( 't.tag LIKE ?1' );
+		if (!empty($event_ids)) {
+			$qb->andWhere('t.tag LIKE ?1' );
+				
+		}
 		$qb->setParameter ( 1, "$tag%" );
 		$result = $qb->getQuery ()->getResult ();
 		// error_log("createDiscoverCache SQL--->".$qb->getQuery()->getSql().PHP_EOL);
