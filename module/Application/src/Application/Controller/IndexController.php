@@ -226,14 +226,14 @@ class IndexController extends AbstractActionController {
 		// Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
-			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
-			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for  ( $actionname )--> ', $actionname );
-			Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for  ( $data)--> ', $data );
+			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $actionname )--> ', $actionname );
+			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $data)--> ', $data );
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
 		
@@ -508,10 +508,10 @@ class IndexController extends AbstractActionController {
 				 * --- this is based on media_id
 				 */
 				
-				Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION['user_id'] );
-				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION['user_id'] );
-				Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION['user_id'] );
-				$this->redis->invalidateCache ( "viewevents_" . $_SESSION['user_id'] );
+				Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION ['user_id'] );
+				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION ['user_id'] );
+				Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION ['user_id'] );
+				$this->redis->invalidateCache ( "viewevents_" . $_SESSION ['user_id'] );
 			/**
 			 * Cache Approach:
 			 * - Check cache first if not there then fetch and cache...
@@ -1306,6 +1306,7 @@ class IndexController extends AbstractActionController {
 				$user_id = empty ( $user_id ) ? 0 : $user_id;
 				$a = $tag [0];
 				$search = substr ( $tag, 1 );
+				$hash_search = $tag;
 				
 				/*
 				 * - set paging and limits
@@ -1545,38 +1546,58 @@ class IndexController extends AbstractActionController {
                     	 * TODO: Migrate to redis search - see example below
                     	 */
 						$search_result = array ();
-						if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-							// Mlog::addone ( $cm . __LINE__, "redis hashtag fetch TODO..." );
-							// Mlog::addone ( $cm . __LINE__, "Inside findTag # for tag $search" );
-							$tags_public = $this->redis->findSet ( '#hashtag', $search );
-							$tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $search );
-							$tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
-							// Mlog::addone ( $cm . __LINE__, "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) );
-							$hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
-							// Mlog::addone ( $cm . __LINE__, "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) );
-							$hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
-							// Mlog::addone ( $cm . __LINE__, "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) );
-							
-							$eventRep = $this->sm->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							$mc = $eventRep->createDiscoverCache ( $search );
-							$usernames = $this->redis->findSet ( '@person', $search );
-							$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
-							$person_uid_hash = $this->redis->cache->hmget ( '@person_uid_hash', $usernames );
-							$user_ids = $usernames;
-						} else {
-							/*
-							 * -
-							 * Fetch from db
-							 */
-							$eventRep = $this->sm->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
-							
-							/*
-							 * -
-							 * error_log ( "createDiscoverCache------>$tag" . PHP_EOL );
-							 */
-							$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
-						}
+						/*
+						 * if ((MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+						 * Mlog::addone ( $cm . __LINE__, "redis hashtag fetch TODO..." );
+						 * Mlog::addone ( $cm . __LINE__, "Inside findTag # for tag $hash_search" );
+						 * $tags_public = $this->redis->findSet ( '#hashtag', $hash_search );
+						 * $tags_uid = $this->redis->findSet ( '#hashtag_' . $user_id, $hash_search );
+						 * $tags_unique = array_unique ( array_merge ( $tags_public, $tags_uid ) );
+						 * Mlog::addone ( $cm . __LINE__, "Inside findTag # tags_unique--->" . json_encode ( $tags_unique ) );
+						 * $hashtag_public_eid_hash = $this->redis->cache->hmget ( "#hashtag_public_eid_hash", $tags_unique );
+						 * Mlog::addone ( $cm . __LINE__, "Inside findTag # hashtag_public_eid_hash--->" . json_encode ( $hashtag_public_eid_hash ) );
+						 * $hashtag_friends_hash = $this->redis->cache->hmget ( '#hashtag_friends_hash_' . $user_id, $tags_unique );
+						 * Mlog::addone ( $cm . __LINE__, "Inside findTag # hashtag_friends_hash--->" . json_encode ( $hashtag_friends_hash ) );
+						 *
+						 *
+						 * $hashtag_cache = array_merge($hashtag_public_eid_hash, $hashtag_friends_hash);
+						 * Mlog::addone ( $cm . __LINE__, 'Inside findTag # $hashtag_cache--->' . json_encode ( $hashtag_cache ) );
+						 *
+						 * //$eventRep = $this->sm->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+						 * //$mc = $eventRep->createDiscoverCache ( $hash_search );
+						 * //$usernames = $this->redis->findSet ( '@person', $search );
+						 * //$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
+						 * //$person_uid_hash = $this->redis->cache->hmget ( '@person_uid_hash', $usernames );
+						 * //$user_ids = $usernames;
+						 *
+						 * } else {
+						 * $eventRep = $this->sm->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+						 * $tags = $tagRep->getHashTags ();
+						 * if ($tags) {
+						 *
+						 * $event_ids [] = array ();
+						 * foreach ( $tags as $tag ) {
+						 * $tag_meta = json_decode ( $tag ['meta'], true );
+						 * if (! empty ( $tag_meta ['event'] )) {
+						 * $event_ids [$tag_meta ['event'] [0]] = $tag ['tag'];
+						 * }
+						 * }
+						 * // Mlog::addone ( 'warmHashTagSet($user_id)', 'past for loop' );
+						 *
+						 * //
+						 * // Now filter by public and friends and add to cache...
+						 * //
+						 * $keys = array_keys ( $event_ids );
+						 * $public_event_ids = $tagRep->filterPublicHashTags ( $keys );
+						 * }
+						 *
+						 * $hashtag_cache = $eventRep->createDiscoverCache ( $tag );
+						 * }
+						 */
 						
+						$eventRep = $this->sm->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
+						$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
+						Mlog::addone ( $cm . __LINE__, 'Inside findTag # $hashtag_cache--->' . json_encode ( $hashtag_cache ) );
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
 							// Mlog::addone ( $cm . __LINE__, "tag------>$tag" );
 							// Mlog::addone ( $cm . __LINE__, "cache_entry------>" . json_encode ( $cache_entry ) );
@@ -1617,14 +1638,8 @@ class IndexController extends AbstractActionController {
 			} // end actions
 			
 			/**
-			 * - Caching section
-			 * - this
-			 * Successfully retrieved from cache so echo
+			 * - fetch buffer and clean
 			 */
-			// if ($cache_me == false && ! empty ( $result )) {
-			// Mlog::addone ( __METHOD__ . __LINE__ . 'Successfully retrieved from cache so echo:OUTPUT', $result );
-			// echo $result;
-			// }
 			$output = trim ( ob_get_clean () );
 			
 			/*
@@ -1659,8 +1674,8 @@ class IndexController extends AbstractActionController {
 			//
 			// couldn't start session so logout
 			//
-			$logout = new LogOut($message_data, $memreas_tables, $this->sm);
-			$logout->exec($this->sessHandler);
+			$logout = new LogOut ( $message_data, $memreas_tables, $this->sm );
+			$logout->exec ( $this->sessHandler );
 		}
 		
 		if (! empty ( $callback )) {
@@ -1693,7 +1708,7 @@ class IndexController extends AbstractActionController {
 					$data = simplexml_load_string ( trim ( $output ) );
 					if (! empty ( $data->memreascookie )) {
 						$data->x_memreas_chameleon = $_SESSION ['x_memreas_chameleon'];
-						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon']);
+						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
 						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
 						$output = $data->asXML ();
 						// error_log ( '$xml-->' . $xml );
@@ -1851,8 +1866,8 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					error_log ( 'SID IS NOT SET !!!!' . PHP_EOL );
-					Mlog::add(__CLASS__.__METHOD__.__LINE__.'::logging out due to bad session - last action ----> ', $actionname);
-						
+					Mlog::add ( __CLASS__ . __METHOD__ . __LINE__ . '::logging out due to bad session - last action ----> ', $actionname );
+					
 					return '';
 				}
 			} // end if ($requiresExistingSession)
