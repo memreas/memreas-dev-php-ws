@@ -1609,19 +1609,19 @@ class IndexController extends AbstractActionController {
 								$cache_entry ['updated_on'] = Utility::formatDateDiff ( $cache_entry ['update_time'] );
 								$cache_entry ['update_time'] = Utility::toDateTime ( $cache_entry ['update_time'] );
 								$search_result [$tag] = $cache_entry;
-								/*
-								 * -
-								 * }
-								 * $rc += 1;
-								 */
-								//
 							}
 						}
 						
-						$result ['count'] = $rc;
+						/*
+						 * -
+						 * hide pagination
+						 */
+						$result = Array ();
+						$result ['totalPage'] = 1;
+						$result ['count'] = count($search_result);
 						$result ['search'] = $search_result;
-						$result ['page'] = $page;
-						$result ['totalPage'] = ceil ( $rc / $limit );
+						
+						
 						
 						echo json_encode ( $result );
 						$result = '';

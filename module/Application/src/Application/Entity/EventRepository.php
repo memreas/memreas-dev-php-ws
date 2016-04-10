@@ -76,7 +76,7 @@ class EventRepository extends EntityRepository {
 			// Mlog::addone ( 'createEventCache()::$row ---->', $row, 'p' );
 			$event_id = $row ['event_id'];
 			/**
-			 * event media 
+			 * event media
 			 */
 			$result = $this->getEventMedia ( $event_id );
 			if ($result) {
@@ -426,21 +426,17 @@ class EventRepository extends EntityRepository {
 		$qb->select ( 't.tag,t.tag_id,t.meta' );
 		$qb->from ( 'Application\Entity\Tag', 't' );
 		$qb->where ( 't.tag LIKE ?1' );
-		if (!empty($event_ids)) {
-			$qb->andWhere('t.tag LIKE ?1' );
-				
+		if (! empty ( $event_ids )) {
+			$qb->andWhere ( 't.tag LIKE ?1' );
 		}
 		$qb->setParameter ( 1, "$tag%" );
 		$result = $qb->getQuery ()->getResult ();
-		// error_log("createDiscoverCache SQL--->".$qb->getQuery()->getSql().PHP_EOL);
 		foreach ( $result as $row ) {
 			$temp = array ();
 			$json_array = json_decode ( $row ['meta'], true );
-			// error_log ( 'tag meta->' . $row ['meta'] . PHP_EOL );
 			if (empty ( $json_array ['comment'] [0] )) {
 				continue;
 			}
-			// error_log ( 'comment[] as json->' . json_encode ( $json_array ['comment'] [0] ) . PHP_EOL );
 			
 			foreach ( $json_array ['comment'] as $k => $comm ) {
 				$temp ['tag_name'] = $row ['tag'];
@@ -455,28 +451,29 @@ class EventRepository extends EntityRepository {
 				$temp ['comment'] = $comment->text;
 				$temp ['update_time'] = $comment->update_time;
 				$commenter = $this->getUser ( $comment->user_id, 'row' );
-				$temp ['commenter_photo'] = $commenter ['profile_photo'];
+				$temp ['commenter_photo'] = json_decode($commenter ['profile_photo']);
 				$temp ['commenter_name'] = $commenter ['username'];
 				if (! empty ( $temp ['event_id'] )) {
 					$event_ids [] = $temp ['event_id'];
 				}
 				if (! empty ( $event_ids )) {
 					// For Redis lookup
-					// if (in_array ( $temp ['event_id'], $event_ids )) {
-					foreach ( $event_ids as $event_id ) {
-						// Fetch event media
-						error_log ( "event id -->" . $event_id . PHP_EOL );
-						$event_media = $this->getEventMedia ( $event_id );
-						$i = 0;
-						foreach ( $event_media as $mediaRow ) {
-							$event_media_url = (! empty ( $this->getEventMediaUrl ( $mediaRow ['metadata'] ) )) ? $this->getEventMediaUrl ( $mediaRow ['metadata'] ) : $this->getEventMediaUrl ( '' );
-							// $this->getEventMediaUrl ( $mediaRow ['metadata'] )
-							$event_media_url = json_decode ( $event_media_url );
-							$event_media_url = $event_media_url [0];
-							
-							if (! empty ( $event_media_url )) {
-								$temp ['event_media_url'] ["$i"] = $event_media_url;
-								$i ++;
+					if (in_array ( $temp ['event_id'], $event_ids )) {
+						foreach ( $event_ids as $event_id ) {
+							// Fetch event media
+							error_log ( "event id -->" . $event_id . PHP_EOL );
+							$event_media = $this->getEventMedia ( $event_id );
+							$i = 0;
+							foreach ( $event_media as $mediaRow ) {
+								$event_media_url = (! empty ( $this->getEventMediaUrl ( $mediaRow ['metadata'] ) )) ? $this->getEventMediaUrl ( $mediaRow ['metadata'] ) : $this->getEventMediaUrl ( '' );
+								// $this->getEventMediaUrl ( $mediaRow ['metadata'] )
+								$event_media_url = json_decode ( $event_media_url );
+								$event_media_url = $event_media_url [0];
+								
+								if (! empty ( $event_media_url )) {
+									$temp ['event_media_url'] ["$i"] = $event_media_url;
+									$i ++;
+								}
 							}
 						}
 					}
