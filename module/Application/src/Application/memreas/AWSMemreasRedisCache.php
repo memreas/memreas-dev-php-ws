@@ -401,48 +401,48 @@ class AWSMemreasRedisCache {
 				 */
 				$keys = array_keys ( $event_ids );
 				$public_event_ids = $tagRep->filterPublicHashTags ( $keys );
-				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
 				$hashtag_public_eid_hash = array ();
 				foreach ( $public_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						// Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						// Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
-						$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
-						$reply = $this->cache->hset ( '#hashtag_public_eid_hash', $eid ['event_id'],  $event_ids [$eid ['event_id']] );
+						//$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+						$reply = $this->cache->hset ( '#hashtag_public_eid_hash',  $event_ids [$eid ['event_id']], $eid ['event_id'] );
 					}
 				}
-				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
 				//$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
 				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
-				// Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
+				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
 				$hashtag_friends_eid_hash = array ();
 				foreach ( $friend_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						// Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						// Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag_' . $user_id, 0, $event_ids [$eid ['event_id']] );
 						$hashtag_friends_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
-						$reply = $this->cache->hset ( '#hashtag_friends_hash_' . $user_id, $eid ['event_id'], $event_ids [$eid ['event_id']] );
+						$reply = $this->cache->hset ( '#hashtag_friends_hash_' . $user_id, $event_ids [$eid ['event_id']], $eid ['event_id'] );
 					}
 				}
-				// Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
-				// Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
+				Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
+				Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
 				//$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
-				// Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
+				Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
 				
 				$result = $this->cache->executeRaw ( array (
 						'HLEN',
 						'#hashtag_friends_hash_' . $user_id 
 				) );
-				// Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
+				Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
 				$result = $this->cache->executeRaw ( array (
 						'HLEN',
 						'#hashtag_public_eid_hash' 
 				) );
-				// Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
+				Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
 				$warming = $this->cache->set ( 'warming_hashtag', '0' );
-				// Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
+				Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
 				
 				/**
 				 * Set expire for each set

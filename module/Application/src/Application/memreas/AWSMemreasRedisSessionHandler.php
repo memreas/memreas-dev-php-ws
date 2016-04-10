@@ -182,14 +182,14 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		if ($_SESSION ['profile_pic_meta']) {
 			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
-				Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - 79x80', $_SESSION ['profile_pic']);
+				//Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - 79x80', $_SESSION ['profile_pic']);
 			} else {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['full'] );
-				Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - full', $_SESSION ['profile_pic']);
+				//Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - full', $_SESSION ['profile_pic']);
 			}
 		} else {
 			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( null );
-			Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - null', $_SESSION ['profile_pic']);
+			//Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - null', $_SESSION ['profile_pic']);
 		}
 		//
 		//handle x_memreas_chameleon on login $_SESSION is set in function
