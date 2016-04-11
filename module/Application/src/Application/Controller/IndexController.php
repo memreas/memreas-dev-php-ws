@@ -1836,7 +1836,7 @@ class IndexController extends AbstractActionController {
 					 * TODO - Fix token
 					 */
 					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, '', $actionname );
-					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
+					if ($_SESSION ['memreascookie'] == (string) $data->memreascookie) {
 						$sid_success = 1;
 					}
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $_SESSION [memreascookie]', $_SESSION ['memreascookie'] );
