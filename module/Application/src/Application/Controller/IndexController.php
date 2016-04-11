@@ -1906,6 +1906,9 @@ class IndexController extends AbstractActionController {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
 		
+		Mlog::addone ( __METHOD__ . __LINE__ . 'fetchSession() return $actionname--->', $actionname );
+		
+		
 		return $actionname;
 	}
 	public function fetchUserIPAddress() {
