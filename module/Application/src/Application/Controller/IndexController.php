@@ -237,6 +237,8 @@ class IndexController extends AbstractActionController {
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
 		
+		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
+		
 		/**
 		 * For testing only...
 		 */
@@ -247,6 +249,7 @@ class IndexController extends AbstractActionController {
 			                              // folder
 			return $view;
 		}
+		Mlog::addone ( $cm . __LINE__ . '::', '...' );
 		if ($actionname == "stripe_ws_tester") {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
@@ -258,6 +261,8 @@ class IndexController extends AbstractActionController {
 			                                                                   // folder
 			return $view;
 		}
+		
+		Mlog::addone ( $cm . __LINE__ . '::', '...' );
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
 			$cache_me = false;
@@ -1239,7 +1244,7 @@ class IndexController extends AbstractActionController {
 				 * -
 				 * Payments should not be cached - will be small portion of usage
 				 */
-				// Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
+				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( $this->sm );
 				$cache_me = false;
 				$cache_found = false;
