@@ -1839,6 +1839,8 @@ class IndexController extends AbstractActionController {
 					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
 						$sid_success = 1;
 					}
+					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $_SESSION [memreascookie]', $_SESSION ['memreascookie'] );
+					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $data->memreascookie', $data->memreascookie );
 					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				} else if (! empty ( $data->sid )) {
