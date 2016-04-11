@@ -1884,6 +1884,7 @@ class IndexController extends AbstractActionController {
 			 * Fetch user ip
 			 */
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data---->', $data );
+			/*
 			if (empty ( $data->clientIPAddress )) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
 				
@@ -1901,6 +1902,7 @@ class IndexController extends AbstractActionController {
 					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 				}
 			}
+			*/
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
