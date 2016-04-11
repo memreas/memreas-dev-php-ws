@@ -1835,9 +1835,13 @@ class IndexController extends AbstractActionController {
 					/**
 					 * TODO - Fix token
 					 */
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, '', $actionname );
+					$memreascookie =  ( string ) $data->memreascookie;
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( $memreascookie, '', $actionname );
 					if ($result) {
-						$sid_success = 1;
+						$sid_success = true;
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true');
+					} else {
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false');
 					}
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $_SESSION [memreascookie]', $_SESSION ['memreascookie'] );
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $data->memreascookie', $data->memreascookie );
@@ -1850,7 +1854,7 @@ class IndexController extends AbstractActionController {
 					 */
 					$this->sessHandler->startSessionWithSID ( $data->sid );
 					if (session_id () == $data->sid) {
-						$sid_success = 1;
+						$sid_success = true;
 					}
 					// Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . 'from startSessionWithSID--> $_SESSION', $_SESSION );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
