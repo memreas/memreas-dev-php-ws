@@ -1885,15 +1885,15 @@ class IndexController extends AbstractActionController {
 			 */
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data---->', $data );
 			if (empty ( $data->clientIPAddress )) {
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
 				
 				$currentIPAddress = $this->fetchUserIPAddress ();
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
 				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
-					// Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
+					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
 					return '';
 				}
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
