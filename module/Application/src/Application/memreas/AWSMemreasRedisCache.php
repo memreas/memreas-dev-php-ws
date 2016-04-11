@@ -578,7 +578,6 @@ class AWSMemreasRedisCache {
 					$event_owner = $event ['user_id'];
 					// Mlog::addone($cm. '::for loop $event--->' , $event, 'p');
 					if ($event ['user_id'] != $user_id) {
-						
 						/**
 						 * - Check for viewable from / to since db date is string
 						 */
