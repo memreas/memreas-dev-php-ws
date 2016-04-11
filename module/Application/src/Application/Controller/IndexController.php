@@ -1919,6 +1919,7 @@ class IndexController extends AbstractActionController {
 		 */
 		// //Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
 		// //Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
+		$ipAddress = '';
 		if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
 			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
