@@ -238,7 +238,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		
 		$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
 		
-		//Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setSession $_SESSION--->', $_SESSION ['x_memreas_chameleon'][count($_SESSION ['x_memreas_chameleon'])-1] );
+		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setMemreasCookieLookup $_SESSION--->', $_SESSION );
 		Mlog::addone(__CLASS__.__METHOD__, __LINE__);
 	}
 	public function closeSessionWithSID() {
