@@ -71,16 +71,20 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
+		$result = false;
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$rMemreasCookieSession-->', $rMemreasCookieSession );
 		if ($rMemreasCookieSession) {
 			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::startSessionWithMemreasCookie sid is-->', $rMemreasCookieSessionArr ['sid'] );
+			$result = true;
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
 		$fetchChameleon->setChameleon ();
+		
+		return $result;
 		
 		// not worknig ---reset the cache with the updated data...
 		// $this->setMemreasCookieLookup ( true );
