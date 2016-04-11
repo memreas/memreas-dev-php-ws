@@ -1708,7 +1708,7 @@ class IndexController extends AbstractActionController {
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
 					$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
-					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
+					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
 					$output = $data->asXML ();
 					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
