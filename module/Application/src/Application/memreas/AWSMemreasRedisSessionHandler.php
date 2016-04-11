@@ -86,7 +86,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$fetchChameleon = new FetchChameleon ();
 		$fetchChameleon->setChameleon();
 		
-		//reset the cache with the updated data...
+		//reset the cache with the updated data....
 		$this->setMemreasCookieLookup ( true );
 		
 		//$_SESSION ['x_memreas_chameleon'] = $fetchChameleon->setChameleon();
