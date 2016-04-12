@@ -29,10 +29,10 @@ class Email {
 	public static $item = array ();
 	protected static $collection = array ();
 	public static function collect() {
-		error_log ( 'item-->' . json_encode ( self::$item ) . PHP_EOL );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'item-->' . json_encode ( self::$item )  );
 		self::$collection [] = self::$item;
 		self::$item = array ();
-		error_log ( '$collection-->' . json_encode ( self::$collection ) . PHP_EOL );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$collection-->' . json_encode ( self::$collection )  );
 	}
 	public static function ok() {
 		return empty ( $item->ok ) ? false : TRUE;
@@ -43,7 +43,7 @@ class Email {
 		
 		$viewRender = $servicemanager->get ( 'ViewRenderer' );
 		foreach ( self::$collection as $value ) {
-			error_log ( 'email collection value' . json_encode ( $value ) . PHP_EOL );
+			Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'email collection value' . json_encode ( $value )  );
 			if (empty ( $value ['email'] ))
 				continue;
 			$email = self::getSubject ( $value );
@@ -53,21 +53,22 @@ class Email {
 			$viewModel->setVariables ( $value );
 			$html = $viewRender->render ( $viewModel );
 			try {
-				error_log ( 'sending-email-' . $value ['email'] );
+				Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'sending-email-' . $value ['email'] );
 				$aws_manager->sendSeSMail ( array (
 						$value ['email'] 
 				), $subject, $html );
 			} catch ( \Exception $exc ) {
-				error_log ( 'exception->sending mail' . $exc->getMessage () );
+				Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'exception->sending mail' . $exc->getMessage () );
 			}
 		}
 	}
 	public static function sendEmailNotification($sm, $db, $receiver_uid, $sender_uid, $type, $status = '', $comment = '') {
-		error_log ( '$receiver_uid-->' . $receiver_uid . ' ::::file--->' . basename ( __FILE__ ) . PHP_EOL );
-		error_log ( '$sender_uid-->' . $sender_uid . ' ::::file--->' . basename ( __FILE__ ) . PHP_EOL );
-		error_log ( '$type-->' . $type . ' ::::file--->' . basename ( __FILE__ ) . PHP_EOL );
-		error_log ( '$status-->' . $status . ' ::::file--->' . basename ( __FILE__ ) . PHP_EOL );
-		error_log ( '$comment-->' . $comment . ' ::::file--->' . basename ( __FILE__ ) . PHP_EOL );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,$e->getMessage () );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$receiver_uid-->' . $receiver_uid . ' ::::file--->' . basename ( __FILE__ )  );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$sender_uid-->' . $sender_uid . ' ::::file--->' . basename ( __FILE__ )  );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$type-->' . $type . ' ::::file--->' . basename ( __FILE__ )  );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$status-->' . $status . ' ::::file--->' . basename ( __FILE__ )  );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$comment-->' . $comment . ' ::::file--->' . basename ( __FILE__ )  );
 		
 		$ReplyTo = $db->getRepository ( "\Application\Entity\User" )->findOneBy ( array (
 				'user_id' => $receiver_uid 
@@ -76,9 +77,9 @@ class Email {
 		$Sender = $db->getRepository ( "\Application\Entity\User" )->findOneBy ( array (
 				'user_id' => $sender_uid 
 		) );
-		error_log ( '$Sender->username' . $Sender->username . PHP_EOL );
-		error_log ( '$ReplyTo->username' . $ReplyTo->username . PHP_EOL );
-		error_log ( '$ReplyTo->username' . $ReplyTo->email_address . PHP_EOL );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$Sender->username' . $Sender->username  );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$ReplyTo->username' . $ReplyTo->username  );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$ReplyTo->username' . $ReplyTo->email_address  );
 		
 		self::$item ['type'] = $type;
 		self::$item ['sender_name'] = $Sender->username;
@@ -87,7 +88,8 @@ class Email {
 		self::$item ['status'] = $status;
 		self::$item ['message'] = $comment;
 		self::collect ();
-		Email::sendmail ( $sm );
+		$result = Email::sendmail ( $sm );
+		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ . '::Email::sendmail ( $sm )::$result', $result  );
 		return true;
 	}
 	public static function getSubject($item) {
