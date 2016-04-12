@@ -81,7 +81,8 @@ class UpdateNotification {
 						$this->tblNotification->is_read = 1;
 						$this->tblNotification->update_time = $time;
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT) {
-							$result = $this->handleAddFriendToEventResponse ();
+							$this->tblNotification->notification_type = $this->handleAddFriendToEventResponse ();
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->tblNotification->notification_type::ADD_FRIEND_TO_EVENT-->', $result );
 							if (! $result) {
 								throw new \Exception ( $e->getMessage ( 'error in handleAddFriendToEventResponse' ) );
 							}
@@ -90,6 +91,7 @@ class UpdateNotification {
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND) {
 							$result = $this->handleAddFriendResponse ();
 							if (! $result) {
+								Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->tblNotification->notification_type::ADD_FRIEND-->', $result );
 								throw new \Exception ( 'error in handleAddFriendResponse' );
 							}
 						} // end add friend update
@@ -157,6 +159,7 @@ class UpdateNotification {
 			
 			$result = $this->handleNotification ( \Application\Entity\Notification::ADD_FRIEND_TO_EVENT_RESPONSE, Email::EVENT_INVITE_RESPONSE, $nmessage );
 		} catch ( \Exception $e ) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$e->getMessage ()', $e->getMessage () );
 			throw new \Exception ( $e->getMessage () );
 		}
 		return $result;
@@ -167,6 +170,7 @@ class UpdateNotification {
 			/*
 			 * Here user_id is sender_id (logged in user who sent) and friend_id is receiver_id (friend who received the friend request)
 			 */
+			
 			$user_friend = $this->checkInUserFriend ( $this->receiver_uid, $this->sender_uid );
 			if (! empty ( $user_friend )) {
 				$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $this->sender_uid );
@@ -196,12 +200,15 @@ class UpdateNotification {
 				}
 				
 				$result = $this->handleNotification ( \Application\Entity\Notification::ADD_FRIEND_RESPONSE, Email::FRIEND_REQUEST_RESPONSE, $nmessage );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->handleNotification::$result', $result );
+				return $result;
 				// user friend updated
 			} else {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', 'empty user friend entry - check parameters...' );
 				throw new Exception ( 'empty user friend entry - check parameters...' );
 			}
 		} catch ( \Exception $e ) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$e->getMessage ()', $e->getMessage () );
 			throw new \Exception ( $e->getMessage () );
 		}
 	} // end handleAddFriendResponse()
@@ -308,10 +315,10 @@ class UpdateNotification {
 		// add notification in db.
 		$result = $this->AddNotification->exec ( $data );
 		
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
+		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
 		
-		if ($this->notification_status != 3) {
+		if ((strtolower ( $this->notification_status ) == 'ignore') || ($this->notification_status == 3)) {
 			// send email (reversed due to response)
 			$email_sender_uid = $this->receiver_uid;
 			$email_receiver_uid = $this->sender_uid;
@@ -319,7 +326,7 @@ class UpdateNotification {
 			// send push message add user id
 			$result = $this->notification->add ( $this->receiver_uid );
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->notification->add ( $this->receiver_uid )::$result', $result );
 		return $result;
 	}
 } // end class
