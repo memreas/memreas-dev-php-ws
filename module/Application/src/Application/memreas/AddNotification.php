@@ -29,12 +29,12 @@ class AddNotification {
 	}
 	public function exec($frmweb = '') {
 		try {
-			// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
+			error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
 			if (empty ( $frmweb )) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			} else {
 				$data = json_decode ( json_encode ( $frmweb ) );
-				Mlog::addone (  __LINE__ ,$frmweb ); 
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $frmweb );
 			}
 			
 			// save notification in table
@@ -47,18 +47,18 @@ class AddNotification {
 			$tblNotification->meta = json_encode ( $data->addNotification->meta );
 			$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;
 			$tblNotification->status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
-			if ($tblNotification->status == 0) {
-				$tblNotification->response_status = 'add';	
-			} else if ($tblNotification->status == 1) {
+			if ((strtolower ( $tblNotification->status ) == 'add') || ($tblNotification->status == 0)) {
+				$tblNotification->response_status = 'add';
+			} else if ((strtolower ( $tblNotification->status ) == 'accept') || ($tblNotification->status == 1)) {
 				$tblNotification->response_status = 'accept';
-			} else if ($tblNotification->status == 2) {
+			} else if ((strtolower ( $tblNotification->status ) == 'decline') || ($tblNotification->status == 2)) {
 				$tblNotification->response_status = 'decline';
-			} else if ($tblNotification->status == 3) {
+			} else if ((strtolower ( $tblNotification->status ) == 'ignore') || ($tblNotification->status == 3)) {
 				$tblNotification->response_status = 'ignore';
 			}
 			$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
-			$tblNotification->create_time = MNow::now();
-			$tblNotification->update_time = MNow::now();
+			$tblNotification->create_time = MNow::now ();
+			$tblNotification->update_time = MNow::now ();
 			$this->dbAdapter->persist ( $tblNotification );
 			$this->dbAdapter->flush ();
 			
@@ -75,19 +75,24 @@ class AddNotification {
 				echo $xml_output;
 			}
 		} catch ( \Exception $e ) {
-			$status = 'failure';
-			$message .= 'addnotification error ->' . $e->getMessage ();
-			header ( "Content-type: text/xml" );
-			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-			$xml_output .= "<xml>";
-			$xml_output .= "<addnotification>";
-			$xml_output .= "<status>$status</status>";
-			$xml_output .= "<message>" . $message . "</message>";
-			$xml_output .= "</addnotification>";
-			$xml_output .= "</xml>";
-			echo $xml_output;
+			if (empty ( $frmweb )) {
+				$status = 'failure';
+				$message .= 'addnotification error ->' . $e->getMessage ();
+				header ( "Content-type: text/xml" );
+				$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
+				$xml_output .= "<xml>";
+				$xml_output .= "<addnotification>";
+				$xml_output .= "<status>$status</status>";
+				$xml_output .= "<message>" . $message . "</message>";
+				$xml_output .= "</addnotification>";
+				$xml_output .= "</xml>";
+				echo $xml_output;
+			} else {
+				Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,$e->getMessage () );
+				throw new Exception ( __CLASS__ . __METHOD . __LINE__, $e->getMessage () );
+			}
 		}
-		 
+		
 		return true;
 	} // end exec()
 }

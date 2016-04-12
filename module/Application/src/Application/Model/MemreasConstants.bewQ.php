@@ -18,8 +18,8 @@ class MemreasConstants {
 	
 	// memreasdev urls
 	const WEB_URL = "https://fe.memreas.com/";
-	const ORIGINAL_URL = "https://memreasdev-wsj.memreas.com/";
-	const MEDIA_URL = "https://memreasdev-wsj.memreas.com/?action=addmediaevent";
+	const ORIGINAL_URL = "https://memreasdev-ws.memreas.com/";
+	const MEDIA_URL = "https://memreasdev-ws.memreas.com/?action=addmediaevent";
 	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
 	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com/";
 	const MEMREAS_PAY_URL_STRIPE = "https://memreasdev-pay.memreas.com/stripe/";

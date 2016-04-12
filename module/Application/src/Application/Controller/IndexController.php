@@ -237,6 +237,8 @@ class IndexController extends AbstractActionController {
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
 		
+		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
+		
 		/**
 		 * For testing only...
 		 */
@@ -247,6 +249,7 @@ class IndexController extends AbstractActionController {
 			                              // folder
 			return $view;
 		}
+		Mlog::addone ( $cm . __LINE__ . '::', '...' );
 		if ($actionname == "stripe_ws_tester") {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
@@ -258,6 +261,8 @@ class IndexController extends AbstractActionController {
 			                                                                   // folder
 			return $view;
 		}
+		
+		Mlog::addone ( $cm . __LINE__ . '::', '...' );
 		
 		if (isset ( $actionname ) && ! empty ( $actionname )) {
 			$cache_me = false;
@@ -1239,7 +1244,7 @@ class IndexController extends AbstractActionController {
 				 * -
 				 * Payments should not be cached - will be small portion of usage
 				 */
-				// Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
+				Mlog::addone ( $cm . __LINE__ . '::$actionname', $actionname );
 				$PaymentsProxy = new PaymentsProxy ( $this->sm );
 				$cache_me = false;
 				$cache_found = false;
@@ -1708,7 +1713,7 @@ class IndexController extends AbstractActionController {
 				} else {
 					$data = simplexml_load_string ( trim ( $output ) );
 					$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
-					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data );
+					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
 					$output = $data->asXML ();
 					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 				}
@@ -1835,10 +1840,16 @@ class IndexController extends AbstractActionController {
 					/**
 					 * TODO - Fix token
 					 */
-					$result = $this->sessHandler->startSessionWithMemreasCookie ( ( string ) $data->memreascookie, '', $actionname );
-					if ($_SESSION ['memreascookie'] == $data->memreascookie) {
-						$sid_success = 1;
+					$memreascookie =  ( string ) $data->memreascookie;
+					$result = $this->sessHandler->startSessionWithMemreasCookie ( $memreascookie, '', $actionname );
+					if ($result) {
+						$sid_success = true;
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true');
+					} else {
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false');
 					}
+					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $_SESSION [memreascookie]', $_SESSION ['memreascookie'] );
+					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $data->memreascookie', $data->memreascookie );
 					Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithMemreasCookie", $actionname );
 				} else if (! empty ( $data->sid )) {
@@ -1848,7 +1859,7 @@ class IndexController extends AbstractActionController {
 					 */
 					$this->sessHandler->startSessionWithSID ( $data->sid );
 					if (session_id () == $data->sid) {
-						$sid_success = 1;
+						$sid_success = true;
 					}
 					// Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . 'from startSessionWithSID--> $_SESSION', $_SESSION );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
@@ -1873,16 +1884,17 @@ class IndexController extends AbstractActionController {
 			 * Fetch user ip
 			 */
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data---->', $data );
+			/*
 			if (empty ( $data->clientIPAddress )) {
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
 				
 				$currentIPAddress = $this->fetchUserIPAddress ();
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
 				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
-					// Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
+					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
 					return '';
 				}
 				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
@@ -1890,10 +1902,14 @@ class IndexController extends AbstractActionController {
 					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
 				}
 			}
+			*/
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
+		
+		Mlog::addone ( __METHOD__ . __LINE__ . 'fetchSession() return $actionname--->', $actionname );
+		
 		
 		return $actionname;
 	}
@@ -1903,6 +1919,7 @@ class IndexController extends AbstractActionController {
 		 */
 		// //Mlog::addone ( '$_SERVER [REMOTE_ADDR]', $_SERVER ['REMOTE_ADDR'] );
 		// //Mlog::addone ( '$_SERVER [HTTP_X_FORWARDED_FOR]', $_SERVER ['HTTP_X_FORWARDED_FOR'] );
+		$ipAddress = '';
 		if (! empty ( $_SERVER ['HTTP_X_FORWARDED_FOR'] )) {
 			$ipAddress = $_SERVER ['HTTP_X_FORWARDED_FOR'];
 		} else {
