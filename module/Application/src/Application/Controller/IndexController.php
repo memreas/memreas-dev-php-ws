@@ -633,6 +633,7 @@ class IndexController extends AbstractActionController {
 				 * - hold for now
 				 */
 				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
+				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addfriendtoevent->exec ();
@@ -645,14 +646,8 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				// $this->redis->invalidateEvents
-				// (
-				// $uid
-				// );
-				// $this->redis->invalidateGroups
-				// (
-				// $uid
-				// );
+				$this->redis->invalidateEvents($uid);
+				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
 			} else if ($actionname == "viewmediadetails") {
 				/*
 				 * - Cache Approach: Check cache first if not there then fetch and cache...
