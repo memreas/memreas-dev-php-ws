@@ -57,8 +57,8 @@ class AddNotification {
 				$tblNotification->response_status = 'ignore';
 			}
 			$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
-			$tblNotification->create_time = MNow::now ();
-			$tblNotification->update_time = MNow::now ();
+			$tblNotification->create_time = time();
+			$tblNotification->update_time = time();
 			$this->dbAdapter->persist ( $tblNotification );
 			$this->dbAdapter->flush ();
 			
