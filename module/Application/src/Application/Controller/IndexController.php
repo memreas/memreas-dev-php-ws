@@ -632,10 +632,7 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				// $this->redis->invalidateEvents
-				// (
-				// $uid
-				// );
+				$this->redis->invalidateEvents ( $uid );
 				// $this->redis->invalidateGroups
 				// (
 				// $uid
@@ -1623,10 +1620,8 @@ class IndexController extends AbstractActionController {
 						 */
 						$result = Array ();
 						$result ['totalPage'] = 1;
-						$result ['count'] = count($search_result);
+						$result ['count'] = count ( $search_result );
 						$result ['search'] = $search_result;
-						
-						
 						
 						echo json_encode ( $result );
 						$result = '';
@@ -1840,13 +1835,13 @@ class IndexController extends AbstractActionController {
 					/**
 					 * TODO - Fix token
 					 */
-					$memreascookie =  ( string ) $data->memreascookie;
+					$memreascookie = ( string ) $data->memreascookie;
 					$result = $this->sessHandler->startSessionWithMemreasCookie ( $memreascookie, '', $actionname );
 					if ($result) {
 						$sid_success = true;
-						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true');
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true' );
 					} else {
-						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false');
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false' );
 					}
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $_SESSION [memreascookie]', $_SESSION ['memreascookie'] );
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $data->memreascookie', $data->memreascookie );
@@ -1879,37 +1874,36 @@ class IndexController extends AbstractActionController {
 					return '';
 				}
 			} // end if ($requiresExistingSession)
-			
-			/**
-			 * Fetch user ip
-			 */
+		
+		/**
+		 * Fetch user ip
+		 */
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data---->', $data );
 			/*
-			if (empty ( $data->clientIPAddress )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
-				
-				$currentIPAddress = $this->fetchUserIPAddress ();
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
-				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
-					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
-					return '';
-				}
-				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
-				}
-			}
-			*/
+			 * if (empty ( $data->clientIPAddress )) {
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
+			 *
+			 * $currentIPAddress = $this->fetchUserIPAddress ();
+			 * // Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
+			 * if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
+			 * Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
+			 * return '';
+			 * }
+			 * $_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+			 * if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+			 * $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			 * }
+			 * }
+			 */
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
 		
 		Mlog::addone ( __METHOD__ . __LINE__ . 'fetchSession() return $actionname--->', $actionname );
-		
 		
 		return $actionname;
 	}
