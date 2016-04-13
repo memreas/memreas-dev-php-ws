@@ -222,7 +222,7 @@ class AWSMemreasRedisCache {
 		// Mlog::addone ( __LINE__ ,$keys );
 		// return $this->cache->deleteMulti ( $keys );
 		$result = $this->remSetKeys ( $keys );
-		//Mlog::addone ( __LINE__, $frmweb );
+		// Mlog::addone ( __LINE__, $frmweb );
 		if ($result) {
 			error_log ( 'JUST DELETED THESE KEYS ----> ' . json_encode ( $keys ) . PHP_EOL );
 		} else {
@@ -408,12 +408,12 @@ class AWSMemreasRedisCache {
 						Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
 						Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
-						//$hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
-						$reply = $this->cache->hset ( '#hashtag_public_eid_hash',  $event_ids [$eid ['event_id']], $eid ['event_id'] );
+						// $hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
+						$reply = $this->cache->hset ( '#hashtag_public_eid_hash', $event_ids [$eid ['event_id']], $eid ['event_id'] );
 					}
 				}
 				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
-				//$reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
+				// $reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
 				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
 				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
 				$hashtag_friends_eid_hash = array ();
@@ -428,7 +428,7 @@ class AWSMemreasRedisCache {
 				}
 				Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
 				Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
-				//$reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
+				// $reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
 				Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
 				
 				$result = $this->cache->executeRaw ( array (
@@ -727,10 +727,7 @@ class AWSMemreasRedisCache {
 		}
 		$meta = $row ['metadata'];
 		if (empty ( $meta )) {
-			$pic_79x80 = $this->url_signer->signArrayOfUrls ( '' );
-			$pic_full = $this->url_signer->signArrayOfUrls ( '' );
-			$pic_448x306 = $this->url_signer->signArrayOfUrls ( '' );
-			$pic_98x78 = $this->url_signer->signArrayOfUrls ( '' );
+			$pic_full = $pic_448x306 = $pic_98x78 = $pic_79x80 = $this->url_signer->signArrayOfUrls ( '' );
 		} else {
 			$json_array = json_decode ( $meta, true );
 			if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
@@ -756,53 +753,10 @@ class AWSMemreasRedisCache {
 		}
 		
 		// decode here because result will be encoded
-		// error_log('$url1---->'.$url1);
 		$pic_79x80 = json_decode ( $pic_79x80 );
-		// $pic_79x80 = $pic_79x80 [0];
 		$pic_448x306 = json_decode ( $pic_448x306 );
-		// $pic_448x306 = $pic_448x306 [0];
 		$pic_98x78 = json_decode ( $pic_98x78 );
-		// $pic_98x78 = $pic_98x78 [0];
 		$pic_full = json_decode ( $pic_full );
-		// $pic_full = $pic_full [0];
-		
-		/*
-		 * -
-		 * Fetch stripe data
-		 * - failures will only be called once ...
-		 * should correct all entries
-		 */
-		// $jsonArr = [ ];
-		// $jsonArr ['user_id'] = $row ['user_id'];
-		// $PaymentsProxy = new PaymentsProxy ( $this->service_locator );
-		// $result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
-		// if ($result) {
-		// $result = json_decode ( $result, true );
-		// } else {
-		// $result = '';
-		// }
-		/*
-		 * -
-		 * Code to recreate
-		 * if ($result ['status'] = 'Failure') {
-		 * //
-		 * // setup new user with free plan
-		 * // - should only need this in short run to correct bad data...
-		 * //
-		 * $message_data ['sid'] = $_SESSION ['sid'];
-		 * $message_data ['user_id'] = $_SESSION ['user_id'];
-		 * $message_data ['username'] = $_SESSION ['username'];
-		 * $message_data ['email'] = $_SESSION ['email_address'];
-		 * $message_data ['description'] = "corrected registered user associated with email: " . $message_data ['email'];
-		 * $message_data ['metadata'] = array (
-		 * 'user_id' => $_SESSION ['user_id']
-		 * );
-		 * $result = $PaymentsProxy->exec ( "stripe_createCustomer", $message_data );
-		 * if ($result) {
-		 * $result = $PaymentsProxy->exec ( "stripe_getCustomerInfo", $jsonArr );
-		 * }
-		 * }
-		 */
 		
 		$person_json = json_encode ( array (
 				'username' => $row ['username'],
@@ -813,14 +767,12 @@ class AWSMemreasRedisCache {
 				'profile_photo_448x306' => $pic_448x306,
 				'profile_photo_98x78' => $pic_98x78,
 				'profile_photo_full' => $pic_full 
-		)
-		// 'stripe_getCustomerInfo' => $result
-		 );
+		) );
 		
 		$result = $this->cache->zadd ( '@person', 0, $row ['username'] );
 		$reply = $this->cache->hset ( '@person_meta_hash', $row ['username'], $person_json );
 		$reply = $this->cache->hset ( '@person_uid_hash', $row ['user_id'], $row ['username'] );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$person_json--->', $person_json );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$person_json--->', $person_json );
 	}
 }
 

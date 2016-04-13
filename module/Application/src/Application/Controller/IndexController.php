@@ -632,11 +632,7 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				$this->redis->invalidateEvents ( $uid );
-				// $this->redis->invalidateGroups
-				// (
-				// $uid
-				// );
+				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addfriendtoevent->exec ();
