@@ -63,7 +63,6 @@ class Email {
 		}
 	}
 	public static function sendEmailNotification($sm, $db, $receiver_uid, $sender_uid, $type, $status = '', $comment = '') {
-		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,$e->getMessage () );
 		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$receiver_uid-->' . $receiver_uid . ' ::::file--->' . basename ( __FILE__ )  );
 		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$sender_uid-->' . $sender_uid . ' ::::file--->' . basename ( __FILE__ )  );
 		Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,'$type-->' . $type . ' ::::file--->' . basename ( __FILE__ )  );
