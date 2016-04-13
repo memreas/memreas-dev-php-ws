@@ -55,6 +55,7 @@ class GetFriends {
 		$qb->where ( "uf.user_id=?1 AND uf.user_approve = 1" );
 		$qb->setParameter ( 1, $user_id );
 		$result_friends = $qb->getQuery ()->getResult ();
+		Mlog::addone(__CLASS__.METHOD__.__LINE__.'::$result_friends', $result_friends);
 		if (empty ( $result_friends )) {
 			$status = "Failure";
 			$message = "You have no friend at this time.";
@@ -65,7 +66,17 @@ class GetFriends {
 				$output .= '<friend>';
 				$output .= '<friend_id>' . $friend->friend_id . '</friend_id>';
 				$output .= '<friend_name>' . $friend->social_username . '</friend_name>';
-				$output .= '<photo>' . $this->url_signer->fetchSignedURL ( $friend->url_image ) . '</photo>';
+				
+				//check redis for profile image to get latest
+				$redis = AWSMemreasRedisCache::getHandle ();
+				$friend_profile = json_decode($redis->cache->hget ( '@person_meta_hash', $friend->social_username ), true);
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$friend_profile', $friend_profile);
+				if ($friend_profile) {
+					$profile_image = json_encode ( $friend_profile ['profile_photo_79x80'] );
+				} else {
+					$profile_image = $this->url_signer->fetchSignedURL ( null );
+				}
+				$output .= '<photo><![CDATA[' . $profile_image . ']]></photo>';
 				$output .= '</friend>';
 			}
 			$output .= '</friends>';

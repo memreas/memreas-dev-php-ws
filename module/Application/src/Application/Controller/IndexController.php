@@ -632,14 +632,8 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				// $this->redis->invalidateEvents
-				// (
-				// $uid
-				// );
-				// $this->redis->invalidateGroups
-				// (
-				// $uid
-				// );
+				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
+				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addfriendtoevent->exec ();
@@ -652,14 +646,8 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				// $this->redis->invalidateEvents
-				// (
-				// $uid
-				// );
-				// $this->redis->invalidateGroups
-				// (
-				// $uid
-				// );
+				$this->redis->invalidateEvents($uid);
+				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
 			} else if ($actionname == "viewmediadetails") {
 				/*
 				 * - Cache Approach: Check cache first if not there then fetch and cache...
@@ -1623,10 +1611,8 @@ class IndexController extends AbstractActionController {
 						 */
 						$result = Array ();
 						$result ['totalPage'] = 1;
-						$result ['count'] = count($search_result);
+						$result ['count'] = count ( $search_result );
 						$result ['search'] = $search_result;
-						
-						
 						
 						echo json_encode ( $result );
 						$result = '';
@@ -1711,6 +1697,7 @@ class IndexController extends AbstractActionController {
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 					$output = json_encode ( $message_data );
 				} else {
+					Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
 					$data = simplexml_load_string ( trim ( $output ) );
 					$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
 					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
@@ -1840,13 +1827,13 @@ class IndexController extends AbstractActionController {
 					/**
 					 * TODO - Fix token
 					 */
-					$memreascookie =  ( string ) $data->memreascookie;
+					$memreascookie = ( string ) $data->memreascookie;
 					$result = $this->sessHandler->startSessionWithMemreasCookie ( $memreascookie, '', $actionname );
 					if ($result) {
 						$sid_success = true;
-						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true');
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true' );
 					} else {
-						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false');
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false' );
 					}
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $_SESSION [memreascookie]', $_SESSION ['memreascookie'] );
 					Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $data->memreascookie', $data->memreascookie );
@@ -1879,37 +1866,36 @@ class IndexController extends AbstractActionController {
 					return '';
 				}
 			} // end if ($requiresExistingSession)
-			
-			/**
-			 * Fetch user ip
-			 */
+		
+		/**
+		 * Fetch user ip
+		 */
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data---->', $data );
 			/*
-			if (empty ( $data->clientIPAddress )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
-				
-				$currentIPAddress = $this->fetchUserIPAddress ();
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
-				if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
-					Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
-					return '';
-				}
-				$_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
-				if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
-					$_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
-				}
-			}
-			*/
+			 * if (empty ( $data->clientIPAddress )) {
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data->clientIPAddress---->', 'is empty...' );
+			 *
+			 * $currentIPAddress = $this->fetchUserIPAddress ();
+			 * // Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$currentIPAddress', $currentIPAddress );
+			 * if (! empty ( $_SESSION ['ipAddress'] ) && ($currentIPAddress != $_SESSION ['ipAddress'])) {
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$_SESSION [ipAddress]', $_SESSION ['ipAddress'] );
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$currentIPAddress', $currentIPAddress );
+			 * Mlog::addone ( __CLASS__ . __METHOD__, "ERROR::User IP Address has changed - logging user out!" );
+			 * Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '_SESSION vars after sid_success', $_SESSION );
+			 * return '';
+			 * }
+			 * $_SESSION ['user'] ['HTTP_USER_AGENT'] = "";
+			 * if (! empty ( $_SERVER ['HTTP_USER_AGENT'] )) {
+			 * $_SESSION ['user'] ['HTTP_USER_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			 * }
+			 * }
+			 */
 		} catch ( \Exception $e ) {
 			// echo 'Caught exception: ', $e->getMessage(), "\n";
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
 		
 		Mlog::addone ( __METHOD__ . __LINE__ . 'fetchSession() return $actionname--->', $actionname );
-		
 		
 		return $actionname;
 	}
