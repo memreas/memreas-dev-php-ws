@@ -646,7 +646,7 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				$this->redis->invalidateEvents($uid);
+				$this->redis->invalidateEvents ( $uid );
 				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
 			} else if ($actionname == "viewmediadetails") {
 				/*
@@ -1350,8 +1350,13 @@ class IndexController extends AbstractActionController {
 							if (is_array ( $usernames ) && (count ( $usernames ) > 1)) {
 								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_array' );
 								$index = array_search ( $_SESSION ['username'], $usernames );
-								unset ( $usernames [$index] );
-								$usernames = array_values ( $usernames );
+								Mlog::addone ( $cm . __LINE__ . '::$index--->', $index );
+								
+								Mlog::addone ( $cm . __LINE__ . '::$usernames [$index]--->', $usernames [$index] );
+								if ($index) {
+									unset ( $usernames [$index] );
+									$usernames = array_values ( $usernames );
+								}
 								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
 							} else if (is_array ( $usernames )) {
 								$username = $usernames [0];
@@ -1420,7 +1425,7 @@ class IndexController extends AbstractActionController {
 								// }
 							}
 							$rc = count ( $search_result );
-						}
+						} // end else
 						
 						/*
 						 * -
