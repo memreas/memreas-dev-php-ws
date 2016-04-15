@@ -1247,7 +1247,16 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
-				} else if ($actionname == 'stripe_viewCard') {
+				} else if ($actionname ==  'stripe_getCustomerInfo') {
+					$cache_id = $data->user_id;
+					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+					
+					if (! $result || empty ( $result )) {
+						$cache_me = true;
+					} else {
+						$cache_found = true;
+					}
+				}else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 					
@@ -1262,18 +1271,21 @@ class IndexController extends AbstractActionController {
 					 */
 					$cache_id = $data->event_id;
 					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
 					$cache_id = $data->user_id;
 					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 				} else if (($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
 					$cache_id = $data->user_id;
 					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 					$cache_id = $data->user_id . '_' . $data->id;
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 				}
