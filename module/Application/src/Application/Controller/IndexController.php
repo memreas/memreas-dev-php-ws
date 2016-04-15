@@ -231,6 +231,9 @@ class IndexController extends AbstractActionController {
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic
+		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
+			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $actionname )--> ', $actionname );
 			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $data)--> ', $data );
@@ -1247,7 +1250,7 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
-				} else if ($actionname ==  'stripe_getCustomerInfo') {
+				} else if ($actionname == 'stripe_getCustomerInfo') {
 					$cache_id = $data->user_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 					
@@ -1256,7 +1259,7 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
-				}else if ($actionname == 'stripe_viewCard') {
+				} else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 					
@@ -1705,21 +1708,23 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
-			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
-				Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
-				
-				if ($this->isJson ( $output )) {
-					$message_data = json_decode ( $output, true );
-					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
-					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
-					$output = json_encode ( $message_data );
-				} else {
-					Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
-					$data = simplexml_load_string ( trim ( $output ) );
-					$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
-					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
-					$output = $data->asXML ();
-					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
+			if (! empty ( $_SESSION )) {
+				if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
+					Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
+					
+					if ($this->isJson ( $output )) {
+						$message_data = json_decode ( $output, true );
+						$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+						$output = json_encode ( $message_data );
+					} else {
+						Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
+						$data = simplexml_load_string ( trim ( $output ) );
+						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
+						$output = $data->asXML ();
+						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
+					}
 				}
 			}
 			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
