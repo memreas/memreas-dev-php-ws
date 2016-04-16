@@ -52,7 +52,7 @@ class MemreasConstants {
 	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
-	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
+	const CLOUDFRONT_EXPIRY_TIME = 720000; // 200 hours
 	
 	//free plan id
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";

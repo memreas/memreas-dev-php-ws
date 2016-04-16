@@ -25,19 +25,36 @@ class RemoveFriends {
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
-		$data = simplexml_load_string ( $_POST ['xml'] );
-		$friend_ids = $data->removefriends->friend_ids->friend_id;
-		$user_id = $data->removefriends->user_id;
-		if (! empty ( $friend_ids )) {
-			$friendList = array ();
-			foreach ( $friend_ids as $friend_id )
-				$friendList [] = "'" . $friend_id . "'";
-			
-			$friendList = implode ( ', ', $friendList );
-			
-			$query_friends = "DELETE FROM Application\Entity\UserFriend uf WHERE uf.friend_id IN ({$friendList}) AND uf.user_id = '{$user_id}'";
-			$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
-			$friend_result = $friend_statement->getResult ();
+		try {
+			$data = simplexml_load_string ( $_POST ['xml'] );
+			$friend_ids = $data->removefriends->friend_ids->friend_id;
+			$user_id = $data->removefriends->user_id;
+			if (! empty ( $friend_ids )) {
+				$friendList = array ();
+				foreach ( $friend_ids as $friend_id )
+					$friendList [] = "'" . $friend_id . "'";
+				
+				$friendList = implode ( ', ', $friendList );
+				
+				// remove friend from user's user_friend entry
+				$query_friends = "DELETE FROM Application\Entity\UserFriend uf WHERE uf.friend_id IN ({$friendList}) AND uf.user_id = '{$user_id}'";
+				$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
+				$friend_result = $friend_statement->getResult ();
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query_friends::', $query_friends );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				
+				// remove user from friend's user_friend entry
+				$query_friends = "DELETE FROM Application\Entity\UserFriend uf WHERE uf.friend_id = '{$user_id}' AND uf.user_id IN ({$friendList})";
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query_friends::', $query_friends );
+				$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
+				$friend_result = $friend_statement->getResult ();
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query_friends::', $query_friends );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				
+			}
+		} catch ( Exception $e ) {
+			$friend_result = false;
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::exception::', $e->getMessage () );
 		}
 		
 		if ($friend_result) {
