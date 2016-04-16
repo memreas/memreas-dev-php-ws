@@ -231,6 +231,9 @@ class IndexController extends AbstractActionController {
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic
+		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
+			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $actionname )--> ', $actionname );
 			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $data)--> ', $data );
@@ -646,7 +649,7 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				$this->redis->invalidateEvents($uid);
+				$this->redis->invalidateEvents ( $uid );
 				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
 			} else if ($actionname == "viewmediadetails") {
 				/*
@@ -1247,6 +1250,15 @@ class IndexController extends AbstractActionController {
 					} else {
 						$cache_found = true;
 					}
+				} else if ($actionname == 'stripe_getCustomerInfo') {
+					$cache_id = $data->user_id;
+					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+					
+					if (! $result || empty ( $result )) {
+						$cache_me = true;
+					} else {
+						$cache_found = true;
+					}
 				} else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
@@ -1262,18 +1274,21 @@ class IndexController extends AbstractActionController {
 					 */
 					$cache_id = $data->event_id;
 					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
 					$cache_id = $data->user_id;
 					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 				} else if (($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
 					$cache_id = $data->user_id;
 					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 					$cache_id = $data->user_id . '_' . $data->id;
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 				}
@@ -1350,8 +1365,13 @@ class IndexController extends AbstractActionController {
 							if (is_array ( $usernames ) && (count ( $usernames ) > 1)) {
 								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_array' );
 								$index = array_search ( $_SESSION ['username'], $usernames );
-								unset ( $usernames [$index] );
-								$usernames = array_values ( $usernames );
+								Mlog::addone ( $cm . __LINE__ . '::$index--->', $index );
+								
+								Mlog::addone ( $cm . __LINE__ . '::$usernames [$index]--->', $usernames [$index] );
+								if ($index) {
+									unset ( $usernames [$index] );
+									$usernames = array_values ( $usernames );
+								}
 								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
 							} else if (is_array ( $usernames )) {
 								$username = $usernames [0];
@@ -1420,7 +1440,7 @@ class IndexController extends AbstractActionController {
 								// }
 							}
 							$rc = count ( $search_result );
-						}
+						} // end else
 						
 						/*
 						 * -
@@ -1688,21 +1708,23 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
-			if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
-				Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
-				
-				if ($this->isJson ( $output )) {
-					$message_data = json_decode ( $output, true );
-					$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
-					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
-					$output = json_encode ( $message_data );
-				} else {
-					Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
-					$data = simplexml_load_string ( trim ( $output ) );
-					$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
-					Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
-					$output = $data->asXML ();
-					// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
+			if (! empty ( $_SESSION )) {
+				if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
+					Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
+					
+					if ($this->isJson ( $output )) {
+						$message_data = json_decode ( $output, true );
+						$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+						$output = json_encode ( $message_data );
+					} else {
+						Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
+						$data = simplexml_load_string ( trim ( $output ) );
+						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
+						$output = $data->asXML ();
+						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
+					}
 				}
 			}
 			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );

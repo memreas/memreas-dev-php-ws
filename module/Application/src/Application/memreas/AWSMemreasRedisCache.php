@@ -328,13 +328,13 @@ class AWSMemreasRedisCache {
 		// - remove friend
 		if (! empty ( $event_id )) {
 			// countviewevent can return me / friends / public
-			$cache_keys = array (
-					"listmemreasfriends_" . $user_id,
-					"getfriends_" . $user_id 
-			);
-			$this->invalidateCacheMulti ( $cache_keys );
 			$this->invalidateEvents ( $user_id );
 		}
+		$cache_keys = array (
+				"listmemreasfriends_" . $user_id,
+				"getfriends_" . $user_id 
+		);
+		$this->invalidateCacheMulti ( $cache_keys );
 	}
 	
 	/*
@@ -772,7 +772,7 @@ class AWSMemreasRedisCache {
 		$result = $this->cache->zadd ( '@person', 0, $row ['username'] );
 		$reply = $this->cache->hset ( '@person_meta_hash', $row ['username'], $person_json );
 		$reply = $this->cache->hset ( '@person_uid_hash', $row ['user_id'], $row ['username'] );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$person_json--->', $person_json );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$person_json--->', $person_json );
 	}
 }
 
