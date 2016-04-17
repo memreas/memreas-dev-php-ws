@@ -59,7 +59,7 @@ class MemreasConstants {
 	                                      
 	// Same across...
 	const registration_secret_passphrase = 'freedom tower';
-	const media_id_batch_create_count = 25;
+	const media_id_batch_create_count = 50;
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
 	const URL = "/index";
