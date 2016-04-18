@@ -85,12 +85,23 @@ class UpdateMedia {
 						$message = 'Media updated';
 						$status = 'Success';
 						
-
 						//
-						// invalidate cache so update occurs
+						// invalidate cache so proper data is retrieved
 						//
 						$redis = AWSMemreasRedisCache::getHandle();
 						$redis->invalidateCache('viewmediadetails_'.$media_id);
+						
+						//
+						// Invalidate events with the media also
+						//
+						$queryEvents = "SELECT em FROM Application\Entity\EventMedia em WHERE em.media_id='$media_id'";
+						$statement = $this->dbAdapter->createQuery ( $queryEvents );
+						$resultEvents = $statement->getResult ();
+						if ($resultEvents) {
+							foreach ( $resultEvents as $event ) {
+								$redis->invalidateCache('viewmediadetails_'.$event->event_id.'_'.$media_id);
+							}
+						}
 					}
 				}
 				$output .= '<media_id>' . $media_id . '</media_id>';
