@@ -657,9 +657,13 @@ class IndexController extends AbstractActionController {
 				 * if event_id then return then event_id_media_id else cache media_id
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				if (! empty ( $data->viewmediadetails->event_id ) && ! empty ( $data->viewmediadetails->media_id )) {
-					$cache_id = trim ( $data->viewmediadetails->event_id ) . "_" . trim ( $data->viewmediadetails->media_id );
-				} else if (! empty ( $data->viewmediadetails->media_id )) {
+				//if (! empty ( $data->viewmediadetails->event_id ) && ! empty ( $data->viewmediadetails->media_id )) {
+				//	$cache_id = trim ( $data->viewmediadetails->event_id ) . "_" . trim ( $data->viewmediadetails->media_id );
+				//} else if (! empty ( $data->viewmediadetails->media_id )) {
+				//	$cache_id = trim ( $data->viewmediadetails->media_id );
+				//}
+				
+				if (! empty ( $data->viewmediadetails->media_id )) {
 					$cache_id = trim ( $data->viewmediadetails->media_id );
 				}
 				
@@ -1042,10 +1046,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * TODO: Cache approach
 				 * - write operation
-				 * - need to invalidate invalidateMedia
+				 * - need to invalidate invalidateCache for viewmediadetails within Update Media
 				 */
-				
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "mediadevicetracker") {
 				/*
 				 * TODO: Invalidation needed.

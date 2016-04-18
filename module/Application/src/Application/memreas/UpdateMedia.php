@@ -80,6 +80,13 @@ class UpdateMedia {
 						// error_log("Inside else section set media.metadata ---> ".$media->metadata.PHP_EOL);
 						$message = 'Media updated';
 						$status = 'Success';
+						
+
+						//
+						// invalidate cache so update occurs
+						//
+						$redis = AWSMemreasRedisCache::getHandle();
+						$redis->invalidateCache('viewmediadetails_'.$media_id);
 					}
 				}
 				$output .= '<media_id>' . $media_id . '</media_id>';
