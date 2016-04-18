@@ -72,6 +72,10 @@ class UpdateMedia {
 						$metadata ["S3_files"] ["location"] ["longitude"] = $longitude;
 						$metadata = json_encode ( $metadata );
 						
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$address', $address);
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$latitude', $latitude);
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$longitude', $longitude);
+						
 						$media = $media [0];
 						$media->metadata = $metadata;
 						$this->dbAdapter->persist ( $media );

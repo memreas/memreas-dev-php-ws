@@ -84,6 +84,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$fetchChameleon = new FetchChameleon ();
 		$fetchChameleon->setChameleon ();
 		
+		//set back to cache to reset ttl
+		$result = $this->mRedis->setCache ('memreascookie::' . $memreascookie, $rMemreasCookieSession);
+		
 		return $result;
 		
 		// not worknig ---reset the cache with the updated data...
