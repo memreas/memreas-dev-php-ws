@@ -110,6 +110,7 @@ class ViewMediadetails {
 			$resource = $statement->getResult ();
 			$metadata = json_decode ( $resource [0] ['metadata'] );
 			$location = $metadata->S3_files->location;
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$location--->', $location);
 			if (isset ( $location->longitude ) && ! empty ( $location->longitude )) {
 				$longitude = $location->longitude;
 				$latitude = $location->latitude;
