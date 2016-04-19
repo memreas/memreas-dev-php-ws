@@ -52,9 +52,9 @@ class GetEventDetails {
 			$output .= '<name>' . $event_detail['name'] . '</name>';
 			$output .= '<location>' . $event_detail['location'] . '</location>';
 			$output .= '<date>' . $event_detail['date'] . '</date>';
-			$fcp = ($event_detail->friends_can_post) ? 1 : 0;
-			$fcs = ($event_detail->friends_can_share) ? 1 : 0;
-			$public = ($event_detail->public) ? 1 : 0;
+			$fcp = ($event_detail['friends_can_post']) ? 1 : 0;
+			$fcs = ($event_detail['friends_can_share']) ? 1 : 0;
+			$public = ($event_detail['public']) ? 1 : 0;
 			$output .= "<friends_can_post>$fcp</friends_can_post>";
 			$output .= "<friends_can_share>$fcs</friends_can_share>";
 			$output .= "<public>$public</public>";

@@ -88,7 +88,7 @@ class DcmaReportViolation {
 			$tblDcmaViolation->copyright_owner_agreed_to_terms = $agreedTerm;
 			$tblDcmaViolation->meta = $meta;
 			$tblDcmaViolation->status = MemreasConstants::DCMA_CLAIM;
-			$tblDcmaViolation->dmca_violation_report_date = $time;
+			$tblDcmaViolation->dmca_violation_report_date = MNow::now();
 			
 			$tblDcmaViolation->create_time = $time;
 			$this->dbAdapter->persist ( $tblDcmaViolation );

@@ -1042,10 +1042,8 @@ class IndexController extends AbstractActionController {
 				/*
 				 * TODO: Cache approach
 				 * - write operation
-				 * - need to invalidate invalidateMedia
+				 * - need to invalidate invalidateCache for viewmediadetails within Update Media
 				 */
-				
-				// $this->redis->invalidateMedia ( $_SESSION ['user_id'] );
 			} else if ($actionname == "mediadevicetracker") {
 				/*
 				 * TODO: Invalidation needed.
@@ -1708,22 +1706,23 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
-			if (! empty ( $_SESSION )) {
+			if (! empty ( $data->memreascookie )) {
 				if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
 					Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
 					
 					if ($this->isJson ( $output )) {
 						$message_data = json_decode ( $output, true );
 						$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
-						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+						$message_data ['memreascookie'] = $_SESSION ['memreascookie'];
+						//Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 						$output = json_encode ( $message_data );
 					} else {
 						Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
 						$data = simplexml_load_string ( trim ( $output ) );
-						$data->addChild ( 'x_memreas_chameleon', $_SESSION ['x_memreas_chameleon'] );
-						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
+						$data->addChild ( 'x_memreas_chameleon', (string) $_SESSION ['x_memreas_chameleon'] );
+						$data->addChild ( 'memreascookie', (string) $_SESSION ['memreascookie'] );
+						//Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
 						$output = $data->asXML ();
-						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $ouput --->', $output );
 					}
 				}
 			}
