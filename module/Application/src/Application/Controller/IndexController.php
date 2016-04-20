@@ -1656,6 +1656,7 @@ class IndexController extends AbstractActionController {
 			 */
 			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
+				/*
 				$result = $this->redis->getCache ( $_SESSION ['username'] . '::' . "cached_actions" );
 				if ((! $result) || empty ( $result )) {
 					$cached_actions = [ ];
@@ -1665,9 +1666,10 @@ class IndexController extends AbstractActionController {
 					$cached_actions [] = $actionname . '_' . $cache_id;
 				}
 				$this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
+				*/
 				
 				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
-				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
+				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
 			}
 			/*
 			 * TODO - Invalidate cache in if statements (id is all that is needed)
