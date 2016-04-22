@@ -67,15 +67,15 @@ class Media {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="report_flag", type="string", length=1, nullable=false)
+	 * @var string @ORM\Column(name="report_flag", type="integer", nullable=false)
 	 */
-	private $report_flag = '0';
+	private $report_flag = 0;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="delete_flag", type="string", length=1, nullable=false)
+	 * @var string @ORM\Column(name="delete_flag", type="integer", nullable=false)
 	 */
-	private $delete_flag = '0';
+	private $delete_flag = 0;
 	
 	/**
 	 *

@@ -1728,7 +1728,7 @@ class IndexController extends AbstractActionController {
 					}
 				}
 			}
-			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			echo $output;
 		}
 		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
