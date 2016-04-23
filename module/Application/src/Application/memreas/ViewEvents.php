@@ -722,6 +722,7 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0)) {
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::','insside delete/report section');
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
@@ -743,6 +744,7 @@ class ViewEvents {
 						$url98x78 = $delete_path;
 					}
 				} else if (isset ( $row ['metadata'] )) {
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::','insside normal section');
 					$json_array = json_decode ( $row ['metadata'], true );
 					
 					$url = $json_array ['S3_files'] ['path'];
@@ -997,7 +999,7 @@ class ViewEvents {
 							media.media_id, media.metadata
 							from Application\Entity\Media media,
 							Application\Entity\EventMedia event_media
-							where event_media.media_id = media.media_id".
+							where event_media.media_id = media.media_id ".
 							//removing so images can be checked one by one
                             //and media.report_flag = 0
 				            //and media.delete_flag != 1
