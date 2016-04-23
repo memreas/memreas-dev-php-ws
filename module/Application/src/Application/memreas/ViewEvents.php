@@ -7,11 +7,8 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\memreas\UUID;
 use Application\memreas\ListComments;
+use Application\Model\MemreasConstants;
 
 class ViewEvents {
 	protected $message_data;
@@ -329,7 +326,12 @@ class ViewEvents {
 				$xml_output .= "<page>$page</page>";
 				$xml_output .= "<events>";
 				
+				//
+				// Main for loop for public events...
+				//
 				foreach ( $result_pub as $public_event_row ) {
+					
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					
 					if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
 						Mlog::addone ( $cm . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
@@ -347,24 +349,29 @@ class ViewEvents {
 					 */
 					$viewable_from = $public_event_row ['viewable_from'];
 					$viewable_to = $public_event_row ['viewable_to'];
-					if ((isset ( $viewable_from ) && ! empty ( $viewable_from )) && (isset ( $viewable_to ) && ! empty ( $viewable_to ))) {
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$viewable_from--->', '*' . $viewable_from . '*' );
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$viewable_to--->', '*' . $viewable_to . '*' );
+					if (! empty ( $viewable_from ) && ! empty ( $viewable_to )) {
 						if (($viewable_from >= $date) && ($viewable_to <= $date)) {
 							// date is outside of viewable from/to
 							error_log ( "public event date is outside of from / to..." . PHP_EOL );
 							continue;
 						}
 					}
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					/*
 					 * Skip if not past ghost date
 					 */
 					$self_destruct = $public_event_row ['self_destruct'];
-					if (isset ( $self_destruct ) && ! empty ( $self_destruct )) {
-						if (($self_destruct < $date) && ($viewable_to <= $date)) {
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$self_destruct--->', '*' . $self_destruct . '*' );
+					if (! empty ( $self_destruct )) {
+						if ($self_destruct < $date) {
 							// date is outside of viewable from/to
 							error_log ( "public event date is outside of ghost date..." . PHP_EOL );
 							continue;
 						}
 					}
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					
 					//
 					// Check if event has media if so show otherwise skip
@@ -373,6 +380,7 @@ class ViewEvents {
 					if (! count ( $result_event_media_public ) > 0) {
 						continue;
 					}
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					/*
 					 * Add event entry data...
 					 */
@@ -398,16 +406,16 @@ class ViewEvents {
 					$redis = AWSMemreasRedisCache::getHandle ();
 					$event_owner_name = $redis->cache->hget ( '@person_uid_hash', $public_event_row ['user_id'] );
 					$event_owner_profile = $redis->cache->hget ( '@person_meta_hash', $event_owner_name );
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profile--->', $event_owner_profile );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profile--->', $event_owner_profile );
 					$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = $this->url_signer->signArrayOfUrls ( null );
 					if ($event_owner_profile) {
 						$event_owner_profileArr = json_decode ( $event_owner_profile, true );
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profileArr--->', $event_owner_profileArr );
+						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profileArr--->', $event_owner_profileArr );
 						$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo'] );
 						// only profile_photo in redis
-						//$pic_79x80 = json_encode ( $event_owner_profileArr ['profile_photo_79x80'] );
-						//$pic_448x306 = json_encode ( $event_owner_profileArr ['profile_photo_448x306'] );
-						//$pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo_98x78'] );
+						// $pic_79x80 = json_encode ( $event_owner_profileArr ['profile_photo_79x80'] );
+						// $pic_448x306 = json_encode ( $event_owner_profileArr ['profile_photo_448x306'] );
+						// $pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo_98x78'] );
 					} else {
 						$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
 						if ($profile) {
@@ -435,23 +443,26 @@ class ViewEvents {
 					 */
 					/*
 					 * Set xml output for profile photo data...
-					 *  - data set in cachec or from profile lookup
+					 * - data set in cachec or from profile lookup
 					 */
 					$xml_output .= "<profile_pic><![CDATA[" . $pic . "]]></profile_pic>";
 					$xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
 					$xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
 					$xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
-							
+					
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					
 					/**
 					 * Fetch event friends...
 					 */
 					$friends = $this->fetchEventFriends ( $public_event_row ['event_id'] );
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					
 					/**
 					 * Generate event friends xml .
 					 */
 					$xml_output .= $this->generateEventFriendsXML ( $friends );
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					
 					/**
 					 * Fetch comment like and count totals...
@@ -463,20 +474,17 @@ class ViewEvents {
 					$commCount = $this->fetchEventCommentCount ( $public_event_row ['event_id'] );
 					$xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
 					
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					/**
 					 * get comments
 					 */
 					$xml_output .= $this->fetchEventComments ( $public_event_row ['event_id'] );
 					
-					/*
-					 * Fetch event photo thumbs...
-					 */
-					// done above to check count
-					
 					/**
 					 * generatePublicEventMediaXML
 					 */
 					$xml_output .= $this->generatePublicEventMediaXML ( $result_event_media_public );
+					Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::$public_event_row [name]', "event name --->" . $public_event_row ['name'] );
 					// }
 					// }
 					$xml_output .= " </event>";
@@ -788,7 +796,7 @@ class ViewEvents {
 					$xml .= "</event_media>";
 				} // end if (isset ( $row ['metadata'] ))
 			} // end for each event friend media
-			if (isset($only_audio_in_event)) {
+			if (isset ( $only_audio_in_event )) {
 				$xml .= "<event_media>";
 				$xml .= "<event_media_id></event_media_id>";
 				$xml .= "<event_media_name></event_media_name>";
