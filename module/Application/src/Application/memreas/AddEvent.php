@@ -48,7 +48,7 @@ class AddEvent {
 			$event_name = addslashes ( trim ( $data->addevent->event_name ) );
 			$event_location = addslashes ( trim ( $data->addevent->event_location ) );
 			
-			$event_date = addslashes ( trim ( $data->addevent->event_date ) );
+			$event_date = strtotime ( trim ( $data->addevent->event_date ) );
 			$event_from = strtotime ( trim ( $data->addevent->event_from ) );
 			$event_to = strtotime ( trim ( $data->addevent->event_to ) );
 			

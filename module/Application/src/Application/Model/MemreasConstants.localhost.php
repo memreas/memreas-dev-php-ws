@@ -32,7 +32,7 @@ class MemreasConstants {
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
 	const REDIS_CACHE_SESSION_TTL = 3600;
-	const REDIS_CACHE_TTL = 3600;
+	const REDIS_CACHE_TTL = 7200;
 	// 1 hour
 	
 	// memreasdevsec related
