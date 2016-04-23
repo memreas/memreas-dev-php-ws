@@ -721,7 +721,7 @@ class ViewEvents {
 				$url98x78 = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if ($row ['delete_flag'] == 1) {
+				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0)) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
@@ -997,10 +997,11 @@ class ViewEvents {
 							media.media_id, media.metadata
 							from Application\Entity\Media media,
 							Application\Entity\EventMedia event_media
-							where event_media.media_id = media.media_id
-                            and media.report_flag = 0
-				            and media.delete_flag != 1
-							and event_media.event_id = ?1
+							where event_media.media_id = media.media_id".
+							//removing so images can be checked one by one
+                            //and media.report_flag = 0
+				            //and media.delete_flag != 1
+							"and event_media.event_id = ?1
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
 		$event_media_query->setParameter ( 1, $event_id );
