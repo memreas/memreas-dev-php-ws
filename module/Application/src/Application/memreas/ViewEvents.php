@@ -411,8 +411,8 @@ class ViewEvents {
 					if ($event_owner_profile) {
 						$event_owner_profileArr = json_decode ( $event_owner_profile, true );
 						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_owner_profileArr--->', $event_owner_profileArr );
-						$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo'] );
 						// only profile_photo in redis
+						$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo'] );
 						// $pic_79x80 = json_encode ( $event_owner_profileArr ['profile_photo_79x80'] );
 						// $pic_448x306 = json_encode ( $event_owner_profileArr ['profile_photo_448x306'] );
 						// $pic_98x78 = json_encode ( $event_owner_profileArr ['profile_photo_98x78'] );
