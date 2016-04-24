@@ -33,26 +33,31 @@ class MediaInappropriate {
 				$data = json_decode ( json_encode ( $frmweb ) );
 			}
 			error_log ( "Inside MediaInappropriate _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
-			$message = ' ';
-			$event_id = trim ( $data->mediainappropriate->event_id );
-			$user_id = trim ( $data->mediainappropriate->user_id );
-			$reporting_user_id = trim ( $data->mediainappropriate->reporting_user_id );
-			$media_id = trim ( $data->mediainappropriate->media_id );
-			$inappropriate = trim ( $data->mediainappropriate->inappropriate );
-			$reason = $data->mediainappropriate->reason;
-			if (! isset ( $media_id ) || empty ( $media_id )) {
+			$message = '';
+			if (empty ( $data->mediainappropriate->media_id )) {
 				$message = 'media_id is empty...';
 				$status = 'Failure';
-			} else if (! isset ( $event_id ) || empty ( $event_id )) {
+			} else if (empty ( $data->mediainappropriate->event_id )) {
 				$message = 'event_id is empty...';
 				$status = 'Failure';
-			} else if (! isset ( $user_id ) || empty ( $user_id )) {
-				$message = 'user_id is empty...';
+			} else if (empty ( $data->mediainappropriate->reporting_user_id )) {
+				$message = 'reporting_user_id is empty...';
 				$status = 'Failure';
-			} else if (! isset ( $reason_types ) || empty ( $reason_types )) {
-				$message = 'reason_types is empty...';
+			} else if (empty ( $data->mediainappropriate->reason )) {
+				$message = 'reason is empty...';
+				$status = 'Failure';
+			} else if (empty ( $data->mediainappropriate->inappropriate )) {
+				$message = 'inappropriate is empty...';
 				$status = 'Failure';
 			} else {
+				//
+				// Set vars
+				//
+				$event_id = trim ( $data->mediainappropriate->event_id );
+				$reporting_user_id = trim ( $data->mediainappropriate->reporting_user_id );
+				$media_id = trim ( $data->mediainappropriate->media_id );
+				$inappropriate = trim ( $data->mediainappropriate->inappropriate );
+				$reason = $data->mediainappropriate->reason;
 				
 				/*
 				 * Fetch the media row
@@ -74,18 +79,18 @@ class MediaInappropriate {
 					 */
 					/*
 					 * "inappropriate" : {
-					 * "events" : [event1,event2,...],
-					 * "event:event_id" : {
-					 * "users" : [user1,user2,...],
-					 * "user:user_id" : {
-					 * "reason_types" : [
-					 * "sexual_content",
-					 * "violent_content",
-					 * "hate_content",
-					 * "other_content"
-					 * ],
-					 * "date_created" : "date_created"
-					 * }
+					 * 			"events" : [event1,event2,...],
+					 * 			"event:event_id" : {
+					 * 				"users" : [user1,user2,...],
+					 * 				"user:user_id" : {
+					 * 					"reason" : "reason..."
+					 * 					"date_created" : "date_created"
+					 * 				},
+					 * 			},
+					 * 			"event:event_id" : {
+					 * 				...
+					 * 			},
+					 * 		}
 					 * }
 					 * }
 					 */
@@ -93,46 +98,56 @@ class MediaInappropriate {
 					$json_array = json_decode ( $result_media [0]->metadata, true );
 					$media_inappropriate_event;
 					if (empty ( $json_array ['S3_files'] ['media_inappropriate'] )) {
-						$media_inappropriate_event = Array ();
-						$media_inappropriate_event ['events'] [] = $event_id;
-						$media_inappropriate_event ['event:' . $event_id] ['users'] = $user_id;
-						$media_inappropriate_event ['event:' . $event_id] ['reporting_user_id'] = $reporting_user_id;
-						$now = date ( 'Y-m-d H:i:s' );
-						$media_inappropriate_event ['event:' . $event_id] ['user:' . $user_id] ['date_created'] = $now;
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::if (empty ( $json_array [S3_files] [media_inappropriate] )) --> $event_id-->', $event_id);
+						$media_inappropriate_event = [];
 					} else {
-						// Check for event_id
-						if (in_array ( $event_id, $json_array ['S3_files'] ['media_inappropriate'] ['events'] )) {
-							$media_inappropriate_event = $json_array ['S3_files'] ['media_inappropriate'] ['event' . $event_id];
-						} else {
-							// create entry for this event...
-							$media_inappropriate_event = Array ();
-							$media_inappropriate_event ['events'] [] = $event_id;
-							$media_inappropriate_event ['event:' . $event_id] ['users'] = $user_id;
-							$media_inappropriate_event ['event:' . $event_id] ['reporting_user_id'] = $reporting_user_id;
-							$now = date ( 'Y-m-d H:i:s' );
-							$media_inappropriate_event ['event:' . $event_id] ['user:' . $user_id] ['date_created'] = $now;
-						}
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::if (!empty ( $json_array [S3_files] [media_inappropriate] )) --> $event_id-->', $event_id);
+						// media_inappropriate exists
+						// just add to existing...
+						$media_inappropriate_event = $media_inappropriate_event = $json_array ['S3_files'] ['media_inappropriate'] ;
 					}
-					// Found or created array now populate
-					foreach ( $reason_types as $reason ) {
-						$media_inappropriate_event ['event:' . $event_id] ['user:' . $user_id] ['reason'] [] = ( string ) $reason;
+					//
+					// once proper array is retrieved the entries are the same
+					// - only add to events if event_id wasn't added prior
+					// - only add user data if they haven't reported media prior.
+					//
+					if (!in_array ( $event_id , $media_inappropriate_event ['events'])) {
+						$media_inappropriate_event ['events'] [] = $event_id;
 					}
-					foreach ( $media_inappropriate_event ['event:' . $event_id] ['user:' . $user_id] ['reason'] as $reason ) {
-						error_log ( "mreason ..." . $reason . PHP_EOL );
+					if (!in_array ( $reporting_user_id , $media_inappropriate_event ['users'])) {
+						$media_inappropriate_event ['users'] [] = $reporting_user_id;
+						$media_inappropriate_event [$event_id] ['event'] ['users'][] = $reporting_user_id;
+						$media_inappropriate_event [$event_id] ['event'] [$reporting_user_id] ['user'] ['reason'] = (string)$reason;
+						$media_inappropriate_event [$event_id] ['event'] [$reporting_user_id] ['user'] ['date_created'] = MNow::now();
+					} else {
+						throw new \Exception("prior report received");
 					}
+					
+					$json_array ['S3_files'] ['media_inappropriate'] = $media_inappropriate_event;
 				}
-				$json_array ['S3_files'] ['media_inappropriate'] = $media_inappropriate_event;
+				// array is modified already 
+				//
 				error_log ( "json_array ..." . json_encode ( $json_array ) . PHP_EOL );
 				
 				/*
 				 * Updates the media table
+				 *  - if count of users is > 5 then set flag else add flag data
 				 */
-				$q = "UPDATE Application\Entity\Media m" . " SET m.report_flag= $inappropriate, m.metadata='" . json_encode ( $json_array ) . "'" . " WHERE m.media_id ='$media_id'";
+				if (count($media_inappropriate_event ['users']) > 5) {
+					$q = "UPDATE Application\Entity\Media m" . " SET m.report_flag= $inappropriate, m.metadata='" . json_encode ( $json_array ) . "'" . " WHERE m.media_id ='$media_id'";
+				} else {
+					$q = "UPDATE Application\Entity\Media m" . " SET m.metadata='" . json_encode ( $json_array ) . "'" . " WHERE m.media_id ='$media_id'";
+				}
 				$statement = $this->dbAdapter->createQuery ( $q );
 				$result = $statement->getResult ();
 				
-				$status = 'Success';
-				$message = 'hide media success...';
+				if ($result) {
+					$status = 'success';
+					$message = 'mediainappropriate completed';
+				} else {
+					$status = 'failure';
+					$message = 'mediainappropriate failed';
+				}
 			}
 		} catch ( \Exception $exc ) {
 			$status = 'Failure';

@@ -421,10 +421,14 @@ echo "user_id ----> " . $user_id;
             var mediainappropriate = '<xml>'+ 
 					         '<username>jmeah80</username>'+
 					            '<mediainappropriate>'+
+					            '<event_id>event_id</event_id>'+
+					            '<reporting_user_id>reporting_user_id</reporting_user_id>'+
 					            '<media_id>1</media_id>'+
-					            '<is_appropriate>0</is_appropriate>'+
+					            '<inappropriate>1</inappropriate>'+
+					            '<reason>reason</reason>'+
 					            '</mediainappropriate>'+
 					            '</xml>';	
+								            
             var memreas_tvm= '<xml>'+ 
 					         '<username>jmeah80</username>'+
 					            '<memreas_tvm>'+
@@ -690,24 +694,6 @@ echo "user_id ----> " . $user_id;
 					            '<user_id>1</user_id>'+
 					            '</dcmalist>'+
 					            '</xml>'; 
-                                                                   
-            
-			var stripe_addValue = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}'; 
-			var stripe_addSeller = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-			var stripe_buyMedia = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-			var stripe_checkOwnEvent = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-			var stripe_deleteCards = '{"username": "jmeah80","action": "deleteCards", "type":"jsonp", "json": ["card_17SPPV2gUEVpEUdcboUtHZZy"]}';
-			var stripe_getUserBalance = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-			var stripe_getCustomerInfo = '{"username": "jmeah80","action": "getCustomerInfo", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-			var stripe_listCards = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-			var stripe_listPlan = '{"username": "jmeah80","action": "listPlan", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-            var stripe_storeCard = '{"username": "jmeah80","action": "addCard", "type":"jsonp", "json": {"user_id":"27fa589a-b648-4dfb-8ec0-618ff9139d2b","first_name":"john","last_name":"meah","credit_card_type":"visa","credit_card_number":"4242424242424242","expiration_month":"11","expiration_year":"2017","cvc":"1234","125 maiden lane":"add-1","":"add-2","city":"New York","state":"ny","zip_code":"11554"}}';
-            var stripe_subscribe = '{"username": "jmeah80",{"action": "subscription", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b","card_id": "card_17UUhO2gUEVpEUdcRzwThW50","plan": "PLAN_A_2GB_MONTHLY","amount": 0}}';  
-            var stripe_viewCard = '{"username": "jmeah80", "action": "listCard", "type":"jsonp", "json": {"user_id": "27fa589a-b648-4dfb-8ec0-618ff9139d2b","card_id": "card_17MZGP2gUEVpEUdcrRx55Vto"}}';
-            var stripe_updateCard = '{"username": "jmeah80","action": "listcards", "type":"jsonp", "json": {"userid": "27fa589a-b648-4dfb-8ec0-618ff9139d2b"}}';
-                  
-            
-    
     $(document).ready(function() {
                 $("#btnOK").click(onBtnCallClicked);
             });
@@ -797,24 +783,9 @@ echo "user_id ----> " . $user_id;
                     else if ($("#input_action").val() == "refund") { xml = refund; }
                     else if ($("#input_action").val() == "listpayees") { xml = listpayees; }
                     else if ($("#input_action").val() == "makepayout") { xml = makepayout; }
-                    else if ($("#input_action").val() == "stripe_addCard") { xml = stripe_addCard; }
-                    else if ($("#input_action").val() == "stripe_addSeller") { xml = stripe_addSeller; }
-                    else if ($("#input_action").val() == "stripe_addValue") { xml = stripe_addValue; }
-                    else if ($("#input_action").val() == "stripe_buyMedia") { xml = stripe_buyMedia; }
-                    else if ($("#input_action").val() == "stripe_checkOwnEvent") { xml = stripe_checkOwnEvent; }
-                    else if ($("#input_action").val() == "stripe_deleteCards") { xml = stripe_deleteCards; }
-                    else if ($("#input_action").val() == "stripe_getUserBalance") { xml = stripe_getUserBalance; }
-                    else if ($("#input_action").val() == "stripe_getCustomerInfo") { xml = stripe_getCustomerInfo; }
-                    else if ($("#input_action").val() == "stripe_subscribe") { xml = stripe_subscribe; }
-                    else if ($("#input_action").val() == "stripe_storeCard") { xml = stripe_storeCard; }
-                    else if ($("#input_action").val() == "stripe_listCards") { xml = stripe_listCards; }
-                    else if ($("#input_action").val() == "stripe_listPlan") { xml = stripe_listPlan; }
-                    else if ($("#input_action").val() == "stripe_updateCard") { xml = stripe_updateCard; }
-                    else if ($("#input_action").val() == "stripe_viewCard") { xml = stripe_viewCard; }
-                        else if ($("#input_action").val() == "dcmacounterclaim") { xml = dcmacounterclaim; }
-                        else if ($("#input_action").val() == "dcmareportviolation") { xml = dcmareportviolation; }
-                        else if ($("#input_action").val() == "dcmalist") { xml = dcmalist; }
-                    
+                    else if ($("#input_action").val() == "dcmacounterclaim") { xml = dcmacounterclaim; }
+                    else if ($("#input_action").val() == "dcmareportviolation") { xml = dcmareportviolation; }
+                    else if ($("#input_action").val() == "dcmalist") { xml = dcmalist; }
                     
                 	$("#action_input").val(xml);
                     $("#link_output").attr('href','/output/'+ $("#input_action").val() +'.xml');
@@ -877,9 +848,9 @@ echo "user_id ----> " . $user_id;
 								<option>creategroup</option>
 								<option>deletephoto</option>
 								<option>download</option>
-                                                                <option>dcmalist</option>
-                                                                <option>dcmareportviolation</option>
-                                                                <option>dcmacounterclaim</option>
+								<option>dcmalist</option>
+								<option>dcmareportviolation</option>
+								<option>dcmacounterclaim</option>
 								<option>editevent</option>
 								<option>feedback</option>
 								<option>fetchcopyrightbatch</option>
@@ -931,51 +902,6 @@ echo "user_id ----> " . $user_id;
 								<option>viewallfriends</option>
 								<option>viewevents</option>
 								<option>viewmediadetails</option>
-								<option value="getplans">Stripe Admin - Getplans</option>
-								<option value="getplansstatic">Stripe Admin - GetPlansStatic</option>
-								<option value="getorderhistory">Stripe Admin - GetOrderHistory</option>
-								<option value="getorder">Stripe Admin - GetOrder</option>
-								<option value="getaccountdetail">Stripe Admin - GetAccountDetail</option>
-								<option value="refund">Stripe Admin - Refund</option>
-								<option value="listpayees">Stripe Admin - ListPayees</option>
-								<option value="makepayout">Stripe Admin - MakePayout</option>
-
-
-
-								<option value="stripe_addSeller">Stripe FE - add Seller</option>
-								<option value="stripe_addValue">Stripe FE - Add value</option>
-								<option value="stripe_buyMedia">Stripe FE - buy Media</option>
-								<option value="stripe_checkOwnEvent">Stripe FE - check Own Event</option>
-								<option value="stripe_deleteCards">Stripe FE - delete Card</option>
-								<option value="stripe_getUserBalance">Stripe FE - User Balance</option>
-								<option value="stripe_getCustomerInfo">Stripe FE - Customer Info</option>
-								<option value="stripe_listCards">Stripe FE - list Card</option>
-								<option value="stripe_listPlan">Stripe FE - List plan</option>
-								<option value="stripe_storeCard">Stripe FE - Add Card</option>
-								<option value="stripe_subscribe">Stripe FE - subscribe</option>
-								<option value="stripe_viewCard">Stripe FE - view Card</option>
-								<option value="stripe_updateCard">Stripe FE - update Card</option>
-								<!--
-								** memreas stripe actions
-									accounthistoryAction()
-									activeCreditAction()
-									addSellerAction()
-									addValueAction()
-									buyMediaAction()
-									checkOwnEventAction()
-									deleteCardsAction()
-									decrementAction()
-									getCustomerInfoAction()
-									getUserBalanceAction()
-									listPlanAction()
-									listCardsAction()
-									listMassPayeeAction()
-									storeCardAction()
-									subscribeAction()
-									viewCardAction()
-									updateCardAction()
-								 -->
-
 						</select>
 					
 					</tr>
