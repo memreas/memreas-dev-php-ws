@@ -7,10 +7,9 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
+use Application\Model\MemreasConstants;
 use Zend\View\Model\ViewModel;
 
 class MediaInappropriate {
@@ -40,7 +39,7 @@ class MediaInappropriate {
 			$reporting_user_id = trim ( $data->mediainappropriate->reporting_user_id );
 			$media_id = trim ( $data->mediainappropriate->media_id );
 			$inappropriate = trim ( $data->mediainappropriate->inappropriate );
-			$reason_types = $data->mediainappropriate->reason_types->reason_type;
+			$reason = $data->mediainappropriate->reason;
 			if (! isset ( $media_id ) || empty ( $media_id )) {
 				$message = 'media_id is empty...';
 				$status = 'Failure';
