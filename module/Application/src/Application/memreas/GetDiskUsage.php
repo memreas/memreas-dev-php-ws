@@ -39,7 +39,7 @@ class GetDiskUsage {
 			
 			/*
 			 * -
-			 * memreasdevsec
+			 * memreasdevsec or memreasprodsec
 			 */
 			$total_used = 0.0;
 			$iterator = $client->getIterator ( 'ListObjects', array (
@@ -53,7 +53,7 @@ class GetDiskUsage {
 			
 			/*
 			 * -
-			 * memreasdevhlssec
+			 * memreasdevhlssec or memreasprodhlssec
 			 */
 			$iterator = $client->getIterator ( 'ListObjects', array (
 					'Bucket' => MemreasConstants::S3HLSBUCKET,
