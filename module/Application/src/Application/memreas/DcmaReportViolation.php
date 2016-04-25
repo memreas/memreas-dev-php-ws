@@ -7,12 +7,9 @@
  */
 namespace Application\memreas;
 
-use Application\memreas\AWSManagerSender;
-use Application\memreas\MemreasSignedURL;
-use Application\memreas\MUUID;
-use Application\memreas\Mlog;
-use Application\Model\MemreasConstants;
 use Zend\View\Model\ViewModel;
+use Application\Model\MemreasConstants;
+use Application\Model\MemreasStringsWS;
 
 class DcmaReportViolation {
 	protected $message_data;
@@ -25,7 +22,7 @@ class DcmaReportViolation {
 		$this->url_signer = new MemreasSignedURL ();
 	}
 	public function exec($frmweb = '') {
-		$cm = __CLASS__.__METHOD__;
+		$cm = __CLASS__ . __METHOD__;
 		if (empty ( $frmweb )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
 		} else {
@@ -40,40 +37,56 @@ class DcmaReportViolation {
 		$agreedTerm = trim ( $data->dcmareportviolation->copyright_owner_agreed_to_terms );
 		$meta = trim ( $data->dcmareportviolation->meta );
 		$claim_status = MemreasConstants::DCMA_CLAIM;
-
-		Mlog::addone($cm . __LINE__.'::$media_id', "$media_id");
-		Mlog::addone($cm . __LINE__.'::$user_id', "$user_id");
-		Mlog::addone($cm . __LINE__.'::$name', "$name");
-		Mlog::addone($cm . __LINE__.'::$address', "$address");
-		Mlog::addone($cm . __LINE__.'::$email', "$email");
-		Mlog::addone($cm . __LINE__.'::$agreedTerm', "$agreedTerm");
-		Mlog::addone($cm . __LINE__.'::$meta', "$meta");
-		Mlog::addone($cm . __LINE__.'::$claim_status', "$claim_status");
+		
+		Mlog::addone ( $cm . __LINE__ . '::$media_id', "$media_id" );
+		Mlog::addone ( $cm . __LINE__ . '::$user_id', "$user_id" );
+		Mlog::addone ( $cm . __LINE__ . '::$name', "$name" );
+		Mlog::addone ( $cm . __LINE__ . '::$address', "$address" );
+		Mlog::addone ( $cm . __LINE__ . '::$email', "$email" );
+		Mlog::addone ( $cm . __LINE__ . '::$agreedTerm', "$agreedTerm" );
+		Mlog::addone ( $cm . __LINE__ . '::$meta', "$meta" );
+		Mlog::addone ( $cm . __LINE__ . '::$claim_status', "$claim_status" );
 		
 		$time = time ();
 		$message = '';
 		
 		if (empty ( $agreedTerm )) {
-			$message = 'Pleae aceept terms ';
+			$message = MemreasStringsWS::getString("DMCA_AGREE_TO_TERMS");
 			$status = 'Failure';
 		} else if (empty ( $media_id )) {
-			$message = 'Media Not Found';
+			$message = MemreasStringsWS::getString("DMCA_MEDIA_NOT_FOUND");
 			$status = 'Failure';
 		} else {
 			$mediaObj = $this->dbAdapter->getRepository ( "\Application\Entity\Media" )->findOneBy ( array (
 					'media_id' => $media_id 
 			) );
 			if (empty ( $mediaObj )) {
-				$message = 'Media Not Found';
+				$message = MemreasStringsWS::getString("DMCA_MEDIA_NOT_FOUND");
 				$status = 'Failure';
 			}
 		}
 		
 		if (! $this->is_valid_email ( $email )) {
-			$message .= 'Please enter valid email address. ';
+			$message = MemreasStringsWS::getString("DMCA_VERIFY_EMAIL");
 			$status = 'Failure';
 		}
 		
+		//
+		// Check if DMCA violation submitted already
+		//
+		$query_event = "select d from Application\Entity\DcmaViolation d 
+			where d.media_id ='$media_id' 
+			and d.copyright_owner_email_address ='$email'";  
+		$statement = $this->dbAdapter->createQuery ( $query_event );
+		$result = $statement->getResult ();
+		if ($result) {
+			$message = MemreasStringsWS::getString("DMCA_VIOLATION_REPORTED_PRIOR");
+			$status = 'Failure';
+		}
+		
+		//
+		// If !failure then proceed 
+		//
 		if ($status != 'Failure') {
 			// add Violation
 			$violation_id = MUUID::fetchUUID ();
@@ -151,17 +164,17 @@ class DcmaReportViolation {
 		if (empty ( $frmweb )) {
 			header ( "Content-type: text/xml" );
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-			$xml_output .= "<xml>";
-			$xml_output .= "<dcmareportviolationresult>";
-			$xml_output .= "<status>$status</status>";
-			$xml_output .= "<message>" . $message . "</message>";
-			$xml_output .= "<violation_id>$violation_id</violation_id>";
-			
-			$xml_output .= "</dcmareportviolationresult>";
-			$xml_output .= "</xml>";
-			echo $xml_output;
-		}
+		$xml_output .= "<xml>";
+		$xml_output .= "<dcmareportviolationresult>";
+		$xml_output .= "<status>$status</status>";
+		$xml_output .= "<message>" . $message . "</message>";
+		$xml_output .= "<violation_id>$violation_id</violation_id>";
+		
+		$xml_output .= "</dcmareportviolationresult>";
+		$xml_output .= "</xml>";
+		echo $xml_output;
 	}
+}
 	public function is_valid_email($email) {
 		$result = TRUE;
 		if (! preg_match ( '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/', $email )) {

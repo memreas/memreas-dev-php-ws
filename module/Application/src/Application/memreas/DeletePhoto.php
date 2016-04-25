@@ -57,7 +57,8 @@ class DeletePhoto {
 				
 				/**
 				 * Allow delete even if memreas share uses
-				 *  memreasdevsec and memreasdevhlssec
+				 *  memreasdevsec and memreasdevhlssec or
+				 *  memreasprodsec and memreasprodhlssec
 				 */
 				$user_id = $resseldata [0]->user_id;
 				$prefix = $user_id . '/' . $media_id;
