@@ -85,6 +85,24 @@ class Event {
 	
 	/**
 	 *
+	 * @var string @ORM\Column(name="metadata", type="string", length=10000, nullable=false)
+	 */
+	private $metadata;
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="report_flag", type="integer", nullable=false)
+	 */
+	private $report_flag = 0;
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="delete_flag", type="integer", nullable=false)
+	 */
+	private $delete_flag = 0;
+	
+	/**
+	 *
 	 * @var string @ORM\Column(name="create_time", type="string", length=255, nullable=false)
 	 */
 	private $create_time;
@@ -95,11 +113,6 @@ class Event {
 	 */
 	private $update_time;
 	
-	/**
-	 *
-	 * @var string @ORM\Column(name="metadata", type="string", length=10000, nullable=false)
-	 */
-	private $metadata;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}
