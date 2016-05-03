@@ -7,9 +7,7 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 
 class ListAllmedia {
 	protected $message_data;
