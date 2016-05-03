@@ -190,7 +190,6 @@ class AddMediaEvent {
 				$json_array ['S3_files'] ['full'] = $s3file;
 				$json_array ['S3_files'] ['location'] = json_decode ( ( string ) $location );
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_id'] = $device_id;
-				$json_array ['S3_files'] ['devices'] ['device'] ['device_id'] = $device_id;
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_type'] = $device_type;
 				$json_array ['S3_files'] ['devices'] ['device'] ['device_local_identifier'] = $s3file_name; // initial upload
 				$json_array ['S3_files'] ['devices'] ['device'] ['origin'] = 1;
@@ -245,7 +244,6 @@ class AddMediaEvent {
 				$data ['device_type'] = $device_type;
 				$data ['device_id'] = $device_id;
 				$data ['device_local_identifier'] = $s3file_basename_prefix;
-				$data ['origin'] = 1;
 				$data ['task_identifier'] = (! empty ( $task_identifier )) ? $task_identifier : 0;
 				$result = $MediaDeviceTracker->exec ( $data );
 				
