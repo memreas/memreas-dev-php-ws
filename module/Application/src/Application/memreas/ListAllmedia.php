@@ -250,15 +250,9 @@ class ListAllmedia {
 					$devices = isset($json_array ['S3_files']['devices']) ? $json_array ['S3_files']['devices'] : '';
 					$i = 0;
 					$device_id = '';
-					if (! empty ( $devices )) {
+					if ( $devices ) {
 						foreach ( $devices as $device ) {
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
-							if ($i == 0) {
-								// take the first just in case - old data
-								$device_id = $device ['device_id'];
-								$device_type = $device ['device_type'];
-								$i++;
-							}
 							if ( isset ( $device ['origin'] ) && ($device ['origin'] == 1)) {
 								$device_id = $device ['device_id'];
 								$device_type = $device ['device_type'];
