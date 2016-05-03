@@ -237,6 +237,7 @@ class ListAllmedia {
 							$devices = json_decode($mediaDevice['metadata'], true);
 							$origin_found = false;
 							foreach ($devices as $device) {
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$device-->',$device);
 								if (!empty($device['origin']) && ($device['origin'] == 1)) {
 									$xml_output .= "<device_id>" . $device['device_id'] . "</device_id>";
 									$xml_output .= "<device_type>" . $device['device_type'] . "</device_type>";
