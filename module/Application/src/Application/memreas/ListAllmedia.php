@@ -144,8 +144,8 @@ class ListAllmedia {
 					$media_name_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
 					
 					// fetch device_id and type
-					$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
-					$device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
+					//$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
+					//$device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
 					
 					// output xml
 					$xml_output .= "<media>";
@@ -155,8 +155,6 @@ class ListAllmedia {
 					$date = \DateTime::createFromFormat ( $format, $row ['create_date'] );
 					$xml_output .= "<media_date>" . $date->getTimestamp () . "</media_date>";
 					
-					$xml_output .= "<device_id>" . $device_id . "</device_id>";
-					$xml_output .= "<device_type>" . $device_type . "</device_type>";
 					$xml_output .= "<content_type>" . $content_type . "</content_type>";
 					
 					// main
@@ -236,6 +234,19 @@ class ListAllmedia {
 						if ($mediaDevice ['media_id'] == $row ['media_id']) {
 							$found = true;
 							$xmlMediaDevice = "<user_media_device><![CDATA[" . $mediaDevice ['metadata'] . "]]></user_media_device>";
+							$devices = json_decode($mediaDevice['metadata'], true);
+							$origin_found = false;
+							foreach ($devices as $device) {
+								if (!empty($device['origin']) && ($device['origin'] == 1)) {
+									$xml_output .= "<device_id>" . $device['device_id'] . "</device_id>";
+									$xml_output .= "<device_type>" . $device['device_type'] . "</device_type>";
+									$origin_found = true;
+								}
+							}
+							if (!$origin_found) {
+								$xml_output .= "<device_id/>";
+								$xml_output .= "<device_type/>";
+							}
 						} else {
 							// media wasn't downloaded to a device for this user.
 						}
