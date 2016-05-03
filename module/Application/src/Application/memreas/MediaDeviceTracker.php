@@ -82,7 +82,7 @@ class MediaDeviceTracker {
 			$media_id = $data ['media_id'];
 			$user_id = $data ['user_id'];
 			$device_type = $data ['device_type'];
-			$device_id = $data ['media_id'];
+			$device_id = $data ['device_id'];
 			$device_local_identifier = $data ['device_local_identifier'];
 			$task_identifier = $data ['task_identifier'];
 		}

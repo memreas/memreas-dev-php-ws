@@ -63,7 +63,7 @@ class ListAllmedia {
 			$statement->setFirstResult ( $from );
 			$result = $statement->getArrayResult ();
 		} else {
-                     
+			
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'media.user_id', 'media.media_id', 'media.transcode_status', 'media.metadata', 'media.create_date' );
 			$qb->from ( 'Application\Entity\Media', 'media' );
@@ -138,14 +138,14 @@ class ListAllmedia {
 					$content_type = isset ( $json_array ['S3_files'] ['content_type'] ) ? $json_array ['S3_files'] ['content_type'] : "";
 					$url = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : $json_array ['S3_files'] ['path'];
 					// Prefix added for matching and sync...
-					//$media_name = basename ( $json_array ['S3_files'] ['path'] );
-					//$media_name_prefix = pathinfo ( $media_name ) ['filename'];
+					// $media_name = basename ( $json_array ['S3_files'] ['path'] );
+					// $media_name_prefix = pathinfo ( $media_name ) ['filename'];
 					$media_name = $json_array ['S3_files'] ['s3file_name'];
 					$media_name_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
 					
 					// fetch device_id and type
-					//$device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
-					//$device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
+					// $device_id = isset ( $json_array ['S3_files'] ['device'] ['device_id'] ) ? $json_array ['S3_files'] ['device'] ['device_id'] : '';
+					// $device_type = isset ( $json_array ['S3_files'] ['device'] ['device_type'] ) ? $json_array ['S3_files'] ['device'] ['device_type'] : '';
 					
 					// output xml
 					$xml_output .= "<media>";
@@ -234,20 +234,6 @@ class ListAllmedia {
 						if ($mediaDevice ['media_id'] == $row ['media_id']) {
 							$found = true;
 							$xmlMediaDevice = "<user_media_device><![CDATA[" . $mediaDevice ['metadata'] . "]]></user_media_device>";
-							$devices = json_decode($mediaDevice['metadata'], true);
-							$origin_found = false;
-							foreach ($devices as $device) {
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$device-->',$device);
-								if (!empty($device['origin']) && ($device['origin'] == 1)) {
-									$xml_output .= "<device_id>" . $device['device_id'] . "</device_id>";
-									$xml_output .= "<device_type>" . $device['device_type'] . "</device_type>";
-									$origin_found = true;
-								}
-							}
-							if (!$origin_found) {
-								$xml_output .= "<device_id/>";
-								$xml_output .= "<device_type/>";
-							}
 						} else {
 							// media wasn't downloaded to a device for this user.
 						}
@@ -256,6 +242,36 @@ class ListAllmedia {
 						$xml_output .= $xmlMediaDevice;
 					} else {
 						$xml_output .= "<user_media_device/>";
+					}
+					
+					//
+					// Check media for origin
+					//
+					$devices = isset($json_array ['S3_files']['devices']) ? $json_array ['S3_files']['devices'] : '';
+					$i = 0;
+					$device_id = '';
+					if (! empty ( $devices )) {
+						foreach ( $devices as $device ) {
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
+							if ($i == 0) {
+								// take the first just in case - old data
+								$device_id = $device ['device_id'];
+								$device_type = $device ['device_type'];
+								$i++;
+							}
+							if ( isset ( $device ['origin'] ) && ($device ['origin'] == 1)) {
+								$device_id = $device ['device_id'];
+								$device_type = $device ['device_type'];
+								$origin_found = true;
+							}
+						}
+					}
+					if (! empty ( $device_id )) {
+						$xml_output .= "<device_id>" . $device ['device_id'] . "</device_id>";
+						$xml_output .= "<device_type>" . $device ['device_type'] . "</device_type>";
+					} else {
+						$xml_output .= "<device_id/>";
+						$xml_output .= "<device_type/>";
 					}
 					
 					//
@@ -291,7 +307,7 @@ class ListAllmedia {
 		$xml_output .= "</listallmediaresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-		//Mlog::addone ( '$xml_output', $xml_output );
+		// Mlog::addone ( '$xml_output', $xml_output );
 	}
 }
 
