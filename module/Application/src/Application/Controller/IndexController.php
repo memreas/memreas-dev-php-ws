@@ -1249,7 +1249,11 @@ class IndexController extends AbstractActionController {
 						$cache_found = true;
 					}
 				} else if ($actionname == 'stripe_getCustomerInfo') {
-					$cache_id = $data->user_id;
+					if (!empty($data->user_id)) {
+						$cache_id = $data->user_id;
+					} else {
+						$cache_id = $_SESSION['user_id'];
+					}
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 					
 					if (! $result || empty ( $result )) {

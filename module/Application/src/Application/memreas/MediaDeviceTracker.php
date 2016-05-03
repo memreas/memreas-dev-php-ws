@@ -10,11 +10,9 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\Entity\Media;
 use \Exception;
+use Application\Entity\Media;
+use Application\Entity\MediaDevice;
 
 // Sample xml
 // <xml>
@@ -47,13 +45,17 @@ class MediaDeviceTracker {
 	 * @param user_id $user_id        	
 	 */
 	public function fetchMediaDeviceMediaByUserId($user_id) {
-		$query = "SELECT m
-        from \Application\Entity\MediaDevice m
-        WHERE m.user_id = '$user_id'";
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
-		$statement = $this->dbAdapter->createQuery ( $query );
-		$mediaDevicesForUser = $statement->getArrayResult ();
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode ( $mediaDevicesForUser ) );
+		try {
+			$query = "SELECT md
+        			from Application\Entity\MediaDevice md, Application\Entity\Media m
+        			WHERE md.user_id = m.user_id and md.media_id = m.media_id and m.delete_flag != 1 and m.transcode_status = 'success' and m.user_id = '$user_id'";
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+			$statement = $this->dbAdapter->createQuery ( $query );
+			$mediaDevicesForUser = $statement->getArrayResult ();
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode ( $mediaDevicesForUser ) );
+		} catch ( QueryException $ex ) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$ex::', $ex->getMessage () );
+		}
 		
 		return $mediaDevicesForUser;
 	}
@@ -97,14 +99,16 @@ class MediaDeviceTracker {
 		//
 		// Fetch the db entry
 		//
-		$query = "SELECT m
-        from \Application\Entity\MediaDevice m
-        WHERE m.media_id = '$media_id'
-        AND m.user_id = '$user_id'";
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
-		$statement = $this->dbAdapter->createQuery ( $query );
-		$media_on_devices = $statement->getArrayResult ();
-		
+		try {
+			$query = "SELECT md
+        			from Application\Entity\MediaDevice md, Application\Entity\Media m
+        			WHERE md.user_id = m.user_id and md.media_id = m.media_id and m.delete_flag != 1 and m.transcode_status = 'success' and m.user_id = '$user_id'";
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+			$statement = $this->dbAdapter->createQuery ( $query );
+			$media_on_devices = $statement->getArrayResult ();
+		} catch ( QueryException $ex ) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$ex::', $ex->getMessage () );
+		}
 		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_on_devices::', $media_on_devices );
 		
 		//
