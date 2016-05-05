@@ -40,7 +40,21 @@ return array (
 												'action' => 'index' 
 										) 
 								) 
-						) 
+						),
+						'public' => array (
+								'type' => 'Segment',
+								'options' => array (
+										'route' => '/public[/:action][/:id]',
+										'constraints' => array (
+												'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+										),
+										'defaults' => array (
+												'controller' => 'Application\Controller\Public',
+												'action' => 'index'
+										)
+								)
+						)
+						
 				) 
 		),
 		// The following is a route to simplify getting started creating

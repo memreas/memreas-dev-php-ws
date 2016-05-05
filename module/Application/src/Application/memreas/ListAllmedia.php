@@ -67,7 +67,7 @@ class ListAllmedia {
 			$qb->from ( 'Application\Entity\Media', 'media' );
 			$qb->join ( 'Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id' );
 			$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id' );
-			$qb->where ( ' media.delete_flag != 1 and media.report_flag = 0 and and event.event_id = ?1' );
+			$qb->where ( ' media.delete_flag != 1 and media.report_flag = 0 and event.event_id = ?1' );
 			$qb->orderBy ( 'media.create_date', 'DESC' );
 			$qb->setParameter ( 1, $event_id );
 			$qb->setMaxResults ( $limit );
