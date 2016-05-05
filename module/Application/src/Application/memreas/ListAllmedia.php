@@ -67,7 +67,7 @@ class ListAllmedia {
 			$qb->from ( 'Application\Entity\Media', 'media' );
 			$qb->join ( 'Application\Entity\EventMedia', 'em', 'WITH', 'media.media_id = em.media_id' );
 			$qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'em.event_id = event.event_id' );
-			$qb->where ( ' media.delete_flag != 1 and media.report_flag = 0 and and event.event_id = ?1' );
+			$qb->where ( ' media.delete_flag != 1 and media.report_flag = 0 and event.event_id = ?1' );
 			$qb->orderBy ( 'media.create_date', 'DESC' );
 			$qb->setParameter ( 1, $event_id );
 			$qb->setMaxResults ( $limit );
@@ -247,13 +247,11 @@ class ListAllmedia {
 					//
 					// Check media for origin
 					//
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$json_array [S3_files][devices]-->', $json_array ['S3_files']['devices'] );
-					
 					$devices = isset ( $json_array ['S3_files'] ['devices'] ) ? $json_array ['S3_files'] ['devices'] : '';
 					$device_id = '';
 					if ($devices) {
 						foreach ( $devices as $device ) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
 							if (isset ( $device ['origin'] ) && ($device ['origin'] == 1)) {
 								$device_id = $device ['device_id'];
 								$device_type = $device ['device_type'];
@@ -270,6 +268,10 @@ class ListAllmedia {
 						$xml_output .= "<device_id/>";
 						$xml_output .= "<device_type/>";
 					}
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id-->', $row['media_id'] );
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id-->', $device_id );
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type-->', $device_type );
+						
 					//
 					// Close media entry
 					//
