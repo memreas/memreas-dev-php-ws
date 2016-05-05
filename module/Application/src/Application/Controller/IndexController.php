@@ -175,6 +175,7 @@ class IndexController extends AbstractActionController {
 		}
 		return $data;
 	}
+	
 	public function indexAction() {
 		$cm = __CLASS__ . __METHOD__;
 		// Start capture so we control what is sent back...
