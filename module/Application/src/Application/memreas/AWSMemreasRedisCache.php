@@ -67,7 +67,7 @@ class AWSMemreasRedisCache {
 		// $result = $this->cache->set ( $key , $value, $ttl );
 		$result = $this->cache->executeRaw ( array (
 				'SETEX',
-				$key,
+				"$key",
 				$ttl,
 				$value 
 		) );
@@ -190,7 +190,7 @@ class AWSMemreasRedisCache {
 			return false;
 		}
 		
-		$result = $this->cache->get ( $key );
+		$result = $this->cache->get ( "$key" );
 		
 		// if ($result) {
 		// error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
@@ -206,7 +206,7 @@ class AWSMemreasRedisCache {
 			return false;
 		}
 		
-		$result = $this->cache->del ( $key );
+		$result = $this->cache->del ( "$key" );
 		if ($result) {
 			error_log ( 'JUST DELETED THIS KEY ----> ' . $key . PHP_EOL );
 		} else {
