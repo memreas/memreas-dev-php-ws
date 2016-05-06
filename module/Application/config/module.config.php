@@ -46,17 +46,17 @@ return array (
 								'options' => array (
 										'route' => '/public[/:action][/:id]',
 										'constraints' => array (
-												'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+												'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
 										),
 										'defaults' => array (
 												'controller' => 'Application\Controller\Public',
-												'action' => 'index'
-										)
-								)
-						)
-						
+												'action' => 'index' 
+										) 
+								) 
+						) 
 				) 
-		),
+		)
+		,
 		// The following is a route to simplify getting started creating
 		// new controllers and actions without needing to create a new
 		// module. Simply drop new controllers in, and you can access them
@@ -108,13 +108,20 @@ return array (
 		),
 		'controllers' => array (
 				'factories' => array (
-						'Application\Controller\Index' =>    function($cm) {
-                                                $sm   = $cm->getServiceLocator();
-                                                $controller = new \Application\Controller\IndexController($sm);
-                                                return $controller;
-                                                } 
-				) 
-		),
+						'Application\Controller\Index' => function ($cm) {
+							$sm = $cm->getServiceLocator ();
+							$controller = new \Application\Controller\IndexController ( $sm );
+							return $controller;
+						},
+						'Application\Controller\Public' => function ($cm) {
+							$sm = $cm->getServiceLocator ();
+							$controller = new \Application\Controller\PublicController ( $sm );
+							return $controller;
+						} 
+				)
+				 
+		)
+		,
 		
 		'view_manager' => array (
 				'display_not_found_reason' => true,
