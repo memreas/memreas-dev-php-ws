@@ -521,14 +521,14 @@ class ViewEvents {
 							and e.event_id = ?1
 							and e.user_id = ?2
 							order by m.create_date desc";
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$user_id::', $user_id );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$event_id::', $event_id );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$q_event_media::', $q_event_media );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$user_id::', $user_id );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$event_id::', $event_id );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$q_event_media::', $q_event_media );
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
 		$event_media_query->setParameter ( 1, $event_id );
 		$event_media_query->setParameter ( 2, $user_id );
 		$result = $event_media_query->getResult ();
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
 		return $result;
 	}
 	private function generateMyEventMediaXML($query_event_media_result) {
