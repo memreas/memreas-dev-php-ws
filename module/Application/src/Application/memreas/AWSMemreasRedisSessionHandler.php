@@ -150,7 +150,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		/*
 		 * Check for profile photo
 		 */
-		$sql = "SELECT m  FROM Application\Entity\Media as m  where m.user_id = '$uid' and m.is_profile_pic=1";
+		$sql = "SELECT m FROM Application\Entity\Media as m  where m.user_id = '$uid' and m.is_profile_pic=1";
 		$statement = $this->dbAdapter->createQuery ( $sql );
 		$profile = $statement->getResult ();
 		
@@ -185,8 +185,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$_SESSION [profile_pic_meta]', $_SESSION ['profile_pic_meta'] );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$json_pic_meta', $json_pic_meta );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$_SESSION [profile_pic_meta]', $_SESSION ['profile_pic_meta'] );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$json_pic_meta', $json_pic_meta );
 		if ($_SESSION ['profile_pic_meta']) {
 			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
