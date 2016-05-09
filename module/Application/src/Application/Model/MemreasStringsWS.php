@@ -22,6 +22,7 @@ class MemreasStringsWS {
 	//email general
 	const EMAIL_SIGNATURE = 'Best Regards,';
 	const EMAIL_EMAIL_ADDRESS = 'email address';
+	const EMAIL_HEADER_TO = 'To';
 	
 	//user comment email
 	const EMAIL_USER_COMMENT_BODY = 'has added a new comment to your';
