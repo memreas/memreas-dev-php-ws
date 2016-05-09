@@ -100,6 +100,7 @@ body {
 <body>
 	<?php
 	use Application\Model\MemreasConstants;
+	use Application\Model\MemreasStringsWS;
 	?>
 <div class="container">
 		<div class="header" style="height: 91px; background: #a9b6c8;">
@@ -108,17 +109,17 @@ body {
 				width="288" height="72" />
 		</div>
 		<div class="content">
-			<h2>To <?php echo $receiver_name?>,</h2>
+			<h2><?php echo MemreasStringsWS::EMAIL_HEADER_TO?> <?php echo $receiver_name?>,</h2>
 			<br>
 
-				<p>Welcome to memreas!</p>
+				<p><?php echo MemreasStringsWS::EMAIL_REGISTER_WELCOME?></p>
 				<p class="tab">
-					Thanks for joining! Please click the following link to verify your
-					<a href="<?php echo $email_verification_url?>">email address</a><br />
+					<?php echo MemreasStringsWS::EMAIL_REGISTER_BODY?>
+					<a href="<?php echo $email_verification_url?>"><?php echo MemreasStringsWS::EMAIL_EMAIL_ADDRESS?></a><br />
 				</p>
 
 				<p>
-					Best Regards,<br /> <img
+					<?php echo MemreasStringsWS::EMAIL_SIGNATURE?><br /> <img
 						src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
 						width="103" height="20" />
 				</p>

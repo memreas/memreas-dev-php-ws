@@ -11,6 +11,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Application\memreas\Mlog;
 use Application\memreas\AWSMemreasRedisCache;
 use Application\memreas\ViewEvents;
+use Application\memreas\MemreasTables;
 
 class PublicController extends AbstractActionController {
 	protected $redis;
@@ -48,22 +49,20 @@ class PublicController extends AbstractActionController {
 		 * Check cache first if not there then
 		 * fetch and cache...
 		 */
-		if (! empty ( $data->viewevent->public_page )) {
+		if (! empty ( $data->viewevent->is_public_event ) && ! empty ( $data->viewevent->tag )) {
+			Mlog::addone ( $cm . __LINE__ . '$data->viewevent->type', $data->viewevent->tag.$data->viewevent->name );
+			$cache_id = "public_" . $data->viewevent->tag . $data->viewevent->name;
+		} else if (! empty ( $data->viewevent->public_page )) {
 			$cache_id = "public";
-		} else if (! empty ( $data->viewevent->public_page ) && ! empty ( $data->viewevent->public_person )) {
-			$user_id = $data->viewevent->user_id;
-			$cache_id = "public_" . $user_id;
-		} else if (! empty ( $data->viewevent->public_page ) && ! empty ( $data->viewevent->public_memreas )) {
-			$event_id = $data->viewevent->memreas;
-			$cache_id = "public_" . $event_id;
 		}
 		Mlog::addone ( $cm . __LINE__ . '$this->redis->getCache ( $actionname_$cache_id )-->', $actionname . '_' . $cache_id );
 		$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 		Mlog::addone ( $cm . __LINE__ . '$this->redis->getCache ( $actionname_$cache_id )-->$result', $result );
 		
 		if (! $result || empty ( $result )) {
+			$memreas_tables = new MemreasTables ( $this->sm );
 			// Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
-			$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
+			$viewevents = new ViewEvents ( null, $memreas_tables, $this->sm );
 			$result = $viewevents->exec ();
 			$cache_me = true;
 		} else {

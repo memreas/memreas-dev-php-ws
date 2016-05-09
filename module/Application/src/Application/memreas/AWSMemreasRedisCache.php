@@ -67,7 +67,7 @@ class AWSMemreasRedisCache {
 		// $result = $this->cache->set ( $key , $value, $ttl );
 		$result = $this->cache->executeRaw ( array (
 				'SETEX',
-				$key,
+				"$key",
 				$ttl,
 				$value 
 		) );
@@ -190,7 +190,7 @@ class AWSMemreasRedisCache {
 			return false;
 		}
 		
-		$result = $this->cache->get ( $key );
+		$result = $this->cache->get ( "$key" );
 		
 		// if ($result) {
 		// error_log('JUST FETCHED THIS KEY ----> ' . $key . PHP_EOL);
@@ -206,7 +206,7 @@ class AWSMemreasRedisCache {
 			return false;
 		}
 		
-		$result = $this->cache->del ( $key );
+		$result = $this->cache->del ( "$key" );
 		if ($result) {
 			error_log ( 'JUST DELETED THIS KEY ----> ' . $key . PHP_EOL );
 		} else {
@@ -249,29 +249,37 @@ class AWSMemreasRedisCache {
 		$cache_keys = array ();
 		$event_id = trim ( $event_id );
 		if (! empty ( $event_id )) {
-			$cache_keys [] = "listallmedia_" . $event_id;
-			$cache_keys [] = "geteventdetails_" . $event_id;
+			//$cache_keys [] = "listallmedia_" . $event_id;
+			//$cache_keys [] = "geteventdetails_" . $event_id;
+			$this->invalidateCache("listallmedia_" . $event_id);
+			$this->invalidateCache("geteventdetails_" . $event_id);
 		}
 		$media_id = trim ( $media_id );
 		if (! empty ( $media_id )) {
-			$cache_keys [] = "viewmediadetails_" . $media_id;
+			//$cache_keys [] = "viewmediadetails_" . $media_id;
+			$this->invalidateCache("viewmediadetails_" . $media_id);
 		}
 		$user_id = trim ( $user_id );
 		if (! empty ( $user_id )) {
 			// countviewevent can return me / friends / public
-			$cache_keys [] = "listallmedia_" . $user_id;
-			$cache_keys [] = "viewevents_is_my_event_" . $user_id;
-			$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
+			//$cache_keys [] = "listallmedia_" . $user_id;
+			//$cache_keys [] = "viewevents_is_my_event_" . $user_id;
+			//$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
+			$this->invalidateCache("listnotification_" . $user_id);
+			$this->invalidateCache("listallmedia_" . $event_id);
+			$this->invalidateCache("viewevents_is_my_event_" . $user_id);
+			$this->invalidateCache("viewevents_is_friend_event_" . $user_id);
 		}
+		
 		// Mecached - deleteMulti...
-		$result = $this->remSetKeys ( $cache_keys );
-		if ($result) {
-			$now = date ( 'Y-m-d H:i:s.u' );
-			error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
-		} else {
-			$now = date ( 'Y-m-d H:i:s.u' );
-			error_log ( 'invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
-		}
+		//$result = $this->remSetKeys ( $cache_keys );
+		//if ($result) {
+		//	$now = date ( 'Y-m-d H:i:s.u' );
+		//	error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
+		//} else {
+		//	$now = date ( 'Y-m-d H:i:s.u' );
+		//	error_log ( 'invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
+		//}
 	} // End invalidateMedia
 	
 	/*
