@@ -29,8 +29,10 @@ class ViewEvents {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
 		$is_my_event = trim ( $data->viewevent->is_my_event );
-		$is_friend_event = trim ( $data->viewevent->is_friend_event );
-		$is_public_event = trim ( $data->viewevent->is_public_event );
+		$is_friend_event = trim ( $data->viewevent->is_friend_event);
+		$is_public_event = trim ( $data->viewevent->is_public_event);
+		$tag = !empty($data->viewevent->tag) ? $data->viewevent->tag : '';
+		$name = !empty($data->viewevent->name) ? $data->viewevent->name : '';
 		$page = trim ( $data->viewevent->page );
 		$limit = trim ( $data->viewevent->limit );
 		$error_flag = 0;
@@ -318,8 +320,14 @@ class ViewEvents {
 			
 			/*
 			 * Fetch all public events filter in loop...
+			 *  - for public page check for tag to seach person or memreas...
 			 */
-			$result_pub = $this->fetchPublicEvents ();
+			if (!empty($tag)) {
+				$result_pub = $this->fetchPublicEvents ($tag, $name);
+			} else {
+				$result_pub = $this->fetchPublicEvents ();
+			}
+			
 			
 			if (count ( $result_pub ) == 0) {
 				//Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
@@ -498,18 +506,6 @@ class ViewEvents {
 	}
 	private function fetchMyEventsMedia($user_id, $event_id) {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
-		/*
-		 * $qb = $this->dbAdapter->createQueryBuilder ();
-		 * $qb->select ( 'event.event_id', 'event.name', 'media.media_id', 'media.metadata', 'media.delete_flag' );
-		 * $qb->from ( 'Application\Entity\EventMedia', 'event_media' );
-		 * $qb->join ( 'Application\Entity\Event', 'event', 'WITH', 'event.event_id = event_media.event_id' );
-		 * $qb->join ( 'Application\Entity\Media', 'media', 'WITH', 'event_media.media_id = media.media_id' );
-		 * $qb->where ( 'event.user_id = ?1 and event.event_id=?2' );
-		 * $qb->orderBy ( 'media.create_date', 'DESC' );
-		 * $qb->setParameter ( 1, $user_id );
-		 * $qb->setParameter ( 2, $event_id );
-		 * $result = $qb->getQuery ()->getResult ();
-		 */
 		$q_event_media = "select e.event_id, e.name, m.media_id, m.metadata, m.delete_flag
 							from 	Application\Entity\Media m,
 									Application\Entity\Event e,
@@ -809,32 +805,16 @@ class ViewEvents {
 	/**
 	 * Public event functions
 	 */
-	private function fetchPublicEvents() {
-		/*
-		 * - query not working..
-		 * $q_public = "select event.event_id,
-		 * event.user_id,
-		 * event.name,
-		 * event.location,
-		 * event.date,
-		 * event.metadata,
-		 * event.viewable_from,
-		 * event.viewable_to,
-		 * user.username,
-		 * user.profile_photo
-		 * from Application\Entity\Event event, Application\Entity\User user
-		 * where event.public=1
-		 * and event.user_id = user.user_id
-		 * and (event.viewable_to >=" . $date . " or event.viewable_to ='')
-		 * and (event.viewable_from <=" . $date . " or event.viewable_from ='')
-		 * and (event.self_destruct >=" . $date . " or event.self_destruct='')
-		 * ORDER BY event.create_time DESC";
-		 */
-		
+	private function fetchPublicEvents($tag = null, $name = null) {
 		//
 		// Fetch public events without viewable or ghost
 		//
-		$q_public = "select  event.event_id,
+		$cm = __CLASS__.__METHOD__;
+		$q_public = '';
+		
+		if ($tag == null) {
+			//without tag we return public list
+			$q_public = "select  event.event_id,
 			event.user_id,
 			event.name,
 			event.location,
@@ -849,7 +829,51 @@ class ViewEvents {
 			where event.public=1
 		 	and event.user_id = user.user_id
 			ORDER BY event.create_time DESC";
+			Mlog::addone($cm.__LINE__.'::public query', $q_public);
+		} else if (($tag == '@') && !empty($name)) {
+			//handle @person public events here
+			$q_public = "select  event.event_id,
+			event.user_id,
+			event.name,
+			event.location,
+			event.date,
+			event.metadata,
+			event.viewable_from,
+			event.viewable_to,
+			event.self_destruct,
+			user.username,
+			user.profile_photo
+			from Application\Entity\Event event, Application\Entity\User user
+			where event.public=1
+		 	and event.user_id = user.user_id
+			and user.username = '$name'
+			ORDER BY event.create_time DESC";
+			Mlog::addone($cm.__LINE__.'::public person query', $q_public);
+		} else if (($tag == '!') && !empty($name)) {
+			//handle !memreas public events here
+			$q_public = "select  event.event_id,
+			event.user_id,
+			event.name,
+			event.location,
+			event.date,
+			event.metadata,
+			event.viewable_from,
+			event.viewable_to,
+			event.self_destruct,
+			user.username,
+			user.profile_photo
+			from Application\Entity\Event event, Application\Entity\User user
+			where event.public=1
+		 	and event.user_id = user.user_id
+			and event.name = '$name'
+			ORDER BY event.create_time DESC";
+			Mlog::addone($cm.__LINE__.'::public memreas query', $q_public);
+		}
+		if (empty($q_public)) {
+			return null;
+		}
 		
+		//we have a query so run it..
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
 		
@@ -986,18 +1010,17 @@ class ViewEvents {
 	 * Common queries
 	 */
 	private function fetchEventMedia($event_id) {
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'...');
 		$q_event_media = "select media.delete_flag, media.report_flag, event_media.event_id,
 							media.media_id, media.metadata
 							from Application\Entity\EventMedia event_media,  Application\Entity\Media media
 							where event_media.media_id = media.media_id ".
-							// remove in for loop
+							// remove in for loop - otherwise inner join will leave out entries...
 							//and media.report_flag = 0
 							//and media.delete_flag != 1
 							" and event_media.event_id = '$event_id'
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_event_media -->',$q_event_media);
+		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_event_media -->',$q_event_media);
 		return $event_media_query->getResult ();
 	}
 	private function fetchEventComments($event_id) {

@@ -96,6 +96,7 @@ body {
 <body>
 	<?php
 	use Application\Model\MemreasConstants;
+	use Application\Model\MemreasStringsWS;
 	?>
 <div class="container">
 		<div class="header" style="height: 91px; background: #a9b6c8;">
@@ -105,14 +106,14 @@ body {
 		</div>
 		<div class="content">
 			<h2>To <?=$friend_name?>,</h2>
-			
+
 			<p>
-<?=$user_name?> had been placed  A new comment on your event !<?=$event_name?>  : "<a
+<?=$user_name?> <?php echo MemreasStringsWS::EMAIL_USER_COMMENT_BODY?> !<?=$event_name?>  : "<a
 					href="<?php echo MemreasConstants::WEB_URL?>"> <?=$message?></a>"<br />
 			</p>
 
 			<p>
-				Best Regards,<br /> <img
+				<?php echo MemreasStringsWS::EMAIL_SIGNATURE?><br /> <img
 					src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
 					width="103" height="20" />
 			</p>
