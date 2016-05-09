@@ -96,7 +96,7 @@ body {
 <body>
 	<?php
 	use Application\Model\MemreasConstants;
-use Application\Model\MemreasStringsWS;
+	use Application\Model\MemreasStringsWS;
 	?>
 <div class="container">
 		<div class="header" style="height: 91px; background: #a9b6c8;">
@@ -106,7 +106,7 @@ use Application\Model\MemreasStringsWS;
 		</div>
 		<div class="content">
 			<h2>To <?=$friend_name?>,</h2>
-			
+
 			<p>
 <?=$user_name?> <?php echo MemreasStringsWS::EMAIL_USER_COMMENT_BODY?> !<?=$event_name?>  : "<a
 					href="<?php echo MemreasConstants::WEB_URL?>"> <?=$message?></a>"<br />
