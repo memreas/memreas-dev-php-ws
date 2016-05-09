@@ -391,6 +391,7 @@ class IndexController extends AbstractActionController {
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
+				
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
@@ -650,7 +651,7 @@ class IndexController extends AbstractActionController {
 				 * - hold for now
 				 */
 				$this->redis->invalidateEvents ( $uid );
-				$this->redis->invalidateNotifications ( $_SESSION ['user_id'] );
+				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "viewmediadetails") {
 				/*
 				 * - Cache Approach: Check cache first if not there then fetch and cache...

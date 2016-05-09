@@ -265,7 +265,8 @@ class AWSMemreasRedisCache {
 			//$cache_keys [] = "listallmedia_" . $user_id;
 			//$cache_keys [] = "viewevents_is_my_event_" . $user_id;
 			//$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
-			$this->invalidateCache("listallmedia_" . $user_id);
+			$this->invalidateCache("listnotification_" . $user_id);
+			$this->invalidateCache("listallmedia_" . $event_id);
 			$this->invalidateCache("viewevents_is_my_event_" . $user_id);
 			$this->invalidateCache("viewevents_is_friend_event_" . $user_id);
 		}
