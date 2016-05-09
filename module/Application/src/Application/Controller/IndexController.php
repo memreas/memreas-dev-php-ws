@@ -175,7 +175,6 @@ class IndexController extends AbstractActionController {
 		}
 		return $data;
 	}
-	
 	public function indexAction() {
 		$cm = __CLASS__ . __METHOD__;
 		// Start capture so we control what is sent back...
@@ -689,12 +688,13 @@ class IndexController extends AbstractActionController {
 				$result = $addNotification->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$uid = trim ( $data->addNotification->user_id );
-			/**
-			 * Cache approach
-			 * - write operation
-			 * - invalidate listnotification
-			 */
-				// $this->redis->invalidateNotifications($uid);
+				
+				//
+				// Cache approach
+				// - write operation
+				// - invalidate listnotification
+				//
+				$this->redis->invalidateNotifications($uid);
 			} else if ($actionname == "changepassword") {
 				$changepassword = new ChangePassword ( $message_data, $memreas_tables, $this->sm );
 				$result = $changepassword->exec ();
@@ -1250,10 +1250,10 @@ class IndexController extends AbstractActionController {
 						$cache_found = true;
 					}
 				} else if ($actionname == 'stripe_getCustomerInfo') {
-					if (!empty($data->user_id)) {
+					if (! empty ( $data->user_id )) {
 						$cache_id = $data->user_id;
 					} else {
-						$cache_id = $_SESSION['user_id'];
+						$cache_id = $_SESSION ['user_id'];
 					}
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 					
@@ -1288,7 +1288,6 @@ class IndexController extends AbstractActionController {
 					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_checkOwnEvent_' . $_SESSION ['user_id'] );
-					
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
