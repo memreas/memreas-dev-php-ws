@@ -517,15 +517,10 @@ class IndexController extends AbstractActionController {
 				 * --- this is based on media_id
 				 */
 				
-				Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION ['user_id'] );
 				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION ['user_id'] );
-				Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION ['user_id'] );
-				$this->redis->invalidateCache ( "viewevents_" . $_SESSION ['user_id'] );
-			/**
-			 * Cache Approach:
-			 * - Check cache first if not there then fetch and cache...
-			 * - if event_id then return that cache else user_id
-			 */
+				$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] );
+				//Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION ['user_id'] );
+				//Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION ['user_id'] );
 			} else if ($actionname == "listallmedia") {
 				/*
 				 * - Cache Approach: Check cache first if not there then fetch and cache...
