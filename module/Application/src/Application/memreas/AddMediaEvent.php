@@ -373,7 +373,7 @@ class AddMediaEvent {
 					/**
 					 * Notifications - only for images and video
 					 */
-					if (! is_audio) {
+					if (! $is_audio) {
 						$query = "SELECT ef.friend_id FROM  Application\Entity\EventFriend as ef  where ef.event_id = '$event_id'";
 						$qb = $this->dbAdapter->createQueryBuilder ();
 						$qb->select ( 'f.network,f.friend_id' );
