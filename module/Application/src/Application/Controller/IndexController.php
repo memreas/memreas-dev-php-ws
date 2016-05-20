@@ -338,12 +338,14 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - Write Operation - Invalidate
 				 * listcomment here
 				 */
-				// $data = simplexml_load_string($_POST ['xml']);
-				// if (isset($data->addcomment->event_id)) {
-				// //Invalidate existing cache
-				// $this->redis->invalidateCache("listcomments_" .
-				// $data->addcomment->event_id);
-				// }
+				$data = simplexml_load_string($_POST ['xml']);
+				if (isset($data->addcomment->event_id)) {
+					//Invalidate existing cache
+					$this->redis->invalidateCache("listcomments_" . $data->addcomment->event_id);
+					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $data->addcomment->user_id );
+					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $data->addcomment->user_id );
+						
+				}
 			} else if ($actionname == "verifyemailaddress") {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->sm );
 				$verified_user_id = $verifyemailaddress->exec ();
@@ -519,6 +521,7 @@ class IndexController extends AbstractActionController {
 				
 				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION ['user_id'] );
 				$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] );
+				$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] );
 				//Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION ['user_id'] );
 				//Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION ['user_id'] );
 			} else if ($actionname == "listallmedia") {

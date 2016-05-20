@@ -46,7 +46,7 @@ class AddComment {
 			$event_id = trim ( $data->addcomment->event_id );
 			$media_id = trim ( $data->addcomment->media_id );
 			$comment = trim ( $data->addcomment->comments );
-                        $comment =strip_tags($comment, '<div><b><strong><i><p><a><img><ul><li><ol><i><u><em>');
+			$comment = strip_tags ( $comment, '<div><b><strong><i><p><a><img><ul><li><ol><i><u><em>' );
 			$user_id = trim ( $data->addcomment->user_id );
 			$audio_media_id = trim ( $data->addcomment->audio_media_id );
 			$message = "";
@@ -81,7 +81,7 @@ class AddComment {
 					if (! empty ( $comment )) {
 						$comment = $this->tester->censor ( $comment );
 					}
-
+					
 					$uuid = MUUID::fetchUUID ();
 					$tblComment = new \Application\Entity\Comment ();
 					$tblComment->comment_id = $uuid;
