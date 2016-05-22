@@ -106,15 +106,11 @@ class AddComment {
 						$metaTag ['event'] [] = $event_id;
 						$metaTag ['media'] [] = $media_id;
 						$metaTag ['user'] [] = $user_id;
-						Mlog::add ( __CLASS__ . __METHOD__ . '::$metaTag...' );
-						Mlog::add ( $metaTag, 'j', 1 );
 						
 						// add tags
 						$this->addTag->getEventname ( $comment, $metaTag );
-						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->addTag->getEventname ( $comment, $metaTag )' );
 						// $this->addTag->getUserName($comment,$metaTag);
 						$this->addTag->getKeyword ( $comment, $metaTag );
-						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->addTag->getKeyword ( $comment, $metaTag )' );
 						
 						// send notification owner of the event and all who commented.
 						$qb = $this->dbAdapter->createQueryBuilder ();
@@ -124,7 +120,6 @@ class AddComment {
 						$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
 						$qb->setParameter ( 1, $event_id );
 						$qb->setParameter ( 2, $user_id );
-						Mlog::addone ( __CLASS__ . __METHOD__ . '$qb', $qb );
 						
 						// Check if comment is made by owner or not
 						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
