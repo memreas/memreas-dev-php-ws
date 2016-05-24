@@ -63,9 +63,10 @@ class ListComments {
 		$qb->select ( 'c.type,c.audio_id,c.text,u.username, u.user_id,c.media_id,c.event_id, c.create_time' );
 		$qb->from ( 'Application\Entity\Comment', 'c' );
 		$qb->join ( 'Application\Entity\User', 'u', 'WITH', 'c.user_id = u.user_id' );
+		$qb->where ( "c.type != 'like'" );
 		if (! empty ( $event_id )) {
 			// $qb->where ( "c.event_id=?1 AND (c.type='text' or c.type='audio' or c.type='like')" );
-			$qb->where ( "c.event_id=?1" );
+			$qb->andWhere ( "c.event_id=?1" );
 			$qb->setParameter ( 1, $event_id );
 		}
 		
@@ -86,46 +87,58 @@ class ListComments {
 			$message = "No TEXT Comment For this Event";
 		} else {
 			foreach ( $result_comment as $value ) {
-				$output .= '<comment>';
-				$output .= "<comment_event_id>" . $value ['event_id'] . "</comment_event_id>";
-				$output .= "<comment_media_id>" . $value ['media_id'] . "</comment_media_id>";
-				$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
-				$output .= "<type>" . $value ['type'] . "</type>";
-				$audio_url = '';
-				if ($value ['type'] == 'audio') {
-					$audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
-					// $audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
-					// $json_array = json_decode ( $audio_row ['metadata'], true );
-					// error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
-					
-					if ($audio_row) {
-						$json_array = json_decode ( $audio_row->metadata, true );
-						if (isset ( $json_array ['S3_files'] ['type'] ['audio'] )) {
-							if (isset ( $json_array ['S3_files'] ['audio'] ) || array_key_exists ( 'audio', $json_array ['S3_files'] ))
-								$audio_url = $json_array ['S3_files'] ['audio'];
-							else
-								$audio_url = $json_array ['S3_files'] ['path'];
-							$output .= "<audio_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $audio_url ) . "]]></audio_media_url>";
+				
+				if (($value ['type'] == 'text') || (! empty ( $value ['text'] ))) {
+					$output .= '<comment>';
+					$output .= "<comment_event_id>" . $value ['event_id'] . "</comment_event_id>";
+					$output .= "<comment_media_id>" . $value ['media_id'] . "</comment_media_id>";
+					$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
+					$output .= "<type>text</type>";
+					$output .= "<username>" . $value ['username'] . "</username>";
+					$redis = AWSMemreasRedisCache::getHandle ();
+					$url1 = $redis->getProfilePhoto ( $value ['user_id'] );
+					$output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+					$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
+					$output .= '</comment>';
+				}
+				if (! empty ( $value ['audio_id'] )) {
+					$output .= '<comment>';
+					$output .= "<comment_event_id>" . $value ['event_id'] . "</comment_event_id>";
+					$output .= "<comment_media_id>" . $value ['media_id'] . "</comment_media_id>";
+					$output .= "<comment_text/>";
+					$output .= "<type>audio</type>";
+					$audio_url = '';
+					if (! empty ( $value ['audio_id'] )) {
+						$audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
+						// $audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
+						// $json_array = json_decode ( $audio_row ['metadata'], true );
+						//error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
+						
+						if ($audio_row) {
+							$json_array = json_decode ( $audio_row->metadata, true );
+							if (isset ( $json_array ['S3_files'] ['type'] ['audio'] )) {
+								if (isset ( $json_array ['S3_files'] ['audio'] )) {
+									$audio_url = $json_array ['S3_files'] ['audio'];
+								} else {
+									$audio_url = $json_array ['S3_files'] ['path'];
+								}
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.' $value [audio_id]--->', $value ['audio_id']);
+								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$audio_url--->',$audio_url);
+								$output .= "<audio_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $audio_url ) . "]]></audio_media_url>";
+							}
+						} else {
+							$output .= "<audio_media_url></audio_media_url>";
 						}
-					} else {
-						$output .= "<audio_media_url></audio_media_url>";
 					}
+					
+					$output .= "<username>" . $value ['username'] . "</username>";
+					$redis = AWSMemreasRedisCache::getHandle ();
+					$url1 = $redis->getProfilePhoto ( $value ['user_id'] );
+					$output .= "<profile_pic><![CDATA[" . $url1 . "]]></profile_pic>";
+					$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
+					$output .= '</comment>';
 				}
 				
-				$output .= "<username>" . $value ['username'] . "</username>";
-				$media_row = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$value['user_id']}' AND m.is_profile_pic = 1" )->getQuery ()->getResult ();
-				if ($media_row) {
-					$json_array_profile = json_decode ( $media_row [0]->metadata, true );
-				}
-				
-				$url1 = MemreasConstants::ORIGINAL_URL . '/memreas/img/profile-pic.jpg';
-				if (! empty ( $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0] )){
-					$url1 = $json_array_profile ['S3_files'] ['thumbnails'] ['79x80'] [0];
-				}
-				$output .= "<profile_pic><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url1 ) . "]]></profile_pic>";
-				$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
-				
-				$output .= '</comment>';
 			}
 		}
 		$output .= '</comments>';
