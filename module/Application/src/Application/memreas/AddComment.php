@@ -42,11 +42,12 @@ class AddComment {
 		// error_log("Inside Add Comment exec()".PHP_EOL);
 		error_log ( "Inside Add Comment _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
 		try {
+			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$event_id = trim ( $data->addcomment->event_id );
 			$media_id = trim ( $data->addcomment->media_id );
 			$comment = trim ( $data->addcomment->comments );
-			$comment = strip_tags ( $comment, '<div><b><strong><i><p><a><img><ul><li><ol><i><u><em>' );
+			$comment = strip_tags ( $comment, '<script><div><b><strong><i><p><a><img><ul><li><ol><i><u><em>' );
 			$user_id = trim ( $data->addcomment->user_id );
 			$audio_media_id = trim ( $data->addcomment->audio_media_id );
 			$message = "";
@@ -74,12 +75,11 @@ class AddComment {
 							$comment = $this->tester->censor ( $comment );
 						}
 						$type = 'text';
-						$audio_media_id = "";
 						$uuid = MUUID::fetchUUID ();
 						$tblComment = new \Application\Entity\Comment ();
 						$tblComment->comment_id = $uuid;
 						$tblComment->media_id = $media_id;
-						$tblComment->audio_id = $audio_media_id;
+						$tblComment->audio_id = '';
 						$tblComment->user_id = $user_id;
 						$tblComment->type = $type;
 						$tblComment->event_id = $event_id;
@@ -91,7 +91,6 @@ class AddComment {
 					}
 					if (! empty ( $audio_media_id )) {
 						$type = 'audio';
-						$comment = "";
 						$uuid = MUUID::fetchUUID ();
 						$tblComment = new \Application\Entity\Comment ();
 						$tblComment->comment_id = $uuid;
@@ -100,7 +99,7 @@ class AddComment {
 						$tblComment->user_id = $user_id;
 						$tblComment->type = $type;
 						$tblComment->event_id = $event_id;
-						$tblComment->text = $comment;
+						$tblComment->text = '';
 						$tblComment->create_time = $time;
 						$tblComment->update_time = $time;
 						$this->dbAdapter->persist ( $tblComment );
