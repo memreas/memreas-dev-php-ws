@@ -42,11 +42,12 @@ class AddComment {
 		// error_log("Inside Add Comment exec()".PHP_EOL);
 		error_log ( "Inside Add Comment _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
 		try {
+			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$event_id = trim ( $data->addcomment->event_id );
 			$media_id = trim ( $data->addcomment->media_id );
 			$comment = trim ( $data->addcomment->comments );
-			$comment = strip_tags ( $comment, '<div><b><strong><i><p><a><img><ul><li><ol><i><u><em>' );
+			$comment = strip_tags ( $comment, '<script><div><b><strong><i><p><a><img><ul><li><ol><i><u><em>' );
 			$user_id = trim ( $data->addcomment->user_id );
 			$audio_media_id = trim ( $data->addcomment->audio_media_id );
 			$message = "";
@@ -68,36 +69,43 @@ class AddComment {
 				} else {
 					
 					$type;
-					if (empty ( $audio_media_id )) {
-						$type = 'text';
-						$audio_media_id = "";
-					} else if (empty ( $comment )) {
-						$type = 'audio';
-						$comment = "";
-					} else {
-						$type = 'text|audio';
-					}
-					// profanity check
 					if (! empty ( $comment )) {
-						$comment = $this->tester->censor ( $comment );
+						// profanity check
+						if (! empty ( $comment )) {
+							$comment = $this->tester->censor ( $comment );
+						}
+						$type = 'text';
+						$uuid = MUUID::fetchUUID ();
+						$tblComment = new \Application\Entity\Comment ();
+						$tblComment->comment_id = $uuid;
+						$tblComment->media_id = $media_id;
+						$tblComment->audio_id = '';
+						$tblComment->user_id = $user_id;
+						$tblComment->type = $type;
+						$tblComment->event_id = $event_id;
+						$tblComment->text = $comment;
+						$tblComment->create_time = $time;
+						$tblComment->update_time = $time;
+						$this->dbAdapter->persist ( $tblComment );
+						$this->dbAdapter->flush ();
 					}
-					
-					$uuid = MUUID::fetchUUID ();
-					$tblComment = new \Application\Entity\Comment ();
-					$tblComment->comment_id = $uuid;
-					$tblComment->media_id = $media_id;
-					$tblComment->audio_id = $audio_media_id;
-					$tblComment->user_id = $user_id;
-					$tblComment->type = $type;
-					$tblComment->event_id = $event_id;
-					$tblComment->text = $comment;
-					$tblComment->create_time = $time;
-					$tblComment->update_time = $time;
-					$this->dbAdapter->persist ( $tblComment );
-					$this->dbAdapter->flush ();
+					if (! empty ( $audio_media_id )) {
+						$type = 'audio';
+						$uuid = MUUID::fetchUUID ();
+						$tblComment = new \Application\Entity\Comment ();
+						$tblComment->comment_id = $uuid;
+						$tblComment->media_id = $media_id;
+						$tblComment->audio_id = $audio_media_id;
+						$tblComment->user_id = $user_id;
+						$tblComment->type = $type;
+						$tblComment->event_id = $event_id;
+						$tblComment->text = '';
+						$tblComment->create_time = $time;
+						$tblComment->update_time = $time;
+						$this->dbAdapter->persist ( $tblComment );
+						$this->dbAdapter->flush ();
+					}
 					$status = 'success';
-					// error_log("Inserted Comment without audio_media_id ---> ".$audio_media_id.PHP_EOL);
-					
 					$message = "Comment successfully added";
 					
 					if ($status != 'failure') {
@@ -106,15 +114,11 @@ class AddComment {
 						$metaTag ['event'] [] = $event_id;
 						$metaTag ['media'] [] = $media_id;
 						$metaTag ['user'] [] = $user_id;
-						Mlog::add ( __CLASS__ . __METHOD__ . '::$metaTag...' );
-						Mlog::add ( $metaTag, 'j', 1 );
 						
 						// add tags
 						$this->addTag->getEventname ( $comment, $metaTag );
-						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->addTag->getEventname ( $comment, $metaTag )' );
 						// $this->addTag->getUserName($comment,$metaTag);
 						$this->addTag->getKeyword ( $comment, $metaTag );
-						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->addTag->getKeyword ( $comment, $metaTag )' );
 						
 						// send notification owner of the event and all who commented.
 						$qb = $this->dbAdapter->createQueryBuilder ();
@@ -124,7 +128,6 @@ class AddComment {
 						$qb->where ( 'ef.event_id = ?1 AND ef.friend_id != ?2' );
 						$qb->setParameter ( 1, $event_id );
 						$qb->setParameter ( 2, $user_id );
-						Mlog::addone ( __CLASS__ . __METHOD__ . '$qb', $qb );
 						
 						// Check if comment is made by owner or not
 						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );

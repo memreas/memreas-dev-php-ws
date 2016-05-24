@@ -782,7 +782,23 @@ class AWSMemreasRedisCache {
 		$reply = $this->cache->hset ( '@person_uid_hash', $row ['user_id'], $row ['username'] );
 		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$person_json--->', $person_json );
 	}
+	
+	public function getProfilePhoto($user_id) {
+		/*
+		 * Check REDIS to fetch event owner profile pic
+		 */
+		$username = $this->cache->hget ( '@person_uid_hash', $user_id );
+		$user_profile = $this->cache->hget ( '@person_meta_hash', $username );
+		$pic = $this->url_signer->signArrayOfUrls ( null );
+		if ($user_profile) {
+			$user_profileArr = json_decode ( $user_profile, true );
+			$pic = json_encode ( $user_profileArr ['profile_photo'] );
+		} 
+		return $pic;
+	}
 }
+
+
 
 ?>
 		

@@ -532,6 +532,7 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if (! empty ( $data->listallmedia->event_id )) {
 					$cache_id = $data->listallmedia->event_id;
+					
 				} else if (! empty ( $data->listallmedia->user_id )) {
 					$cache_id = $data->listallmedia->user_id;
 				}
