@@ -68,36 +68,45 @@ class AddComment {
 				} else {
 					
 					$type;
-					if (empty ( $audio_media_id )) {
+					if (! empty ( $comment )) {
+						// profanity check
+						if (! empty ( $comment )) {
+							$comment = $this->tester->censor ( $comment );
+						}
 						$type = 'text';
 						$audio_media_id = "";
-					} else if (empty ( $comment )) {
+						$uuid = MUUID::fetchUUID ();
+						$tblComment = new \Application\Entity\Comment ();
+						$tblComment->comment_id = $uuid;
+						$tblComment->media_id = $media_id;
+						$tblComment->audio_id = $audio_media_id;
+						$tblComment->user_id = $user_id;
+						$tblComment->type = $type;
+						$tblComment->event_id = $event_id;
+						$tblComment->text = $comment;
+						$tblComment->create_time = $time;
+						$tblComment->update_time = $time;
+						$this->dbAdapter->persist ( $tblComment );
+						$this->dbAdapter->flush ();
+					}
+					if (! empty ( $audio_media_id )) {
 						$type = 'audio';
 						$comment = "";
-					} else {
-						$type = 'text|audio';
+						$uuid = MUUID::fetchUUID ();
+						$tblComment = new \Application\Entity\Comment ();
+						$tblComment->comment_id = $uuid;
+						$tblComment->media_id = $media_id;
+						$tblComment->audio_id = $audio_media_id;
+						$tblComment->user_id = $user_id;
+						$tblComment->type = $type;
+						$tblComment->event_id = $event_id;
+						$tblComment->text = $comment;
+						$tblComment->create_time = $time;
+						$tblComment->update_time = $time;
+						$this->dbAdapter->persist ( $tblComment );
+						$this->dbAdapter->flush ();
 					}
-					// profanity check
-					if (! empty ( $comment )) {
-						$comment = $this->tester->censor ( $comment );
-					}
-					
-					$uuid = MUUID::fetchUUID ();
-					$tblComment = new \Application\Entity\Comment ();
-					$tblComment->comment_id = $uuid;
-					$tblComment->media_id = $media_id;
-					$tblComment->audio_id = $audio_media_id;
-					$tblComment->user_id = $user_id;
-					$tblComment->type = $type;
-					$tblComment->event_id = $event_id;
-					$tblComment->text = $comment;
-					$tblComment->create_time = $time;
-					$tblComment->update_time = $time;
-					$this->dbAdapter->persist ( $tblComment );
-					$this->dbAdapter->flush ();
 					$status = 'success';
-					// error_log("Inserted Comment without audio_media_id ---> ".$audio_media_id.PHP_EOL);
-					
 					$message = "Comment successfully added";
 					
 					if ($status != 'failure') {
