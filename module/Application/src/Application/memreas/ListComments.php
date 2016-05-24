@@ -77,7 +77,7 @@ class ListComments {
 		$qb->orderBy ( 'c.create_time', 'DESC' );
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
-		error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
+		//error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 		$result_comment = $qb->getQuery ()->getResult ();
 		
 		$output .= '<comments>';
@@ -117,7 +117,7 @@ class ListComments {
 						if ($audio_row) {
 							$json_array = json_decode ( $audio_row->metadata, true );
 							if (isset ( $json_array ['S3_files'] ['type'] ['audio'] )) {
-								if (isset ( $json_array ['S3_files'] ['audio'] ) || array_key_exists ( 'audio', $json_array ['S3_files'] )) {
+								if (isset ( $json_array ['S3_files'] ['audio'] )) {
 									$audio_url = $json_array ['S3_files'] ['audio'];
 								} else {
 									$audio_url = $json_array ['S3_files'] ['path'];
