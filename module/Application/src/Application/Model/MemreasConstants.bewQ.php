@@ -88,8 +88,10 @@ class MemreasConstants {
 	const ADMIN_EMAIL = 'admin@memreas.com';
 	const GCM_SERVER_KEY = 'AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE';
 	const COPYRIGHT = '&copy;2015 memreas, llc. all rights reserved.';
-        const DCMA_CLAIM = 2; 
+    const DCMA_CLAIM = 2; 
+	const DCMA_CLAIM_TEXT = 'claim reported'; 
 	const DCMA_COUNTER_CLAIM = 3; 
+	const DCMA_COUNTER_CLAIM_TEXT = 'counter claim reported'; 
 	public static function fetchAWS() {
 		$sharedConfig = [ 
 				'region' => 'us-east-1',
