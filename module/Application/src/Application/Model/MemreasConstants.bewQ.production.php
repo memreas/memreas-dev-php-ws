@@ -30,7 +30,10 @@ class MemreasConstants {
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
-	const REDIS_CACHE_TTL = 3600;
+	const REDIS_CACHE_SESSION_TTL = 3600; // 1hour 
+	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600*24); // 1day 
+	const REDIS_CACHE_TTL = 7200; // 2 hours
+
 	// 1 hour
 	
 	// memreasdevsec related
@@ -85,7 +88,9 @@ class MemreasConstants {
 	const GCM_SERVER_KEY = 'AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE';
 	const COPYRIGHT = '&copy;2015 memreas, llc. all rights reserved.';
     const DCMA_CLAIM = 2; 
+	const DCMA_CLAIM_TEXT = 'claim reported'; 
 	const DCMA_COUNTER_CLAIM = 3; 
+	const DCMA_COUNTER_CLAIM_TEXT = 'counter claim reported'; 
 	public static function fetchAWS() {
 		$sharedConfig = [ 
 				'region' => 'us-east-1',
