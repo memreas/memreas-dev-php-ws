@@ -67,7 +67,7 @@ class AddComment {
 				} else if (! $eventOBj) {
 					throw new \Exception ( 'event_id not found' );
 				} else {
-					
+						
 					$type;
 					if (! empty ( $comment )) {
 						// profanity check
