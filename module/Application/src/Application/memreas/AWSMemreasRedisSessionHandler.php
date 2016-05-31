@@ -67,7 +67,12 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
 		session_start ();
+		$rMemreasSidSession = $this->mRedis->getCache ( $sid );
+		//store to reset ttl
+		$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession );
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		
+		return $result;
 	}
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
