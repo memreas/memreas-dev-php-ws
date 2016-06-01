@@ -112,7 +112,7 @@ class ListComments {
 						$audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['audio_id'] );
 						// $audio_row = $this->dbAdapter->find ( 'Application\Entity\Media', $value ['media_id'] );
 						// $json_array = json_decode ( $audio_row ['metadata'], true );
-						//error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
+						// error_log("metadata-----> ".print_r($audio_row,true).PHP_EOL);
 						
 						if ($audio_row) {
 							$json_array = json_decode ( $audio_row->metadata, true );

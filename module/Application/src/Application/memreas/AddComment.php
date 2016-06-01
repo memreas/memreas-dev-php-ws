@@ -71,9 +71,7 @@ class AddComment {
 					$type;
 					if (! empty ( $comment )) {
 						// profanity check
-						if (! empty ( $comment )) {
-							$comment = $this->tester->censor ( $comment );
-						}
+						$comment = $this->tester->censor ( $comment );
 						$type = 'text';
 						$uuid = MUUID::fetchUUID ();
 						$tblComment = new \Application\Entity\Comment ();
