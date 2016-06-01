@@ -41,6 +41,8 @@ class AddComment {
 	public function exec() {
 		// error_log("Inside Add Comment exec()".PHP_EOL);
 		error_log ( "Inside Add Comment _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
+		$cm = __CLASS__ . __METHOD__;
+		MLog::addone($cm . __LINE__);
 		try {
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -52,24 +54,32 @@ class AddComment {
 			$audio_media_id = trim ( $data->addcomment->audio_media_id );
 			$message = "";
 			$time = time ();
+		MLog::addone($cm . __LINE__);
 			if (! isset ( $event_id ) || empty ( $event_id )) {
+		MLog::addone($cm . __LINE__);
 				$message = 'event id is empty';
 				$status = 'Failure';
 			} else if (empty ( $comment ) && empty ( $audio_media_id )) {
+		MLog::addone($cm . __LINE__);
 				throw new \Exception ( 'audio and text are empty' );
 			} else if (empty ( $user_id )) {
+		MLog::addone($cm . __LINE__);
 				throw new \Exception ( 'user id is empty' );
 			} else {
+		MLog::addone($cm . __LINE__);
 				$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 				$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
 				if (! $userOBj) {
+		MLog::addone($cm . __LINE__);
 					throw new \Exception ( 'user not found' );
 				} else if (! $eventOBj) {
+		MLog::addone($cm . __LINE__);
 					throw new \Exception ( 'event_id not found' );
 				} else {
-						
+		MLog::addone($cm . __LINE__);
 					$type;
 					if (! empty ( $comment )) {
+		MLog::addone($cm . __LINE__);
 						// profanity check
 						$comment = $this->tester->censor ( $comment );
 						$type = 'text';
@@ -86,8 +96,10 @@ class AddComment {
 						$tblComment->update_time = $time;
 						$this->dbAdapter->persist ( $tblComment );
 						$this->dbAdapter->flush ();
+		MLog::addone($cm . __LINE__);
 					}
 					if (! empty ( $audio_media_id )) {
+		MLog::addone($cm . __LINE__);
 						$type = 'audio';
 						$uuid = MUUID::fetchUUID ();
 						$tblComment = new \Application\Entity\Comment ();
@@ -102,6 +114,7 @@ class AddComment {
 						$tblComment->update_time = $time;
 						$this->dbAdapter->persist ( $tblComment );
 						$this->dbAdapter->flush ();
+		MLog::addone($cm . __LINE__);
 					}
 					$status = 'success';
 					$message = "Comment successfully added";
@@ -114,11 +127,14 @@ class AddComment {
 						$metaTag ['user'] [] = $user_id;
 						
 						// add tags
+		MLog::addone($cm . __LINE__);
 						$this->addTag->getEventname ( $comment, $metaTag );
 						// $this->addTag->getUserName($comment,$metaTag);
+		MLog::addone($cm . __LINE__);
 						$this->addTag->getKeyword ( $comment, $metaTag );
 						
 						// send notification owner of the event and all who commented.
+		MLog::addone($cm . __LINE__);
 						$qb = $this->dbAdapter->createQueryBuilder ();
 						$qb->select ( 'f.network,f.friend_id' );
 						$qb->from ( 'Application\Entity\Friend', 'f' );
@@ -128,6 +144,7 @@ class AddComment {
 						$qb->setParameter ( 2, $user_id );
 						
 						// Check if comment is made by owner or not
+		MLog::addone($cm . __LINE__);
 						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 						$efusers = $qb->getQuery ()->getResult ();
 						$nmessage = $userOBj->username . ' has commented on !' . $eventOBj->name . ' event';
@@ -139,6 +156,7 @@ class AddComment {
 									'friend_id' => $eventOBj->user_id 
 							);
 						}
+		MLog::addone($cm . __LINE__);
 						foreach ( $efusers as $ef ) {
 							/**
 							 * Build array and send notifications...
@@ -177,6 +195,7 @@ class AddComment {
 							}
 						} // end for loop
 						
+		MLog::addone($cm . __LINE__);
 						$this->notification->setMessage ( $comment );
 						$this->notification->type = \Application\Entity\Notification::ADD_COMMENT;
 						$this->notification->event_id = $event_id;
@@ -188,9 +207,11 @@ class AddComment {
 				}
 			}
 		} catch ( \Exception $e ) {
+		MLog::addone($cm . __LINE__);
 			$status = 'failure';
 			$message = $e->getMessage ();
 		}
+		MLog::addone($cm . __LINE__);
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
@@ -199,6 +220,7 @@ class AddComment {
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "</addcommentresponse>";
 		$xml_output .= "</xml>";
+		MLog::addone($cm . __LINE__);
 		error_log ( "Leaving Add Comment exec() - xml_output-->" . $xml_output . PHP_EOL );
 		echo $xml_output;
 	}
