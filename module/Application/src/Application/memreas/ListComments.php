@@ -122,8 +122,8 @@ class ListComments {
 								} else {
 									$audio_url = $json_array ['S3_files'] ['path'];
 								}
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.' $value [audio_id]--->', $value ['audio_id']);
-								Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$audio_url--->',$audio_url);
+								//Mlog::addone(__CLASS__.__METHOD__.__LINE__.' $value [audio_id]--->', $value ['audio_id']);
+								//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$audio_url--->',$audio_url);
 								$output .= "<audio_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $audio_url ) . "]]></audio_media_url>";
 							}
 						} else {
