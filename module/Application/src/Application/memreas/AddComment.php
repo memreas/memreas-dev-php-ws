@@ -41,6 +41,8 @@ class AddComment {
 	public function exec() {
 		// error_log("Inside Add Comment exec()".PHP_EOL);
 		error_log ( "Inside Add Comment _POST ['xml'] ---> " . $_POST ['xml'] . PHP_EOL );
+		$cm = __CLASS__ . __METHOD__;
+		
 		try {
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -52,28 +54,34 @@ class AddComment {
 			$audio_media_id = trim ( $data->addcomment->audio_media_id );
 			$message = "";
 			$time = time ();
+			
 			if (! isset ( $event_id ) || empty ( $event_id )) {
+				
 				$message = 'event id is empty';
 				$status = 'Failure';
 			} else if (empty ( $comment ) && empty ( $audio_media_id )) {
+				
 				throw new \Exception ( 'audio and text are empty' );
 			} else if (empty ( $user_id )) {
+				
 				throw new \Exception ( 'user id is empty' );
 			} else {
+				
 				$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 				$eventOBj = $this->dbAdapter->find ( 'Application\Entity\Event', $event_id );
 				if (! $userOBj) {
+					
 					throw new \Exception ( 'user not found' );
 				} else if (! $eventOBj) {
+					
 					throw new \Exception ( 'event_id not found' );
 				} else {
-						
+					
 					$type;
 					if (! empty ( $comment )) {
+						
 						// profanity check
-						if (! empty ( $comment )) {
-							$comment = $this->tester->censor ( $comment );
-						}
+						$comment = $this->tester->censor ( $comment );
 						$type = 'text';
 						$uuid = MUUID::fetchUUID ();
 						$tblComment = new \Application\Entity\Comment ();
@@ -90,6 +98,7 @@ class AddComment {
 						$this->dbAdapter->flush ();
 					}
 					if (! empty ( $audio_media_id )) {
+						
 						$type = 'audio';
 						$uuid = MUUID::fetchUUID ();
 						$tblComment = new \Application\Entity\Comment ();
@@ -116,11 +125,14 @@ class AddComment {
 						$metaTag ['user'] [] = $user_id;
 						
 						// add tags
+						
 						$this->addTag->getEventname ( $comment, $metaTag );
 						// $this->addTag->getUserName($comment,$metaTag);
+						
 						$this->addTag->getKeyword ( $comment, $metaTag );
 						
 						// send notification owner of the event and all who commented.
+						
 						$qb = $this->dbAdapter->createQueryBuilder ();
 						$qb->select ( 'f.network,f.friend_id' );
 						$qb->from ( 'Application\Entity\Friend', 'f' );
@@ -130,6 +142,7 @@ class AddComment {
 						$qb->setParameter ( 2, $user_id );
 						
 						// Check if comment is made by owner or not
+						
 						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 						$efusers = $qb->getQuery ()->getResult ();
 						$nmessage = $userOBj->username . ' has commented on !' . $eventOBj->name . ' event';
@@ -141,6 +154,7 @@ class AddComment {
 									'friend_id' => $eventOBj->user_id 
 							);
 						}
+						
 						foreach ( $efusers as $ef ) {
 							/**
 							 * Build array and send notifications...
@@ -190,9 +204,11 @@ class AddComment {
 				}
 			}
 		} catch ( \Exception $e ) {
+			
 			$status = 'failure';
 			$message = $e->getMessage ();
 		}
+		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
@@ -201,6 +217,7 @@ class AddComment {
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "</addcommentresponse>";
 		$xml_output .= "</xml>";
+		
 		error_log ( "Leaving Add Comment exec() - xml_output-->" . $xml_output . PHP_EOL );
 		echo $xml_output;
 	}
