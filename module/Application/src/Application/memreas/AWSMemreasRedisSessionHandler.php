@@ -294,6 +294,13 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				/**
 				 * End Session
 				 */
+				$sessionObj = $this->dbAdapter->getRepository ( "\Application\Entity\UserSession" )->findOneBy ( array (
+						'session_id' => session_id ()
+				) );
+				$sessionObj->end_time = $now;
+				
+				$this->dbAdapter->persist ( $sessionObj );
+				$this->dbAdapter->flush ();
 				$result = $this->endSession ();
 			}
 		} catch ( \Exception $e ) {
