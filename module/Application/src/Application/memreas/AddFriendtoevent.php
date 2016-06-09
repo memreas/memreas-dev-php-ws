@@ -203,13 +203,13 @@ class AddFriendtoevent {
 							$this->notification->setMessage ( $this->notification->type, $meta ['sent'] ['message'] );
 							$this->notification->send ();
 						}
-						$status = 'success';
+						$status = 'Success';
 						$message = 'friend add to event request sent';
 					} // endif (!empty($event_id) && $error == 0)
 				} // end foreach
 			} // end if (!empty($friend_array))
 		} catch ( \Exception $e ) {
-			$status = 'failure';
+			$status = 'Failure';
 			$message .= 'friend request not sent ->' . $e->getMessage ();
 		}
 		header ( "Content-type: text/xml" );
