@@ -178,8 +178,10 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		//
 		// Check Headers sent
 		//
-		
+
+		//
 		// Set Session vars
+		//
 		$_SESSION ['user_id'] = $user->user_id;
 		$_SESSION ['username'] = $user->username;
 		$_SESSION ['sid'] = session_id ();
@@ -189,21 +191,27 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['memreascookie'] = $memreascookie;
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
+		
+
+		//
+		// Set Profile Pic Url
+		//
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$_SESSION [profile_pic_meta]', $_SESSION ['profile_pic_meta'] );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$json_pic_meta', $json_pic_meta );
 		if ($_SESSION ['profile_pic_meta']) {
 			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
-				// Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - 79x80', $_SESSION ['profile_pic']);
 			} else {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['full'] );
-				// Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - full', $_SESSION ['profile_pic']);
 			}
 		} else {
 			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( null );
-			// Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - null', $_SESSION ['profile_pic']);
 		}
+		
+		//
+		// Store to user session table
+		//
+		$this->storeSession ( true );
+		
 		//
 		// handle x_memreas_chameleon on login $_SESSION is set in function
 		//
@@ -212,7 +220,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		
 		// Mlog::addone(__CLASS__.__METHOD__.':: $_SESSION[profile_pic]', $_SESSION['profile_pic']);
 		$this->setUIDLookup ();
-		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . ':: about to set $this->setMemreasCookieLookup for cookie::', $_SESSION ['memreascookie'] );
 			$this->setMemreasCookieLookup ( true );
@@ -294,6 +301,13 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				/**
 				 * End Session
 				 */
+				$sessionObj = $this->dbAdapter->getRepository ( "\Application\Entity\UserSession" )->findOneBy ( array (
+						'session_id' => session_id ()
+				) );
+				$sessionObj->end_time = $now;
+				
+				$this->dbAdapter->persist ( $sessionObj );
+				$this->dbAdapter->flush ();
 				$result = $this->endSession ();
 			}
 		} catch ( \Exception $e ) {
