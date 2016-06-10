@@ -7,7 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 
 class gcm {
