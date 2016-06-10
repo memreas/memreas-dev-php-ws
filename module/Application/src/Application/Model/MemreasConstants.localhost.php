@@ -80,7 +80,7 @@ class MemreasConstants {
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
 	const ADMIN_EMAIL = 'admin@memreas.com';
-	const GCM_SERVER_KEY = 'AIzaSyArHQUvC2rpXabM3g_T_VPKa82vCaCrslE';
+	const GCM_SERVER_KEY = 'AIzaSyAt0YAt_Nb9Q4zjaU0-epWeTejUVVh8lDI';
 	const COPYRIGHT = '&copy;2015 memreas, llc. all rights reserved.';
     const DCMA_CLAIM = 2; 
 	const DCMA_CLAIM_TEXT = 'claim reported'; 
