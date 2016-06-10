@@ -39,9 +39,11 @@ class apns {
 		$payload = json_encode ( $payload );
 		
 		$ctx = stream_context_create ();
-		stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/memreas_apns.pem' );
+		stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/' . MemreasConstants::APNS );
+		//stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/memreas_apns.pem' );
 		stream_context_set_option ( $ctx, 'ssl', 'passphrase', 'nopass' );
-		$fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+		//$fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+		$fp = stream_socket_client(MemreasConstants::APNS_GATEWAY, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
 		
 		//$fp = stream_socket_client ( 'ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx );
 		
