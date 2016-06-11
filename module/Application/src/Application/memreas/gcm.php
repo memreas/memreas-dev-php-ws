@@ -36,7 +36,7 @@ class gcm {
 						'user_id' => $user_id 
 				) 
 		);
-		// error_log("gcm fields ---> ".json_encode($fields).PHP_EOL);
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__, "gcm fields ---> ".json_encode($fields));
 		$headers = array (
 				// memreas key
 				'Authorization: key=' . MemreasConstants::GCM_SERVER_KEY,
@@ -48,7 +48,6 @@ class gcm {
 		
 		// Set the url, number of POST vars, POST data
 		curl_setopt ( $ch, CURLOPT_URL, $url );
-		
 		curl_setopt ( $ch, CURLOPT_POST, true );
 		curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
@@ -60,7 +59,7 @@ class gcm {
 		
 		// Close connection
 		curl_close ( $ch );
-		error_log ( "result ---> " . $result . PHP_EOL );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__, "gcm result ---> " . $result);
 		
 		return $result;
 	}
