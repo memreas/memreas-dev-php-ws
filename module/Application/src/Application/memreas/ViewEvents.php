@@ -25,6 +25,8 @@ class ViewEvents {
 	}
 	public function exec() {
 		$cm = __CLASS__ . __METHOD__;
+		//timestamping
+		Mlog::addone ( $cm . __LINE__, MNow::now() );
 		// Mlog::addone ( $cm . '::inbound xml-->', $_POST ['xml'] );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
@@ -49,6 +51,8 @@ class ViewEvents {
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		header ( "Content-type: text/xml" );
 		
+		//timestamping
+		Mlog::addone ( $cm . __LINE__, MNow::now() );
 		/*
 		 * ---------------------------my events----------------------------
 		 */
@@ -63,6 +67,8 @@ class ViewEvents {
 			 */
 			$result_event = $this->fetchMyEvents ( $user_id );
 			// Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
+		//timestamping
+		Mlog::addone ( $cm . __LINE__, MNow::now() );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -77,6 +83,8 @@ class ViewEvents {
 				}
 				if (count ( $result_event ) > 0) {
 					foreach ( $result_event as $row ) { // get media
+						//timestamping
+						Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
 						
 						$xml_output .= "<event>";
 						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
@@ -132,8 +140,11 @@ class ViewEvents {
 						// Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
 						
 						$xml_output .= "</event>";
+						//timestamping
+						Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
 					} // end for loop my events
 					$xml_output .= "</events>";
+					Mlog::addone ( $cm . __LINE__. '</events> end-->', MNow::now() );
 				}
 			} else {
 				$xml_output .= "<status>Failure</status>";
