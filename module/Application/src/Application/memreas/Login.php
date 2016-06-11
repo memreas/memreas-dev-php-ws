@@ -7,10 +7,9 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\SessionManager;
-use Zend\Session\Container;
+use Psr\Http\Message\ResponseInterface;
+use GuzzleHttp\Exception\RequestException;
 use Application\Model\MemreasConstants;
-use Application\memreas\MemreasSignedCookie;
 
 class Login {
 	protected $message_data;
@@ -41,12 +40,12 @@ class Login {
 	}
 	public function exec($sessHandler, $ipAddress = '') {
 		try {
-			$cm = __CLASS__.__METHOD__;
+			$cm = __CLASS__ . __METHOD__;
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			if ( !empty($data->clientIPAddress) ) {
-				Mlog::addone ( $cm . __LINE__.'::$data->clientIPAddress---->', (string) $data->clientIPAddress );
-				$ipAddress = (string) $data->clientIPAddress;
+			if (! empty ( $data->clientIPAddress )) {
+				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
+				$ipAddress = ( string ) $data->clientIPAddress;
 			}
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
@@ -58,12 +57,12 @@ class Login {
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
-			//Mlog::addone ( $cm . '::$this->username', $this->username );
-			//Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
-			//Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
-			//Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
-			//Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
-			//Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
+			// Mlog::addone ( $cm . '::$this->username', $this->username );
+			// Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
+			// Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
+			// Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
+			// Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
+			// Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
 			
 			$time = time ();
 			if (empty ( $this->username )) {
@@ -97,8 +96,8 @@ class Login {
 					 * Set the session for the user data...
 					 */
 					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie, $this->clientIPAddress );
-					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
-						
+					Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+					
 					/*
 					 * Check if the device is registered and update as needed
 					 */
@@ -106,8 +105,8 @@ class Login {
 					if (! empty ( $this->device_type )) {
 						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type );
 					}
-					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
-						
+					Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+					
 					/*
 					 * check if email is verified
 					 */
@@ -147,13 +146,49 @@ class Login {
 			$xml_output .= "<message>" . $e->getMessage () . "</message>";
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$e->getMessage ()--->', $e->getMessage ());
-			Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$e->getMessage ()--->', $e->getMessage () );
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		}
 		
 		header ( "Content-type: text/xml" );
 		echo $xml_output;
-		//error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
+		
+		//
+		// Login so cache user events...
+		//
+		$myViewEventsXML = '<xml><sid>' . session_id () . '</sid><viewevent><user_id>' . $_SESSION ['user_id'] . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
+		$friendsViewEventsXML = '<xml><sid>' . session_id () . '</sid><viewevent><user_id>' . $_SESSION ['user_id'] . '</user_id><is_my_event>0</is_my_event><is_friend_event>1</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
+		$publicViewEventsXML = '<xml><sid>' . session_id () . '</sid><viewevent><user_id>' . $_SESSION ['user_id'] . '</user_id><is_my_event>0</is_my_event><is_friend_event>0</is_friend_event><is_public_event>1</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
+		
+		//
+		// Fire background guzzles - do nothing with response
+		//
+		$this->fetchXMLAsync ( 'viewevents', $myViewEventsXML );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'viewevents $myViewEventsXML async sent');
+		$this->fetchXMLAsync ( 'viewevents', $friendsViewEventsXML );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'viewevents $friendsViewEventsXML async sent');
+		$this->fetchXMLAsync ( 'viewevents', $publicViewEventsXML );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'viewevents $publicViewEventsXML async sent');
+	}
+	public function fetchXMLAsync($action, $xml) {
+		$guzzle = new \GuzzleHttp\Client ();
+		$promise = $guzzle->postAsync( MemreasConstants::ORIGINAL_URL, [ 
+				'form_params' => [ 
+						'action' => $action,
+						'xml' => $xml 
+				] 
+		] );
+		$promise->then ( function (ResponseInterface $res) {
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'viewevents async response--->', $res->getBody());
+			//echo $res->getStatusCode () . "\n";
+			//do nothing ... we just want to cached on login
+		}, function (RequestException $e) {
+			//echo $e->getMessage () . "\n";
+			//echo $e->getRequest ()->getMethod ();
+			//do nothing ... something else went wrong.
+		} );
+		
+		// do nothing ... caching took place...
 	}
 }
 ?>
