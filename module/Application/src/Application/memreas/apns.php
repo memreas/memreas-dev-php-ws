@@ -7,7 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 
 class apns {
@@ -48,10 +47,12 @@ class apns {
 		//$fp = stream_socket_client ( 'ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx );
 		
 		if (! $fp) {
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "APNS Notifications FAILURE!");
 			// print "Failed to connect $err $errstr";
 			return;
 		} else {
-			// print "Notifications sent!";
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "APNS Notifications sent!");
+			// print ;
 		}
 		// Pass device key
 		foreach ( $this->device_token as $deviceToken ) {
