@@ -57,7 +57,8 @@ class ViewEvents {
 		 * ---------------------------my events----------------------------
 		 */
 		if ($is_my_event) {
-			Mlog::addone ( $cm . '::my event::', __LINE__ );
+		//timestamping
+			Mlog::addone ( $cm . __LINE__, MNow::now() );
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -417,7 +418,7 @@ class ViewEvents {
 					 */
 					$redis = AWSMemreasRedisCache::getHandle ();
 					$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = $redis->getProfilePhoto ( $public_event_row ['user_id'] );
-					if (! pic) {
+					if (!$pic) {
 						$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
 						if ($profile) {
 							$profile_image = json_decode ( $profile [0] ['metadata'], true );

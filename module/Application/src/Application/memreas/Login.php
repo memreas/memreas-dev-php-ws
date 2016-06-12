@@ -152,43 +152,6 @@ class Login {
 		
 		header ( "Content-type: text/xml" );
 		echo $xml_output;
-		
-		//
-		// Login so cache user events...
-		//
-		$myViewEventsXML = '<xml><sid>' . session_id () . '</sid><viewevent><user_id>' . $_SESSION ['user_id'] . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
-		$friendsViewEventsXML = '<xml><sid>' . session_id () . '</sid><viewevent><user_id>' . $_SESSION ['user_id'] . '</user_id><is_my_event>0</is_my_event><is_friend_event>1</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
-		$publicViewEventsXML = '<xml><sid>' . session_id () . '</sid><viewevent><user_id>' . $_SESSION ['user_id'] . '</user_id><is_my_event>0</is_my_event><is_friend_event>0</is_friend_event><is_public_event>1</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
-		
-		//
-		// Fire background guzzles - do nothing with response
-		//
-		$this->fetchXMLAsync ( 'viewevents', $myViewEventsXML );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'viewevents $myViewEventsXML async sent');
-		$this->fetchXMLAsync ( 'viewevents', $friendsViewEventsXML );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'viewevents $friendsViewEventsXML async sent');
-		$this->fetchXMLAsync ( 'viewevents', $publicViewEventsXML );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'viewevents $publicViewEventsXML async sent');
-	}
-	public function fetchXMLAsync($action, $xml) {
-		$guzzle = new \GuzzleHttp\Client ();
-		$promise = $guzzle->postAsync( MemreasConstants::ORIGINAL_URL, [ 
-				'form_params' => [ 
-						'action' => $action,
-						'xml' => $xml 
-				] 
-		] );
-		$promise->then ( function (ResponseInterface $res) {
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'viewevents async response--->', $res->getBody());
-			//echo $res->getStatusCode () . "\n";
-			//do nothing ... we just want to cached on login
-		}, function (RequestException $e) {
-			//echo $e->getMessage () . "\n";
-			//echo $e->getRequest ()->getMethod ();
-			//do nothing ... something else went wrong.
-		} );
-		
-		// do nothing ... caching took place...
 	}
 }
 ?>
