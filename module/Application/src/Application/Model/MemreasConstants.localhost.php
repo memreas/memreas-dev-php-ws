@@ -31,9 +31,11 @@ class MemreasConstants {
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
+	//1 hour
 	const REDIS_CACHE_SESSION_TTL = 3600;
-	const REDIS_CACHE_TTL = 7200;
-	// 1 hour
+	// 1day 
+	const REDIS_CACHE_TTL = (3600*24);
+	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600*24);
 	
 	// memreasdevsec related
 	const S3BUCKET = "memreasdevsec";

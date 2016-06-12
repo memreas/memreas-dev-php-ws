@@ -69,7 +69,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		session_start ();
 		$rMemreasSidSession = $this->mRedis->getCache ( $sid );
 		//store to reset ttl
-		$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession );
+		$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession, MemreasConstants::REDIS_CACHE_SESSION_DEVICE_TTL );
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 		
 		return $result;
@@ -90,7 +90,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$fetchChameleon->setChameleon ();
 		
 		//set back to cache to reset ttl
-		$result = $this->mRedis->setCache ('memreascookie::' . $memreascookie, $rMemreasCookieSession);
+		$result = $this->mRedis->setCache ('memreascookie::' . $memreascookie, $rMemreasCookieSession, MemreasConstants::REDIS_CACHE_SESSION_TTL);
 		
 		return $result;
 		
