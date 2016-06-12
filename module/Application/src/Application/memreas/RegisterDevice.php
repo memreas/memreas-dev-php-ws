@@ -7,10 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\MUUID;
-
 class RegisterDevice {
 	protected $message_data;
 	protected $memreas_tables;

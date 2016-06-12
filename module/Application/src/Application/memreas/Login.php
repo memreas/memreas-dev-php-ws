@@ -7,10 +7,6 @@
  */
 namespace Application\memreas;
 
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
-use Application\Model\MemreasConstants;
-
 class Login {
 	protected $message_data;
 	protected $memreas_tables;
@@ -20,6 +16,7 @@ class Login {
 	protected $username;
 	protected $password;
 	protected $device_id;
+	protected $device_token;
 	protected $device_type;
 	protected $memreascookie;
 	protected $clientIPAddress;
@@ -54,6 +51,7 @@ class Login {
 			$this->username = trim ( $data->login->username );
 			$this->device_id = (! empty ( $data->login->device_id )) ? trim ( $data->login->device_id ) : '';
 			$this->device_type = (! empty ( $data->login->device_type )) ? trim ( $data->login->device_type ) : '';
+			$this->device_token = (! empty ( $data->login->device_token )) ? trim ( $data->login->device_token ) : '';
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
@@ -101,11 +99,13 @@ class Login {
 					/*
 					 * Check if the device is registered and update as needed
 					 */
-					$device_token = '';
+					$deviceId = (!empty($this->device_token)) $this->device_token : $this->device_id; 
 					if (! empty ( $this->device_type )) {
-						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type );
+						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $deviceId, $this->device_type );
 					}
-					Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$row [0]->user_id--->' . $row [0]->user_id);
+					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$deviceId--->'.$deviceId);
+					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$this->device_type---->'.$this->device_type);
 					
 					/*
 					 * check if email is verified
