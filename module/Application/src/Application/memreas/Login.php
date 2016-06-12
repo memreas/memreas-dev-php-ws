@@ -99,7 +99,7 @@ class Login {
 					/*
 					 * Check if the device is registered and update as needed
 					 */
-					$deviceId = (!empty($this->device_token)) $this->device_token : $this->device_id; 
+					$deviceId = (!empty($this->device_token)) ? $this->device_token : $this->device_id; 
 					if (! empty ( $this->device_type )) {
 						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $deviceId, $this->device_type );
 					}
