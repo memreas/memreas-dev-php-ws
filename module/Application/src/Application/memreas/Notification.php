@@ -66,9 +66,15 @@ class Notification {
 				foreach ( $devices as $device ) {
 					error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
 					if ($device ['device_type'] == \Application\Entity\Device::ANDROID) {
+						//
+						// Android GCM
+						//
 						error_log ( "Notification::Inside send()->adding to Android list" . PHP_EOL );
 						$this->gcm->addDevice ( $device ['device_token'] );
 					} else if ($user ['device_type'] == \Application\Entity\Device::APPLE) {
+						//
+						// Apple APNS
+						//
 						error_log ( "Notification::Inside send()->adding to Apple list" . PHP_EOL );
 						$this->apns->addDevice ( $device ['device_token'] );
 					}
