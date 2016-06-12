@@ -26,6 +26,9 @@ use Application\memreas\ClearAllNotification;
 use Application\memreas\CountListallmedia;
 use Application\memreas\CountViewevent;
 use Application\memreas\CreateGroup;
+use Application\memreas\DcmaCounterClaim;
+use Application\memreas\DcmaList;
+use Application\memreas\DcmaReportViolation;
 use Application\memreas\DeletePhoto;
 use Application\memreas\Download;
 use Application\memreas\EditEvent;
@@ -84,13 +87,10 @@ use Application\memreas\ViewMediadetails;
 use Application\Model\MemreasConstants;
 use GuzzleHttp\Client;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
-use Application\memreas\DcmaList;
-use Application\memreas\DcmaCounterClaim;
-use Application\memreas\DcmaReportViolation;
 
 // Stripe Web Services
+use Application\memreas\FetchChameleon;
 use Application\memreas\StripeWS\GetAccountDetail;
 use Application\memreas\StripeWS\GetOrder;
 use Application\memreas\StripeWS\GetOrderHistory;
@@ -99,8 +99,6 @@ use Application\memreas\StripeWS\GetPlansStatic;
 use Application\memreas\StripeWS\MakePayout;
 use Application\memreas\StripeWS\PaymentsProxy;
 use Application\memreas\StripeWS\Refund;
-use Application\memreas\FetchChameleon;
-use Zend\View\ViewEvent;
 
 class IndexController extends AbstractActionController {
 	protected $xml_in;
@@ -229,9 +227,8 @@ class IndexController extends AbstractActionController {
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - profile pic upload for registration
-		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id )) {
+		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id ) && ! (isset ( $data->memreascookie ) || isset ( $data->sid ))) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
-			// do nothing - fetching token to upload profile pic
 		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic
@@ -286,9 +283,11 @@ class IndexController extends AbstractActionController {
 				 * Cache approach - N/a
 				 */
 			} else if ($actionname == 'fetchchameleon') {
-				
 				$fetchChameleon = new FetchChameleon ();
 				$fetchChameleon->exec ();
+			} else if ($actionname == "memreas_tvm") {
+				$memreastvm = new Memreastvm ( $message_data, $memreas_tables, $this->sm );
+				$result = $memreastvm->exec ();
 			} else if ($actionname == "login") {
 				$login = new Login ( $message_data, $memreas_tables, $this->sm );
 				$login->exec ( $this->sessHandler, $this->fetchUserIPAddress () );
@@ -534,7 +533,7 @@ class IndexController extends AbstractActionController {
 				}
 				
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-				if (! $result || empty ( $result )) {
+				if (! $result) {
 					$listallmedia = new ListAllmedia ( $message_data, $memreas_tables, $this->sm );
 					$result = $listallmedia->exec ();
 					$cache_me = true;
@@ -593,20 +592,32 @@ class IndexController extends AbstractActionController {
 				 * fetch and cache...
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				if (! empty ( $data->viewevent->is_public_event ) && $data->viewevent->is_public_event) {
+				if ($data->viewevent->is_public_event == '1') {
 					$cache_id = "public";
-				} else if (! empty ( $data->viewevent->is_friend_event ) && $data->viewevent->is_friend_event) {
+					$warming = $warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
+				} else if ($data->viewevent->is_friend_event == '1') {
 					/*
 					 * -
 					 * friend events includes public
 					 */
 					$cache_id = "is_friend_event_" . trim ( $data->viewevent->user_id );
-				} else if (! empty ( $data->viewevent->is_my_event ) && $data->viewevent->is_my_event) {
+					$warming = $warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+				} else if ($data->viewevent->is_my_event == '1') {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
+					$warming = $warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
 				}
-				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
 				
-				if (! $result || empty ( $result )) {
+				//
+				// check if warming, if so give it some time
+				//
+				if ($warming) {
+					sleep ( 3 );
+				}
+				//
+				// go to database if !result - deadlock race condition???
+				//
+				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+				if (! $result) {
 					// Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
 					$result = $viewevents->exec ();
@@ -668,11 +679,6 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "snsProcessMediaPublish") {
 				$snsProcessMediaPublish = new snsProcessMediaPublish ( $message_data, $memreas_tables, $this->sm );
 				$result = $snsProcessMediaPublish->exec ();
-			} else if ($actionname == "memreas_tvm") {
-				// Mlog::addone ( $cm . __LINE__, 'Enter ' . $actionname );
-				$memreastvm = new Memreastvm ( $message_data, $memreas_tables, $this->sm );
-				$result = $memreastvm->exec ();
-				// Mlog::addone ( $cm . __LINE__ . '::Exit ' . $actionname . ' result--->', $result );
 			} else if ($actionname == "uploadadvertisement") {
 				$uploadadvertisement = new UploadAdvertisement ( $message_data, $memreas_tables, $this->sm );
 				$result = $uploadadvertisement->exec ();
@@ -1642,9 +1648,15 @@ class IndexController extends AbstractActionController {
 						break;
 				}
 			} // end actions
+			  
+			//
+			  // Use these for background processes below...
+			  //
+			$user_id = $_SESSION ? $_SESSION ['user_id'] : "";
+			$username = $_SESSION ? $_SESSION ['username'] : "";
 			
 			/**
-			 * - fetch buffer and clean
+			 * - fetch buffer, clean
 			 */
 			$output = trim ( ob_get_clean () );
 			
@@ -1696,10 +1708,7 @@ class IndexController extends AbstractActionController {
 			);
 			$json = json_encode ( $json_arr );
 			
-			header ( 'Content-Type: application/json' );
-			// callback json
-			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "response for $actionname with callback--->", $callback . "(" . $json . ")" );
-			echo $callback . "(" . $json . ")";
+			$response = $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
 			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
@@ -1723,37 +1732,84 @@ class IndexController extends AbstractActionController {
 						$output = $data->asXML ();
 					}
 				}
+				//
+				// Store memreascokie for guzzle calls
+				//
+				$memreascookie = $data->memreascookie;
+			} else {
+				$sid = session_id ();
 			}
 			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
-			echo $output;
+			$response = $output;
+		}
+		
+		//
+		// Send response and close session
+		//
+		if ($callback) {
+			$this->returnResponse ( $response, true );
+		} else {
+			$this->returnResponse ( $response );
 		}
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		
 		/**
-		 * close session for ajax
-		 */
-		$user_id = $_SESSION ['user_id'];
-		$username = $_SESSION ['username'];
-		session_write_close ();
-		
-		/**
 		 * Post Processing and Cache Warming section...
 		 */
 		if (MemreasConstants::REDIS_SERVER_USE) {
-			// Return the status code here so this process continues and the user receives
-			// response
-			try {
-				// http_response_code ( 200 );
-				// header ( 'Connection: close' );
-				// header ( 'Content-Length: ' . ob_get_length () );
-				ob_end_flush (); // Strange behaviour, will not work
-				flush (); // Unless both are called !
-			} catch ( Exception $e ) {
-				// Do nothing...
-			}
 			
+			//
+			// viewevents cache handling...
+			//
+			$cacheViewEvents = true;
+			if (! empty ( $memreascookie )) {
+				$xmlStart = '<xml><memreascookie>' . $memreascookie . '</memreascookie>';
+			} else if (! empty ( $sid )) {
+				$xmlStart = '<xml><sid>' . $sid . '</sid>';
+			} else {
+				$cacheViewEvents = false;
+			}
+			if ($cacheViewEvents) {
+				
+				if (! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) {
+					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
+					if (! $warming_viewevents_is_my_event_user_id) {
+						
+						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '1' );
+						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
+						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
+						$result = $viewevents->exec ( false );
+						$this->redis->setCache ( 'viewevents_is_my_event_' . $user_id, $result );
+						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '0' );
+					}
+				}
+				if (! $this->redis->hasSet ( 'viewevents_is_friend_event_' . $user_id )) {
+					$warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+					if (! $warming_viewevents_is_friend_event_user_id) {
+						
+						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '1' );
+						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>1</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
+						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
+						$result = $viewevents->exec ( false );
+						$this->redis->setCache ( 'viewevents_is_friend_event_' . $user_id, $result );
+						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '0' );
+					}
+				}
+				if (! $this->redis->hasSet ( 'viewevents_public' )) {
+					$warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
+					if (! $warming_viewevents_public) {
+						
+						$this->redis->setCache ( 'warming_viewevents_public', '1' );
+						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>0</is_friend_event><is_public_event>1</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
+						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
+						$result = $viewevents->exec ( false );
+						$this->redis->setCache ( 'viewevents_public', $result );
+						$this->redis->setCache ( 'warming_viewevents_public', '0' );
+					}
+				}
+			} // end if ($cacheViewEvents)
 			if (! $this->redis->hasSet ( '@person' )) {
 				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
 				// Now continue processing and warm the cache for @person
@@ -1769,49 +1825,54 @@ class IndexController extends AbstractActionController {
 				// warm the cache for #hashtag
 				$this->redis->warmHashTagSet ( $user_id );
 			}
-			if ($actionname == 'login') {
-				ob_start ();
-				if (!$this->redis->hasSet ( 'viewevents_public' )) {
-					$warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
-					if (! $warming_viewevents_public) {
-						$this->redis->setCache ( 'warming_viewevents_public', '1' );
-						$_POST ['xml'] = '<xml><username>' . $username . '</username><viewevent><user_id>' . $user_id . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
-						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
-						$result = $viewevents->exec ();
-						$this->redis->setCache ( viewevents_public, $result );
-						$this->redis->setCache ( 'warming_viewevents_public', '0' );
-					}
-				}
-				if (!$this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) {
-					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
-					if (! $warming_viewevents_is_my_event_user_id) {
-						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '1' );
-						$_POST ['xml'] = '<xml><username>' . $username . '</username><viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>1</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
-						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
-						$result = $viewevents->exec ();
-						$this->redis->setCache ( 'viewevents_is_my_event_' . $user_id, $result );
-						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '0' );
-					}
-				}
-				if (!$this->redis->hasSet ( 'viewevents_is_friend_event_' . $user_id )) {
-					$warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
-					if (! $warming_viewevents_is_friend_event_user_id) {
-						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '1' );
-						$_POST ['xml'] = '<xml><username>' . $username . '</username><viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>0</is_friend_event><is_public_event>1</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
-						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
-						$result = $viewevents->exec ();
-						$this->redis->setCache ( 'viewevents_is_friend_event_' . $user_id, $result );
-						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '0' );
-					}
-				}
-				ob_end_clean ();
-			} // end login if
 		}
 		// Need to exit here to avoid ZF2 framework view.
 		
 		exit ();
 	}
 	// end indexcontroller...
+	
+	//
+	// Supporting functions
+	//
+	protected function returnResponse($response, $json = false) {
+		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
+		// buffer all upcoming output
+		ignore_user_abort ( true ); // keeps php from stopping process
+		ob_start ();
+		header ( 'HTTP/1.0 200 OK' );
+		if ($json) {
+			header ( 'Content-Type: application/json' );
+		}
+		echo $response;
+		// get the size of the output
+		$size = ob_get_length ();
+		// send headers to tell the browser to close the connection
+		// http_response_code ( 200 );
+		header ( 'HTTP/1.0 200 OK' );
+		header ( "Content-Length: $size" );
+		header ( 'Connection: close' );
+		
+		// flush all output
+		ob_end_flush ();
+		ob_flush ();
+		flush ();
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::flushed' );
+		// if you're using sessions, this prevents subsequent requests
+		// from hanging while the background process executes
+		if (session_id ()) {
+			session_write_close ();
+		}
+		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::session closed' );
+		// check headers
+		if (headers_sent ()) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "Success: response header 200 sucessfully sent" );
+		} else {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "FAIL: response header 200 NOT sucessfully sent" );
+		}
+	}
 	public function requiresSecureAction($actionname) {
 		/*
 		 * Check action to see if session is needed...
@@ -1875,6 +1936,11 @@ class IndexController extends AbstractActionController {
 						$sid_success = true;
 						// Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true' );
 					} else {
+						//
+						// if cookie is bad logout
+						//
+						$logout = new LogOut ( $message_data, $memreas_tables, $this->sm );
+						$logout->exec ( $this->sessHandler );
 						// Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false' );
 					}
 				} else if (! empty ( $data->sid )) {

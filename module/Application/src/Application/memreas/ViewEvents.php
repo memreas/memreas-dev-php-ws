@@ -23,7 +23,7 @@ class ViewEvents {
 		$this->comments = new ListComments ( $message_data, $memreas_tables, $service_locator );
 		$this->url_signer = new MemreasSignedURL ();
 	}
-	public function exec() {
+	public function exec($setHeader=true) {
 		$cm = __CLASS__ . __METHOD__;
 		//timestamping
 		Mlog::addone ( $cm . __LINE__, MNow::now() );
@@ -49,7 +49,12 @@ class ViewEvents {
 		$totlecount = 0;
 		$from = ($page - 1) * $limit;
 		$date = strtotime ( date ( 'd-m-Y' ) );
-		header ( "Content-type: text/xml" );
+		//
+		// Handle caching for login
+		//
+		if ($setHeader) {
+			header ( "Content-type: text/xml" );
+		}
 		
 		//timestamping
 		Mlog::addone ( $cm . __LINE__, MNow::now() );
@@ -68,8 +73,8 @@ class ViewEvents {
 			 */
 			$result_event = $this->fetchMyEvents ( $user_id );
 			// Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
-		//timestamping
-		Mlog::addone ( $cm . __LINE__, MNow::now() );
+			//timestamping
+			//Mlog::addone ( $cm . __LINE__, MNow::now() );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -85,7 +90,7 @@ class ViewEvents {
 				if (count ( $result_event ) > 0) {
 					foreach ( $result_event as $row ) { // get media
 						//timestamping
-						Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
+						//Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
 						
 						$xml_output .= "<event>";
 						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
@@ -142,7 +147,7 @@ class ViewEvents {
 						
 						$xml_output .= "</event>";
 						//timestamping
-						Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
+						//Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
 					} // end for loop my events
 					$xml_output .= "</events>";
 					Mlog::addone ( $cm . __LINE__. '</events> end-->', MNow::now() );
@@ -491,7 +496,12 @@ class ViewEvents {
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
 		// error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
+		
+		//
+		// Handle caching for login
+		//
 		echo $xml_output;
+		return $xml_output;
 	} // end exec()
 	
 	/**
