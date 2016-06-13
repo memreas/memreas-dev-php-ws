@@ -101,7 +101,7 @@ class Login {
 					 * Check if the device is registered and update as needed
 					 */
 					if (! empty ( $this->device_type )) {
-						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $deviceId, $this->device_type, $this->device_token );
+						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type, $this->device_token );
 					}
 					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$row [0]->user_id--->' . $row [0]->user_id);
 					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$this->device_id--->'.$this->device_id);

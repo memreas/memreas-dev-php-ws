@@ -48,8 +48,8 @@ class RegisterDevice {
 				$device_token = $device->device_token;
 				if ($device->device_id == $device_id) {
 					$device_found = true;
-					// error_log ( "found device device_id----->" . $device_id . PHP_EOL );
-					// error_log ( "found device device_token----->" . $device_token . PHP_EOL );
+					error_log ( "found device device_id----->" . $device_id . PHP_EOL );
+					error_log ( "found device device_token----->" . $device_token . PHP_EOL );
 					break;
 				}
 			}
@@ -73,11 +73,11 @@ class RegisterDevice {
 		try {
 			error_log ( 'registerdevice.exec()' . PHP_EOL );
 			if ($isInternalJSON) {
-				// error_log ( 'registerdevice.exec()-> internaJSON' . $internaJSON . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> internaJSON' . $internaJSON . PHP_EOL );
 				$data = json_decode ( $internaJSON );
 				error_log ( 'registerdevice.exec()-> data' . print_r ( $data, true ) . PHP_EOL );
 			} else {
-				// error_log ( 'registerdevice.exec()-> _POST [xml]' . $_POST ['xml'] . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> _POST [xml]' . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			}
 			
