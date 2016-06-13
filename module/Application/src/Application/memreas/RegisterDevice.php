@@ -39,7 +39,7 @@ class RegisterDevice {
 		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"checkdevice_query->getSql()--->" . $checkdevice_query->getSql ());
 		$device_found_result = $checkdevice_query->getResult ();
 		
-		if (empty ( $device_found_result )) {
+		if (empty ( $device_found_result ) && (empty($device_token_login)) ) {
 			$device_token = '';
 		} else {
 			$device_found = false;
