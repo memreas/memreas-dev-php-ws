@@ -111,11 +111,13 @@ class RegisterDevice {
 				$user_device_type_query = $this->dbAdapter->createQuery ( $user_device_type_sql );
 				$devicetype_count = $user_device_type_query->getSingleScalarResult ();
 				
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'$devicetype_count---->' . $devicetype_count);
 				if ($devicetype_count > 0) {
 					$devicetype_lastused_update_sql = "UPDATE Application\Entity\Device d
 							SET d.last_used = 0
 							WHERE d.user_id = '$user_id'
 							AND d.device_type = '$device_type'";
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'$devicetype_lastused_update_sql---->' . $devicetype_lastused_update_sql);
 					$devicetype_lastused_update_query = $this->dbAdapter->createQuery ( $devicetype_lastused_update_sql );
 					$devicetype_lastused_update_result = $devicetype_lastused_update_query->getResult ();
 				}
@@ -135,8 +137,8 @@ class RegisterDevice {
 					$tblDevice->device_token = $device_token;
 					$tblDevice->device_type = $device_type;
 					$tblDevice->last_used = 1;
-					$tblDevice->create_time = $time;
-					$tblDevice->update_time = $time;
+					$tblDevice->create_time = (string) $time;
+					$tblDevice->update_time = (string) $time;
 					$this->dbAdapter->persist ( $tblDevice );
 					$this->dbAdapter->flush ();
 					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->executed insert');
