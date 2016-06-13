@@ -28,14 +28,15 @@ class RegisterDevice {
 				WHERE device.user_id='$user_id'
 				AND device.device_type='$device_type'";
 		
-		// error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
-		// error_log ( "user_id--->" . $user_id . PHP_EOL );
-		// error_log ( "device_id--->" . $device_id . PHP_EOL );
-		// error_log ( "device_type--->" . $device_type . PHP_EOL );
-		// error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+		error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+		error_log ( "user_id--->" . $user_id . PHP_EOL );
+		error_log ( "device_id--->" . $device_id . PHP_EOL );
+		error_log ( "device_type--->" . $device_type . PHP_EOL );
+		error_log ( "device_type--->" . $device_token_login . PHP_EOL );
+		error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
 		
 		$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-		// error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
+		error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
 		$device_found_result = $checkdevice_query->getResult ();
 		
 		if (empty ( $device_found_result )) {
@@ -53,7 +54,7 @@ class RegisterDevice {
 				}
 			}
 			if (!$device_found) {
-				// error_log ( "device not found" . PHP_EOL );
+				error_log ( "device not found registering $device_type $device_token_login" . PHP_EOL );
 				$device_array = array (
 						'registerdevice' => array (
 								'user_id' => $user_id,
