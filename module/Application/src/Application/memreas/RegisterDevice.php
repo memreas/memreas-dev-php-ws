@@ -28,18 +28,18 @@ class RegisterDevice {
 				WHERE device.user_id='$user_id'
 				AND device.device_type='$device_type'";
 		
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"q_checkdevice--->" . $q_checkdevice);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"user_id--->" . $user_id);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"device_id--->" . $device_id);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"device_type--->" . $device_type);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"device_type--->" . $device_token_login);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"q_checkdevice--->" . $q_checkdevice);
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "q_checkdevice--->" . $q_checkdevice );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "user_id--->" . $user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "device_id--->" . $device_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "device_type--->" . $device_type );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "device_type--->" . $device_token_login );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "q_checkdevice--->" . $q_checkdevice );
 		
 		$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"checkdevice_query->getSql()--->" . $checkdevice_query->getSql ());
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () );
 		$device_found_result = $checkdevice_query->getResult ();
 		
-		if (empty ( $device_found_result ) && (empty($device_token_login)) ) {
+		if (empty ( $device_found_result ) && (empty ( $device_token_login ))) {
 			$device_token = '';
 		} else {
 			$device_found = false;
@@ -48,13 +48,13 @@ class RegisterDevice {
 				$device_token = $device->device_token;
 				if ($device->device_id == $device_id) {
 					$device_found = true;
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,"found device device_id----->" . $device_id);
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,"found device device_token----->" . $device_token);
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "found device device_id----->" . $device_id );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "found device device_token----->" . $device_token );
 					break;
 				}
 			}
-			if (!$device_found) {
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,"device not found registering $device_type $device_token_login");
+			if (! $device_found) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "device not found registering $device_type $device_token_login" );
 				$device_array = array (
 						'registerdevice' => array (
 								'user_id' => $user_id,
@@ -71,13 +71,13 @@ class RegisterDevice {
 	// end checkDevice
 	public function exec($isInternalJSON = false, $internaJSON = '') {
 		try {
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()');
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()' );
 			if ($isInternalJSON) {
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()-> internaJSON' . $internaJSON);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()-> internaJSON' . $internaJSON );
 				$data = json_decode ( $internaJSON );
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()-> data' . print_r ( $data, true ));
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()-> data' . print_r ( $data, true ) );
 			} else {
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()-> _POST [xml]' . $_POST ['xml']);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()-> _POST [xml]' . $_POST ['xml'] );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			}
 			
@@ -85,10 +85,10 @@ class RegisterDevice {
 			$device_id = trim ( $data->registerdevice->device_id );
 			$device_token = trim ( $data->registerdevice->device_token );
 			$device_type = trim ( $data->registerdevice->device_type );
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->user_id' . $user_id);
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->device_id' . $device_id);
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->device_token' . $device_token);
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->device_type' . $device_type);
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->user_id' . $user_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->device_id' . $device_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->device_token' . $device_token );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->device_type' . $device_type );
 			
 			$time = time ();
 			if (! empty ( $user_id ) && ! empty ( $device_token ) && ! empty ( $device_type )) {
@@ -111,39 +111,44 @@ class RegisterDevice {
 				$user_device_type_query = $this->dbAdapter->createQuery ( $user_device_type_sql );
 				$devicetype_count = $user_device_type_query->getSingleScalarResult ();
 				
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'$devicetype_count---->' . $devicetype_count);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$devicetype_count---->' . $devicetype_count );
 				if ($devicetype_count > 0) {
 					$devicetype_lastused_update_sql = "UPDATE Application\Entity\Device d
 							SET d.last_used = 0
 							WHERE d.user_id = '$user_id'
 							AND d.device_type = '$device_type'";
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'$devicetype_lastused_update_sql---->' . $devicetype_lastused_update_sql);
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$devicetype_lastused_update_sql---->' . $devicetype_lastused_update_sql );
 					$devicetype_lastused_update_query = $this->dbAdapter->createQuery ( $devicetype_lastused_update_sql );
 					$devicetype_lastused_update_result = $devicetype_lastused_update_query->getResult ();
 				}
 				
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$device_id---->' . $device_id);
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$device_token---->' . $device_token);
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$user_id---->' . $user_id);
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$device_type---->' . $device_type);
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$last_used---->1');
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$create_time---->' . $time);
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'tblDevice->$update_time---->' . $time);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_id---->' . $device_id );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_token---->' . $device_token );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$user_id---->' . $user_id );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_type---->' . $device_type );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$last_used---->1' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$create_time---->' . $time );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$update_time---->' . $time );
 				if (! $device_exists) {
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->inside !$device_exists');
-					$tblDevice = new \Application\Entity\Device ();
-					$tblDevice->device_id = $device_id;
-					$tblDevice->user_id = $user_id;
-					$tblDevice->device_token = $device_token;
-					$tblDevice->device_type = $device_type;
-					$tblDevice->last_used = 1;
-					$tblDevice->create_time = (string) $time;
-					$tblDevice->update_time = (string) $time;
-					$this->dbAdapter->persist ( $tblDevice );
-					$this->dbAdapter->flush ();
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->executed insert');
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->inside !$device_exists' );
+					try {
+						$tblDevice = new \Application\Entity\Device ();
+						$tblDevice->device_id = $device_id;
+						$tblDevice->user_id = $user_id;
+						$tblDevice->device_token = $device_token;
+						$tblDevice->device_type = $device_type;
+						$tblDevice->last_used = 1;
+						$tblDevice->create_time = ( string ) $time;
+						$tblDevice->update_time = ( string ) $time;
+						$this->dbAdapter->persist ( $tblDevice );
+						$this->dbAdapter->flush ();
+					} catch ( Doctrine_Connection_Exception $e ) {
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Code : ' . $e->getPortableCode ());
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Message : ' . $e->getPortableMessage ());
+					}
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->executed insert' );
 				} else {
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->inside update');
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->inside update' );
 					
 					/**
 					 * Update current user login as last used on this device
@@ -158,7 +163,7 @@ class RegisterDevice {
 					// error_log('$deviceexists_update_sql----->'.$deviceexists_update_sql.PHP_EOL);
 					$deviceexists_update_query = $this->dbAdapter->createQuery ( $deviceexists_update_sql );
 					$deviceexists_update_result = $deviceexists_update_query->getResult ();
-					Mlog::addone(__CLASS__.__METHOD__.__LINE__,'registerdevice.exec()->executed update');
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->executed update' );
 				}
 			}
 			$status = 'success';
@@ -173,7 +178,7 @@ class RegisterDevice {
 				$xml_output .= "</registerdeviceresponse>";
 				$xml_output .= "</xml>";
 				echo $xml_output;
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,"RegisterDevice ---> xml_output ----> " . $xml_output);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "RegisterDevice ---> xml_output ----> " . $xml_output );
 			}
 		} catch ( \Exception $e ) {
 			if (! $isInternalJSON) {
@@ -185,7 +190,7 @@ class RegisterDevice {
 				$xml_output .= "</registerdeviceresponse>";
 				$xml_output .= "</xml>";
 				echo $xml_output;
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__,"RegisterDevice ---> xml_output ----> " . $xml_output);
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "RegisterDevice ---> xml_output ----> " . $xml_output );
 			}
 		}
 	}
