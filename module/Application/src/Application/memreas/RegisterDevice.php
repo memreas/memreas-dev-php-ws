@@ -18,7 +18,7 @@ class RegisterDevice {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
-	public function checkDevice($user_id, $device_id, $device_type) {
+	public function checkDevice($user_id, $device_id, $device_type, $device_token_login = '') {
 		/*
 		 * Check if device is inserted and has registration id for type...
 		 * If the device exists use the regId else return empty reg id and let device obtain reg id and call register device...
@@ -58,7 +58,7 @@ class RegisterDevice {
 						'registerdevice' => array (
 								'user_id' => $user_id,
 								'device_id' => $device_id,
-								'device_token' => $device_token,
+								'device_token' => $device_token_login,
 								'device_type' => $device_type 
 						) 
 				);

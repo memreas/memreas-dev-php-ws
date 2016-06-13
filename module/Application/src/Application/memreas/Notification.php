@@ -7,7 +7,6 @@
  */
 namespace Application\memreas;
 
-use Application\Model\MemreasConstants as MC;
 use \Exception;
 
 class Notification {
