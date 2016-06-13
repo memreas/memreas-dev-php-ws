@@ -104,9 +104,10 @@ class Login {
 						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $deviceId, $this->device_type, $this->device_token );
 					}
 					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$row [0]->user_id--->' . $row [0]->user_id);
-					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$deviceId--->'.$deviceId);
+					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$this->device_id--->'.$this->device_id);
 					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$this->device_type---->'.$this->device_type);
-					
+					Mlog::addone ( __CLASS__ . __METHOD__.__LINE__ , '$this->device_token---->'.$this->device_token);
+						
 					/*
 					 * check if email is verified
 					 */

@@ -52,7 +52,7 @@ class RegisterDevice {
 					break;
 				}
 			}
-			if (! $device_found) {
+			if (!$device_found) {
 				// error_log ( "device not found" . PHP_EOL );
 				$device_array = array (
 						'registerdevice' => array (
