@@ -7,10 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\MUUID;
-
 class RegisterDevice {
 	protected $message_data;
 	protected $memreas_tables;
@@ -22,7 +18,7 @@ class RegisterDevice {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
-	public function checkDevice($user_id, $device_id, $device_type) {
+	public function checkDevice($user_id, $device_id, $device_type, $device_token_login = '') {
 		/*
 		 * Check if device is inserted and has registration id for type...
 		 * If the device exists use the regId else return empty reg id and let device obtain reg id and call register device...
@@ -32,14 +28,15 @@ class RegisterDevice {
 				WHERE device.user_id='$user_id'
 				AND device.device_type='$device_type'";
 		
-		// error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
-		// error_log ( "user_id--->" . $user_id . PHP_EOL );
-		// error_log ( "device_id--->" . $device_id . PHP_EOL );
-		// error_log ( "device_type--->" . $device_type . PHP_EOL );
-		// error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+		error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
+		error_log ( "user_id--->" . $user_id . PHP_EOL );
+		error_log ( "device_id--->" . $device_id . PHP_EOL );
+		error_log ( "device_type--->" . $device_type . PHP_EOL );
+		error_log ( "device_type--->" . $device_token_login . PHP_EOL );
+		error_log ( "q_checkdevice--->" . $q_checkdevice . PHP_EOL );
 		
 		$checkdevice_query = $this->dbAdapter->createQuery ( $q_checkdevice );
-		// error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
+		error_log ( "checkdevice_query->getSql()--->" . $checkdevice_query->getSql () . PHP_EOL );
 		$device_found_result = $checkdevice_query->getResult ();
 		
 		if (empty ( $device_found_result )) {
@@ -51,18 +48,18 @@ class RegisterDevice {
 				$device_token = $device->device_token;
 				if ($device->device_id == $device_id) {
 					$device_found = true;
-					// error_log ( "found device device_id----->" . $device_id . PHP_EOL );
-					// error_log ( "found device device_token----->" . $device_token . PHP_EOL );
+					error_log ( "found device device_id----->" . $device_id . PHP_EOL );
+					error_log ( "found device device_token----->" . $device_token . PHP_EOL );
 					break;
 				}
 			}
-			if (! $device_found) {
-				// error_log ( "device not found" . PHP_EOL );
+			if (!$device_found) {
+				error_log ( "device not found registering $device_type $device_token_login" . PHP_EOL );
 				$device_array = array (
 						'registerdevice' => array (
 								'user_id' => $user_id,
 								'device_id' => $device_id,
-								'device_token' => $device_token,
+								'device_token' => $device_token_login,
 								'device_type' => $device_type 
 						) 
 				);
@@ -76,11 +73,11 @@ class RegisterDevice {
 		try {
 			error_log ( 'registerdevice.exec()' . PHP_EOL );
 			if ($isInternalJSON) {
-				// error_log ( 'registerdevice.exec()-> internaJSON' . $internaJSON . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> internaJSON' . $internaJSON . PHP_EOL );
 				$data = json_decode ( $internaJSON );
 				error_log ( 'registerdevice.exec()-> data' . print_r ( $data, true ) . PHP_EOL );
 			} else {
-				// error_log ( 'registerdevice.exec()-> _POST [xml]' . $_POST ['xml'] . PHP_EOL );
+				error_log ( 'registerdevice.exec()-> _POST [xml]' . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			}
 			
