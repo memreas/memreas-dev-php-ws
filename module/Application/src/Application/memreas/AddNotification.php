@@ -7,10 +7,7 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
 use Application\memreas\MUUID;
-use Application\memreas\Email;
 
 class AddNotification {
 	protected $message_data;
@@ -29,7 +26,7 @@ class AddNotification {
 	}
 	public function exec($frmweb = '') {
 		try {
-			error_log ( 'file--->' . __FILE__ . ' method -->' . __METHOD__ . ' line number::' . __LINE__ . PHP_EOL );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
 			if (empty ( $frmweb )) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			} else {
@@ -40,26 +37,31 @@ class AddNotification {
 			//
 			// Add sql check here to see if notification is logged...
 			//
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
 			$suid = $data->addNotification->sender_uid;
 			$ruid = $data->addNotification->receiver_uid;
 			$ntype = $data->addNotification->notification_type;
-			$sql = "SELECT n  FROM Application\Entity\Notification as n 
+			$sql = "SELECT count(n.sender_uid)  FROM Application\Entity\Notification as n 
 					where n.sender_uid = '$suid' 
 					and n.receiver_uid = '$ruid' 
 					and n.notification_type = '$ntype'";
 			$statement = $this->dbAdapter->createQuery ( $sql );
-			$row = $statement->getResult ();
-			
+			$sentPrior = $statement->getSingleScalarResult ();
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'check for prior notification sql --> ' . $sql );
+				
 			//
 			// Notification is ok to proceed
 			//
-			if (!$row) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
+			if ($sentPrior) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
 				$status = 'Failure';
 				$message = 'notification sent prior';
 			} else {
 				//
 				// save notification in table
 				//
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
 				$this->notification_id = $notification_id = MUUID::fetchUUID ();
 				$tblNotification = new \Application\Entity\Notification ();
 				$tblNotification->notification_id = $notification_id;
@@ -83,6 +85,7 @@ class AddNotification {
 				$tblNotification->update_time = time ();
 				$this->dbAdapter->persist ( $tblNotification );
 				$this->dbAdapter->flush ();
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
 				
 				$status = 'Success';
 				$message = 'notification added';

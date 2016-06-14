@@ -7,10 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\MUUID;
-
 class AddFriend {
 	protected $message_data;
 	protected $memreas_tables;
@@ -33,8 +29,7 @@ class AddFriend {
 	}
 	public function exec() {
 		try {
-			// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
-			// error_log('xml--->'.$_POST ['xml'] . PHP_EOL);
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::enter' );
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$message = ' ';
@@ -49,15 +44,6 @@ class AddFriend {
 				$status = 'Failure';
 			} else {
 				/**
-				 * Store user_friend table for request...
-				 */
-				$tblUserFriend = new \Application\Entity\UserFriend ();
-				$tblUserFriend->user_id = $user_id;
-				$tblUserFriend->friend_id = $friend_id;
-				$this->dbAdapter->persist ( $tblUserFriend );
-				$this->dbAdapter->flush ();
-				
-				/**
 				 * Fetch user info...
 				 */
 				$user = $this->dbAdapter->find ( 'Application\Entity\Friend', $user_id );
@@ -65,6 +51,7 @@ class AddFriend {
 				/**
 				 * Build array and send notifications...
 				 */
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Build array and send notifications...' );
 				$data = array ();
 				$data ['addNotification'] ['sender_uid'] = $user_id;
 				$data ['addNotification'] ['receiver_uid'] = $friend_id;
@@ -86,13 +73,25 @@ class AddFriend {
 					error_log ( 'AddFriend $receiver_uid--->' . $data ['addNotification'] ['receiver_uid'] . PHP_EOL );
 					error_log ( 'AddFriend $sender_uid--->' . $data ['addNotification'] ['sender_uid'] . PHP_EOL );
 					error_log ( 'AddFriend $type--->' . Email::FRIEND_REQUEST . PHP_EOL );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Email::sendEmailNotification...' );
 					Email::sendEmailNotification ( $this->service_locator, $this->dbAdapter, $data ['addNotification'] ['receiver_uid'], $data ['addNotification'] ['sender_uid'], Email::FRIEND_REQUEST, '' );
 					
 					// Push Notification
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Push Notification...' );
 					$this->notification->type = $data ['addNotification'] ['notification_type'];
 					$this->notification->setMessage ( $this->notification->type, $meta ['sent'] ['message'] );
 					$this->notification->send ();
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Push Notification SENT??' );
 				}
+				
+				/**
+				 * Store user_friend table for request...
+				 */
+				$tblUserFriend = new \Application\Entity\UserFriend ();
+				$tblUserFriend->user_id = $user_id;
+				$tblUserFriend->friend_id = $friend_id;
+				$this->dbAdapter->persist ( $tblUserFriend );
+				$this->dbAdapter->flush ();
 			}
 			$status = 'success';
 			$message = 'add friend request sent';

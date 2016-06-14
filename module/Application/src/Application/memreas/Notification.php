@@ -60,7 +60,7 @@ class Notification {
 				$qb->andWhere ( 'd.user_id IN (:x)' )->setParameter ( 'x', $this->receiverIds );
 				$qb->andWhere ( 'd.last_used = 1' );
 				$devices = $qb->getQuery ()->getArrayResult ();
-				error_log ( '$qb--->' . $qb . PHP_EOL );
+				//error_log ( '$qb--->' . $qb . PHP_EOL );
 				
 				foreach ( $devices as $device ) {
 					error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
@@ -80,12 +80,12 @@ class Notification {
 					$gcm_push_notification_result = '';
 					if ($this->gcm->getDeviceCount () > 0) {
 						$push_notification_result = $this->gcm->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-ANROID' . print_r ( $push_notification_result, true ) . PHP_EOL );
+						error_log ( 'SENDING-ANROID' . print_r ( $gcm_push_notification_result, true ) . PHP_EOL );
 					}
 					$ios_push_notification_result = '';
 					if ($this->apns->getDeviceCount () > 0) {
-						$iox_push_notification_result = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-Apple' . print_r ( $push_notification_result, true ) . PHP_EOL );
+						$ios_push_notification_result = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
+						error_log ( 'SENDING-Apple' . print_r ( $ios_push_notification_result, true ) . PHP_EOL );
 					}
 				}
 			}
