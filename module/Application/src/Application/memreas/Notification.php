@@ -70,7 +70,7 @@ class Notification {
 						//
 						error_log ( "Notification::Inside send()->adding to Android list" . PHP_EOL );
 						$this->gcm->addDevice ( $device ['device_token'] );
-					} else if ($user ['device_type'] == \Application\Entity\Device::APPLE) {
+					} else if ($device ['device_type'] == \Application\Entity\Device::IOS) {
 						//
 						// Apple APNS
 						//

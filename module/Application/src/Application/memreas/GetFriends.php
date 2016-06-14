@@ -55,7 +55,7 @@ class GetFriends {
 		$qb->where ( "uf.user_id=?1 AND uf.user_approve = 1" );
 		$qb->setParameter ( 1, $user_id );
 		$result_friends = $qb->getQuery ()->getResult ();
-		Mlog::addone(__CLASS__.METHOD__.__LINE__.'::$result_friends', $result_friends);
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$result_friends', $result_friends);
 		if (empty ( $result_friends )) {
 			$status = "Failure";
 			$message = "You have no friend at this time.";

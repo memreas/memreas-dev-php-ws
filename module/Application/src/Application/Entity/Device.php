@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  */
 class Device {
+	const ANDROID = 'ANDROID';
+	const IOS = 'IOS';
 	/**
 	 *
 	 * @var string @ORM\Column(name="device_id", type="string", length=255, nullable=false)

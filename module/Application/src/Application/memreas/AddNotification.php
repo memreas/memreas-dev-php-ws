@@ -46,15 +46,15 @@ class AddNotification {
 			$sql = "SELECT n  FROM Application\Entity\Notification as n 
 					where n.sender_uid = '$suid' 
 					and n.receiver_uid = '$ruid' 
-					and .notification_type = '$ntype'";
+					and n.notification_type = '$ntype'";
 			$statement = $this->dbAdapter->createQuery ( $sql );
 			$row = $statement->getResult ();
 			
 			//
 			// Notification is ok to proceed
 			//
-			if (!row) {
-				$status = 'Failur';
+			if (!$row) {
+				$status = 'Failure';
 				$message = 'notification sent prior';
 			} else {
 				//

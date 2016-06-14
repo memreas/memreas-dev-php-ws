@@ -75,7 +75,7 @@ class MemreasConstants {
 	const AUDIO = "/data/media/upload_audio";
 	const ADMIN_EMAIL = 'admin@memreas.com';
 	const GCM_SERVER_KEY = 'AIzaSyAt0YAt_Nb9Q4zjaU0-epWeTejUVVh8lDI';
-	const APNS = 'aps.pem';
+	const APNS = 'aps_pkey.pem';
 	const APNS_GATEWAY = 'ssl://gateway.sandbox.push.apple.com:2195';
 	const COPYRIGHT = '&copy;memreas, llc. all rights reserved.';
     const DCMA_CLAIM = 2; 
