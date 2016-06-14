@@ -20,8 +20,9 @@ class User {
 	
 	/**
 	 *
-	 * @var string @ORM\Id
-	 *      @ORM\Column(type="string",name="user_id");
+	 * @var string @ORM\Column(name="user_id", type="string", length=255, nullable=false)
+	 *      @ORM\Id
+	 *      @ORM\GeneratedValue(strategy="IDENTITY")
 	 */
 	protected $user_id;
 	
@@ -45,40 +46,15 @@ class User {
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="user_id", type="string", length=255, nullable=false)
-	 *      @ORM\Id
-	 *      @ORM\GeneratedValue(strategy="IDENTITY")
-	 */
-	
-	/**
-	 *
 	 * @var integer @ORM\Column(name="database_id", type="integer", nullable=false)
 	 */
 	private $database_id = 0;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="username", type="string", length=255, nullable=false)
-	 */
-	// private $username;
-	
-	/**
-	 *
-	 * @var string @ORM\Column(name="password", type="string", length=255, nullable=false)
-	 */
-	// private $password;
-	//
-	/**
-	 *
 	 * @var string @ORM\Column(name="email_address", type="string", length=255, nullable=false)
 	 */
 	private $email_address;
-	
-	/**
-	 *
-	 * @var string @ORM\Column(name="role", type="string", length=20, nullable=false)
-	 */
-	// private $role;
 	
 	/**
 	 *
@@ -100,7 +76,7 @@ class User {
 	
 	/**
 	 *
-	 * @var boolean @ORM\Column(name="disable_account", type="boolean", nullable=false)
+	 * @var integer @ORM\Column(name="disable_account", type="integer", nullable=false)
 	 */
 	protected $disable_account = 0;
 	
