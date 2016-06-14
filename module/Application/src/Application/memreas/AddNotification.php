@@ -37,30 +37,56 @@ class AddNotification {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $frmweb );
 			}
 			
-			// save notification in table
-			$this->notification_id = $notification_id = MUUID::fetchUUID ();
-			$tblNotification = new \Application\Entity\Notification ();
-			$tblNotification->notification_id = $notification_id;
-			$tblNotification->sender_uid = $data->addNotification->sender_uid;
-			$tblNotification->receiver_uid = $data->addNotification->receiver_uid;
-			$tblNotification->notification_type = $data->addNotification->notification_type;
-			$tblNotification->meta = json_encode ( $data->addNotification->meta );
-			$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;
-			$tblNotification->status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
-			if ((strtolower ( $tblNotification->status ) == 'add') || ($tblNotification->status == 0)) {
-				$tblNotification->response_status = 'add';
-			} else if ((strtolower ( $tblNotification->status ) == 'accept') || ($tblNotification->status == 1)) {
-				$tblNotification->response_status = 'accept';
-			} else if ((strtolower ( $tblNotification->status ) == 'decline') || ($tblNotification->status == 2)) {
-				$tblNotification->response_status = 'decline';
-			} else if ((strtolower ( $tblNotification->status ) == 'ignore') || ($tblNotification->status == 3)) {
-				$tblNotification->response_status = 'ignore';
-			}
-			$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
-			$tblNotification->create_time = time();
-			$tblNotification->update_time = time();
-			$this->dbAdapter->persist ( $tblNotification );
-			$this->dbAdapter->flush ();
+			//
+			// Add sql check here to see if notification is logged...
+			//
+			$suid = $data->addNotification->sender_uid;
+			$ruid = $data->addNotification->receiver_uid;
+			$ntype = $data->addNotification->notification_type;
+			$sql = "SELECT n  FROM Application\Entity\Notification as n 
+					where n.sender_uid = '$suid' 
+					and n.receiver_uid = '$ruid' 
+					and .notification_type = '$ntype'";
+			$statement = $this->dbAdapter->createQuery ( $sql );
+			$row = $statement->getResult ();
+			
+			//
+			// Notification is ok to proceed
+			//
+			if (!row) {
+				$status = 'Failur';
+				$message = 'notification sent prior';
+			} else {
+				//
+				// save notification in table
+				//
+				$this->notification_id = $notification_id = MUUID::fetchUUID ();
+				$tblNotification = new \Application\Entity\Notification ();
+				$tblNotification->notification_id = $notification_id;
+				$tblNotification->sender_uid = $data->addNotification->sender_uid;
+				$tblNotification->receiver_uid = $data->addNotification->receiver_uid;
+				$tblNotification->notification_type = $data->addNotification->notification_type;
+				$tblNotification->meta = json_encode ( $data->addNotification->meta );
+				$tblNotification->is_read = empty ( $data->addNotification->is_read ) ? 0 : $data->addNotification->is_read;
+				$tblNotification->status = empty ( $data->addNotification->status ) ? 0 : $data->addNotification->status;
+				if ((strtolower ( $tblNotification->status ) == 'add') || ($tblNotification->status == 0)) {
+					$tblNotification->response_status = 'add';
+				} else if ((strtolower ( $tblNotification->status ) == 'accept') || ($tblNotification->status == 1)) {
+					$tblNotification->response_status = 'accept';
+				} else if ((strtolower ( $tblNotification->status ) == 'decline') || ($tblNotification->status == 2)) {
+					$tblNotification->response_status = 'decline';
+				} else if ((strtolower ( $tblNotification->status ) == 'ignore') || ($tblNotification->status == 3)) {
+					$tblNotification->response_status = 'ignore';
+				}
+				$tblNotification->notification_methods = json_encode ( $data->addNotification->notification_methods );
+				$tblNotification->create_time = time ();
+				$tblNotification->update_time = time ();
+				$this->dbAdapter->persist ( $tblNotification );
+				$this->dbAdapter->flush ();
+				
+				$status = 'Success';
+				$message = 'notification added';
+			} // end if
 			
 			if (empty ( $frmweb )) {
 				header ( "Content-type: text/xml" );
@@ -88,7 +114,7 @@ class AddNotification {
 				$xml_output .= "</xml>";
 				echo $xml_output;
 			} else {
-				Mlog::addone ( __CLASS__.__METHOD__. __LINE__ ,$e->getMessage () );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $e->getMessage () );
 				throw new Exception ( __CLASS__ . __METHOD . __LINE__, $e->getMessage () );
 			}
 		}
