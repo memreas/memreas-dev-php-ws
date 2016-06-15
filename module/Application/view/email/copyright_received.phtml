@@ -111,9 +111,12 @@ body {
 			<h2>To <?php echo $receiver_name?>,</h2>
 			<br>
 
-				<p>We have received your media and applied copyrights.  See below for details.</p>
+				<p>We have received your media and applied copyrights. See below for
+					details.</p>
 				<p class="tab">
-				copyright id: <?php echo $copyright_array['copyright_id'];?></br>
+				copyright id: <?php echo $copyright_array['copyright_id'];?>
+			
+			</br>
 				copyright id md5: <?php echo $copyright_array['copyright_id_md5'];?></br>
 				copyright id sha1: <?php echo $copyright_array['copyright_id_sha1'];?></br>
 				copyright id sha256: <?php echo $copyright_array['copyright_id_sha256'];?></br>
@@ -121,16 +124,15 @@ body {
 				fileCheckSumSHA1: <?php echo $copyright_array['fileCheckSumSHA1'];?></br>
 				fileCheckSumSHA256: <?php echo $copyright_array['fileCheckSumSHA256'];?></br>
 				device id: <?php echo $copyright_array['device_id'];?></br>
-				device type: <?php echo $device_type;?></br>
-				<br />
-				</p>
+				device type: <?php echo $device_type;?></br> <br />
+			</p>
 
-				<p>
-					Best Regards,<br /> <img
-						src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
-						width="103" height="20" />
-				</p>
-		
+			<p>
+				Best Regards,<br /> <img
+					src="<?php echo MemreasConstants::ORIGINAL_URL?>memreas/img/footer_ref.png"
+					width="103" height="20" />
+			</p>
+
 		</div>
 		<div class="footer" style="background: #45484d;">
 			<p><?php echo MemreasConstants::COPYRIGHT?></p>

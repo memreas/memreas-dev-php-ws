@@ -47,8 +47,8 @@ class PaymentsProxy {
 		$cm = __CLASS__ . __METHOD__;
 		$action_method = substr ( $action, 7 );
 		$guzzle = new \GuzzleHttp\Client ();
-		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$_REQUEST', $_REQUEST);
-		Mlog::addone($cm.__LINE__.'::enter paymentsproxy->$jsonArr', $jsonArr);
+		Mlog::addone ( $cm . __LINE__ . '::enter paymentsproxy->$_REQUEST', $_REQUEST );
+		Mlog::addone ( $cm . __LINE__ . '::enter paymentsproxy->$jsonArr', $jsonArr );
 		
 		/*
 		 * -
@@ -56,7 +56,7 @@ class PaymentsProxy {
 		 */
 		if ($action_method == 'subscribe') {
 			$disk_usage = new GetDiskUsage ( $this->service_locator );
-			Mlog::addone($cm.__LINE__.'::paymentsproxy->$_SESSION', $_SESSION);
+			Mlog::addone ( $cm . __LINE__ . '::paymentsproxy->$_SESSION', $_SESSION );
 			$jsonArr ['disk_usage'] = $disk_usage->exec ( $_SESSION ['user_id'], true );
 		}
 		/*

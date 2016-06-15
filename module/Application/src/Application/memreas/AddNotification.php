@@ -26,7 +26,7 @@ class AddNotification {
 	}
 	public function exec($frmweb = '') {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 			if (empty ( $frmweb )) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			} else {
@@ -37,7 +37,7 @@ class AddNotification {
 			//
 			// Add sql check here to see if notification is logged...
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 			$suid = $data->addNotification->sender_uid;
 			$ruid = $data->addNotification->receiver_uid;
 			$ntype = $data->addNotification->notification_type;
@@ -48,20 +48,20 @@ class AddNotification {
 			$statement = $this->dbAdapter->createQuery ( $sql );
 			$sentPrior = $statement->getSingleScalarResult ();
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'check for prior notification sql --> ' . $sql );
-				
+			
 			//
 			// Notification is ok to proceed
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
 			if ($sentPrior) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 				$status = 'Failure';
 				$message = 'notification sent prior';
 			} else {
 				//
 				// save notification in table
 				//
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 				$this->notification_id = $notification_id = MUUID::fetchUUID ();
 				$tblNotification = new \Application\Entity\Notification ();
 				$tblNotification->notification_id = $notification_id;
@@ -85,7 +85,7 @@ class AddNotification {
 				$tblNotification->update_time = time ();
 				$this->dbAdapter->persist ( $tblNotification );
 				$this->dbAdapter->flush ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...');
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 				
 				$status = 'Success';
 				$message = 'notification added';

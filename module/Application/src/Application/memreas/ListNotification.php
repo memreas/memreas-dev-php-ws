@@ -29,17 +29,13 @@ class ListNotification {
 	}
 	
 	/*
-	 * Sample Notification xml
+	 * Sample List Notification xml and response
 	 * <!-- Request -->
 	 * <xml>
-	 * <updatenotification>
-	 * <notification>
-	 * <notification_id>5f173f40-2d87-11e3-b8a8-27e1f11594a6</notification_id>
-	 * <!-- status 0 - accept, 1 - decline, 2 - ignore, 3 - rejected(not used) -->
-	 * <status>2</status>
-	 * <message> optional </message>
-	 * </notification>
-	 * </updatenotification>
+	 * <sid></sid>
+	 * <listnotification>
+	 * <receiver_uid></receiver_uid>
+	 * </listnotification>
 	 * </xml>
 	 *
 	 * <!-- Response -->
@@ -64,13 +60,11 @@ class ListNotification {
 	public function exec() {
 		try {
 			$cm = __CLASS__ . __METHOD__;
-			Mlog::addone ( $cm, '::inbound xml--->' . $_POST ['xml'] );
+			Mlog::addone ( $cm . __LINE__, '::inbound xml--->' . $_POST ['xml'] );
 			
-			$oClass = new \ReflectionClass ( 'Application\Entity\Notification' );
-			$array = $oClass->getConstants ();
-			unset ( $array ['EMAIL'], $array ['MEMREAS'] );
-			$array = array_flip ( $array );
-			
+			//
+			// Note: see Application\Entity\Notification.php for constants
+			//
 			$error_flag = 0;
 			$message = '';
 			$data = simplexml_load_string ( $_POST ['xml'] );
@@ -93,17 +87,21 @@ class ListNotification {
 				$statement = $this->dbAdapter->createQuery ( $query_user_notification );
 				$result = $statement->getArrayResult ();
 				
-				$this->xml_output .= "<notifications>";
+				Mlog::addone ( $cm . __LINE__ . '::$query_user_notification--->', $query_user_notification );
+				
 				if (count ( $result ) > 0) {
+					Mlog::addone ( $cm . __LINE__ . '::count ( $result ) > 0--->', count ( $result ) );
 					
 					$count = 0;
 					$this->xml_output .= "<status>success</status>";
+					$this->xml_output .= "<message>notifications found</message>";
+					$this->xml_output .= "<notifications>";
 					$eventRepository = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 					foreach ( $result as $row ) {
 						
 						$meta = json_decode ( $row ['meta'], true );
 						if (empty ( $meta ['sent'] )) {
-							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
 							//
 							// something is wrong
 							// - data should be populated
@@ -114,6 +112,7 @@ class ListNotification {
 							$tblNotification->status = '-1';
 							$tblNotification->response_status = 'FAILURE';
 							$tblNotification->update_time = MNow::now ();
+							$this->dbAdapter->persist ($tblNotification);
 							$this->dbAdapter->flush ();
 							continue;
 						}
@@ -124,17 +123,20 @@ class ListNotification {
 						//
 						// data must be good so start entry
 						//
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::data must be good so start entry' );
 						$this->xml_output .= "<notification>";
 						
 						/**
 						 * Fetch Profile Pics
 						 */
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::$this->fetchPics ( $from_user_id )' );
 						$this->fetchPics ( $from_user_id );
 						
 						/**
 						 * Fetch event id
 						 */
 						if (isset ( $meta ['event_id'] )) {
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , '::inside if (isset ( $meta [event_id] ))' );
 							$this->xml_output .= "<event_id>{$meta ['sent']['event_id']}</event_id>";
 							$redis = AWSMemreasRedisCache::getHandle ();
 							$event = $from_user_id . '_' . $meta ['sent'] ['event_id'];
@@ -142,6 +144,7 @@ class ListNotification {
 							$event_data = $redis->cache->hget ( "!memreas_meta_hash", $event_key_meta );
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_data', $event_data );
 						} else {
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , '::inside else !if (isset ( $meta [event_id] ))' );
 							$this->xml_output .= "<event_id></event_id>";
 						}
 						
@@ -182,9 +185,8 @@ class ListNotification {
 						}
 						$this->xml_output .= "</notification>";
 					} // end for each
-				} // end if count > 0
-				
-				if (count ( $result ) == 0) {
+					$this->xml_output .= "</notifications>";
+				} else {
 					$this->xml_output .= "<status>failure</status>";
 					$this->xml_output .= "<message>No record found</message>";
 				}
@@ -192,8 +194,7 @@ class ListNotification {
 				$this->xml_output .= "<status>failure</status>";
 				$this->xml_output .= "<message>No record found</message>";
 			}
-			
-			$this->xml_output .= "</notifications></listnotificationresponse>";
+			$this->xml_output .= "</listnotificationresponse>";
 			$this->xml_output .= "</xml>";
 			echo $this->xml_output;
 			// Mlog::addone ( $cm,'::outbound xml--->'. $_POST ['xml'] );

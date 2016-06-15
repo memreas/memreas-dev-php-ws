@@ -32,7 +32,7 @@ class PublicController extends AbstractActionController {
 		ob_start ();
 		
 		//
-		//Fetch input xml from guzzle...
+		// Fetch input xml from guzzle...
 		//
 		Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
 		// assuming xml if not json
@@ -50,7 +50,7 @@ class PublicController extends AbstractActionController {
 		 * fetch and cache...
 		 */
 		if (! empty ( $data->viewevent->is_public_event ) && ! empty ( $data->viewevent->tag )) {
-			Mlog::addone ( $cm . __LINE__ . '$data->viewevent->type', $data->viewevent->tag.$data->viewevent->name );
+			Mlog::addone ( $cm . __LINE__ . '$data->viewevent->type', $data->viewevent->tag . $data->viewevent->name );
 			$cache_id = "public_" . $data->viewevent->tag . $data->viewevent->name;
 		} else if (! empty ( $data->viewevent->public_page )) {
 			$cache_id = "public";

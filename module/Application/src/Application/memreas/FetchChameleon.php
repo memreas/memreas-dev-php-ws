@@ -35,30 +35,30 @@ class FetchChameleon {
 		 * create chameleon and add to array - keep last 3 given async calls
 		 */
 		$chameleon_value = hash ( 'sha256', uniqid ( '', true ) );
-		$_SESSION ['x_memreas_chameleon'] = $chameleon_value; 
+		$_SESSION ['x_memreas_chameleon'] = $chameleon_value;
 		/*
-		if (isset ( $_SESSION ['x_memreas_chameleon'] )) {
-			$x_memreas_chameleonArr = $_SESSION ['x_memreas_chameleon'];
-		} else {
-			$x_memreas_chameleonArr = [];
-		}
-		
-		if (! is_array ( $x_memreas_chameleonArr )) {
-			// first time so create array
-			$x_memreas_chameleonArr = [];
-			$x_memreas_chameleonArr [] = $_SESSION ['x_memreas_chameleon'];
-		}
-		if (count ( $x_memreas_chameleonArr ) > 3) {
-			unset ( $x_memreas_chameleonArr [0] );
-			$x_memreas_chameleonArr = array_values ( $x_memreas_chameleonArr );
-			$x_memreas_chameleonArr [] = $chameleon_value;
-			$_SESSION ['x_memreas_chameleon'] = $x_memreas_chameleonArr;
-		} else {
-			// < 3
-			$x_memreas_chameleonArr [] = $chameleon_value;
-			$_SESSION ['x_memreas_chameleon'] = $x_memreas_chameleonArr;
-		}
-		*/
+		 * if (isset ( $_SESSION ['x_memreas_chameleon'] )) {
+		 * $x_memreas_chameleonArr = $_SESSION ['x_memreas_chameleon'];
+		 * } else {
+		 * $x_memreas_chameleonArr = [];
+		 * }
+		 *
+		 * if (! is_array ( $x_memreas_chameleonArr )) {
+		 * // first time so create array
+		 * $x_memreas_chameleonArr = [];
+		 * $x_memreas_chameleonArr [] = $_SESSION ['x_memreas_chameleon'];
+		 * }
+		 * if (count ( $x_memreas_chameleonArr ) > 3) {
+		 * unset ( $x_memreas_chameleonArr [0] );
+		 * $x_memreas_chameleonArr = array_values ( $x_memreas_chameleonArr );
+		 * $x_memreas_chameleonArr [] = $chameleon_value;
+		 * $_SESSION ['x_memreas_chameleon'] = $x_memreas_chameleonArr;
+		 * } else {
+		 * // < 3
+		 * $x_memreas_chameleonArr [] = $chameleon_value;
+		 * $_SESSION ['x_memreas_chameleon'] = $x_memreas_chameleonArr;
+		 * }
+		 */
 		
 		return $chameleon_value;
 	}
@@ -72,7 +72,7 @@ class FetchChameleon {
 					return true;
 				}
 			}
-		} else if (!empty($actionname) && ($actionname == 'login')){
+		} else if (! empty ( $actionname ) && ($actionname == 'login')) {
 			// if count 0 then we should be in login
 			return true;
 		}

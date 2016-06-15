@@ -26,7 +26,7 @@ class apns {
 	}
 	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '') { // Message to be sent
 		$payload ['aps'] = array (
-				'badge' => +1,
+				'badge' => + 1,
 				'alert' => $message,
 				'sound' => 'default' 
 		);
@@ -38,20 +38,20 @@ class apns {
 		$payload = json_encode ( $payload );
 		
 		$ctx = stream_context_create ();
-		$ctx = stream_context_create();
+		$ctx = stream_context_create ();
 		stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/' . MemreasConstants::APNS );
 		stream_context_set_option ( $ctx, 'ssl', 'passphrase', '' );
-		$fp = stream_socket_client(MemreasConstants::APNS_GATEWAY, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+		$fp = stream_socket_client ( MemreasConstants::APNS_GATEWAY, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx );
 		
-		//stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/memreas_apns.pem' );
-		//$fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
-		//$fp = stream_socket_client ( 'ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx );
+		// stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/memreas_apns.pem' );
+		// $fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+		// $fp = stream_socket_client ( 'ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx );
 		
 		if (! $fp) {
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "APNS Notifications FAILURE!");
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "APNS Notifications FAILURE!" );
 			return;
 		} else {
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "APNS Notifications sent!");
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "APNS Notifications sent!" );
 		}
 		// Pass device key
 		foreach ( $this->device_token as $deviceToken ) {

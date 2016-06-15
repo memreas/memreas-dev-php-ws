@@ -18,42 +18,42 @@ use Zend\Stdlib\AbstractOptions;
 class DbTableGatewayOptions extends AbstractOptions {
 	/**
 	 * ID Column
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $idColumn = 'id';
 	
 	/**
 	 * Name Column
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $nameColumn = 'name';
 	
 	/**
 	 * Data Column
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $dataColumn = 'data';
 	
 	/**
 	 * Lifetime Column
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $lifetimeColumn = 'lifetime';
 	
 	/**
 	 * Modified Column
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $modifiedColumn = 'modified';
 	
 	/**
 	 * Modified Column
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $ipaddress = '';

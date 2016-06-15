@@ -7,9 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants as MC;
-use Application\memreas\UUID;
 use \Exception;
 
 class UpdateNotification {
@@ -294,12 +291,12 @@ class UpdateNotification {
 		 * Update the existing notification table meta
 		 */
 		$meta = json_decode ( $this->tblNotification->meta, true );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
 		$meta ['received'] ['message'] = $nmessage;
 		$this->tblNotification->meta = json_encode ( $meta );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$meta', $meta );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->sender_uid', $this->sender_uid );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->receiver_uid', $this->receiver_uid );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$meta', $meta );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->sender_uid', $this->sender_uid );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->receiver_uid', $this->receiver_uid );
 		
 		/**
 		 * Build array and send notifications...
@@ -315,8 +312,8 @@ class UpdateNotification {
 		// add notification in db.
 		$result = $this->AddNotification->exec ( $data );
 		
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
-		//Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
+		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
 		
 		if ((strtolower ( $this->notification_status ) == 'ignore') || ($this->notification_status == 3)) {
 			// send email (reversed due to response)

@@ -37,7 +37,7 @@ class GetOrderHistory {
 			
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
- 		$user_id = trim ( $data->getorderhistory->user_id );
+		$user_id = trim ( $data->getorderhistory->user_id );
 		$search_username = trim ( $data->getorderhistory->search_username );
 		$page = trim ( $data->getorderhistory->page );
 		$limit = trim ( $data->getorderhistory->limit );
@@ -52,14 +52,14 @@ class GetOrderHistory {
 		);
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
-                                                'sid' => $_SESSION ['sid'],
-						'admin_key' => $_REQUEST ['admin_key'],	 
+						'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],
 						'action' => 'getorderhistory',
-						'data' => json_encode ( $request_data )
-                                    ] 
-		]);
+						'data' => json_encode ( $request_data ) 
+				] 
+		] );
 		
- 		$result = trim ( ( string ) $response->getBody () );
+		$result = trim ( ( string ) $response->getBody () );
 		echo $result;
 		die ();
 	}

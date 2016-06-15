@@ -53,7 +53,7 @@ class RemoveFriends {
 				$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
 				$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
-
+				
 				// udpate notification
 				$query_friends = "DELETE FROM Application\Entity\Notification n 
 									WHERE n.sender_uid = '{$user_id}' 
@@ -64,9 +64,6 @@ class RemoveFriends {
 				$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query_friends::', $query_friends );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
-				
-				
-				
 			}
 		} catch ( Exception $e ) {
 			$friend_result = false;

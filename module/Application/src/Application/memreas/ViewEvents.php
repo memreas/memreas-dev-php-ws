@@ -23,10 +23,10 @@ class ViewEvents {
 		$this->comments = new ListComments ( $message_data, $memreas_tables, $service_locator );
 		$this->url_signer = new MemreasSignedURL ();
 	}
-	public function exec($setHeader=true) {
+	public function exec($setHeader = true) {
 		$cm = __CLASS__ . __METHOD__;
-		//timestamping
-		Mlog::addone ( $cm . __LINE__, MNow::now() );
+		// timestamping
+		Mlog::addone ( $cm . __LINE__, MNow::now () );
 		// Mlog::addone ( $cm . '::inbound xml-->', $_POST ['xml'] );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
@@ -56,14 +56,14 @@ class ViewEvents {
 			header ( "Content-type: text/xml" );
 		}
 		
-		//timestamping
-		Mlog::addone ( $cm . __LINE__, MNow::now() );
+		// timestamping
+		Mlog::addone ( $cm . __LINE__, MNow::now () );
 		/*
 		 * ---------------------------my events----------------------------
 		 */
 		if ($is_my_event) {
-		//timestamping
-			Mlog::addone ( $cm . __LINE__, MNow::now() );
+			// timestamping
+			Mlog::addone ( $cm . __LINE__, MNow::now () );
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -73,8 +73,8 @@ class ViewEvents {
 			 */
 			$result_event = $this->fetchMyEvents ( $user_id );
 			// Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
-			//timestamping
-			//Mlog::addone ( $cm . __LINE__, MNow::now() );
+			// timestamping
+			// Mlog::addone ( $cm . __LINE__, MNow::now() );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -89,8 +89,8 @@ class ViewEvents {
 				}
 				if (count ( $result_event ) > 0) {
 					foreach ( $result_event as $row ) { // get media
-						//timestamping
-						//Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
+					                                    // timestamping
+					                                    // Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
 						
 						$xml_output .= "<event>";
 						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
@@ -146,11 +146,11 @@ class ViewEvents {
 						// Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
 						
 						$xml_output .= "</event>";
-						//timestamping
-						//Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
+						// timestamping
+						// Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
 					} // end for loop my events
 					$xml_output .= "</events>";
-					Mlog::addone ( $cm . __LINE__. '</events> end-->', MNow::now() );
+					Mlog::addone ( $cm . __LINE__ . '</events> end-->', MNow::now () );
 				}
 			} else {
 				$xml_output .= "<status>Failure</status>";
@@ -423,7 +423,7 @@ class ViewEvents {
 					 */
 					$redis = AWSMemreasRedisCache::getHandle ();
 					$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = $redis->getProfilePhoto ( $public_event_row ['user_id'] );
-					if (!$pic) {
+					if (! $pic) {
 						$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
 						if ($profile) {
 							$profile_image = json_decode ( $profile [0] ['metadata'], true );
