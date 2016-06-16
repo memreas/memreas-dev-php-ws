@@ -94,7 +94,6 @@ class ListNotification {
 					
 					$count = 0;
 					$this->xml_output .= "<status>success</status>";
-					$this->xml_output .= "<message>notifications found</message>";
 					$this->xml_output .= "<notifications>";
 					$eventRepository = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
 					foreach ( $result as $row ) {
@@ -188,11 +187,9 @@ class ListNotification {
 					$this->xml_output .= "</notifications>";
 				} else {
 					$this->xml_output .= "<status>failure</status>";
-					$this->xml_output .= "<message>No record found</message>";
 				}
 			} else {
 				$this->xml_output .= "<status>failure</status>";
-				$this->xml_output .= "<message>No record found</message>";
 			}
 			$this->xml_output .= "</listnotificationresponse>";
 			$this->xml_output .= "</xml>";
