@@ -68,7 +68,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		session_id ( $sid );
 		session_start ();
 		$rMemreasSidSession = $this->mRedis->getCache ( $sid );
-		//store to reset ttl
+		// store to reset ttl
 		$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession, MemreasConstants::REDIS_CACHE_SESSION_DEVICE_TTL );
 		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
 		
@@ -82,15 +82,15 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
-			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::startSessionWithMemreasCookie sid is-->', $rMemreasCookieSessionArr ['sid'] );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::startSessionWithMemreasCookie sid is-->', $rMemreasCookieSessionArr ['sid'] );
 			$result = true;
 		}
 		
 		$fetchChameleon = new FetchChameleon ();
 		$fetchChameleon->setChameleon ();
 		
-		//set back to cache to reset ttl
-		$result = $this->mRedis->setCache ('memreascookie::' . $memreascookie, $rMemreasCookieSession, MemreasConstants::REDIS_CACHE_SESSION_TTL);
+		// set back to cache to reset ttl
+		$result = $this->mRedis->setCache ( 'memreascookie::' . $memreascookie, $rMemreasCookieSession, MemreasConstants::REDIS_CACHE_SESSION_TTL );
 		
 		return $result;
 		
@@ -164,7 +164,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		return $meta;
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
-		
 		session_start ();
 		error_log ( 'Inside setSession' . PHP_EOL );
 		if (empty ( session_id () )) {
@@ -174,7 +173,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		//
 		// Check Headers sent
 		//
-
+		
 		//
 		// Set Session vars
 		//
@@ -188,7 +187,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
 		
-
 		//
 		// Set Profile Pic Url
 		//
@@ -217,7 +215,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		// Mlog::addone(__CLASS__.__METHOD__.':: $_SESSION[profile_pic]', $_SESSION['profile_pic']);
 		$this->setUIDLookup ();
 		if (! empty ( $memreascookie )) {
-			//Mlog::addone ( __CLASS__ . __METHOD__ . ':: about to set $this->setMemreasCookieLookup for cookie::', $_SESSION ['memreascookie'] );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . ':: about to set $this->setMemreasCookieLookup for cookie::', $_SESSION ['memreascookie'] );
 			$this->setMemreasCookieLookup ( true );
 		}
 	}
@@ -285,7 +283,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				 * End Session
 				 */
 				$sessionObj = $this->dbAdapter->getRepository ( "\Application\Entity\UserSession" )->findOneBy ( array (
-						'session_id' => session_id ()
+						'session_id' => session_id () 
 				) );
 				$sessionObj->end_time = $now;
 				

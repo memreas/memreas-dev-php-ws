@@ -18,11 +18,11 @@ class GenerateMediaId {
 		Mlog::addone ( $cm . '::$data->generatemediaid->media_id_batch---->', $data->media_id_batch );
 		
 		if ($data->generatemediaid->media_id_batch) {
-			$media_id_batch = array();
-			for($i=0;$i<=MemreasConstants::media_id_batch_create_count; $i++) {
-				$media_id_batch[] = MUUID::fetchUUID ();
+			$media_id_batch = array ();
+			for($i = 0; $i <= MemreasConstants::media_id_batch_create_count; $i ++) {
+				$media_id_batch [] = MUUID::fetchUUID ();
 			}
-			$media_id_output = '<media_id_batch>' . json_encode($media_id_batch) . '</media_id_batch>';
+			$media_id_output = '<media_id_batch>' . json_encode ( $media_id_batch ) . '</media_id_batch>';
 		} else {
 			$media_id_output = '';
 		}
@@ -38,7 +38,6 @@ class GenerateMediaId {
 		$xml_output .= "</xml>";
 		echo $xml_output;
 		Mlog::addone ( $cm . '::$xml_output---->', $xml_output );
-		
 	}
 }
 ?>

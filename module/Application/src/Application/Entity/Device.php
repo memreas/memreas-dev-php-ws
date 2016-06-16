@@ -16,6 +16,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  */
 class Device {
+	const ANDROID = 'ANDROID';
+	const IOS = 'IOS';
 	/**
 	 *
 	 * @var string @ORM\Column(name="device_id", type="string", length=255, nullable=false)
@@ -58,7 +60,6 @@ class Device {
 	 * @var string @ORM\Column(name="update_time", type="string", length=255, nullable=false)
 	 */
 	public $update_time;
-
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

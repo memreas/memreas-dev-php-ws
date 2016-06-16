@@ -40,24 +40,23 @@ class ListPayees {
 		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
-                                                'sid' => $_SESSION ['sid'],
-						'admin_key' => $_REQUEST ['admin_key'],	
-                        'action' => 'listpayees',
-				'username' => $username,
-				'page' => $page,
-				'limit' => $limit 
-                    ]
-                ]
-				
-		 );
-		
-		 
-$result = trim ( ( string ) $response->getBody () );
+						'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],
+						'action' => 'listpayees',
+						'username' => $username,
+						'page' => $page,
+						'limit' => $limit 
+				] 
+		] )
 
-//returns result after {
-$result = substr($result, strpos($result, "{") );
- 		echo $result;
-                die();
+		;
+		
+		$result = trim ( ( string ) $response->getBody () );
+		
+		// returns result after {
+		$result = substr ( $result, strpos ( $result, "{" ) );
+		echo $result;
+		die ();
 	}
 }
 

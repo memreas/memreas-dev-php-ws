@@ -29,16 +29,16 @@ class MemreasConstants {
 	// Redis section
 	// ubuntu standalone for
 	// redis 3 version
-	//const REDIS_SERVER_ENDPOINT = "54.225.187.57";
+	// const REDIS_SERVER_ENDPOINT = "54.225.187.57";
 	const REDIS_SERVER_ENDPOINT = "10.164.216.184";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
-	//1 hour
+	// 1 hour
 	const REDIS_CACHE_SESSION_TTL = 3600;
-	// 1day 
-	const REDIS_CACHE_TTL = (3600*24);
-	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600*24);
+	// 1day
+	const REDIS_CACHE_TTL = (3600 * 24);
+	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600 * 24);
 	
 	// memreasdevsec related
 	const S3BUCKET = "memreasdevsec";
@@ -55,10 +55,10 @@ class MemreasConstants {
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
 	const CLOUDFRONT_EXPIRY_TIME = 720000; // 200 hours
-	
-	//free plan id
+	                                       
+	// free plan id
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
-	                                      
+	
 	// Same across...
 	const registration_secret_passphrase = 'freedom tower1';
 	const media_id_batch_create_count = 50;
@@ -81,13 +81,13 @@ class MemreasConstants {
 	const AUDIO = "/data/media/upload_audio";
 	const ADMIN_EMAIL = 'admin@memreas.com';
 	const GCM_SERVER_KEY = 'AIzaSyAt0YAt_Nb9Q4zjaU0-epWeTejUVVh8lDI';
-	const APNS = 'aps.pem';
+	const APNS = 'aps_pkey.pem';
 	const APNS_GATEWAY = 'ssl://gateway.sandbox.push.apple.com:2195';
 	const COPYRIGHT = '&copy;memreas, llc. all rights reserved.';
-    const DCMA_CLAIM = 2; 
-	const DCMA_CLAIM_TEXT = 'claim reported'; 
-	const DCMA_COUNTER_CLAIM = 3; 
-	const DCMA_COUNTER_CLAIM_TEXT = 'counter claim reported'; 
+	const DCMA_CLAIM = 2;
+	const DCMA_CLAIM_TEXT = 'claim reported';
+	const DCMA_COUNTER_CLAIM = 3;
+	const DCMA_COUNTER_CLAIM_TEXT = 'counter claim reported';
 	public static function fetchAWS() {
 		$sharedConfig = [ 
 				'region' => 'us-east-1',
@@ -95,7 +95,7 @@ class MemreasConstants {
 				'credentials' => [ 
 						'key' => self::S3_APPKEY,
 						'secret' => self::S3_APPSEC 
-				]
+				] 
 		];
 		
 		return new \Aws\Sdk ( $sharedConfig );

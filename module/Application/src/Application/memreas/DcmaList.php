@@ -75,10 +75,10 @@ class DcmaList {
 					$dcmalist .= "<copyright_owner_email_address>{$rec['copyright_owner_email_address']}</copyright_owner_email_address>";
 					$dcmalist .= "<dmca_violation_report_date>{$rec['dmca_violation_report_date']}</dmca_violation_report_date>";
 					$dcmalist .= "<meta>{$rec['meta']}</meta>";
-					if ($rec['status'] == 2) {
-						$dcmalist .= '<status>'.MemreasConstants::DCMA_CLAIM_TEXT.'</status>';
-					} else if ($rec['status'] == 3) {
-						$dcmalist .= '<status>'.MemreasConstants::DCMA_COUNTER_CLAIM_TEXT.'</status>';
+					if ($rec ['status'] == 2) {
+						$dcmalist .= '<status>' . MemreasConstants::DCMA_CLAIM_TEXT . '</status>';
+					} else if ($rec ['status'] == 3) {
+						$dcmalist .= '<status>' . MemreasConstants::DCMA_COUNTER_CLAIM_TEXT . '</status>';
 					} else {
 						$dcmalist .= '<status>undefined</status>';
 					}

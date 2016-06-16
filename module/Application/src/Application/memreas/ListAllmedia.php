@@ -251,13 +251,13 @@ class ListAllmedia {
 					$device_id = '';
 					if ($devices) {
 						foreach ( $devices as $device ) {
-							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
+							// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
 							if (isset ( $device ['origin'] ) && ($device ['origin'] == 1)) {
 								$device_id = $device ['device_id'];
 								$device_type = $device ['device_type'];
 							}
 						}
-					} else if (isset($json_array ['S3_files'] ['device'] ['device_id'])) {
+					} else if (isset ( $json_array ['S3_files'] ['device'] ['device_id'] )) {
 						$device_id = $json_array ['S3_files'] ['device'] ['device_id'];
 						$device_type = $json_array ['S3_files'] ['device'] ['device_type'];
 					}
@@ -268,10 +268,10 @@ class ListAllmedia {
 						$xml_output .= "<device_id/>";
 						$xml_output .= "<device_type/>";
 					}
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id-->', $row['media_id'] );
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id-->', $device_id );
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type-->', $device_type );
-						
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id-->', $row['media_id'] );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id-->', $device_id );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type-->', $device_type );
+					
 					//
 					// Close media entry
 					//

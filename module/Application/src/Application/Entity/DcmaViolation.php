@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A DMCA Violation
- * 
+ *
  * @ORM\Entity
  * @ORM\Table(name="dmca_violation")
  */

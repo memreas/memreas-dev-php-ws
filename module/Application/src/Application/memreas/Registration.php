@@ -462,7 +462,7 @@ class Registration {
 					'profile_photo' => $pic_79x80,
 					'profile_photo_79x80' => $pic_79x80,
 					'profile_photo_448x306' => $pic_448x306,
-					'profile_photo_98x78' => $pic_98x78, 
+					'profile_photo_98x78' => $pic_98x78,
 					'profile_photo_full' => $pic_full 
 			);
 		}

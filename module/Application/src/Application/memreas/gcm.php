@@ -36,7 +36,7 @@ class gcm {
 						'user_id' => $user_id 
 				) 
 		);
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__, "gcm fields ---> ".json_encode($fields));
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm fields ---> " . json_encode ( $fields ) );
 		$headers = array (
 				// memreas key
 				'Authorization: key=' . MemreasConstants::GCM_SERVER_KEY,
@@ -59,7 +59,7 @@ class gcm {
 		
 		// Close connection
 		curl_close ( $ch );
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__, "gcm result ---> " . $result);
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm result ---> " . $result );
 		
 		return $result;
 	}

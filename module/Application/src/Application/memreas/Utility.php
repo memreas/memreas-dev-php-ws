@@ -41,10 +41,10 @@ class Utility {
 		/**
 		 * Check if timestampe is unix timestamp and convert to datetime
 		 */
-		//Mlog::addone('formatDateDiff($start, $end = null) $start-->', '*'.$start.'*');
-		//Mlog::addone('formatDateDiff($start, $end = null) $end-->', '*'.$end.'*');
-		if (self::isValidTimeStamp($start)) {
-			$start = self::toDateTime($start);
+		// Mlog::addone('formatDateDiff($start, $end = null) $start-->', '*'.$start.'*');
+		// Mlog::addone('formatDateDiff($start, $end = null) $end-->', '*'.$end.'*');
+		if (self::isValidTimeStamp ( $start )) {
+			$start = self::toDateTime ( $start );
 		}
 		$pos = strpos ( $start, '-' );
 		
@@ -55,8 +55,8 @@ class Utility {
 			$start = new \DateTime ( $start );
 		}
 		
-		if (self::isValidTimeStamp($end)) {
-			$end = self::toDateTime($end);
+		if (self::isValidTimeStamp ( $end )) {
+			$end = self::toDateTime ( $end );
 		}
 		if ($end === null) {
 			$end = new \DateTime ();

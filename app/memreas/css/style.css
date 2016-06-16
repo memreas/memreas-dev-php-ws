@@ -1,8 +1,13 @@
 @charset "utf-8";
 /* CSS Document */
 /*.....:Reset CSS:.....*/
-html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video
-	{
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p,
+	blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn,
+	em, img, ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, b, u,
+	i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table,
+	caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas,
+	details, embed, figure, figcaption, footer, header, hgroup, menu, nav,
+	output, ruby, section, summary, time, mark, audio, video {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -11,8 +16,8 @@ html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abb
 	vertical-align: baseline;
 }
 /*.....:HTML5 display-role reset for older browsers:.....*/
-article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section
-	{
+article, aside, details, figcaption, figure, footer, header, hgroup,
+	menu, nav, section {
 	display: block;
 }
 
@@ -26,7 +31,7 @@ article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section
 	color: #FFF;
 }
 
-ol,ul {
+ol, ul {
 	list-style: none;
 }
 
@@ -49,15 +54,15 @@ button:focus {
 	outline: none;
 }
 /* Improve readability when focused and hovered in all browsers: people.opera.com/patrickl/experiments/keyboard/test */
-a:hover,a:active {
+a:hover, a:active {
 	outline: 0;
 }
 
-blockquote,q {
+blockquote, q {
 	quotes: none;
 }
 
-blockquote:before,blockquote:after,q:before,q:after {
+blockquote:before, blockquote:after, q:before, q:after {
 	content: '';
 	content: none;
 }
@@ -67,7 +72,7 @@ table {
 	border-spacing: 0;
 }
 
-input,textarea {
+input, textarea {
 	outline: 0;
 }
 /*.....:Fonts Styles:.....*/
@@ -114,7 +119,7 @@ a {
 }
 
 a:
-input,textarea {
+input, textarea {
 	outline: 0;
 }
 /*++++++++++++++++++++++++++++++++++++++++++++ Headings ++++++++++++++++++++++++++++++++++++++++++++*/
@@ -157,7 +162,7 @@ body {
 	z-index: -1;
 }
 
-.bgstretcher,.bgstretcher UL,.bgstretcher UL LI {
+.bgstretcher, .bgstretcher UL, .bgstretcher UL LI {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -165,7 +170,7 @@ body {
 	bottom: 0;
 }
 
-.bgstretcher UL,.bgstretcher UL LI {
+.bgstretcher UL, .bgstretcher UL LI {
 	margin: 0;
 	padding: 0;
 	list-style: none;
@@ -283,7 +288,7 @@ nav ul li a {
 	background: url(../img/nav-link.jpg) no-repeat right;
 }
 
-nav ul li a:hover,nav ul li a.active {
+nav ul li a:hover, nav ul li a.active {
 	background: url(../img/nav-act.jpg) no-repeat right;
 }
 
@@ -392,7 +397,7 @@ nav ul li a:hover,nav ul li a.active {
 	text-align: center;
 }
 
-.menu ul li a:hover,.menu ul li a.active {
+.menu ul li a:hover, .menu ul li a.active {
 	background: url(../img/menu-act.png);
 }
 
@@ -480,7 +485,7 @@ a.black_btn_skin {
 	margin: 20px 10px;
 }
 
-a.black_btn_skin:hover,a.black_btn_skin:active {
+a.black_btn_skin:hover, a.black_btn_skin:active {
 	color: #fff;
 	text-decoration: none;
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#646464),
@@ -535,8 +540,8 @@ a.black_btn_skin:hover,a.black_btn_skin:active {
 	padding: .7em 4em !important;
 }
 
-#tabs a:hover,#tabs a:hover::after,#tabs a:focus,#tabs a:focus::after,#tabs a:hover::before
-	{
+#tabs a:hover, #tabs a:hover::after, #tabs a:focus, #tabs a:focus::after,
+	#tabs a:hover::before {
 	background: #151515;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#3a3a3a),
 		to(#151515));
@@ -609,7 +614,7 @@ a.black_btn_skin:hover,a.black_btn_skin:active {
 	border-radius: 10px 0 0 0;
 }
 
-#tabs #current a,#tabs #current a::after,#tabs #current a::before {
+#tabs #current a, #tabs #current a::after, #tabs #current a::before {
 	background: #151515;
 	background-image: -webkit-gradient(linear, left top, left bottom, from(#3a3a3a),
 		to(#151515));
@@ -629,7 +634,7 @@ a.black_btn_skin:hover,a.black_btn_skin:active {
 	height: 360px;
 }
 
-#tab-content h2,#tab-content h3,#tab-content p {
+#tab-content h2, #tab-content h3, #tab-content p {
 	margin: 0 0 15px 0;
 	color: #fff;
 }
@@ -767,7 +772,7 @@ a.forgot-password:hover {
 	overflow: hidden;
 }
 
-.file_upload:hover,.file_upload:active {
+.file_upload:hover, .file_upload:active {
 	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#0b51a2),
 		to(#4a9bea));
 	background: -webkit-linear-gradient(top, #0b51a2, #4a9bea);
@@ -1190,7 +1195,7 @@ ul.image_upload_box li {
 	background: #4891f3;
 }
 
-.close_progress a:hover,.close_progress a:active {
+.close_progress a:hover, .close_progress a:active {
 	box-shadow: 0 0 10px #fff;
 }
 /************************************end queue*****************************************/
@@ -1389,7 +1394,7 @@ ul.option li small {
 		inset 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.regular-radio+label:active,.regular-radio:checked+label:active {
+.regular-radio+label:active, .regular-radio:checked+label:active {
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), inset 0px 1px 3px
 		rgba(0, 0, 0, 0.1);
 }

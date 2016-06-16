@@ -1,10 +1,9 @@
 <?php
-//$env = getenv('APP_ENV') ?: 'production';
-//if ($env == 'development') {
-	
-	
-	//$modules[] = 'ZendDeveloperTools';
-//}
+// $env = getenv('APP_ENV') ?: 'production';
+// if ($env == 'development') {
+
+// $modules[] = 'ZendDeveloperTools';
+// }
 return array (
 		// This should be an array of module namespaces used in the application.
 		'modules' => array (

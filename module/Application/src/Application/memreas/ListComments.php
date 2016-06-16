@@ -77,7 +77,7 @@ class ListComments {
 		$qb->orderBy ( 'c.create_time', 'DESC' );
 		$qb->setMaxResults ( $limit );
 		$qb->setFirstResult ( $from );
-		//error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
+		// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
 		$result_comment = $qb->getQuery ()->getResult ();
 		
 		$output .= '<comments>';
@@ -122,8 +122,8 @@ class ListComments {
 								} else {
 									$audio_url = $json_array ['S3_files'] ['path'];
 								}
-								//Mlog::addone(__CLASS__.__METHOD__.__LINE__.' $value [audio_id]--->', $value ['audio_id']);
-								//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$audio_url--->',$audio_url);
+								// Mlog::addone(__CLASS__.__METHOD__.__LINE__.' $value [audio_id]--->', $value ['audio_id']);
+								// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$audio_url--->',$audio_url);
 								$output .= "<audio_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $audio_url ) . "]]></audio_media_url>";
 							}
 						} else {
@@ -138,7 +138,6 @@ class ListComments {
 					$output .= '<commented_about>' . Utility::formatDateDiff ( $value ['create_time'] ) . '</commented_about>';
 					$output .= '</comment>';
 				}
-				
 			}
 		}
 		$output .= '</comments>';
