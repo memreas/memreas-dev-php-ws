@@ -125,23 +125,23 @@ class RegisterDevice {
 				if (! $device_exists) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->inside !$device_exists' );
 					try {
-						$tblDevice = new \Application\Entity\Device();
+						$tblDevice = new \Application\Entity\Device ();
 						$tblDevice->device_id = $device_id;
 						$tblDevice->user_id = $user_id;
 						$tblDevice->device_token = $device_token;
 						$tblDevice->device_type = $device_type;
 						$tblDevice->last_used = '1';
-						$tblDevice->create_time = strval($time);
-						$tblDevice->update_time = strval($time);
+						$tblDevice->create_time = strval ( $time );
+						$tblDevice->update_time = strval ( $time );
 						
-						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblDevice', $tblDevice);
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_id---->' . $tblDevice->device_id . ' of type --> ' . gettype($tblDevice->device_id));
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_token---->' . $tblDevice->device_token  . ' of type --> ' . gettype($tblDevice->device_token));
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$user_id---->' . $tblDevice->user_id  . ' of type --> ' . gettype($tblDevice->user_id));
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_type---->' . $tblDevice->device_type  . ' of type --> ' . gettype($tblDevice->device_type));
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$last_used---->'. $tblDevice->last_used  . ' of type --> ' . gettype($tblDevice->last_used));
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$create_time---->' . $tblDevice->create_time  . ' of type --> ' . gettype($tblDevice->create_time));
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$update_time---->' . $tblDevice->update_time  . ' of type --> ' . gettype($tblDevice->update_time));
+						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblDevice', $tblDevice);
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_id---->' . $tblDevice->device_id . ' of type --> ' . gettype ( $tblDevice->device_id ) );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_token---->' . $tblDevice->device_token . ' of type --> ' . gettype ( $tblDevice->device_token ) );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$user_id---->' . $tblDevice->user_id . ' of type --> ' . gettype ( $tblDevice->user_id ) );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$device_type---->' . $tblDevice->device_type . ' of type --> ' . gettype ( $tblDevice->device_type ) );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$last_used---->' . $tblDevice->last_used . ' of type --> ' . gettype ( $tblDevice->last_used ) );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$create_time---->' . $tblDevice->create_time . ' of type --> ' . gettype ( $tblDevice->create_time ) );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'tblDevice->$update_time---->' . $tblDevice->update_time . ' of type --> ' . gettype ( $tblDevice->update_time ) );
 						if ($this->dbAdapter) {
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->inside !$device_exists - $this->dbAdapter is valid' );
 						} else {
@@ -149,9 +149,9 @@ class RegisterDevice {
 						}
 						$this->dbAdapter->persist ( $tblDevice );
 						$this->dbAdapter->flush ();
-					} catch(\Doctrine\DBAL\DBALException $e) {
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $e->getErrorCode());
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $e->getMessage());
+					} catch ( \Doctrine\DBAL\DBALException $e ) {
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $e->getErrorCode () );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $e->getMessage () );
 					}
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->executed insert' );
 				} else {
@@ -167,7 +167,7 @@ class RegisterDevice {
 							d.update_time = '$time'
 					WHERE d.device_id = '$device_id'
 					AND d.device_type = '$device_type'";
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$deviceexists_update_sql----->'.$deviceexists_update_sql);
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$deviceexists_update_sql----->' . $deviceexists_update_sql );
 					$deviceexists_update_query = $this->dbAdapter->createQuery ( $deviceexists_update_sql );
 					$deviceexists_update_result = $deviceexists_update_query->getResult ();
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'registerdevice.exec()->executed update' );

@@ -111,14 +111,14 @@ class MediaInappropriate {
 					// - only add to events if event_id wasn't added prior
 					// - only add user data if they haven't reported media prior.
 					//
-					if (!isset($media_inappropriate_event ['events'])) {
+					if (! isset ( $media_inappropriate_event ['events'] )) {
 						$media_inappropriate_event ['events'] [] = $event_id;
 					} else if (! in_array ( $event_id, $media_inappropriate_event ['events'] )) {
 						$media_inappropriate_event ['events'] [] = $event_id;
 					}
 					
 					$logMediaInappropriate = false;
-					if (!isset($media_inappropriate_event ['users'])) {
+					if (! isset ( $media_inappropriate_event ['users'] )) {
 						$logMediaInappropriate = true;
 					} else if (! in_array ( $reporting_user_id, $media_inappropriate_event ['users'] )) {
 						$logMediaInappropriate = true;
@@ -129,8 +129,8 @@ class MediaInappropriate {
 						Mlog::addone ( '$reason_types--->', $reason_types );
 						$reason_type = $reason_types [0];
 						foreach ( $reason_type as $reason ) {
-							Mlog::addone ( '(string) $reason--->', (string) $reason );
-							$media_inappropriate_event [$event_id] ['event'] [$reporting_user_id] ['user'] ['reason'][] = ( string ) $reason;
+							Mlog::addone ( '(string) $reason--->', ( string ) $reason );
+							$media_inappropriate_event [$event_id] ['event'] [$reporting_user_id] ['user'] ['reason'] [] = ( string ) $reason;
 						}
 						$media_inappropriate_event [$event_id] ['event'] [$reporting_user_id] ['user'] ['date_created'] = MNow::now ();
 					} else {

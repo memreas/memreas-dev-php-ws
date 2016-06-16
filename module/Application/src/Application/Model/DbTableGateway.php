@@ -14,7 +14,6 @@ use Zend\Session\SaveHandler\SaveHandlerInterface;
 use Zend\Session\Container;
 use \Exception;
 
-
 /**
  * DB Table Gateway session save handler
  */
@@ -35,21 +34,21 @@ class DbTableGateway implements SaveHandlerInterface {
 	
 	/**
 	 * Lifetime
-	 * 
+	 *
 	 * @var int
 	 */
 	protected $lifetime;
 	
 	/**
 	 * Zend Db Table Gateway
-	 * 
+	 *
 	 * @var TableGateway
 	 */
 	protected $tableGateway;
 	
 	/**
 	 * DbTableGateway Options
-	 * 
+	 *
 	 * @var DbTableGatewayOptions
 	 */
 	protected $options;
@@ -96,7 +95,6 @@ class DbTableGateway implements SaveHandlerInterface {
 	 * @return string
 	 */
 	public function read($id) {
- 
 		$rows = $this->tableGateway->select ( array (
 				$this->options->getIdColumn () => $id,
 				$this->options->getNameColumn () => $this->sessionName 
@@ -120,7 +118,7 @@ class DbTableGateway implements SaveHandlerInterface {
 	 * @return bool
 	 */
 	public function write($id, $data) {
-  		$datetime = date ( "Y-m-d H:i:s", time () );
+		$datetime = date ( "Y-m-d H:i:s", time () );
 		$data = array (
 				$this->options->getModifiedColumn () => time (),
 				$this->options->getDataColumn () => ( string ) $data,
@@ -145,15 +143,14 @@ class DbTableGateway implements SaveHandlerInterface {
 		if (! empty ( $_SESSION ['user'] ['user_id'] )) {
 			$data ['user_id'] = $_SESSION ['user'] ['user_id'];
 		}
- 		try {
- 			return ( bool )$this->tableGateway->insert ( $data );
- 		} catch (\Exception $e) {
- 			return ( bool ) $this->tableGateway->update ( $data, array (
+		try {
+			return ( bool ) $this->tableGateway->insert ( $data );
+		} catch ( \Exception $e ) {
+			return ( bool ) $this->tableGateway->update ( $data, array (
 					$this->options->getIdColumn () => $id,
 					$this->options->getNameColumn () => $this->sessionName 
 			) );
- 			
- 		} 
+		}
 	}
 	
 	/**

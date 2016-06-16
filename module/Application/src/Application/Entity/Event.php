@@ -112,7 +112,6 @@ class Event {
 	 * @var string @ORM\Column(name="update_time", type="string", length=255, nullable=false)
 	 */
 	private $update_time;
-	
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}

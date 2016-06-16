@@ -129,7 +129,7 @@ class AWSManagerSender {
 	}
 	public function webserviceUpload($user_id, $media_id, $dirPath, $file_name, $content_type) {
 		$s3_data = array ();
-		$s3_data ['s3path'] = "$user_id/".$media_id."/";
+		$s3_data ['s3path'] = "$user_id/" . $media_id . "/";
 		$s3_data ['s3file_name'] = $file_name;
 		$s3_data ['s3file'] = $s3_data ['s3path'] . $file_name;
 		$file = $dirPath . $file_name;
