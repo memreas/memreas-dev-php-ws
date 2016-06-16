@@ -99,6 +99,13 @@ class UpdateNotification {
 						$this->dbAdapter->flush ();
 						$status = "success";
 						$message = "notification updated";
+						
+						//
+						// Invalidate listnotifications for sender and receiver
+						//
+						$redis = AWSMemreasRedisCache::getHandle();
+						$redis->invalidateNotifications ( $this->sender_uid );
+						$redis->invalidateNotifications ( $this->receiver_uid );
 					}
 				}
 			}
