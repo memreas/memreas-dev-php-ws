@@ -14,54 +14,51 @@ class MemreasConstants {
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;
 	// has 1 or 0 value
 	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
-	const FORGOT_PASSWORD_CODE_LENGTH = 6;
+	const FORGOT_PASSWORD_CODE_LENGTH = 8;
 	
-	// memreasdev urls
-	const WEB_URL = "https://fe.memreas.com/";
-	const ORIGINAL_URL = "https://memreasdev-ws.memreas.com/";
-	const MEDIA_URL = "https://memreasdev-ws.memreas.com/?action=addmediaevent";
-	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
-	const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com/";
-	const MEMREAS_PAY_URL_STRIPE = "https://memreasdev-pay.memreas.com/stripe/";
-	const MEMREAS_PAY_URL_INDEX = "https://memreasdev-pay.memreas.com/index/";
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
+	// memreasprod urls
+	const WEB_URL = "https://www.memreas.com/";
+	const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
+	const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
+	const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
+	const MEMREAS_PAY_URL = "https://memreasprod-pay.memreas.com/";
+	const MEMREAS_PAY_URL_STRIPE = "https://memreasprod-pay.memreas.com/stripe/";
+	const MEMREAS_PAY_URL_INDEX = "https://memreasprod-pay.memreas.com/index/";
 	
 	// Redis section
-	// ubuntu standalone for
-	// redis 3 version
-	//const REDIS_SERVER_ENDPOINT = "54.225.187.57";
-	const REDIS_SERVER_ENDPOINT = "10.164.216.184";
+	const REDIS_SERVER_ENDPOINT = "10.154.58.83";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
-	//1 hour
-	const REDIS_CACHE_SESSION_TTL = 3600;
-	// 1day 
-	const REDIS_CACHE_TTL = (3600*24);
-	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600*24);
+	const REDIS_CACHE_SESSION_TTL = 3600; // 1hour 
+	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600*24); // 1day 
+	const REDIS_CACHE_TTL = 7200; // 2 hours
+
+	// 1 hour
 	
 	// memreasdevsec related
-	const S3BUCKET = "memreasdevsec";
-	const S3HLSBUCKET = "memreasdevhlssec";
-	const S3_APPKEY = 'AKIAJZE2O2WDMXLGR27A';
-	const S3_APPSEC = 'FI09T7vRXcWx+QBE/n5ysEtZxx/DOAxkks/o2rzG';
+	const S3_APPKEY = 'AKIAISDIQFVJMWFYXCIA';
+	const S3_APPSEC = 'eM5HG4MbYhkW1Jz1RWIdMapo2s+DbB+KnkhzTt91';
 	const S3_REGION = 'us-east-1';
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
+	const S3BUCKET = "memreasprodsec";
+	const S3HLSBUCKET = "memreasprodhlssec";
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s12hcdq6y0d1zq.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d321rfaqc9owi4.cloudfront.net/';
+	const CLOUDFRONT_HLS_DOWNLOAD_HOST = 'https://d1fhgtf97i7jlq.cloudfront.net/';
+	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d1fhgtf97i7jlq.cloudfront.net/';
 	const SIGNURLS = true;
 	
-	// const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2b3944zpv2o6x.cloudfront.net/';
-	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
+	
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
-	const CLOUDFRONT_EXPIRY_TIME = 720000; // 200 hours
+	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
 	
 	//free plan id
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
 	                                      
 	// Same across...
-	const registration_secret_passphrase = 'freedom tower1';
-	const media_id_batch_create_count = 50;
+	const registration_secret_passphrase = 'freedom tower';
+	const media_id_batch_create_count = 25;
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
 	const URL = "/index";
@@ -81,8 +78,8 @@ class MemreasConstants {
 	const AUDIO = "/data/media/upload_audio";
 	const ADMIN_EMAIL = 'admin@memreas.com';
 	const GCM_SERVER_KEY = 'AIzaSyAt0YAt_Nb9Q4zjaU0-epWeTejUVVh8lDI';
-	const APNS = 'aps.pem';
-	const APNS_GATEWAY = 'ssl://gateway.sandbox.push.apple.com:2195';
+	const APNS = 'aps_pkey.pem';
+	const APNS_GATEWAY = 'ssl://gateway.push.apple.com:2195';
 	const COPYRIGHT = '&copy;memreas, llc. all rights reserved.';
     const DCMA_CLAIM = 2; 
 	const DCMA_CLAIM_TEXT = 'claim reported'; 
@@ -109,4 +106,5 @@ class MemreasConstants {
 	const TW_CONSUMER_SECRET = 'bDqOeHkJ7OIQ4QPNnT1PA9oz55gf51YW0REBo12aazGA0CBrbY';
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
+	
 }
