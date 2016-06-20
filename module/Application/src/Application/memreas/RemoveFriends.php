@@ -37,33 +37,44 @@ class RemoveFriends {
 				$friendList = implode ( ', ', $friendList );
 				
 				// remove friend from user's user_friend entry
-				$query_friends = "DELETE FROM Application\Entity\UserFriend uf 
+				$query = "DELETE FROM Application\Entity\UserFriend uf 
 									WHERE uf.friend_id IN ({$friendList}) 
 									AND uf.user_id = '{$user_id}'";
-				$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
+				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query_friends::', $query_friends );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query::', $query );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// remove user from friend's user_friend entry
-				$query_friends = "DELETE FROM Application\Entity\UserFriend uf 
+				$query = "DELETE FROM Application\Entity\UserFriend uf 
 									WHERE uf.friend_id = '{$user_id}' 
 									AND uf.user_id IN ({$friendList})";
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query_friends::', $query_friends );
-				$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
+				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query::', $query );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
-				// udpate notification
-				$query_friends = "DELETE FROM Application\Entity\Notification n 
-									WHERE n.sender_uid = '{$user_id}' 
-									AND n.receiver_uid IN ({$friendList})
-									and n.notification_type = 'ADD_FRIEND'";
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query_friends::', $query_friends );
-				$friend_statement = $this->dbAdapter->createQuery ( $query_friends );
+				// delete add notification
+				$query = "DELETE FROM Application\Entity\Notification n
+				WHERE n.sender_uid = '{$user_id}'
+				AND n.receiver_uid IN ({$friendList})
+				and n.notification_type = 'ADD_FRIEND'";
+				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query_friends::', $query_friends );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				
+				// delete response notification
+				$query = "DELETE FROM Application\Entity\Notification n 
+									WHERE n.receiver_uid IN ({$friendList}) 
+									AND n.sender_uid = '{$user_id}'
+									and n.notification_type = 'ADD_FRIEND_RESPONSE'";
+				$friend_statement = $this->dbAdapter->createQuery ( $query );
+				$friend_result = $friend_statement->getResult ();
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				
+				
 			}
 		} catch ( Exception $e ) {
 			$friend_result = false;

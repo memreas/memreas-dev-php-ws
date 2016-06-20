@@ -732,6 +732,7 @@ class IndexController extends AbstractActionController {
 				 * Cache approach
 				 * - write operation
 				 * - invalidate listnotification
+				 * - performed insied updatenotification so sender and received notifications are updated
 				 */
 				$this->redis->invalidateNotifications ( $uid );
 			} else if ($actionname == "signedurl") {
