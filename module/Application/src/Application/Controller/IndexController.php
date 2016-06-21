@@ -1879,21 +1879,35 @@ class IndexController extends AbstractActionController {
 		 * Check action to see if session is needed...
 		 */
 		$requires = false;
-		$public = array (
-				'login',
-				'registration',
-				'forgotpassword',
-				'checkusername',
-				// 'chkuname',
-				'changepassword',
-				'verifyemailaddress',
-				'ws_tester',
-				'stripe_ws_tester',
-				'clearlog',
-				'showlog',
-				'stripe_activeCredit',
-				'dcmareportviolation' 
-		);
+		$public;
+		if (MemreasConstants::ENV == 'DEV') {
+			$public = array (
+					'login',
+					'registration',
+					'forgotpassword',
+					'checkusername',
+					// 'chkuname',
+					'changepassword',
+					'verifyemailaddress',
+					'ws_tester',
+					'stripe_ws_tester',
+					'clearlog',
+					'showlog',
+					'stripe_activeCredit',
+					'dcmareportviolation' 
+			);
+		} else {
+			$public = array (
+					'login',
+					'registration',
+					'forgotpassword',
+					'checkusername',
+					// 'chkuname',
+					'changepassword',
+					'verifyemailaddress',
+					'stripe_activeCredit',
+					'dcmareportviolation'
+		}
 		if (in_array ( $actionname, $public )) {
 			$requires = false;
 		} else if (strpos ( $actionname, "stripe_" ) !== false) {
