@@ -1907,6 +1907,7 @@ class IndexController extends AbstractActionController {
 					'verifyemailaddress',
 					'stripe_activeCredit',
 					'dcmareportviolation'
+			);
 		}
 		if (in_array ( $actionname, $public )) {
 			$requires = false;
