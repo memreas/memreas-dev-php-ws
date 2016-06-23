@@ -41,7 +41,7 @@ class VerifyEmailAddress {
 			
 			if ($user) {
 				$metadata = json_decode ( $user->metadata, true );
-				// error_log("user->metadata ----> ".$user->metadata.PHP_EOL);
+				error_log("user->metadata ----> ".$user->metadata.PHP_EOL);
 				$email_verification_sent = $metadata ['user'] ['email_verification_id'];
 			}
 			/*
