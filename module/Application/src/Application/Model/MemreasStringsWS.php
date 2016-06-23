@@ -30,6 +30,9 @@ class MemreasStringsWS {
 	// register email
 	const EMAIL_REGISTER_WELCOME = 'Welcome to memreas!';
 	const EMAIL_REGISTER_BODY = 'Thanks for joining! Please click the following link to verify your';
+	
+	// notifications
+	const NOTIFICATION_ADD_FRIEND = 'friend request from @';
 	static function getString($string) {
 		return constant ( 'self::' . $string . self::$locale );
 	}
