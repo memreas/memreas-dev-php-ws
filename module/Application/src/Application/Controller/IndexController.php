@@ -225,20 +225,19 @@ class IndexController extends AbstractActionController {
 		// Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
-			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - profile pic upload for registration
-		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id ) && ! (isset ( $data->memreascookie ) || isset ( $data->sid ))) {
-			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id ) && (isset ( $data->registration->secret ))) {
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $actionname )--> ', $actionname );
-			// Mlog::addone ( $cm . __LINE__ . '::about to fetchSession for ( $data)--> ', $data );
+			Mlog::addone ( $cm . __LINE__ . '::requiresSecureAction::about to fetchSession for ( $actionname )--> ', $actionname );
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
 		
-		// Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
+		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
 		
 		/**
 		 * For testing only...
@@ -324,10 +323,9 @@ class IndexController extends AbstractActionController {
 				}
 			} else if ($actionname == "registration") {
 				$registration = new Registration ( $this->sessHandler, $message_data, $memreas_tables, $this->sm );
-				$result = $registration->exec ();
-				
-				$data = simplexml_load_string ( $_POST ['xml'] );
-				$uid = trim ( $data->registration->username );
+				$result = $registration->exec ($this->fetchUserIPAddress ());
+				Mlog::addone($cm, __LINE__.'registration result array -->', $result);
+				$uid = $result['user_id'];
 			} else if ($actionname == "addcomments") {
 				$addcomment = new AddComment ( $message_data, $memreas_tables, $this->sm );
 				$result = $addcomment->exec ();
@@ -1906,7 +1904,7 @@ class IndexController extends AbstractActionController {
 					'changepassword',
 					'verifyemailaddress',
 					'stripe_activeCredit',
-					'dcmareportviolation'
+					'dcmareportviolation' 
 			);
 		}
 		if (in_array ( $actionname, $public )) {

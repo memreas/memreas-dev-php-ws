@@ -15,6 +15,7 @@ use Application\memreas\RmWorkDir;
 use Application\memreas\StripeWS\PaymentsProxy;
 use Application\Model\MemreasConstants;
 use Zend\View\Model\ViewModel;
+use Application\Model\MemreasStringsWS;
 
 class Registration {
 	protected $message_data;
@@ -47,10 +48,9 @@ class Registration {
 		}
 		return $result;
 	}
-	public function exec() {
+	public function exec($clientIPAddress = '') {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::exit" );
 		
-		$user_id = MUUID::fetchUUID ();
 		$invited_by = '';
 		if (isset ( $_POST ['xml'] )) {
 			error_log ( "Inside Registration xml request ----> " . $_POST ['xml'] . PHP_EOL );
@@ -89,14 +89,14 @@ class Registration {
 			}
 		}
 		
-		// error_log ( "username--->" . $username . PHP_EOL );
-		// error_log ( "email--->" . $email . PHP_EOL );
-		// error_log ( "password--->" . $password . PHP_EOL );
-		// error_log ( "device_id--->" . $device_id . PHP_EOL );
-		// error_log ( "device_type--->" . $device_type . PHP_EOL );
-		// error_log ( "secret--->" . $secret . PHP_EOL );
-		// error_log ( "invited_by--->" . $invited_by . PHP_EOL );
-		// error_log ( "event_id--->" . $event_id . PHP_EOL );
+		error_log ( "username--->" . $username . PHP_EOL );
+		error_log ( "email--->" . $email . PHP_EOL );
+		error_log ( "password--->" . $password . PHP_EOL );
+		error_log ( "device_id--->" . $device_id . PHP_EOL );
+		error_log ( "device_type--->" . $device_type . PHP_EOL );
+		error_log ( "secret--->" . $secret . PHP_EOL );
+		error_log ( "invited_by--->" . $invited_by . PHP_EOL );
+		error_log ( "event_id--->" . $event_id . PHP_EOL );
 		
 		// $this->processInvitedBy($invited_by);exit;
 		try {
@@ -107,9 +107,6 @@ class Registration {
 					// throw new \Exception ( 'Your profile is not created successfully. Please enter valid email address.' );
 					$status = 'failure';
 					$message = 'email address is invalid';
-				} else if ($secret != MemreasConstants::registration_secret_passphrase) {
-					$status = 'failure';
-					throw new \Exception ( "We're in beta, please enter the secret to pass" );
 				} else {
 					
 					/*
@@ -129,18 +126,20 @@ class Registration {
 						$result = $result [0];
 						$status = 'Failure';
 						if (($result->email_address == $email) && ($result->username != $username)) {
-							$message = 'Your profile is not created successfully. Email is already exist.';
+							$message = MemreasStringsWS::EMAIL_ALREADY_EXISTS;
 						} else if (($result->username == $username) && ($result->email_address != $email)) {
-							$message = 'Your profile is not created successfully. User name is already exist.';
+							$message = MemreasStringsWS::USERNAME_ALREADY_EXISTS;
 						} else if (($result->username == $username) && ($result->email_address == $email)) {
-							$message = 'Your profile is not created successfully. User name and email are already exist.';
+							$message = MemreasStringsWS::USERNAME_EMAIL_ALREADY_EXISTS;
 						}
 					} else {
-						$status = 'Success';
 						/*
 						 * added entry for email address verification
 						 */
+						$user_id = MUUID::fetchUUID ();
 						$email_verification_id = MUUID::fetchUUID ();
+						error_log ( "user_id--->" . $user_id . PHP_EOL );
+						error_log ( "email_verification_id--->" . $email_verification_id . PHP_EOL );
 						
 						/*
 						 * Set user metadata
@@ -152,7 +151,6 @@ class Registration {
 						$email_verification_url = MemreasConstants::ORIGINAL_URL . 'index?action=verifyemailaddress&email_verification_id=' . $email_verification_id . '&user_id=' . $user_id;
 						$meta_arr ['user'] ['email_verification_url'] = $email_verification_url;
 						$meta_arr ['user'] ['email_verified'] = "0";
-						
 						$metadata = json_encode ( $meta_arr );
 						
 						/*
@@ -161,20 +159,19 @@ class Registration {
 						$passwrd = $password;
 						$password = md5 ( $password );
 						$roleid = 2;
-						$statusid = 0;
-						$forgottoken = "";
 						$created = strtotime ( date ( 'Y-m-d H:i:s' ) );
 						$modified = strtotime ( date ( 'Y-m-d H:i:s' ) );
 						
+						//
+						// Create User
+						//
 						$tblUser = new \Application\Entity\User ();
-						$tblUser->email_address = $email;
-						$tblUser->password = $password;
 						$tblUser->user_id = $user_id;
 						$tblUser->username = $username;
+						$tblUser->password = $password;
+						$tblUser->email_address = $email;
 						$tblUser->role = $roleid;
 						$tblUser->metadata = $metadata;
-						$tblUser->disable_account = $statusid;
-						$tblUser->forgot_token = $forgottoken;
 						$tblUser->create_date = $created;
 						$tblUser->update_time = $modified;
 						$tblUser->invited_by = $invited_by;
@@ -240,7 +237,9 @@ class Registration {
 						// $MemreasEvent->exec ( $message_data );
 						// }
 						
+						//
 						// upload profile image
+						//
 						if (isset ( $_FILES ['f'] ) && ! empty ( $_FILES ['f'] ['name'] )) {
 							$s3file_name = time () . $_FILES ['f'] ['name'];
 							$content_type = $_FILES ['f'] ['type'];
@@ -286,14 +285,12 @@ class Registration {
 							
 							$time = time ();
 							$tblMedia = new \Application\Entity\Media ();
-							
 							$tblMedia->media_id = $media_id;
 							$tblMedia->user_id = $user_id;
 							$tblMedia->is_profile_pic = '1';
 							$tblMedia->metadata = $json_str;
 							$tblMedia->create_date = $time;
 							$tblMedia->update_date = $time;
-							
 							$this->dbAdapter->persist ( $tblMedia );
 							$this->dbAdapter->flush ();
 							
@@ -323,15 +320,21 @@ class Registration {
 							$message = "Media Successfully add";
 						}
 						
-						/*
-						 * Check if the device is registered and update as needed
+						/**
+						 * TODO:
+						 * 	Check if the device is registered and update as needed
+						 *  	- need device token...
 						 */
-						$this->registerDevice->checkDevice ( $user_id, $device_id, $device_type );
+						//$this->registerDevice->checkDevice ( $user_id, $device_id, $device_type );
 						
-						// error_log ( "About to email..." . PHP_EOL );
-						// API Info
-						// http://docs.aws.amazon.com/AWSSDKforPHP/latest/index.html#m=AmazonSES/send_email
-						// Always set content-type when sending HTML email
+						//
+						// Start session so we can create plan
+						//
+						$data = [];
+						$data['user_id'] = $user_id;
+						$data['username'] = $username;
+						$data = (object) $data;
+						$this->sessHandler->startSessionWithUID ( $data );
 						
 						/*
 						 * setup new user with free plan
@@ -369,7 +372,7 @@ class Registration {
 						$this->status = $status = 'Success';
 						$message = "Welcome to memreas. Your profile has been created.  Please verify your email next";
 						
-						$this->sessHandler->startSessionWithUID ( $user_id, $username );
+						//$this->sessHandler->startSessionWithUID ( $user_id, $username );
 						error_log ( "Finished..." . PHP_EOL );
 					}
 				}
@@ -402,18 +405,24 @@ class Registration {
 			$xml_output .= "</xml>";
 		}
 		
-		ob_clean ();
 		echo $xml_output;
 		
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::exit" );
 		
-		// error_log("registration xml_output -------> *****" . $xml_output . "*****" . PHP_EOL);
+		error_log ( "registration xml_output -------> *****" . $xml_output . "*****" . PHP_EOL );
 		
 		$this->username = $username;
 		$this->user_id = $user_id;
 		$filename = $s3_data ['s3path'] . $s3_data ['s3file_name'];
 		$this->profile_photo = ! empty ( $filename ) ? $s3_data ['s3path'] . $s3_data ['s3file_name'] : '';
-		// return array ('user_id' => $user_id, 'username' => $username, 'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] );
+		
+		$result = array (
+				'user_id' => $user_id,
+				'username' => $username,
+				'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] 
+		);
+		
+		return $result;
 	} // end exec()
 	function createUserCache() {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::enter" );
