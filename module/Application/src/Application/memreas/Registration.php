@@ -418,8 +418,8 @@ class Registration {
 		
 		$result = array (
 				'user_id' => $user_id,
-				'username' => $username,
-				'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] 
+				'username' => $username
+				//'profile_photo' => $s3_data ['s3path'] . $s3_data ['s3file_name'] 
 		);
 		
 		return $result;
