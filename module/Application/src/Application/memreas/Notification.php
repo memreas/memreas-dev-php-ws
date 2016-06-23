@@ -46,7 +46,7 @@ class Notification {
 	public function send() {
 		// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
 		try {
-			error_log ( "Notification::Inside send()" . PHP_EOL );
+			//error_log ( "Notification::Inside send()" . PHP_EOL );
 			// mobile notification.
 			if (count ( $this->receiverIds ) > 0) {
 				error_log ( "Notification::Inside send() count ( this->receiverIds ) " . count ( $this->receiverIds ) . PHP_EOL );

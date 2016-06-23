@@ -7,6 +7,8 @@
  */
 namespace Application\memreas;
 
+use Application\Model\MemreasStringsWS;
+
 class AddFriend {
 	protected $message_data;
 	protected $memreas_tables;
@@ -62,8 +64,8 @@ class AddFriend {
 				$meta = array ();
 				$meta ['sent'] ['sender_user_id'] = $user_id;
 				$meta ['sent'] ['receiver_user_id'] = $friend_id;
-				$meta ['sent'] ['message'] = 'add friend request from @' . $_SESSION ['username'];
-				// $meta['sent']['message'] = 'add friend request from @'.$user->username;
+				//$meta ['sent'] ['message'] = 'add friend request from @' . $_SESSION ['username'];
+				$meta['sent']['message'] = MemreasStringsWS::NOTIFICATION_ADD_FRIEND.$user->username;
 				$data ['addNotification'] ['meta'] = $meta;
 				$this->AddNotification->exec ( $data );
 				$this->notification->add ( $friend_id );
@@ -79,7 +81,8 @@ class AddFriend {
 					// Push Notification
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Push Notification...' );
 					$this->notification->type = $data ['addNotification'] ['notification_type'];
-					$this->notification->setMessage ( $this->notification->type, $meta ['sent'] ['message'] );
+					//$this->notification->setMessage ( $this->notification->type, $meta ['sent'] ['message'] );
+					$this->notification->setMessage ( $meta ['sent'] ['message'] );
 					$this->notification->send ();
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Push Notification SENT??' );
 				}
