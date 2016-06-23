@@ -18,6 +18,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $url_signer;
 	private $aws_manager;
 	protected $service_locator;
+	private static $handle;
+	private static $isInitialized;
 	public function __construct($redis, $service_locator) {
 		$cm = __CLASS__ . __METHOD__;
 		$this->service_locator = $service_locator;
@@ -36,7 +38,14 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->mRedis = $redis;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->url_signer = new MemreasSignedURL ();
+		self::$isInitialized = true;
+		self::$handle = $this;
 		// Mlog::addone ( $cm . __LINE__ . '::', 'exit __construct' );
+	}
+	public static function getHandle() {
+		if (! empty ( self::$isInitialized )) {
+			return self::$handle;
+		}
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected

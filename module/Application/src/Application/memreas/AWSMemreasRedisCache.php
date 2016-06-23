@@ -409,21 +409,21 @@ class AWSMemreasRedisCache {
 				 */
 				$keys = array_keys ( $event_ids );
 				$public_event_ids = $tagRep->filterPublicHashTags ( $keys );
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
+				//Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
 				$hashtag_public_eid_hash = array ();
 				foreach ( $public_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						//Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						//Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
 						// $hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
 						$reply = $this->cache->hset ( '#hashtag_public_eid_hash', $event_ids [$eid ['event_id']], $eid ['event_id'] );
 					}
 				}
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
+				//Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
 				// $reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
 				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
+				//Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
 				$hashtag_friends_eid_hash = array ();
 				foreach ( $friend_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
