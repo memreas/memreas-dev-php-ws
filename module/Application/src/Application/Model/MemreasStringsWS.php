@@ -27,6 +27,11 @@ class MemreasStringsWS {
 	// user comment email
 	const EMAIL_USER_COMMENT_BODY = 'has added a new comment to your';
 	
+	//registration
+	const EMAIL_ALREADY_EXISTS = 'This email already exists. Please check your info.';
+	const USERNAME_ALREADY_EXISTS = 'This username already exists. Please check your info.';
+	const USERNAME_EMAIL_ALREADY_EXISTS = 'This username and email already exists. Please check your info.';
+	
 	// register email
 	const EMAIL_REGISTER_WELCOME = 'Welcome to memreas!';
 	const EMAIL_REGISTER_BODY = 'Thanks for joining! Please click the following link to verify your';
