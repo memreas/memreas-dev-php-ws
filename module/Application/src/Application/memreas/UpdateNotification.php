@@ -78,7 +78,7 @@ class UpdateNotification {
 						$this->tblNotification->is_read = 1;
 						$this->tblNotification->update_time = $time;
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT) {
-							$this->tblNotification->notification_type = $this->handleAddFriendToEventResponse ();
+							$result = $this->handleAddFriendToEventResponse ();
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->tblNotification->notification_type::ADD_FRIEND_TO_EVENT-->', $result );
 							if (! $result) {
 								throw new \Exception ( $e->getMessage ( 'error in handleAddFriendToEventResponse' ) );
