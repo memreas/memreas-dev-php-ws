@@ -86,16 +86,6 @@ class AddNotification {
 				$this->dbAdapter->persist ( $tblNotification );
 				$this->dbAdapter->flush ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Success? - $this->dbAdapter->flush ()... ' );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->notification_id --->', $tblNotification->notification_id );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->sender_uid --->', $tblNotification->sender_uid );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->receiver_uid --->', $tblNotification->receiver_uid );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->notification_type --->', $tblNotification->notification_type );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->meta --->', $tblNotification->meta );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->is_read --->', $tblNotification->is_read );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->status --->', $tblNotification->status );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->notification_methods --->', $tblNotification->notification_methods );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->create_time --->', $tblNotification->create_time );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$tblNotification->update_time --->', $tblNotification->update_time );
 				
 				$status = 'Success';
 				$message = 'notification added';

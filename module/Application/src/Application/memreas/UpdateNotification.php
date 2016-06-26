@@ -16,6 +16,7 @@ class UpdateNotification {
 	protected $dbAdapter;
 	protected $notification;
 	public $user_id;
+	public $friend_id;
 	protected $receiver_uid;
 	protected $sender_uid;
 	protected $AddNotification;
@@ -68,15 +69,17 @@ class UpdateNotification {
 						$status = "failure";
 						$message = "notification not found";
 					} else {
-						/*
+						/**
+						 *  
+						 * NOTE: We're updating an existing notification so...
 						 * user_id = receiver_id (logged in user is receiving notification)
 						 * friend_id = sender_id (user who sent notification)
 						 */
 						$this->user_id = $this->sender_uid = $this->tblNotification->receiver_uid;
-						$this->receiver_uid = $this->tblNotification->sender_uid;
+						$this->friend_id = $this->receiver_uid = $this->tblNotification->sender_uid;
 						$this->tblNotification->response_status = $this->notification_status;
 						$this->tblNotification->is_read = 1;
-						$this->tblNotification->update_time = MNow::now();
+						$this->tblNotification->update_time = time ();
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT) {
 							$result = $this->handleAddFriendToEventResponse ();
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->tblNotification->notification_type::ADD_FRIEND_TO_EVENT-->', $result );
@@ -307,10 +310,11 @@ class UpdateNotification {
 		
 		/**
 		 * Build array and send notifications...
+		 *  - note sender 
 		 */
 		$data = array ();
-		$data ['addNotification'] ['sender_uid'] = $this->receiver_uid;
-		$data ['addNotification'] ['receiver_uid'] = $this->sender_uid;
+		$data ['addNotification'] ['sender_uid'] = $this->user_id;
+		$data ['addNotification'] ['receiver_uid'] = $this->friend_id;
 		$data ['addNotification'] ['notification_type'] = $response_type;
 		$data ['addNotification'] ['notification_methods'] [] = 'email';
 		$data ['addNotification'] ['notification_methods'] [] = 'push_notification';
@@ -322,13 +326,17 @@ class UpdateNotification {
 		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
 		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
 		
-		if ((strtolower ( $this->notification_status ) == 'ignore') || ($this->notification_status == 3)) {
-			// send email (reversed due to response)
-			$email_sender_uid = $this->receiver_uid;
-			$email_receiver_uid = $this->sender_uid;
+		//
+		// Send notification of email or push notification if !ignore
+		//
+		if ( !((strtolower ( $this->notification_status ) == 'ignore') || ($this->notification_status == 3))) {
+			// send email
+			$email_sender_uid = $this->user_id;
+			$email_receiver_uid = $this->friend_id;
 			Email::sendEmailNotification ( $this->service_locator, $this->dbAdapter, $email_receiver_uid, $email_sender_uid, $email_type, $this->notification_status, $nmessage );
+
 			// send push message add user id
-			$result = $this->notification->add ( $this->receiver_uid );
+			$result = $this->notification->add ( $this->user_id );
 		}
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->notification->add ( $this->receiver_uid )::$result', $result );
 		return $result;
