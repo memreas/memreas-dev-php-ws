@@ -76,7 +76,7 @@ class UpdateNotification {
 						$this->receiver_uid = $this->tblNotification->sender_uid;
 						$this->tblNotification->response_status = $this->notification_status;
 						$this->tblNotification->is_read = 1;
-						$this->tblNotification->update_time = $time;
+						$this->tblNotification->update_time = MNow::now();
 						if ($this->tblNotification->notification_type == \Application\Entity\Notification::ADD_FRIEND_TO_EVENT) {
 							$result = $this->handleAddFriendToEventResponse ();
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->tblNotification->notification_type::ADD_FRIEND_TO_EVENT-->', $result );
@@ -301,9 +301,9 @@ class UpdateNotification {
 		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->tblNotification->meta', $this->tblNotification->meta );
 		$meta ['received'] ['message'] = $nmessage;
 		$this->tblNotification->meta = json_encode ( $meta );
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$meta', $meta );
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->sender_uid', $this->sender_uid );
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->receiver_uid', $this->receiver_uid );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$meta', $meta );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->sender_uid', $this->sender_uid );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->receiver_uid', $this->receiver_uid );
 		
 		/**
 		 * Build array and send notifications...
@@ -319,8 +319,8 @@ class UpdateNotification {
 		// add notification in db.
 		$result = $this->AddNotification->exec ( $data );
 		
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
-		// Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$this->AddNotification->exec ( $data )->$result', $result );
+		Mlog::addone ( __CLASS__ . '::' . __METHOD__ . '::$data->notification_id', $data->notification_id );
 		
 		if ((strtolower ( $this->notification_status ) == 'ignore') || ($this->notification_status == 3)) {
 			// send email (reversed due to response)
