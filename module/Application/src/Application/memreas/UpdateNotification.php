@@ -335,10 +335,10 @@ class UpdateNotification {
 			$email_receiver_uid = $this->friend_id;
 			Email::sendEmailNotification ( $this->service_locator, $this->dbAdapter, $email_receiver_uid, $email_sender_uid, $email_type, $this->notification_status, $nmessage );
 
-			// send push message add user id
-			$result = $this->notification->add ( $this->user_id );
+			// send push message to receiver_uid so add friend_id
+			$result = $this->notification->add ( $this->friend_id );
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->notification->add ( $this->receiver_uid )::$result', $result );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->notification->add ( $this->friend_id )::$result', $result );
 		return $result;
 	}
 } // end class
