@@ -54,14 +54,14 @@ class AddNotification {
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
 			if ($sentPrior) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Failure - notification sent prior' );
 				$status = 'Failure';
 				$message = 'notification sent prior';
 			} else {
 				//
 				// save notification in table
 				//
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Success - adding notification' );
 				$this->notification_id = $notification_id = MUUID::fetchUUID ();
 				$tblNotification = new \Application\Entity\Notification ();
 				$tblNotification->notification_id = $notification_id;
@@ -85,7 +85,7 @@ class AddNotification {
 				$tblNotification->update_time = time ();
 				$this->dbAdapter->persist ( $tblNotification );
 				$this->dbAdapter->flush ();
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Success? - $this->dbAdapter->flush ()... ' );
 				
 				$status = 'Success';
 				$message = 'notification added';
