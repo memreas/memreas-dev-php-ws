@@ -753,7 +753,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Now logout
 				 */
-				$logout = new LogOut ( $message_data, $memreas_tables, $this->sm );
+				$logout = new LogOut ( );
 				$result = $logout->exec ( $this->sessHandler );
 			} else if ($actionname == "clearallnotification") {
 				/* - TODO: Cache Approach: write operation do later - */
