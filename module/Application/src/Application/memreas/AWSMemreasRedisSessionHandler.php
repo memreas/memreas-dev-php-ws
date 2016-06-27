@@ -75,11 +75,20 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
-		session_start ();
-		$rMemreasSidSession = $this->mRedis->getCache ( $sid );
-		// store to reset ttl
-		$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession, MemreasConstants::REDIS_CACHE_SESSION_DEVICE_TTL );
-		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		$result = session_start ();
+		if ($result) {
+			//
+			// store to reset ttl
+			//
+			$rMemreasSidSession = $this->mRedis->getCache ( $sid );
+			$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession, MemreasConstants::REDIS_CACHE_SESSION_DEVICE_TTL );
+		} else {
+			//
+			// Can't find session so logout
+			//
+			$logout = new LogOut ();
+			$result = $logout->exec ( $this );
+		}
 		
 		return $result;
 	}
@@ -93,15 +102,21 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			session_start ();
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::startSessionWithMemreasCookie sid is-->', $rMemreasCookieSessionArr ['sid'] );
 			$result = true;
+			
+			$fetchChameleon = new FetchChameleon ();
+			$fetchChameleon->setChameleon ();
+			
+			// set back to cache to reset ttl
+			$result = $this->mRedis->setCache ( 'memreascookie::' . $memreascookie, $rMemreasCookieSession, MemreasConstants::REDIS_CACHE_SESSION_TTL );
+			
+			return $result;
+		} else {
+			//
+			// Can't find session so logout
+			//
+			$logout = new LogOut ();
+			$result = $logout->exec ( $this );
 		}
-		
-		$fetchChameleon = new FetchChameleon ();
-		$fetchChameleon->setChameleon ();
-		
-		// set back to cache to reset ttl
-		$result = $this->mRedis->setCache ( 'memreascookie::' . $memreascookie, $rMemreasCookieSession, MemreasConstants::REDIS_CACHE_SESSION_TTL );
-		
-		return $result;
 		
 		// not worknig ---reset the cache with the updated data...
 		// $this->setMemreasCookieLookup ( true );
