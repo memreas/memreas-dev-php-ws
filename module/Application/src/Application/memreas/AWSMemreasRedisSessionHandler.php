@@ -215,7 +215,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		// Set Profile Pic Url
 		//
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		if (!empty($_SESSION ['profile_pic_meta'])) {
+		if ($_SESSION ['profile_pic_meta']) {
 			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
 			} else {
