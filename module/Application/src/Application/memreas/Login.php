@@ -132,7 +132,6 @@ class Login {
 						$xml_output .= "<email>" . $email . "</email>";
 						$xml_output .= "<sid>" . session_id () . "</sid>";
 						$xml_output .= "<device_token><![CDATA[" . $device_token . "]]></device_token>";
-						$xml_output .= "<profile_pic>" . $_SESSION ['profile_pic'] . "</profile_pic>";
 					} else {
 						$xml_output .= "<status>failure</status><message>Please verify your email address then try again.</message>";
 					}

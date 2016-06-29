@@ -511,6 +511,7 @@ class ViewEvents {
 		$query_event = "select e
 			from Application\Entity\Event e
 			where e.user_id='" . $user_id . "'
+			and e.delete_flag != 1
 			ORDER BY e.create_time DESC";
 		$statement = $this->dbAdapter->createQuery ( $query_event );
 		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
@@ -666,6 +667,7 @@ class ViewEvents {
 			 WHERE event.event_id=event_friend.event_id
 			 AND event_friend.user_approve=1
 			 AND event_friend.friend_id='" . $user_id . "'
+			 and event.delete_flag != 1
 			 ORDER BY event.create_time DESC ";
 		$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 		return $statement->getArrayResult ();
@@ -839,6 +841,7 @@ class ViewEvents {
 			from Application\Entity\Event event, Application\Entity\User user
 			where event.public=1
 		 	and event.user_id = user.user_id
+			and e.delete_flag != 1
 			ORDER BY event.create_time DESC";
 			// Mlog::addone($cm.__LINE__.'::public query', $q_public);
 		} else if (($tag == '@') && ! empty ( $name )) {
