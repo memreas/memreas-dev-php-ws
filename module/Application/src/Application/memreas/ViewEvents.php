@@ -841,7 +841,7 @@ class ViewEvents {
 			from Application\Entity\Event event, Application\Entity\User user
 			where event.public=1
 		 	and event.user_id = user.user_id
-			and e.delete_flag != 1
+			and event.delete_flag != 1
 			ORDER BY event.create_time DESC";
 			// Mlog::addone($cm.__LINE__.'::public query', $q_public);
 		} else if (($tag == '@') && ! empty ( $name )) {
@@ -861,6 +861,7 @@ class ViewEvents {
 			where event.public=1
 		 	and event.user_id = user.user_id
 			and user.username = '$name'
+			and event.delete_flag != 1
 			ORDER BY event.create_time DESC";
 			Mlog::addone ( $cm . __LINE__ . '::public person query', $q_public );
 		} else if (($tag == '!') && ! empty ( $name )) {
