@@ -599,10 +599,10 @@ class IndexController extends AbstractActionController {
 					 * friend events includes public
 					 */
 					$cache_id = "is_friend_event_" . trim ( $data->viewevent->user_id );
-					$warming = $warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+					$warming = $warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $data->viewevent->user_id );
 				} else if ($data->viewevent->is_my_event == '1') {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
-					$warming = $warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
+					$warming = $warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $data->viewevent->user_id );
 				}
 				
 				//
