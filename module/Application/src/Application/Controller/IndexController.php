@@ -384,10 +384,10 @@ class IndexController extends AbstractActionController {
 				/*
 				 * - Cache approach
 				 * - write operation
-				 * - TODO: invalideate cache
+				 * - Note:: moved invalidation to backend worker for transcoding.
 				 */
-				$data = simplexml_load_string ( $_POST ['xml'] );
-				$this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
+				//$data = simplexml_load_string ( $_POST ['xml'] );
+				//$this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
