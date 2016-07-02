@@ -564,14 +564,14 @@ class IndexController extends AbstractActionController {
 				$editevent = new EditEvent ( $message_data, $memreas_tables, $this->sm );
 				$result = $editevent->exec ();
 				$data = simplexml_load_string ( $_POST ['xml'] );
-				$event_id = trim ( $data->editevent->event_id );
+				$user_id = trim ( $data->editevent->user_id );
 				
 				/*
 				 * -
 				 * Cache Approach:
 				 * TODO: invalidate - hold for now
 				 */
-				$this->redis->invalidateEvents ( $event_id );
+				$this->redis->invalidateEvents ( $user_id );
 			} else if ($actionname == "addevent") {
 				$addevent = new AddEvent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addevent->exec ();
