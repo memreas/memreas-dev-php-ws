@@ -22,7 +22,7 @@ class EditEvent {
 	}
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		$message = ' ';
+		$message = '';
 		$event_id = trim ( $data->editevent->event_id );
 		$event_name = trim ( $data->editevent->event_name );
 		$event_location = trim ( $data->editevent->event_location );
@@ -41,7 +41,9 @@ class EditEvent {
 		
 		// delete flag
 		$delete_event = (int)$data->editevent->delete_event;
+		$type = '';
 		if ($delete_event) {
+			$type = 'deleted';
 			//
 			// Delete event
 			//
@@ -52,6 +54,7 @@ class EditEvent {
 			//
 			// Update event
 			//
+			$type = 'updated';
 			if (! isset ( $event_id ) && ! empty ( $event_id )) {
 				$message = 'event id is empty';
 				$status = 'Failure';
@@ -97,7 +100,6 @@ class EditEvent {
 					$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
 					$event_detail = $qb->getQuery ()->getResult ();
 					$event_detail = $event_detail [0];
-					;
 					$event_meta = json_decode ( $event_detail->metadata, true );
 					$event_meta ['price'] = 0;
 					$query .= ", e.metadata = '" . json_encode ( $event_meta ) . "'";
@@ -112,8 +114,9 @@ class EditEvent {
 		//
 		$statement = $this->dbAdapter->createQuery ( $query );
 		$result = $statement->getResult ();
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__."update result ---> ", $result );
 		if ($result) {
-			$message .= 'Event Successfully Updated';
+			$message .= 'Event Successfully ' . $type;
 			$status = 'Success';
 		} else {
 			$message .= 'error: update failed';
@@ -126,6 +129,8 @@ class EditEvent {
 		$xml_output .= "<editeventresponse>";
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
+		$xml_output .= "<event_id>$event_id</event_id>";
+		$xml_output .= "<event_name>$event_name</event_name>";
 		$xml_output .= "</editeventresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
