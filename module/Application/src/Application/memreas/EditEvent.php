@@ -7,9 +7,7 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
 use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 
 class EditEvent {
 	protected $message_data;
@@ -21,12 +19,9 @@ class EditEvent {
 		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
-		// echo "hi<pre>";
-		// print_r($data);
 		$message = ' ';
 		$event_id = trim ( $data->editevent->event_id );
 		$event_name = trim ( $data->editevent->event_name );
@@ -44,85 +39,97 @@ class EditEvent {
 		$media_array = $data->editevent->medias->media;
 		$friend_array = $data->editevent->friends->friend;
 		
-		if (! isset ( $event_id ) && ! empty ( $event_id )) {
-			$message = 'event id is empty';
-			$status = 'Failure';
-		} else if (! isset ( $event_name ) && ! empty ( $event_name )) {
-			$message = 'event name is empty';
-			$status = 'Failure';
-		} else if (! isset ( $event_date ) && ! empty ( $event_date )) {
-			$message = 'event date is empty';
-			$status = 'Failure';
-		} else if (! isset ( $event_location ) && ! empty ( $event_location )) {
-			$messages = 'event location is empty';
-			$status = 'Failure';
-		} else if (! isset ( $event_from ) && ! empty ( $event_from )) {
-			$message = 'event from is empty';
-			$status = 'Failure';
-		} else if (! isset ( $event_to ) && ! empty ( $event_to )) {
-			$message = 'event to date is empty';
-			$status = 'Failure';
-		} else if (! isset ( $is_friend_can_share ) && ! empty ( $is_friend_can_share )) {
-			$message = 'frients can share field is empty';
-			$status = 'Failure';
-		} else if (! isset ( $is_friend_can_post_media ) && ! empty ( $is_friend_can_post_media )) {
-			$message = 'friend can post field is empty';
-			$status = 'Failure';
-		} else if (! isset ( $event_self_destruct ) && ! empty ( $event_self_destruct )) {
-			$message = 'self distruct field is empty';
-			$status = 'Failure';
-		} else {
-			$query = "update Application\Entity\Event as e set                  e.name='$event_name',
-                                                e.location='$event_location',
-                                                e.date='$event_date',
-                                                e.friends_can_post='$is_friend_can_post_media',
-                                                e.friends_can_share='$is_friend_can_share',
-                                                e.viewable_from='$event_from',
-                                                e.viewable_to='$event_to',
-                                                e.self_destruct='$event_self_destruct',
-                                                e.create_time='$event_date',
-                                                e.update_time='$event_date'";
-			// Set event to free
-			if (! $sell_media) {
-				$qb = $this->dbAdapter->createQueryBuilder ();
-				$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
-				$event_detail = $qb->getQuery ()->getResult ();
-				$event_detail = $event_detail [0];
-				;
-				$event_meta = json_decode ( $event_detail->metadata, true );
-				$event_meta ['price'] = 0;
-				$query .= ", e.metadata = '" . json_encode ( $event_meta ) . "'";
-			}
-			
+		// delete flag
+		$delete_event = (int)$data->editevent->delete_event;
+		if ($delete_event) {
+			//
+			// Delete event
+			//
+			$query = "update Application\Entity\Event as e set e.delete_flag=$delete_event";
 			$query .= " where e.event_id='$event_id' ";
-			// $result = mysql_query($query);
-			// $statement = $this->dbAdapter->createStatement($query);
-			// $result = $statement->execute();
-			// $row = $result->current
-			$statement = $this->dbAdapter->createQuery ( $query );
-			$result = $statement->getResult ();
-			
-			if (! $result) {
-				$message .= 'Record not updated';
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "delete query ---> $query" );
+		} else {
+			//
+			// Update event
+			//
+			if (! isset ( $event_id ) && ! empty ( $event_id )) {
+				$message = 'event id is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_name ) && ! empty ( $event_name )) {
+				$message = 'event name is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_date ) && ! empty ( $event_date )) {
+				$message = 'event date is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_location ) && ! empty ( $event_location )) {
+				$messages = 'event location is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_from ) && ! empty ( $event_from )) {
+				$message = 'event from is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_to ) && ! empty ( $event_to )) {
+				$message = 'event to date is empty';
+				$status = 'Failure';
+			} else if (! isset ( $is_friend_can_share ) && ! empty ( $is_friend_can_share )) {
+				$message = 'frients can share field is empty';
+				$status = 'Failure';
+			} else if (! isset ( $is_friend_can_post_media ) && ! empty ( $is_friend_can_post_media )) {
+				$message = 'friend can post field is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_self_destruct ) && ! empty ( $event_self_destruct )) {
+				$message = 'self distruct field is empty';
 				$status = 'Failure';
 			} else {
-				$message .= 'Event Successfully Updated';
-				$status = 'Success';
+				$query = "update Application\Entity\Event as e set                  
+				e.name='$event_name',
+				e.location='$event_location',
+				e.date='$event_date',
+				e.friends_can_post='$is_friend_can_post_media',
+				e.friends_can_share='$is_friend_can_share',
+				e.viewable_from='$event_from',
+				e.viewable_to='$event_to',
+				e.self_destruct='$event_self_destruct',
+				e.create_time='$event_date',
+				e.update_time='$event_date'";
+				// Set event to free
+				if (! $sell_media) {
+					$qb = $this->dbAdapter->createQueryBuilder ();
+					$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
+					$event_detail = $qb->getQuery ()->getResult ();
+					$event_detail = $event_detail [0];
+					;
+					$event_meta = json_decode ( $event_detail->metadata, true );
+					$event_meta ['price'] = 0;
+					$query .= ", e.metadata = '" . json_encode ( $event_meta ) . "'";
+				}
+				$query .= " where e.event_id='$event_id' ";
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "update query ---> $query" );
 			}
-			// $event_id = mysql_insert_id($conn);
+		} // end else for update
+		  
+		//
+		// handle update or delete
+		//
+		$statement = $this->dbAdapter->createQuery ( $query );
+		$result = $statement->getResult ();
+		if ($result) {
+			$message .= 'Event Successfully Updated';
+			$status = 'Success';
+		} else {
+			$message .= 'error: update failed';
+			$status = 'Failure';
 		}
 		
 		header ( "Content-type: text/xml" );
 		$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 		$xml_output .= "<xml>";
-		
 		$xml_output .= "<editeventresponse>";
 		$xml_output .= "<status>$status</status>";
 		$xml_output .= "<message>$message</message>";
 		$xml_output .= "</editeventresponse>";
 		$xml_output .= "</xml>";
 		echo $xml_output;
-	}
+	} // end exec()
 }
 
 ?>
