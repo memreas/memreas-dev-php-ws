@@ -34,12 +34,12 @@ class MemreasConstants {
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
-	const REDIS_CACHE_SESSION_TTL = 3600; // 1hour 
-	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600*24); // 1day 
-	const REDIS_CACHE_TTL = 7200; // 2 hours
-
 	// 1 hour
-	
+	const REDIS_CACHE_SESSION_TTL = 3600;
+	// 1day
+	const REDIS_CACHE_TTL = (3600 * 24);
+	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600 * 24);
+
 	// memreasdevsec related
 	const S3_APPKEY = 'AKIAISDIQFVJMWFYXCIA';
 	const S3_APPSEC = 'eM5HG4MbYhkW1Jz1RWIdMapo2s+DbB+KnkhzTt91';
@@ -55,7 +55,7 @@ class MemreasConstants {
 	
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
-	const CLOUDFRONT_EXPIRY_TIME = 36000; // 10 hours
+	const CLOUDFRONT_EXPIRY_TIME = (3600 * 48); // 48 hours
 	
 	//free plan id
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
