@@ -240,7 +240,7 @@ class IndexController extends AbstractActionController {
 		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
 		
 		/**
-		 * For testing only...
+		 * Available on Dev Server only
 		 */
 		if ($actionname == "ws_tester") {
 			// error_log ( "path--->" . $path );
@@ -250,6 +250,9 @@ class IndexController extends AbstractActionController {
 			return $view;
 		}
 		
+		/**
+		 * Available on Dev Server only
+		 */
 		if ($actionname == "stripe_ws_tester") {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
@@ -271,16 +274,15 @@ class IndexController extends AbstractActionController {
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "Input data as xml ----> " . $_POST ['xml'] . PHP_EOL );
 			}
-			
 			$memreas_tables = new MemreasTables ( $this->sm );
-			
-			if ($actionname == 'notlogin') {
-				$result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-				$result .= "<xml><error>Please Login </error></xml>";
-				
-				/*
-				 * Cache approach - N/a
-				 */
+			if ($actionname == 'dead_session') {
+				//
+				// Either failed security or sesssion not found
+				// so logout and redirect to index
+				//
+				MLog::addone(__CLASS__.__METHOD__.__LINE__, 'hit dead_session');
+				$logout = new LogOut ();
+				$result = $logout->exec ( $this );
 			} else if ($actionname == 'fetchchameleon') {
 				$fetchChameleon = new FetchChameleon ();
 				$fetchChameleon->exec ();
@@ -1916,6 +1918,7 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $actionname );
 			$requires = true;
 		}
+		
 		return $requires;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
@@ -1979,7 +1982,7 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					Mlog::add ( __CLASS__ . __METHOD__ . __LINE__ . '::logging out due to bad session - last action ----> ', $actionname );
-					return '';
+					return 'dead_session';
 				}
 			} // end if ($requiresExistingSession)
 		} catch ( \Exception $e ) {
