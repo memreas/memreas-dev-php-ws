@@ -231,25 +231,27 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
-			// do nothing - fetching token to upload profile pic
+			// do nothing - fetching token to upload profile pic or showing public page
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			Mlog::addone ( $cm . __LINE__ . '::requiresSecureAction::about to fetchSession for ( $actionname )--> ', $actionname );
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
-		
 		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
 		
 		/**
-		 * For testing only...
+		 * Available on Dev Server only
 		 */
 		if ($actionname == "ws_tester") {
-			// error_log ( "path--->" . $path );
+			error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view
 			                              // folder
 			return $view;
 		}
 		
+		/**
+		 * Available on Dev Server only
+		 */
 		if ($actionname == "stripe_ws_tester") {
 			// error_log ( "path--->" . $path );
 			$view = new ViewModel ();
@@ -271,16 +273,15 @@ class IndexController extends AbstractActionController {
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "Input data as xml ----> " . $_POST ['xml'] . PHP_EOL );
 			}
-			
 			$memreas_tables = new MemreasTables ( $this->sm );
-			
-			if ($actionname == 'notlogin') {
-				$result = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
-				$result .= "<xml><error>Please Login </error></xml>";
-				
-				/*
-				 * Cache approach - N/a
-				 */
+			if ($actionname == 'dead_session') {
+				//
+				// Either failed security or sesssion not found
+				// so logout and redirect to index
+				//
+				MLog::addone(__CLASS__.__METHOD__.__LINE__, 'hit dead_session');
+				$logout = new LogOut ();
+				$result = $logout->exec ( $this );
 			} else if ($actionname == 'fetchchameleon') {
 				$fetchChameleon = new FetchChameleon ();
 				$fetchChameleon->exec ();
@@ -1279,7 +1280,10 @@ class IndexController extends AbstractActionController {
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
 					$cache_id = $data->event_id;
+					
+					$this->redis->invalidateCache ( 'getuserdetails_' . $cache_id );
 					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_checkOwnEvent_' . $_SESSION ['user_id'] );
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
@@ -1878,6 +1882,7 @@ class IndexController extends AbstractActionController {
 		 */
 		$requires = false;
 		$public;
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'MemreasConstants::ENV-->', MemreasConstants::ENV);
 		if (MemreasConstants::ENV == 'DEV') {
 			$public = array (
 					'login',
@@ -1916,6 +1921,7 @@ class IndexController extends AbstractActionController {
 			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $actionname );
 			$requires = true;
 		}
+		
 		return $requires;
 	}
 	public function fetchSession($actionname, $requiresExistingSession, $data) {
@@ -1979,7 +1985,7 @@ class IndexController extends AbstractActionController {
 				
 				if (! $sid_success) {
 					Mlog::add ( __CLASS__ . __METHOD__ . __LINE__ . '::logging out due to bad session - last action ----> ', $actionname );
-					return '';
+					return 'dead_session';
 				}
 			} // end if ($requiresExistingSession)
 		} catch ( \Exception $e ) {

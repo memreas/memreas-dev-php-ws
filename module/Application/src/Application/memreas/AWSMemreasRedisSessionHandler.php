@@ -82,12 +82,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			//
 			$rMemreasSidSession = $this->mRedis->getCache ( $sid );
 			$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession, MemreasConstants::REDIS_CACHE_SESSION_DEVICE_TTL );
-		} else {
-			//
-			// Can't find session so logout
-			//
-			$logout = new LogOut ();
-			$result = $logout->exec ( $this );
 		}
 		
 		return $result;
