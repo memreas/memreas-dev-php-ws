@@ -231,19 +231,18 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
 			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
-			// do nothing - fetching token to upload profile pic
+			// do nothing - fetching token to upload profile pic or showing public page
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			Mlog::addone ( $cm . __LINE__ . '::requiresSecureAction::about to fetchSession for ( $actionname )--> ', $actionname );
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
-		
 		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
 		
 		/**
 		 * Available on Dev Server only
 		 */
 		if ($actionname == "ws_tester") {
-			// error_log ( "path--->" . $path );
+			error_log ( "path--->" . $path );
 			$view = new ViewModel ();
 			$view->setTemplate ( $path ); // path to phtml file under view
 			                              // folder
@@ -1281,7 +1280,10 @@ class IndexController extends AbstractActionController {
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
 					$cache_id = $data->event_id;
+					
+					$this->redis->invalidateCache ( 'getuserdetails_' . $cache_id );
 					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_checkOwnEvent_' . $_SESSION ['user_id'] );
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
@@ -1880,6 +1882,7 @@ class IndexController extends AbstractActionController {
 		 */
 		$requires = false;
 		$public;
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'MemreasConstants::ENV-->', MemreasConstants::ENV);
 		if (MemreasConstants::ENV == 'DEV') {
 			$public = array (
 					'login',
