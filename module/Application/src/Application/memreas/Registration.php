@@ -72,6 +72,7 @@ class Registration {
 			$device_type = trim ( $data->registration->device_type );
 			$secret = trim ( $data->registration->secret );
 			$invited_by = trim ( $data->registration->invited_by );
+			$mobile = trim ( $data->registration->mobile );
 			// $invited_by = $this->is_valid_email ( $invited_by ) ? $invited_by : '';
 			$assign_event = trim ( $data->registration->event_id );
 		} else {
@@ -87,6 +88,7 @@ class Registration {
 			} else {
 				$invited_by = null;
 			}
+			$mobile = trim ( $_REQUEST ['mobile'] );
 		}
 		
 		error_log ( "username--->" . $username . PHP_EOL );
@@ -387,6 +389,9 @@ class Registration {
 			$xml_output .= "<message>$message</message>";
 			$xml_output .= "<userid>" . $user_id . "</userid>";
 			$xml_output .= "<email_verification_url><![CDATA[" . $meta_arr ['user'] ['email_verification_url'] . "]]></email_verification_url>";
+			if ($mobile) {
+				$xml_output .= "<mobile>1</mobile>";
+			}
 			$xml_output .= "<sid>" . session_id () . "</sid>";
 			$xml_output .= "</registrationresponse>";
 			$xml_output .= "</xml>";
