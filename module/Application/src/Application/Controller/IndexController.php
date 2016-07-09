@@ -1279,12 +1279,14 @@ class IndexController extends AbstractActionController {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
 					 */
-					$cache_id = $data->event_id;
+					$cache_id = $_SESSION ['user_id'];
 					
 					$this->redis->invalidateCache ( 'getuserdetails_' . $cache_id );
-					$this->redis->invalidateCache ( 'geteventdetails_' . $cache_id );
+					$this->redis->invalidateCache ( 'geteventdetails_' . $data->event_id );
 					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
+					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
+					
 					$this->redis->invalidateCache ( 'stripe_checkOwnEvent_' . $_SESSION ['user_id'] );
 				} else if (($actionname == 'stripe_storeCard') || ($actionname == 'stripe_saveCard')) {
 					/**
