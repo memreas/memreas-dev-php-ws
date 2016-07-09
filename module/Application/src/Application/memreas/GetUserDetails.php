@@ -9,7 +9,6 @@
  * Get user's details service
  * @params: user_id Provide user id to get back detail
  * @Return User information detail
- * @Tran Tuan
  */
 namespace Application\memreas;
 
