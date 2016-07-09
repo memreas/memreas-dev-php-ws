@@ -1297,11 +1297,11 @@ class IndexController extends AbstractActionController {
 					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 				} else if (($actionname == 'stripe_updateCard') || ($actionname == 'stripe_deleteCards')) {
 					/**
-					 * Invalidate stripe_listCards cache since update is happening.
+					 * Invalidate stripe_list/view/Cards cache since update is happening.
 					 */
-					$cache_id = $data->user_id;
+					Mlog::addone($cm.__LINE__.'$data-->', $data);
+					$cache_id = $_SESSION['user_id'];
 					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
-					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 					$cache_id = $data->user_id . '_' . $data->id;
 					$this->redis->invalidateCache ( 'stripe_viewCard_' . $cache_id );
 				}
@@ -1311,9 +1311,16 @@ class IndexController extends AbstractActionController {
 				 * not caching so run against stripe server
 				 */
 				if (! $cache_found) {
+					if (isset($_SESSION ['ipAddress']) ) {
+						$message_data ['ip_address'] = $_SESSION ['ipAddress'];
+					} else {
+						$message_data ['ip_address'] = $this->fetchUserIPAddress ();
+					}
 					$message_data ['ip_address'] = $this->fetchUserIPAddress ();
 					$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
+					Mlog::addone($cm . __LINE__ .'Payments Proxy $message_data-->', $message_data);
 					$result = $PaymentsProxy->exec ( $actionname, $message_data );
+					Mlog::addone($cm . __LINE__ .'Payments Proxy $result-->', $result);
 				}
 				echo $result;
 			} else if ($actionname == "findtag") {

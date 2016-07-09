@@ -124,9 +124,9 @@ class PaymentsProxy {
 					] 
 			] );
 		}
-		// Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
-		// Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
-		// Mlog::addone ( $cm . '$response->getBody ()--->', trim(( string ) $response->getBody ()) );
+		Mlog::addone ( $cm . '$response->getStatusCode()--->', $response->getStatusCode () );
+		Mlog::addone ( $cm . '$response->getReasonPhrase()--->', $response->getReasonPhrase () );
+		Mlog::addone ( $cm . '$response->getBody ()--->', trim(( string ) $response->getBody ()) );
 		
 		$result = trim ( ( string ) $response->getBody () );
 		// Mlog::addone ( $cm . __LINE__ . '::$ouptput--->', $result );
