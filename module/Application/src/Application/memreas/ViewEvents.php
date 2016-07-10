@@ -375,13 +375,27 @@ class ViewEvents {
 					/*
 					 * Skip if not within viewable from / to
 					 */
-					$viewable_from = $public_event_row ['viewable_from'];
-					$viewable_to = $public_event_row ['viewable_to'];
+					$viewable_from = strtotime ( $public_event_row ['viewable_from'] );
+					$viewable_to = strtotime ( $public_event_row ['viewable_to'] );
 					if (! empty ( $viewable_from ) && ! empty ( $viewable_to )) {
-						if (($viewable_from >= $date) && ($viewable_to <= $date)) {
+						if ((time() < $viewable_from) || ($viewable_to < time () )) {
 							// date is outside of viewable from/to
-							error_log ( "public event date is outside of from / to..." . PHP_EOL );
+							Mlog::addone ( $cm . __LINE__, "public event date is outside of from / to..." );
 							continue;
+						} else {
+							Mlog::addone ( $cm . __LINE__, "public event date is INSIDE of from / to for name --->" . $public_event_row ['name'] );
+							/*
+							 * Debugging
+							 */
+							Mlog::addone ( $cm . __LINE__ . '$public_event_row [name]--->', $public_event_row ['name'] );
+							Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_from]--->', $public_event_row ['viewable_from'] );
+							Mlog::addone ( $cm . __LINE__ . '$viewable_from--->', $viewable_from );
+							Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_to]--->', $public_event_row ['viewable_to'] );
+							Mlog::addone ( $cm . __LINE__ . '$viewable_to--->', $viewable_to );
+							Mlog::addone ( $cm . __LINE__ . 'string view $viewable_from--->', date ( 'm/d/Y H:i:s', $viewable_from ) );
+							Mlog::addone ( $cm . __LINE__ . 'string view $viewable_to--->', date ( 'm/d/Y H:i:s', $viewable_to ) );
+							Mlog::addone ( $cm . __LINE__ . 'time()--->', time () );
+							Mlog::addone ( $cm . __LINE__ . '$public_event_row [metadata]--->', $public_event_row ['metadata'] );
 						}
 					}
 					/*

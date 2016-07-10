@@ -49,8 +49,8 @@ class AddEvent {
 			$event_location = addslashes ( trim ( $data->addevent->event_location ) );
 			
 			$event_date = strtotime ( trim ( $data->addevent->event_date ) );
-			$event_from = strtotime ( trim ( $data->addevent->event_from ) );
-			$event_to = strtotime ( trim ( $data->addevent->event_to ) );
+			$event_from = $duration_from = strtotime ( trim ( $data->addevent->event_from ) );
+			$event_to = $duration_to = strtotime ( trim ( $data->addevent->event_to ) );
 			
 			$event_date_timestamp = time ();
 			$is_friend_can_share = trim ( $data->addevent->is_friend_can_add_friend );
@@ -58,8 +58,6 @@ class AddEvent {
 			$event_self_destruct = strtotime ( trim ( $data->addevent->event_self_destruct ) );
 			$is_public = trim ( $data->addevent->is_public );
 			$price = trim ( $data->addevent->price );
-			$event_from = $duration_from = trim ( $data->addevent->duration_from );
-			$event_to = $duration_to = trim ( $data->addevent->duration_to );
 			$event_id = '';
 			$time = time ();
 			if (! isset ( $user_id ) || empty ( $user_id )) {
