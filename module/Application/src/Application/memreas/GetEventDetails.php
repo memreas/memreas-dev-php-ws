@@ -26,6 +26,7 @@ class GetEventDetails {
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
 	public function exec($frmweb = false, $output = '') {
+		$cm = __CLASS__ . __METHOD__;
 		$error_flag = 0;
 		$message = '';
 		if (empty ( $frmweb )) {
@@ -35,9 +36,11 @@ class GetEventDetails {
 		}
 		$event_id = trim ( $data->geteventdetails->event_id );
 		
+		Mlog::addone($cm . __LINE__, $event_id);
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
 		$event_detail = $qb->getQuery ()->getArrayResult ();
+		Mlog::addone($cm . __LINE__.'$event_detail-->', $event_detail);
 		if (empty ( $event_detail )) {
 			$status = 'Failure';
 			$message = 'No event found for this id';
