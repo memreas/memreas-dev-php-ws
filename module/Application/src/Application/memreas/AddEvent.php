@@ -48,9 +48,9 @@ class AddEvent {
 			$event_name = addslashes ( trim ( $data->addevent->event_name ) );
 			$event_location = addslashes ( trim ( $data->addevent->event_location ) );
 			
-			$event_date = strtotime ( trim ( $data->addevent->event_date ) );
-			$event_from = $duration_from = strtotime ( trim ( $data->addevent->event_from ) );
-			$event_to = $duration_to = strtotime ( trim ( $data->addevent->event_to ) );
+			$event_date = trim ( $data->addevent->event_date );
+			$event_from = $duration_from =  trim ( $data->addevent->event_from );
+			$event_to = $duration_to =  trim ( $data->addevent->event_to );
 			
 			$event_date_timestamp = time ();
 			$is_friend_can_share = trim ( $data->addevent->is_friend_can_add_friend );
