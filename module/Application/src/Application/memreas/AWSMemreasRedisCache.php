@@ -236,50 +236,34 @@ class AWSMemreasRedisCache {
 	 */
 	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
 		$cm = __CLASS__ . __METHOD__;
-		// error_log("Inside invalidateMedia".PHP_EOL);
-		// error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
-		// error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
-		// error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
-		// write functions for media
 		// - add media event (key is event_id or user_id)
 		// - mediainappropriate (key is user id for invalidate)
 		// - deletePhoto (key is user id for invalidate)
-		// - update media
-		// - removeeventmedia
+		// - update media ??
+		// - removeeventmedia ??
 		$cache_keys = array ();
 		$event_id = trim ( $event_id );
 		if (! empty ( $event_id )) {
 			// $cache_keys [] = "listallmedia_" . $event_id;
 			// $cache_keys [] = "geteventdetails_" . $event_id;
+			$this->invalidateCache ( "listcomments_" . $event_id . '_' . $media_id );
 			$this->invalidateCache ( "geteventdetails_" . $event_id );
 		}
 		$media_id = trim ( $media_id );
 		if (! empty ( $media_id )) {
 			// $cache_keys [] = "viewmediadetails_" . $media_id;
+			$this->invalidateCache ( "listcomments_" . $media_id );
 			$this->invalidateCache ( "viewmediadetails_" . $media_id );
 		}
 		$user_id = trim ( $user_id );
 		if (! empty ( $user_id )) {
 			// countviewevent can return me / friends / public
-			// $cache_keys [] = "listallmedia_" . $user_id;
-			// $cache_keys [] = "viewevents_is_my_event_" . $user_id;
-			// $cache_keys [] = "viewevents_is_friend_event_" . $user_id;
 			$this->invalidateCache ( "listallmedia_" . $user_id );
 			$this->invalidateCache ( "listnotification_" . $user_id );
 			$this->invalidateCache ( "listallmedia_" . $event_id );
 			$this->invalidateCache ( "viewevents_is_my_event_" . $user_id );
 			$this->invalidateCache ( "viewevents_is_friend_event_" . $user_id );
 		}
-		
-		// Mecached - deleteMulti...
-		// $result = $this->remSetKeys ( $cache_keys );
-		// if ($result) {
-		// $now = date ( 'Y-m-d H:i:s.u' );
-		// error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
-		// } else {
-		// $now = date ( 'Y-m-d H:i:s.u' );
-		// error_log ( 'invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
-		// }
 	} // End invalidateMedia
 	
 	/*
@@ -296,7 +280,7 @@ class AWSMemreasRedisCache {
 					"viewevents_is_my_event_" . $user_id,
 					"viewevents_is_friend_event_" . $user_id 
 			);
-			Mlog::addone ( __METHOD__ . __LINE__, $cache_keys );
+			//Mlog::addone ( __METHOD__ . __LINE__, $cache_keys );
 			$this->invalidateCacheMulti ( $cache_keys );
 		}
 	}

@@ -79,8 +79,6 @@ class AddFriendtoevent {
 				 * Level 3 Friend Checking here
 				 */
 				$allowAddFriends = $eventRepo->checkFriendLevelRule ( $event_id, $eventOBj->user_id, $user_id, $friend_id );
-				Mlog::addone ( '$friendLevel', $friendLevel );
-				
 				foreach ( $friend_array as $key => $value ) {
 					
 					$network_name = addslashes ( trim ( $value->network_name ) );
