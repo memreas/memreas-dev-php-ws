@@ -1707,7 +1707,7 @@ class IndexController extends AbstractActionController {
 			// couldn't start session so logout
 			//
 			$logout = new LogOut ( $message_data, $memreas_tables, $this->sm );
-			$logout->exec ( $this->sessHandler );
+			//$logout->exec ( $this->sessHandler );
 		}
 		
 		if (! empty ( $callback )) {
@@ -1758,11 +1758,14 @@ class IndexController extends AbstractActionController {
 		//
 		// Send response and close session
 		//
+		$this->returnResponse ( $response, true );
+		/*
 		if ($callback) {
 			$this->returnResponse ( $response, true );
 		} else {
 			$this->returnResponse ( $response );
 		}
+		*/
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
@@ -1770,12 +1773,12 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Post Processing and Cache Warming section...
 		 */
-		if (MemreasConstants::REDIS_SERVER_USE) {
+		if ((MemreasConstants::REDIS_SERVER_USE) && !empty($_SESSION)) {
 			
 			//
 			// viewevents cache handling...
 			//
-			$cacheViewEvents = true;
+			$cacheViewEvents = $this->redis->getCache ( 'viewevents_is_my_event_' . $user_id );;
 			if (! empty ( $memreascookie )) {
 				$xmlStart = '<xml><memreascookie>' . $memreascookie . '</memreascookie>';
 			} else if (! empty ( $sid )) {
@@ -1783,7 +1786,7 @@ class IndexController extends AbstractActionController {
 			} else {
 				$cacheViewEvents = false;
 			}
-			if ($cacheViewEvents) {
+			if (!$cacheViewEvents) {
 				
 				if (! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) {
 					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
