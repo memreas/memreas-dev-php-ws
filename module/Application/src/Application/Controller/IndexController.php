@@ -346,7 +346,7 @@ class IndexController extends AbstractActionController {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->sm );
 				$verified_user_id = $verifyemailaddress->exec ();
 				if ($verified_user_id) {
-					// udpade catch
+					// udpdate cache
 					$this->redis->updatePersonCache ( $verified_user_id );
 					if (! empty ( $_GET ['perf'] )) {
 						return true;
@@ -1234,6 +1234,7 @@ class IndexController extends AbstractActionController {
 				$PaymentsProxy = new PaymentsProxy ( $this->sm );
 				$cache_me = false;
 				$cache_found = false;
+				$redirect = false;
 				
 				// Mlog::addone ( $cm . __LINE__ . '::$data', $data );
 				if ($actionname == 'stripe_listCards') {
