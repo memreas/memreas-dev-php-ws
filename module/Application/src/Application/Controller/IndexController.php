@@ -1232,16 +1232,11 @@ class IndexController extends AbstractActionController {
 				$cache_found = false;
 				$redirect = false;
 				
-				// Mlog::addone ( $cm . __LINE__ . '::$data', $data );
+				Mlog::addone ( $cm . __LINE__ . '::$data', $data );
+				Mlog::addone ( $cm . __LINE__ . '::$_SESSION [user_id]', $_SESSION ['user_id'] );
 				if ($actionname == 'stripe_listCards') {
 					$cache_id = $_SESSION ['user_id'];
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_getCustomerInfo') {
 					if (! empty ( $data->user_id )) {
 						$cache_id = $data->user_id;
@@ -1249,30 +1244,12 @@ class IndexController extends AbstractActionController {
 						$cache_id = $_SESSION ['user_id'];
 					}
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_checkOwnEvent') {
 					$cache_id = $data->user_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_buyMedia') {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
@@ -1310,6 +1287,11 @@ class IndexController extends AbstractActionController {
 				 * -
 				 * not caching so run against stripe server
 				 */
+				if (! $result || empty ( $result )) {
+					$cache_me = true;
+				} else {
+					$cache_found = true;
+				}
 				if (! $cache_found) {
 					if (isset ( $_SESSION ['ipAddress'] )) {
 						$message_data ['ip_address'] = $_SESSION ['ipAddress'];
@@ -1673,10 +1655,10 @@ class IndexController extends AbstractActionController {
 			//
 			// Use these for background processes below...
 			//
-			if ($_SESSION) {
-				$user_id = $_SESSION ? $_SESSION ['user_id'] : "";
-				$username = $_SESSION ? $_SESSION ['username'] : "";
-			}
+			// if ($_SESSION) {
+			// $user_id = $_SESSION ? $_SESSION ['user_id'] : "";
+			// $username = $_SESSION ? $_SESSION ['username'] : "";
+			// }
 			
 			/**
 			 * - fetch buffer, clean
@@ -1686,30 +1668,30 @@ class IndexController extends AbstractActionController {
 			/*
 			 * TODO - Cache here due to ob_get_clean
 			 */
-			// if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-			// $this->redis->setCache ( $actionname . '_' . $cache_id, $output );
-			/*
-			 * $result = $this->redis->getCache ( $_SESSION ['username'] . '::' . "cached_actions" );
-			 * if ((! $result) || empty ( $result )) {
-			 * $cached_actions = [ ];
-			 * $cached_actions [] = $actionname . '_' . $cache_id;
-			 * } else {
-			 * $cached_actions = json_decode ( $result );
-			 * $cached_actions [] = $actionname . '_' . $cache_id;
-			 * }
-			 * $this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
-			 */
-			
-			// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
-			// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
-			// }
-			/*
-			 * TODO - Invalidate cache in if statements (id is all that is needed)
-			 */
-			// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-			// $this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
-			// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
-			// }
+			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
+				/*
+				 * $result = $this->redis->getCache ( $_SESSION ['username'] . '::' . "cached_actions" );
+				 * if ((! $result) || empty ( $result )) {
+				 * $cached_actions = [ ];
+				 * $cached_actions [] = $actionname . '_' . $cache_id;
+				 * } else {
+				 * $cached_actions = json_decode ( $result );
+				 * $cached_actions [] = $actionname . '_' . $cache_id;
+				 * }
+				 * $this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
+				 */
+				
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
+				// }
+				/*
+				 * TODO - Invalidate cache in if statements (id is all that is needed)
+				 */
+				// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				// $this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
+				// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
+			}
 		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
 		
 		if (! empty ( $callback )) {
@@ -1753,17 +1735,18 @@ class IndexController extends AbstractActionController {
 			} else {
 				$sid = session_id ();
 			}
-			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			$response = $output;
 		}
 		
 		//
 		// Send response and close session
 		//
-		
 		if ($callback) {
+			Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response, true )' );
 			$this->returnResponse ( $response, true );
 		} else {
+			Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response )' );
 			$this->returnResponse ( $response );
 		}
 		
@@ -1786,8 +1769,9 @@ class IndexController extends AbstractActionController {
 			} else {
 				$cacheViewEvents = false;
 			}
-			if (isset($_SESSION['user_id'])) {
-				$user_id = $_SESSION['user_id'];
+			Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
+			if (isset ( $_SESSION ['user_id'] )) {
+				$user_id = $_SESSION ['user_id'];
 				if (! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) {
 					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
 					if (! $warming_viewevents_is_my_event_user_id) {
@@ -1858,6 +1842,8 @@ class IndexController extends AbstractActionController {
 		header ( 'HTTP/1.0 200 OK' );
 		if ($json) {
 			header ( 'Content-Type: application/json' );
+		} else {
+			header ( "Content-type: text/xml" );
 		}
 		echo $response;
 		// get the size of the output
