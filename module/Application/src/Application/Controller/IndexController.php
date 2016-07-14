@@ -607,17 +607,13 @@ class IndexController extends AbstractActionController {
 				}
 				
 				//
-				// check if warming, if so give it some time
-				//
-				if ($warming) {
-					sleep ( 3 );
-				}
-				//
 				// go to database if !result - deadlock race condition???
 				//
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+				Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
+				Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
 				if (! $result) {
-					// Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
+					Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
 					$result = $viewevents->exec ();
 					$cache_me = true;
@@ -975,7 +971,7 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
 				
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
 				$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
 			} else if ($actionname == "getmedialike") {
 				/*
@@ -1322,18 +1318,18 @@ class IndexController extends AbstractActionController {
 					}
 					$message_data ['ip_address'] = $this->fetchUserIPAddress ();
 					$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
-					Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $message_data-->', $message_data );
+					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $message_data-->', $message_data );
 					$result = $PaymentsProxy->exec ( $actionname, $message_data );
-					Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
+					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
 				}
 				
 				// credit activation redirect
 				if ($redirect) {
-					Mlog::addone ( $cm . __LINE__ , 'Setting header redirect to ' . $result );
-					header($result);
-					exit;
+					Mlog::addone ( $cm . __LINE__, 'Setting header redirect to ' . $result );
+					header ( $result );
+					exit ();
 				}
-				//otherwise follow normal flow
+				// otherwise follow normal flow
 				echo $result;
 			} else if ($actionname == "findtag") {
 				
@@ -1745,7 +1741,7 @@ class IndexController extends AbstractActionController {
 						// Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
 						$data = simplexml_load_string ( trim ( $output ) );
 						$data->addChild ( 'x_memreas_chameleon', ( string ) $_SESSION ['x_memreas_chameleon'] );
-						$data->addChild ( 'memreascookie', ( string ) $_SESSION ['memreascookie'] );
+						$data->addChild ( 'memreascookie', $data->memreascookie );
 						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
 						$output = $data->asXML ();
 					}
@@ -1757,21 +1753,20 @@ class IndexController extends AbstractActionController {
 			} else {
 				$sid = session_id ();
 			}
-			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			$response = $output;
 		}
 		
 		//
 		// Send response and close session
 		//
-		$this->returnResponse ( $response, true );
-		/*
-		 * if ($callback) {
-		 * $this->returnResponse ( $response, true );
-		 * } else {
-		 * $this->returnResponse ( $response );
-		 * }
-		 */
+		
+		if ($callback) {
+			$this->returnResponse ( $response, true );
+		} else {
+			$this->returnResponse ( $response );
+		}
+		
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
@@ -1779,13 +1774,11 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Post Processing and Cache Warming section...
 		 */
-		if ((MemreasConstants::REDIS_SERVER_USE) && ! empty ( $_SESSION )) {
-			
+		if (MemreasConstants::REDIS_SERVER_USE) {
 			//
 			// viewevents cache handling...
 			//
-			$cacheViewEvents = $this->redis->getCache ( 'viewevents_is_my_event_' . $user_id );
-			;
+			
 			if (! empty ( $memreascookie )) {
 				$xmlStart = '<xml><memreascookie>' . $memreascookie . '</memreascookie>';
 			} else if (! empty ( $sid )) {
@@ -1793,8 +1786,8 @@ class IndexController extends AbstractActionController {
 			} else {
 				$cacheViewEvents = false;
 			}
-			if (! $cacheViewEvents) {
-				
+			if (isset($_SESSION['user_id'])) {
+				$user_id = $_SESSION['user_id'];
 				if (! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) {
 					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
 					if (! $warming_viewevents_is_my_event_user_id) {
@@ -1831,7 +1824,7 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_public', '0' );
 					}
 				}
-			} // end if ($cacheViewEvents)
+			} // end if (isset($_SESSION['user_id']))
 			if (! $this->redis->hasSet ( '@person' )) {
 				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
 				// Now continue processing and warm the cache for @person
@@ -1848,8 +1841,8 @@ class IndexController extends AbstractActionController {
 				$this->redis->warmHashTagSet ( $user_id );
 			}
 		}
+		// end if (MemreasConstants::REDIS_SERVER_USE)
 		// Need to exit here to avoid ZF2 framework view.
-		
 		exit ();
 	}
 	// end indexcontroller...
