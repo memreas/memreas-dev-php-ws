@@ -22,6 +22,8 @@ class ViewEvents {
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->comments = new ListComments ( $message_data, $memreas_tables, $service_locator );
 		$this->url_signer = new MemreasSignedURL ();
+		$this->redis = new AWSMemreasRedisCache($service_locator);
+		
 	}
 	public function exec($setHeader = true) {
 		$cm = __CLASS__ . __METHOD__;
@@ -42,6 +44,7 @@ class ViewEvents {
 		$pic_98x78 = '';
 		$pic_448x306 = '';
 		$pic_79x80 = '';
+		
 		// ------------------set default limit----------------------
 		if (! isset ( $limit ) || empty ( $limit )) {
 			$limit = 10;
@@ -88,69 +91,85 @@ class ViewEvents {
 					$xml_output .= "<events>";
 				}
 				if (count ( $result_event ) > 0) {
-					foreach ( $result_event as $row ) { // get media
-					                                    // timestamping
-					                                    // Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
-						
-						$xml_output .= "<event>";
-						$xml_output .= "<event_id>" . $row->event_id . "</event_id>";
-						$xml_output .= "<event_name>" . $row->name . "</event_name>";
-						$xml_output .= "<event_location>" . $row->location . "</event_location>";
-						$xml_output .= "<event_metadata>" . $row->metadata . "</event_metadata>";
-						
-						$friends_can_post = $row->friends_can_post == 0 ? 0 : 1;
-						$xml_output .= "<friend_can_post>" . $friends_can_post . "</friend_can_post>";
-						$friends_can_share = $row->friends_can_share == 0 ? 0 : 1;
-						$xml_output .= "<friend_can_share>" . $friends_can_share . "</friend_can_share>";
-						
-						/**
-						 * get like count
-						 */
-						$likeCount = $this->fetchEventLikeCount ( $row->event_id );
-						$xml_output .= "<like_count>" . $likeCount . "</like_count>";
-						// Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::', $likeCount );
-						
-						/**
-						 * get comment count for event
-						 */
-						$commCount = $this->fetchEventCommentCount ( $row->event_id );
-						$xml_output .= "<comment_count>" . $commCount . "</comment_count>";
-						// Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::', $commCount );
-						
-						/**
-						 * Fetch event friends...
-						 */
-						$friends = $this->fetchEventFriends ( $row->event_id );
-						// Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::', count ( $friends ) );
-						
-						/**
-						 * Generate event friends xml...
-						 */
-						$xml_output .= $this->generateEventFriendsXML ( $friends );
-						
-						/**
-						 * get comments
-						 */
-						$xml_output .= $this->fetchEventComments ( $row->event_id );
-						
-						/**
-						 * get event media
-						 */
-						$query_event_media_result = $this->fetchMyEventsMedia ( $user_id, $row->event_id );
-						// Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::', $query_event_media_result );
-						
-						/**
-						 * generateMyEventMediaXML
-						 */
-						$xml_output .= $this->generateMyEventMediaXML ( $query_event_media_result );
-						// Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
-						
-						$xml_output .= "</event>";
+					foreach ( $result_event as $row ) {
+						// get media
 						// timestamping
-						// Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
+						// Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
+						
+						//
+						// Cache id is viewevents_is_my_event_ . $user_id
+						// - event xml will be subcached as viewevents_is_my_event_ . $user_id . $event_id
+						//
+						$event_xml = $this->redis->getCache ( 'viewevents_is_my_event_' . $user_id . '_' . $row->event_id );
+						Mlog::addone ( $cm . __LINE__ . '::my event - $event_xml::', $event_xml );
+						if ($event_xml) {
+							$xml_output .= $event_xml;
+						} else {
+							$event_xml = "<event>";
+							$event_xml .= "<event_id>" . $row->event_id . "</event_id>";
+							$event_xml .= "<event_name>" . $row->name . "</event_name>";
+							$event_xml .= "<event_location>" . $row->location . "</event_location>";
+							$event_xml .= "<event_metadata>" . $row->metadata . "</event_metadata>";
+							
+							$friends_can_post = $row->friends_can_post == 0 ? 0 : 1;
+							$event_xml .= "<friend_can_post>" . $friends_can_post . "</friend_can_post>";
+							$friends_can_share = $row->friends_can_share == 0 ? 0 : 1;
+							$event_xml .= "<friend_can_share>" . $friends_can_share . "</friend_can_share>";
+							
+							/**
+							 * get like count
+							 */
+							$likeCount = $this->fetchEventLikeCount ( $row->event_id );
+							$event_xml .= "<like_count>" . $likeCount . "</like_count>";
+							// Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::', $likeCount );
+							
+							/**
+							 * get comment count for event
+							 */
+							$commCount = $this->fetchEventCommentCount ( $row->event_id );
+							$event_xml .= "<comment_count>" . $commCount . "</comment_count>";
+							// Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::', $commCount );
+							
+							/**
+							 * Fetch event friends...
+							 */
+							$friends = $this->fetchEventFriends ( $row->event_id );
+							// Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::', count ( $friends ) );
+							
+							/**
+							 * Generate event friends xml...
+							 */
+							$event_xml .= $this->generateEventFriendsXML ( $friends );
+							
+							/**
+							 * get comments
+							 */
+							$event_xml .= $this->fetchEventComments ( $row->event_id );
+							
+							/**
+							 * get event media
+							 */
+							$query_event_media_result = $this->fetchMyEventsMedia ( $user_id, $row->event_id );
+							// Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::', $query_event_media_result );
+							
+							/**
+							 * generateMyEventMediaXML
+							 */
+							$event_xml .= $this->generateMyEventMediaXML ( $query_event_media_result );
+							// Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
+							
+							$event_xml .= "</event>";
+							$xml_output .= $event_xml;
+							
+							//
+							// Set the event in cache
+							//
+							$this->redis->setCache ( 'viewevents_is_my_event_' . $user_id . '_' . $row->event_id, $event_xml );
+							// Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
+						} // end else if (!$event_xml)
 					} // end for loop my events
 					$xml_output .= "</events>";
-					Mlog::addone ( $cm . __LINE__ . '</events> end-->', MNow::now () );
+					//Mlog::addone ( $cm . __LINE__ . '</events> end-->', MNow::now () );
 				}
 			} else {
 				$xml_output .= "<status>Failure</status>";
@@ -192,29 +211,35 @@ class ViewEvents {
 				}
 				foreach ( $array as $k => $row_events ) {
 					// get friend's event
-					$qb = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$k}' AND m.is_profile_pic = 1" );
-					$profile = $qb->getQuery ()->getResult ();
-					
-					if (! empty ( $profile )) {
-						$json_array = json_decode ( $profile [0]->metadata, true );
-						if (! empty ( $json_array ['S3_files'] ['path'] )) {
-							$url1 = $json_array ['S3_files'] ['path'];
-							$url1 = $this->url_signer->signArrayOfUrls ( $url1 );
+					$friend_id = $k;
+					$url1 = $pic_79x80 = $pic_448x306 = $pic_98x78 = $this->redis->getProfilePhoto ( $k );
+					if (! $url1) {
+						$qb = $this->dbAdapter->createQueryBuilder ()->select ( 'm' )->from ( 'Application\Entity\Media', 'm' )->where ( "m.user_id = '{$k}' AND m.is_profile_pic = 1" );
+						$profile = $qb->getQuery ()->getResult ();
+						
+						if (! empty ( $profile )) {
+							$json_array = json_decode ( $profile [0]->metadata, true );
+							if (! empty ( $json_array ['S3_files'] ['path'] )) {
+								$url1 = $json_array ['S3_files'] ['path'];
+								$url1 = $this->url_signer->signArrayOfUrls ( $url1 );
+							}
+							if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
+								$pic_79x80 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
+							}
+							if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
+								$pic_448x306 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] );
+							}
+							if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ))
+								$pic_98x78 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] );
+						} else {
+							$url1 = $this->url_signer->signArrayOfUrls ( null );
+							$pic_79x80 = '';
+							$pic_448x306 = '';
+							$pic_98x78 = '';
 						}
-						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] )) {
-							$pic_79x80 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] );
-						}
-						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] )) {
-							$pic_448x306 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] );
-						}
-						if (! empty ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] ))
-							$pic_98x78 = $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['thumbnails'] ['98x78'] );
-					} else {
-						$url1 = $this->url_signer->signArrayOfUrls ( null );
-						$pic_79x80 = '';
-						$pic_448x306 = '';
-						$pic_98x78 = '';
 					}
+					// end else if (!$url1)
+					
 					$xml_output .= "<friend>";
 					// echo '<pre>';print_r($row_getfriendid);exit;
 					$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $k );
@@ -228,86 +253,101 @@ class ViewEvents {
 					
 					$xml_output .= "<event_creator_user_id>" . $k . "</event_creator_user_id>";
 					$xml_output .= "<events>";
+					
 					foreach ( $row_events as $key => $row_friendsevent ) {
-						$url = '';
-						$event_xml_output = '';
-						$publish = false;
-						
-						$event_xml_output .= "<event>";
-						$event_xml_output .= "<event_id>" . $row_friendsevent ['event_id'] . "</event_id>";
-						$event_xml_output .= "<event_name>" . $row_friendsevent ['name'] . "</event_name>";
-						$event_xml_output .= "<event_metadata>" . $row_friendsevent ['metadata'] . "</event_metadata>";
-						$event_xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
-						$event_xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
-						
-						/*
-						 * Skip if not within viewable from / to
-						 */
-						$viewable_from = $row_friendsevent ['viewable_from'];
-						$viewable_to = $row_friendsevent ['viewable_to'];
-						if ((isset ( $viewable_from ) && ! empty ( $viewable_from )) && (isset ( $viewable_to ) && ! empty ( $viewable_to ))) {
-							if (($viewable_from >= $date) && ($viewable_to <= $date)) {
-								// date is outside of viewable from/to
-								error_log ( "friend event date is outside of from / to..." . PHP_EOL );
-								continue;
-							}
-						}
-						/*
-						 * Skip if not past ghost date
-						 */
-						$self_destruct = $row_friendsevent ['self_destruct'];
-						if (isset ( $self_destruct ) && ! empty ( $self_destruct )) {
-							if (($self_destruct < $date) && ($viewable_to <= $date)) {
-								// date is outside of viewable from/to
-								error_log ( "friend event date is outside of ghost date..." . PHP_EOL );
-								continue;
-							}
-						}
-						
-						/**
-						 * Fetch event friends...
-						 */
-						$friends = $this->fetchEventFriends ( $row_friendsevent ['event_id'] );
-						
-						/**
-						 * Generate event friends xml .
-						 */
-						$event_xml_output .= $this->generateEventFriendsXML ( $friends );
-						
-						/**
-						 * get like count
-						 */
-						$likeCount = $this->fetchEventLikeCount ( $row_friendsevent ['event_id'] );
-						$event_xml_output .= "<like_count>" . $likeCount . "</like_count>";
-						
-						/**
-						 * get comment count for event
-						 */
-						$commCount = $this->fetchEventCommentCount ( $row_friendsevent ['event_id'] );
-						$event_xml_output .= "<comment_count>" . $commCount . "</comment_count>";
-						
-						/**
-						 * get comments
-						 */
-						$event_xml_output .= $this->fetchEventComments ( $row_friendsevent ['event_id'] );
-						
-						/**
-						 * Event Media
-						 */
-						$query_event_media_result = $this->fetchEventMedia ( $row_friendsevent ['event_id'] );
-						
-						/**
-						 * generateFriendEventMediaXML
-						 */
-						$event_media_list = $this->generateFriendEventMediaXML ( $query_event_media_result );
-						if (! empty ( $event_media_list )) {
-							$event_xml_output .= $event_media_list;
-							$event_xml_output .= "</event>";
+						//
+						// Cache id is 'viewevents_is_friend_event_' . $user_id
+						// - friend xml will be subcached as 'viewevents_is_friend_event_' . $user_id . '_' . $event_id
+						//
+						$event_xml_output = $this->redis->getCache ( 'viewevents_is_friend_event_' . $user_id . '_' . $row_friendsevent ['event_id'] );
+						if ($event_xml_output) {
+							$xml_output .= $event_xml_output;
 						} else {
+							$url = '';
 							$event_xml_output = '';
-						}
-						$xml_output .= $event_xml_output;
-					}
+							$publish = false;
+							
+							$event_xml_output = "<event>";
+							$event_xml_output .= "<event_id>" . $row_friendsevent ['event_id'] . "</event_id>";
+							$event_xml_output .= "<event_name>" . $row_friendsevent ['name'] . "</event_name>";
+							$event_xml_output .= "<event_metadata>" . $row_friendsevent ['metadata'] . "</event_metadata>";
+							$event_xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
+							$event_xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
+							
+							/*
+							 * Skip if not within viewable from / to
+							 */
+							$viewable_from = $row_friendsevent ['viewable_from'];
+							$viewable_to = $row_friendsevent ['viewable_to'];
+							if ((isset ( $viewable_from ) && ! empty ( $viewable_from )) && (isset ( $viewable_to ) && ! empty ( $viewable_to ))) {
+								if (($viewable_from >= $date) && ($viewable_to <= $date)) {
+									// date is outside of viewable from/to
+									error_log ( "friend event date is outside of from / to..." . PHP_EOL );
+									continue;
+								}
+							}
+							/*
+							 * Skip if not past ghost date
+							 */
+							$self_destruct = $row_friendsevent ['self_destruct'];
+							if (isset ( $self_destruct ) && ! empty ( $self_destruct )) {
+								if (($self_destruct < $date) && ($viewable_to <= $date)) {
+									// date is outside of viewable from/to
+									error_log ( "friend event date is outside of ghost date..." . PHP_EOL );
+									continue;
+								}
+							}
+							
+							/**
+							 * Fetch event friends...
+							 */
+							$friends = $this->fetchEventFriends ( $row_friendsevent ['event_id'] );
+							
+							/**
+							 * Generate event friends xml .
+							 */
+							$event_xml_output .= $this->generateEventFriendsXML ( $friends );
+							
+							/**
+							 * get like count
+							 */
+							$likeCount = $this->fetchEventLikeCount ( $row_friendsevent ['event_id'] );
+							$event_xml_output .= "<like_count>" . $likeCount . "</like_count>";
+							
+							/**
+							 * get comment count for event
+							 */
+							$commCount = $this->fetchEventCommentCount ( $row_friendsevent ['event_id'] );
+							$event_xml_output .= "<comment_count>" . $commCount . "</comment_count>";
+							
+							/**
+							 * get comments
+							 */
+							$event_xml_output .= $this->fetchEventComments ( $row_friendsevent ['event_id'] );
+							
+							/**
+							 * Event Media
+							 */
+							$query_event_media_result = $this->fetchEventMedia ( $row_friendsevent ['event_id'] );
+							
+							/**
+							 * generateFriendEventMediaXML
+							 */
+							$event_media_list = $this->generateFriendEventMediaXML ( $query_event_media_result );
+							if (! empty ( $event_media_list )) {
+								$event_xml_output .= $event_media_list;
+								$event_xml_output .= "</event>";
+							} else {
+								$event_xml_output = '';
+							}
+							$xml_output .= $event_xml_output;
+							
+							//
+							// Set the event in cache
+							//
+							$this->redis->setCache ( 'viewevents_is_friend_event_' . $user_id . '_' . $row_friendsevent ['event_id'], $event_xml_output );
+						} // end else if (!$event_xml)
+					} // foreach ( $row_events as $key => $row_friendsevent )
 					$xml_output .= "</events>";
 					$xml_output .= "</friend>";
 				} // end for loop friend events
@@ -361,148 +401,162 @@ class ViewEvents {
 				// Main for loop for public events...
 				//
 				foreach ( $result_pub as $public_event_row ) {
-					if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
-						// Mlog::addone ( $cm . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
-						$event_json_array = json_decode ( $public_event_row ['metadata'], true );
-						//
-						// If selling is off then skip this event
-						//
-						if (! empty ( $event_json_array ['price'] )) {
-							continue;
-						}
-					}
-					
-					/*
-					 * Skip if not within viewable from / to
-					 */
-					$viewable_from = strtotime ( $public_event_row ['viewable_from'] );
-					$viewable_to = strtotime ( $public_event_row ['viewable_to'] );
-					if (! empty ( $viewable_from ) && ! empty ( $viewable_to )) {
-						if ((time() < $viewable_from) || ($viewable_to < time () )) {
-							// date is outside of viewable from/to
-							Mlog::addone ( $cm . __LINE__, "public event date is outside of from / to..." );
-							continue;
-						} else {
-							Mlog::addone ( $cm . __LINE__, "public event date is INSIDE of from / to for name --->" . $public_event_row ['name'] );
-							/*
-							 * Debugging
-							 */
-							Mlog::addone ( $cm . __LINE__ . '$public_event_row [name]--->', $public_event_row ['name'] );
-							Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_from]--->', $public_event_row ['viewable_from'] );
-							Mlog::addone ( $cm . __LINE__ . '$viewable_from--->', $viewable_from );
-							Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_to]--->', $public_event_row ['viewable_to'] );
-							Mlog::addone ( $cm . __LINE__ . '$viewable_to--->', $viewable_to );
-							Mlog::addone ( $cm . __LINE__ . 'string view $viewable_from--->', date ( 'm/d/Y H:i:s', $viewable_from ) );
-							Mlog::addone ( $cm . __LINE__ . 'string view $viewable_to--->', date ( 'm/d/Y H:i:s', $viewable_to ) );
-							Mlog::addone ( $cm . __LINE__ . 'time()--->', time () );
-							Mlog::addone ( $cm . __LINE__ . '$public_event_row [metadata]--->', $public_event_row ['metadata'] );
-						}
-					}
-					/*
-					 * Skip if not past ghost date
-					 */
-					$self_destruct = $public_event_row ['self_destruct'];
-					if (! empty ( $self_destruct )) {
-						if ($self_destruct < $date) {
-							// date is outside of viewable from/to
-							error_log ( "public event date is outside of ghost date..." . PHP_EOL );
-							continue;
-						}
-					}
-					
 					//
-					// Check if event has media if so show otherwise skip
+					// Cache id is 'viewevents_public'
+					// - event xml will be subcached as 'viewevents_public_' . $public_event_row ['event_id']
 					//
-					$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
-					if (! count ( $result_event_media_public ) > 0) {
-						continue;
-					}
-					/*
-					 * Add event entry data...
-					 */
-					$event_xml_output = '';
-					$event_xml_output .= "<event>";
-					$event_xml_output .= "<event_id>" . $public_event_row ['event_id'] . "</event_id>";
-					$event_xml_output .= "<event_name>" . $public_event_row ['name'] . "</event_name>";
-					$event_xml_output .= "<event_location>" . $public_event_row ['location'] . "</event_location>";
-					$event_xml_output .= "<event_date>" . $public_event_row ['date'] . "</event_date>";
-					$event_xml_output .= "<event_metadata>" . $public_event_row ['metadata'] . "</event_metadata>";
-					$event_xml_output .= "<event_viewable_from>" . $public_event_row ['viewable_from'] . "</event_viewable_from>";
-					$event_xml_output .= "<event_viewable_to>" . $public_event_row ['viewable_to'] . "</event_viewable_to>";
-					$event_xml_output .= "<event_creator>" . $public_event_row ['username'] . "</event_creator>";
-					$event_xml_output .= "<event_creator_user_id>" . $public_event_row ['user_id'] . "</event_creator_user_id>";
-					
-					/*
-					 * Check REDIS to fetch event owner profile pic
-					 */
-					$redis = AWSMemreasRedisCache::getHandle ();
-					$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = $redis->getProfilePhoto ( $public_event_row ['user_id'] );
-					if (! $pic) {
-						$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
-						if ($profile) {
-							$profile_image = json_decode ( $profile [0] ['metadata'], true );
-							if (! empty ( $profile_image ['S3_files'] ['path'] )) {
-								$pic = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['path'] );
-							}
-							
-							if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] )) {
-								$pic_79x80 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] );
-							}
-							
-							if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['448x306'] )) {
-								$pic_448x306 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['448x306'] );
-							}
-							
-							if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] )) {
-								$pic_98x78 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] );
-							}
-						}
-					} // if $event_owner_profile
-					
-					/**
-					 * Output profile urls
-					 */
-					$event_xml_output .= "<profile_pic><![CDATA[" . $pic . "]]></profile_pic>";
-					$event_xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
-					$event_xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
-					$event_xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
-					
-					/**
-					 * Fetch event friends...
-					 */
-					$friends = $this->fetchEventFriends ( $public_event_row ['event_id'] );
-					
-					/**
-					 * Generate event friends xml .
-					 */
-					$event_xml_output .= $this->generateEventFriendsXML ( $friends );
-					
-					/**
-					 * Fetch comment like and count totals...
-					 */
-					// get like count
-					$likeCount = $this->fetchEventLikeCount ( $public_event_row ['event_id'] );
-					$event_xml_output .= "<event_like_total>" . $likeCount . "</event_like_total>";
-					// get comment count for event
-					$commCount = $this->fetchEventCommentCount ( $public_event_row ['event_id'] );
-					$event_xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
-					
-					/**
-					 * get comments
-					 */
-					$event_xml_output .= $this->fetchEventComments ( $public_event_row ['event_id'] );
-					
-					/**
-					 * generatePublicEventMediaXML
-					 */
-					$event_media_list = $this->generatePublicEventMediaXML ( $result_event_media_public );
-					if (! empty ( $event_media_list )) {
-						$event_xml_output .= $event_media_list;
-						$event_xml_output .= "</event>";
+					$event_xml = $this->redis->getCache ( 'viewevents_public_' . $public_event_row ['event_id'] );
+					if ($event_xml) {
+						$xml_output .= $event_xml;
 					} else {
+						
+						if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
+							// Mlog::addone ( $cm . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
+							$event_json_array = json_decode ( $public_event_row ['metadata'], true );
+							//
+							// If selling is off then skip this event
+							//
+							if (! empty ( $event_json_array ['price'] )) {
+								continue;
+							}
+						}
+						
+						/*
+						 * Skip if not within viewable from / to
+						 */
+						$viewable_from = strtotime ( $public_event_row ['viewable_from'] );
+						$viewable_to = strtotime ( $public_event_row ['viewable_to'] );
+						if (! empty ( $viewable_from ) && ! empty ( $viewable_to )) {
+							if ((time () < $viewable_from) || ($viewable_to < time ())) {
+								// date is outside of viewable from/to
+								Mlog::addone ( $cm . __LINE__, "public event date is outside of from / to..." );
+								continue;
+							} else {
+								Mlog::addone ( $cm . __LINE__, "public event date is INSIDE of from / to for name --->" . $public_event_row ['name'] );
+								/*
+								 * Debugging
+								 */
+								Mlog::addone ( $cm . __LINE__ . '$public_event_row [name]--->', $public_event_row ['name'] );
+								Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_from]--->', $public_event_row ['viewable_from'] );
+								Mlog::addone ( $cm . __LINE__ . '$viewable_from--->', $viewable_from );
+								Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_to]--->', $public_event_row ['viewable_to'] );
+								Mlog::addone ( $cm . __LINE__ . '$viewable_to--->', $viewable_to );
+								Mlog::addone ( $cm . __LINE__ . 'string view $viewable_from--->', date ( 'm/d/Y H:i:s', $viewable_from ) );
+								Mlog::addone ( $cm . __LINE__ . 'string view $viewable_to--->', date ( 'm/d/Y H:i:s', $viewable_to ) );
+								Mlog::addone ( $cm . __LINE__ . 'time()--->', time () );
+								Mlog::addone ( $cm . __LINE__ . '$public_event_row [metadata]--->', $public_event_row ['metadata'] );
+							}
+						}
+						/*
+						 * Skip if not past ghost date
+						 */
+						$self_destruct = $public_event_row ['self_destruct'];
+						if (! empty ( $self_destruct )) {
+							if ($self_destruct < $date) {
+								// date is outside of viewable from/to
+								error_log ( "public event date is outside of ghost date..." . PHP_EOL );
+								continue;
+							}
+						}
+						
+						//
+						// Check if event has media if so show otherwise skip
+						//
+						$result_event_media_public = $this->fetchEventMedia ( $public_event_row ['event_id'] );
+						if (! count ( $result_event_media_public ) > 0) {
+							continue;
+						}
+						/*
+						 * Add event entry data...
+						 */
 						$event_xml_output = '';
-					}
-					$xml_output .= $event_xml_output;
+						$event_xml_output .= "<event>";
+						$event_xml_output .= "<event_id>" . $public_event_row ['event_id'] . "</event_id>";
+						$event_xml_output .= "<event_name>" . $public_event_row ['name'] . "</event_name>";
+						$event_xml_output .= "<event_location>" . $public_event_row ['location'] . "</event_location>";
+						$event_xml_output .= "<event_date>" . $public_event_row ['date'] . "</event_date>";
+						$event_xml_output .= "<event_metadata>" . $public_event_row ['metadata'] . "</event_metadata>";
+						$event_xml_output .= "<event_viewable_from>" . $public_event_row ['viewable_from'] . "</event_viewable_from>";
+						$event_xml_output .= "<event_viewable_to>" . $public_event_row ['viewable_to'] . "</event_viewable_to>";
+						$event_xml_output .= "<event_creator>" . $public_event_row ['username'] . "</event_creator>";
+						$event_xml_output .= "<event_creator_user_id>" . $public_event_row ['user_id'] . "</event_creator_user_id>";
+						
+						/*
+						 * Check REDIS to fetch event owner profile pic
+						 */
+						$pic = $pic_79x80 = $pic_448x306 = $pic_98x78 = $this->redis->getProfilePhoto ( $public_event_row ['user_id'] );
+						if (! $pic) {
+							$profile = $this->fetchOwnerProfilePic ( $public_event_row ['user_id'] );
+							if ($profile) {
+								$profile_image = json_decode ( $profile [0] ['metadata'], true );
+								if (! empty ( $profile_image ['S3_files'] ['path'] )) {
+									$pic = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['path'] );
+								}
+								
+								if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] )) {
+									$pic_79x80 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['79x80'] );
+								}
+								
+								if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['448x306'] )) {
+									$pic_448x306 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['448x306'] );
+								}
+								
+								if (! empty ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] )) {
+									$pic_98x78 = $this->url_signer->signArrayOfUrls ( $profile_image ['S3_files'] ['thumbnails'] ['98x78'] );
+								}
+							}
+						} // if $event_owner_profile
+						
+						/**
+						 * Output profile urls
+						 */
+						$event_xml_output .= "<profile_pic><![CDATA[" . $pic . "]]></profile_pic>";
+						$event_xml_output .= "<profile_pic_79x80><![CDATA[" . $pic_79x80 . "]]></profile_pic_79x80>";
+						$event_xml_output .= "<profile_pic_448x306><![CDATA[" . $pic_448x306 . "]]></profile_pic_448x306>";
+						$event_xml_output .= "<profile_pic_98x78><![CDATA[" . $pic_98x78 . "]]></profile_pic_98x78>";
+						
+						/**
+						 * Fetch event friends...
+						 */
+						$friends = $this->fetchEventFriends ( $public_event_row ['event_id'] );
+						
+						/**
+						 * Generate event friends xml .
+						 */
+						$event_xml_output .= $this->generateEventFriendsXML ( $friends );
+						
+						/**
+						 * Fetch comment like and count totals...
+						 */
+						// get like count
+						$likeCount = $this->fetchEventLikeCount ( $public_event_row ['event_id'] );
+						$event_xml_output .= "<event_like_total>" . $likeCount . "</event_like_total>";
+						// get comment count for event
+						$commCount = $this->fetchEventCommentCount ( $public_event_row ['event_id'] );
+						$event_xml_output .= "<event_comment_total>" . $commCount . "</event_comment_total>";
+						
+						/**
+						 * get comments
+						 */
+						$event_xml_output .= $this->fetchEventComments ( $public_event_row ['event_id'] );
+						
+						/**
+						 * generatePublicEventMediaXML
+						 */
+						$event_media_list = $this->generatePublicEventMediaXML ( $result_event_media_public );
+						if (! empty ( $event_media_list )) {
+							$event_xml_output .= $event_media_list;
+							$event_xml_output .= "</event>";
+						} else {
+							$event_xml_output = '';
+						}
+						$xml_output .= $event_xml_output;
+						
+						//
+						// Set the event in cache
+						//
+						$this->redis->setCache ( 'viewevents_public_' . $public_event_row ['event_id'], $event_xml_output );
+					} // end else if (!$event_xml)
 				} // end for loop public events
 				$xml_output .= "</events>";
 			}

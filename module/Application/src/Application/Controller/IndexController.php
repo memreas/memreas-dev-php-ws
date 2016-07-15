@@ -339,8 +339,8 @@ class IndexController extends AbstractActionController {
 				if (isset ( $data->addcomment->event_id )) {
 					// Invalidate existing cache
 					$this->redis->invalidateCache ( "listcomments_" . $data->addcomment->event_id );
-					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $data->addcomment->user_id );
-					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $data->addcomment->user_id );
+					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $data->addcomment->user_id . '_' . $data->addcomment->event_id );
+					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $data->addcomment->user_id . '_' . $data->addcomment->event_id );
 				}
 			} else if ($actionname == "verifyemailaddress") {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->sm );
@@ -389,6 +389,10 @@ class IndexController extends AbstractActionController {
 				 */
 				// $data = simplexml_load_string ( $_POST ['xml'] );
 				// $this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
+				if (!empty($data->addmediaevent->event_id)) {
+					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $data->addmediaevent->event_id);
+					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $data->addmediaevent->event_id );
+				}
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
@@ -515,8 +519,8 @@ class IndexController extends AbstractActionController {
 				 */
 				
 				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION ['user_id'] );
-				$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] );
-				$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] );
+				// $this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] );
+				// $this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] );
 				// Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION ['user_id'] );
 				// Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION ['user_id'] );
 			} else if ($actionname == "listallmedia") {
@@ -581,9 +585,9 @@ class IndexController extends AbstractActionController {
 				/*
 				 * -
 				 * Cache Approach:
-				 * TODO: invalidate
+				 * TODO: no necessary - events are cached at event level
 				 */
-				$this->redis->invalidateEvents ( $data->addevent->user_id );
+				//$this->redis->invalidateEvents ( $data->addevent->user_id );
 			} else if ($actionname == "viewevents") {
 				/*
 				 * - Cache Approach:
@@ -607,17 +611,13 @@ class IndexController extends AbstractActionController {
 				}
 				
 				//
-				// check if warming, if so give it some time
-				//
-				if ($warming) {
-					sleep ( 3 );
-				}
-				//
 				// go to database if !result - deadlock race condition???
 				//
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+				//Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
+				//Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
 				if (! $result) {
-					// Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
+					Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
 					$result = $viewevents->exec ();
 					$cache_me = true;
@@ -969,14 +969,17 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach
 				 * - write operation
-				 * - need to invalidate invalidateEvents
+				 * - need to invalidate invalidateEvent
 				 */
 				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
 				
-				$this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
-				$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
+				// $this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
+				//$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
+				$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id);
+				$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
+				
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach:
@@ -1236,16 +1239,11 @@ class IndexController extends AbstractActionController {
 				$cache_found = false;
 				$redirect = false;
 				
-				// Mlog::addone ( $cm . __LINE__ . '::$data', $data );
+				Mlog::addone ( $cm . __LINE__ . '::$data', $data );
+				Mlog::addone ( $cm . __LINE__ . '::$_SESSION [user_id]', $_SESSION ['user_id'] );
 				if ($actionname == 'stripe_listCards') {
 					$cache_id = $_SESSION ['user_id'];
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_getCustomerInfo') {
 					if (! empty ( $data->user_id )) {
 						$cache_id = $data->user_id;
@@ -1253,30 +1251,12 @@ class IndexController extends AbstractActionController {
 						$cache_id = $_SESSION ['user_id'];
 					}
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_checkOwnEvent') {
 					$cache_id = $data->user_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
-					if (! $result || empty ( $result )) {
-						$cache_me = true;
-					} else {
-						$cache_found = true;
-					}
 				} else if ($actionname == 'stripe_buyMedia') {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
@@ -1314,6 +1294,11 @@ class IndexController extends AbstractActionController {
 				 * -
 				 * not caching so run against stripe server
 				 */
+				if (! $result || empty ( $result )) {
+					$cache_me = true;
+				} else {
+					$cache_found = true;
+				}
 				if (! $cache_found) {
 					if (isset ( $_SESSION ['ipAddress'] )) {
 						$message_data ['ip_address'] = $_SESSION ['ipAddress'];
@@ -1322,18 +1307,18 @@ class IndexController extends AbstractActionController {
 					}
 					$message_data ['ip_address'] = $this->fetchUserIPAddress ();
 					$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
-					Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $message_data-->', $message_data );
+					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $message_data-->', $message_data );
 					$result = $PaymentsProxy->exec ( $actionname, $message_data );
-					Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
+					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
 				}
 				
 				// credit activation redirect
 				if ($redirect) {
-					Mlog::addone ( $cm . __LINE__ , 'Setting header redirect to ' . $result );
-					header($result);
-					exit;
+					Mlog::addone ( $cm . __LINE__, 'Setting header redirect to ' . $result );
+					header ( $result );
+					exit ();
 				}
-				//otherwise follow normal flow
+				// otherwise follow normal flow
 				echo $result;
 			} else if ($actionname == "findtag") {
 				
@@ -1677,10 +1662,10 @@ class IndexController extends AbstractActionController {
 			//
 			// Use these for background processes below...
 			//
-			if ($_SESSION) {
-				$user_id = $_SESSION ? $_SESSION ['user_id'] : "";
-				$username = $_SESSION ? $_SESSION ['username'] : "";
-			}
+			// if ($_SESSION) {
+			// $user_id = $_SESSION ? $_SESSION ['user_id'] : "";
+			// $username = $_SESSION ? $_SESSION ['username'] : "";
+			// }
 			
 			/**
 			 * - fetch buffer, clean
@@ -1690,30 +1675,30 @@ class IndexController extends AbstractActionController {
 			/*
 			 * TODO - Cache here due to ob_get_clean
 			 */
-			// if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-			// $this->redis->setCache ( $actionname . '_' . $cache_id, $output );
-			/*
-			 * $result = $this->redis->getCache ( $_SESSION ['username'] . '::' . "cached_actions" );
-			 * if ((! $result) || empty ( $result )) {
-			 * $cached_actions = [ ];
-			 * $cached_actions [] = $actionname . '_' . $cache_id;
-			 * } else {
-			 * $cached_actions = json_decode ( $result );
-			 * $cached_actions [] = $actionname . '_' . $cache_id;
-			 * }
-			 * $this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
-			 */
-			
-			// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
-			// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
-			// }
-			/*
-			 * TODO - Invalidate cache in if statements (id is all that is needed)
-			 */
-			// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
-			// $this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
-			// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
-			// }
+			if ($cache_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				$this->redis->setCache ( $actionname . '_' . $cache_id, $output );
+				/*
+				 * $result = $this->redis->getCache ( $_SESSION ['username'] . '::' . "cached_actions" );
+				 * if ((! $result) || empty ( $result )) {
+				 * $cached_actions = [ ];
+				 * $cached_actions [] = $actionname . '_' . $cache_id;
+				 * } else {
+				 * $cached_actions = json_decode ( $result );
+				 * $cached_actions [] = $actionname . '_' . $cache_id;
+				 * }
+				 * $this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
+				 */
+				
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
+				// }
+				/*
+				 * TODO - Invalidate cache in if statements (id is all that is needed)
+				 */
+				// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
+				// $this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
+				// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
+			}
 		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
 		
 		if (! empty ( $callback )) {
@@ -1745,7 +1730,7 @@ class IndexController extends AbstractActionController {
 						// Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
 						$data = simplexml_load_string ( trim ( $output ) );
 						$data->addChild ( 'x_memreas_chameleon', ( string ) $_SESSION ['x_memreas_chameleon'] );
-						$data->addChild ( 'memreascookie', ( string ) $_SESSION ['memreascookie'] );
+						$data->addChild ( 'memreascookie', $data->memreascookie );
 						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
 						$output = $data->asXML ();
 					}
@@ -1757,21 +1742,21 @@ class IndexController extends AbstractActionController {
 			} else {
 				$sid = session_id ();
 			}
-			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			$response = $output;
 		}
 		
 		//
 		// Send response and close session
 		//
-		$this->returnResponse ( $response, true );
-		/*
-		 * if ($callback) {
-		 * $this->returnResponse ( $response, true );
-		 * } else {
-		 * $this->returnResponse ( $response );
-		 * }
-		 */
+		if ($callback) {
+			Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response, true )' );
+			$this->returnResponse ( $response, true );
+		} else {
+			Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response )' );
+			$this->returnResponse ( $response );
+		}
+		
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
 		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
@@ -1779,13 +1764,11 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Post Processing and Cache Warming section...
 		 */
-		if ((MemreasConstants::REDIS_SERVER_USE) && ! empty ( $_SESSION )) {
-			
+		if (MemreasConstants::REDIS_SERVER_USE) {
 			//
 			// viewevents cache handling...
 			//
-			$cacheViewEvents = $this->redis->getCache ( 'viewevents_is_my_event_' . $user_id );
-			;
+			
 			if (! empty ( $memreascookie )) {
 				$xmlStart = '<xml><memreascookie>' . $memreascookie . '</memreascookie>';
 			} else if (! empty ( $sid )) {
@@ -1793,8 +1776,9 @@ class IndexController extends AbstractActionController {
 			} else {
 				$cacheViewEvents = false;
 			}
-			if (! $cacheViewEvents) {
-				
+			Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
+			if (isset ( $_SESSION ['user_id'] )) {
+				$user_id = $_SESSION ['user_id'];
 				if (! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) {
 					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
 					if (! $warming_viewevents_is_my_event_user_id) {
@@ -1831,7 +1815,7 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_public', '0' );
 					}
 				}
-			} // end if ($cacheViewEvents)
+			} // end if (isset($_SESSION['user_id']))
 			if (! $this->redis->hasSet ( '@person' )) {
 				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
 				// Now continue processing and warm the cache for @person
@@ -1848,8 +1832,8 @@ class IndexController extends AbstractActionController {
 				$this->redis->warmHashTagSet ( $user_id );
 			}
 		}
+		// end if (MemreasConstants::REDIS_SERVER_USE)
 		// Need to exit here to avoid ZF2 framework view.
-		
 		exit ();
 	}
 	// end indexcontroller...
@@ -1857,6 +1841,9 @@ class IndexController extends AbstractActionController {
 	//
 	// Supporting functions
 	//
+	protected function reCacheViewEvents() {
+		
+	}
 	protected function returnResponse($response, $json = false) {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
 		// buffer all upcoming output
@@ -1865,6 +1852,8 @@ class IndexController extends AbstractActionController {
 		header ( 'HTTP/1.0 200 OK' );
 		if ($json) {
 			header ( 'Content-Type: application/json' );
+		} else {
+			header ( "Content-type: text/xml" );
 		}
 		echo $response;
 		// get the size of the output
