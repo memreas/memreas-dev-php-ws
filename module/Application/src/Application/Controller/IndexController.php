@@ -610,8 +610,8 @@ class IndexController extends AbstractActionController {
 				// go to database if !result - deadlock race condition???
 				//
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-				Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
-				Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
+				//Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
+				//Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
 				if (! $result) {
 					Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
@@ -1834,6 +1834,9 @@ class IndexController extends AbstractActionController {
 	//
 	// Supporting functions
 	//
+	protected function reCacheViewEvents() {
+		
+	}
 	protected function returnResponse($response, $json = false) {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
 		// buffer all upcoming output
