@@ -339,8 +339,8 @@ class IndexController extends AbstractActionController {
 				if (isset ( $data->addcomment->event_id )) {
 					// Invalidate existing cache
 					$this->redis->invalidateCache ( "listcomments_" . $data->addcomment->event_id );
-					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $data->addcomment->user_id );
-					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $data->addcomment->user_id );
+					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $data->addcomment->user_id . '_' . $data->addcomment->event_id );
+					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $data->addcomment->user_id . '_' . $data->addcomment->event_id );
 				}
 			} else if ($actionname == "verifyemailaddress") {
 				$verifyemailaddress = new VerifyEmailAddress ( $message_data, $memreas_tables, $this->sm );
@@ -389,6 +389,10 @@ class IndexController extends AbstractActionController {
 				 */
 				// $data = simplexml_load_string ( $_POST ['xml'] );
 				// $this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
+				if (!empty($data->addmediaevent->event_id)) {
+					$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $data->addmediaevent->event_id);
+					$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $data->addmediaevent->event_id );
+				}
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
@@ -515,8 +519,8 @@ class IndexController extends AbstractActionController {
 				 */
 				
 				$this->redis->invalidateCache ( "listallmedia_" . $_SESSION ['user_id'] );
-				$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] );
-				$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] );
+				// $this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] );
+				// $this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] );
 				// Mlog::addone ( $cm . __LINE__ . '::listallmedia_$session->user_id', "listallmedia_" . $_SESSION ['user_id'] );
 				// Mlog::addone ( $cm . __LINE__ . '::viewevents_$session->user_id', "viewevents_" . $_SESSION ['user_id'] );
 			} else if ($actionname == "listallmedia") {
@@ -581,9 +585,9 @@ class IndexController extends AbstractActionController {
 				/*
 				 * -
 				 * Cache Approach:
-				 * TODO: invalidate
+				 * TODO: no necessary - events are cached at event level
 				 */
-				$this->redis->invalidateEvents ( $data->addevent->user_id );
+				//$this->redis->invalidateEvents ( $data->addevent->user_id );
 			} else if ($actionname == "viewevents") {
 				/*
 				 * - Cache Approach:
@@ -965,14 +969,17 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach
 				 * - write operation
-				 * - need to invalidate invalidateEvents
+				 * - need to invalidate invalidateEvent
 				 */
 				
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$event_id = $data->addexistmediatoevent->event_id;
 				
 				// $this->redis->invalidateMedia ( $_SESSION ['user_id'], $event_id );
-				$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
+				//$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
+				$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id);
+				$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
+				
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach:
