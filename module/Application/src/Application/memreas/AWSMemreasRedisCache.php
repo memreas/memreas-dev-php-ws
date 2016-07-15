@@ -274,15 +274,8 @@ class AWSMemreasRedisCache {
 		// write functions for media
 		// - add event (key is event_id)
 		// - removeevent
-		if (! empty ( $user_id )) {
-			// countviewevent can return me / friends / public
-			$cache_keys = array (
-					"viewevents_is_my_event_" . $user_id,
-					"viewevents_is_friend_event_" . $user_id 
-			);
-			//Mlog::addone ( __METHOD__ . __LINE__, $cache_keys );
-			$this->invalidateCacheMulti ( $cache_keys );
-		}
+		$this->invalidateCache ( "viewevents_is_my_event_" . $user_id );
+		$this->invalidateCache ( "viewevents_is_friend_event_" . $user_id );
 	}
 	
 	/*
