@@ -117,6 +117,10 @@ class IndexController extends AbstractActionController {
 	protected $sessHandler;
 	protected $sm;
 	protected $is_valid_session;
+	protected $warming_viewevents_is_my_event_user_id;
+	protected $warming_viewevents_is_friend_event_user_id;
+	protected $warming_viewevents_public;
+	
 	public function __construct($sm) {
 		$this->sm = $sm;
 	}
@@ -596,17 +600,17 @@ class IndexController extends AbstractActionController {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				if ($data->viewevent->is_public_event == '1') {
 					$cache_id = "public";
-					$warming = $warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
+					$warming = $this->warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
 				} else if ($data->viewevent->is_friend_event == '1') {
 					/*
 					 * -
 					 * friend events includes public
 					 */
 					$cache_id = "is_friend_event_" . trim ( $data->viewevent->user_id );
-					$warming = $warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $data->viewevent->user_id );
+					$warming = $this->warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $data->viewevent->user_id );
 				} else if ($data->viewevent->is_my_event == '1') {
 					$cache_id = "is_my_event_" . trim ( $data->viewevent->user_id );
-					$warming = $warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $data->viewevent->user_id );
+					$warming = $this->warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $data->viewevent->user_id );
 				}
 				
 				//
@@ -1774,11 +1778,11 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
 			if (isset ( $_SESSION ['user_id'] )) {
 				$user_id = $_SESSION ['user_id'];
-				$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
-				Mlog::addone ( __METHOD__ . __LINE__ . '$warming_viewevents_is_my_event_user_id--->', $warming_viewevents_is_my_event_user_id );
-				if ((! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) || ($warming_viewevents_is_my_event_user_id == - 1)) {
-					$warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
-					if (! $warming_viewevents_is_my_event_user_id) {
+				$this->warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
+				if ((! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) || ($this->warming_viewevents_is_my_event_user_id == - 1)) {
+					$this->warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
+					if (! $this->warming_viewevents_is_my_event_user_id) {
 						
 						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
@@ -1788,11 +1792,11 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '0' );
 					}
 				}
-				$warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
-				Mlog::addone ( __METHOD__ . __LINE__ . '$warming_viewevents_is_friend_event_user_id--->', $warming_viewevents_is_friend_event_user_id );
-				if ((! $this->redis->hasSet ( 'viewevents_is_friend_event_' . $user_id )) || ($warming_viewevents_is_friend_event_user_id == - 1)) {
-					$warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
-					if (! $warming_viewevents_is_friend_event_user_id) {
+				$this->warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->', $this->warming_viewevents_is_friend_event_user_id );
+				if ((! $this->redis->hasSet ( 'viewevents_is_friend_event_' . $user_id )) || ($this->warming_viewevents_is_friend_event_user_id == - 1)) {
+					$this->warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+					if (! $this->warming_viewevents_is_friend_event_user_id) {
 						
 						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>1</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
@@ -1802,10 +1806,10 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '0' );
 					}
 				}
-				$warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
-				Mlog::addone ( __METHOD__ . __LINE__ . '$warming_viewevents_public--->', $warming_viewevents_public );
-				if (! $this->redis->hasSet ( 'viewevents_public' ) || ($warming_viewevents_public == - 1)) {
-					if (! $warming_viewevents_public) {
+				$this->warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->', $this->warming_viewevents_public );
+				if (! $this->redis->hasSet ( 'viewevents_public' ) || ($this->warming_viewevents_public == - 1)) {
+					if (! $this->warming_viewevents_public) {
 						
 						$this->redis->setCache ( 'warming_viewevents_public', '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>0</is_friend_event><is_public_event>1</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
@@ -1843,11 +1847,11 @@ class IndexController extends AbstractActionController {
 	//
 	protected function setRecacheViewEvents($event_id) {
 		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
-		$warming_viewevents_is_my_event_user_id = - 1;
+		$this->warming_viewevents_is_my_event_user_id = - 1;
 		$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
-		$warming_viewevents_is_friend_event_user_id = - 1;
-		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
-		$warming_viewevents_public = - 1;
+		$this->warming_viewevents_is_friend_event_user_id = - 1;
+		$this->this->redis->invalidateCache ( "viewevents_public_" . $event_id );
+		$this->warming_viewevents_public = - 1;
 	}
 	protected function returnResponse($response, $json = false) {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
