@@ -588,9 +588,10 @@ class IndexController extends AbstractActionController {
 				/*
 				 * -
 				 * Cache Approach:
-				 * TODO: no necessary - events are cached at event level
+				 * - need to add event to cache so set warming flags
 				 */
 				// $this->redis->invalidateEvents ( $data->addevent->user_id );
+				$this->addToCacheViewEvents();
 			} else if ($actionname == "viewevents") {
 				/*
 				 * - Cache Approach:
@@ -1855,6 +1856,11 @@ class IndexController extends AbstractActionController {
 	//
 	// Supporting functions
 	//
+	protected function addToCacheViewEvents() {
+		$this->warming_viewevents_is_my_event_user_id = - 1;
+		$this->warming_viewevents_is_friend_event_user_id = - 1;
+		$this->warming_viewevents_public = - 1;
+	}
 	protected function setRecacheViewEvents($event_id) {
 		$this->redis->invalidateCache ( 'listallmedia_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
