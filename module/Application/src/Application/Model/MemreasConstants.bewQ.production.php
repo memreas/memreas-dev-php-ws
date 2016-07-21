@@ -10,8 +10,8 @@ namespace Application\Model;
 class MemreasConstants {
 	
 	//environment
-	const ENV = 'PROD';
-	//const ENV = 'DEV';
+	//const ENV = 'PROD';
+	const ENV = 'DEV';
 	
 	// Turns off emails for perf testing
 	const SEND_EMAIL = true;
