@@ -7,12 +7,9 @@
  */
 namespace Application\memreas;
 
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\memreas\AddNotification;
-use Application\memreas\MUUID;
 use \Exception;
-use Application\memreas\Email;
+use Application\memreas\AddNotification;
+use Application\memreas\AWSManagerSender;
 
 class ReTransCoder {
 	protected $message_data;
