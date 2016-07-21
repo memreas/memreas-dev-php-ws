@@ -41,8 +41,6 @@ class MemreasSignedURL {
 	}
 	public function fetchSignedURL($path) {
 		if ((MemreasConstants::SIGNURLS) && ! empty ( $path ) && ! is_array ( $path )) {
-			$this->expires = time () + MemreasConstants::EXPIRES;
-			
 			$signed_url = $this->get_canned_policy_stream_name ( $path, $this->private_key_filename, $this->key_pair_id, $this->expires );
 			
 			return $signed_url;
@@ -144,7 +142,7 @@ class MemreasSignedURL {
 			//
 			// fetch a signed url for the new file name
 			//
-			$this->expires = time () + MemreasConstants::EXPIRES;
+			//$this->expires = time () + MemreasConstants::EXPIRES;
 			$signedFileName = $singedM3u8FilePrefix . $this->expires . "_" . $fileName;
 			$signedS3M3u8Path = $s3path . '/' . $signedFileName;
 			$signedS3M3u8Path = $this->fetchSignedURL ( MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST . $signedS3M3u8Path );
