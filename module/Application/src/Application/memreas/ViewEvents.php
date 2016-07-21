@@ -615,6 +615,7 @@ class ViewEvents {
 				$url = "";
 				$s3file_basename_prefix = "";
 				$url_web = "";
+				$url_webm = "";
 				$url_hls = "";
 				$type = "";
 				$thum_url = '';
@@ -643,6 +644,7 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = $delete_path;
+						$url_webm = $delete_path;
 						$url_hls = $delete_path;
 						$thum_url = $delete_path;
 						$url79x80 = $delete_path;
@@ -670,7 +672,8 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : ''; // get web url
-						$url_hls = isset ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : ''; // get web url
+						$url_webm = isset ( $json_array ['S3_files'] ['webm'] ) ? $json_array ['S3_files'] ['webm'] : ''; // get webm url
+						$url_hls = isset ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : ''; // get hls url
 						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
 						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
 						$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
@@ -689,6 +692,8 @@ class ViewEvents {
 					$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url, $host ) . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 					// web - video specific
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web, $host ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
+					// web - video specific
+					$xml .= (! empty ( $url_webm )) ? "<event_media_url_webm><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_webm, $host ) . "]]></event_media_url_webm>" : '<event_media_url_webm></event_media_url_webm>';
 					// hls video specific
 					if ($host == MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST) {
 						$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
@@ -777,6 +782,7 @@ class ViewEvents {
 				$url = '';
 				$s3file_basename_prefix = "";
 				$url_web = '';
+				$url_webm = '';
 				$url_hls = '';
 				$type = "";
 				$thum_url = '';
@@ -804,6 +810,7 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = $delete_path;
+						$url_webm = $delete_path;
 						$url_hls = $delete_path;
 						$thum_url = $delete_path;
 						$url79x80 = $delete_path;
@@ -832,7 +839,8 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : ''; // get web url
-						$url_hls = isset ( $json_array ['S3_files'] ['$url_hls'] ) ? $json_array ['S3_files'] ['$url_hls'] : ''; // get web url
+						$url_webm = isset ( $json_array ['S3_files'] ['webm'] ) ? $json_array ['S3_files'] ['webm'] : ''; // get webm url
+						$url_hls = isset ( $json_array ['S3_files'] ['$url_hls'] ) ? $json_array ['S3_files'] ['$url_hls'] : ''; // get hls url
 						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
 						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
 						$url448x306 = isset ( $json_array ['S3_files'] ['thumbnails'] ['448x306'] ) ? $json_array ['S3_files'] ['thumbnails'] ['448x306'] : ''; // get video thum
@@ -850,6 +858,8 @@ class ViewEvents {
 					$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $url . "]]></event_media_url>" : '<event_media_url></event_media_url>';
 					// web - video specific
 					$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
+					// webm - video specific
+					$xml .= (! empty ( $url_webm )) ? "<event_media_url_webm><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_webm ) . "]]></event_media_url_webm>" : '<event_media_url_webm></event_media_url_webm>';
 					// hls video specific
 					$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 					$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum></event_media_video_thum>";
@@ -983,6 +993,7 @@ class ViewEvents {
 				$url = '';
 				$s3file_basename_prefix = "";
 				$url_web = '';
+				$url_webm = '';
 				$url_hls = '';
 				$type = "";
 				$thum_url = '';
@@ -1008,6 +1019,7 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = $delete_path;
+						$url_webm = $delete_path;
 						$url_hls = $delete_path;
 						$thum_url = $delete_path;
 						$url79x80 = $delete_path;
@@ -1037,6 +1049,7 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['video'] ) && is_array ( $json_array ['S3_files'] ['type'] ['video'] )) {
 						$type = "video";
 						$url_web = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : ''; // get web url
+						$url_webm = isset ( $json_array ['S3_files'] ['webm'] ) ? $json_array ['S3_files'] ['webm'] : ''; // get webm url
 						$url_hls = isset ( $json_array ['S3_files'] ['hls'] ) ? $json_array ['S3_files'] ['hls'] : ''; // get hls url
 						$thum_url = isset ( $json_array ['S3_files'] ['thumbnails'] ['fullsize'] ) ? $json_array ['S3_files'] ['thumbnails'] ['fullsize'] : ''; // get video thum
 						$url79x80 = isset ( $json_array ['S3_files'] ['thumbnails'] ['79x80'] ) ? $json_array ['S3_files'] ['thumbnails'] ['79x80'] : ''; // get video thum
@@ -1057,6 +1070,8 @@ class ViewEvents {
 				$xml .= (! empty ( $url )) ? "<event_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url ) . "]]></event_media_url>" : "<event_media_url/>";
 				// web - video specific
 				$xml .= (! empty ( $url_web )) ? "<event_media_url_web><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_web ) . "]]></event_media_url_web>" : '<event_media_url_web></event_media_url_web>';
+				// webm - video specific
+				$xml .= (! empty ( $url_webm )) ? "<event_media_url_webm><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_webm ) . "]]></event_media_url_webm>" : '<event_media_url_webm></event_media_url_webm>';
 				// hls video specific
 				$xml .= (! empty ( $url_hls )) ? "<event_media_url_hls><![CDATA[" . $this->url_signer->signArrayOfUrls ( $url_hls, MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) . "]]></event_media_url_hls>" : '<event_media_url_hls></event_media_url_hls>';
 				$xml .= (! empty ( $thum_url )) ? "<event_media_video_thum><![CDATA[" . $this->url_signer->signArrayOfUrls ( $thum_url ) . "]]></event_media_video_thum>" : "<event_media_video_thum/>";
