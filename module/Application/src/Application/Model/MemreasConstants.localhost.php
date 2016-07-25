@@ -27,7 +27,6 @@ class MemreasConstants {
 	const MEMREAS_PAY_URL = "http://memreas-dev-php-stripe.localhost/";
 	const MEMREAS_PAY_URL_STRIPE = "http://memreas-dev-php-stripe.localhost/stripe/";
 	const MEMREAS_PAY_URL_INDEX = "http://memreas-dev-php-stripe.localhost/index/";
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	
 	// Redis constant section
 	const REDIS_SERVER_ENDPOINT = "127.0.0.1";
@@ -54,7 +53,8 @@ class MemreasConstants {
 	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
-	const CLOUDFRONT_EXPIRY_TIME = (3600 * 48); // 48 hours
+	// 48 hours
+	const CLOUDFRONT_EXPIRY_TIME = (3600 * 48); 
 	
 	// Same across...
 	const registration_secret_passphrase = 'freedom tower';
@@ -65,8 +65,8 @@ class MemreasConstants {
 	const MEMREAS_TRANSCODER = true;
 	const MEMREASDB = 'memreasintdb';
 	const S3HOST = 'https://s3.amazonaws.com/';
-	const EXPIRES = 36000;
 	// 10 hour
+	const EXPIRES = 36000;
 	const DATA_PATH = "/data/";
 	const MEDIA_PATH = "/media/";
 	const IMAGES_PATH = "/images/";

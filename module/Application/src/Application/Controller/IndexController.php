@@ -1257,6 +1257,15 @@ class IndexController extends AbstractActionController {
 				} else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+					
+				} else if ($actionname == 'stripe_subscribe') {
+					/**
+					 * Invalidate stripe_getCustomerInfo cache since update is happening.
+					 */
+					$cache_id = $_SESSION ['user_id'];
+					Mlog::addone($cm . __LINE__ , 'stripe_subscribe....');
+					Mlog::addone($cm . __LINE__ , '$this->redis->invalidateCache ( stripe_getCustomerInfo_ . $cache_id )');
+					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 				} else if ($actionname == 'stripe_buyMedia') {
 					/**
 					 * Invalidate stripe_listCards cache since update is happening.
@@ -1312,13 +1321,17 @@ class IndexController extends AbstractActionController {
 					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
 				}
 				
+				//
 				// credit activation redirect
+				//
 				if ($redirect) {
 					Mlog::addone ( $cm . __LINE__, 'Setting header redirect to ' . $result );
 					header ( $result );
 					exit ();
 				}
+				//
 				// otherwise follow normal flow
+				//
 				echo $result;
 			} else if ($actionname == "findtag") {
 				
