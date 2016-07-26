@@ -9,6 +9,9 @@ namespace Application\Model;
 
 class MemreasConstants {
 	
+	//environment
+	const ENV = 'PROD';
+	
 	// Turns off emails for perf testing
 	const SEND_EMAIL = true;
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;
