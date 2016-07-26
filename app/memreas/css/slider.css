@@ -29,7 +29,7 @@
 	display: none;
 }
 /*---------navigation buttons-------*/
-#mcts1 .navPrev,#mcts1 .navNext,#mcts1 .navPlay,#mcts1 .navPause {
+#mcts1 .navPrev, #mcts1 .navNext, #mcts1 .navPlay, #mcts1 .navPause {
 	position: absolute;
 	top: 380px;
 	background: url(../img/next-prev.png);
@@ -60,7 +60,7 @@
 	background-position: -76px 38px;
 }
 
-#mcts1 .navPause,#mcts1 .navPlay {
+#mcts1 .navPause, #mcts1 .navPlay {
 	right: 530px;
 	width: 166px;
 	height: 38px;
@@ -82,7 +82,7 @@
 	background-position: 166px 0px;
 }
 
-.navPrev,.navPlay,.navPause,.navNext {
+.navPrev, .navPlay, .navPause, .navNext {
 	-moz-user-select: -moz-none;
 	-khtml-user-select: none;
 	-webkit-user-select: none;

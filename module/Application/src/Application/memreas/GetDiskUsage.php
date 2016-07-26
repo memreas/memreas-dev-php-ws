@@ -16,7 +16,7 @@ class GetDiskUsage {
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
-	public function exec($user_id = '', $stringOnly=false) {
+	public function exec($user_id = '', $stringOnly = false) {
 		if (isset ( $_POST ['xml'] )) {
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$user_id = trim ( $data->getdiskusage->user_id );
@@ -72,11 +72,11 @@ class GetDiskUsage {
 		$xml_output .= "<total_used>$total_used GB</total_used>";
 		$xml_output .= "</getdiskusageresponse>";
 		$xml_output .= "</xml>";
-		if (!$stringOnly) {
-			//for admin
+		if (! $stringOnly) {
+			// for admin
 			echo $xml_output;
 		} else {
-			//for stripe
+			// for stripe
 			return $total_used;
 		}
 		error_log ( "getdisusage ---> xml_output ----> " . $xml_output . PHP_EOL );

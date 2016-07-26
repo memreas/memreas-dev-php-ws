@@ -19,8 +19,8 @@ class MakePayout {
 	protected $dbAdapter;
 	public function __construct($service_locator) {
 		error_log ( "Inside__construct..." );
-		//$this->message_data = $message_data;
-		//$this->memreas_tables = $memreas_tables;
+		// $this->message_data = $message_data;
+		// $this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
@@ -40,19 +40,19 @@ class MakePayout {
 		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
-                                                'sid' => $_SESSION ['sid'],
-						'admin_key' => $_REQUEST ['admin_key'],	
-                        'action' => 'makepayout',
-				'account_id' => $account_id,
-				'amount' => $amount,
-				'description' => $description 
-                    ]
-                ]
-				
-                );
+						'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],
+						'action' => 'makepayout',
+						'account_id' => $account_id,
+						'amount' => $amount,
+						'description' => $description 
+				] 
+		] )
+
+		;
 		$result = trim ( ( string ) $response->getBody () );
- 		echo $result;
-                die();
+		echo $result;
+		die ();
 	}
 }
 

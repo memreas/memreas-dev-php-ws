@@ -10,7 +10,7 @@ namespace Application\memreas\StripeWS;
 use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
- use GuzzleHttp\Client;
+use GuzzleHttp\Client;
 
 class GetPlansStatic {
 	protected $message_data;
@@ -42,18 +42,18 @@ class GetPlansStatic {
 		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
-                                                'sid' => $_SESSION ['sid'],
-						'admin_key' => $_REQUEST ['admin_key'],	
-                        'action' => 'listplansstatic',
-                        'static' => $static 
-                    ]
-                ]
-				
-		 );
-		 
+						'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],
+						'action' => 'listplansstatic',
+						'static' => $static 
+				] 
+		] )
+
+		;
+		
 		$result = trim ( ( string ) $response->getBody () );
- 		echo $result;
-                die();
+		echo $result;
+		die ();
 	}
 }
 

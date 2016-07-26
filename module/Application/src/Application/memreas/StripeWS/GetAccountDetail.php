@@ -44,21 +44,18 @@ class GetAccountDetail {
 		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
-                                                'sid' => $_SESSION ['sid'],
-						'admin_key' => $_REQUEST ['admin_key'],	
-                            'action' => 'getaccountdetail',
-				'user_id' => $user_id 
-                        ]
-		]
-                        
-                                    
-				
-		 );
+						'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],
+						'action' => 'getaccountdetail',
+						'user_id' => $user_id 
+				] 
+		] )
+
+		;
 		
-		 $result = trim ( ( string ) $response->getBody () );
- 		echo $result;
-                die();
-	 
+		$result = trim ( ( string ) $response->getBody () );
+		echo $result;
+		die ();
 	}
 }
 

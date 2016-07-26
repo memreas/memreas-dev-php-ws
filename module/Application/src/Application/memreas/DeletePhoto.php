@@ -141,7 +141,7 @@ class DeletePhoto {
 					if (! empty ( $copyright_id )) {
 						$now = date ( 'Y-m-d H:i:s' );
 						$seldata = "select c from Application\Entity\Copyright c where c.copyright_id='{$copyright_id}'";
-						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $seldata::', $seldata );
+						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $seldata::', $seldata );
 						$statement = $this->dbAdapter->createQuery ( $seldata );
 						$resseldata = $statement->getResult ();
 						$metadata = json_decode ( $resseldata [0]->metadata, true );
@@ -150,21 +150,21 @@ class DeletePhoto {
 						// update copyright to note media was deleted with date.
 						$json_metadata = json_encode ( $metadata );
 						$update_copyright = "UPDATE Application\Entity\Copyright c SET c.metadata = $json_metadata WHERE c.copyright_id='{$copyright_id}'";
-						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_copyright::', $update_copyright );
+						// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'query $update_copyright::', $update_copyright );
 						$statement = $this->dbAdapter->createQuery ( $update_copyright );
 						$result_update_copyright = $statement->getResult ();
-						//Mlog::addone ( $cm, __LINE__ );
+						// Mlog::addone ( $cm, __LINE__ );
 					}
-					//Mlog::addone ( $cm, __LINE__ );
+					// Mlog::addone ( $cm, __LINE__ );
 				} catch ( \Exception $e ) {
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Caught exception::', $e->getMessage () );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Caught exception::', $e->getMessage () );
 				}
 				
 				// if (count ( $result ) > 0) {
 				if (count ( $update_media_result ) > 0) {
 					$xml_output .= "<status>success</status>";
 					$xml_output .= "<message>Media removed successfully</message>";
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::db entry deleted!' );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::db entry deleted!' );
 				} else {
 					$xml_output .= "<status>failure</status><message>An error occurred</message>";
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::db entry delete failed' );

@@ -73,10 +73,10 @@ class DcmaCounterClaim {
 			$violationObj->counter_claim_url = $counter_url;
 			$violationObj->counter_claim_address = $counter_address;
 			$violationObj->counter_claim_email_address = $mediaUser->email_address;
-			$violationObj->counter_claim_report_date = MNow::now();
+			$violationObj->counter_claim_report_date = MNow::now ();
 			$violationObj->counter_claim_phone_number = $counter_phone;
 			$violationObj->status = MemreasConstants::DCMA_COUNTER_CLAIM;
-			$violationObj->update_date = MNow::now();
+			$violationObj->update_date = MNow::now ();
 			$this->dbAdapter->persist ( $violationObj );
 			$this->dbAdapter->flush ();
 			$message .= 'Dcma counter Claim ';

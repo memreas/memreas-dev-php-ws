@@ -18,6 +18,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	private $url_signer;
 	private $aws_manager;
 	protected $service_locator;
+	private static $handle;
+	private static $isInitialized;
 	public function __construct($redis, $service_locator) {
 		$cm = __CLASS__ . __METHOD__;
 		$this->service_locator = $service_locator;
@@ -36,7 +38,14 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$this->mRedis = $redis;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 		$this->url_signer = new MemreasSignedURL ();
+		self::$isInitialized = true;
+		self::$handle = $this;
 		// Mlog::addone ( $cm . __LINE__ . '::', 'exit __construct' );
+	}
+	public static function getHandle() {
+		if (! empty ( self::$isInitialized )) {
+			return self::$handle;
+		}
 	}
 	public function open($savePath, $sessionName) {
 		// No action necessary because connection is injected
@@ -66,33 +75,42 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function startSessionWithSID($sid) {
 		session_id ( $sid );
-		session_start ();
-		$rMemreasSidSession = $this->mRedis->getCache ( $sid );
-		//store to reset ttl
-		$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession );
-		// error_log ( '_SESSION vars after sid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
+		$result = session_start ();
+		if ($result) {
+			//
+			// store to reset ttl
+			//
+			$rMemreasSidSession = $this->mRedis->getCache ( $sid );
+			$result = $this->mRedis->setCache ( $sid, $rMemreasSidSession, MemreasConstants::REDIS_CACHE_SESSION_DEVICE_TTL );
+		}
 		
 		return $result;
 	}
 	public function startSessionWithMemreasCookie($memreascookie, $x_memreas_chameleon = '', $actionname = '') {
 		$rMemreasCookieSession = $this->mRedis->getCache ( 'memreascookie::' . $memreascookie );
 		$result = false;
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$rMemreasCookieSession-->', $rMemreasCookieSession );
+		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$rMemreasCookieSession-->', $rMemreasCookieSession );
 		if ($rMemreasCookieSession) {
 			$rMemreasCookieSessionArr = json_decode ( $rMemreasCookieSession, true );
 			session_id ( $rMemreasCookieSessionArr ['sid'] );
 			session_start ();
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::startSessionWithMemreasCookie sid is-->', $rMemreasCookieSessionArr ['sid'] );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::startSessionWithMemreasCookie sid is-->', $rMemreasCookieSessionArr ['sid'] );
 			$result = true;
+			
+			$fetchChameleon = new FetchChameleon ();
+			$fetchChameleon->setChameleon ();
+			
+			// set back to cache to reset ttl
+			$result = $this->mRedis->setCache ( 'memreascookie::' . $memreascookie, $rMemreasCookieSession, MemreasConstants::REDIS_CACHE_SESSION_TTL );
+			
+			return $result;
+		} else {
+			//
+			// Can't find session so logout
+			//
+			$logout = new LogOut ();
+			$result = $logout->exec ( $this );
 		}
-		
-		$fetchChameleon = new FetchChameleon ();
-		$fetchChameleon->setChameleon ();
-		
-		//set back to cache to reset ttl
-		$result = $this->mRedis->setCache ('memreascookie::' . $memreascookie, $rMemreasCookieSession);
-		
-		return $result;
 		
 		// not worknig ---reset the cache with the updated data...
 		// $this->setMemreasCookieLookup ( true );
@@ -148,10 +166,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			}
 		}
 		// error_log ( '_SESSION vars after uid start...' . print_r ( $_SESSION, true ) . PHP_EOL );
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function fetchProfilePicMeta($uid) {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		/*
 		 * Check for profile photo
 		 */
@@ -163,12 +179,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		if ($profile) {
 			$meta = $profile [0]->metadata;
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		return $meta;
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
-		
 		session_start ();
 		error_log ( 'Inside setSession' . PHP_EOL );
 		if (empty ( session_id () )) {
@@ -179,7 +192,9 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		// Check Headers sent
 		//
 		
+		//
 		// Set Session vars
+		//
 		$_SESSION ['user_id'] = $user->user_id;
 		$_SESSION ['username'] = $user->username;
 		$_SESSION ['sid'] = session_id ();
@@ -189,21 +204,26 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$_SESSION ['memreascookie'] = $memreascookie;
 		$_SESSION ['ipAddress'] = $clientIPAddress;
 		$_SESSION ['profile_pic_meta'] = $this->fetchProfilePicMeta ( $user->user_id );
+		
+		//
+		// Set Profile Pic Url
+		//
 		$json_pic_meta = json_decode ( $_SESSION ['profile_pic_meta'], true );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$_SESSION [profile_pic_meta]', $_SESSION ['profile_pic_meta'] );
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$json_pic_meta', $json_pic_meta );
 		if ($_SESSION ['profile_pic_meta']) {
 			if (isset ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] )) {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['thumbnails'] ['79x80'] );
-				// Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - 79x80', $_SESSION ['profile_pic']);
 			} else {
 				$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( $json_pic_meta ['S3_files'] ['full'] );
-				// Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - full', $_SESSION ['profile_pic']);
 			}
 		} else {
 			$_SESSION ['profile_pic'] = $this->url_signer->signArrayOfUrls ( null );
-			// Mlog::addone(__CLASS__.__METHOD__. __LINE__.'::$_SESSION [profile_pic] - null', $_SESSION ['profile_pic']);
 		}
+		
+		//
+		// Store to user session table
+		//
+		$this->storeSession ( true );
+		
 		//
 		// handle x_memreas_chameleon on login $_SESSION is set in function
 		//
@@ -212,15 +232,12 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		
 		// Mlog::addone(__CLASS__.__METHOD__.':: $_SESSION[profile_pic]', $_SESSION['profile_pic']);
 		$this->setUIDLookup ();
-		$this->storeSession ( true );
 		if (! empty ( $memreascookie )) {
-			Mlog::addone ( __CLASS__ . __METHOD__ . ':: about to set $this->setMemreasCookieLookup for cookie::', $_SESSION ['memreascookie'] );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . ':: about to set $this->setMemreasCookieLookup for cookie::', $_SESSION ['memreascookie'] );
 			$this->setMemreasCookieLookup ( true );
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function setUIDLookup() {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		// error_log ( 'Inside setUserNameLookup' . PHP_EOL );
 		$userNameArr = array ();
 		$userNameArr ['user_id'] = $_SESSION ['user_id'];
@@ -233,11 +250,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$userNameArr ['profile_pic'] = $_SESSION ['profile_pic'];
 		$this->mRedis->setCache ( 'uid::' . $_SESSION ['user_id'], json_encode ( $userNameArr ) );
 		$this->mRedis->setCache ( 'username::' . $_SESSION ['username'], json_encode ( $userNameArr ) );
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function setMemreasCookieLookup($create = false) {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
-		error_log ( 'Inside setMemreasCookieLookup' . PHP_EOL );
 		$memreascookieArr = array ();
 		$memreascookieArr ['user_id'] = $_SESSION ['user_id'];
 		$memreascookieArr ['username'] = $_SESSION ['username'];
@@ -250,26 +264,18 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$memreascookieArr ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
 		
 		$this->mRedis->setCache ( 'memreascookie::' . $_SESSION ['memreascookie'], json_encode ( $memreascookieArr ) );
-		
-		Mlog::addone ( __CLASS__ . __METHOD__ . ':: after setMemreasCookieLookup $_SESSION--->', $_SESSION );
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function closeSessionWithSID() {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
 		session_destroy ();
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function closeSessionWithMemreasCookie() {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		// $this->destroy(session_id());
 		$this->mRedis->invalidateCache ( 'memreascookie::' . $_SESSION ['memreascookie'] );
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
 		session_destroy ();
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function storeSession($start) {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		try {
 			$now = date ( "Y-m-d H:i:s" );
 			if ($start) {
@@ -294,6 +300,13 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				/**
 				 * End Session
 				 */
+				$sessionObj = $this->dbAdapter->getRepository ( "\Application\Entity\UserSession" )->findOneBy ( array (
+						'session_id' => session_id () 
+				) );
+				$sessionObj->end_time = $now;
+				
+				$this->dbAdapter->persist ( $sessionObj );
+				$this->dbAdapter->flush ();
 				$result = $this->endSession ();
 			}
 		} catch ( \Exception $e ) {
@@ -302,18 +315,14 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 			 */
 			$result = $this->endSession ();
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 	}
 	public function endSession() {
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		$now = date ( "Y-m-d H:i:s" );
 		$q_update = "UPDATE Application\Entity\UserSession u
 		SET u.end_time = '$now'
 		WHERE u.session_id ='" . session_id () . "'
 		and u.user_id = '" . $_SESSION ['user_id'] . "'";
-		// error_log ( 'logout update sql ---->' . $q_update . PHP_EOL );
 		$statement = $this->dbAdapter->createQuery ( $q_update );
-		Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		return $statement->getResult ();
 	}
 }

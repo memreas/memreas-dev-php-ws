@@ -236,50 +236,34 @@ class AWSMemreasRedisCache {
 	 */
 	public function invalidateMedia($user_id, $event_id = null, $media_id = null) {
 		$cm = __CLASS__ . __METHOD__;
-		// error_log("Inside invalidateMedia".PHP_EOL);
-		// error_log('Inside invalidateMedia $user_id ----> *' . $user_id . '*' . PHP_EOL);
-		// error_log('Inside invalidateMedia $event_id ----> *' . $event_id . '*' . PHP_EOL);
-		// error_log('Inside invalidateMedia $media_id ----> *' . $media_id . '*' . PHP_EOL);
-		// write functions for media
 		// - add media event (key is event_id or user_id)
 		// - mediainappropriate (key is user id for invalidate)
 		// - deletePhoto (key is user id for invalidate)
-		// - update media
-		// - removeeventmedia
+		// - update media ??
+		// - removeeventmedia ??
 		$cache_keys = array ();
 		$event_id = trim ( $event_id );
 		if (! empty ( $event_id )) {
-			//$cache_keys [] = "listallmedia_" . $event_id;
-			//$cache_keys [] = "geteventdetails_" . $event_id;
-			$this->invalidateCache("listallmedia_" . $event_id);
-			$this->invalidateCache("geteventdetails_" . $event_id);
+			// $cache_keys [] = "listallmedia_" . $event_id;
+			// $cache_keys [] = "geteventdetails_" . $event_id;
+			$this->invalidateCache ( "listcomments_" . $event_id . '_' . $media_id );
+			$this->invalidateCache ( "geteventdetails_" . $event_id );
 		}
 		$media_id = trim ( $media_id );
 		if (! empty ( $media_id )) {
-			//$cache_keys [] = "viewmediadetails_" . $media_id;
-			$this->invalidateCache("viewmediadetails_" . $media_id);
+			// $cache_keys [] = "viewmediadetails_" . $media_id;
+			$this->invalidateCache ( "listcomments_" . $media_id );
+			$this->invalidateCache ( "viewmediadetails_" . $media_id );
 		}
 		$user_id = trim ( $user_id );
 		if (! empty ( $user_id )) {
 			// countviewevent can return me / friends / public
-			//$cache_keys [] = "listallmedia_" . $user_id;
-			//$cache_keys [] = "viewevents_is_my_event_" . $user_id;
-			//$cache_keys [] = "viewevents_is_friend_event_" . $user_id;
-			$this->invalidateCache("listnotification_" . $user_id);
-			$this->invalidateCache("listallmedia_" . $event_id);
-			$this->invalidateCache("viewevents_is_my_event_" . $user_id);
-			$this->invalidateCache("viewevents_is_friend_event_" . $user_id);
+			$this->invalidateCache ( "listallmedia_" . $user_id );
+			$this->invalidateCache ( "listnotification_" . $user_id );
+			$this->invalidateCache ( "listallmedia_" . $event_id );
+			$this->invalidateCache ( "viewevents_is_my_event_" . $user_id );
+			$this->invalidateCache ( "viewevents_is_friend_event_" . $user_id );
 		}
-		
-		// Mecached - deleteMulti...
-		//$result = $this->remSetKeys ( $cache_keys );
-		//if ($result) {
-		//	$now = date ( 'Y-m-d H:i:s.u' );
-		//	error_log ( 'invalidateCacheMulti JUST DELETED THESE KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
-		//} else {
-		//	$now = date ( 'Y-m-d H:i:s.u' );
-		//	error_log ( 'invalidateCacheMulti COULD NOT DELETE THES KEYS ----> ' . json_encode ( $cache_keys ) . " time: " . $now . PHP_EOL );
-		//}
 	} // End invalidateMedia
 	
 	/*
@@ -290,15 +274,8 @@ class AWSMemreasRedisCache {
 		// write functions for media
 		// - add event (key is event_id)
 		// - removeevent
-		if (! empty ( $user_id )) {
-			// countviewevent can return me / friends / public
-			$cache_keys = array (
-					"viewevents_is_my_event_" . $user_id,
-					"viewevents_is_friend_event_" . $user_id 
-			);
-			Mlog::addone ( __METHOD__ . __LINE__, $cache_keys );
-			$this->invalidateCacheMulti ( $cache_keys );
-		}
+		$this->invalidateCache ( "viewevents_is_my_event_" . $user_id );
+		$this->invalidateCache ( "viewevents_is_friend_event_" . $user_id );
 	}
 	
 	/*
@@ -409,48 +386,48 @@ class AWSMemreasRedisCache {
 				 */
 				$keys = array_keys ( $event_ids );
 				$public_event_ids = $tagRep->filterPublicHashTags ( $keys );
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
+				//Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys )' );
 				$hashtag_public_eid_hash = array ();
 				foreach ( $public_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						//Mlog::addone ( $cm, '::public_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						//Mlog::addone ( $cm, '::public_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag', 0, $event_ids [$eid ['event_id']] );
 						// $hashtag_public_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
 						$reply = $this->cache->hset ( '#hashtag_public_eid_hash', $event_ids [$eid ['event_id']], $eid ['event_id'] );
 					}
 				}
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
+				//Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterPublicHashTags ( $keys ) for loop...' );
 				// $reply = $this->cache->hmset ( '#hashtag_public_eid_hash', $hashtag_public_eid_hash );
 				$friend_event_ids = $tagRep->filterFriendHashTags ( $keys, $user_id );
-				Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
+				//Mlog::addone ( 'warmHashTagSet($user_id)', 'past $tagRep->filterFriendHashTags ( $keys, $user_id )' );
 				$hashtag_friends_eid_hash = array ();
 				foreach ( $friend_event_ids as $eid ) {
 					if (! empty ( $event_ids [$eid ['event_id']] )) {
-						Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
-						Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
+						//Mlog::addone ( $cm, '::friend_event_tags event_ids[eid[event_id]] ---> ' . $event_ids [$eid ['event_id']] );
+						//Mlog::addone ( $cm, '::friend_event_tags eid[tag] ---> ' . $event_ids [$eid ['event_id']] );
 						$result = $this->cache->zadd ( '#hashtag_' . $user_id, 0, $event_ids [$eid ['event_id']] );
 						$hashtag_friends_eid_hash [$eid ['event_id']] = $event_ids [$eid ['event_id']];
 						$reply = $this->cache->hset ( '#hashtag_friends_hash_' . $user_id, $event_ids [$eid ['event_id']], $eid ['event_id'] );
 					}
 				}
-				Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
-				Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
+				//Mlog::addone ( $cm, '::friend_event_tags count ---> ' . count ( $friend_event_ids ) );
+				//Mlog::addone ( $cm, '::ZCARD #hashtag_' . $user_id . ' result ---> ' . $this->cache->zcard ( '#hashtag_' . $user_id ) );
 				// $reply = $this->cache->hmset ( '#hashtag_friends_hash_' . $user_id, $hashtag_friends_eid_hash );
-				//Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
+				// Mlog::addone ( $cm . __LINE__, '::setExpire reply ---> ' . $reply );
 				
 				$result = $this->cache->executeRaw ( array (
 						'HLEN',
 						'#hashtag_friends_hash_' . $user_id 
 				) );
-				Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
+				//Mlog::addone ( $cm, '::HLEN #hashtag_friends_hash_' . $user_id . ' result --->' . $result );
 				$result = $this->cache->executeRaw ( array (
 						'HLEN',
 						'#hashtag_public_eid_hash' 
 				) );
-				Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
+				//Mlog::addone ( $cm, '::HLEN #hashtag_public_eid_hash result --->' . $result );
 				$warming = $this->cache->set ( 'warming_hashtag', '0' );
-				Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
+				//Mlog::addone ( $cm, '::cache warming @warming_hashtag finished...' . date ( 'Y-m-d H:i:s.u' ) );
 				
 				/**
 				 * Set expire for each set
@@ -482,6 +459,7 @@ class AWSMemreasRedisCache {
 		// Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		sleep ( 1 );
 		$user_id = $_SESSION ['user_id'];
+		
 		$warming_memreas = $this->cache->get ( 'warming_memreas' );
 		if (! $warming_memreas) {
 			// Mlog::addone ( $cm, '::cache warming @warming_memreas started...' . date ( 'Y-m-d H:i:s.u' ) );
@@ -782,7 +760,6 @@ class AWSMemreasRedisCache {
 		$reply = $this->cache->hset ( '@person_uid_hash', $row ['user_id'], $row ['username'] );
 		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$person_json--->', $person_json );
 	}
-	
 	public function getProfilePhoto($user_id) {
 		/*
 		 * Check REDIS to fetch event owner profile pic
@@ -793,12 +770,10 @@ class AWSMemreasRedisCache {
 		if ($user_profile) {
 			$user_profileArr = json_decode ( $user_profile, true );
 			$pic = json_encode ( $user_profileArr ['profile_photo'] );
-		} 
+		}
 		return $pic;
 	}
 }
-
-
 
 ?>
 		

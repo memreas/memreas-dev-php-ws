@@ -49,10 +49,10 @@ class MediaDeviceTracker {
 			$query = "SELECT md
         			from Application\Entity\MediaDevice md, Application\Entity\Media m
         			WHERE md.user_id = m.user_id and md.media_id = m.media_id and m.delete_flag != 1 and m.transcode_status = 'success' and m.user_id = '$user_id'";
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 			$statement = $this->dbAdapter->createQuery ( $query );
 			$mediaDevicesForUser = $statement->getArrayResult ();
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode ( $mediaDevicesForUser ) );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$mediaDevicesForUser::', json_encode ( $mediaDevicesForUser ) );
 		} catch ( QueryException $ex ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$ex::', $ex->getMessage () );
 		}

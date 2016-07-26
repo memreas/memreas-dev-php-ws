@@ -46,21 +46,20 @@ class Refund {
 		
 		$response = $guzzle->request ( 'POST', MemreasConstants::MEMREAS_PAY_URL, [ 
 				'form_params' => [ 
-                                                'sid' => $_SESSION ['sid'],
-						'admin_key' => $_REQUEST ['admin_key'],	
-                        'action' => 'refund',
-				'user_id' => $user_id,
-				'amount' => $amount,
-				'reason' => $reason 
-                    ]
-                ]
-				
-		);
+						'sid' => $_SESSION ['sid'],
+						'admin_key' => $_REQUEST ['admin_key'],
+						'action' => 'refund',
+						'user_id' => $user_id,
+						'amount' => $amount,
+						'reason' => $reason 
+				] 
+		] )
+
+		;
 		
-		 
 		$result = trim ( ( string ) $response->getBody () );
- 		echo $result;
-                die();
+		echo $result;
+		die ();
 	}
 }
 

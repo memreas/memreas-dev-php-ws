@@ -7,11 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\SessionManager;
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\MemreasSignedCookie;
-
 class Login {
 	protected $message_data;
 	protected $memreas_tables;
@@ -21,6 +16,7 @@ class Login {
 	protected $username;
 	protected $password;
 	protected $device_id;
+	protected $device_token;
 	protected $device_type;
 	protected $memreascookie;
 	protected $clientIPAddress;
@@ -41,12 +37,12 @@ class Login {
 	}
 	public function exec($sessHandler, $ipAddress = '') {
 		try {
-			$cm = __CLASS__.__METHOD__;
+			$cm = __CLASS__ . __METHOD__;
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-			if ( !empty($data->clientIPAddress) ) {
-				Mlog::addone ( $cm . __LINE__.'::$data->clientIPAddress---->', (string) $data->clientIPAddress );
-				$ipAddress = (string) $data->clientIPAddress;
+			if (! empty ( $data->clientIPAddress )) {
+				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
+				$ipAddress = ( string ) $data->clientIPAddress;
 			}
 			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
@@ -55,15 +51,17 @@ class Login {
 			$this->username = trim ( $data->login->username );
 			$this->device_id = (! empty ( $data->login->device_id )) ? trim ( $data->login->device_id ) : '';
 			$this->device_type = (! empty ( $data->login->device_type )) ? trim ( $data->login->device_type ) : '';
+			$this->device_token = (! empty ( $data->login->device_token )) ? trim ( $data->login->device_token ) : '';
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
-			//Mlog::addone ( $cm . '::$this->username', $this->username );
-			//Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
-			//Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
-			//Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
-			//Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
-			//Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
+			Mlog::addone ( $cm . '::$this->username', $this->username );
+			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
+			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
+			Mlog::addone ( $cm . '::$this->device_token', $this->device_token );
+			// Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
+			// Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
+			// Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
 			
 			$time = time ();
 			if (empty ( $this->username )) {
@@ -97,17 +95,23 @@ class Login {
 					 * Set the session for the user data...
 					 */
 					$sessHandler->setSession ( $row [0], $this->device_id, $this->device_type, $this->memreascookie, $this->clientIPAddress );
-					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
-						
+					Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+					
 					/*
 					 * Check if the device is registered and update as needed
 					 */
-					$device_token = '';
-					if (! empty ( $this->device_type )) {
-						$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type );
+					try {
+						if (! empty ( $this->device_type )) {
+							$device_token = $this->registerDevice->checkDevice ( $row [0]->user_id, $this->device_id, $this->device_type, $this->device_token );
+						}
+					} catch ( Exception $e ) {
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->registerDevice->checkDevice  returned error --> ' . $e->getMessage () );
 					}
-					Mlog::addone(__CLASS__.__METHOD__, __LINE__);
-						
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$row [0]->user_id--->' . $row [0]->user_id );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->device_id--->' . $this->device_id );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->device_type---->' . $this->device_type );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->device_token---->' . $this->device_token );
+					
 					/*
 					 * check if email is verified
 					 */
@@ -147,13 +151,12 @@ class Login {
 			$xml_output .= "<message>" . $e->getMessage () . "</message>";
 			$xml_output .= "</loginresponse>";
 			$xml_output .= "</xml>";
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$e->getMessage ()--->', $e->getMessage ());
-			Mlog::addone(__CLASS__.__METHOD__, __LINE__);
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$e->getMessage ()--->', $e->getMessage () );
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 		}
 		
 		header ( "Content-type: text/xml" );
 		echo $xml_output;
-		//error_log ( "Login ---> xml_output ----> ******" . $xml_output . "******" . PHP_EOL );
 	}
 }
 ?>

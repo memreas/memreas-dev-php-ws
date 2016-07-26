@@ -9,7 +9,6 @@
  * Get user's details service
  * @params: user_id Provide user id to get back detail
  * @Return User information detail
- * @Tran Tuan
  */
 namespace Application\memreas;
 
@@ -173,7 +172,7 @@ class GetUserDetails {
 			$xml_output .= "</xml>";
 			echo $xml_output;
 		}
-		error_log ( __CLASS__.__METHOD__.__LINE__.'$this->xml_output--->' . $xml_output . PHP_EOL );
+		error_log ( __CLASS__ . __METHOD__ . __LINE__ . '$this->xml_output--->' . $xml_output . PHP_EOL );
 	} // end exec()
 }
 

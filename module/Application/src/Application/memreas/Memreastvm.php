@@ -4,9 +4,9 @@
  * Copyright (C) 2015 memreas llc. - All Rights Reserved
  * Unauthorized copying of memreas specific code, via any medium is strictly prohibited
  * proprietary and confidential
+ * 		Select portions of software below utilize code found @ https://github.com/eddturtle/direct-upload-s3-signaturev4
+ * 		memreas assumes copyright noted above for memreas specific code 
  */
-// Select portions of software below utilize code found @ https://github.com/eddturtle/direct-upload-s3-signaturev4
-// as such including license for software utilized. License is bounded to this file only.
 
 // The MIT License (MIT)
 
@@ -59,7 +59,7 @@ class Memreastvm {
 		$this->iam = $this->aws->createIam ();
 	}
 	public function exec($type = "") {
-		$cm = __CLASS__.__METHOD__;
+		$cm = __CLASS__ . __METHOD__;
 		try {
 			/**
 			 * Fetch data return type
@@ -87,11 +87,11 @@ class Memreastvm {
 				$xml_output .= "<memreas_tvm>$cdata</memreas_tvm>";
 				$xml_output .= "</xml>";
 				echo $xml_output;
-				//Mlog::addone ( $cm.__LINE__ . '::output::', $xml_output);
+				// Mlog::addone ( $cm.__LINE__ . '::output::', $xml_output);
 			} else {
 				header ( 'Content-Type: application/json' );
 				echo json_encode ( $signature_data );
-				//Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
+				// Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
 			}
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . 'error::', $e->getMessage () );
