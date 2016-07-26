@@ -7,11 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\memreas\MUUID;
-use Zend\View\Model\ViewModel;
 use Application\memreas\Email;
 
 class AddFriendtoevent {
@@ -43,14 +38,14 @@ class AddFriendtoevent {
 				$data = simplexml_load_string ( $frmweb );
 				error_log ( "Enter AddFriendtoevent.exec() frmweb ----> " . $frmweb . PHP_EOL );
 			}
-
+			
 			/**
 			 * fetch input vars
 			 */
 			$friend_array = $data->addfriendtoevent->friends->friend;
 			$user_id = (trim ( $data->addfriendtoevent->user_id ));
 			$event_id = (trim ( $data->addfriendtoevent->event_id ));
-			//$group_array = (trim ( $data->addfriendtoevent->groups ));
+			// $group_array = (trim ( $data->addfriendtoevent->groups ));
 			$email_array = $data->addfriendtoevent->emails->email;
 			
 			$status = "Success";
@@ -74,7 +69,7 @@ class AddFriendtoevent {
 			/**
 			 * add group to event_group
 			 */
-			//$result = $this->addToGroup ( $group_array );
+			// $result = $this->addToGroup ( $group_array );
 			
 			/**
 			 * add friends to event loop
@@ -84,8 +79,6 @@ class AddFriendtoevent {
 				 * Level 3 Friend Checking here
 				 */
 				$allowAddFriends = $eventRepo->checkFriendLevelRule ( $event_id, $eventOBj->user_id, $user_id, $friend_id );
-				Mlog::addone ( '$friendLevel', $friendLevel );
-				
 				foreach ( $friend_array as $key => $value ) {
 					
 					$network_name = addslashes ( trim ( $value->network_name ) );
@@ -129,15 +122,15 @@ class AddFriendtoevent {
 					 */
 					if (! empty ( $event_id ) && $error == 0) {
 						
-						Mlog::addone ( __CLASS__.__METHOD__.__LINE__ , 'adding friend to event...' );
-						Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . '$event_id', $event_id );
-						Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . '$friend_id', $friend_id );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'adding friend to event...' );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$event_id', $event_id );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$friend_id', $friend_id );
 						$check_event_friend = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='" . $event_id . "' and e.friend_id='" . $friend_id . "'";
 						$statement = $this->dbAdapter->createQuery ( $check_event_friend );
 						$r = $statement->getResult ();
 						
 						if (count ( $r ) > 0) {
-							Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . 'EventFriend count > 0', '' );
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'EventFriend count > 0', '' );
 							$status = "Success";
 							// $error = 1;
 							$message .= "$friend_name is already in your Event Friend list.";
@@ -147,7 +140,7 @@ class AddFriendtoevent {
 							$tblEventFriend = new \Application\Entity\EventFriend ();
 							$tblEventFriend->friend_id = $friend_id;
 							$tblEventFriend->event_id = $event_id;
-							Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . 'setting allowAddFriends', '...' );
+							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'setting allowAddFriends', '...' );
 							if (! $allowAddFriends) {
 								$tblEventFriend->friend_level = $allowAddFriends;
 							}
@@ -158,12 +151,12 @@ class AddFriendtoevent {
 								$message .= 'Event Friend Successfully added';
 								$status = 'Success';
 							} catch ( \Exception $exc ) {
-								Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . 'Exception', $exc->getMessage () );
+								Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Exception', $exc->getMessage () );
 								$message .= '';
 								$status = 'failure';
 							}
 						}
-						Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . 'Finished add to event friend', '...' );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Finished add to event friend', '...' );
 						
 						/**
 						 * Check if existing notification exists...
@@ -172,7 +165,7 @@ class AddFriendtoevent {
 								  where n.sender_uid = '$user_id'
 								  and n.receiver_uid = '$friend_id'
 								  and n.notification_type = '" . \Application\Entity\Notification::ADD_FRIEND_TO_EVENT . "'";
-						Mlog::addone ( __CLASS__.__METHOD__.__LINE__ . '$checkExistingNotificationQuery', $checkExistingNotificationQuery );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$checkExistingNotificationQuery', $checkExistingNotificationQuery );
 						$statement = $this->dbAdapter->createQuery ( $checkExistingNotificationQuery );
 						$checkExistingNotificationResult = $statement->getArrayResult ();
 						Mlog::add ( $checkExistingNotificationResult, 'p', 1 );
@@ -208,13 +201,13 @@ class AddFriendtoevent {
 							$this->notification->setMessage ( $this->notification->type, $meta ['sent'] ['message'] );
 							$this->notification->send ();
 						}
-						$status = 'success';
+						$status = 'Success';
 						$message = 'friend add to event request sent';
 					} // endif (!empty($event_id) && $error == 0)
 				} // end foreach
 			} // end if (!empty($friend_array))
 		} catch ( \Exception $e ) {
-			$status = 'failure';
+			$status = 'Failure';
 			$message .= 'friend request not sent ->' . $e->getMessage ();
 		}
 		header ( "Content-type: text/xml" );

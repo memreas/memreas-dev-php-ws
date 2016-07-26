@@ -10,56 +10,56 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * Device
+ *
  * @ORM\Table(name="device")
+ * @ORM\Entity
  */
 class Device {
 	const ANDROID = 'ANDROID';
 	const IOS = 'IOS';
-	
 	/**
 	 *
 	 * @var string @ORM\Column(name="device_id", type="string", length=255, nullable=false)
 	 *      @ORM\Id
-	 *      @ORM\GeneratedValue(strategy="NONE")
 	 */
-	private $device_id;
+	public $device_id;
 	
 	/**
 	 *
 	 * @var string @ORM\Column(name="user_id", type="string", length=255, nullable=false)
 	 */
-	private $user_id;
+	public $user_id;
 	
 	/**
 	 *
 	 * @var string @ORM\Column(name="device_token", type="string", length=255, nullable=false)
 	 */
-	private $device_token;
+	public $device_token;
 	
 	/**
 	 *
 	 * @var string @ORM\Column(name="device_type", type="string", length=10, nullable=false)
 	 */
-	private $device_type;
+	public $device_type;
 	
 	/**
 	 *
-	 * @var string @ORM\Column(name="last_used", type="integer", nullable=false)
+	 * @var string @ORM\Column(name="last_used", type="string", length=1, nullable=false)
 	 */
-	private $last_used;
+	public $last_used;
 	
 	/**
 	 *
 	 * @var string @ORM\Column(name="create_time", type="string", length=255, nullable=false)
 	 */
-	private $create_time;
+	public $create_time;
 	
 	/**
 	 *
 	 * @var string @ORM\Column(name="update_time", type="string", length=255, nullable=false)
 	 */
-	private $update_time;
+	public $update_time;
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}
@@ -67,3 +67,4 @@ class Device {
 		return $this->$name;
 	}
 }
+	

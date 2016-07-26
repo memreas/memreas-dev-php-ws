@@ -7,7 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 
 class apns {
@@ -25,10 +24,11 @@ class apns {
 	public function getDeviceCount() {
 		return count ( $this->device_token );
 	}
-	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '') { // Message to be sent
+	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '') { 
+		// Setup the payload
 		$payload ['aps'] = array (
+				'badge' => 1,
 				'alert' => $message,
-				'badge' => '1',
 				'sound' => 'default' 
 		);
 		$payload ['event_id'] = $event_id;
@@ -36,29 +36,33 @@ class apns {
 		if (! empty ( $media_id )) {
 			$payload ['media_id'] = $media_id;
 		}
+		
+		// json_encode it
 		$payload = json_encode ( $payload );
 		
+		// setup the context
 		$ctx = stream_context_create ();
-		stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/memreas_apns.pem' );
-		stream_context_set_option ( $ctx, 'ssl', 'passphrase', 'nopass' );
-		// $fp = stream_socket_client('ssl://gateway.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+		stream_context_set_option ( $ctx, 'ssl', 'local_cert', getcwd () . '/key/' . MemreasConstants::APNS );
+		stream_context_set_option ( $ctx, 'ssl', 'passphrase', '' );
+		$fp = stream_socket_client ( MemreasConstants::APNS_GATEWAY, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx );
 		
-		$fp = stream_socket_client ( 'ssl://gateway.sandbox.push.apple.com:2195', $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx );
-		
-		if (! $fp) {
-			// print "Failed to connect $err $errstr";
+		// check if the connection is valid
+		if (!$fp) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "APNS Notifications FAILURE!" );
 			return;
 		} else {
-			// print "Notifications sent!";
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "APNS Notifications sent!" );
 		}
+		
 		// Pass device key
 		foreach ( $this->device_token as $deviceToken ) {
+			// binary encode the message
 			$msg = chr ( 0 ) . pack ( 'n', 32 ) . pack ( 'H*', $deviceToken ) . pack ( 'n', strlen ( $payload ) ) . $payload;
 			
 			// Send it to the server
 			$result = fwrite ( $fp, $msg, strlen ( $msg ) );
 		}
-		fclose ( $fp );
+		$result = fclose ( $fp );
 		return $result;
 	}
 }

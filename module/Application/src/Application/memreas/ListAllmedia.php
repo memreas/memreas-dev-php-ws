@@ -157,38 +157,39 @@ class ListAllmedia {
 					
 					// main
 					$xml_output .= "<main_media_url><![CDATA[" . $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['path'] ) . "]]></main_media_url>";
-					
+
+					//
 					// hls
-					// $path = isset ( $json_array ['S3_files'] ['hls'] ) ? $this->url_signer->signHlsUrl ( $json_array ['S3_files'] ['hls'] ) : '';
-					// $xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
-					// create new m3u8
-					// $new_m3u8_signed = $this->url_signer->createAndSignCustomHLS ( $row ['media_id'], $json_array ['S3_files'] ['hls'] );
+					//
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['hls'], MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['hls'] ) ? "<media_url_hls><![CDATA[" . $path . "]]></media_url_hls>" : '';
 					
+					//
 					// web
+					//
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['web'] ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['web'] ) ? "<media_url_web><![CDATA[" . $path . "]]></media_url_web>" : '';
 					
-					// 1080p
-					// $path = isset ( $json_array ['S3_files'] ['1080p'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['1080p'] ) : '';
-					// $xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080p><![CDATA[" . $path . "]]></media_url_1080p>" : '';
+					
+					// VP9 / webm
+					$path = isset ( $json_array ['S3_files'] ['webm'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['webm'] ) : '';
+					$xml_output .= isset ( $json_array ['S3_files'] ['webm'] ) ? "<media_url_webm><![CDATA[" . $path . "]]></media_url_webm>" : '';
 					
 					// download
 					$path = isset ( $json_array ['S3_files'] ['download'] ) ? $this->url_signer->signArrayOfUrls ( $json_array ['S3_files'] ['download'] ) : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['download'] ) ? "<media_url_download><![CDATA[" . $path . "]]></media_url_download>" : '';
-					
+
+					//
 					// path for image
+					//
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$json_array [S3_files] [path]', $json_array ['S3_files'] ['path'] );
 					$xml_output .= "<main_media_path><![CDATA[" . $json_array ['S3_files'] ['path'] . "]]></main_media_path>";
-					
-					// download web path
+
+					//
+					// download web s3 path
+					//
 					$path = isset ( $json_array ['S3_files'] ['web'] ) ? $json_array ['S3_files'] ['web'] : '';
 					$xml_output .= isset ( $json_array ['S3_files'] ['web'] ) ? "<media_url_webs3path><![CDATA[" . $path . "]]></media_url_webs3path>" : '';
-					
-					// download 1080p path
-					$path = isset ( $json_array ['S3_files'] ['1080p'] ) ? $json_array ['S3_files'] ['1080p'] : '';
-					$xml_output .= isset ( $json_array ['S3_files'] ['1080p'] ) ? "<media_url_1080ps3path><![CDATA[" . $path . "]]></media_url_1080ps3path>" : '';
 					
 					// transcode status
 					$transcode_status = $row ['transcode_status'];
@@ -251,13 +252,13 @@ class ListAllmedia {
 					$device_id = '';
 					if ($devices) {
 						foreach ( $devices as $device ) {
-							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
+							// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device-->', $device );
 							if (isset ( $device ['origin'] ) && ($device ['origin'] == 1)) {
 								$device_id = $device ['device_id'];
 								$device_type = $device ['device_type'];
 							}
 						}
-					} else if (isset($json_array ['S3_files'] ['device'] ['device_id'])) {
+					} else if (isset ( $json_array ['S3_files'] ['device'] ['device_id'] )) {
 						$device_id = $json_array ['S3_files'] ['device'] ['device_id'];
 						$device_type = $json_array ['S3_files'] ['device'] ['device_type'];
 					}
@@ -268,10 +269,10 @@ class ListAllmedia {
 						$xml_output .= "<device_id/>";
 						$xml_output .= "<device_type/>";
 					}
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id-->', $row['media_id'] );
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id-->', $device_id );
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type-->', $device_type );
-						
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$media_id-->', $row['media_id'] );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_id-->', $device_id );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$device_type-->', $device_type );
+					
 					//
 					// Close media entry
 					//

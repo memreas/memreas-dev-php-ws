@@ -33,12 +33,11 @@ class Module {
 		$moduleRouteListener = new ModuleRouteListener ();
 		$moduleRouteListener->attach ( $eventManager );
 		// $this->bootstrapSession ( $e );
-		register_shutdown_function(function ()
-		{
-			if ($e = error_get_last()) {
-				error_log('LAST ERROR---->'. $e['message'] . " in " . $e['file'] . ' line ' . $e['line']);
+		register_shutdown_function ( function () {
+			if ($e = error_get_last ()) {
+				error_log ( 'LAST ERROR---->' . $e ['message'] . " in " . $e ['file'] . ' line ' . $e ['line'] );
 			}
-		});
+		} );
 	}
 	public function bootstrapSession($e) {
 		// ini_set ( 'session.use_cookies', '0' );
@@ -58,7 +57,7 @@ class Module {
 	public function getServiceConfig() {
 		return array (
 				'factories' => array () 
-		)
+		);
 		// ZF2 Session Setup...
 		// 'Zend\Session\SessionManager' => function ($sm) {
 		// $config = $sm->get ( 'config' );
@@ -133,6 +132,6 @@ class Module {
 		// return new TableGateway ( 'user', $dbAdapter, null, $resultSetPrototype );
 		// }
 		
-		;
+		
 	}
 }

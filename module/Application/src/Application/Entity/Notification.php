@@ -10,7 +10,7 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * A music album.
+ * A notification.
  *
  * @ORM\Entity
  * @ORM\Table(name="notifications")

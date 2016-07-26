@@ -6,6 +6,7 @@
  * Proprietary and confidential
  */
 namespace Application\memreas;
+
 use GuzzleHttp\Client;
 
 // https://github.com/ramsey/uuid

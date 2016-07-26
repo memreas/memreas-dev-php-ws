@@ -37,13 +37,6 @@ class ListPhotos {
 		$xml_output .= "<listphotosresponse>";
 		if (isset ( $userid ) && ! empty ( $userid )) {
 			
-			// echo $query="SELECT m.media_id,m.metadata
-			// FROM event_media AS em
-			// RIGHT JOIN event AS e ON e.event_id = em.event_id
-			// LEFT JOIN media AS m ON m.media_id = em.media_id
-			// WHERE e.user_id = '$userid'
-			// OR m.user_id = '$userid'
-			// ORDER BY m.create_date DESC ";
 			$qb = $this->dbAdapter->createQueryBuilder ();
 			$qb->select ( 'm.media_id', 'm.metadata' );
 			$qb->from ( 'Application\Entity\EventMedia', 'em' );
@@ -52,28 +45,10 @@ class ListPhotos {
 			$qb->where ( 'e.user_id = ?1 and m.user_id!=?1' );
 			$qb->orderBy ( 'm.create_date', 'DESC' );
 			$qb->setParameter ( 1, $userid );
-			
 			$result1 = $qb->getQuery ()->getResult ();
-			// echo '<pre>';print_r($result1);
-			
 			$query_user_media = "SELECT m FROM Application\Entity\Media m where m.user_id ='$userid' ORDER BY m.create_date DESC";
-			/*
-			 * $query_user_event_media="SELECT m.media_id,m.metadata FROM Application\Entity\EventMedia AS em JOIN Application\Entity\Event AS e ON e.event_id = em.event_id* JOIN Application\Entity\Media AS m ON m.media_id = em.media_id WHERE e.user_id = '$userid' and m.user_id!='$userid' ORDER BY m.create_date DESC";
-			 */
-			// $result = mysql_query($query_user_media) or die(mysql_error());
-			// $result1 = mysql_query($query_user_event_media) or die(mysql_error());
-			// $statement = $this->dbAdapter->createStatement($query_user_media);
-			// $result = $statement->execute();
-			// $row = $result->current
-			
 			$statement = $this->dbAdapter->createQuery ( $query_user_media );
 			$result = $statement->getResult ();
-			
-			// /$statement1 = $this->dbAdapter->createStatement($query_user_event_media);
-			// $result1 = $statement1->execute();
-			// $row = $result1->current();
-			// $statement = $this->dbAdapter->createQuery($query_user_event_media);
-			// $result1 = $statement->getResult();
 			
 			if (count ( $result ) > 0 || count ( $result1 ) > 0) {
 				$count = 0;
@@ -120,11 +95,11 @@ class ListPhotos {
 			}
 			// -----------------for users event
 			if (count ( $result1 ) == 0 && count ( $result ) == 0) {
-				$error_flag = 2;
-				$message = "no record found";
+				$error_flag = 1;
+				$message = "add some photos or videos...";
 			}
 			if ($error_flag) {
-				$xml_output .= "<status>failure</status>";
+				$xml_output .= "<status>success</status>";
 				$xml_output .= "<noofimage>0</noofimage>";
 				$xml_output .= "<message>$message</message>";
 				$xml_output .= "<images>";

@@ -36,22 +36,21 @@ class GetPlans {
 			$data = json_decode ( json_encode ( $frmweb ) );
 		}
 		
+		$message_data = [ ];
+		$message_data ['user_id'] = trim ( $data->getplans->user_id );
 		
-		$message_data = [];
-		$message_data['user_id'] = trim ( $data->getplans->user_id );
-
 		$PaymentsProxy = new PaymentsProxy ();
 		$result = $PaymentsProxy->exec ( stripe_listplans, $message_data );
 		
-		//$response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [
-        //            'form_params' =>[
-        //                'action' => 'listplans',
-		//	'user_id' => $user_id 
-        //            ]
-        //        ]
-		//		
+		// $response = $guzzle->post ( MemreasConstants::MEMREAS_PAY_URL, [
+		// 'form_params' =>[
+		// 'action' => 'listplans',
+		// 'user_id' => $user_id
+		// ]
+		// ]
+		//
 		// );
-		 
+		
 		$data = json_decode ( $response->getBody (), true );
 		$status = $data ['status'];
 		
@@ -82,7 +81,7 @@ class GetPlans {
 		$xml_output .= $output;
 		$xml_output .= "</getplansresponse>";
 		$xml_output .= "</xml>";
-		echo trim($xml_output);
+		echo trim ( $xml_output );
 		die ();
 	}
 }

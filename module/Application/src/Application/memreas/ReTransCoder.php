@@ -7,12 +7,9 @@
  */
 namespace Application\memreas;
 
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\memreas\AddNotification;
-use Application\memreas\MUUID;
 use \Exception;
-use Application\memreas\Email;
+use Application\memreas\AddNotification;
+use Application\memreas\AWSManagerSender;
 
 class ReTransCoder {
 	protected $message_data;
@@ -90,8 +87,8 @@ class ReTransCoder {
 								// $message_data ['applyCopyrightOnServer'] = empty ( $meta ['S3_files'] ['copyright'] ['applyCopyrightOnServer'] ) ? 0 : 1;
 								$message_data ['copyright'] = $meta ['S3_files'] ['copyright'];
 							}
-							//Mlog::addone ( '$message_data', $message_data );
-							//Mlog::addone ( '$meta [S3_files] [is_video] ', $meta ['S3_files'] ['is_video'] );
+							// Mlog::addone ( '$message_data', $message_data );
+							// Mlog::addone ( '$meta [S3_files] [is_video] ', $meta ['S3_files'] ['is_video'] );
 						} else {
 							throw new \Exception ( "can't find media by media id" );
 						}
@@ -102,7 +99,6 @@ class ReTransCoder {
 					} else {
 						throw new \Exception ( "missing media id and backlog flag" );
 					}
-					
 					
 					if ($message_data) {
 						//

@@ -27,7 +27,6 @@ class ViewAllfriends {
 		$this->url_signer = new MemreasSignedURL ();
 		// $this->dbAdapter = $service_locator->get(MemreasConstants::MEMREASDB);
 	}
-
 	public function exec() {
 		$cm = __CLASS__ . __METHOD__;
 		
@@ -43,14 +42,14 @@ class ViewAllfriends {
 			$message = 'User id is empty';
 		} else {
 			/*
-			$qb = $this->dbAdapter->createQueryBuilder ();
-			$qb->select ( 'f' );
-			$qb->from ( 'Application\Entity\Friend', 'f' );
-			$qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" )->andwhere ( "uf.user_id = :userid" )->setParameter ( 'userid', $user_id );
-			$qb->orderBy ( 'f.social_username', 'ASC' );
-			// error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
-			$result = $qb->getQuery ()->getResult ();
-			*/
+			 * $qb = $this->dbAdapter->createQueryBuilder ();
+			 * $qb->select ( 'f' );
+			 * $qb->from ( 'Application\Entity\Friend', 'f' );
+			 * $qb->join ( 'Application\Entity\UserFriend', 'uf', 'WITH', 'uf.friend_id = f.friend_id' )->andwhere ( "uf.user_approve = '1'" )->andwhere ( "uf.user_id = :userid" )->setParameter ( 'userid', $user_id );
+			 * $qb->orderBy ( 'f.social_username', 'ASC' );
+			 * // error_log("dql ---> ".$qb->getQuery()->getSql().PHP_EOL);
+			 * $result = $qb->getQuery ()->getResult ();
+			 */
 			
 			/**
 			 * Query to fetch the user's friends
@@ -60,11 +59,11 @@ class ViewAllfriends {
 			$query = "select uf.friend_id, u.username, m.metadata
 						from Application\Entity\UserFriend uf
 						inner join Application\Entity\User u with uf.friend_id = u.user_id and uf.user_id = '$user_id'
-						left join Application\Entity\Media m with m.user_id = uf.friend_id and m.is_profile_pic = '1'";		
+						left join Application\Entity\Media m with m.user_id = uf.friend_id and m.is_profile_pic = '1'";
 			$statement = $this->dbAdapter->createQuery ( $query );
-			$result =  $statement->getResult();
-				
-			//Mlog::addone($cm .__LINE__.'::result --->', $result); 
+			$result = $statement->getResult ();
+			
+			// Mlog::addone($cm .__LINE__.'::result --->', $result);
 			if (! $result) {
 				$error_flag = 1;
 				$message = mysql_error ();
@@ -73,15 +72,15 @@ class ViewAllfriends {
 					$xml_output .= "<status>Success</status><message>Friends list</message>";
 					foreach ( $result as $row ) {
 						$count ++;
-						$view_all_friend [$count] ['id'] = $row['friend_id'];
+						$view_all_friend [$count] ['id'] = $row ['friend_id'];
 						/**
 						 * hard code to memreas for network
 						 */
 						$view_all_friend [$count] ['network'] = 'memreas';
-						$view_all_friend [$count] ['social_username'] = $row['username'];
-						if (isset($row['metadata']) && !empty($row['metadata'])) {
-							$profile = json_decode($row['metadata'], true);
-							$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $profile['S3_files']['thumbnails']['98x78'] );
+						$view_all_friend [$count] ['social_username'] = $row ['username'];
+						if (isset ( $row ['metadata'] ) && ! empty ( $row ['metadata'] )) {
+							$profile = json_decode ( $row ['metadata'], true );
+							$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( $profile ['S3_files'] ['thumbnails'] ['98x78'] );
 						} else {
 							$view_all_friend [$count] ['url_image'] = $this->url_signer->signArrayOfUrls ( null );
 						}
@@ -109,26 +108,26 @@ class ViewAllfriends {
 		}
 		$xml_output .= "</friends>";
 		/*
-		$group = "SELECT g  FROM Application\Entity\Group g  where g.user_id = '" . $user_id . "'";
-		$statement = $this->dbAdapter->createQuery ( $group );
-		$res = $statement->getResult ();
-		$xml_output .= "<groups>";
-		if (count ( $res ) <= 0) {
-			//
-			// $xml_output .= "<group>";
-			// $xml_output .= "<group_id></group_id>";
-			// $xml_output .= "<group_name></group_name>";
-			// $xml_output .= "</group>";
-			//
-		} else
-			foreach ( $res as $row ) {
-				$xml_output .= "<group>";
-				$xml_output .= "<group_id>" . $row->group_id . "</group_id>";
-				$xml_output .= "<group_name>" . $row->group_name . "</group_name>";
-				$xml_output .= "</group>";
-			}
-		$xml_output .= "</groups>";
-		*/
+		 * $group = "SELECT g FROM Application\Entity\Group g where g.user_id = '" . $user_id . "'";
+		 * $statement = $this->dbAdapter->createQuery ( $group );
+		 * $res = $statement->getResult ();
+		 * $xml_output .= "<groups>";
+		 * if (count ( $res ) <= 0) {
+		 * //
+		 * // $xml_output .= "<group>";
+		 * // $xml_output .= "<group_id></group_id>";
+		 * // $xml_output .= "<group_name></group_name>";
+		 * // $xml_output .= "</group>";
+		 * //
+		 * } else
+		 * foreach ( $res as $row ) {
+		 * $xml_output .= "<group>";
+		 * $xml_output .= "<group_id>" . $row->group_id . "</group_id>";
+		 * $xml_output .= "<group_name>" . $row->group_name . "</group_name>";
+		 * $xml_output .= "</group>";
+		 * }
+		 * $xml_output .= "</groups>";
+		 */
 		$xml_output .= "</xml>";
 		error_log ( "Exiting ViewAllfriends.exec().xml ---> " . $xml_output . PHP_EOL );
 		echo $xml_output;

@@ -451,7 +451,7 @@ class EventRepository extends EntityRepository {
 				$temp ['comment'] = $comment->text;
 				$temp ['update_time'] = $comment->update_time;
 				$commenter = $this->getUser ( $comment->user_id, 'row' );
-				$temp ['commenter_photo'] = json_decode($commenter ['profile_photo']);
+				$temp ['commenter_photo'] = json_decode ( $commenter ['profile_photo'] );
 				$temp ['commenter_name'] = $commenter ['username'];
 				if (! empty ( $temp ['event_id'] )) {
 					$event_ids [] = $temp ['event_id'];
