@@ -1398,7 +1398,7 @@ class IndexController extends AbstractActionController {
 								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
 							} else if (is_array ( $usernames )) {
 								$username = $usernames [0];
-								// Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
 								$person_meta_hash [] = $this->redis->cache->hget ( "@person_meta_hash", $username );
 							} else {
 								// must be string
