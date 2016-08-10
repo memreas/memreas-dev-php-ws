@@ -563,6 +563,7 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
+		Mlog::addone ( $cm . __LINE__, MNow::now () );
 		error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
 		
 		//
