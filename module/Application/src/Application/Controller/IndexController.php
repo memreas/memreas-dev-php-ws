@@ -618,6 +618,8 @@ class IndexController extends AbstractActionController {
 				// go to database if !result - deadlock race condition???
 				//
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+				Mlog::addone ( $cm . __LINE__, "View Events.xml_output  $actionname _ $cache_id----> $result" );
+				
 				// Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
 				// Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
 				if (! $result) {
