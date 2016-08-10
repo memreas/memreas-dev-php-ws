@@ -564,7 +564,7 @@ class ViewEvents {
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
 		Mlog::addone ( $cm . __LINE__, MNow::now () );
-		error_log ( "View Events.xml_output ----> $xml_output" . PHP_EOL );
+		Mlog::addone ( $cm . __LINE__, "View Events.xml_output ----> $xml_output" );
 		
 		//
 		// Handle caching for login
