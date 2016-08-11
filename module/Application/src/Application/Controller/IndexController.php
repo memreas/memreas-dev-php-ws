@@ -407,7 +407,7 @@ class IndexController extends AbstractActionController {
 				/*
 				 * Cache approach
 				 * - write operation
-				 * - need to invalidate invalidateEvent
+				 * - need to invalidate cache
 				 */
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				//
@@ -1887,11 +1887,14 @@ class IndexController extends AbstractActionController {
 	//
 	// Supporting functions
 	//
-	protected function addToCacheViewEvents() {
+	protected function addToCacheViewEvents($event_id) {
 		$neg_one = ( int ) "-1";
 		$this->warming_viewevents_is_my_event_user_id = $neg_one;
 		$this->warming_viewevents_is_friend_event_user_id = $neg_one;
 		$this->warming_viewevents_public = $neg_one;
+		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
+		$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
+		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
 		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
 		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
 		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
