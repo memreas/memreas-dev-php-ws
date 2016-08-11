@@ -400,6 +400,20 @@ class IndexController extends AbstractActionController {
 					//
 					$this->setRecacheViewEvents ( $data->addmediaevent->event_id );
 				}
+			} else if ($actionname == "addexistmediatoevent") {
+				$AddExistMediaToEvent = new AddExistMediaToEvent ( $message_data, $memreas_tables, $this->sm );
+				$result = $AddExistMediaToEvent->exec ();
+				
+				/*
+				 * Cache approach
+				 * - write operation
+				 * - need to invalidate invalidateEvent
+				 */
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				//
+				// invalidate and recache
+				//
+				$this->addToCacheViewEvents ( $data->addexistmediatoevent->event_id );
 			} else if ($actionname == "likemedia") {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 				$cache_id = trim ( $data->likemedia->user_id );
@@ -591,7 +605,7 @@ class IndexController extends AbstractActionController {
 				 * - need to add event to cache so set warming flags
 				 */
 				// $this->redis->invalidateEvents ( $data->addevent->user_id );
-				$this->addToCacheViewEvents();
+				$this->addToCacheViewEvents ();
 			} else if ($actionname == "viewevents") {
 				/*
 				 * - Cache Approach:
@@ -618,6 +632,7 @@ class IndexController extends AbstractActionController {
 				// go to database if !result - deadlock race condition???
 				//
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
+				// Mlog::addone ( $cm . __LINE__, "View Events.xml_output $actionname _ $cache_id----> $result" );
 				// Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
 				// Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
 				if (! $result) {
@@ -966,20 +981,6 @@ class IndexController extends AbstractActionController {
 				} else {
 					echo $result;
 				}
-			} else if ($actionname == "addexistmediatoevent") {
-				$AddExistMediaToEvent = new AddExistMediaToEvent ( $message_data, $memreas_tables, $this->sm );
-				$result = $AddExistMediaToEvent->exec ();
-				
-				/*
-				 * Cache approach
-				 * - write operation
-				 * - need to invalidate invalidateEvent
-				 */
-				$data = simplexml_load_string ( $_POST ['xml'] );
-				//
-				// invalidate and recache
-				//
-				$this->setRecacheViewEvents ( $data->addexistmediatoevent->event_id );
 			} else if ($actionname == "getmedialike") {
 				/*
 				 * Cache Approach:
@@ -1257,14 +1258,13 @@ class IndexController extends AbstractActionController {
 				} else if ($actionname == 'stripe_viewCard') {
 					$cache_id = $data->user_id . '_' . $data->card_id;
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-					
 				} else if ($actionname == 'stripe_subscribe') {
 					/**
 					 * Invalidate stripe_getCustomerInfo cache since update is happening.
 					 */
 					$cache_id = $_SESSION ['user_id'];
-					Mlog::addone($cm . __LINE__ , 'stripe_subscribe....');
-					Mlog::addone($cm . __LINE__ , '$this->redis->invalidateCache ( stripe_getCustomerInfo_ . $cache_id )');
+					Mlog::addone ( $cm . __LINE__, 'stripe_subscribe....' );
+					Mlog::addone ( $cm . __LINE__, '$this->redis->invalidateCache ( stripe_getCustomerInfo_ . $cache_id )' );
 					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 				} else if ($actionname == 'stripe_buyMedia') {
 					/**
@@ -1797,12 +1797,17 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
 			if (isset ( $_SESSION ['user_id'] )) {
 				$user_id = $_SESSION ['user_id'];
-				$this->warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
-				// Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->started @', MNow::now () );
 				if ((! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) || ($this->warming_viewevents_is_my_event_user_id == - 1)) {
-					$this->warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
+					
+					Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->completed @', MNow::now () );
+					if ($this->warming_viewevents_is_my_event_user_id == - 1) {
+						$this->warming_viewevents_is_my_event_user_id = 0;
+					} else {
+						$this->warming_viewevents_is_my_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_my_event_' . $user_id );
+					}
 					if (! $this->warming_viewevents_is_my_event_user_id) {
-						
 						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
 						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
@@ -1813,10 +1818,17 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '0' );
 					}
 				}
-				$this->warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
-				// Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->', $this->warming_viewevents_is_friend_event_user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->completed @', MNow::now () );
+				
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->', $this->warming_viewevents_is_friend_event_user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->started @', MNow::now () );
 				if ((! $this->redis->hasSet ( 'viewevents_is_friend_event_' . $user_id )) || ($this->warming_viewevents_is_friend_event_user_id == - 1)) {
-					$this->warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+					
+					if ($this->warming_viewevents_is_friend_event_user_id == - 1) {
+						$this->warming_viewevents_is_friend_event_user_id = 0;
+					} else {
+						$this->warming_viewevents_is_friend_event_user_id = $this->redis->getCache ( 'warming_viewevents_is_friend_event_' . $user_id );
+					}
 					if (! $this->warming_viewevents_is_friend_event_user_id) {
 						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>1</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
@@ -1826,11 +1838,16 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '0' );
 					}
 				}
-				$this->warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
-				// Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->', $this->warming_viewevents_public );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->completed @', MNow::now () );
+				
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->', $this->warming_viewevents_public );
 				if (! $this->redis->hasSet ( 'viewevents_public' ) || ($this->warming_viewevents_public == - 1)) {
+					if ($this->warming_viewevents_public == - 1) {
+						$this->warming_viewevents_public = 0;
+					} else {
+						$this->warming_viewevents_public = $this->redis->getCache ( 'warming_viewevents_public' );
+					}
 					if (! $this->warming_viewevents_public) {
-						
 						$this->redis->setCache ( 'warming_viewevents_public', '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>0</is_my_event><is_friend_event>0</is_friend_event><is_public_event>1</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
 						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
@@ -1839,11 +1856,12 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_public', '0' );
 					}
 				}
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->completed @', MNow::now () );
 			} // end if (isset($_SESSION['user_id']))
 			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 			Mlog::addone ( __METHOD__ . __LINE__, "END PROCESSING FOR VIEWEVENTS CACHING..." );
 			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-
+			
 			if (! $this->redis->hasSet ( '@person' )) {
 				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
 				// Now continue processing and warm the cache for @person
@@ -1870,18 +1888,27 @@ class IndexController extends AbstractActionController {
 	// Supporting functions
 	//
 	protected function addToCacheViewEvents() {
-		$this->warming_viewevents_is_my_event_user_id = - 1;
-		$this->warming_viewevents_is_friend_event_user_id = - 1;
-		$this->warming_viewevents_public = - 1;
+		$neg_one = ( int ) "-1";
+		$this->warming_viewevents_is_my_event_user_id = $neg_one;
+		$this->warming_viewevents_is_friend_event_user_id = $neg_one;
+		$this->warming_viewevents_public = $neg_one;
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
 	}
 	protected function setRecacheViewEvents($event_id) {
+		$neg_one = ( int ) "-1";
 		$this->redis->invalidateCache ( 'listallmedia_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
-		$this->warming_viewevents_is_my_event_user_id = - 1;
+		$this->warming_viewevents_is_my_event_user_id = $neg_one;
 		$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
-		$this->warming_viewevents_is_friend_event_user_id = - 1;
+		$this->warming_viewevents_is_friend_event_user_id = $neg_one;
 		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
-		$this->warming_viewevents_public = - 1;
+		$this->warming_viewevents_public = $neg_one;
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
+		
 	}
 	protected function returnResponse($response, $json = false) {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
