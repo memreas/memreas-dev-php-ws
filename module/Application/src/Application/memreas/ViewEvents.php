@@ -77,7 +77,7 @@ class ViewEvents {
 			$result_event = $this->fetchMyEvents ( $user_id );
 			// Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
 			// timestamping
-			// Mlog::addone ( $cm . __LINE__, MNow::now() );
+			//Mlog::addone ( $cm . __LINE__, 'fetchMyEvents:: started @ '. MNow::now() );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -94,7 +94,7 @@ class ViewEvents {
 					foreach ( $result_event as $row ) {
 						// get media
 						// timestamping
-						// Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
+						//Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) start -->', MNow::now() );
 						
 						//
 						// Cache id is viewevents_is_my_event_ . $user_id
@@ -169,7 +169,7 @@ class ViewEvents {
 						} // end else if (!$event_xml)
 					} // end for loop my events
 					$xml_output .= "</events>";
-					//Mlog::addone ( $cm . __LINE__ . '</events> end-->', MNow::now () );
+					//Mlog::addone ( $cm . __LINE__, 'fetchMyEvents:: started @ '. MNow::now() );
 				}
 			} else {
 				$xml_output .= "<status>Failure</status>";
@@ -563,8 +563,8 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
-		Mlog::addone ( $cm . __LINE__, MNow::now () );
-		Mlog::addone ( $cm . __LINE__, "View Events.xml_output ----> $xml_output" );
+		Mlog::addone ( $cm . __LINE__, "View Events ended @ " . MNow::now () );
+		//Mlog::addone ( $cm . __LINE__, "View Events.xml_output ----> $xml_output" );
 		
 		//
 		// Handle caching for login
