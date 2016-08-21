@@ -99,16 +99,16 @@ class AddMediaEvent {
 			}
 			$time = time ();
 			
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$event_id', $event_id );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$media_id', $media_id );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$$is_profile_pic', $is_profile_pic );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$is_server_image', $is_server_image );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$content_type', $content_type );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$s3url', $s3url );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$s3file_name', $s3file_name );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$s3file_basename_prefix', $s3file_basename_prefix );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$location', $location );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '$copyright', $copyright );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$event_id', $event_id );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$media_id', $media_id );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$$is_profile_pic', $is_profile_pic );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$is_server_image', $is_server_image );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$content_type', $content_type );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$s3url', $s3url );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$s3file_name', $s3file_name );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$s3file_basename_prefix', $s3file_basename_prefix );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$location', $location );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . '$copyright', $copyright );
 			
 			// ////////////////////////////////////////////////////////////////////
 			// dont upload file if server image just insert into event_media
@@ -200,15 +200,33 @@ class AddMediaEvent {
 				
 				/**
 				 * -
-				 * TODO: Check if media is uploaded to S3 if you can't find it then return exception
-				 * doesn't work...
-				 * commented out for now
+				 * Check if object exists in S3 otherwise throw exception...
 				 */
-				// $s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
-				// $result = $this->aws_manager->checkIfS3MediaExists ( $s3file );
-				// if (! $result) {
-				// throw new Exception ( 'media did not upload properly' );
-				// }
+				$s3file = (isset ( $_POST ['s3file_name'] ) || isset ( $s3file_name )) ? $s3path . $s3file_name : $s3url;
+
+				/* - Code to test failed upload
+    				Mlog::addone($cm . __LINE__ , 'Checking $this->aws_manager->s3->doesObjectExist( MemreasConstants::S3BUCKET, $key )' );
+    				$result = $this->aws_manager->s3->doesObjectExist( MemreasConstants::S3BUCKET, $s3file );
+    				
+    				if ($result) {
+    					Mlog::addone($cm . __LINE__ . '$result --->', $result );
+    				}
+    				
+    				// Test if exception with delete
+    				Mlog::addone($cm . __LINE__ , '$this->aws_manager->s3->deleteObject...' );
+    				$this->aws_manager->s3->deleteObject ( array (
+    						'Bucket' => MemreasConstants::S3BUCKET,
+    						'Key' => $s3file
+    				) );
+
+    				Mlog::addone($cm . __LINE__ , 'ReChecking $this->aws_manager->s3->doesObjectExist( MemreasConstants::S3BUCKET, $key )' );
+    				*/
+				
+    				$result = $this->aws_manager->s3->doesObjectExist( MemreasConstants::S3BUCKET, $s3file );
+				if (!$result) {
+    					//Mlog::addone($cm . __LINE__ , 'throw new Exception ( media failed upload );' );
+					throw new Exception ( 'current media failed upload' );
+				}
 				
 				//
 				// if copyright add id to media table

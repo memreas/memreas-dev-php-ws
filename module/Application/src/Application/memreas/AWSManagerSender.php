@@ -54,12 +54,13 @@ class AWSManagerSender {
 	}
 	public function checkIfS3MediaExists($key) {
 		try {
+			/*
 			$result = $this->s3->headObject ( array (
 					// Bucket is required
 					'Bucket' => MemreasConstants::S3BUCKET,
 					'Key' => $key 
 			) );
-			
+			*/
 			// If the file exists we can return result else an exception will be raised
 			return $result;
 		} catch ( S3Exception $e ) {

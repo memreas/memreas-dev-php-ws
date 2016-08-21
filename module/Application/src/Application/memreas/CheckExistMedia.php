@@ -9,13 +9,9 @@
  * Check if media exist or not
  * @params: user_id, media_id
  * @Return Falure if media existed and Success if has no
- * @Tran Tuan
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 use Application\Entity\Media;
 
 class CheckExistMedia {
@@ -47,9 +43,8 @@ class CheckExistMedia {
 		$query = $this->dbAdapter->createQueryBuilder ();
 		$query->select ( 'm.metadata' )->from ( 'Application\Entity\Media', 'm' )->where ( 'm.user_id = ?1' )->andWhere ( 'm.transcode_status = ?2' )->andWhere ( 'm.delete_flag != ?3' )->setParameter ( 1, $user_id )->setParameter ( 2, 'success' )->setParameter ( 3, '1' );
 		$result = $query->getQuery ()->getResult ();
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result-->', $query->getQuery ()->getSql () );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result-->', $query->getQuery ()->getSql () );
 		if (! empty ( $result )) {
-			error_log ( "Inside CheckExistMedia.exec() - !empty(result)" . PHP_EOL );
 			$pass = true;
 			foreach ( $result as $media ) {
 				$metadata = json_decode ( $media ['metadata'], true );
@@ -66,7 +61,6 @@ class CheckExistMedia {
 				$status = 'Failure';
 		} else
 			$status = 'Success';
-		error_log ( "Inside CheckExistMedia.exec() - status ---> $status" . PHP_EOL );
 		
 		if ($frmweb) {
 			return $output;
