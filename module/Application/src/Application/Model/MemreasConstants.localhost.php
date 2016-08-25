@@ -20,13 +20,13 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 6;
 	
 	// localhost urls
-	const WEB_URL = "http://127.0.0.1:8080/";
-	const ORIGINAL_URL = "http://127.0.0.1:8081/";
-	const MEDIA_URL = "http://127.0.0.1:8081/?action=addmediaevent";
+	const WEB_URL = "http://127.0.0.1:55151/";
+	const ORIGINAL_URL = "http://127.0.0.1:55152/";
+	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
 	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
-	const MEMREAS_PAY_URL = "http://127.0.0.1:8082/";
-	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:8082/stripe/";
-	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:8082/index/";
+	const MEMREAS_PAY_URL = "http://127.0.0.1:55153/";
+	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:55153/stripe/";
+	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:55153/index/";
 	
 	// Redis constant section
 	const REDIS_SERVER_ENDPOINT = "127.0.0.1";
