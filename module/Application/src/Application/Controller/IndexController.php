@@ -761,7 +761,7 @@ class IndexController extends AbstractActionController {
 				$result = $signedurl->exec ();
 			} else if ($actionname == "showlog") {
 				/* - Cache Approach: N/a - */
-				Mlog::addone($cm . __LINE__.'getcwd()/php_errors.log', getcwd () . '/php_errors.log')
+				Mlog::addone($cm . __LINE__.'getcwd()/php_errors.log', getcwd () . '/php_errors.log');
 				echo '<pre>' . file_get_contents ( getcwd () . '/php_errors.log' );
 				ob_end_flush ();
 				exit ();
