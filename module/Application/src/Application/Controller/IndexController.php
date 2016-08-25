@@ -188,9 +188,9 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
-		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
+		Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
 		if (isset ( $_REQUEST ['json'] )) {
 			// Handle JSon
 			$reqArr = json_decode ( $_REQUEST ['json'], true );
@@ -213,10 +213,10 @@ class IndexController extends AbstractActionController {
 			// dont remove just to be safe relying on $_POST data
 			$message_data ['xml'] = '';
 		}
-		// Mlog::addone ( $cm . __LINE__, '*********************************************' );
-		// Mlog::addone ( $cm . __LINE__ . '::Starting process for $actionname-->', $actionname );
-		// Mlog::addone ( $cm . __LINE__ . '::Starting process for $data-->', $data );
-		// Mlog::addone ( $cm . __LINE__, '*********************************************' );
+		Mlog::addone ( $cm . __LINE__, '*********************************************' );
+		Mlog::addone ( $cm . __LINE__ . '::Starting process for $actionname-->', $actionname );
+		Mlog::addone ( $cm . __LINE__ . '::Starting process for $data-->', $data );
+		Mlog::addone ( $cm . __LINE__, '*********************************************' );
 		
 		/**
 		 * Setup save handler
@@ -226,7 +226,7 @@ class IndexController extends AbstractActionController {
 		/**
 		 * Bypass section - handle with care!!
 		 */
-		// Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
+		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
 			//Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
@@ -234,7 +234,7 @@ class IndexController extends AbstractActionController {
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id ) && (isset ( $data->registration->secret ))) {
 			//Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
-			// Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic or showing public page
 		} else if ($this->requiresSecureAction ( $actionname )) {
 			//Mlog::addone ( $cm . __LINE__ . '::requiresSecureAction::about to fetchSession for ( $actionname )--> ', $actionname );
@@ -634,15 +634,15 @@ class IndexController extends AbstractActionController {
 				// go to database if !result - deadlock race condition???
 				//
 				$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
-				// Mlog::addone ( $cm . __LINE__, "View Events.xml_output $actionname _ $cache_id----> $result" );
-				// Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
-				// Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
+				Mlog::addone ( $cm . __LINE__, "View Events.xml_output $actionname _ $cache_id----> $result" );
+				Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS FOR ---> ', $actionname . '_' . $cache_id );
+				Mlog::addone ( $cm . __LINE__ . 'VIEWEVENTS FETCH FROM REDIS $result ---> ', $result );
 				if (! $result) {
 					Mlog::addone ( $cm . __LINE__, 'COULD NOT FIND REDIS viewevents::$this->redis->getCache ( $actionname . _ . $cache_id ) for ---->' . $actionname . '_' . $cache_id );
 					$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
 					$result = $viewevents->exec ();
 					$cache_me = true;
-					// Mlog::addone ( $cm . __LINE__ . '::' . $actionname . '_$cache_me', 'true' );
+					Mlog::addone ( $cm . __LINE__ . '::' . $actionname . '_$cache_me', 'true' );
 				} else {
 					echo $result;
 				}
@@ -730,7 +730,7 @@ class IndexController extends AbstractActionController {
 				$cache_id = ! empty ( $data ) ? trim ( $data->listnotification->receiver_uid ) : null;
 				try {
 					$result = ! empty ( $cache_id ) ? $this->redis->getCache ( $actionname . '_' . $cache_id ) : false;
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$actionname_$cache_id', $actionname . '_' . $cache_id );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$actionname_$cache_id', $actionname . '_' . $cache_id );
 				} catch ( \Exception $e ) {
 					$result = false;
 				}
@@ -1054,7 +1054,7 @@ class IndexController extends AbstractActionController {
 				 */
 				$MediaDeviceTracker = new MediaDeviceTracker ( $message_data, $memreas_tables, $this->sm );
 				$result = $MediaDeviceTracker->exec ();
-				// Mlog::addone ( __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
+				Mlog::addone ( __METHOD__ . __LINE__ . '::action::mediadevicetracker::result', $result );
 				/*
 				 * TODO: Cache approach
 				 * - write operation
@@ -1318,9 +1318,9 @@ class IndexController extends AbstractActionController {
 					}
 					$message_data ['ip_address'] = $this->fetchUserIPAddress ();
 					$message_data ['user_agent'] = $_SERVER ['HTTP_USER_AGENT'];
-					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $message_data-->', $message_data );
+					Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $message_data-->', $message_data );
 					$result = $PaymentsProxy->exec ( $actionname, $message_data );
-					// Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
+					Mlog::addone ( $cm . __LINE__ . 'Payments Proxy $result-->', $result );
 				}
 				
 				//
@@ -1364,7 +1364,7 @@ class IndexController extends AbstractActionController {
 				$from = ($page - 1) * $limit;
 				$rc = 0;
 				
-				// Mlog::addone ( $cm . __LINE__ . '::$a', $a );
+				Mlog::addone ( $cm . __LINE__ . '::$a', $a );
 				$search_result = array ();
 				switch ($a) {
 					/**
@@ -1374,25 +1374,25 @@ class IndexController extends AbstractActionController {
 					case '@' :
 						$user_ids = array ();
 						if (MemreasConstants::REDIS_SERVER_USE) {
-							// Mlog::addone ( $cm . __LINE__, "::@person search initiating search from REDIS" );
+							Mlog::addone ( $cm . __LINE__, "::@person search initiating search from REDIS" );
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 */
-							// Mlog::addone ( $cm . __LINE__ . '::$search ', $search );
+							Mlog::addone ( $cm . __LINE__ . '::$search ', $search );
 							$usernames = $this->redis->findSet ( '@person', $search );
-							// Mlog::addone ( $cm . __LINE__ . '::$usernames', $usernames );
+							Mlog::addone ( $cm . __LINE__ . '::$usernames', $usernames );
 							/*
 							 * -
 							 * remove self and update indices
 							 */
-							// Mlog::addone ( $cm . __LINE__ . '::$usernames', $usernames );
+							Mlog::addone ( $cm . __LINE__ . '::$usernames', $usernames );
 							if (is_array ( $usernames ) && (count ( $usernames ) > 1)) {
-								// Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_array' );
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_array' );
 								$index = array_search ( $_SESSION ['username'], $usernames );
-								// Mlog::addone ( $cm . __LINE__ . '::$index--->', $index );
+								Mlog::addone ( $cm . __LINE__ . '::$index--->', $index );
 								
-								// Mlog::addone ( $cm . __LINE__ . '::$usernames [$index]--->', $usernames [$index] );
+								Mlog::addone ( $cm . __LINE__ . '::$usernames [$index]--->', $usernames [$index] );
 								if ($index) {
 									unset ( $usernames [$index] );
 									$usernames = array_values ( $usernames );
@@ -1405,10 +1405,10 @@ class IndexController extends AbstractActionController {
 							} else {
 								// must be string
 								$username = $usernames;
-								// Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
 								$person_meta_hash [] = $this->redis->cache->hget ( "@person_meta_hash", $username );
 							}
-							// Mlog::addone ( $cm . __LINE__ . '::$person_meta_hash', $person_meta_hash );
+							Mlog::addone ( $cm . __LINE__ . '::$person_meta_hash', $person_meta_hash );
 							
 							/*
 							 * -
@@ -1423,10 +1423,10 @@ class IndexController extends AbstractActionController {
 								$search_result [] = $entry_arr;
 							}
 							$rc = count ( $search_result );
-							// Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result count--->", $rc );
-							// Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result --->", $search_result, 'p' );
+							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result count--->", $rc );
+							Mlog::addone ( $cm . __LINE__ . "::@person search completed search from REDIS result --->", $search_result, 'p' );
 						} else {
-							// Mlog::addone ( $cm . __LINE__, "::@person search initiating build cache and search in db" );
+							Mlog::addone ( $cm . __LINE__, "::@person search initiating build cache and search in db" );
 							$registration = new registration ( $message_data, $memreas_tables, $this->sm );
 							$registration->createUserCache ();
 							$person_meta_hash = $registration->userIndex;
@@ -1442,7 +1442,7 @@ class IndexController extends AbstractActionController {
 								 * -
 								 * Remove existing user
 								 */
-								// Mlog::addone ( $cm . __LINE__ . "remove existing user for seach key username" . $username . " --- uid-->", $uid );
+								Mlog::addone ( $cm . __LINE__ . "remove existing user for seach key username" . $username . " --- uid-->", $uid );
 								if ($uid == $user_id) {
 									continue;
 								}
@@ -1460,7 +1460,7 @@ class IndexController extends AbstractActionController {
 									$meta_arr ['username'] = '@' . $meta_arr ['username'];
 									$search_result [] = $meta_arr;
 									$user_ids [] = $uid;
-									// Mlog::addone ( $cm . __LINE__ . "user_ids-->", json_encode ( $user_ids ) );
+									Mlog::addone ( $cm . __LINE__ . "user_ids-->", json_encode ( $user_ids ) );
 								}
 								// }
 							}
@@ -1525,30 +1525,30 @@ class IndexController extends AbstractActionController {
 					 */
 					case '!' :
 						if (MemreasConstants::REDIS_SERVER_USE) {
-							// Mlog::addone ( '$this->redis->getCache ( "warming_memreas" )--->', $this->redis->getCache ( "warming_memreas" ) );
+							Mlog::addone ( '$this->redis->getCache ( "warming_memreas" )--->', $this->redis->getCache ( "warming_memreas" ) );
 							
-							// Mlog::addone ( $cm . __LINE__ . '$this->redis->getCache("warming_memreas")', $this->redis->getCache ( "warming_memreas" ) );
-							// Mlog::addone ( $cm . __LINE__, "::!memreas search initiating search from REDIS" );
+							Mlog::addone ( $cm . __LINE__ . '$this->redis->getCache("warming_memreas")', $this->redis->getCache ( "warming_memreas" ) );
+							Mlog::addone ( $cm . __LINE__, "::!memreas search initiating search from REDIS" );
 							/*
 							 * -
 							 * Redis - this code fetches usernames by the search term then gets the hashes
 							 * - check public then friends...
 							 */
-							// Mlog::addone ( $cm . __LINE__ . 'findSet public $search-->', $search );
+							Mlog::addone ( $cm . __LINE__ . 'findSet public $search-->', $search );
 							$search_result = $this->redis->findSet ( '!memreas', '!' . $search );
-							// Mlog::addone ( $cm . __LINE__ . 'findSet public result-->', $search_result );
+							Mlog::addone ( $cm . __LINE__ . 'findSet public result-->', $search_result );
 							$search_result_friends = $this->redis->findSet ( '!memreas_friends_events_' . $user_id, $search );
-							// Mlog::addone ( $cm . __LINE__ . 'findSet public result-->', $search_result_friends );
+							Mlog::addone ( $cm . __LINE__ . 'findSet public result-->', $search_result_friends );
 							$search_result = array_merge ( $search_result, $search_result_friends );
 							
-							// Mlog::addone ( 'findSet result-->', $search_result, 'p' );
+							Mlog::addone ( 'findSet result-->', $search_result, 'p' );
 							
 							/*
 							 * -
 							 * fetch from hash
 							 */
 							$event_ids_from_search = $this->redis->cache->hmget ( "!memreas_meta_hash", $search_result );
-							// Mlog::addone ( 'hmget $event_ids_from_search -->', $event_ids_from_search, 'p' );
+							Mlog::addone ( 'hmget $event_ids_from_search -->', $event_ids_from_search, 'p' );
 							$events_from_search = $this->redis->cache->hmget ( "!memreas_eid_hash", $event_ids_from_search );
 							
 							$rc = count ( $events_from_search );
@@ -1556,8 +1556,8 @@ class IndexController extends AbstractActionController {
 							 * Decode because we have encode below...
 							 */
 							
-							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
-							// Mlog::addone ( $cm . __LINE__ . '::gettype($events_from_search)--->', gettype ( $events_from_search ) );
+							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result count--->", $rc );
+							Mlog::addone ( $cm . __LINE__ . '::gettype($events_from_search)--->', gettype ( $events_from_search ) );
 							$result = Array ();
 							$result ['totalPage'] = 1;
 							$result ['count'] = $rc;
@@ -1570,7 +1570,7 @@ class IndexController extends AbstractActionController {
 							}
 							
 							echo json_encode ( $result );
-							// Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", json_encode ( $result ) );
+							Mlog::addone ( $cm . __LINE__ . "::!memreas search completed search from REDIS result --->", json_encode ( $result ) );
 						}
 						$result = '';
 						break;
@@ -1620,7 +1620,7 @@ class IndexController extends AbstractActionController {
 						 * $event_ids [$tag_meta ['event'] [0]] = $tag ['tag'];
 						 * }
 						 * }
-						 * // Mlog::addone ( 'warmHashTagSet($user_id)', 'past for loop' );
+						 * Mlog::addone ( 'warmHashTagSet($user_id)', 'past for loop' );
 						 *
 						 * //
 						 * // Now filter by public and friends and add to cache...
@@ -1637,8 +1637,8 @@ class IndexController extends AbstractActionController {
 						$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
 						//Mlog::addone ( $cm . __LINE__, 'Inside findTag # $hashtag_cache--->' . json_encode ( $hashtag_cache ) );
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
-							// Mlog::addone ( $cm . __LINE__, "tag------>$tag" );
-							// Mlog::addone ( $cm . __LINE__, "cache_entry------>" . json_encode ( $cache_entry ) );
+							Mlog::addone ( $cm . __LINE__, "tag------>$tag" );
+							Mlog::addone ( $cm . __LINE__, "cache_entry------>" . json_encode ( $cache_entry ) );
 							if (stripos ( $cache_entry ['tag_name'], $search ) !== false) {
 								/*
 								 * -
@@ -1712,7 +1712,7 @@ class IndexController extends AbstractActionController {
 				 */
 				// if ($invalidate_me && (MemreasConstants::REDIS_SERVER_USE) && (! MemreasConstants::REDIS_SERVER_SESSION_ONLY)) {
 				// $this->redis->invalidateCache ( $invalidate_action . '_' . $cache_id );
-				// Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->invalidateCache ( $invalidate_action_$cache_id )::', $invalidate_action . '_' . $cache_id );
 			}
 		} // end if (isset ( $actionname ) && ! empty ( $actionname ))
 		
@@ -1729,24 +1729,24 @@ class IndexController extends AbstractActionController {
 			$response = $callback . "(" . $json . ")";
 		} else {
 			// callback is empty
-			// Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
+			Mlog::addone ( __METHOD__ . __LINE__ . '::output:', $output );
 			
 			if (! empty ( $data->memreascookie )) {
 				if (isset ( $output ) && isset ( $_SESSION ['x_memreas_chameleon'] )) {
-					// Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
+					Mlog::addone ( __METHOD__ . __LINE__ . '::$_SESSION [x_memreas_chameleon]-->', $_SESSION ['x_memreas_chameleon'] );
 					
 					if ($this->isJson ( $output )) {
 						$message_data = json_decode ( $output, true );
 						$message_data ['x_memreas_chameleon'] = $_SESSION ['x_memreas_chameleon'];
 						$message_data ['memreascookie'] = $_SESSION ['memreascookie'];
-						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 						$output = json_encode ( $message_data );
 					} else {
-						// Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
+						Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
 						$data = simplexml_load_string ( trim ( $output ) );
 						$data->addChild ( 'x_memreas_chameleon', ( string ) $_SESSION ['x_memreas_chameleon'] );
 						$data->addChild ( 'memreascookie', $data->memreascookie );
-						// Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
+						Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $data --->', $data->x_memreas_chameleon );
 						$output = $data->asXML ();
 					}
 				}
@@ -1757,7 +1757,7 @@ class IndexController extends AbstractActionController {
 			} else {
 				$sid = session_id ();
 			}
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
+			Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			$response = $output;
 		}
 		
@@ -1865,17 +1865,17 @@ class IndexController extends AbstractActionController {
 			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 			
 			if (! $this->redis->hasSet ( '@person' )) {
-				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
+				Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
 				// Now continue processing and warm the cache for @person
 				$this->redis->warmPersonSet ();
 			}
 			if (! $this->redis->hasSet ( '!memreas' )) {
-				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmMemreasSet (uid) executing...' );
+				Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmMemreasSet (uid) executing...' );
 				// Now continue processing and warm the cache for !memreas
 				$this->redis->warmMemreasSet ( $user_id );
 			}
 			if (! $this->redis->hasSet ( '#hashtag' )) {
-				// Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmHashTagSet () executing...' );
+				Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmHashTagSet () executing...' );
 				// warm the cache for #hashtag
 				$this->redis->warmHashTagSet ( $user_id );
 			}
@@ -1994,10 +1994,10 @@ class IndexController extends AbstractActionController {
 		if (in_array ( $actionname, $public )) {
 			$requires = false;
 		} else if (strpos ( $actionname, "stripe_" ) !== false) {
-			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::"stripe_--->', $actionname );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::"stripe_--->', $actionname );
 			$requires = true;
 		} else {
-			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $actionname );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $actionname );
 			$requires = true;
 		}
 		
@@ -2033,17 +2033,17 @@ class IndexController extends AbstractActionController {
 					$result = $this->sessHandler->startSessionWithMemreasCookie ( $memreascookie, '', $actionname );
 					if ($result) {
 						$sid_success = true;
-						// Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true' );
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'true' );
 					} else {
 						//
 						// if cookie is bad logout
 						//
 						$logout = new LogOut ( $message_data, $memreas_tables, $this->sm );
 						$logout->exec ( $this->sessHandler );
-						// Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false' );
+						Mlog::addone ( __METHOD__ . __LINE__ . 'from startSessionWithMemreasCookie $sid_success--->', 'false' );
 					}
 				} else if (! empty ( $data->sid )) {
-					// Mlog::addone ( __METHOD__ . __LINE__ . 'from $data->sid--->', $actionname );
+					Mlog::addone ( __METHOD__ . __LINE__ . 'from $data->sid--->', $actionname );
 					/*
 					 * SetId for the mobile devices session and start...
 					 */
@@ -2051,9 +2051,9 @@ class IndexController extends AbstractActionController {
 					if (session_id () == $data->sid) {
 						$sid_success = true;
 					}
-					// Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . 'from startSessionWithSID--> $_SESSION', $_SESSION );
+					Mlog::addone ( __CLASS__.__METHOD__ . __LINE__ . 'from startSessionWithSID--> $_SESSION', $_SESSION );
 				} else if (! empty ( $data->uid ) || ! empty ( $data->username )) {
-					// Mlog::addone ( __METHOD__ . __LINE__ . '$data->uid ) || ! empty ( $data->username )--->', $actionname );
+					Mlog::addone ( __METHOD__ . __LINE__ . '$data->uid ) || ! empty ( $data->username )--->', $actionname );
 					/*
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
