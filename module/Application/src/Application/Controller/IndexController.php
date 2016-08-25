@@ -128,8 +128,11 @@ class IndexController extends AbstractActionController {
 		return is_string ( $string ) && is_array ( json_decode ( $string, true ) ) && (json_last_error () == JSON_ERROR_NONE) ? true : false;
 	}
 	public function setupSaveHandler() {
+		Mlog::addone ( $cm . __LINE__ ,'$this->redis = new AWSMemreasRedisCache ( $this->sm );' );
 		$this->redis = new AWSMemreasRedisCache ( $this->sm );
+		Mlog::addone ( $cm . __LINE__ ,'$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );' );
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );
+		Mlog::addone ( $cm . __LINE__ ,'session_set_save_handler ( $this->sessHandler );' );
 		session_set_save_handler ( $this->sessHandler );
 	}
 	public function xml2array($xmlstring) {
