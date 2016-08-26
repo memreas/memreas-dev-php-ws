@@ -763,6 +763,13 @@ class IndexController extends AbstractActionController {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->sm );
 				$result = $signedurl->exec ();
+		} else if ($actionname == "gitpul") {
+			$this->checkGitPull = new CheckGitPull ();
+			$this->checkGitPull->exec ();
+			Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
+			$gitpull = true;
+			echo $this->checkGitPull->exec ( $gitpull );
+			exit ();
 			} else if ($actionname == "showlog") {
 				/* - Cache Approach: N/a - */
 				Mlog::addone($cm . __LINE__.'getcwd()/php_errors.log', getcwd () . '/php_errors.log');
@@ -1980,6 +1987,7 @@ class IndexController extends AbstractActionController {
 					'stripe_ws_tester',
 					'clearlog',
 					'showlog',
+					'gitpull',
 					'stripe_activeCredit',
 					'dcmareportviolation' 
 			);
