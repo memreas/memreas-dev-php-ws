@@ -121,6 +121,7 @@ class IndexController extends AbstractActionController {
 	protected $warming_viewevents_is_my_event_user_id;
 	protected $warming_viewevents_is_friend_event_user_id;
 	protected $warming_viewevents_public;
+	protected $checkGitPull;
 	public function __construct($sm) {
 		$this->sm = $sm;
 	}
@@ -769,6 +770,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
 			$gitpull = true;
 			echo $this->checkGitPull->exec ( $gitpull );
+			ob_end_flush ();
 			exit ();
 			} else if ($actionname == "showlog") {
 				/* - Cache Approach: N/a - */
