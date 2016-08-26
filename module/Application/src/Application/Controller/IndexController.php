@@ -130,11 +130,11 @@ class IndexController extends AbstractActionController {
 	}
 	public function setupSaveHandler() {
 		$cm = __CLASS__ . __METHOD__;
-		Mlog::addone ( $cm . __LINE__ ,'$this->redis = new AWSMemreasRedisCache ( $this->sm );' );
+		Mlog::addone ( $cm . __LINE__, '$this->redis = new AWSMemreasRedisCache ( $this->sm );' );
 		$this->redis = new AWSMemreasRedisCache ( $this->sm );
-		Mlog::addone ( $cm . __LINE__ ,'$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );' );
+		Mlog::addone ( $cm . __LINE__, '$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );' );
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );
-		Mlog::addone ( $cm . __LINE__ ,'session_set_save_handler ( $this->sessHandler );' );
+		Mlog::addone ( $cm . __LINE__, 'session_set_save_handler ( $this->sessHandler );' );
 		session_set_save_handler ( $this->sessHandler );
 	}
 	public function xml2array($xmlstring) {
@@ -610,7 +610,7 @@ class IndexController extends AbstractActionController {
 				 * - need to add event to cache so set warming flags
 				 * - no need to recache
 				 */
-				$this->warming_viewevents_is_my_event_user_id = -1;
+				$this->warming_viewevents_is_my_event_user_id = - 1;
 				// $this->redis->invalidateEvents ( $data->addevent->user_id );
 				// $this->addToCacheViewEvents ();
 			} else if ($actionname == "viewevents") {
@@ -764,17 +764,17 @@ class IndexController extends AbstractActionController {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->sm );
 				$result = $signedurl->exec ();
-		} else if ($actionname == "gitpul") {
-			$this->checkGitPull = new CheckGitPull ();
-			$this->checkGitPull->exec ();
-			Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
-			$gitpull = true;
-			echo $this->checkGitPull->exec ( $gitpull );
-			ob_end_flush ();
-			exit ();
+			} else if ($actionname == "gitpul") {
+				$this->checkGitPull = new CheckGitPull ();
+				$this->checkGitPull->exec ();
+				Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
+				$gitpull = true;
+				echo $this->checkGitPull->exec ( $gitpull );
+				ob_end_flush ();
+				exit ();
 			} else if ($actionname == "showlog") {
 				/* - Cache Approach: N/a - */
-				Mlog::addone($cm . __LINE__.'getcwd()/php_errors.log', getcwd () . '/php_errors.log');
+				Mlog::addone ( $cm . __LINE__ . 'getcwd()/php_errors.log', getcwd () . '/php_errors.log' );
 				echo '<pre>' . file_get_contents ( getcwd () . '/php_errors.log' );
 				ob_end_flush ();
 				exit ();
@@ -1911,9 +1911,9 @@ class IndexController extends AbstractActionController {
 		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
-		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
-		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
-		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
 	}
 	protected function setRecacheViewEvents($event_id) {
 		$neg_one = ( int ) "-1";
@@ -1924,10 +1924,9 @@ class IndexController extends AbstractActionController {
 		$this->warming_viewevents_is_friend_event_user_id = $neg_one;
 		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
 		$this->warming_viewevents_public = $neg_one;
-		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
-		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
-		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
-		
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
 	}
 	protected function returnResponse($response, $json = false) {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
