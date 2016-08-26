@@ -42,9 +42,6 @@ class CheckGitPull {
 			// cd to $github_basedir
 			$output .= $this->execOps ( "cd $this->github_basedir" );
 			
-			// remove composer.phar 10-JAN-2015 - pushing entire folder to avoid merge conflicts
-			// $output .= $this->execOps ( "git reset --hard HEAD" );
-			
 			// git pull
 			$output .= $this->execOps ( "git pull" );
 			

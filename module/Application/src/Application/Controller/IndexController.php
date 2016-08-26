@@ -766,10 +766,8 @@ class IndexController extends AbstractActionController {
 				$result = $signedurl->exec ();
 			} else if ($actionname == "gitpul") {
 				$this->checkGitPull = new CheckGitPull ();
-				$this->checkGitPull->exec ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
-				$gitpull = true;
-				echo $this->checkGitPull->exec ( $gitpull );
+				echo $this->checkGitPull->exec ( true );
 				ob_end_flush ();
 				exit ();
 			} else if ($actionname == "showlog") {
