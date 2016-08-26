@@ -233,18 +233,18 @@ class IndexController extends AbstractActionController {
 		Mlog::addone ( $cm . __LINE__ . '::input data as object---> ', $data );
 		
 		if (($actionname == 'addmediaevent') && ((( int ) $data->addmediaevent->is_profile_pic) == 1) && ((( int ) $data->addmediaevent->is_registration) == 1)) {
-			//Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - profile pic upload for registration
 		} else if (($actionname == 'memreas_tvm') && isset ( $data->user_id ) && (isset ( $data->registration->secret ))) {
-			//Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
+			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 		} else if (($actionname == 'viewevents') && isset ( $data->viewevent->public_page )) {
 			Mlog::addone ( $cm . __LINE__ . '::session not required...', '...' );
 			// do nothing - fetching token to upload profile pic or showing public page
 		} else if ($this->requiresSecureAction ( $actionname )) {
-			//Mlog::addone ( $cm . __LINE__ . '::requiresSecureAction::about to fetchSession for ( $actionname )--> ', $actionname );
+			Mlog::addone ( $cm . __LINE__ . '::requiresSecureAction::about to fetchSession for ( $actionname )--> ', $actionname );
 			$actionname = $this->fetchSession ( $actionname, true, $data );
 		}
-		//Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
+		Mlog::addone ( $cm . __LINE__ . '::$this->fetchSession ( $actionname, true, $data )', $actionname );
 		
 		/**
 		 * Available on Dev Server only
@@ -333,7 +333,7 @@ class IndexController extends AbstractActionController {
 			} else if ($actionname == "registration") {
 				$registration = new Registration ( $this->sessHandler, $message_data, $memreas_tables, $this->sm );
 				$result = $registration->exec ( $this->fetchUserIPAddress () );
-				//Mlog::addone ( $cm, __LINE__ . 'registration result array -->', $result );
+				Mlog::addone ( $cm, __LINE__ . 'registration result array -->', $result );
 				$uid = $result ['user_id'];
 			} else if ($actionname == "addcomments") {
 				$addcomment = new AddComment ( $message_data, $memreas_tables, $this->sm );
@@ -1247,8 +1247,8 @@ class IndexController extends AbstractActionController {
 				$cache_found = false;
 				$redirect = false;
 				
-				//Mlog::addone ( $cm . __LINE__ . '::$data', $data );
-				//Mlog::addone ( $cm . __LINE__ . '::$_SESSION [user_id]', $_SESSION ['user_id'] );
+				Mlog::addone ( $cm . __LINE__ . '::$data', $data );
+				Mlog::addone ( $cm . __LINE__ . '::$_SESSION [user_id]', $_SESSION ['user_id'] );
 				if ($actionname == 'stripe_listCards') {
 					$cache_id = $_SESSION ['user_id'];
 					$result = $this->redis->getCache ( $actionname . '_' . $cache_id );
@@ -1270,8 +1270,8 @@ class IndexController extends AbstractActionController {
 					 * Invalidate stripe_getCustomerInfo cache since update is happening.
 					 */
 					$cache_id = $_SESSION ['user_id'];
-					//Mlog::addone ( $cm . __LINE__, 'stripe_subscribe....' );
-					//Mlog::addone ( $cm . __LINE__, '$this->redis->invalidateCache ( stripe_getCustomerInfo_ . $cache_id )' );
+					Mlog::addone ( $cm . __LINE__, 'stripe_subscribe....' );
+					Mlog::addone ( $cm . __LINE__, '$this->redis->invalidateCache ( stripe_getCustomerInfo_ . $cache_id )' );
 					$this->redis->invalidateCache ( 'stripe_getCustomerInfo_' . $cache_id );
 				} else if ($actionname == 'stripe_buyMedia') {
 					/**
@@ -1297,7 +1297,7 @@ class IndexController extends AbstractActionController {
 					/**
 					 * Invalidate stripe_list/view/Cards cache since update is happening.
 					 */
-					//Mlog::addone ( $cm . __LINE__ . '$data-->', $data );
+					Mlog::addone ( $cm . __LINE__ . '$data-->', $data );
 					$cache_id = $_SESSION ['user_id'];
 					$this->redis->invalidateCache ( 'stripe_listCards_' . $cache_id );
 					$cache_id = $data->user_id . '_' . $data->id;
@@ -1332,7 +1332,7 @@ class IndexController extends AbstractActionController {
 				// credit activation redirect
 				//
 				if ($redirect) {
-					//Mlog::addone ( $cm . __LINE__, 'Setting header redirect to ' . $result );
+					Mlog::addone ( $cm . __LINE__, 'Setting header redirect to ' . $result );
 					header ( $result );
 					exit ();
 				}
@@ -1405,7 +1405,7 @@ class IndexController extends AbstractActionController {
 								$person_meta_hash = $this->redis->cache->hmget ( "@person_meta_hash", $usernames );
 							} else if (is_array ( $usernames )) {
 								$username = $usernames [0];
-								//Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
+								Mlog::addone ( $cm . __LINE__ . '::$usernames--->', 'is_not_array' );
 								$person_meta_hash [] = $this->redis->cache->hget ( "@person_meta_hash", $username );
 							} else {
 								// must be string
@@ -1520,7 +1520,7 @@ class IndexController extends AbstractActionController {
 						$result ['search'] = $search_result;
 						
 						echo json_encode ( $result );
-						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$result', $result );
 						$result = '';
 						break;
 					
@@ -1640,7 +1640,7 @@ class IndexController extends AbstractActionController {
 						
 						$eventRep = $this->sm->get ( 'doctrine.entitymanager.orm_default' )->getRepository ( 'Application\Entity\Event' );
 						$hashtag_cache = $eventRep->createDiscoverCache ( $tag );
-						//Mlog::addone ( $cm . __LINE__, 'Inside findTag # $hashtag_cache--->' . json_encode ( $hashtag_cache ) );
+						Mlog::addone ( $cm . __LINE__, 'Inside findTag # $hashtag_cache--->' . json_encode ( $hashtag_cache ) );
 						foreach ( $hashtag_cache as $tag => $cache_entry ) {
 							Mlog::addone ( $cm . __LINE__, "tag------>$tag" );
 							Mlog::addone ( $cm . __LINE__, "cache_entry------>" . json_encode ( $cache_entry ) );
@@ -1709,8 +1709,8 @@ class IndexController extends AbstractActionController {
 				 * $this->redis->setCache ( '@' . $_SESSION ['username'] . '::' . "cached_actions", json_encode ( $cached_actions ) );
 				 */
 				
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::', $actionname . '_' . $cache_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->redis->setCache ( $actionname_$cache_id, $output )::$result', $result );
 				// }
 				/*
 				 * TODO - Invalidate cache in if statements (id is all that is needed)
@@ -1770,16 +1770,16 @@ class IndexController extends AbstractActionController {
 		// Send response and close session
 		//
 		if ($callback) {
-			//Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response, true )' );
+			Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response, true )' );
 			$this->returnResponse ( $response, true );
 		} else {
-			//Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response )' );
+			Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response )' );
 			$this->returnResponse ( $response );
 		}
 		
-		//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-		//Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
-		//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
+		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		
 		/**
 		 * ***************************************************************************************
@@ -1798,17 +1798,17 @@ class IndexController extends AbstractActionController {
 			} else {
 				$cacheViewEvents = false;
 			}
-			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-			//Mlog::addone ( __METHOD__ . __LINE__, "STARTING PROCESSING FOR VIEWEVENTS CACHING..." );
-			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-			//Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
+			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+			Mlog::addone ( __METHOD__ . __LINE__, "STARTING PROCESSING FOR VIEWEVENTS CACHING..." );
+			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+			Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
 			if (isset ( $_SESSION ['user_id'] )) {
 				$user_id = $_SESSION ['user_id'];
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->started @', MNow::now () );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->started @', MNow::now () );
 				if ((! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) || ($this->warming_viewevents_is_my_event_user_id == - 1)) {
 					
-					//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->completed @', MNow::now () );
+					Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->completed @', MNow::now () );
 					if ($this->warming_viewevents_is_my_event_user_id == - 1) {
 						$this->warming_viewevents_is_my_event_user_id = 0;
 					} else {
@@ -1818,17 +1818,17 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '1' );
 						$_POST ['xml'] = $xmlStart . '<viewevent><user_id>' . $user_id . '</user_id><is_my_event>1</is_my_event><is_friend_event>0</is_friend_event><is_public_event>0</is_public_event><page>1</page><limit>500</limit></viewevent></xml>';
 						$viewevents = new ViewEvents ( $message_data, $memreas_tables, $this->sm );
-						//Mlog::addone ( __METHOD__ . __LINE__, "CACHING START FOR ME @..." . MNow::now () );
+						Mlog::addone ( __METHOD__ . __LINE__, "CACHING START FOR ME @..." . MNow::now () );
 						$result = $viewevents->exec ( false );
-						//Mlog::addone ( __METHOD__ . __LINE__, "CACHING END FOR ME @..." . MNow::now () );
+						Mlog::addone ( __METHOD__ . __LINE__, "CACHING END FOR ME @..." . MNow::now () );
 						$this->redis->setCache ( 'viewevents_is_my_event_' . $user_id, $result );
 						$this->redis->setCache ( 'warming_viewevents_is_my_event_' . $user_id, '0' );
 					}
 				}
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->completed @', MNow::now () );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->completed @', MNow::now () );
 				
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->', $this->warming_viewevents_is_friend_event_user_id );
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->started @', MNow::now () );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->', $this->warming_viewevents_is_friend_event_user_id );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->started @', MNow::now () );
 				if ((! $this->redis->hasSet ( 'viewevents_is_friend_event_' . $user_id )) || ($this->warming_viewevents_is_friend_event_user_id == - 1)) {
 					
 					if ($this->warming_viewevents_is_friend_event_user_id == - 1) {
@@ -1845,9 +1845,9 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_is_friend_event_' . $user_id, '0' );
 					}
 				}
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->completed @', MNow::now () );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_friend_event_user_id--->completed @', MNow::now () );
 				
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->', $this->warming_viewevents_public );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->', $this->warming_viewevents_public );
 				if (! $this->redis->hasSet ( 'viewevents_public' ) || ($this->warming_viewevents_public == - 1)) {
 					if ($this->warming_viewevents_public == - 1) {
 						$this->warming_viewevents_public = 0;
@@ -1863,11 +1863,11 @@ class IndexController extends AbstractActionController {
 						$this->redis->setCache ( 'warming_viewevents_public', '0' );
 					}
 				}
-				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->completed @', MNow::now () );
+				Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_public--->completed @', MNow::now () );
 			} // end if (isset($_SESSION['user_id']))
-			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-			//Mlog::addone ( __METHOD__ . __LINE__, "END PROCESSING FOR VIEWEVENTS CACHING..." );
-			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+			Mlog::addone ( __METHOD__ . __LINE__, "END PROCESSING FOR VIEWEVENTS CACHING..." );
+			Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 			
 			if (! $this->redis->hasSet ( '@person' )) {
 				Mlog::addone ( __METHOD__ . __LINE__, '$this->redis->warmPersonSet () executing...' );
@@ -1902,9 +1902,9 @@ class IndexController extends AbstractActionController {
 		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
-		//Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
-		//Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
-		//Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
 	}
 	protected function setRecacheViewEvents($event_id) {
 		$neg_one = ( int ) "-1";
@@ -1915,13 +1915,13 @@ class IndexController extends AbstractActionController {
 		$this->warming_viewevents_is_friend_event_user_id = $neg_one;
 		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
 		$this->warming_viewevents_public = $neg_one;
-		//Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
-		//Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
-		//Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
+		Mlog::addone ( __CLASS__ . __METHOD__. __LINE__, '::setRecacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
 		
 	}
 	protected function returnResponse($response, $json = false) {
-		//Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
+		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
 		// buffer all upcoming output
 		ignore_user_abort ( true ); // keeps php from stopping process
 		ob_start ();
@@ -1945,14 +1945,14 @@ class IndexController extends AbstractActionController {
 		ob_flush ();
 		flush ();
 		
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::flushed' );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::flushed' );
 		// if you're using sessions, this prevents subsequent requests
 		// from hanging while the background process executes
 		if (session_id ()) {
 			session_write_close ();
 		}
 		
-		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::session closed' );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::session closed' );
 		// check headers
 		if (headers_sent ()) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "Success: response header 200 sucessfully sent" );
@@ -2063,7 +2063,7 @@ class IndexController extends AbstractActionController {
 					 * SetId for the web browser session and start... (TESTING...)
 					 */
 					$this->sessHandler->startSessionWithUID ( $data );
-					// //Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
+					// Mlog::addone ( __METHOD__ . __LINE__ . "from startSessionWithUID", $actionname );
 					return $actionname;
 				}
 				
@@ -2077,7 +2077,7 @@ class IndexController extends AbstractActionController {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
 		
-		//Mlog::addone ( __METHOD__ . __LINE__ . 'fetchSession() return $actionname--->', $actionname );
+		Mlog::addone ( __METHOD__ . __LINE__ . 'fetchSession() return $actionname--->', $actionname );
 		
 		return $actionname;
 	}
