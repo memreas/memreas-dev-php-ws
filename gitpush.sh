@@ -30,3 +30,6 @@ then
 fi
 
 #eb events -f
+
+curl http://54.160.204.224:55152/?action=clearlog
+curl http://54.160.204.224:55152/?action=gitpull
