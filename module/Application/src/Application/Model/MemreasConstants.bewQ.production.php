@@ -20,13 +20,20 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 8;
 	
 	// memreasprod urls
-	const WEB_URL = "https://www.memreas.com/";
-	const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
-	const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
-	const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
-	const MEMREAS_PAY_URL = "https://memreasprod-pay.memreas.com/";
-	const MEMREAS_PAY_URL_STRIPE = "https://memreasprod-pay.memreas.com/stripe/";
-	const MEMREAS_PAY_URL_INDEX = "https://memreasprod-pay.memreas.com/index/";
+	const WEB_URL = "http://127.0.0.1:55151/";
+	const ORIGINAL_URL = "http://127.0.0.1:55152/";
+	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
+	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
+	const MEMREAS_PAY_URL = "http://127.0.0.1:55153/";
+	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:55153/stripe/";
+	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:55153/index/";
+	//const WEB_URL = "https://www.memreas.com/";
+	//const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
+	//const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
+	//const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
+	//const MEMREAS_PAY_URL = "https://memreasprod-pay.memreas.com/";
+	//const MEMREAS_PAY_URL_STRIPE = "https://memreasprod-pay.memreas.com/stripe/";
+	//const MEMREAS_PAY_URL_INDEX = "https://memreasprod-pay.memreas.com/index/";
 	
 	// Redis section
 	const REDIS_SERVER_ENDPOINT = "10.154.58.83";
