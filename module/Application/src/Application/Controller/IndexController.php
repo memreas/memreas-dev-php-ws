@@ -1985,14 +1985,14 @@ class IndexController extends AbstractActionController {
 					'verifyemailaddress',
 					'ws_tester',
 					'stripe_ws_tester',
-					'clearlog',
 					'showlog',
-					'gitpull',
 					'stripe_activeCredit',
 					'dcmareportviolation' 
 			);
 		} else {
 			$public = array (
+					'clearlog',
+					'gitpull',
 					'login',
 					'registration',
 					'forgotpassword',
