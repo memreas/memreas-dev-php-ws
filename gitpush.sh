@@ -31,5 +31,5 @@ fi
 
 #eb events -f
 
-curl http://54.160.204.224:55152/index?action=clearlog
-curl http://54.160.204.224:55152/index?action=gitpull
+curl https://memreasdev.memreas.com:9002/index?action=clearlog
+curl https://memreasdev.memreas.com:9002/index?action=gitpull
