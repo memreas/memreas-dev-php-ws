@@ -765,7 +765,7 @@ class IndexController extends AbstractActionController {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->sm );
 				$result = $signedurl->exec ();
-			} else if ($actionname == "gitpul") {
+			} else if ($actionname == "gitpull") {
 				$this->checkGitPull = new CheckGitPull ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
 				echo $this->checkGitPull->exec ( true );
