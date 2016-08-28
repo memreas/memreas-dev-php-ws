@@ -22,6 +22,7 @@ use Application\memreas\ChangePassword;
 use Application\memreas\CheckEvent;
 use Application\memreas\CheckExistMedia;
 use Application\memreas\ChkUname;
+use Application\memreas\CheckGitPull;
 use Application\memreas\ClearAllNotification;
 use Application\memreas\CountListallmedia;
 use Application\memreas\CountViewevent;
@@ -764,7 +765,7 @@ class IndexController extends AbstractActionController {
 				/* - Cache Approach: N/a - */
 				$signedurl = new MemreasSignedURL ( $message_data, $memreas_tables, $this->sm );
 				$result = $signedurl->exec ();
-			} else if ($actionname == "gitpul") {
+			} else if ($actionname == "gitpull") {
 				$this->checkGitPull = new CheckGitPull ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
 				echo $this->checkGitPull->exec ( true );
