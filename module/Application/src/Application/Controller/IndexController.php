@@ -22,6 +22,7 @@ use Application\memreas\ChangePassword;
 use Application\memreas\CheckEvent;
 use Application\memreas\CheckExistMedia;
 use Application\memreas\ChkUname;
+use Application\memreas\CheckGitPull;
 use Application\memreas\ClearAllNotification;
 use Application\memreas\CountListallmedia;
 use Application\memreas\CountViewevent;

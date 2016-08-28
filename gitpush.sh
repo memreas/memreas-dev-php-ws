@@ -31,5 +31,5 @@ fi
 
 #eb events -f
 
-curl http://54.160.204.224:55152/?action=clearlog
-curl http://54.160.204.224:55152/?action=gitpull
+curl http://54.160.204.224:55152/index?action=clearlog
+curl http://54.160.204.224:55152/index?action=gitpull
