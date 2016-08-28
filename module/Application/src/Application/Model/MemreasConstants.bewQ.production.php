@@ -23,7 +23,7 @@ class MemreasConstants {
 	const WEB_URL = "http://127.0.0.1:55151/";
 	const ORIGINAL_URL = "http://127.0.0.1:55152/";
 	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
-	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
+	const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
 	const MEMREAS_PAY_URL = "http://127.0.0.1:55153/";
 	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:55153/stripe/";
 	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:55153/index/";
