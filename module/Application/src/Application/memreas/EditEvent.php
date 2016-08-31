@@ -21,6 +21,7 @@ class EditEvent {
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 	}
 	public function exec() {
+		$cm = __CLASS__ . __METHOD__;
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = '';
 		
@@ -51,7 +52,7 @@ class EditEvent {
 			//
 			$query = "update Application\Entity\Event as e set e.delete_flag=$delete_event";
 			$query .= " where e.event_id='$event_id' ";
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "delete query ---> $query" );
+			Mlog::addone ( $cm . __LINE__, "delete query ---> $query" );
 		} else {
 			//
 			// Update event
@@ -60,33 +61,43 @@ class EditEvent {
 			if (!isset ( $event_id ) || empty ( $event_id )) {
 				$message = 'event id is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (!isset ( $event_name ) || empty ( $event_name )) {
 				$message = 'event name is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_date ) || empty ( $event_date )) {
 				$message = 'event date is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_location ) || empty ( $event_location )) {
 				$messages = 'event location is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_public ) || empty ( $is_public )) {
 				$messages = 'public field is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_from ) || empty ( $event_from )) {
 				$message = 'event from is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_to ) || empty ( $event_to )) {
 				$message = 'event to date is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_friend_can_share ) || empty ( $is_friend_can_share )) {
 				$message = 'frients can share field is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_friend_can_post_media ) || empty ( $is_friend_can_post_media )) {
 				$message = 'friend can post field is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_self_destruct ) || empty ( $event_self_destruct )) {
 				$message = 'self distruct field is empty';
 				$status = 'Failure';
+				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else {
 				$query = "update Application\Entity\Event as e set                  
 				e.name='$event_name',
@@ -111,17 +122,21 @@ class EditEvent {
 					$query .= ", e.metadata = '" . json_encode ( $event_meta ) . "'";
 				}
 				$query .= " where e.event_id='$event_id' ";
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "update query ---> $query" );
+				Mlog::addone ( $cm . __LINE__, "update query ---> $query" );
 			}
 		} // end else for update
 		  
 		//
 		// handle update or delete
 		//
-		$statement = $this->dbAdapter->createQuery ( $query );
-		$result = $statement->getResult ();
+		if (isset($query) && !empty($query)){
+			$statement = $this->dbAdapter->createQuery ( $query );
+			$result = $statement->getResult ();
+		} else {
+			$result = '';
+		}
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__."update result ---> ", $result );
-		if ($result) {
+		if (!empty($result)) {
 			$message .= 'Event Successfully ' . $type;
 			$status = 'Success';
 		} else {
