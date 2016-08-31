@@ -23,24 +23,26 @@ class EditEvent {
 	public function exec() {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = '';
+		
+		//
+		// ws parameters - xml
+		//
 		$event_id = trim ( $data->editevent->event_id );
 		$event_name = trim ( $data->editevent->event_name );
 		$event_location = trim ( $data->editevent->event_location );
-		
 		$event_date = trim ( $data->editevent->event_date );
+		$is_public = trim ( $data->editevent->is_public );
 		$event_from = strtotime ( trim ( $data->editevent->event_from ) );
 		$event_to = strtotime ( trim ( $data->editevent->event_to ) );
-		
 		$is_friend_can_share = trim ( $data->editevent->is_friend_can_add_friend );
 		$is_friend_can_post_media = trim ( $data->editevent->is_friend_can_post_media );
 		$event_self_destruct = strtotime ( trim ( $data->editevent->event_self_destruct ) );
 		$sell_media = strtotime ( trim ( $data->editevent->sell_media ) );
+		$delete_event = (int)$data->editevent->delete_event;
 		
 		$media_array = $data->editevent->medias->media;
 		$friend_array = $data->editevent->friends->friend;
 		
-		// delete flag
-		$delete_event = (int)$data->editevent->delete_event;
 		$type = '';
 		if ($delete_event) {
 			$type = 'deleted';
@@ -55,31 +57,34 @@ class EditEvent {
 			// Update event
 			//
 			$type = 'updated';
-			if (! isset ( $event_id ) && ! empty ( $event_id )) {
+			if (!isset ( $event_id ) || empty ( $event_id )) {
 				$message = 'event id is empty';
 				$status = 'Failure';
-			} else if (! isset ( $event_name ) && ! empty ( $event_name )) {
+			} else if (!isset ( $event_name ) || empty ( $event_name )) {
 				$message = 'event name is empty';
 				$status = 'Failure';
-			} else if (! isset ( $event_date ) && ! empty ( $event_date )) {
+			} else if (! isset ( $event_date ) || empty ( $event_date )) {
 				$message = 'event date is empty';
 				$status = 'Failure';
-			} else if (! isset ( $event_location ) && ! empty ( $event_location )) {
+			} else if (! isset ( $event_location ) || empty ( $event_location )) {
 				$messages = 'event location is empty';
 				$status = 'Failure';
-			} else if (! isset ( $event_from ) && ! empty ( $event_from )) {
+			} else if (! isset ( $is_public ) || empty ( $is_public )) {
+				$messages = 'public field is empty';
+				$status = 'Failure';
+			} else if (! isset ( $event_from ) || empty ( $event_from )) {
 				$message = 'event from is empty';
 				$status = 'Failure';
-			} else if (! isset ( $event_to ) && ! empty ( $event_to )) {
+			} else if (! isset ( $event_to ) || empty ( $event_to )) {
 				$message = 'event to date is empty';
 				$status = 'Failure';
-			} else if (! isset ( $is_friend_can_share ) && ! empty ( $is_friend_can_share )) {
+			} else if (! isset ( $is_friend_can_share ) || empty ( $is_friend_can_share )) {
 				$message = 'frients can share field is empty';
 				$status = 'Failure';
-			} else if (! isset ( $is_friend_can_post_media ) && ! empty ( $is_friend_can_post_media )) {
+			} else if (! isset ( $is_friend_can_post_media ) || empty ( $is_friend_can_post_media )) {
 				$message = 'friend can post field is empty';
 				$status = 'Failure';
-			} else if (! isset ( $event_self_destruct ) && ! empty ( $event_self_destruct )) {
+			} else if (! isset ( $event_self_destruct ) || empty ( $event_self_destruct )) {
 				$message = 'self distruct field is empty';
 				$status = 'Failure';
 			} else {
@@ -87,6 +92,7 @@ class EditEvent {
 				e.name='$event_name',
 				e.location='$event_location',
 				e.date='$event_date',
+				e.public='$is_public',
 				e.friends_can_post='$is_friend_can_post_media',
 				e.friends_can_share='$is_friend_can_share',
 				e.viewable_from='$event_from',
