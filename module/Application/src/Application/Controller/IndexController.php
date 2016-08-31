@@ -63,7 +63,7 @@ use Application\memreas\MediaInappropriate;
 use Application\memreas\MemreasSignedURL;
 use Application\memreas\MemreasTables;
 use Application\memreas\Memreastvm;
-use Application\memreas\//Mlog;
+use Application\memreas\Mlog;
 use Application\memreas\RegisterCanonicalDevice;
 use Application\memreas\RegisterDevice;
 use Application\memreas\Registration;
