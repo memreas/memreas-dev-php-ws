@@ -94,7 +94,7 @@ class EditEvent {
 				$message = 'friend can post field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $event_self_destruct ) || empty ( $event_self_destruct )) {
+			} else if (! isset ( $event_self_destruct )) {
 				$message = 'self distruct field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
@@ -115,6 +115,10 @@ class EditEvent {
 				if (empty($event_to)) {
 					$event_to = '';
 				}
+				if (empty($event_self_destruct)) {
+					$event_self_destruct = '';
+				}
+				
 				
 				$now = MNow::now();
 				$query = "update Application\Entity\Event as e set                  
