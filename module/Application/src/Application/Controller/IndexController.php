@@ -2005,6 +2005,7 @@ class IndexController extends AbstractActionController {
 					'dcmareportviolation' 
 			);
 		}
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$public--->', $public );
 		if (in_array ( $actionname, $public )) {
 			$requires = false;
 		} else if (strpos ( $actionname, "stripe_" ) !== false) {
