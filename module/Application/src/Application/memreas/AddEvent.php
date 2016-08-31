@@ -44,7 +44,7 @@ class AddEvent {
 			error_log ( "AddEvent::input::" . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$message = ' ';
-			$user_id = addslashes ( trim ( $data->addevent->user_id ) );
+			//$user_id = addslashes ( trim ( $data->addevent->user_id ) );
 			$event_name = addslashes ( trim ( $data->addevent->event_name ) );
 			$event_location = addslashes ( trim ( $data->addevent->event_location ) );
 			
@@ -77,7 +77,7 @@ class AddEvent {
 				
 				$tblEvent->name = $event_name;
 				$tblEvent->location = $event_location;
-				$tblEvent->user_id = $user_id;
+				$tblEvent->user_id = $_SESSION['user_id'];
 				$tblEvent->type = 'audio';
 				$tblEvent->event_id = $uuid;
 				$tblEvent->date = $event_date;
