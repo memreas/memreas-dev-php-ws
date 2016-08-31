@@ -1987,6 +1987,8 @@ class IndexController extends AbstractActionController {
 					'ws_tester',
 					'stripe_ws_tester',
 					'showlog',
+					'clearlog',
+					'gitpull',
 					'stripe_activeCredit',
 					'dcmareportviolation' 
 			);
