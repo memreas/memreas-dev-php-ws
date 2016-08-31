@@ -99,6 +99,21 @@ class EditEvent {
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else {
+				
+				//
+				// check dates for empty
+				//
+				if (empty($event_date)) {
+					$event_date = '';
+				} 
+				if (empty($event_from)) {
+					$event_from = '';
+				} 
+				if (empty($event_to)) {
+					$event_to = '';
+				}
+				
+				$now = MNow::now();
 				$query = "update Application\Entity\Event as e set                  
 				e.name='$event_name',
 				e.location='$event_location',
@@ -109,8 +124,7 @@ class EditEvent {
 				e.viewable_from='$event_from',
 				e.viewable_to='$event_to',
 				e.self_destruct='$event_self_destruct',
-				e.create_time='$event_date',
-				e.update_time='$event_date'";
+				e.update_time='$now'";
 				// Set event to free
 				if (! $sell_media) {
 					$qb = $this->dbAdapter->createQueryBuilder ();
