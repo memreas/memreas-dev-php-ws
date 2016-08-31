@@ -67,11 +67,11 @@ class EditEvent {
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_date )) {
-				$message = 'event date is empty';
+				$message = 'event date is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $event_location ) || empty ( $event_location )) {
-				$messages = 'event location is empty';
+			} else if (! isset ( $event_location )) {
+				$messages = 'event location is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_public ) || empty ( $is_public )) {
@@ -79,11 +79,11 @@ class EditEvent {
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_from )) {
-				$message = 'event from is empty';
+				$message = 'event from is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_to )) {
-				$message = 'event to date is empty';
+				$message = 'event to date is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_friend_can_share ) || empty ( $is_friend_can_share )) {
@@ -103,6 +103,9 @@ class EditEvent {
 				//
 				// check dates for empty
 				//
+				if (empty($event_location)) {
+					$event_location = '';
+				} 
 				if (empty($event_date)) {
 					$event_date = '';
 				} 
