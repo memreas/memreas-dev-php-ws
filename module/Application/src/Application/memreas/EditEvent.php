@@ -66,7 +66,7 @@ class EditEvent {
 				$message = 'event name is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $event_date ) || empty ( $event_date )) {
+			} else if (! isset ( $event_date )) {
 				$message = 'event date is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
@@ -78,11 +78,11 @@ class EditEvent {
 				$messages = 'public field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $event_from ) || empty ( $event_from )) {
+			} else if (! isset ( $event_from )) {
 				$message = 'event from is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $event_to ) || empty ( $event_to )) {
+			} else if (! isset ( $event_to )) {
 				$message = 'event to date is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
