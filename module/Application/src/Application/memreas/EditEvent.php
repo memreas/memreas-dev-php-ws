@@ -71,11 +71,11 @@ class EditEvent {
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_location )) {
-				$messages = 'event location is not set';
+				$message = 'event location is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_public ) || empty ( $is_public )) {
-				$messages = 'public field is empty';
+				$message = 'public field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_from )) {
