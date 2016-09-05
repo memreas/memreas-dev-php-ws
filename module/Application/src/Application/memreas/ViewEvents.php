@@ -1003,10 +1003,16 @@ class ViewEvents {
 				$media_inappropriate = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure')) {
+				
+				if ($event_media ['media_id'] == '7fa897e0-d40c-4476-93fa-f2e4d061efba') {
 					if ($event_media ['transcode_status'] == 'failure') {
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$event_media[transcode_status]--->', '*'.$event_media['transcode_status'].'*' );
 					}
+				}
+				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure')) {
+					//if ($event_media ['transcode_status'] == 'failure') {
+					//	Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
+					//}
 					continue;
 					
 					//below not used??
