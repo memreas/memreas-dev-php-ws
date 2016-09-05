@@ -11,6 +11,7 @@ use Zend\Session\Container;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
+use Aws\MachineLearning\MachineLearningClient;
 
 class AddEvent {
 	protected $message_data;
@@ -41,7 +42,7 @@ class AddEvent {
 	public function exec() {
 		try {
 			
-			error_log ( "AddEvent::input::" . $_POST ['xml'] . PHP_EOL );
+			Mlog::addone( $cm . __LINE__, "AddEvent::input::" . $_POST ['xml'] . PHP_EOL );
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			$message = ' ';
 			$user_id = addslashes ( trim ( $data->addevent->user_id ) );
