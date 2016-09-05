@@ -99,5 +99,6 @@ class PublicController extends AbstractActionController {
 		Mlog::addone ( $cm . __LINE__, '*********************************************' );
 		Mlog::addone ( $cm . __LINE__ . '::Public Controller End process for $actionname-->', $actionname );
 		Mlog::addone ( $cm . __LINE__, '*********************************************' );
+		exit();
 	}
 }
