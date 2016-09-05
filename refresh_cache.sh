@@ -2,4 +2,4 @@
 #Created on 14-JUL-2016
 #Author = John Meah
 #Version 1.0
-php /var/www/memreas-dev-deploy/refresh_cache.php
+php /var/www/memreas-dev-php-ws/refresh_cache.php
