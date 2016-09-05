@@ -47,7 +47,7 @@ $xml = '<xml>
 		</xml>';
 
 //dev 
-$url = 'https://memreasdev-wsa.memreas.com/index?action=';
+$url = 'https://memreasdev.memreas.com/index?action=';
 $action = 'login';
 error_log("starting dev login..." . PHP_EOL);
 //echo $url;
@@ -58,7 +58,7 @@ error_log("completed dev login..." . PHP_EOL);
 
 
 //dev 
-$url = 'https://memreasprod-ws.memreas.com/index?action=';
+$url = 'https://memreasdev.memreas.com/index?action=';
 $action = 'login';
 error_log("starting prod login..." . PHP_EOL);
 //echo $url;
