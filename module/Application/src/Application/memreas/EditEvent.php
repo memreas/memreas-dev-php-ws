@@ -74,7 +74,7 @@ class EditEvent {
 				$message = 'event location is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $is_public ) || empty ( $is_public )) {
+			} else if (! isset ( $is_public )) {
 				$message = 'public field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
@@ -86,11 +86,11 @@ class EditEvent {
 				$message = 'event to date is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $is_friend_can_share ) || empty ( $is_friend_can_share )) {
+			} else if (! isset ( $is_friend_can_share )) {
 				$message = 'frients can share field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (! isset ( $is_friend_can_post_media ) || empty ( $is_friend_can_post_media )) {
+			} else if (! isset ( $is_friend_can_post_media )) {
 				$message = 'friend can post field is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );

@@ -15,6 +15,7 @@ use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
 use Zend\Db\ResultSet;
 use Zend\Db\Sql\Select;
+use Application\memreas\MNow;
 
 class UserTable {
 	protected $tableGateway;
@@ -38,18 +39,26 @@ class UserTable {
 		return $row;
 	}
 	public function saveUser(User $user) {
+		
+		$this -> user_id = (isset($data['user_id'])) ? $data['user_id'] : null;
+		$this -> username = (isset($data['username'])) ? $data['username'] : null;
+		$this -> email_address = (isset($data['email_address'])) ? $data['email_address'] : null;
+		$this -> metadata = (isset($data['metadata'])) ? $data['metadata'] : null;
+		$this -> disable_account = (isset($data['disable_account'])) ? $data['disable_account'] : null;
+		$this -> create_timestamp = (isset($data['create_timestamp'])) ? $data['create_timestamp'] : null;
+		$this -> update_timestamp = (isset($data['update_timestamp'])) ? $data['update_timestamp'] : null;
+		$this -> create_time = (isset($data['create_time'])) ? $data['create_time'] : null;
+		$this -> update_time = (isset($data['update_time'])) ? $data['update_time'] : null;
+		
 		// (isset($user->user_id)) ? $data['user_id']= $user->user_id : null;
-		(isset ( $user->database_id )) ? $data ['database_id'] = $user->database_id : null;
 		(isset ( $user->username )) ? $data ['username'] = $user->username : null;
-		(isset ( $user->password )) ? $data ['password'] = $user->password : null;
 		(isset ( $user->email_address )) ? $data ['email_address'] = $user->email_address : null;
 		(isset ( $user->role )) ? $data ['role'] = $user->role : null;
-		(isset ( $user->profile_photo )) ? $data ['profile_photo'] = $user->profile_photo : null;
-		(isset ( $user->facebook_username )) ? $data ['facebook_username'] = $user->facebook_username : null;
-		(isset ( $user->twitter_username )) ? $data ['twitter_username'] = $user->twitter_username : null;
-		(isset ( $user->disable_account )) ? $data ['disable_account'] = $user->disable_account : null;
-		(isset ( $user->create_date )) ? $data ['create_date'] = $user->create_date : null;
-		(isset ( $user->update_time )) ? $data ['update_time'] = strtotime ( date ( 'Y-m-d' ) ) : strtotime ( date ( 'Y-m-d' ) );
+		(isset ( $user->metadata )) ? $data ['metadata'] = $user->metadata : null;
+		(isset ( $user->create_timestamp )) ? $data ['create_timestamp'] = $user->create_timestamp : null;
+		(isset ( $user->update_timestamp )) ? $data ['update_timestamp'] = MNow::now() : null;
+		(isset ( $user->create_time )) ? $data ['create_time'] = $user->create_time : null;
+		(isset ( $user->update_time )) ? $data ['update_time'] = time() : null;
 		
 		$id = $user->user_id;
 		if (empty ( $id )) {
