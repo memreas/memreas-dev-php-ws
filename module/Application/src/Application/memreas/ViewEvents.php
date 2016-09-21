@@ -605,6 +605,7 @@ class ViewEvents {
 		$event_media_query->setParameter ( 2, $user_id );
 		$result = $event_media_query->getResult ();
 		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
+		
 		return $result;
 	}
 	private function generateMyEventMediaXML($query_event_media_result) {
@@ -628,7 +629,6 @@ class ViewEvents {
 				 * Check if media was deleted or transcode failed
 				 */
 				$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media row--->', $row1 );
 				if (($row1 ['delete_flag'] == 1) || ($row1 ['transcode_status'] == 'failure')) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
@@ -791,10 +791,8 @@ class ViewEvents {
 				$url98x78 = '';
 				$s3file_download_path = '';
 				$s3file_location = '';
-				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0)) {
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', 'insside delete/report section' );
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [delete_flag]', $row ['delete_flag'] );
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [report_flag]', $row ['report_flag'] );
+				
+				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure'))  {
 					continue;
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
@@ -1004,11 +1002,6 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if ($event_media ['media_id'] == '7fa897e0-d40c-4476-93fa-f2e4d061efba') {
-					if ($event_media ['transcode_status'] == 'failure') {
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$event_media[transcode_status]--->', '*'.$event_media['transcode_status'].'*' );
-					}
-				}
 				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure')) {
 					//if ($event_media ['transcode_status'] == 'failure') {
 					//	Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
