@@ -87,15 +87,15 @@ class EditEvent {
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_friend_can_share )) {
-				$message = 'frients can share field is empty';
+				$message = 'frients can share field is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $is_friend_can_post_media )) {
-				$message = 'friend can post field is empty';
+				$message = 'friend can post field is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else if (! isset ( $event_self_destruct )) {
-				$message = 'self distruct field is empty';
+				$message = 'ghost field is not set';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
 			} else {
