@@ -24,7 +24,8 @@ class Login {
 	public function exec($ipAddress = '') {
 		try {
 			$cm = __CLASS__ . __METHOD__;
-
+			$data = simplexml_load_string ( $_POST ['xml'] );
+				
 			if (! empty ( $data->clientIPAddress )) {
 				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
 				$this->clientIPAddress = ( string ) $data->clientIPAddress;
