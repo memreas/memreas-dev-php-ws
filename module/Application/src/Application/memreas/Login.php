@@ -7,33 +7,47 @@
  */
 namespace Application\memreas;
 
-
-use Application\Model\MemreasConstants;
-
 class Login {
 	protected $message_data;
+	protected $memreas_tables;
 	protected $service_locator;
 	protected $dbAdapter;
+	protected $registerDevice;
+	protected $username;
+	protected $password;
+	protected $device_id;
+	protected $device_token;
+	protected $device_type;
+	protected $memreascookie;
 	protected $clientIPAddress;
 	public $isWeb;
 	public function __construct($message_data, $memreas_tables, $service_locator) {
 		$this->message_data = $message_data;
+		$this->memreas_tables = $memreas_tables;
 		$this->service_locator = $service_locator;
 		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+		$this->registerDevice = new RegisterDevice ( $message_data, $memreas_tables, $service_locator );
 	}
-	public function exec($ipAddress = '') {
+	public function is_valid_email($email) {
+		$result = TRUE;
+		if (! preg_match ( '/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,3})$/', $email )) {
+			$result = FALSE;
+		}
+		return $result;
+	}
+	public function exec($sessHandler, $ipAddress = '') {
 		try {
 			$cm = __CLASS__ . __METHOD__;
+			
 			$data = simplexml_load_string ( $_POST ['xml'] );
-				
 			if (! empty ( $data->clientIPAddress )) {
 				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
-				$this->clientIPAddress = ( string ) $data->clientIPAddress;
+				$ipAddress = ( string ) $data->clientIPAddress;
 			}
-				
-			//
-			// fetch parameters
-			//
+			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
+			// 0 = not empty, 1 = empty
+			$flagusername = 0;
+			$flagpass = 0;
 			$this->username = trim ( $data->login->username );
 			$this->device_id = (! empty ( $data->login->device_id )) ? trim ( $data->login->device_id ) : '';
 			$this->device_type = (! empty ( $data->login->device_type )) ? trim ( $data->login->device_type ) : '';
@@ -45,30 +59,6 @@ class Login {
 			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
 			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
 			Mlog::addone ( $cm . '::$this->device_token', $this->device_token );
-			
-			//
-			// 
-			//
-				
-			
-			
-			// set success status if no exception...
-			$output['status'] = 'success';
-			$output['message'] = 'success';
-		} catch ( \Exception $e ) {
-			$output['status'] = 'failure';
-			$output['message'] = $e -> getMessage();
-		
-			Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '$e->getMessage ()--->', $e -> getMessage());
-			Mlog::addone(__CLASS__ . __METHOD__, __LINE__);
-		}
-		// return an array and encode in case we need to check status
-		return $output;
-		
-		
-		try {
-			$cm = __CLASS__ . __METHOD__;
-			
 			// Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
 			// Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
 			// Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
