@@ -39,6 +39,7 @@ class EditEvent {
 		$is_friend_can_post_media = trim ( $data->editevent->is_friend_can_post_media );
 		$event_self_destruct = strtotime ( trim ( $data->editevent->event_self_destruct ) );
 		$sell_media = strtotime ( trim ( $data->editevent->sell_media ) );
+		$metadata = $data->editevent->metadata;
 		$delete_event = (int)$data->editevent->delete_event;
 		
 		$media_array = $data->editevent->medias->media;
@@ -141,6 +142,8 @@ class EditEvent {
 					$event_meta = json_decode ( $event_detail->metadata, true );
 					$event_meta ['price'] = 0;
 					$query .= ", e.metadata = '" . json_encode ( $event_meta ) . "'";
+				} else {
+					$query .= ", e.metadata = '" . json_encode ( $metadata ) . "'";
 				}
 				$query .= " where e.event_id='$event_id' ";
 				Mlog::addone ( $cm . __LINE__, "update query ---> $query" );

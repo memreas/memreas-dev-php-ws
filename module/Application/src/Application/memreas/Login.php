@@ -8,7 +8,7 @@
 namespace Application\mm;
 
 
-use Application\Model\MMConstants;
+use Application\Model\MemreasConstants;
 
 class Login {
 	protected $message_data;
