@@ -1912,6 +1912,7 @@ class IndexController extends AbstractActionController {
 		$this->redis->invalidateCache ( "viewevents_is_my_event_" . $_SESSION ['user_id'] . '_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_is_friend_event_" . $_SESSION ['user_id'] . '_' . $event_id );
 		$this->redis->invalidateCache ( "viewevents_public_" . $event_id );
+		$this->redis->invalidateCache ( "geteventdetails_" . $event_id );
 		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_my_event_user_id-->' . $this->warming_viewevents_is_my_event_user_id );
 		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_is_friend_event_user_id-->' . $this->warming_viewevents_is_friend_event_user_id );
 		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::addToCacheViewEvents::$this->warming_viewevents_public-->' . $this->warming_viewevents_public );
