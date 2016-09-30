@@ -46,7 +46,7 @@ class Notification {
 	public function send() {
 		// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
 		try {
-			//error_log ( "Notification::Inside send()" . PHP_EOL );
+			error_log ( "Notification::Inside send()" . PHP_EOL );
 			// mobile notification.
 			if (count ( $this->receiverIds ) > 0) {
 				error_log ( "Notification::Inside send() count ( this->receiverIds ) " . count ( $this->receiverIds ) . PHP_EOL );
@@ -60,7 +60,7 @@ class Notification {
 				$qb->andWhere ( 'd.user_id IN (:x)' )->setParameter ( 'x', $this->receiverIds );
 				$qb->andWhere ( 'd.last_used = 1' );
 				$devices = $qb->getQuery ()->getArrayResult ();
-				// error_log ( '$qb--->' . $qb . PHP_EOL );
+				error_log ( '$qb--->' . $qb . PHP_EOL );
 				
 				foreach ( $devices as $device ) {
 					error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
