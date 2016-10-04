@@ -7,11 +7,6 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\Entity\EventFriend;
-
 class RemoveFriends {
 	protected $message_data;
 	protected $memreas_tables;
@@ -31,8 +26,9 @@ class RemoveFriends {
 			$user_id = $data->removefriends->user_id;
 			if (! empty ( $friend_ids )) {
 				$friendList = array ();
-				foreach ( $friend_ids as $friend_id )
+				foreach ( $friend_ids as $friend_id ) {
 					$friendList [] = "'" . $friend_id . "'";
+				}
 				
 				$friendList = implode ( ', ', $friendList );
 				
@@ -42,8 +38,8 @@ class RemoveFriends {
 									AND uf.user_id = '{$user_id}'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// remove user from friend's user_friend entry
 				$query = "DELETE FROM Application\Entity\UserFriend uf 
@@ -51,8 +47,8 @@ class RemoveFriends {
 									AND uf.user_id IN ({$friendList})";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// delete add notification
 				$query = "DELETE FROM Application\Entity\Notification n
@@ -61,8 +57,8 @@ class RemoveFriends {
 				and n.notification_type = 'ADD_FRIEND'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// delete response notification
 				$query = "DELETE FROM Application\Entity\Notification n 
@@ -70,10 +66,15 @@ class RemoveFriends {
 									AND n.sender_uid = '{$user_id}'
 									and n.notification_type = 'ADD_FRIEND_RESPONSE'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
-				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				// response may not have been sent...
+				//$friend_result = $friend_statement->getResult ();
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
+				
+				//flush to db...
+				$friend_result = true;
+				$this->dbAdapter->flush ();
 				
 			}
 		} catch ( Exception $e ) {

@@ -75,16 +75,17 @@ class AddFriendtoevent {
 			 * add friends to event loop
 			 */
 			if (! empty ( $friend_array ) && ! $error) {
-				/*
-				 * Level 3 Friend Checking here
-				 */
-				$allowAddFriends = $eventRepo->checkFriendLevelRule ( $event_id, $eventOBj->user_id, $user_id, $friend_id );
 				foreach ( $friend_array as $key => $value ) {
 					
 					$network_name = addslashes ( trim ( $value->network_name ) );
 					$friend_name = addslashes ( trim ( $value->friend_name ) );
 					$friend_id = trim ( $value->friend_id );
 					$profile_pic_url = isset ( $value->profile_pic_url ) ? stripslashes ( trim ( $value->profile_pic_url ) ) : '';
+					
+					/*
+					 * Level 3 Friend Checking here
+					 */
+					$allowAddFriends = $eventRepo->checkFriendLevelRule ( $event_id, $eventOBj->user_id, $user_id, $friend_id );
 					
 					/*
 					 * Fetch from Friend table if exists
