@@ -75,7 +75,7 @@ class RemoveFriends {
 									AND n.sender_uid = '{$user_id}'
 									and n.notification_type = 'ADD_FRIEND_RESPONSE'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
-				$friend_result = $friend_statement->getResult ();
+				//$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
