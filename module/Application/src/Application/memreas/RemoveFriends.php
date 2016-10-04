@@ -32,15 +32,12 @@ class RemoveFriends {
 				
 				$friendList = implode ( ', ', $friendList );
 				
-				// assume true unless exception
-				$friend_result = true;
-				
 				// remove friend from user's user_friend entry
 				$query = "DELETE FROM Application\Entity\UserFriend uf 
 									WHERE uf.friend_id IN ({$friendList}) 
 									AND uf.user_id = '{$user_id}'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
-				// $friend_result = $friend_statement->getResult ();
+				$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query::', $query );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
@@ -49,7 +46,7 @@ class RemoveFriends {
 									WHERE uf.friend_id = '{$user_id}' 
 									AND uf.user_id IN ({$friendList})";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
-				// $friend_result = $friend_statement->getResult ();
+				$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query::', $query );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
@@ -59,7 +56,7 @@ class RemoveFriends {
 				AND n.receiver_uid IN ({$friendList})
 				and n.notification_type = 'ADD_FRIEND'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
-				// $friend_result = $friend_statement->getResult ();
+				$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
@@ -69,7 +66,7 @@ class RemoveFriends {
 									AND n.sender_uid = '{$user_id}'
 									and n.notification_type = 'ADD_FRIEND_RESPONSE'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
-				// $friend_result = $friend_statement->getResult ();
+				$friend_result = $friend_statement->getResult ();
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 			}
