@@ -65,7 +65,8 @@ class AddFriend {
 				$meta ['sent'] ['sender_user_id'] = $user_id;
 				$meta ['sent'] ['receiver_user_id'] = $friend_id;
 				//$meta ['sent'] ['message'] = 'add friend request from @' . $_SESSION ['username'];
-				$meta['sent']['message'] = MemreasStringsWS::NOTIFICATION_ADD_FRIEND.$user->username;
+				//$meta['sent']['message'] = MemreasStringsWS::NOTIFICATION_ADD_FRIEND.$user->username;
+				$meta['sent']['message'] = MemreasStringsWS::NOTIFICATION_ADD_FRIEND . $_SESSION ['username'];
 				$data ['addNotification'] ['meta'] = $meta;
 				$this->AddNotification->exec ( $data );
 				$this->notification->add ( $friend_id );

@@ -666,7 +666,7 @@ class IndexController extends AbstractActionController {
 				 * - write operation
 				 * - hold for now
 				 */
-				// $this->redis->invalidateFriends ( $_SESSION ['user_id'] );
+				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
 				$this->redis->invalidateNotifications ( $data->addfriend->friend_id );
 			} else if ($actionname == "addfriendtoevent") {
 				$addfriendtoevent = new AddFriendtoevent ( $message_data, $memreas_tables, $this->sm );
@@ -1130,8 +1130,8 @@ class IndexController extends AbstractActionController {
 				$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriends") {
 				
-				$RemoveFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->sm );
-				$result = $RemoveFriends->exec ();
+				$removeFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->sm );
+				$result = $removeFriends->exec ();
 				
 				/*
 				 * Cache approach
@@ -1140,6 +1140,12 @@ class IndexController extends AbstractActionController {
 				 */
 				
 				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				$friend_ids = $data->removefriends->friend_ids->friend_id;
+				foreach ($friend_ids as $friend) {
+					$this->redis->invalidateFriends ( $friend );
+				}
+				
 			} else if ($actionname == "getfriends") {
 				
 				/*

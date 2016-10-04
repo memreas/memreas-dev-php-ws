@@ -91,6 +91,8 @@ class MemreasConstants {
 	const AUDIO = "/data/media/upload_audio";
 	const ADMIN_EMAIL = 'admin@memreas.com';
 	const GCM_SERVER_KEY = 'AIzaSyAt0YAt_Nb9Q4zjaU0-epWeTejUVVh8lDI';
+	//const FCM_SERVER_URL = 'https://android.googleapis.com/gcm/send';
+	const FCM_SERVER_URL = 'https://fcm.googleapis.com/fcm/send';
 	const APNS = 'aps_pkey.pem';
 	const APNS_GATEWAY = 'ssl://gateway.sandbox.push.apple.com:2195';
 	const COPYRIGHT = '&copy;memreas, llc. all rights reserved.';

@@ -311,10 +311,6 @@ class AWSMemreasRedisCache {
 		// write functions for media
 		// - add friend
 		// - remove friend
-		if (! empty ( $event_id )) {
-			// countviewevent can return me / friends / public
-			$this->invalidateEvents ( $user_id );
-		}
 		$cache_keys = array (
 				"listmemreasfriends_" . $user_id,
 				"getfriends_" . $user_id 
