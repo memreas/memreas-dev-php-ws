@@ -13,11 +13,8 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
-use Application\Entity\UserFriend;
 use Application\Entity\Friend;
+use Application\Entity\UserFriend;
 
 class GetFriends {
 	protected $message_data;
