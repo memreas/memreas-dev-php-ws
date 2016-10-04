@@ -23,31 +23,44 @@ class gcm {
 	public function getDeviceCount() {
 		return count ( $this->device_tokens );
 	}
-	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '', $user_id = '') { // Message to be sent
-		$url = 'https://android.googleapis.com/gcm/send';
+	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '', $user_id = '') {
+		
+		//
+		// Firebase sample message
+		//
+		/*
+		 * {
+		 * "to" : "bk3RNwTe3H0:CI2k_HHwgIpoDKCIZvvDMExUdFQ3P1...",
+		 * "data" : {
+		 * "Nick" : "Mario",
+		 * "body" : "great match!",
+		 * "Room" : "PortugalVSDenmark"
+		 * },
+		 * }
+		 */
 		
 		$fields = array (
-				'registration_ids' => $this->device_tokens,
+				'to' => $this->device_tokens,
 				'data' => array (
 						"message" => $message,
 						'type' => $type,
 						'event_id' => $event_id,
 						'media_id' => $media_id,
-						'user_id' => $user_id 
-				) 
+						'user_id' => $user_id
+				)
 		);
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm fields ---> " . json_encode ( $fields ) );
 		$headers = array (
 				// memreas key
 				'Authorization: key=' . MemreasConstants::GCM_SERVER_KEY,
-				'Content-Type: application/json' 
+				'Content-Type: application/json'
 		);
 		
 		// Open connection
 		$ch = curl_init ();
 		
 		// Set the url, number of POST vars, POST data
-		curl_setopt ( $ch, CURLOPT_URL, $url );
+		curl_setopt ( $ch, CURLOPT_URL, MemreasConstants::FCM_SERVER_URL );
 		curl_setopt ( $ch, CURLOPT_POST, true );
 		curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
