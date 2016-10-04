@@ -71,7 +71,9 @@ class RemoveFriends {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
+				
 				//flush to db...
+				$friend_result = true;
 				$this->dbAdapter->flush ();
 				
 			}
