@@ -42,8 +42,8 @@ class RemoveFriends {
 									AND uf.user_id = '{$user_id}'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'remove friend from users user_friend entry ::$query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// remove user from friend's user_friend entry
 				$query = "DELETE FROM Application\Entity\UserFriend uf 
@@ -51,8 +51,8 @@ class RemoveFriends {
 									AND uf.user_id IN ({$friendList})";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::remove user from friends user_friend entry $query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// delete add notification
 				$query = "DELETE FROM Application\Entity\Notification n
@@ -61,8 +61,8 @@ class RemoveFriends {
 				and n.notification_type = 'ADD_FRIEND'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				// delete response notification
 				$query = "DELETE FROM Application\Entity\Notification n 
@@ -71,8 +71,8 @@ class RemoveFriends {
 									and n.notification_type = 'ADD_FRIEND_RESPONSE'";
 				$friend_statement = $this->dbAdapter->createQuery ( $query );
 				$friend_result = $friend_statement->getResult ();
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$query::', $query );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$friend_result::', $friend_result );
 				
 				
 			}
