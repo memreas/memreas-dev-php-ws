@@ -1140,6 +1140,12 @@ class IndexController extends AbstractActionController {
 				 */
 				
 				$this->redis->invalidateFriends ( $_SESSION ['user_id'] );
+				$data = simplexml_load_string ( $_POST ['xml'] );
+				$friend_ids = $data->removefriends->friend_ids->friend_id;
+				foreach ($friend_ids as $friend) {
+					$this->redis->invalidateFriends ( $friend );
+				}
+				
 			} else if ($actionname == "getfriends") {
 				
 				/*
