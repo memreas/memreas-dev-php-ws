@@ -42,7 +42,7 @@ class AddNotification {
 			$ruid = $data->addNotification->receiver_uid;
 			$ntype = $data->addNotification->notification_type;
 			
-			$sql = "SELECT count(n.sender_uid)  FROM Application\Entity\Notification as n 
+			$sql = "SELECT count(n.sender_uid) FROM Application\Entity\Notification as n 
 					where n.sender_uid = '$suid' 
 					and n.receiver_uid = '$ruid' 
 					and n.notification_type = '$ntype'";
