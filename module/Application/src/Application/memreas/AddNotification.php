@@ -42,10 +42,6 @@ class AddNotification {
 			$ruid = $data->addNotification->receiver_uid;
 			$ntype = $data->addNotification->notification_type;
 			
-			//Debugging - temp
-			$sentPrior = false;
-			
-			/*
 			$sql = "SELECT count(n.sender_uid)  FROM Application\Entity\Notification as n 
 					where n.sender_uid = '$suid' 
 					and n.receiver_uid = '$ruid' 
@@ -54,7 +50,6 @@ class AddNotification {
 			$statement = $this->dbAdapter->createQuery ( $sql );
 			$sentPrior = $statement->getSingleScalarResult ();
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'check for prior notification sql --> ' . $sql );
-			*/
 			//
 			// Notification is ok to proceed
 			//
