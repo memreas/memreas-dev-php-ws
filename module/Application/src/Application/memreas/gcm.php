@@ -23,7 +23,7 @@ class gcm {
 	public function getDeviceCount() {
 		return count ( $this->device_tokens );
 	}
-	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '', $user_id = $_SESSION['user_id']) {
+	public function sendpush($message = '', $type = '', $event_id = '', $media_id = '', $user_id = '') {
 		
 		//
 		// Firebase sample message
