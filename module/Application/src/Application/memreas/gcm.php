@@ -39,40 +39,43 @@ class gcm {
 		 * }
 		 */
 		
-		$fields = array (
-				'to' => $this->device_tokens,
-				'data' => array (
-						"message" => $message,
-						'type' => $type,
-						'event_id' => $event_id,
-						'media_id' => $media_id,
-						'user_id' => $user_id
-				)
-		);
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm fields ---> " . json_encode ( $fields ) );
-		$headers = array (
-				// memreas key
-				'Authorization: key=' . MemreasConstants::GCM_SERVER_KEY,
-				'Content-Type: application/json'
-		);
-		
-		// Open connection
-		$ch = curl_init ();
-		
-		// Set the url, number of POST vars, POST data
-		curl_setopt ( $ch, CURLOPT_URL, MemreasConstants::FCM_SERVER_URL );
-		curl_setopt ( $ch, CURLOPT_POST, true );
-		curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
-		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
-		curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $fields ) );
-		
-		// Execute post
-		$result = curl_exec ( $ch );
-		
-		// Close connection
-		curl_close ( $ch );
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm result ---> " . $result );
+		foreach ($this->device_tokens as $device_token) {
+			$fields = array (
+					'to' => $device_token,
+					'data' => array (
+							"message" => $message,
+							'type' => $type,
+							'event_id' => $event_id,
+							'media_id' => $media_id,
+							'user_id' => $user_id
+					)
+			);
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm fields ---> " . json_encode ( $fields ) );
+			$headers = array (
+					// memreas key
+					'Authorization:key=' . MemreasConstants::GCM_SERVER_KEY,
+					'Content-Type:application/json'
+			);
+			
+			// Open connection
+			$ch = curl_init ();
+			
+			// Set the url, number of POST vars, POST data
+			curl_setopt ( $ch, CURLOPT_URL, MemreasConstants::FCM_SERVER_URL );
+			curl_setopt ( $ch, CURLOPT_POST, true );
+			curl_setopt ( $ch, CURLOPT_HTTPHEADER, $headers );
+			//curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
+			//curl_setopt ( $ch, CURLOPT_SSL_VERIFYPEER, false );
+			curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $fields ) );
+			
+			// Execute post
+			$result = curl_exec ( $ch );
+			
+			// Close connection
+			curl_close ( $ch );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "gcm result ---> " . $result );
+		} // end foreach ($this->device_tokens as $device_token) 
+			
 		
 		return $result;
 	}
