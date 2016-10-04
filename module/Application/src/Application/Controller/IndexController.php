@@ -1130,8 +1130,8 @@ class IndexController extends AbstractActionController {
 				$this->redis->invalidateEvents ( $_SESSION ['user_id'] );
 			} else if ($actionname == "removefriends") {
 				
-				$RemoveFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->sm );
-				$result = $RemoveFriends->exec ();
+				$removeFriends = new RemoveFriends ( $message_data, $memreas_tables, $this->sm );
+				$result = $removeFriends->exec ();
 				
 				/*
 				 * Cache approach
