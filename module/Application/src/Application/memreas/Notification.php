@@ -39,17 +39,17 @@ class Notification {
 		}
 	}
 	public function add($receiver) {
-		error_log ( "Notification add receiver-->" . $receiver . PHP_EOL );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__,"Notification add receiver-->" . $receiver );
 		$this->receiverIds [] = $receiver;
 		return true;
 	}
 	public function send() {
 		// error_log('file--->'. __FILE__ . ' method -->'. __METHOD__ . ' line number::' . __LINE__ . PHP_EOL);
 		try {
-			error_log ( "Notification::Inside send()" . PHP_EOL );
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__,"Notification::Inside send()" );
 			// mobile notification.
 			if (count ( $this->receiverIds ) > 0) {
-				error_log ( "Notification::Inside send() count ( this->receiverIds ) " . count ( $this->receiverIds ) . PHP_EOL );
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__,"Notification::Inside send() count ( this->receiverIds ) " . count ( $this->receiverIds ) );
 				
 				/*
 				 * Find the device tokens for receivers by user_id
@@ -60,37 +60,37 @@ class Notification {
 				$qb->andWhere ( 'd.user_id IN (:x)' )->setParameter ( 'x', $this->receiverIds );
 				$qb->andWhere ( 'd.last_used = 1' );
 				$devices = $qb->getQuery ()->getArrayResult ();
-				error_log ( '$qb--->' . $qb . PHP_EOL );
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__,'$qb--->' . $qb );
 				
 				foreach ( $devices as $device ) {
-					error_log ( "device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] . PHP_EOL );
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__,"device_id->" . $device ['device_id'] . "::user_id->" . $device ['user_id'] . "::device_token->" . $device ['device_token'] . "::device_type->" . $device ['device_type'] );
 					if ($device ['device_type'] == \Application\Entity\Device::ANDROID) {
 						//
 						// Android GCM
 						//
-						error_log ( "Notification::Inside send()->adding to Android list" . PHP_EOL );
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__,"Notification::Inside send()->adding to Android list" );
 						$this->gcm->addDevice ( $device ['device_token'] );
 					} else if ($device ['device_type'] == \Application\Entity\Device::IOS) {
 						//
 						// Apple APNS
 						//
-						error_log ( "Notification::Inside send()->adding to Apple list" . PHP_EOL );
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__,"Notification::Inside send()->adding to Apple list" );
 						$this->apns->addDevice ( $device ['device_token'] );
 					}
 					$gcm_push_notification_result = '';
 					if ($this->gcm->getDeviceCount () > 0) {
 						$push_notification_result = $this->gcm->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-ANROID' . print_r ( $gcm_push_notification_result, true ) . PHP_EOL );
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__,'SENDING-ANROID' . print_r ( $gcm_push_notification_result, true ) );
 					}
 					$ios_push_notification_result = '';
 					if ($this->apns->getDeviceCount () > 0) {
 						$ios_push_notification_result = $this->apns->sendpush ( $this->message, $this->type, $this->event_id, $this->media_id );
-						error_log ( 'SENDING-Apple' . print_r ( $ios_push_notification_result, true ) . PHP_EOL );
+						Mlog::addone(__CLASS__.__METHOD__.__LINE__,'SENDING-Apple' . print_r ( $ios_push_notification_result, true ) );
 					}
 				}
 			}
 		} catch ( \Exception $exc ) {
-			error_log ( 'exp-notifcation class' . $exc->getMessage () );
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__,'exp-notifcation class' . $exc->getMessage () );
 		}
 		return true;
 	}

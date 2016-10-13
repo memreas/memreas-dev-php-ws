@@ -48,7 +48,10 @@ class GetDiskUsage {
 			) );
 			
 			foreach ( $iterator as $object ) {
-				$total_used = bcadd ( $total_used, $object ['Size'] );
+				if (isset ( $object ['Size'] ) && ! empty ( $object ['Size'] )) {
+					// $total_used = \bcadd ( $total_used, $object ['Size'] );
+					$total_used += $object ['Size'];
+				}
 			}
 			
 			/*
@@ -61,7 +64,10 @@ class GetDiskUsage {
 			) );
 			
 			foreach ( $iterator as $object ) {
-				$total_used = bcadd ( $total_used, $object ['Size'] );
+				if (isset ( $object ['Size'] ) && ! empty ( $object ['Size'] )) {
+					// $total_used = \bcadd ( $total_used, $object ['Size'] );
+					$total_used += $object ['Size'];
+				}
 			}
 		}
 		
