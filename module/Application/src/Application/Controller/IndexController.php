@@ -613,8 +613,8 @@ class IndexController extends AbstractActionController {
 				 * - no need to recache
 				 */
 				$this->warming_viewevents_is_my_event_user_id = - 1;
-				// $this->redis->invalidateEvents ( $data->addevent->user_id );
-				// $this->addToCacheViewEvents ();
+				$this->redis->invalidateEvents ( $data->addevent->user_id );
+				$this->addToCacheViewEvents ();
 			} else if ($actionname == "viewevents") {
 				/*
 				 * - Cache Approach:
@@ -1783,6 +1783,11 @@ class IndexController extends AbstractActionController {
 		}
 		
 		//
+		// store variables for post processing
+		//
+		$user_id = $_SESSION['user_id'];
+		
+		//
 		// Send response and close session
 		//
 		if ($callback) {
@@ -1818,8 +1823,7 @@ class IndexController extends AbstractActionController {
 			//Mlog::addone ( __METHOD__ . __LINE__, "STARTING PROCESSING FOR VIEWEVENTS CACHING..." );
 			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 			//Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
-			if (isset ( $_SESSION ['user_id'] )) {
-				$user_id = $_SESSION ['user_id'];
+			if (isset ( $user_id )) {
 				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
 				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->started @', MNow::now () );
 				if ((! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) || ($this->warming_viewevents_is_my_event_user_id == - 1)) {
