@@ -123,15 +123,15 @@ class AddFriendtoevent {
 					 */
 					if (! empty ( $event_id ) && $error == 0) {
 						
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'adding friend to event...' );
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$event_id', $event_id );
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$friend_id', $friend_id );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'adding friend to event...' );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$event_id', $event_id );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$friend_id', $friend_id );
 						$check_event_friend = "SELECT e FROM Application\Entity\EventFriend e  where e.event_id='" . $event_id . "' and e.friend_id='" . $friend_id . "'";
 						$statement = $this->dbAdapter->createQuery ( $check_event_friend );
 						$r = $statement->getResult ();
 						
 						if (count ( $r ) > 0) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'EventFriend count > 0', '' );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'EventFriend count > 0', '' );
 							$status = "Success";
 							// $error = 1;
 							$message .= "$friend_name is already in your Event Friend list.";
@@ -141,7 +141,7 @@ class AddFriendtoevent {
 							$tblEventFriend = new \Application\Entity\EventFriend ();
 							$tblEventFriend->friend_id = $friend_id;
 							$tblEventFriend->event_id = $event_id;
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'setting allowAddFriends', '...' );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'setting allowAddFriends', '...' );
 							if (! $allowAddFriends) {
 								$tblEventFriend->friend_level = $allowAddFriends;
 							}
@@ -157,7 +157,7 @@ class AddFriendtoevent {
 								$status = 'failure';
 							}
 						}
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Finished add to event friend', '...' );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'Finished add to event friend', '...' );
 						
 						/**
 						 * Check if existing notification exists...
@@ -166,10 +166,10 @@ class AddFriendtoevent {
 								  where n.sender_uid = '$user_id'
 								  and n.receiver_uid = '$friend_id'
 								  and n.notification_type = '" . \Application\Entity\Notification::ADD_FRIEND_TO_EVENT . "'";
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$checkExistingNotificationQuery', $checkExistingNotificationQuery );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$checkExistingNotificationQuery', $checkExistingNotificationQuery );
 						$statement = $this->dbAdapter->createQuery ( $checkExistingNotificationQuery );
 						$checkExistingNotificationResult = $statement->getArrayResult ();
-						Mlog::add ( $checkExistingNotificationResult, 'p', 1 );
+						//Mlog::add ( $checkExistingNotificationResult, 'p', 1 );
 						if (! empty ( $checkExistingNotificationResult )) {
 						/**
 						 * TODO: Check for prior notification
@@ -229,7 +229,7 @@ class AddFriendtoevent {
 		if ($frmweb == '') {
 			echo $xml_output;
 		}
-		Mlog::addone ( __FILE__ . "output", $xml_output );
+		//Mlog::addone ( __FILE__ . "output", $xml_output );
 	} // end exec
 	
 	/**

@@ -613,8 +613,8 @@ class IndexController extends AbstractActionController {
 				 * - no need to recache
 				 */
 				$this->warming_viewevents_is_my_event_user_id = - 1;
-				// $this->redis->invalidateEvents ( $data->addevent->user_id );
-				// $this->addToCacheViewEvents ();
+				$this->redis->invalidateEvents ( $data->addevent->user_id );
+				$this->addToCacheViewEvents ();
 			} else if ($actionname == "viewevents") {
 				/*
 				 * - Cache Approach:
@@ -1763,7 +1763,7 @@ class IndexController extends AbstractActionController {
 						//Mlog::addone ( $cm . __LINE__ . 'set x_memreas_chameleon in $message_data --->', $message_data );
 						$output = json_encode ( $message_data );
 					} else {
-						Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
+						//Mlog::addone ( $cm . __LINE__ . '::simplexml_load_string ( trim ( $output ) ) --->', $output );
 						$data = simplexml_load_string ( trim ( $output ) );
 						$data->addChild ( 'x_memreas_chameleon', ( string ) $_SESSION ['x_memreas_chameleon'] );
 						$data->addChild ( 'memreascookie', $data->memreascookie );
@@ -1781,6 +1781,11 @@ class IndexController extends AbstractActionController {
 			//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			$response = $output;
 		}
+		
+		//
+		// store variables for post processing
+		//
+		$user_id = $_SESSION['user_id'];
 		
 		//
 		// Send response and close session
@@ -1818,8 +1823,7 @@ class IndexController extends AbstractActionController {
 			//Mlog::addone ( __METHOD__ . __LINE__, "STARTING PROCESSING FOR VIEWEVENTS CACHING..." );
 			//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 			//Mlog::addone ( __METHOD__ . __LINE__ . 'if (isset ( $_SESSION [user_id] )) $_SESSION [user_id]---->', $_SESSION ['user_id'] );
-			if (isset ( $_SESSION ['user_id'] )) {
-				$user_id = $_SESSION ['user_id'];
+			if (isset ( $user_id )) {
 				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->', $this->warming_viewevents_is_my_event_user_id );
 				//Mlog::addone ( __METHOD__ . __LINE__ . '$this->warming_viewevents_is_my_event_user_id--->started @', MNow::now () );
 				if ((! $this->redis->hasSet ( 'viewevents_is_my_event_' . $user_id )) || ($this->warming_viewevents_is_my_event_user_id == - 1)) {
