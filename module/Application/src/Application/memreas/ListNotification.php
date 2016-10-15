@@ -60,7 +60,7 @@ class ListNotification {
 	public function exec() {
 		try {
 			$cm = __CLASS__ . __METHOD__;
-			Mlog::addone ( $cm . __LINE__, '::inbound xml--->' . $_POST ['xml'] );
+			//Mlog::addone ( $cm . __LINE__, '::inbound xml--->' . $_POST ['xml'] );
 			
 			//
 			// Note: see Application\Entity\Notification.php for constants
@@ -87,10 +87,10 @@ class ListNotification {
 				$statement = $this->dbAdapter->createQuery ( $query_user_notification );
 				$result = $statement->getArrayResult ();
 				
-				Mlog::addone ( $cm . __LINE__ . '::$query_user_notification--->', $query_user_notification );
+				//Mlog::addone ( $cm . __LINE__ . '::$query_user_notification--->', $query_user_notification );
 				
 				if (count ( $result ) > 0) {
-					Mlog::addone ( $cm . __LINE__ . '::count ( $result ) > 0--->', count ( $result ) );
+					//Mlog::addone ( $cm . __LINE__ . '::count ( $result ) > 0--->', count ( $result ) );
 					
 					$count = 0;
 					$this->xml_output .= "<status>success</status>";
@@ -100,7 +100,7 @@ class ListNotification {
 						
 						$meta = json_decode ( $row ['meta'], true );
 						if (empty ( $meta ['sent'] )) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::deleting $row [notification_id] due to bad data--->', $row ['notification_id'] );
 							//
 							// something is wrong
 							// - data should be populated
@@ -115,35 +115,35 @@ class ListNotification {
 							$this->dbAdapter->flush ();
 							continue;
 						}
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$row [meta]', $row ['meta'] );
 						$from_user_id = $meta ['sent'] ['sender_user_id'];
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$from_user_id', $from_user_id );
 						
 						//
 						// data must be good so start entry
 						//
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::data must be good so start entry' );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::data must be good so start entry' );
 						$this->xml_output .= "<notification>";
 						
 						/**
 						 * Fetch Profile Pics
 						 */
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::$this->fetchPics ( $from_user_id )' );
+						//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::$this->fetchPics ( $from_user_id )' );
 						$this->fetchPics ( $from_user_id );
 						
 						/**
 						 * Fetch event id
 						 */
 						if (isset ( $meta ['event_id'] )) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , '::inside if (isset ( $meta [event_id] ))' );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , '::inside if (isset ( $meta [event_id] ))' );
 							$this->xml_output .= "<event_id>{$meta ['sent']['event_id']}</event_id>";
 							$redis = AWSMemreasRedisCache::getHandle ();
 							$event = $from_user_id . '_' . $meta ['sent'] ['event_id'];
 							$event_key_meta = $redis->cache->hget ( "!memreas_eid_hash", $event );
 							$event_data = $redis->cache->hget ( "!memreas_meta_hash", $event_key_meta );
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_data', $event_data );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$event_data', $event_data );
 						} else {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , '::inside else !if (isset ( $meta [event_id] ))' );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ , '::inside else !if (isset ( $meta [event_id] ))' );
 							$this->xml_output .= "<event_id></event_id>";
 						}
 						

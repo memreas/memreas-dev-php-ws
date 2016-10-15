@@ -40,7 +40,7 @@ class GetEventDetails {
 		$qb = $this->dbAdapter->createQueryBuilder ();
 		$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
 		$event_detail = $qb->getQuery ()->getArrayResult ();
-		Mlog::addone($cm . __LINE__.'$event_detail-->', $event_detail);
+		//Mlog::addone($cm . __LINE__.'$event_detail-->', $event_detail);
 		if (empty ( $event_detail )) {
 			$status = 'Failure';
 			$message = 'No event found for this id';

@@ -7,8 +7,6 @@
  */
 namespace Application\memreas;
 
-use Application\Model\MemreasConstants;
-
 class EditEvent {
 	protected $message_data;
 	protected $memreas_tables;
@@ -25,6 +23,8 @@ class EditEvent {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = '';
 		
+		
+		Mlog::addone($cm.__LINE__.'data as json-->', json_encode($data));
 		//
 		// ws parameters - xml
 		//
@@ -41,6 +41,19 @@ class EditEvent {
 		$sell_media = strtotime ( trim ( $data->editevent->sell_media ) );
 		$metadata = $data->editevent->metadata;
 		$delete_event = (int)$data->editevent->delete_event;
+		Mlog::addone($cm.__LINE__.'$event_id-->', $event_id);
+		Mlog::addone($cm.__LINE__.'$event_name-->', $event_name);
+		Mlog::addone($cm.__LINE__.'$event_location-->', $event_location);
+		Mlog::addone($cm.__LINE__.'$event_date-->', $event_date);
+		Mlog::addone($cm.__LINE__.'$is_public-->', $is_public);
+		Mlog::addone($cm.__LINE__.'$event_from-->', $event_from);
+		Mlog::addone($cm.__LINE__.'$event_to-->', $event_to);
+		Mlog::addone($cm.__LINE__.'$is_friend_can_share-->', $is_friend_can_share);
+		Mlog::addone($cm.__LINE__.'$is_friend_can_post_media-->', $is_friend_can_post_media);
+		Mlog::addone($cm.__LINE__.'$event_self_destruct-->', $event_self_destruct);
+		Mlog::addone($cm.__LINE__.'$sell_media-->', $sell_media);
+		Mlog::addone($cm.__LINE__.'$metadata-->', $metadata);
+		Mlog::addone($cm.__LINE__.'$delete_event-->', $delete_event);
 		
 		$media_array = $data->editevent->medias->media;
 		$friend_array = $data->editevent->friends->friend;
