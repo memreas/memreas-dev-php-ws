@@ -23,37 +23,39 @@ class EditEvent {
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$message = '';
 		
-		
-		Mlog::addone($cm.__LINE__.'data as json-->', json_encode($data));
+		Mlog::addone ( $cm . __LINE__ . 'data as json-->', json_encode ( $data ) );
 		//
 		// ws parameters - xml
 		//
+		Mlog::addone ( $cm . __LINE__ . '$data->editevent->event_from[0]-->', ( string ) $data->editevent->event_from [0] );
+		Mlog::addone ( $cm . __LINE__ . '$data->editevent->event_to[0]-->', ( string ) $data->editevent->event_to [0] );
 		$event_id = trim ( $data->editevent->event_id );
 		$event_name = trim ( $data->editevent->event_name );
 		$event_location = trim ( $data->editevent->event_location );
-		$event_date = trim ( $data->editevent->event_date );
+		$event_date = trim ( ( string ) $data->editevent->event_date [0] );
 		$is_public = trim ( $data->editevent->is_public );
-		$event_from = strtotime ( trim ( $data->editevent->event_from ) );
-		$event_to = strtotime ( trim ( $data->editevent->event_to ) );
+		$event_from = $duration_from = trim ( ( string ) $data->editevent->event_from [0] );
+		$event_to = $duration_to = trim ( ( string ) $data->editevent->event_to [0] );
 		$is_friend_can_share = trim ( $data->editevent->is_friend_can_add_friend );
 		$is_friend_can_post_media = trim ( $data->editevent->is_friend_can_post_media );
-		$event_self_destruct = strtotime ( trim ( $data->editevent->event_self_destruct ) );
-		$sell_media = strtotime ( trim ( $data->editevent->sell_media ) );
-		$metadata = $data->editevent->metadata;
-		$delete_event = (int)$data->editevent->delete_event;
-		Mlog::addone($cm.__LINE__.'$event_id-->', $event_id);
-		Mlog::addone($cm.__LINE__.'$event_name-->', $event_name);
-		Mlog::addone($cm.__LINE__.'$event_location-->', $event_location);
-		Mlog::addone($cm.__LINE__.'$event_date-->', $event_date);
-		Mlog::addone($cm.__LINE__.'$is_public-->', $is_public);
-		Mlog::addone($cm.__LINE__.'$event_from-->', $event_from);
-		Mlog::addone($cm.__LINE__.'$event_to-->', $event_to);
-		Mlog::addone($cm.__LINE__.'$is_friend_can_share-->', $is_friend_can_share);
-		Mlog::addone($cm.__LINE__.'$is_friend_can_post_media-->', $is_friend_can_post_media);
-		Mlog::addone($cm.__LINE__.'$event_self_destruct-->', $event_self_destruct);
-		Mlog::addone($cm.__LINE__.'$sell_media-->', $sell_media);
-		Mlog::addone($cm.__LINE__.'$metadata-->', $metadata);
-		Mlog::addone($cm.__LINE__.'$delete_event-->', $delete_event);
+		$event_self_destruct = trim ( ( string ) $data->editevent->event_self_destruct );
+		$sell_media = trim ( $data->editevent->sell_media );
+		$price = trim ( $data->editevent->price );
+		$delete_event = ( int ) $data->editevent->delete_event;
+		
+		Mlog::addone ( $cm . __LINE__ . '$event_id-->', $event_id );
+		Mlog::addone ( $cm . __LINE__ . '$event_name-->', $event_name );
+		Mlog::addone ( $cm . __LINE__ . '$event_location-->', $event_location );
+		Mlog::addone ( $cm . __LINE__ . '$event_date-->', $event_date );
+		Mlog::addone ( $cm . __LINE__ . '$is_public-->', $is_public );
+		Mlog::addone ( $cm . __LINE__ . '$event_from-->', $event_from );
+		Mlog::addone ( $cm . __LINE__ . '$event_to-->', $event_to );
+		Mlog::addone ( $cm . __LINE__ . '$is_friend_can_share-->', $is_friend_can_share );
+		Mlog::addone ( $cm . __LINE__ . '$is_friend_can_post_media-->', $is_friend_can_post_media );
+		Mlog::addone ( $cm . __LINE__ . '$event_self_destruct-->', $event_self_destruct );
+		Mlog::addone ( $cm . __LINE__ . '$sell_media-->', $sell_media );
+		Mlog::addone ( $cm . __LINE__ . '$metadata-->', $metadata );
+		Mlog::addone ( $cm . __LINE__ . '$delete_event-->', $delete_event );
 		
 		$media_array = $data->editevent->medias->media;
 		$friend_array = $data->editevent->friends->friend;
@@ -72,11 +74,11 @@ class EditEvent {
 			// Update event
 			//
 			$type = 'updated';
-			if (!isset ( $event_id ) || empty ( $event_id )) {
+			if (! isset ( $event_id ) || empty ( $event_id )) {
 				$message = 'event id is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
-			} else if (!isset ( $event_name ) || empty ( $event_name )) {
+			} else if (! isset ( $event_name ) || empty ( $event_name )) {
 				$message = 'event name is empty';
 				$status = 'Failure';
 				Mlog::addone ( $cm . __LINE__, "$message" );
@@ -117,24 +119,32 @@ class EditEvent {
 				//
 				// check dates for empty
 				//
-				if (empty($event_location)) {
+				if (empty ( $event_location )) {
 					$event_location = '';
-				} 
-				if (empty($event_date)) {
+				}
+				if (empty ( $event_date )) {
 					$event_date = '';
-				} 
-				if (empty($event_from)) {
+				} else {
+					Mlog::addone ( $cm . __LINE__, '$event_date-->' . $event_date );
+				}
+				if (empty ( $event_from )) {
 					$event_from = '';
-				} 
-				if (empty($event_to)) {
+				} else {
+					Mlog::addone ( $cm . __LINE__, '$event_from-->' . $event_from );
+				}
+				if (empty ( $event_to )) {
 					$event_to = '';
+				} else {
+					Mlog::addone ( $cm . __LINE__, '$event_to-->' . $event_to );
 				}
-				if (empty($event_self_destruct)) {
+				if (empty ( $event_self_destruct )) {
 					$event_self_destruct = '';
+				} else {
+					Mlog::addone ( $cm . __LINE__, '$event_self_destruct-->' . $event_self_destruct );
 				}
 				
-				
-				$now = MNow::now();
+				$json_meta = json_encode ( $metadata );
+				$now = MNow::now ();
 				$query = "update Application\Entity\Event as e set                  
 				e.name='$event_name',
 				e.location='$event_location',
@@ -146,35 +156,41 @@ class EditEvent {
 				e.viewable_to='$event_to',
 				e.self_destruct='$event_self_destruct',
 				e.update_time='$now'";
-				// Set event to free
-				if (! $sell_media) {
-					$qb = $this->dbAdapter->createQueryBuilder ();
-					$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
-					$event_detail = $qb->getQuery ()->getResult ();
-					$event_detail = $event_detail [0];
-					$event_meta = json_decode ( $event_detail->metadata, true );
-					$event_meta ['price'] = 0;
-					$query .= ", e.metadata = '" . json_encode ( $event_meta ) . "'";
-				} else {
-					$query .= ", e.metadata = '" . json_encode ( $metadata ) . "'";
-				}
+				
+				//
+				// Set pricing
+				//
+				$metadata = array ();
+				$metadata ['price'] = $price;
+				$metadata ['duration_from'] = $duration_from;
+				$metadata ['duration_to'] = $duration_to;
+				
+				// Always set pricing info...
+				$qb = $this->dbAdapter->createQueryBuilder ();
+				$qb->select ( 'e' )->from ( 'Application\Entity\Event', 'e' )->where ( 'e.event_id = ?1' )->setParameter ( 1, $event_id );
+				$event_detail = $qb->getQuery ()->getResult ();
+				$event_detail = $event_detail [0];
+				$event_meta = json_decode ( $event_detail->metadata, true );
+				$event_meta ['update_time'] = time ();
+				$metadata ['archive'] [] = $event_meta;
+				$query .= ", e.metadata = '" . json_encode ( $metadata ) . "'";
 				$query .= " where e.event_id='$event_id' ";
 				Mlog::addone ( $cm . __LINE__, "update query ---> $query" );
 			}
 		} // end else for update
 		  
 		//
-		// handle update or delete
-		//
-		if (isset($query) && !empty($query)){
+		  // handle update or delete
+		  //
+		if (isset ( $query ) && ! empty ( $query )) {
 			$statement = $this->dbAdapter->createQuery ( $query );
 			$result = $statement->getResult ();
 		} else {
 			$result = '';
 		}
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__."update result ---> ", $result );
-		if (!empty($result)) {
-			$message .= 'Event Successfully ' . $type;
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "update result ---> ", $result );
+		if (! empty ( $result )) {
+			$message .= 'event successfully ' . $type;
 			$status = 'Success';
 		} else {
 			$message .= 'error: update failed';
