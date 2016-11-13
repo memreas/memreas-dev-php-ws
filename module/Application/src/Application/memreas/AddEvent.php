@@ -7,11 +7,7 @@
  */
 namespace Application\memreas;
 
-use Zend\Session\Container;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerSender;
 use Application\memreas\MUUID;
-use Aws\MachineLearning\MachineLearningClient;
 
 class AddEvent {
 	protected $message_data;
@@ -56,7 +52,7 @@ class AddEvent {
 			$event_date_timestamp = time ();
 			$is_friend_can_share = trim ( $data->addevent->is_friend_can_add_friend );
 			$is_friend_can_post_media = trim ( $data->addevent->is_friend_can_post_media );
-			$event_self_destruct = strtotime ( trim ( $data->addevent->event_self_destruct ) );
+			$event_self_destruct = trim ( $data->addevent->event_self_destruct );
 			$is_public = trim ( $data->addevent->is_public );
 			$price = trim ( $data->addevent->price );
 			$event_id = '';
@@ -93,8 +89,6 @@ class AddEvent {
 				$tblEvent->metadata = json_encode ( $metadata );
 				$this->dbAdapter->persist ( $tblEvent );
 				$this->dbAdapter->flush ();
-				
-				$this->createEventCache ();
 				
 				$event_id = $uuid;
 				$message .= $event_name . ' successfully added';
@@ -224,22 +218,6 @@ class AddEvent {
 			error_log ( "AddEventoutput::" . $xml_output . PHP_EOL );
 		} catch ( Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
-		}
-	}
-	function createEventCache() {
-		$date = strtotime ( date ( 'd-m-Y' ) );
-		$query_event = "select e.name, e.event_id 
-                from Application\Entity\Event e  
-                where (e.viewable_to >=" . $date . " or e.viewable_to ='')
-                    and  (e.viewable_from <=" . $date . " or e.viewable_from ='') 
-                    and  (e.self_destruct >=" . $date . " or e.self_destruct='') 
-                ORDER BY e.create_time DESC";
-		$statement = $this->dbAdapter->createQuery ( $query_event );
-		// $statement->setMaxResults ( $limit );
-		// $statement->setFirstResult ( $from );
-		$result = $statement->getResult ();
-		foreach ( $result as $value ) {
-			$this->eventIndex [$value ['event_id']] = $value ['name'];
 		}
 	}
 }
