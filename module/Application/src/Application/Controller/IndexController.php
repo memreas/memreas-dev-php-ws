@@ -281,7 +281,7 @@ class IndexController extends AbstractActionController {
 			$invalidate_me = false;
 			
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
-				error_log ( "Input data as xml ----> " . $_POST ['xml'] . PHP_EOL );
+				Mlog::addone($cm.__LINE__, "action::$actionname::xml::" . $_POST ['xml'] );
 			}
 			$memreas_tables = new MemreasTables ( $this->sm );
 			if ($actionname == 'dead_session') {
@@ -1962,7 +1962,7 @@ class IndexController extends AbstractActionController {
 		
 		// flush all output
 		ob_end_flush ();
-		ob_flush ();
+		//ob_flush ();
 		flush ();
 		
 		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::flushed' );
