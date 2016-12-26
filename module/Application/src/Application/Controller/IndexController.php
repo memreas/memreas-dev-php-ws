@@ -131,11 +131,8 @@ class IndexController extends AbstractActionController {
 	}
 	public function setupSaveHandler() {
 		$cm = __CLASS__ . __METHOD__;
-		//Mlog::addone ( $cm . __LINE__, '$this->redis = new AWSMemreasRedisCache ( $this->sm );' );
 		$this->redis = new AWSMemreasRedisCache ( $this->sm );
-		//Mlog::addone ( $cm . __LINE__, '$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );' );
 		$this->sessHandler = new AWSMemreasRedisSessionHandler ( $this->redis, $this->sm );
-		//Mlog::addone ( $cm . __LINE__, 'session_set_save_handler ( $this->sessHandler );' );
 		session_set_save_handler ( $this->sessHandler );
 	}
 	public function xml2array($xmlstring) {
@@ -391,15 +388,12 @@ class IndexController extends AbstractActionController {
 				
 				$addmediaevent = new AddMediaEvent ( $message_data, $memreas_tables, $this->sm );
 				$result = $addmediaevent->exec ();
-				// $this->sessHandler->startSessionWithSID($_SESSION['sid']);
 				
 				/*
 				 * - Cache approach
 				 * - write operation
 				 * - Note:: moved invalidation to backend worker for transcoding.
 				 */
-				// $data = simplexml_load_string ( $_POST ['xml'] );
-				// $this->redis->invalidateMedia ( $data->addmediaevent->user_id, $data->addmediaevent->event_id, $data->addmediaevent->media_id );
 				if (! empty ( $data->addmediaevent->event_id )) {
 					//
 					// invalidate and recache
@@ -1693,7 +1687,9 @@ class IndexController extends AbstractActionController {
 						break;
 				}
 			}
+			//
 			// end actions
+			//
 			
 			//
 			// Use these for background processes below...
@@ -1797,6 +1793,16 @@ class IndexController extends AbstractActionController {
 			//Mlog::addone ( __METHOD__ . __LINE__, '$this->returnResponse ( $response )' );
 			$this->returnResponse ( $response );
 		}
+		
+		//
+		// Handle logout specifically after return
+		//
+		if (! empty ( $_SESSION ['memreascookie'] )) {
+			$this->sessHandler->closeSessionWithMemreasCookie ();
+		} else {
+			$this->sessHandler->closeSessionWithSID ();
+		}
+		
 		
 		//Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		//Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );

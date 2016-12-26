@@ -183,7 +183,8 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function setSession($user, $device_id = '', $device_type = '', $memreascookie = '', $clientIPAddress = '') {
 		session_start ();
-		error_log ( 'Inside setSession' . PHP_EOL );
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__,'Inside setSession');
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$clientIPAddress', $clientIPAddress);
 		if (empty ( session_id () )) {
 			session_regenerate_id ();
 		}

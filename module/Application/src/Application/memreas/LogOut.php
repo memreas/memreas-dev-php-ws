@@ -27,11 +27,13 @@ class LogOut {
 			$xml_output .= "</logoutresponse>";
 			$xml_output .= "</xml>";
 			echo $xml_output;
-			if (! empty ( $_SESSION ['memreascookie'] )) {
-				$sessHandler->closeSessionWithMemreasCookie ();
-			} else {
-				$sessHandler->closeSessionWithSID ();
-			}
+			
+			//error - doesn't let web client redirect...
+			//if (! empty ( $_SESSION ['memreascookie'] )) {
+			//	$sessHandler->closeSessionWithMemreasCookie ();
+			//} else {
+			//	$sessHandler->closeSessionWithSID ();
+			//}
 			//error_log ( "Logut ---> xml_output ----> " . $xml_output . PHP_EOL );
 		} catch ( \Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
