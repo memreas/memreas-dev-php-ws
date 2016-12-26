@@ -59,9 +59,9 @@ class Login {
 			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
 			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
 			Mlog::addone ( $cm . '::$this->device_token', $this->device_token );
-			// Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
-			// Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
-			// Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
+			Mlog::addone ( $cm . '::$this->memreascookie', $this->memreascookie );
+			Mlog::addone ( $cm . '::$this->isWeb', $this->isWeb );
+			Mlog::addone ( $cm . '::$this->clientIPAddress', $this->clientIPAddress );
 			
 			$time = time ();
 			if (empty ( $this->username )) {
