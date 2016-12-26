@@ -308,15 +308,12 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 				
 				$this->dbAdapter->persist ( $sessionObj );
 				$this->dbAdapter->flush ();
-				$result = $this->endSession ();
 			}
 		} catch ( \Exception $e ) {
-			/**
-			 * End Session
-			 */
-			$result = $this->endSession ();
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, $e->getMessage());
 		}
 	}
+	/*
 	public function endSession() {
 		$now = date ( "Y-m-d H:i:s" );
 		$q_update = "UPDATE Application\Entity\UserSession u
@@ -326,4 +323,5 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		$statement = $this->dbAdapter->createQuery ( $q_update );
 		return $statement->getResult ();
 	}
+	*/
 }
