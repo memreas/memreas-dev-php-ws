@@ -1795,7 +1795,7 @@ class IndexController extends AbstractActionController {
 		//
 		// Handle logout specifically after return
 		//
-		if ($actionname == 'logout') {
+		if ($actionname === 'logout') {
 			if (! empty ( $_SESSION ['memreascookie'] )) {
 				$this->sessHandler->closeSessionWithMemreasCookie ();
 			} else {
@@ -1803,9 +1803,9 @@ class IndexController extends AbstractActionController {
 			}
 		}
 		
-		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
-		// Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
-		// Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
+		Mlog::addone ( __METHOD__ . __LINE__ . "END PROCESSING FOR ACTION--->", $actionname );
+		Mlog::addone ( __METHOD__ . __LINE__, '***********************************************' );
 		
 		/**
 		 * ***************************************************************************************
