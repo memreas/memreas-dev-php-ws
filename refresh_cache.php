@@ -58,7 +58,8 @@ error_log("completed dev login..." . PHP_EOL);
 
 
 //dev 
-$url = 'https://memreasdev.memreas.com/index?action=';
+#$url = 'https://memreasdev.memreas.com/index?action=';
+$url = 'http://127.0.0.1/index?action=';
 $action = 'login';
 error_log("starting prod login..." . PHP_EOL);
 //echo $url;
