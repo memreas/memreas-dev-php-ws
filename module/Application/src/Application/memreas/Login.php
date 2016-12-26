@@ -44,7 +44,6 @@ class Login {
 				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
 				$ipAddress = ( string ) $data->clientIPAddress;
 			}
-			error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
 			$flagusername = 0;
 			$flagpass = 0;
@@ -55,6 +54,7 @@ class Login {
 			$this->memreascookie = (! empty ( $data->memreascookie )) ? trim ( $data->memreascookie ) : '';
 			$this->isWeb = (! empty ( $data->memreascookie )) ? true : false;
 			$this->clientIPAddress = $ipAddress;
+			Mlog::addone ( $cm . '::$_POST [xml]---->', $_POST ['xml'] );
 			Mlog::addone ( $cm . '::$this->username', $this->username );
 			Mlog::addone ( $cm . '::$this->device_id', $this->device_id );
 			Mlog::addone ( $cm . '::$this->device_type', $this->device_type );
