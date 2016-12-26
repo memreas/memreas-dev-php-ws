@@ -68,7 +68,7 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function destroy($id) {
 		$this->db->del ( $this->prefix . $id );
-		$this->storeSession ( false );
+		//$this->storeSession ( false );
 	}
 	public function gc($maxLifetime) {
 		// no action necessary because using EXPIRE
@@ -268,12 +268,24 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 	}
 	public function closeSessionWithSID() {
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
+
+		//
+		// Store to user session table - end
+		//
+		$this->storeSession ( false );
+		
 		session_destroy ();
 	}
 	public function closeSessionWithMemreasCookie() {
 		// $this->destroy(session_id());
 		$this->mRedis->invalidateCache ( 'memreascookie::' . $_SESSION ['memreascookie'] );
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
+		
+		//
+		// Store to user session table - end
+		//
+		$this->storeSession ( false );
+		
 		session_destroy ();
 	}
 	public function storeSession($start) {
