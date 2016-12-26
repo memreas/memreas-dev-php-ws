@@ -44,7 +44,7 @@ class Login {
 				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
 				$ipAddress = ( string ) $data->clientIPAddress;
 			}
-			// error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
+			error_log ( "Login.exec() inbound xml--->" . $_POST ['xml'] . PHP_EOL );
 			// 0 = not empty, 1 = empty
 			$flagusername = 0;
 			$flagpass = 0;
