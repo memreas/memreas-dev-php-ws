@@ -277,7 +277,6 @@ class AWSMemreasRedisSessionHandler implements \SessionHandlerInterface {
 		session_destroy ();
 	}
 	public function closeSessionWithMemreasCookie() {
-		// $this->destroy(session_id());
 		$this->mRedis->invalidateCache ( 'memreascookie::' . $_SESSION ['memreascookie'] );
 		$this->mRedis->invalidateCache ( 'uid::' . $_SESSION ['user_id'] );
 		
