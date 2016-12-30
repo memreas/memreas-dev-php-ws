@@ -351,10 +351,10 @@ class ViewEvents {
 				} // end for loop friend events
 				$xml_output .= "</friends>";
 			}
-			Mlog::addone ( $cm . __LINE__ . '$is_friend_event::$xml_output-->', $xml_output );
 		} // end if ($is_friend_event)
 		
 		if ($is_friend_event) {
+			Mlog::addone ( $cm . __LINE__ . '$is_friend_event::$xml_output-->', $xml_output );
 			if ($error_flag) {
 				// echo $xml_output;
 				$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
