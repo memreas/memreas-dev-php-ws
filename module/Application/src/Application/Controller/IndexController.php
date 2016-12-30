@@ -1772,9 +1772,9 @@ class IndexController extends AbstractActionController {
 			} else {
 				$sid = session_id ();
 			}
-			// Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname without callback--->", $output );
 			$response = $output;
 		}
+		Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname --->", $response );
 		
 		//
 		// store variables for post processing
