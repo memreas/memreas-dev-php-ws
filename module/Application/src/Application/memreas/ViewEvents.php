@@ -351,6 +351,7 @@ class ViewEvents {
 				} // end for loop friend events
 				$xml_output .= "</friends>";
 			}
+			Mlog::addone ( $cm . __LINE__ . '$is_friend_event::$xml_output-->', $xml_output );
 		} // end if ($is_friend_event)
 		
 		if ($is_friend_event) {
@@ -792,7 +793,7 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure'))  {
+				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure')) {
 					continue;
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
@@ -1003,12 +1004,12 @@ class ViewEvents {
 				$s3file_location = '';
 				
 				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure')) {
-					//if ($event_media ['transcode_status'] == 'failure') {
-					//	Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
-					//}
+					// if ($event_media ['transcode_status'] == 'failure') {
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
+					// }
 					continue;
 					
-					//below not used??
+					// below not used??
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
