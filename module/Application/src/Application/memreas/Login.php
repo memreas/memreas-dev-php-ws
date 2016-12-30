@@ -41,7 +41,7 @@ class Login {
 			
 			$data = simplexml_load_string ( $_POST ['xml'] );
 			if (! empty ( $data->clientIPAddress )) {
-				Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
+				//Mlog::addone ( $cm . __LINE__ . '::$data->clientIPAddress---->', ( string ) $data->clientIPAddress );
 				$ipAddress = ( string ) $data->clientIPAddress;
 			}
 			// 0 = not empty, 1 = empty
@@ -86,7 +86,7 @@ class Login {
 					$sql = "SELECT u FROM Application\Entity\User as u where u.username = '" . $this->username . "' and u.password = '" . $this->password . "'  and u.disable_account = 0";
 				}
 				
-				Mlog::addone ( $cm . '::$sql', $sql );
+				//Mlog::addone ( $cm . '::$sql', $sql );
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$row = $statement->getResult ();
 				
