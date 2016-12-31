@@ -198,7 +198,7 @@ class ViewEvents {
 				$xml_output .= "<page>0</page>";
 				$xml_output .= "<friends/>";
 			} else {
-				// Mlog::addone ( $cm . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
+				Mlog::addone ( $cm . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>My Friends Events List</message>";
 				$xml_output .= "<page>$page</page>";
