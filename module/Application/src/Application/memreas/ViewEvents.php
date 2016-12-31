@@ -27,7 +27,7 @@ class ViewEvents {
 	public function exec($setHeader = true) {
 		$cm = __CLASS__ . __METHOD__;
 		// timestamping
-		// Mlog::addone ( $cm . __LINE__, MNow::now () );
+		Mlog::addone ( $cm . __LINE__, MNow::now () );
 		// Mlog::addone ( $cm . '::inbound xml-->', $_POST ['xml'] );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
@@ -58,15 +58,10 @@ class ViewEvents {
 			header ( "Content-type: text/xml" );
 		}
 		
-		// timestamping
-		// Mlog::addone ( $cm . __LINE__, MNow::now () );
 		/*
 		 * ---------------------------my events----------------------------
 		 */
 		if ($is_my_event) {
-			// timestamping
-			// Mlog::addone ( $cm . __LINE__, MNow::now () );
-			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
 			
@@ -75,8 +70,6 @@ class ViewEvents {
 			 */
 			$result_event = $this->fetchMyEvents ( $user_id );
 			// Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
-			// timestamping
-			// Mlog::addone ( $cm . __LINE__, 'fetchMyEvents:: started @ '. MNow::now() );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -180,7 +173,7 @@ class ViewEvents {
 		 * ------------------------for friends event-------------------------
 		 */
 		if ($is_friend_event) {
-			// Mlog::addone ( $cm . '::friends event::', __LINE__ );
+			Mlog::addone ( $cm . '::friends event::', __LINE__ );
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
