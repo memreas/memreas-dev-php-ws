@@ -90,7 +90,7 @@ class ListComments {
 					$output .= '<comment>';
 					$output .= "<comment_event_id>" . $value ['event_id'] . "</comment_event_id>";
 					$output .= "<comment_media_id>" . $value ['media_id'] . "</comment_media_id>";
-					$output .= "<comment_text>" . $value ['text'] . "</comment_text>";
+					$output .= "<comment_text>" . addslashes($value ['text']) . "</comment_text>";
 					$output .= "<type>text</type>";
 					$output .= "<username>" . $value ['username'] . "</username>";
 					$redis = AWSMemreasRedisCache::getHandle ();
