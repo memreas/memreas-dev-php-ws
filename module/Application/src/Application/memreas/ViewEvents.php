@@ -743,6 +743,7 @@ class ViewEvents {
 			 AND event_friend.friend_id='" . $user_id . "'
 			 and event.delete_flag != 1
 			 ORDER BY event.create_time DESC ";
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$q_friendsevent--->', $q_friendsevent);
 		$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 		return $statement->getArrayResult ();
 	}
