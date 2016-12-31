@@ -190,7 +190,7 @@ class ViewEvents {
 			 * FriendsEvents Query
 			 */
 			$result_friendevent = $this->fetchFriendsEvents ( $user_id );
-			// Mlog::addone ( $cm . '::$result_friendevent::', $result_friendevent );
+			Mlog::addone ( $cm . '::$result_friendevent::', $result_friendevent );
 			if (empty ( $result_friendevent )) {
 				// Mlog::addone ( $cm . __LINE__ . '::$this->fetchFriendsEvents ()::', "fail - no records found..." );
 				$xml_output .= "<status>Success</status>";
