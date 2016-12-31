@@ -328,8 +328,9 @@ class ViewEvents {
 							if (! empty ( $event_media_list )) {
 								$event_xml_output .= $event_media_list;
 								$event_xml_output .= "</event>";
-								//} else {
+							} else {
 								//$event_xml_output = '';
+								$event_xml_output .= "</event>";
 							}
 							$xml_output .= $event_xml_output;
 							
