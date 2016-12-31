@@ -623,7 +623,7 @@ class ViewEvents {
 				 * Check if media was deleted or transcode failed
 				 */
 				$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
-				if (($row1 ['delete_flag'] == 1) || ($row1 ['transcode_status'] == 'failure')) {
+				if (($row1 ['delete_flag'] == 1) || ($row1 ['transcode_status'] !== 'success')) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
@@ -787,7 +787,7 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($row ['transcode_status'] == 'failure')) {
+				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($row ['transcode_status'] !== 'success')) {
 					continue;
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
@@ -997,8 +997,8 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] == 'failure')) {
-					// if ($event_media ['transcode_status'] == 'failure') {
+				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] !== 'success')) {
+					// if ($event_media ['transcode_status'] !== 'success') {
 					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
 					// }
 					continue;
