@@ -329,8 +329,8 @@ class ViewEvents {
 								$event_xml_output .= $event_media_list;
 								$event_xml_output .= "</event>";
 							} else {
-								$event_xml_output = '';
-								//$event_xml_output .= "</event>";
+								//$event_xml_output = '';
+								$event_xml_output .= "</event>";
 							}
 							$xml_output .= $event_xml_output;
 							
@@ -790,7 +790,7 @@ class ViewEvents {
 				$s3file_location = '';
 				
 				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($row ['transcode_status'] !== 'success')) {
-					//continue;
+					continue;
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
