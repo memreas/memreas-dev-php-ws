@@ -51,16 +51,16 @@ class EventRepository extends EntityRepository {
 		// $query_builder->andWhere('r.winner IN (:ids)')
 		// ->setParameter('ids', $ids);
 	}
-	public function createEventCache($type) {
+	public function createEventCache($type, $user_id) {
 		$date = strtotime ( date ( 'd-m-Y' ) );
 		if ($type == 'public') {
 			// Mlog::addone ( "createEventCache::", '$this->getPublicEvents ( $date )' );
 			$result = $this->getPublicEvents ( $date );
 		} else if ($type == 'friends') {
 			// Mlog::addone ( "createEventCache::", '$this->getFriendEvents ( $date )' );
-			$result = $this->getFriendEvents ( $date );
+			$result = $this->getFriendEvents ( $date, $user_id );
 		} else if ($type == 'my') {
-			$result = $this->getMyEvents ( $date );
+			$result = $this->getMyEvents ( $date, $user_id );
 		}
 		/**
 		 * attempt to make one call to db - changed query in getPublic events to leftjoin event, event_media, and media
@@ -209,12 +209,11 @@ class EventRepository extends EntityRepository {
 		}
 		return null;
 	}
-	public function getFriendEvents($date) {
+	public function getFriendEvents($date, $user_id) {
 		try {
 			/**
 			 * - This filter only returns events where user is a friend events and with valid from / to / self_destruct(ghost) dates
 			 */
-			$user_id = $_SESSION ['user_id'];
 			$query = "SELECT 
 						e.event_id, 
 						e.user_id, 
@@ -253,7 +252,7 @@ class EventRepository extends EntityRepository {
 		}
 		return null;
 	}
-	public function getMyEvents($date) {
+	public function getMyEvents($date, $user_id) {
 		try {
 			/**
 			 * - This filter only returns events where user is a friend events and with valid from / to / self_destruct(ghost) dates

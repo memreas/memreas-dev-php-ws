@@ -454,7 +454,7 @@ class AWSMemreasRedisCache {
 		$cm = __CLASS__ . __METHOD__;
 		// //Mlog::addone ( $cm, 'entered warmMemreasSet' );
 		sleep ( 1 );
-		$user_id = $_SESSION ['user_id'];
+		//$user_id = $_SESSION ['user_id'];
 		
 		$warming_memreas = $this->cache->get ( 'warming_memreas' );
 		if (! $warming_memreas) {
