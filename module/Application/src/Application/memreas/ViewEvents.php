@@ -790,7 +790,7 @@ class ViewEvents {
 				$s3file_location = '';
 				
 				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($row ['transcode_status'] !== 'success')) {
-					continue;
+					//continue;
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
