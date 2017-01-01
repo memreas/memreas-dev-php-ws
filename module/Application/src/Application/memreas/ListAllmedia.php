@@ -78,7 +78,7 @@ class ListAllmedia {
 		
 		if (count ( $result ) <= 0) {
 			$error_flag = 2;
-			$message = "No Record found for this Event";
+			$message = "no media found!";
 		} else {
 			// If profie pic set it
 			$xml_output .= "<profile_pic><![CDATA[" . $_SESSION ['profile_pic'] . "]]></profile_pic>";
@@ -287,7 +287,7 @@ class ListAllmedia {
 						'<message>media list</message>' 
 				), array (
 						'<status>failure</status>',
-						'<message>No Record found for this Event</message>' 
+						'<message>no media found!</message>' 
 				), $xml_output );
 			}
 		}
