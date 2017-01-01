@@ -98,7 +98,7 @@ class ViewEvents {
 							Mlog::addone ( $cm . __LINE__ . 'processing $row->event_id -->', $row->event_id . ' @ ' . MNow::now () );
 							$event_xml = "<event>";
 							$event_xml .= "<event_id>" . $row->event_id . "</event_id>";
-							$event_xml .= "<event_name>" . $row->name . "</event_name>";
+							$event_xml .= "<event_name>" . addslashes($row->name) . "</event_name>";
 							$event_xml .= "<event_location>" . $row->location . "</event_location>";
 							$event_xml .= "<event_metadata>" . $row->metadata . "</event_metadata>";
 							
