@@ -98,7 +98,7 @@ class ViewEvents {
 							Mlog::addone ( $cm . __LINE__ . 'processing $row->event_id -->', $row->event_id . ' @ ' . MNow::now () );
 							$event_xml = "<event>";
 							$event_xml .= "<event_id>" . $row->event_id . "</event_id>";
-							$event_xml .= "<event_name>" . addslashes($row->name) . "</event_name>";
+							$event_xml .= "<event_name>" . $row->name . "</event_name>";
 							$event_xml .= "<event_location>" . $row->location . "</event_location>";
 							$event_xml .= "<event_metadata>" . $row->metadata . "</event_metadata>";
 							
@@ -260,7 +260,7 @@ class ViewEvents {
 							
 							$event_xml_output = "<event>";
 							$event_xml_output .= "<event_id>" . $row_friendsevent ['event_id'] . "</event_id>";
-							$event_xml_output .= "<event_name>" . addslashes($row_friendsevent ['name']) . "</event_name>";
+							$event_xml_output .= "<event_name>" . $row_friendsevent ['name'] . "</event_name>";
 							$event_xml_output .= "<event_metadata>" . $row_friendsevent ['metadata'] . "</event_metadata>";
 							$event_xml_output .= "<friend_can_post>" . $row_friendsevent ['friends_can_post'] . "</friend_can_post>";
 							$event_xml_output .= "<friend_can_share>" . $row_friendsevent ['friends_can_share'] . "</friend_can_share>";
@@ -465,7 +465,7 @@ class ViewEvents {
 						$event_xml_output = '';
 						$event_xml_output .= "<event>";
 						$event_xml_output .= "<event_id>" . $public_event_row ['event_id'] . "</event_id>";
-						$event_xml_output .= "<event_name>" . addslashes($public_event_row ['name']) . "</event_name>";
+						$event_xml_output .= "<event_name>" . $public_event_row ['name'] . "</event_name>";
 						$event_xml_output .= "<event_location>" . $public_event_row ['location'] . "</event_location>";
 						$event_xml_output .= "<event_date>" . $public_event_row ['date'] . "</event_date>";
 						$event_xml_output .= "<event_metadata>" . $public_event_row ['metadata'] . "</event_metadata>";
