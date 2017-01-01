@@ -27,8 +27,8 @@ class ViewEvents {
 	public function exec($setHeader = true) {
 		$cm = __CLASS__ . __METHOD__;
 		// timestamping
-		Mlog::addone ( $cm . __LINE__, MNow::now () );
-		// Mlog::addone ( $cm . '::inbound xml-->', $_POST ['xml'] );
+		//Mlog::addone ( $cm . __LINE__, MNow::now () );
+		// //Mlog::addone ( $cm . '::inbound xml-->', $_POST ['xml'] );
 		$data = simplexml_load_string ( $_POST ['xml'] );
 		$user_id = trim ( $data->viewevent->user_id );
 		$is_my_event = trim ( $data->viewevent->is_my_event );
@@ -69,7 +69,7 @@ class ViewEvents {
 			 * MyEvents Query
 			 */
 			$result_event = $this->fetchMyEvents ( $user_id );
-			// Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
+			// //Mlog::addone ( $cm . '::$this->fetchMyEvents ( $user_id )::', __LINE__ );
 			if ($result_event) {
 				
 				if (count ( $result_event ) <= 0) {
@@ -89,13 +89,13 @@ class ViewEvents {
 						// - event xml will be subcached as viewevents_is_my_event_ . $user_id . $event_id
 						//
 						$event_xml = $this->redis->getCache ( 'viewevents_is_my_event_' . $user_id . '_' . $row->event_id );
-						// Mlog::addone ( $cm . __LINE__ . '::my event - $event_xml::', $event_xml );
+						// //Mlog::addone ( $cm . __LINE__ . '::my event - $event_xml::', $event_xml );
 						
 						if ($event_xml) {
 							$xml_output .= $event_xml;
 						} else {
-							Mlog::addone ( $cm . __LINE__ . 'processing $user_id -->', $user_id . ' @ ' . MNow::now () );
-							Mlog::addone ( $cm . __LINE__ . 'processing $row->event_id -->', $row->event_id . ' @ ' . MNow::now () );
+							//Mlog::addone ( $cm . __LINE__ . 'processing $user_id -->', $user_id . ' @ ' . MNow::now () );
+							//Mlog::addone ( $cm . __LINE__ . 'processing $row->event_id -->', $row->event_id . ' @ ' . MNow::now () );
 							$event_xml = "<event>";
 							$event_xml .= "<event_id>" . $row->event_id . "</event_id>";
 							$event_xml .= "<event_name>" . $row->name . "</event_name>";
@@ -112,20 +112,20 @@ class ViewEvents {
 							 */
 							$likeCount = $this->fetchEventLikeCount ( $row->event_id );
 							$event_xml .= "<like_count>" . $likeCount . "</like_count>";
-							// Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::', $likeCount );
+							// //Mlog::addone ( $cm . __LINE__ . '::my event - $likeCount::', $likeCount );
 							
 							/**
 							 * get comment count for event
 							 */
 							$commCount = $this->fetchEventCommentCount ( $row->event_id );
 							$event_xml .= "<comment_count>" . $commCount . "</comment_count>";
-							// Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::', $commCount );
+							// //Mlog::addone ( $cm . __LINE__ . '::my event - $commCount::', $commCount );
 							
 							/**
 							 * Fetch event friends...
 							 */
 							$friends = $this->fetchEventFriends ( $row->event_id );
-							// Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::', count ( $friends ) );
+							// //Mlog::addone ( $cm . __LINE__ . '::my event - count($friends)::', count ( $friends ) );
 							
 							/**
 							 * Generate event friends xml...
@@ -141,13 +141,13 @@ class ViewEvents {
 							 * get event media
 							 */
 							$query_event_media_result = $this->fetchMyEventsMedia ( $user_id, $row->event_id );
-							// Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::', $query_event_media_result );
+							//Mlog::addone ( $cm . __LINE__ . '::my event - $query_event_media_result::', $query_event_media_result );
 							
 							/**
 							 * generateMyEventMediaXML
 							 */
 							$event_xml .= $this->generateMyEventMediaXML ( $query_event_media_result );
-							// Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
+							// //Mlog::addone ( $cm . __LINE__ . '::my event - $this->generateMyEventMediaXML ( $query_event_media_result )::', $this->generateMyEventMediaXML ( $query_event_media_result ) );
 							
 							$event_xml .= "</event>";
 							$xml_output .= $event_xml;
@@ -156,11 +156,11 @@ class ViewEvents {
 							// Set the event in cache
 							//
 							$this->redis->setCache ( 'viewevents_is_my_event_' . $user_id . '_' . $row->event_id, $event_xml );
-							// Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
+							// //Mlog::addone ( $cm . __LINE__. 'foreach ( $result_event as $row ) end-->', MNow::now() );
 						} // end else if (!$event_xml)
 					} // end for loop my events
 					$xml_output .= "</events>";
-					// Mlog::addone ( $cm . __LINE__, 'fetchMyEvents:: started @ '. MNow::now() );
+					// //Mlog::addone ( $cm . __LINE__, 'fetchMyEvents:: started @ '. MNow::now() );
 				}
 			} else {
 				$xml_output .= "<status>Failure</status>";
@@ -173,7 +173,7 @@ class ViewEvents {
 		 * ------------------------for friends event-------------------------
 		 */
 		if ($is_friend_event) {
-			Mlog::addone ( $cm . '::friends event::', __LINE__ );
+			//Mlog::addone ( $cm . '::friends event::', __LINE__ );
 			
 			$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
 			$xml_output .= "<xml><viewevents>";
@@ -183,15 +183,15 @@ class ViewEvents {
 			 * FriendsEvents Query
 			 */
 			$result_friendevent = $this->fetchFriendsEvents ( $user_id );
-			Mlog::addone ( $cm . '::$result_friendevent::', $result_friendevent );
+			//Mlog::addone ( $cm . '::$result_friendevent::', $result_friendevent );
 			if (empty ( $result_friendevent )) {
-				// Mlog::addone ( $cm . __LINE__ . '::$this->fetchFriendsEvents ()::', "fail - no records found..." );
+				// //Mlog::addone ( $cm . __LINE__ . '::$this->fetchFriendsEvents ()::', "fail - no records found..." );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>My Friends Events List</message>";
 				$xml_output .= "<page>0</page>";
 				$xml_output .= "<friends/>";
 			} else {
-				Mlog::addone ( $cm . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
+				//Mlog::addone ( $cm . '::$result_friendevent = $this->fetchFriendsEvents ( $user_id )::', __LINE__ );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>My Friends Events List</message>";
 				$xml_output .= "<page>$page</page>";
@@ -348,7 +348,7 @@ class ViewEvents {
 		} // end if ($is_friend_event)
 		
 		if ($is_friend_event) {
-			Mlog::addone ( $cm . __LINE__ . '$is_friend_event::$xml_output-->', $xml_output );
+			//Mlog::addone ( $cm . __LINE__ . '$is_friend_event::$xml_output-->', $xml_output );
 			if ($error_flag) {
 				// echo $xml_output;
 				$xml_output = "<?xml version=\"1.0\"  encoding=\"utf-8\" ?>";
@@ -378,13 +378,13 @@ class ViewEvents {
 			}
 			
 			if (count ( $result_pub ) == 0) {
-				// Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
+				// //Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "fail - no records found..." );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>Public Event List</message>";
 				$xml_output .= "<page>0</page>";
 				$xml_output .= "<events/>";
 			} else {
-				// Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "success - records found..." . count ( $result_pub ) );
+				// //Mlog::addone ( $cm . __LINE__ . '::$this->fetchPublicEvents ()::', "success - records found..." . count ( $result_pub ) );
 				$xml_output .= "<status>Success</status>";
 				$xml_output .= "<message>Public Event List</message>";
 				$xml_output .= "<page>$page</page>";
@@ -404,7 +404,7 @@ class ViewEvents {
 					} else {
 						
 						if (! MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC) {
-							// Mlog::addone ( $cm . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
+							// //Mlog::addone ( $cm . __LINE__ . '::Inside if MemreasConstants::ALLOW_SELL_MEDIA_IN_PUBLIC...' );
 							$event_json_array = json_decode ( $public_event_row ['metadata'], true );
 							//
 							// If selling is off then skip this event
@@ -422,22 +422,22 @@ class ViewEvents {
 						if (! empty ( $viewable_from ) && ! empty ( $viewable_to )) {
 							if ((time () < $viewable_from) || ($viewable_to < time ())) {
 								// date is outside of viewable from/to
-								// Mlog::addone ( $cm . __LINE__, "public event date is outside of from / to..." );
+								// //Mlog::addone ( $cm . __LINE__, "public event date is outside of from / to..." );
 								continue;
 							} else {
-								// Mlog::addone ( $cm . __LINE__, "public event date is INSIDE of from / to for name --->" . $public_event_row ['name'] );
+								// //Mlog::addone ( $cm . __LINE__, "public event date is INSIDE of from / to for name --->" . $public_event_row ['name'] );
 								/*
 								 * Debugging
 								 */
-								// Mlog::addone ( $cm . __LINE__ . '$public_event_row [name]--->', $public_event_row ['name'] );
-								// Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_from]--->', $public_event_row ['viewable_from'] );
-								// Mlog::addone ( $cm . __LINE__ . '$viewable_from--->', $viewable_from );
-								// Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_to]--->', $public_event_row ['viewable_to'] );
-								// Mlog::addone ( $cm . __LINE__ . '$viewable_to--->', $viewable_to );
-								// Mlog::addone ( $cm . __LINE__ . 'string view $viewable_from--->', date ( 'm/d/Y H:i:s', $viewable_from ) );
-								// Mlog::addone ( $cm . __LINE__ . 'string view $viewable_to--->', date ( 'm/d/Y H:i:s', $viewable_to ) );
-								// Mlog::addone ( $cm . __LINE__ . 'time()--->', time () );
-								// Mlog::addone ( $cm . __LINE__ . '$public_event_row [metadata]--->', $public_event_row ['metadata'] );
+								// //Mlog::addone ( $cm . __LINE__ . '$public_event_row [name]--->', $public_event_row ['name'] );
+								// //Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_from]--->', $public_event_row ['viewable_from'] );
+								// //Mlog::addone ( $cm . __LINE__ . '$viewable_from--->', $viewable_from );
+								// //Mlog::addone ( $cm . __LINE__ . '$public_event_row [viewable_to]--->', $public_event_row ['viewable_to'] );
+								// //Mlog::addone ( $cm . __LINE__ . '$viewable_to--->', $viewable_to );
+								// //Mlog::addone ( $cm . __LINE__ . 'string view $viewable_from--->', date ( 'm/d/Y H:i:s', $viewable_from ) );
+								// //Mlog::addone ( $cm . __LINE__ . 'string view $viewable_to--->', date ( 'm/d/Y H:i:s', $viewable_to ) );
+								// //Mlog::addone ( $cm . __LINE__ . 'time()--->', time () );
+								// //Mlog::addone ( $cm . __LINE__ . '$public_event_row [metadata]--->', $public_event_row ['metadata'] );
 							}
 						}
 						/*
@@ -556,8 +556,8 @@ class ViewEvents {
 		} // end if ($is_public_event)
 		$xml_output .= '</viewevents>';
 		$xml_output .= '</xml>';
-		// Mlog::addone ( $cm . __LINE__, "View Events ended @ " . MNow::now () );
-		// Mlog::addone ( $cm . __LINE__, "View Events.xml_output ----> $xml_output" );
+		// //Mlog::addone ( $cm . __LINE__, "View Events ended @ " . MNow::now () );
+		// //Mlog::addone ( $cm . __LINE__, "View Events.xml_output ----> $xml_output" );
 		
 		//
 		// Handle caching for login
@@ -576,12 +576,12 @@ class ViewEvents {
 			and e.delete_flag != 1
 			ORDER BY e.create_time DESC";
 		$statement = $this->dbAdapter->createQuery ( $query_event );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
+		// //Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEvents SQL::', $query_event );
 		return $statement->getResult ();
 	}
 	private function fetchMyEventsMedia($user_id, $event_id) {
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
-		$q_event_media = "select e.event_id, e.name, m.media_id, m.metadata, m.delete_flag
+		// //Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::', "user_id::$user_id event_id::$event_id" );
+		$q_event_media = "select e.event_id, e.name, m.media_id, m.metadata, m.delete_flag, m.transcode_status
 							from 	Application\Entity\Media m,
 									Application\Entity\Event e,
 									Application\Entity\EventMedia em
@@ -592,14 +592,14 @@ class ViewEvents {
 							and e.event_id = ?1
 							and e.user_id = ?2
 							order by m.create_date desc";
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$user_id::', $user_id );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$event_id::', $event_id );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$q_event_media::', $q_event_media );
+		////Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$user_id::', $user_id );
+		////Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$event_id::', $event_id );
+		////Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$q_event_media::', $q_event_media );
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
 		$event_media_query->setParameter ( 1, $event_id );
 		$event_media_query->setParameter ( 2, $user_id );
 		$result = $event_media_query->getResult ();
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
+		// //Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::fetchMyEventsMedia($user_id, $event_id)::$result::', $result );
 		
 		return $result;
 	}
@@ -624,6 +624,8 @@ class ViewEvents {
 				 * Check if media was deleted or transcode failed
 				 */
 				$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
+				//Mlog::add(__CLASS__.__METHOD__.__LINE__.'$row1--->',json_encode($row1));
+				$json_array = json_decode ( $row1 ['metadata'], true );
 				if (($row1 ['delete_flag'] == 1) || ($row1 ['transcode_status'] !== 'success')) {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
@@ -647,7 +649,6 @@ class ViewEvents {
 						$url98x78 = $delete_path;
 					}
 				} else if (isset ( $row1 ['metadata'] )) {
-					$json_array = json_decode ( $row1 ['metadata'], true );
 					$url = $json_array ['S3_files'] ['path'];
 					if (isset ( $json_array ['S3_files'] ['s3file_basename_prefix'] )) {
 						$s3file_basename_prefix = $json_array ['S3_files'] ['s3file_basename_prefix'];
@@ -737,7 +738,7 @@ class ViewEvents {
 			 AND event_friend.friend_id='" . $user_id . "'
 			 and event.delete_flag != 1
 			 ORDER BY event.create_time DESC ";
-		Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$q_friendsevent--->', $q_friendsevent);
+		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$q_friendsevent--->', $q_friendsevent);
 		$statement = $this->dbAdapter->createQuery ( $q_friendsevent );
 		return $statement->getArrayResult ();
 	}
@@ -812,7 +813,7 @@ class ViewEvents {
 						$url98x78 = $delete_path;
 					}
 				} else if (isset ( $row ['metadata'] )) {
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', 'insside normal section' );
+					// //Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::', 'insside normal section' );
 					$json_array = json_decode ( $row ['metadata'], true );
 					
 					$url = $json_array ['S3_files'] ['path'];
@@ -915,7 +916,7 @@ class ViewEvents {
 		 	and event.user_id = user.user_id
 			and event.delete_flag != 1
 			ORDER BY event.create_time DESC";
-			// Mlog::addone($cm.__LINE__.'::public query', $q_public);
+			// //Mlog::addone($cm.__LINE__.'::public query', $q_public);
 		} else if (($tag == '@') && ! empty ( $name )) {
 			// handle @person public events here
 			$q_public = "select  event.event_id,
@@ -935,7 +936,7 @@ class ViewEvents {
 			and user.username = '$name'
 			and event.delete_flag != 1
 			ORDER BY event.create_time DESC";
-			// Mlog::addone ( $cm . __LINE__ . '::public person query', $q_public );
+			// //Mlog::addone ( $cm . __LINE__ . '::public person query', $q_public );
 		} else if (($tag == '!') && ! empty ( $name )) {
 			// handle !memreas public events here
 			$q_public = "select  event.event_id,
@@ -954,7 +955,7 @@ class ViewEvents {
 		 	and event.user_id = user.user_id
 			and event.name = '$name'
 			ORDER BY event.create_time DESC";
-			// Mlog::addone($cm.__LINE__.'::public memreas query', $q_public);
+			// //Mlog::addone($cm.__LINE__.'::public memreas query', $q_public);
 		}
 		if (empty ( $q_public )) {
 			return null;
@@ -964,7 +965,7 @@ class ViewEvents {
 		$statement = $this->dbAdapter->createQuery ( $q_public );
 		$public_events_array = $statement->getArrayResult ();
 		
-		// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
+		// //Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$$public_events_array-->', $public_events_array, 'p' );
 		return $public_events_array;
 	}
 	private function fetchOwnerProfilePic($user_id) {
@@ -1000,7 +1001,7 @@ class ViewEvents {
 				
 				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] !== 'success')) {
 					// if ($event_media ['transcode_status'] !== 'success') {
-					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
+					// //Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
 					// }
 					continue;
 					
@@ -1120,7 +1121,7 @@ class ViewEvents {
 							and event_media.event_id = '$event_id'
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
-		// Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_event_media -->',$q_event_media);
+		// //Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_event_media -->',$q_event_media);
 		return $event_media_query->getResult ();
 	}
 	private function fetchEventComments($event_id) {
@@ -1139,7 +1140,7 @@ class ViewEvents {
 				Where c.event_id=?1
 				AND c.like= 1' );
 		$likeCountSql->setParameter ( 1, $event_id );
-		// Mlog::addone ( __CLASS__ . __METHOD__ . '::$likeCountSql->getSQL()::', __LINE__.$likeCountSql->getSQL() );
+		// //Mlog::addone ( __CLASS__ . __METHOD__ . '::$likeCountSql->getSQL()::', __LINE__.$likeCountSql->getSQL() );
 		return $likeCountSql->getSingleScalarResult ();
 	}
 	private function fetchEventCommentCount($event_id) {
@@ -1147,7 +1148,7 @@ class ViewEvents {
 								FROM Application\Entity\Comment c
 								Where c.event_id='$event_id'
 								AND (c.type= 'text' or c.type ='audio' or  c.type ='text|audio')" );
-		// Mlog::addone(__CLASS__.__METHOD__.'::$commCountSql::',__LINE__.$commCountQuery->getSQL());
+		// //Mlog::addone(__CLASS__.__METHOD__.'::$commCountSql::',__LINE__.$commCountQuery->getSQL());
 		return $commCountQuery->getSingleScalarResult ();
 	}
 	private function fetchEventFriends($event_id) {
