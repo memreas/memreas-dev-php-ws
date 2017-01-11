@@ -454,12 +454,6 @@ class AddMediaEvent {
 								Email::$item ['email'] = $friendUser ['email_address'];
 								Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
 								Email::collect ();
-									
-								Mlog::add ( __CLASS__ . __METHOD__ . __LINE__.'::$ndata.addNotification...' );
-								Mlog::add ( $ndata, 'j', 1 );
-									
-								// save in db
-								$this->AddNotification->exec ( $ndata );
 							}
 						}
 						
