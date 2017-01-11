@@ -442,7 +442,7 @@ class AddMediaEvent {
 								$meta ['sent'] ['media_id'] = $media_id;
 								$meta ['sent'] ['comment'] = $nmessage;
 								$data ['addNotification'] ['meta'] = json_encode ( $meta );
-								Mlog::add ( __CLASS__ . __METHOD__ . '::$data.addNotification...' );
+								Mlog::add ( __CLASS__ . __METHOD__ . __LINE__.'::$data.addNotification...' );
 								Mlog::add ( $data, 'j', 1 );
 									
 								// add notification in db.
@@ -454,6 +454,9 @@ class AddMediaEvent {
 								Email::$item ['email'] = $friendUser ['email_address'];
 								Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
 								Email::collect ();
+									
+								Mlog::add ( __CLASS__ . __METHOD__ . __LINE__.'::$ndata.addNotification...' );
+								Mlog::add ( $ndata, 'j', 1 );
 									
 								// save in db
 								$this->AddNotification->exec ( $ndata );
