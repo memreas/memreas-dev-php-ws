@@ -51,11 +51,11 @@ class AddNotification {
 				
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$sentPrior = $statement->getSingleScalarResult ();
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
 			}
 			//
 			// Notification is ok to proceed
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
 			if ($sentPrior) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Failure - notification sent prior' );
 				$status = 'Failure';
