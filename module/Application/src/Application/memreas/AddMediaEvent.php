@@ -454,8 +454,8 @@ class AddMediaEvent {
 								Email::$item ['email'] = $friendUser ['email_address'];
 								Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
 								Email::collect ();
-							}
-						}
+							} // end if (!empty($friendId))
+						} // foreach ( $efusers as $ef )
 						
 						if (! empty ( $ndata ['addNotification'] ['meta'] )) {
 							$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
