@@ -626,7 +626,12 @@ class ViewEvents {
 				$host = MemreasConstants::CLOUDFRONT_DOWNLOAD_HOST;
 				Mlog::add(__CLASS__.__METHOD__.__LINE__.'$row1--->',json_encode($row1));
 				$json_array = json_decode ( $row1 ['metadata'], true );
-				if (($row1 ['delete_flag'] == 1) || ($row1 ['transcode_status'] !== 'success')) {
+				//if media was deleted don't include it...
+				if ($row1 ['delete_flag'] == 1) {
+					continue;
+				}
+				//if the media is transcoding return a transcoding thumbnail
+				if ($row1 ['transcode_status'] !== 'success') {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
@@ -789,8 +794,12 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if (($row ['delete_flag'] == 1) || ($row ['report_flag'] != 0) || ($row ['transcode_status'] !== 'success')) {
+				//if media was deleted don't include it...
+				if ($row1 ['delete_flag'] == 1) {
 					continue;
+				}
+				//if the media is transcoding return a transcoding thumbnail
+				if ($row1 ['transcode_status'] !== 'success') {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
@@ -999,13 +1008,12 @@ class ViewEvents {
 				$s3file_download_path = '';
 				$s3file_location = '';
 				
-				if (($event_media ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0) || ($event_media ['transcode_status'] !== 'success')) {
-					// if ($event_media ['transcode_status'] !== 'success') {
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'media $event_media--->', $event_media );
-					// }
+				//if media was deleted or reported don't include it...
+				if (($row1 ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0)) {
 					continue;
-					
-					// below not used??
+				}
+				//if the media is transcoding return a transcoding thumbnail
+				if ($row1 ['transcode_status'] !== 'success') {
 					$host = MemreasConstants::ORIGINAL_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
