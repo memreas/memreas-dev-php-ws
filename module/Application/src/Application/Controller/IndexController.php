@@ -1774,7 +1774,7 @@ class IndexController extends AbstractActionController {
 			}
 			$response = $output;
 		}
-		Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname --->", $response );
+		//Mlog::addone ( __METHOD__ . __LINE__ . "response for $actionname --->", $response );
 		
 		//
 		// store variables for post processing

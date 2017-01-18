@@ -42,7 +42,7 @@ class AddMediaEvent {
 		$is_audio = false;
 		try {
 			$media_id = '';
-			// Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
+			Mlog::addone ( $cm .__LINE__.'$_POST [xml]', $_POST ['xml'] );
 			if (isset ( $_POST ['xml'] ) && ! empty ( $_POST ['xml'] )) {
 				error_log ( "AddMediaEvent _POST ['xml'] ----> " . $_POST ['xml'] . PHP_EOL );
 				$data = simplexml_load_string ( $_POST ['xml'] );
@@ -381,6 +381,9 @@ class AddMediaEvent {
 					$this->dbAdapter->createQuery ( $update_friend_photo )->getResult ();
 				}
 				
+				//
+				// Event media section...
+				//
 				if (isset ( $event_id ) && ! empty ( $event_id )) {
 					$tblEventMedia = new \Application\Entity\EventMedia ();
 					$tblEventMedia->media_id = $media_id;
@@ -401,6 +404,7 @@ class AddMediaEvent {
 						$qb->setParameter ( 1, $event_id );
 						$qb->setParameter ( 2, $user_id );
 						
+						Mlog::addone($cm.__LINE__.'::friend_query::', $qb->getQuery()->getSql());
 						$efusers = $qb->getQuery ()->getResult ();
 						$userOBj = $this->dbAdapter->find ( 'Application\Entity\User', $user_id );
 						$eventRepo = $this->dbAdapter->getRepository ( 'Application\Entity\Event' );
@@ -420,39 +424,38 @@ class AddMediaEvent {
 						}
 						foreach ( $efusers as $ef ) {
 							$friendId = $ef ['friend_id'];
-							/**
-							 * Build array and send notifications...
-							 */
-							$data = array ();
-							$data ['addNotification'] ['sender_uid'] = $user_id;
-							$data ['addNotification'] ['receiver_uid'] = $friendId;
-							$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_MEDIA;
-							$data ['addNotification'] ['notification_methods'] [] = 'email';
-							$data ['addNotification'] ['notification_methods'] [] = 'push_notification';
-							$meta ['sent'] ['event_id'] = $event_id;
-							$meta ['sent'] ['event_name'] = $eventOBj->name;
-							$meta ['sent'] ['from_id'] = $user_id;
-							$meta ['sent'] ['from_username'] = $userOBj->username;
-							$meta ['sent'] ['comment_id'] = $uuid;
-							$meta ['sent'] ['media_id'] = $media_id;
-							$meta ['sent'] ['comment'] = $nmessage;
-							$data ['addNotification'] ['meta'] = json_encode ( $meta );
-							Mlog::add ( __CLASS__ . __METHOD__ . '::$data.addNotification...' );
-							Mlog::add ( $data, 'j', 1 );
-							
-							// add notification in db.
-							$result = $this->AddNotification->exec ( $data );
-							
-							$this->notification->add ( $friendId );
-							$friendUser = $eventRepo->getUser ( $friendId, 'row' );
-							Email::$item ['name'] = $friendUser ['username'];
-							Email::$item ['email'] = $friendUser ['email_address'];
-							Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
-							Email::collect ();
-							
-							// save in db
-							$this->AddNotification->exec ( $ndata );
-						}
+							if (!empty($friendId)) {
+								/**
+								 * Build array and send notifications...
+								 */
+								$data = array ();
+								$data ['addNotification'] ['sender_uid'] = $user_id;
+								$data ['addNotification'] ['receiver_uid'] = $friendId;
+								$data ['addNotification'] ['notification_type'] = \Application\Entity\Notification::ADD_MEDIA;
+								$data ['addNotification'] ['notification_methods'] [] = 'email';
+								$data ['addNotification'] ['notification_methods'] [] = 'push_notification';
+								$meta ['sent'] ['event_id'] = $event_id;
+								$meta ['sent'] ['event_name'] = $eventOBj->name;
+								$meta ['sent'] ['from_id'] = $user_id;
+								$meta ['sent'] ['from_username'] = $userOBj->username;
+								$meta ['sent'] ['comment_id'] = $uuid;
+								$meta ['sent'] ['media_id'] = $media_id;
+								$meta ['sent'] ['comment'] = $nmessage;
+								$data ['addNotification'] ['meta'] = json_encode ( $meta );
+								Mlog::add ( __CLASS__ . __METHOD__ . __LINE__.'::$data.addNotification...' );
+								Mlog::add ( $data, 'j', 1 );
+									
+								// add notification in db.
+								$result = $this->AddNotification->exec ( $data );
+									
+								$this->notification->add ( $friendId );
+								$friendUser = $eventRepo->getUser ( $friendId, 'row' );
+								Email::$item ['name'] = $friendUser ['username'];
+								Email::$item ['email'] = $friendUser ['email_address'];
+								Email::$item ['message'] = $ndata ['addNotification'] ['meta'];
+								Email::collect ();
+							} // end if (!empty($friendId))
+						} // foreach ( $efusers as $ef )
 						
 						if (! empty ( $ndata ['addNotification'] ['meta'] )) {
 							$this->notification->setMessage ( $ndata ['addNotification'] ['meta'] );
