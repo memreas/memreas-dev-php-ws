@@ -32,7 +32,8 @@ class MemreasConstants {
 	// Redis section
 	// ubuntu standalone for
 	// redis 3 version
-	const REDIS_SERVER_ENDPOINT = "52.14.76.74";
+	//const REDIS_SERVER_ENDPOINT = "52.14.76.74";
+	const REDIS_SERVER_ENDPOINT = "10.0.0.19";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
