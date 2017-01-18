@@ -56,8 +56,6 @@ class LikeMedia {
 			} else {
 				
 				if (isset ( $media_id ) && ! empty ( $media_id )) {
-					error_log ( "LikeMedia.media_id ---->  " . $media_id . PHP_EOL );
-					error_log ( "LikeMedia.isMediaIdSet ---->  " . $isMediaIdSet . PHP_EOL );
 					$isMediaIdSet = 1;
 				} else {
 					$media_id = "";
@@ -79,11 +77,10 @@ class LikeMedia {
 					 * Determine if Event Like or Media Like
 					 */
 					if ($isEventIdSet && ! $isMediaIdSet) {
-						error_log ( "LikeMedia.setEventLike ---->  " . $setEventLike . PHP_EOL );
-						$setEventLike = 1;
 						/*
-						 * Check event_id for like
+						 * event like
 						 */
+						$setEventLike = 1;
 						$q = "select c.comment_id from Application\Entity\Comment c" . " where c.event_id='$event_id'" . " and c.type = 'like' " . " and c. user_id='$user_id'" . " and c.like=1";
 						$statement = $this->dbAdapter->createQuery ( $q );
 						$row = $statement->getResult ();
@@ -92,10 +89,10 @@ class LikeMedia {
 							$message = 'like already added...';
 						}
 					} else if ($isEventIdSet && $isMediaIdSet) {
-						$setMediaLike = 1;
 						/*
-						 * Check event_id for like
+						 * media like
 						 */
+						$setMediaLike = 1;
 						$q = "select c from Application\Entity\Comment c" . " where c.event_id='$event_id'" . " and c.media_id='$media_id'" . " and c.type = 'like' " . " and c. user_id='$user_id'";
 						$statement = $this->dbAdapter->createQuery ( $q );
 						// error_log("SQL--->".$statement->getSql().PHP_EOL);

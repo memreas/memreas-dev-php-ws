@@ -1,7 +1,4 @@
-<IfModule mod_php5.c>
 php_value date.timezone "America/New_York"
-</IfModule>
-
 RewriteEngine On
 # The following rule tells Apache that if the requested filename
 # exists, simply serve it.

@@ -26,37 +26,36 @@ class AddNotification {
 	}
 	public function exec($frmweb = '') {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 			if (empty ( $frmweb )) {
 				$data = simplexml_load_string ( $_POST ['xml'] );
 			} else {
 				$data = json_decode ( json_encode ( $frmweb ) );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, $frmweb );
 			}
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$data--->', json_encode ( $data ) );
 			
 			//
 			// Add sql check here to see if notification is logged...
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '...' );
 			$suid = $data->addNotification->sender_uid;
 			$ruid = $data->addNotification->receiver_uid;
 			$ntype = $data->addNotification->notification_type;
 			$sentPrior = false;
-				if ($ntype == 'ADD_FRIEND') {
-				//only check for Add Friend...
+			if ($ntype == 'ADD_FRIEND') {
+				// only check for Add Friend...
 				$sql = "SELECT count(n.sender_uid) FROM Application\Entity\Notification as n
 				where n.sender_uid = '$suid'
 				and n.receiver_uid = '$ruid'
 				and n.notification_type = '$ntype'";
-					
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'check for prior notification sql --> ' . $sql );
+				
 				$statement = $this->dbAdapter->createQuery ( $sql );
 				$sentPrior = $statement->getSingleScalarResult ();
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
 			}
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'check for prior notification sql --> ' . $sql );
 			//
 			// Notification is ok to proceed
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'result of check for prior notification sql $sentPrior--> ' . $sentPrior );
 			if ($sentPrior) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::Failure - notification sent prior' );
 				$status = 'Failure';
