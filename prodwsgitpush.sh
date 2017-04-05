@@ -23,5 +23,5 @@ git push
 
 #curl https://memreas-dev-deploy.memreas.com/prod_pull_n_aws_push.php?repo=ws
 
-curl https://memreasprod.memreas.com:9002/?action=clearlog
-curl https://memreasprod.memreas.com:9002/?action=gitpull
+#curl https://memreasprod.memreas.com:9002/?action=clearlog
+#curl https://memreasprod.memreas.com:9002/?action=gitpull
