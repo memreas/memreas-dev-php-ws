@@ -32,7 +32,7 @@ class MemreasConstants {
 	// Redis constant section
 	const REDIS_SERVER_ENDPOINT = "127.0.0.1";
 	const REDIS_SERVER_USE = true;
-	const REDIS_SERVER_SESSION_ONLY = true;
+	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
 	// 1 hour
 	const REDIS_CACHE_SESSION_TTL = 3600;
