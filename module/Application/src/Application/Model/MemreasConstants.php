@@ -20,6 +20,7 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 6;
 	
 	// memreasdev urls
+	const BASE_URL= "https://www.memreas.com";
 	const WEB_URL = "http://127.0.0.1:55151/";
 	const ORIGINAL_URL = "http://127.0.0.1:55152/";
 	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
