@@ -447,7 +447,7 @@ class ViewEvents {
 						if (! empty ( $self_destruct )) {
 							if ($self_destruct < $date) {
 								// date is outside of viewable from/to
-								error_log ( "public event date is outside of ghost date..." . PHP_EOL );
+								Mlog::addone ( $cm . __LINE__ , "public event date is outside of ghost date...");
 								continue;
 							}
 						}
@@ -537,6 +537,10 @@ class ViewEvents {
 						 * generatePublicEventMediaXML
 						 */
 						$event_media_list = $this->generatePublicEventMediaXML ( $result_event_media_public );
+						//debugging
+						Mlog::addone ( $cm . __LINE__ . '$event_media_list--->' , $event_media_list);
+						//end debugging
+						
 						if (! empty ( $event_media_list )) {
 							$event_xml_output .= $event_media_list;
 							$event_xml_output .= "</event>";
@@ -990,6 +994,7 @@ class ViewEvents {
 	}
 	private function generatePublicEventMediaXML($result_event_media_public) {
 		$xml = '';
+		
 		if (count ( $result_event_media_public ) > 0) {
 			foreach ( $result_event_media_public as $event_media ) {
 				
