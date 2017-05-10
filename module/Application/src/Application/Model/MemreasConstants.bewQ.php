@@ -20,11 +20,11 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 6;
 	
 	// memreasdev urls
+	const BASE_URL= "https://www.memreas.com";
 	const WEB_URL = "http://127.0.0.1:55151/";
 	const ORIGINAL_URL = "http://127.0.0.1:55152/";
 	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
-	//const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
-	const MEMREAS_TRANSCODE_URL = "https://internal-memreasdevvpc-bew-elb-1930718513.us-east-2.elb.amazonaws.com/";
+	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
 	const MEMREAS_PAY_URL = "http://127.0.0.1:55153/";
 	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:55153/stripe/";
 	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:55153/index/";
@@ -33,7 +33,7 @@ class MemreasConstants {
 	// Redis section
 	// ubuntu standalone for
 	// redis 3 version
-	const REDIS_SERVER_ENDPOINT = "52.14.71.19";
+	const REDIS_SERVER_ENDPOINT = "10.0.0.231";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
