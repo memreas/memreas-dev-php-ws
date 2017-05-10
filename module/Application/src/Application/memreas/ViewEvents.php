@@ -990,13 +990,14 @@ class ViewEvents {
 		return $profile_query->getResult ();
 	}
 	private function generatePublicEventMediaXML($result_event_media_public) {
-		$xml = '';
 		
 		//
 		// checking public xml
 		//
 		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$result_event_media_public[metadata]--->', $result_event_media_public['metadata']);
+		//updated...
 		
+		$xml = '';
 		if (count ( $result_event_media_public ) > 0) {
 			foreach ( $result_event_media_public as $event_media ) {
 				
