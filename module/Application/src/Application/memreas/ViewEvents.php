@@ -537,10 +537,6 @@ class ViewEvents {
 						 * generatePublicEventMediaXML
 						 */
 						$event_media_list = $this->generatePublicEventMediaXML ( $result_event_media_public );
-						//debugging
-						Mlog::addone ( $cm . __LINE__ . '$event_media_list--->' , $event_media_list);
-						//end debugging
-						
 						if (! empty ( $event_media_list )) {
 							$event_xml_output .= $event_media_list;
 							$event_xml_output .= "</event>";
@@ -1132,6 +1128,7 @@ class ViewEvents {
 								Application\Entity\Media media
 							where event_media.media_id = media.media_id 
 							and event_media.event_id = '$event_id'
+							and media.delete_flag != 1
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
 		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_event_media -->',$q_event_media);
