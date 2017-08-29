@@ -20,6 +20,7 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 8;
 	
 	// memreasprod urls
+	const BASE_URL = "https://www.memreas.com";
 	const WEB_URL = "http://127.0.0.1:55151/";
 	const ORIGINAL_URL = "http://127.0.0.1:55152/";
 	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
@@ -36,7 +37,6 @@ class MemreasConstants {
 	//const MEMREAS_PAY_URL_INDEX = "https://memreasprod-pay.memreas.com/index/";
 	
 	// Redis section
-	//const REDIS_SERVER_ENDPOINT = "10.154.58.83";
 	const REDIS_SERVER_ENDPOINT = "10.0.0.88";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
@@ -119,5 +119,4 @@ class MemreasConstants {
 	const TW_CONSUMER_SECRET = 'bDqOeHkJ7OIQ4QPNnT1PA9oz55gf51YW0REBo12aazGA0CBrbY';
 	const TW_OAUTH_TOKEN = '1941271416-UuUhh7XTVJ7npEjmgQHAypAnl0VmNqOKJ7BzMp2';
 	const TW_OAUTH_TOKEN_SECRET = 't0wqWd0OpHrZTWYHvx9VqVl3iySDTfZklKkB6v1WaohxH';
-	
 }
