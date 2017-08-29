@@ -55,7 +55,7 @@ class ListAllmedia {
 		$from = ($page - 1) * $limit;
 		
 		if (empty ( $event_id )) {
-			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' and m.transcode_status='success' and m.report_flag = 0 and m.delete_flag != 1 ORDER BY m.create_date DESC";
+			$q1 = "select m from Application\Entity\Media m where m.user_id='$user_id' and m.transcode_status!='failure' and m.report_flag = 0 and m.delete_flag != 1 ORDER BY m.create_date DESC";
 			$statement = $this->dbAdapter->createQuery ( $q1 );
 			$statement->setMaxResults ( $limit );
 			$statement->setFirstResult ( $from );
@@ -78,7 +78,7 @@ class ListAllmedia {
 		
 		if (count ( $result ) <= 0) {
 			$error_flag = 2;
-			$message = "No Record found for this Event";
+			$message = "no media found!";
 		} else {
 			// If profie pic set it
 			$xml_output .= "<profile_pic><![CDATA[" . $_SESSION ['profile_pic'] . "]]></profile_pic>";
@@ -287,7 +287,7 @@ class ListAllmedia {
 						'<message>media list</message>' 
 				), array (
 						'<status>failure</status>',
-						'<message>No Record found for this Event</message>' 
+						'<message>no media found!</message>' 
 				), $xml_output );
 			}
 		}

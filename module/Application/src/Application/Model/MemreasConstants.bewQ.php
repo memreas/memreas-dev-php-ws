@@ -20,6 +20,7 @@ class MemreasConstants {
 	const FORGOT_PASSWORD_CODE_LENGTH = 6;
 	
 	// memreasdev urls
+	const BASE_URL= "https://www.memreas.com";
 	const WEB_URL = "http://127.0.0.1:55151/";
 	const ORIGINAL_URL = "http://127.0.0.1:55152/";
 	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
@@ -27,20 +28,12 @@ class MemreasConstants {
 	const MEMREAS_PAY_URL = "http://127.0.0.1:55153/";
 	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:55153/stripe/";
 	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:55153/index/";
-	//const WEB_URL = "https://fe.memreas.com/";
-	//const ORIGINAL_URL = "https://memreasdev-wsa.memreas.com/";
-	//const MEDIA_URL = "https://memreasdev-wsa.memreas.com/?action=addmediaevent";
-	//const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
-	//const MEMREAS_PAY_URL = "https://memreasdev-pay.memreas.com/";
-	//const MEMREAS_PAY_URL_STRIPE = "https://memreasdev-pay.memreas.com/stripe/";
-	//const MEMREAS_PAY_URL_INDEX = "https://memreasdev-pay.memreas.com/index/";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	
 	// Redis section
 	// ubuntu standalone for
 	// redis 3 version
-	// const REDIS_SERVER_ENDPOINT = "54.225.187.57";
-	const REDIS_SERVER_ENDPOINT = "10.164.216.184";
+	const REDIS_SERVER_ENDPOINT = "10.0.0.231";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
