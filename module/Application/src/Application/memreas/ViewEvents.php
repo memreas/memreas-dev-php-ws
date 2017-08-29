@@ -447,7 +447,7 @@ class ViewEvents {
 						if (! empty ( $self_destruct )) {
 							if ($self_destruct < $date) {
 								// date is outside of viewable from/to
-								error_log ( "public event date is outside of ghost date..." . PHP_EOL );
+								Mlog::addone ( $cm . __LINE__ , "public event date is outside of ghost date...");
 								continue;
 							}
 						}
@@ -459,6 +459,7 @@ class ViewEvents {
 						if (! count ( $result_event_media_public ) > 0) {
 							continue;
 						}
+						
 						/*
 						 * Add event entry data...
 						 */
@@ -632,7 +633,7 @@ class ViewEvents {
 				}
 				//if the media is transcoding return a transcoding thumbnail
 				if ($row1 ['transcode_status'] !== 'success') {
-					$host = MemreasConstants::ORIGINAL_URL;
+					$host = MemreasConstants::BASE_URL;
 					$delete_path = 'memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
 					$s3file_location = $json_array ['S3_files'] ['location'];
@@ -800,7 +801,7 @@ class ViewEvents {
 				}
 				//if the media is transcoding return a transcoding thumbnail
 				if ($row1 ['transcode_status'] !== 'success') {
-					$host = MemreasConstants::ORIGINAL_URL;
+					$host = MemreasConstants::BASE_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
 					$s3file_location = $json_array ['S3_files'] ['location'];
@@ -989,6 +990,13 @@ class ViewEvents {
 		return $profile_query->getResult ();
 	}
 	private function generatePublicEventMediaXML($result_event_media_public) {
+		
+		//
+		// checking public xml
+		//
+		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$result_event_media_public[metadata]--->', $result_event_media_public['metadata']);
+		//updated...
+		
 		$xml = '';
 		if (count ( $result_event_media_public ) > 0) {
 			foreach ( $result_event_media_public as $event_media ) {
@@ -1009,12 +1017,12 @@ class ViewEvents {
 				$s3file_location = '';
 				
 				//if media was deleted or reported don't include it...
-				if (($row1 ['delete_flag'] == 1) || ($event_media ['report_flag'] != 0)) {
+				if (($event_media['delete_flag'] == 1) || ($event_media ['report_flag'] != 0)) {
 					continue;
 				}
 				//if the media is transcoding return a transcoding thumbnail
-				if ($row1 ['transcode_status'] !== 'success') {
-					$host = MemreasConstants::ORIGINAL_URL;
+				if ($event_media['transcode_status'] !== 'success') {
+					$host = MemreasConstants::BASE_URL;
 					$delete_path = '/memreas/img/large/1.jpg';
 					$s3file_basename_prefix = 'media removed';
 					$s3file_location = $json_array ['S3_files'] ['location'];
@@ -1067,8 +1075,15 @@ class ViewEvents {
 					} else if (isset ( $json_array ['S3_files'] ['type'] ['audio'] ) && is_array ( $json_array ['S3_files'] ['type'] ['audio'] )) {
 						$only_audio_in_event = 1;
 						continue;
-					} else
+					} else {
 						$type = "Type not Mentioned";
+					}
+					
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$url79x80--->', $url79x80);
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$url448x306--->', $url448x306);
+					Mlog::addone(__CLASS__.__METHOD__.__LINE__.'$url98x78--->', $url98x78);
+					
+					
 				}
 				$only_audio_in_event = 0;
 				$xml .= "<event_media>";
@@ -1127,6 +1142,7 @@ class ViewEvents {
 								Application\Entity\Media media
 							where event_media.media_id = media.media_id 
 							and event_media.event_id = '$event_id'
+							and media.delete_flag != 1
 							order by media.create_date desc";
 		$event_media_query = $this->dbAdapter->createQuery ( $q_event_media );
 		//Mlog::addone(__CLASS__.__METHOD__.__LINE__.'::$q_event_media -->',$q_event_media);
