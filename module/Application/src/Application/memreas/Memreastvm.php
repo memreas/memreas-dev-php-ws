@@ -133,6 +133,9 @@ class Memreastvm {
 								'$key',
 								'' 
 						],
+						[
+								'acl' => S3_ACL
+						],
 						[ 
 								'starts-with',
 								'$Content-Type',
@@ -142,9 +145,6 @@ class Memreastvm {
 								'content-length-range',
 								'0',
 								MemreasConstants::S3_MAX_CONTENT_LENGTH_RANGE
-						],
-						[ 
-								'acl' => S3_ACL 
 						],
 						[ 
 								'success_action_status' => $successStatus 
@@ -160,6 +160,15 @@ class Memreastvm {
 						],
 						[ 
 								'x-amz-expires' => $expires 
+						],
+						[
+								'x-amz-content-sha256' => 'STREAMING-AWS4-HMAC-SHA256-PAYLOAD'
+						],
+						[
+								'x-amz-decoded-content-length' => '10000000'
+						],
+						[
+								'Content-Encoding' => 'aws-chunked,gzip'
 						],
 						[ 
 								'x-amz-server-side-encryption' => $encryption 
