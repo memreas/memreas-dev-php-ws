@@ -91,7 +91,7 @@ class Memreastvm {
 			} else {
 				header ( 'Content-Type: application/json' );
 				echo json_encode ( $signature_data );
-				Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
+				//Mlog::addone ( $cm.__LINE__ . '::output::', json_encode ( $signature_data ));
 			}
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . 'error::', $e->getMessage () );
@@ -137,6 +137,11 @@ class Memreastvm {
 								'starts-with',
 								'$Content-Type',
 								'' 
+						],
+						[
+								'content-length-range',
+								'0',
+								MemreasConstants::MAXS3_MAX_CONTENT_LENGTH_RANGE
 						],
 						[ 
 								'acl' => S3_ACL 
