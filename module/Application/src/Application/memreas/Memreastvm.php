@@ -141,7 +141,7 @@ class Memreastvm {
 						[
 								'content-length-range',
 								'0',
-								MemreasConstants::MAXS3_MAX_CONTENT_LENGTH_RANGE
+								MemreasConstants::S3_MAX_CONTENT_LENGTH_RANGE
 						],
 						[ 
 								'acl' => S3_ACL 
