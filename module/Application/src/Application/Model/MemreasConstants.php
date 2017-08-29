@@ -10,34 +10,30 @@ namespace Application\Model;
 class MemreasConstants {
 	
 	//environment
-	const ENV = 'PROD';
+	const ENV = "DEV";
 	
 	// Turns off emails for perf testing
 	const SEND_EMAIL = true;
 	const ALLOW_DUPLICATE_EMAIL_FOR_TESTING = 1;
 	// has 1 or 0 value
 	const ALLOW_SELL_MEDIA_IN_PUBLIC = 1;
-	const FORGOT_PASSWORD_CODE_LENGTH = 8;
+	const FORGOT_PASSWORD_CODE_LENGTH = 6;
 	
-	// memreasprod urls
-	const BASE_URL = "https://www.memreas.com";
+	// memreasdev urls
+	const BASE_URL= "https://www.memreas.com";
 	const WEB_URL = "http://127.0.0.1:55151/";
 	const ORIGINAL_URL = "http://127.0.0.1:55152/";
 	const MEDIA_URL = "http://127.0.0.1:55152/?action=addmediaevent";
-	const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
+	const MEMREAS_TRANSCODE_URL = "https://memreasdev-backend.memreas.com/";
 	const MEMREAS_PAY_URL = "http://127.0.0.1:55153/";
 	const MEMREAS_PAY_URL_STRIPE = "http://127.0.0.1:55153/stripe/";
 	const MEMREAS_PAY_URL_INDEX = "http://127.0.0.1:55153/index/";
-	//const WEB_URL = "https://www.memreas.com/";
-	//const ORIGINAL_URL = "https://memreasprod-ws.memreas.com/";
-	//const MEDIA_URL = "https://memreasprod-ws.memreas.com/?action=addmediaevent";
-	//const MEMREAS_TRANSCODE_URL = "https://memreasprod-backend.memreas.com/";
-	//const MEMREAS_PAY_URL = "https://memreasprod-pay.memreas.com/";
-	//const MEMREAS_PAY_URL_STRIPE = "https://memreasprod-pay.memreas.com/stripe/";
-	//const MEMREAS_PAY_URL_INDEX = "https://memreasprod-pay.memreas.com/index/";
+	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	
 	// Redis section
-	const REDIS_SERVER_ENDPOINT = "10.0.0.88";
+	// ubuntu standalone for
+	// redis 3 version
+	const REDIS_SERVER_ENDPOINT = "10.0.0.231";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = false;
 	const REDIS_SERVER_PORT = "6379";
@@ -46,30 +42,29 @@ class MemreasConstants {
 	// 1day
 	const REDIS_CACHE_TTL = (3600 * 24);
 	const REDIS_CACHE_SESSION_DEVICE_TTL = (3600 * 24);
-
+	
 	// memreasdevsec related
-	const S3_APPKEY = 'AKIAISDIQFVJMWFYXCIA';
-	const S3_APPSEC = 'eM5HG4MbYhkW1Jz1RWIdMapo2s+DbB+KnkhzTt91';
+	const S3BUCKET = "memreasdevsec";
+	const S3HLSBUCKET = "memreasdevhlssec";
+	const S3_APPKEY = 'AKIAJZE2O2WDMXLGR27A';
+	const S3_APPSEC = 'FI09T7vRXcWx+QBE/n5ysEtZxx/DOAxkks/o2rzG';
 	const S3_REGION = 'us-east-1';
-	const S3BUCKET = "memreasprodsec";
-	const S3HLSBUCKET = "memreasprodhlssec";
-	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s12hcdq6y0d1zq.cloudfront.net/cfx/st/mp4:';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d321rfaqc9owi4.cloudfront.net/';
-	const CLOUDFRONT_HLS_DOWNLOAD_HOST = 'https://d1fhgtf97i7jlq.cloudfront.net/';
-	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d1fhgtf97i7jlq.cloudfront.net/';
+	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s1u1vmosmx0myq.cloudfront.net/cfx/st/mp4:';
+	const CLOUDFRONT_DOWNLOAD_HOST = 'https://d3sisat5gdssl6.cloudfront.net/';
 	const SIGNURLS = true;
 	
-	
+	// const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2b3944zpv2o6x.cloudfront.net/';
+	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
 	const CLOUDFRONT_KEY_FILE = '/key/pk-APKAISSKGZE3DR5HQCHA.pem';
 	const CLOUDFRONT_KEY_PAIR_ID = 'APKAISSKGZE3DR5HQCHA';
 	const CLOUDFRONT_EXPIRY_TIME = (3600 * 48); // 48 hours
 	
-	//free plan id
+	// free plan id
 	const MEMREAS_FREE_PLAN = "PLAN_A_2GB_MONTHLY";
-	                                      
+	
 	// Same across...
-	const registration_secret_passphrase = 'freedom tower';
-	const media_id_batch_create_count = 25;
+	const registration_secret_passphrase = 'freedom tower1';
+	const media_id_batch_create_count = 50;
 	const copyright_batch_create_count = 25;
 	const copyright_batch_minimum = 10;
 	const URL = "/index";
@@ -92,12 +87,12 @@ class MemreasConstants {
 	//const FCM_SERVER_URL = 'https://android.googleapis.com/gcm/send';
 	const FCM_SERVER_URL = 'https://fcm.googleapis.com/fcm/send';
 	const APNS = 'aps_pkey.pem';
-	const APNS_GATEWAY = 'ssl://gateway.push.apple.com:2195';
+	const APNS_GATEWAY = 'ssl://gateway.sandbox.push.apple.com:2195';
 	const COPYRIGHT = '&copy;memreas, llc. all rights reserved.';
-    const DCMA_CLAIM = 2; 
-	const DCMA_CLAIM_TEXT = 'claim reported'; 
-	const DCMA_COUNTER_CLAIM = 3; 
-	const DCMA_COUNTER_CLAIM_TEXT = 'counter claim reported'; 
+	const DCMA_CLAIM = 2;
+	const DCMA_CLAIM_TEXT = 'claim reported';
+	const DCMA_COUNTER_CLAIM = 3;
+	const DCMA_COUNTER_CLAIM_TEXT = 'counter claim reported';
 	public static function fetchAWS() {
 		$sharedConfig = [ 
 				'region' => 'us-east-1',
@@ -105,7 +100,7 @@ class MemreasConstants {
 				'credentials' => [ 
 						'key' => self::S3_APPKEY,
 						'secret' => self::S3_APPSEC 
-				]
+				] 
 		];
 		
 		return new \Aws\Sdk ( $sharedConfig );

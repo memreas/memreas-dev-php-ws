@@ -51,6 +51,7 @@ class MemreasConstants {
 	const S3_APPKEY = 'AKIAISDIQFVJMWFYXCIA';
 	const S3_APPSEC = 'eM5HG4MbYhkW1Jz1RWIdMapo2s+DbB+KnkhzTt91';
 	const S3_REGION = 'us-east-1';
+	const S3_MAX_CONTENT_LENGTH_RANGE = '5242880000'; //5GB
 	const S3BUCKET = "memreasprodsec";
 	const S3HLSBUCKET = "memreasprodhlssec";
 	const CLOUDFRONT_STREAMING_HOST = 'rtmp://s12hcdq6y0d1zq.cloudfront.net/cfx/st/mp4:';
