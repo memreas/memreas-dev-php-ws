@@ -32,4 +32,4 @@ fi
 #eb events -f
 
 #curl https://memreasdev.memreas.com:9002/index?action=clearlog
-curl https://memreasdev.memreas.com:9002/index?action=gitpull
+curl http://18.222.149.148:55152/index?action=gitpull

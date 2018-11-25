@@ -191,6 +191,7 @@ class IndexController extends AbstractActionController {
 		
 		$callback = isset ( $_REQUEST ['callback'] ) ? $_REQUEST ['callback'] : '';
 		
+		Mlog::addone ( $cm . __LINE__ . '::IndexController --->', "HELLO WORLD" );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_REQUEST', $_REQUEST );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_POST', $_POST );
 		// Mlog::addone ( $cm . __LINE__ . '::IndexController $_COOKIE', $_COOKIE );
